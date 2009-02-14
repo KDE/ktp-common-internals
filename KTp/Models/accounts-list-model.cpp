@@ -20,10 +20,17 @@
 
 #include "accounts-list-model.h"
 
+#include "account-item.h"
+
+#include <kdebug.h>
+
+#include <TelepathyQt4/Client/Account>
+
 AccountsListModel::AccountsListModel(QObject *parent)
  : QAbstractListModel(parent)
 {
-    // TODO: Implement me!
+    m_unreadyAccounts.clear();
+    m_readyAccounts.clear();
 }
 
 AccountsListModel::~AccountsListModel()
@@ -41,6 +48,62 @@ QVariant AccountsListModel::data(const QModelIndex &index, int role) const
 {
     // TODO: Implement me!
     return QVariant();
+}
+
+void AccountsListModel::addAccount(Telepathy::Client::Account *account)
+{
+    // Check if the account is already in the model.
+    bool found = false;
+
+    foreach(const AccountItem* ai, m_unreadyAccounts)
+    {
+        if(ai->account() == account)
+        {
+            found = true;
+            break;
+        }
+    }
+    if(!found)
+    {
+        foreach(const AccountItem* ai, m_readyAccounts)
+        {
+            if(ai->account() == account)
+            {
+                found = true;
+                break;
+            }
+        }
+    }
+
+    if(found)
+    {
+       kDebug() << "Requested to add account"
+               << account
+               << "to model, but it is already present. Doing nothing.";
+   }
+   else
+   {
+       AccountItem *item = new AccountItem(account, this);
+       m_unreadyAccounts.append(item);
+       connect(item, SIGNAL(ready()), this, SLOT(onAccountItemReady()));
+       connect(item, SIGNAL(removed()), this, SLOT(onAccountItemRemoved()));
+       connect(item, SIGNAL(updated()), this, SLOT(onAccountItemUpdated()));
+   }
+}
+
+void AccountsListModel::onAccountItemReady()
+{
+    // TODO: Implement me!
+}
+
+void AccountsListModel::onAccountItemRemoved()
+{
+    // TODO: Implement me!
+}
+
+void AccountsListModel::onAccountItemUpdated()
+{
+    // TODO: Implement me!
 }
 
 

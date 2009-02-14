@@ -21,7 +21,15 @@
 #ifndef TELEPATHY_ACCOUNTS_KCM_ACCOUNTS_LIST_MODEL_H
 #define TELEPATHY_ACCOUNTS_KCM_ACCOUNTS_LIST_MODEL_H
 
-#include <QAbstractListModel>
+#include <QtCore/QAbstractListModel>
+
+class AccountItem;
+
+namespace Telepathy {
+    namespace Client {
+        class Account;
+    }
+}
 
 class AccountsListModel : public QAbstractListModel
 {
@@ -33,6 +41,16 @@ public:
     virtual ~AccountsListModel();
     virtual int rowCount(const QModelIndex &index) const;
     virtual QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
+    void addAccount(Telepathy::Client::Account *account);
+
+private Q_SLOTS:
+    void onAccountItemReady();
+    void onAccountItemRemoved();
+    void onAccountItemUpdated();
+
+private:
+    QList<AccountItem*> m_unreadyAccounts;
+    QList<AccountItem*> m_readyAccounts;
 
 };
 
