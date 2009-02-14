@@ -40,13 +40,23 @@ AccountsListModel::~AccountsListModel()
 
 int AccountsListModel::rowCount(const QModelIndex &index) const
 {
-    // TODO: Implement me!
+    if(index == QModelIndex())
+    {
+       return m_readyAccounts.size();
+    }
+
     return 0;
 }
 
 QVariant AccountsListModel::data(const QModelIndex &index, int role) const
 {
-    // TODO: Implement me!
+    // FIXME: This is a basic implementation just so I can see what's going
+    // on while developing this code further. Needs expanding.
+    if(role == Qt::DisplayRole)
+    {
+        return QVariant(m_readyAccounts.at(index.row())->account()->displayName());
+    }
+
     return QVariant();
 }
 
