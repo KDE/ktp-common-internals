@@ -104,7 +104,18 @@ void AccountsListModel::addAccount(Telepathy::Client::Account *account)
 
 void AccountsListModel::onAccountItemReady()
 {
-    // TODO: Implement me!
+    AccountItem *item = qobject_cast<AccountItem*>(sender());
+    Q_ASSERT(item);
+    Q_ASSERT(m_unreadyAccounts.contains(item));
+    Q_ASSERT(!m_readyAccounts.contains(item));
+
+    beginInsertRows(QModelIndex(), m_readyAccounts.size(), m_readyAccounts.size()+1);
+    m_readyAccounts.append(item);
+    Q_ASSERT(1==m_unreadyAccounts.removeAll(item));
+    endInsertRows();
+
+    Q_ASSERT(!m_unreadyAccounts.contains(item));
+    Q_ASSERT(m_readyAccounts.contains(item));
 }
 
 void AccountsListModel::onAccountItemRemoved()
