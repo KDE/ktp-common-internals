@@ -31,6 +31,8 @@ class AccountsListModel : public QAbstractListModel
 public:
     explicit AccountsListModel(QObject *parent = 0);
     virtual ~AccountsListModel();
+    virtual int rowCount(const QModelIndex &index) const;
+    virtual QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
 
 };
 

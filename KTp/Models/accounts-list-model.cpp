@@ -31,6 +31,18 @@ AccountsListModel::~AccountsListModel()
     // TODO: Implement me!
 }
 
+int AccountsListModel::rowCount(const QModelIndex &index) const
+{
+    // TODO: Implement me!
+    return 0;
+}
+
+QVariant AccountsListModel::data(const QModelIndex &index, int role) const
+{
+    // TODO: Implement me!
+    return QVariant();
+}
+
 
 #include "accounts-list-model.moc"
 
