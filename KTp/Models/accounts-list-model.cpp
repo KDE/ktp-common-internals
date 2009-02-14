@@ -22,6 +22,7 @@
 
 #include "account-item.h"
 
+#include <kcategorizedsortfilterproxymodel.h>
 #include <kdebug.h>
 
 #include <TelepathyQt4/Client/Account>
@@ -52,12 +53,38 @@ QVariant AccountsListModel::data(const QModelIndex &index, int role) const
 {
     // FIXME: This is a basic implementation just so I can see what's going
     // on while developing this code further. Needs expanding.
-    if(role == Qt::DisplayRole)
+    QVariant data;
+
+    switch(role)
     {
-        return QVariant(m_readyAccounts.at(index.row())->account()->displayName());
+    case Qt::DisplayRole:
+        data = QVariant(m_readyAccounts.at(index.row())->account()->displayName());
+        break;
+    case KCategorizedSortFilterProxyModel::CategoryDisplayRole:
+        if(m_readyAccounts.at(index.row())->account()->isValidAccount())
+        {
+            data = QVariant(QString("Valid Accounts"));
+        }
+        else
+        {
+            data = QVariant(QString("Invalid Accounts"));
+        }
+        break;
+    case KCategorizedSortFilterProxyModel::CategorySortRole:
+        if(m_readyAccounts.at(index.row())->account()->isValidAccount())
+        {
+            data = QVariant(4);
+        }
+        else
+        {
+            data = QVariant(5);
+        }
+        break;
+    default:
+        break;
     }
 
-    return QVariant();
+    return data;
 }
 
 void AccountsListModel::addAccount(Telepathy::Client::Account *account)
