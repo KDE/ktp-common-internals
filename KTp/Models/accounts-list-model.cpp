@@ -52,6 +52,7 @@ QVariant AccountsListModel::data(const QModelIndex &index, int role) const
 
 void AccountsListModel::addAccount(Telepathy::Client::Account *account)
 {
+    kDebug() << "Creating a new AccountItem from account:" << account;
     // Check if the account is already in the model.
     bool found = false;
 
