@@ -12,6 +12,18 @@ find_package (KdepimLibs REQUIRED)
 
 find_package (TelepathyQt4 REQUIRED)
 find_package(Nepomuk REQUIRED)
+include(MacroAddOntology)
+
+# find the pimo.trig file from the kdebase installation
+find_file(PIMO_TRIG_SOURCE
+  pimo.trig
+  PATHS "${DATA_INSTALL_DIR}" "${KDE4_DATA_DIR}" ENV XDG_DATA_DIRS
+  PATH_SUFFIXES "nepomuk/ontologies"
+  )
+
+if(NOT PIMO_TRIG_SOURCE)
+  message(ERROR_FATAL "Could not find pimo.trig PIMO source file. Is kdebase-runtime installed?")
+endif(NOT PIMO_TRIG_SOURCE)
 
 if(WIN32)
     set(LIB_INSTALL_DIR ${LIB_INSTALL_DIR}
@@ -40,7 +52,11 @@ set(telepathy_integration_daemon_SRCS
     main.cpp
 )
 
-kde4_add_executable(telepathy-integration-daemon ${telepathy_integration_daemon_SRCS})
+kde4_add_ontology(pimo_SRCS ${PIMO_TRIG_SOURCE} "PIMO" "Nepomuk::Vocabulary" "trig")
+
+kde4_add_executable(telepathy-integration-daemon ${telepathy_integration_daemon_SRCS}
+                                                 ${pimo_SRCS}
+)
 
 target_link_libraries(telepathy-integration-daemon ${KDE4_AKONADI_LIBS}
                                                    ${QT_QTCORE_LIBRARY}
