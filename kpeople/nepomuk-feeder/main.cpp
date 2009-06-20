@@ -18,16 +18,48 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
+extern "C"
+{
+#include <signal.h>
+}
+
 #include "telepathyaccountmonitor.h"
 
+#include <kdebug.h>
+
 #include <QtCore/QCoreApplication>
+
+namespace
+{
+    static void signal_handler(int signal)
+    {
+        if ((signal == SIGTERM) || (signal == SIGINT)) {
+            QCoreApplication * const app(QCoreApplication::instance());
+            if (app != 0) {
+                app->quit();
+            }
+        }
+    }
+}
 
 int main(int argc, char *argv[])
 {
     QCoreApplication app(argc, argv);
 
     // Create an instance of the Telepathy Account Monitor.
-    new TelepathyAccountMonitor(&app);
+    TelepathyAccountMonitor *monitor = new TelepathyAccountMonitor(&app);
+
+    // Set up signal handlers.
+    if (signal(SIGINT, signal_handler) == SIG_ERR) {
+        kWarning() << "Setting up SIGINT signal handler failed.";
+    }
+
+    if (signal(SIGTERM, signal_handler) == SIG_ERR) {
+        kWarning() << "Setting up SIGTERM signal handler failed.";
+    }
+
+    // Quite the application when the monitor is destroyed.
+    QObject::connect(monitor, SIGNAL(destroyed()), &app, SLOT(quit()));
 
     // Start event loop.
     app.exec();
