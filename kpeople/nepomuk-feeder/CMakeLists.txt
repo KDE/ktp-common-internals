@@ -36,7 +36,7 @@ set(telepathy_integration_daemon_SRCS
     main.cpp
 )
 
-kde4_add_executable(telepathy-integration-daemon)
+kde4_add_executable(telepathy-integration-daemon ${telepathy_integration_daemon_SRCS})
 
 target_link_libraries(telepathy-integration-daemon ${KDE4_AKONADI_LIBS}
                                                    ${QT_QTCORE_LIBRARY}
