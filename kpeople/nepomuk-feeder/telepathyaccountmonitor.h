@@ -21,7 +21,11 @@
 #ifndef TELEPATHY_INTEGRATION_DAEMON_TELEPATHYACCOUNTMONITOR_H
 #define TELEPATHY_INTEGRATION_DAEMON_TELEPATHYACCOUNTMONITOR_H
 
+#include "telepathyaccount.h"
+
+#include <QtCore/QMap>
 #include <QtCore/QObject>
+#include <QtCore/QString>
 
 #include <TelepathyQt4/AccountManager>
 
@@ -39,9 +43,12 @@ public:
 
 private Q_SLOTS:
     void onAccountManagerReady(Tp::PendingOperation *op);
+    void onAccountCreated(const QString &path);
+    void onAccountRemoved(const QString &path);
 
 private:
     Tp::AccountManagerPtr m_accountManager;
+    QMap<QString, TelepathyAccount*> m_accounts;
 };
 
 

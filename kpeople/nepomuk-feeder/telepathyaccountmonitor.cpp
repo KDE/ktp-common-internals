@@ -47,6 +47,27 @@ void TelepathyAccountMonitor::onAccountManagerReady(Tp::PendingOperation *op)
         return;
     }
 
+     // Account Manager is now ready. We should watch for any changes in the Accounts List.
+    connect(m_accountManager.data(),
+            SIGNAL(accountCreated(const QString&)),
+            SLOT(onAccountCreated(const QString&)));
+    connect(m_accountManager.data(),
+            SIGNAL(accountRemoved(const QString&)),
+            SLOT(onAccountRemoved(const QString&)));
+
+    foreach (const QString &path, m_accountManager->validAccountPaths()) {
+         onAccountCreated(path);
+     }
+}
+
+void TelepathyAccountMonitor::onAccountCreated(const QString &path)
+{
+    m_accounts.insert(path, new TelepathyAccount(path, this));
+}
+
+void TelepathyAccountMonitor::onAccountRemoved(const QString &path)
+{
+    Q_UNUSED(path);
     // TODO: Implement me!
 }
 
