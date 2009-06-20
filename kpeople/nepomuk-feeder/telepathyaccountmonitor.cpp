@@ -20,13 +20,33 @@
 
 #include "telepathyaccountmonitor.h"
 
+#include <kdebug.h>
+
+#include <TelepathyQt4/PendingReady>
+
 TelepathyAccountMonitor::TelepathyAccountMonitor(QObject *parent)
  : QObject(parent)
 {
-    // TODO: Implement me!
+    // Create an instance of the AccountManager and start to get it ready.
+    m_accountManager = Tp::AccountManager::create();
+
+    connect(m_accountManager->becomeReady(),
+            SIGNAL(finished(Tp::PendingOperation*)),
+            SLOT(onAccountManagerReady(Tp::PendingOperation*)));
 }
 
 TelepathyAccountMonitor::~TelepathyAccountMonitor()
 {
+}
+
+void TelepathyAccountMonitor::onAccountManagerReady(Tp::PendingOperation *op)
+{
+    if (op->isError()) {
+        kWarning() << "Account manager cannot become ready:"
+                   << op->errorName() << "-" << op->errorMessage();
+        return;
+    }
+
+    // TODO: Implement me!
 }
 

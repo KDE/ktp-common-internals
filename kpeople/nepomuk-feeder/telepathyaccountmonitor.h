@@ -23,6 +23,12 @@
 
 #include <QtCore/QObject>
 
+#include <TelepathyQt4/AccountManager>
+
+namespace Tp {
+    class PendingOperation;
+}
+
 class TelepathyAccountMonitor : public QObject
 {
     Q_OBJECT
@@ -32,9 +38,10 @@ public:
     ~TelepathyAccountMonitor();
 
 private Q_SLOTS:
+    void onAccountManagerReady(Tp::PendingOperation *op);
 
 private:
-
+    Tp::AccountManagerPtr m_accountManager;
 };
 
 
