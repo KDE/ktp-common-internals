@@ -20,6 +20,7 @@
 
 #include "telepathyaccount.h"
 
+#include "nco.h"
 #include "pimo.h"
 
 #include <Nepomuk/Thing>
@@ -46,6 +47,15 @@ void TelepathyAccount::doNepomukSetup()
     if (!me.exists()) {
         // The PIMO:Person representing "me" does not exist, so we need to create it.
         me.addType(Nepomuk::Vocabulary::PIMO::Person());
+    }
+
+    // Loop through all the grounding instances of this person
+    Q_FOREACH (Nepomuk::Resource resource, me.groundingOccurrences()) {
+        // See if this grounding instance is of type nco:contact.
+        if (resource.hasType(Nepomuk::Vocabulary::NCO::Contact())) {
+            // we have an NCO:Contact. See if it is for this Telepathy Account.
+            // TODO: Implement me!
+        }
     }
 }
 
