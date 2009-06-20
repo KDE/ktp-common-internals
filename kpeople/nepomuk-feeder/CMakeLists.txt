@@ -25,6 +25,17 @@ if(NOT PIMO_TRIG_SOURCE)
   message(ERROR_FATAL "Could not find pimo.trig PIMO source file. Is kdebase-runtime installed?")
 endif(NOT PIMO_TRIG_SOURCE)
 
+# find the nco.trig file from the kdebase installation
+find_file(NCO_TRIG_SOURCE
+  nco.trig
+  PATHS "${DATA_INSTALL_DIR}" "${KDE4_DATA_DIR}" ENV XDG_DATA_DIRS
+  PATH_SUFFIXES "nepomuk/ontologies"
+  )
+
+if(NOT NCO_TRIG_SOURCE)
+  message(ERROR_FATAL "Could not find nco.trig NCO source file. Is kdebase-runtime installed?")
+endif(NOT NCO_TRIG_SOURCE)
+
 if(WIN32)
     set(LIB_INSTALL_DIR ${LIB_INSTALL_DIR}
                         RUNTIME DESTINATION ${BIN_INSTALL_DIR}
@@ -53,9 +64,11 @@ set(telepathy_integration_daemon_SRCS
 )
 
 kde4_add_ontology(pimo_SRCS ${PIMO_TRIG_SOURCE} "PIMO" "Nepomuk::Vocabulary" "trig")
+kde4_add_ontology(nco_SRCS ${NCO_TRIG_SOURCE} "NCO" "Nepomuk::Vocabulary" "trig")
 
 kde4_add_executable(telepathy-integration-daemon ${telepathy_integration_daemon_SRCS}
                                                  ${pimo_SRCS}
+                                                 ${nco_SRCS}
 )
 
 target_link_libraries(telepathy-integration-daemon ${KDE4_AKONADI_LIBS}
