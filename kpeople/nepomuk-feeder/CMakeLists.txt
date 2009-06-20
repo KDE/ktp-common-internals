@@ -33,6 +33,7 @@ set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${KDE4_ENABLE_EXCEPTIONS}" )
 ########### next target ###############
 
 set(telepathy_integration_daemon_SRCS
+    telepathyaccountmonitor.cpp
     main.cpp
 )
 

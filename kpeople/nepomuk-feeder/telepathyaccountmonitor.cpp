@@ -20,16 +20,13 @@
 
 #include "telepathyaccountmonitor.h"
 
-#include <QtCore/QCoreApplication>
-
-int main(int argc, char *argv[])
+TelepathyAccountMonitor::TelepathyAccountMonitor(QObject *parent)
+ : QObject(parent)
 {
-    QCoreApplication app(argc, argv);
+    // TODO: Implement me!
+}
 
-    // Create an instance of the Telepathy Account Monitor.
-    new TelepathyAccountMonitor(&app);
-
-    // Start event loop.
-    app.exec();
+TelepathyAccountMonitor::~TelepathyAccountMonitor()
+{
 }
 

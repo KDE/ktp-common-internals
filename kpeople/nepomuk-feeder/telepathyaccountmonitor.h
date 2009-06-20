@@ -18,18 +18,25 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#include "telepathyaccountmonitor.h"
+#ifndef TELEPATHY_INTEGRATION_DAEMON_TELEPATHYACCOUNTMONITOR_H
+#define TELEPATHY_INTEGRATION_DAEMON_TELEPATHYACCOUNTMONITOR_H
 
-#include <QtCore/QCoreApplication>
+#include <QtCore/QObject>
 
-int main(int argc, char *argv[])
+class TelepathyAccountMonitor : public QObject
 {
-    QCoreApplication app(argc, argv);
+    Q_OBJECT
 
-    // Create an instance of the Telepathy Account Monitor.
-    new TelepathyAccountMonitor(&app);
+public:
+    explicit TelepathyAccountMonitor(QObject *parent = 0);
+    ~TelepathyAccountMonitor();
 
-    // Start event loop.
-    app.exec();
-}
+private Q_SLOTS:
+
+private:
+
+};
+
+
+#endif // Header guard
 
