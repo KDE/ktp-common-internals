@@ -20,6 +20,10 @@
 
 #include "telepathyaccount.h"
 
+#include "pimo.h"
+
+#include <Nepomuk/Thing>
+
 TelepathyAccount::TelepathyAccount(const QString &path, QObject *parent)
  : QObject(parent),
    m_path(path)
@@ -36,8 +40,12 @@ TelepathyAccount::~TelepathyAccount()
 
 void TelepathyAccount::doNepomukSetup()
 {
-    // Query Nepomuk to find out if the "me" pimo:person has a nco:contact instance for this
-    // Telepathy instant messaging account.
+    // Get the PIMO:Person for "me" from nepomuk
+    Nepomuk::Thing me(QUrl::fromEncoded("nepomuk:/myself"));
 
-    // TODO: Implement me!
+    if (!me.exists()) {
+        // The PIMO:Person representing "me" does not exist, so we need to create it.
+        me.addType(Nepomuk::Vocabulary::PIMO::Person());
+    }
 }
+

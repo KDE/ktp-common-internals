@@ -29,6 +29,8 @@ extern "C"
 
 #include <QtCore/QCoreApplication>
 
+#include <Nepomuk/ResourceManager>
+
 namespace
 {
     static void signal_handler(int signal)
@@ -45,6 +47,8 @@ namespace
 int main(int argc, char *argv[])
 {
     QCoreApplication app(argc, argv);
+
+    Nepomuk::ResourceManager::instance()->init();
 
     // Create an instance of the Telepathy Account Monitor.
     TelepathyAccountMonitor *monitor = new TelepathyAccountMonitor(&app);
