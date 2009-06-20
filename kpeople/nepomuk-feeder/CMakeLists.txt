@@ -11,6 +11,7 @@ include(CheckIncludeFiles)
 find_package (KdepimLibs REQUIRED)
 
 find_package (TelepathyQt4 REQUIRED)
+find_package(Nepomuk REQUIRED)
 
 if(WIN32)
     set(LIB_INSTALL_DIR ${LIB_INSTALL_DIR}
@@ -25,6 +26,7 @@ include_directories(
     ${KDE4_INCLUDES}
     ${KDEPIMLIBS_INCLUDE_DIRS}
     ${TELEPATHY_QT4_INCLUDE_DIR}
+    ${NEPOMUK_INCLUDES}
 )
 
 set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${KDE4_ENABLE_EXCEPTIONS}" )
@@ -45,6 +47,7 @@ target_link_libraries(telepathy-integration-daemon ${KDE4_AKONADI_LIBS}
                                                    ${QT_QTDBUS_LIBRARY}
                                                    ${KDE4_KDECORE_LIBS}
                                                    ${TELEPATHY_QT4_LIBRARIES}
+                                                   ${NEPOMUK_LIBRARIES}
 )
 
 install(TARGETS telepathy-integration-daemon ${INSTALL_TARGETS_DEFAULT_ARGS})

@@ -35,6 +35,8 @@ public:
 private Q_SLOTS:
 
 private:
+    void doNepomukSetup();
+
     QString m_path;
 };
 

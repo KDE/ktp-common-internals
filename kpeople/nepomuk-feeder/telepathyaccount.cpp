@@ -24,10 +24,20 @@ TelepathyAccount::TelepathyAccount(const QString &path, QObject *parent)
  : QObject(parent),
    m_path(path)
 {
-    // TODO: Implement me!
+    // FIXME: Check there is an akonadi resource for this account, and create one if not.
+
+    // Check that this Account is set up in nepomuk.
+    doNepomukSetup();
 }
 
 TelepathyAccount::~TelepathyAccount()
 {
 }
 
+void TelepathyAccount::doNepomukSetup()
+{
+    // Query Nepomuk to find out if the "me" pimo:person has a nco:contact instance for this
+    // Telepathy instant messaging account.
+
+    // TODO: Implement me!
+}
