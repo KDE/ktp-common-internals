@@ -22,8 +22,10 @@
 
 #include "nco.h"
 #include "pimo.h"
+#include "tpaccount.h"
 
 #include <Nepomuk/Thing>
+#include <Nepomuk/Variant>
 
 TelepathyAccount::TelepathyAccount(const QString &path, QObject *parent)
  : QObject(parent),
@@ -54,7 +56,16 @@ void TelepathyAccount::doNepomukSetup()
         // See if this grounding instance is of type nco:contact.
         if (resource.hasType(Nepomuk::Vocabulary::NCO::Contact())) {
             // we have an NCO:Contact. See if it is for this Telepathy Account.
-            // TODO: Implement me!
+            if (resource.hasProperty(Nepomuk::Vocabulary::TPACCOUNT::identifier())) {
+                // we have a tpaccount property. See if it is the same as the path of this account.
+                if (resource.property(Nepomuk::Vocabulary::TPACCOUNT::identifier()).toString() == m_path) {
+                    // Nepomuk has this account already. Don't need to do anything.
+                    // TODO: We could store some metadata of this account?
+                } else {
+                    // Nepomuk doesn't yet have this account. Add it.
+                    // TODO: Implement me!
+                }
+            }
         }
     }
 }
