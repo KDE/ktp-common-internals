@@ -50,10 +50,12 @@ include_directories(
     ${KDEPIMLIBS_INCLUDE_DIRS}
     ${TELEPATHY_QT4_INCLUDE_DIR}
     ${NEPOMUK_INCLUDES}
+    ${CMAKE_CURRENT_BINARY_DIR}/nie
 )
 
 set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${KDE4_ENABLE_EXCEPTIONS}" )
 
+add_subdirectory(nie)
 
 ########### next target ###############
 
@@ -79,6 +81,7 @@ target_link_libraries(telepathy-integration-daemon ${KDE4_AKONADI_LIBS}
                                                    ${KDE4_KDECORE_LIBS}
                                                    ${TELEPATHY_QT4_LIBRARIES}
                                                    ${NEPOMUK_LIBRARIES}
+						   nie
 )
 
 install(TARGETS telepathy-integration-daemon ${INSTALL_TARGETS_DEFAULT_ARGS})
