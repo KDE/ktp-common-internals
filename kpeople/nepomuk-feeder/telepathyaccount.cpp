@@ -20,10 +20,15 @@
 
 #include "telepathyaccount.h"
 
+#include "telepathyaccountmonitor.h"
+
+// Ontology uri's
 #include "nco.h"
 #include "pimo.h"
-#include "telepathyaccountmonitor.h"
 #include "tpaccount.h"
+
+// Full Ontologies
+#include "personcontact.h"
 
 #include <kdebug.h>
 
@@ -52,6 +57,7 @@ TelepathyAccount::TelepathyAccount(const QString &path, TelepathyAccountMonitor 
 
 TelepathyAccount::~TelepathyAccount()
 {
+
 }
 
 void TelepathyAccount::onAccountReady(Tp::PendingOperation *op)
@@ -85,13 +91,15 @@ void TelepathyAccount::doNepomukSetup()
                 // we have a tpaccount property. See if it is the same as the path of this account.
                 if (resource.property(Nepomuk::Vocabulary::TPACCOUNT::identifier()).toString() == m_path) {
                     // Nepomuk has this account already. Don't need to do anything.
-                    // TODO: We could store some metadata of this account?
-                } else {
-                    // Nepomuk doesn't yet have this account. Add it.
-                    // TODO: Implement me!
+                    return;
                 }
             }
         }
     }
+
+    kDebug() << "Telepathy Account" << m_path << "does not exist is nepomuk yet. Add it.";
+    // Nepomuk doesn't yet have this account. Add it.
+    Nepomuk::PersonContact contact(m_path);
+    contact.setLabel(m_account->nickname());
 }
 
