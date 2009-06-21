@@ -22,23 +22,48 @@
 
 #include "nco.h"
 #include "pimo.h"
+#include "telepathyaccountmonitor.h"
 #include "tpaccount.h"
+
+#include <kdebug.h>
 
 #include <Nepomuk/Thing>
 #include <Nepomuk/Variant>
 
-TelepathyAccount::TelepathyAccount(const QString &path, QObject *parent)
+#include <TelepathyQt4/PendingOperation>
+#include <TelepathyQt4/PendingReady>
+
+TelepathyAccount::TelepathyAccount(const QString &path, TelepathyAccountMonitor *parent)
  : QObject(parent),
+   m_parent(parent),
    m_path(path)
 {
-    // FIXME: Check there is an akonadi resource for this account, and create one if not.
+    // We need to get the Tp::Account ready before we do any other stuff.
+    m_account = m_parent->accountManager()->accountForPath(path);
 
-    // Check that this Account is set up in nepomuk.
-    doNepomukSetup();
+    Tp::Features features;
+    features << Tp::Account::FeatureCore
+             << Tp::Account::FeatureProtocolInfo;
+
+    connect(m_account->becomeReady(features),
+            SIGNAL(finished(Tp::PendingOperation*)),
+            SLOT(onAccountReady(Tp::PendingOperation*)));
 }
 
 TelepathyAccount::~TelepathyAccount()
 {
+}
+
+void TelepathyAccount::onAccountReady(Tp::PendingOperation *op)
+{
+   if (op->isError()) {
+        kWarning() << "Account" << m_path << "cannot become ready:"
+                   << op->errorName() << "-" << op->errorMessage();
+        return;
+    }
+
+    // Check that this Account is set up in nepomuk.
+    doNepomukSetup();
 }
 
 void TelepathyAccount::doNepomukSetup()

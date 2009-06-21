@@ -24,20 +24,31 @@
 #include <QtCore/QObject>
 #include <QtCore/QString>
 
+#include <TelepathyQt4/Account>
+
+namespace Tp {
+    class PendingOperation;
+}
+
+class TelepathyAccountMonitor;
+
 class TelepathyAccount : public QObject
 {
     Q_OBJECT
 
 public:
-    TelepathyAccount(const QString &path, QObject *parent = 0);
+    TelepathyAccount(const QString &path, TelepathyAccountMonitor *parent = 0);
     ~TelepathyAccount();
 
 private Q_SLOTS:
+    void onAccountReady(Tp::PendingOperation *op);
 
 private:
     void doNepomukSetup();
 
+    TelepathyAccountMonitor *m_parent;
     QString m_path;
+    Tp::AccountPtr m_account;
 };
 
 

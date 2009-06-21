@@ -39,6 +39,11 @@ TelepathyAccountMonitor::~TelepathyAccountMonitor()
 {
 }
 
+Tp::AccountManagerPtr TelepathyAccountMonitor::accountManager()
+{
+    return m_accountManager;
+}
+
 void TelepathyAccountMonitor::onAccountManagerReady(Tp::PendingOperation *op)
 {
     if (op->isError()) {

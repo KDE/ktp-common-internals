@@ -41,6 +41,8 @@ public:
     explicit TelepathyAccountMonitor(QObject *parent = 0);
     ~TelepathyAccountMonitor();
 
+    Tp::AccountManagerPtr accountManager();
+
 private Q_SLOTS:
     void onAccountManagerReady(Tp::PendingOperation *op);
     void onAccountCreated(const QString &path);
