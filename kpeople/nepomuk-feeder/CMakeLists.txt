@@ -65,10 +65,12 @@ set(telepathy_integration_daemon_SRCS
 
 kde4_add_ontology(pimo_SRCS ${PIMO_TRIG_SOURCE} "PIMO" "Nepomuk::Vocabulary" "trig")
 kde4_add_ontology(nco_SRCS ${NCO_TRIG_SOURCE} "NCO" "Nepomuk::Vocabulary" "trig")
+kde4_add_ontology(tpaccount_SRCS ${CMAKE_CURRENT_SOURCE_DIR}/tpaccount.trig "TPACCOUNT" "Nepomuk::Vocabulary" "trig")
 
 kde4_add_executable(telepathy-integration-daemon ${telepathy_integration_daemon_SRCS}
                                                  ${pimo_SRCS}
                                                  ${nco_SRCS}
+                                                 ${tpaccount_SRCS}
 )
 
 target_link_libraries(telepathy-integration-daemon ${KDE4_AKONADI_LIBS}
