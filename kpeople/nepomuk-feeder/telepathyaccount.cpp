@@ -30,6 +30,8 @@
 // Full Ontologies
 #include "personcontact.h"
 
+#include <Akonadi/AgentManager>
+
 #include <kdebug.h>
 
 #include <Nepomuk/Thing>
@@ -110,6 +112,20 @@ void TelepathyAccount::doNepomukSetup()
 
 void TelepathyAccount::doAkonadiSetup()
 {
-    // FIXME: Implement me!
+    // Loop over the list of Agents to find one with the unique identifier of this account and with
+    // the correct type.
+    Akonadi::AgentInstance::List agentList = Akonadi::AgentManager::self()->instances();
+
+    foreach (Akonadi::AgentInstance agent, agentList) {
+        if (agent.type().identifier() == "telepathy_contacts_resource") {
+            if (agent.type().identifier() == "telepathy_contacts_resource") {
+                // This is our agent. Nothing to do. Return.
+                return;
+            }
+        }
+    }
+
+    // If we reach here, the agent doesn't exist for this account, so create an instance of it.
+    // TODO: Implement me!
 }
 
