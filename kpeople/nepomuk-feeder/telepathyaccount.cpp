@@ -101,5 +101,7 @@ void TelepathyAccount::doNepomukSetup()
     // Nepomuk doesn't yet have this account. Add it.
     Nepomuk::PersonContact contact(m_path);
     contact.setLabel(m_account->nickname());
+
+    me.addProperty(Nepomuk::Vocabulary::NCO::PersonContact(), contact);
 }
 
