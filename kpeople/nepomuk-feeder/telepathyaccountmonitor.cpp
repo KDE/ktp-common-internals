@@ -20,12 +20,14 @@
 
 #include "telepathyaccountmonitor.h"
 
-#include <kdebug.h>
+#include <KDebug>
+#include <KGlobal>
 
 #include <TelepathyQt4/PendingReady>
 
 TelepathyAccountMonitor::TelepathyAccountMonitor(QObject *parent)
- : QObject(parent)
+ : QObject(parent),
+   m_config(KGlobal::config())
 {
     // Create an instance of the AccountManager and start to get it ready.
     m_accountManager = Tp::AccountManager::create();

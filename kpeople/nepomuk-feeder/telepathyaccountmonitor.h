@@ -23,6 +23,8 @@
 
 #include "telepathyaccount.h"
 
+#include <KSharedConfig>
+
 #include <QtCore/QMap>
 #include <QtCore/QObject>
 #include <QtCore/QString>
@@ -51,6 +53,7 @@ private Q_SLOTS:
 private:
     Tp::AccountManagerPtr m_accountManager;
     QMap<QString, TelepathyAccount*> m_accounts;
+    KSharedConfigPtr m_config;
 };
 
 
