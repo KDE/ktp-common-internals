@@ -25,8 +25,10 @@ extern "C"
 
 #include "telepathyaccountmonitor.h"
 
-#include <KUniqueApplication>
+#include <KAboutData>
+#include <KCmdLineArgs>
 #include <KDebug>
+#include <KUniqueApplication>
 
 #include <Nepomuk/ResourceManager>
 
@@ -45,9 +47,10 @@ namespace
 
 int main(int argc, char *argv[])
 {
-    KComponentData("telepathy-integration-daemon");
+    KAboutData aboutData("telepathy-integration-daemon", 0, ki18n("Telepathy Integration Daemon"), "0.1");
 
-    KUniqueApplication app(argc, argv);
+    KCmdLineArgs::init(argc, argv, &aboutData);
+    KUniqueApplication app;
 
     Nepomuk::ResourceManager::instance()->init();
 
