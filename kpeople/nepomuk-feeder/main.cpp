@@ -25,9 +25,8 @@ extern "C"
 
 #include "telepathyaccountmonitor.h"
 
-#include <kdebug.h>
-
-#include <QtCore/QCoreApplication>
+#include <KUniqueApplication>
+#include <KDebug>
 
 #include <Nepomuk/ResourceManager>
 
@@ -46,7 +45,9 @@ namespace
 
 int main(int argc, char *argv[])
 {
-    QCoreApplication app(argc, argv);
+    KComponentData("telepathy-integration-daemon");
+
+    KUniqueApplication app(argc, argv);
 
     Nepomuk::ResourceManager::instance()->init();
 
