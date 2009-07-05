@@ -30,6 +30,8 @@ namespace Tp {
     class PendingOperation;
 }
 
+class KJob;
+
 class TelepathyAccountMonitor;
 
 class TelepathyAccount : public QObject
@@ -42,6 +44,7 @@ public:
 
 private Q_SLOTS:
     void onAccountReady(Tp::PendingOperation *op);
+    void onAgentInstanceCreateJobComplete(KJob *job);
 
 private:
     void doNepomukSetup();

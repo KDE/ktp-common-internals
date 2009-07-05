@@ -30,6 +30,7 @@
 // Full Ontologies
 #include "personcontact.h"
 
+#include <Akonadi/AgentInstanceCreateJob>
 #include <Akonadi/AgentManager>
 
 #include <kdebug.h>
@@ -128,6 +129,25 @@ void TelepathyAccount::doAkonadiSetup()
 
     // If we reach here, the agent doesn't exist for this account, so create an instance of it.
     kDebug() << "This telepathy account doesn't already have an Akonadi Resource for it. Create one.";
+
+    Akonadi::AgentType type = Akonadi::AgentManager::self()->type("telepathy_contacts_resource");
+    Akonadi::AgentInstanceCreateJob *job = new Akonadi::AgentInstanceCreateJob(type);
+
+    connect(job, SIGNAL(result(KJob*)), SLOT(onAgentInstanceCreateJobComplete(KJob*)));
+}
+
+void TelepathyAccount::onAgentInstanceCreateJobComplete(KJob *job)
+{
+    Akonadi::AgentInstanceCreateJob *createJob = static_cast<Akonadi::AgentInstanceCreateJob*>(job);
+
+    Q_ASSERT(createJob);
+    if (!createJob) {
+        kWarning() << "createJob is null. This method should only be called as the result of an"
+                   << "Akonadi::AgentInstanceCreateJob.";
+        return;
+    }
+
+    // Check if the job completed successfully.
     // TODO: Implement me!
 }
 
