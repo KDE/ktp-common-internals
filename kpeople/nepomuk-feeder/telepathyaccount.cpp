@@ -70,6 +70,9 @@ void TelepathyAccount::onAccountReady(Tp::PendingOperation *op)
 
     // Check that this Account is set up in nepomuk.
     doNepomukSetup();
+
+    // Once the nepomuk setup is complete, do the Akonadi setup.
+    doAkonadiSetup();
 }
 
 void TelepathyAccount::doNepomukSetup()
@@ -103,5 +106,10 @@ void TelepathyAccount::doNepomukSetup()
     contact.setLabel(m_account->nickname());
 
     me.addProperty(Nepomuk::Vocabulary::NCO::PersonContact(), contact);
+}
+
+void TelepathyAccount::doAkonadiSetup()
+{
+    // FIXME: Implement me!
 }
 

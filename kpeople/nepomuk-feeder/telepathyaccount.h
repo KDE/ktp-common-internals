@@ -45,6 +45,7 @@ private Q_SLOTS:
 
 private:
     void doNepomukSetup();
+    void doAkonadiSetup();
 
     TelepathyAccountMonitor *m_parent;
     QString m_path;
