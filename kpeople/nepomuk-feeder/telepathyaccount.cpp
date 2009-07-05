@@ -120,12 +120,14 @@ void TelepathyAccount::doAkonadiSetup()
         if (agent.type().identifier() == "telepathy_contacts_resource") {
             if (agent.type().identifier() == "telepathy_contacts_resource") {
                 // This is our agent. Nothing to do. Return.
+                kDebug() << "This telepathy account already has a Akonadi Resource for it.";
                 return;
             }
         }
     }
 
     // If we reach here, the agent doesn't exist for this account, so create an instance of it.
+    kDebug() << "This telepathy account doesn't already have an Akonadi Resource for it. Create one.";
     // TODO: Implement me!
 }
 
