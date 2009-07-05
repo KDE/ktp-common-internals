@@ -29,6 +29,9 @@ TelepathyAccountMonitor::TelepathyAccountMonitor(QObject *parent)
  : QObject(parent),
    m_config(KGlobal::config())
 {
+    // Initialise the config group
+    m_contactResourcesConfigGroup = m_config->group("contact_resources");
+
     // Create an instance of the AccountManager and start to get it ready.
     m_accountManager = Tp::AccountManager::create();
 
@@ -76,5 +79,10 @@ void TelepathyAccountMonitor::onAccountRemoved(const QString &path)
 {
     Q_UNUSED(path);
     // TODO: Implement me!
+}
+
+KConfigGroup TelepathyAccountMonitor::contactResourcesConfigGroup()
+{
+    return m_contactResourcesConfigGroup;
 }
 
