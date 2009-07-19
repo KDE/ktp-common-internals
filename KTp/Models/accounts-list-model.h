@@ -47,8 +47,8 @@ private Q_SLOTS:
 private:
     QList<AccountItem*> m_unreadyAccounts;
     QList<AccountItem*> m_readyAccounts;
-
 };
+
 
 #endif // header guard
 
