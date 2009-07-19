@@ -23,13 +23,9 @@
 
 #include <QtCore/QAbstractListModel>
 
-class AccountItem;
+#include <TelepathyQt4/Account>
 
-namespace Telepathy {
-    namespace Client {
-        class Account;
-    }
-}
+class AccountItem;
 
 class AccountsListModel : public QAbstractListModel
 {
@@ -41,7 +37,7 @@ public:
     virtual ~AccountsListModel();
     virtual int rowCount(const QModelIndex &index) const;
     virtual QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
-    void addAccount(Telepathy::Client::Account *account);
+    void addAccount(Tp::AccountPtr account);
 
 private Q_SLOTS:
     void onAccountItemReady();

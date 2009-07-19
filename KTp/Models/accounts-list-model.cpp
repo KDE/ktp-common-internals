@@ -25,7 +25,7 @@
 #include <kcategorizedsortfilterproxymodel.h>
 #include <kdebug.h>
 
-#include <TelepathyQt4/Client/Account>
+#include <TelepathyQt4/Account>
 
 AccountsListModel::AccountsListModel(QObject *parent)
  : QAbstractListModel(parent)
@@ -87,9 +87,9 @@ QVariant AccountsListModel::data(const QModelIndex &index, int role) const
     return data;
 }
 
-void AccountsListModel::addAccount(Telepathy::Client::Account *account)
+void AccountsListModel::addAccount(Tp::AccountPtr account)
 {
-    kDebug() << "Creating a new AccountItem from account:" << account;
+    kDebug() << "Creating a new AccountItem from account:" << account.data();
     // Check if the account is already in the model.
     bool found = false;
 
