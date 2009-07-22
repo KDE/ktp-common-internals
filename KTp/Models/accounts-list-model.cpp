@@ -30,12 +30,16 @@
 AccountsListModel::AccountsListModel(QObject *parent)
  : QAbstractListModel(parent)
 {
+    kDebug();
+
     m_unreadyAccounts.clear();
     m_readyAccounts.clear();
 }
 
 AccountsListModel::~AccountsListModel()
 {
+    kDebug();
+
     // TODO: Implement me!
 }
 
@@ -130,6 +134,8 @@ void AccountsListModel::addAccount(const Tp::AccountPtr &account)
 
 void AccountsListModel::onAccountItemReady()
 {
+    kDebug();
+
     AccountItem *item = qobject_cast<AccountItem*>(sender());
 
     Q_ASSERT(item);
@@ -158,6 +164,8 @@ void AccountsListModel::onAccountItemReady()
 
 void AccountsListModel::onAccountItemRemoved()
 {
+    kDebug();
+
     AccountItem *item = qobject_cast<AccountItem*>(sender());
 
     Q_ASSERT(item);
@@ -185,6 +193,8 @@ void AccountsListModel::onAccountItemRemoved()
 
 void AccountsListModel::onAccountItemUpdated()
 {
+    kDebug();
+
     // TODO: Implement me!
 }
 
