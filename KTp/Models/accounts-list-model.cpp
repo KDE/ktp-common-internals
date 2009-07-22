@@ -89,7 +89,7 @@ QVariant AccountsListModel::data(const QModelIndex &index, int role) const
     return data;
 }
 
-void AccountsListModel::addAccount(Tp::AccountPtr account)
+void AccountsListModel::addAccount(const Tp::AccountPtr &account)
 {
     kDebug() << "Creating a new AccountItem from account:" << account.data();
 

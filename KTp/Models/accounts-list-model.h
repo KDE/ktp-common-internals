@@ -37,7 +37,7 @@ public:
     virtual ~AccountsListModel();
     virtual int rowCount(const QModelIndex &index) const;
     virtual QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
-    void addAccount(Tp::AccountPtr account);
+    void addAccount(const Tp::AccountPtr &account);
 
 private Q_SLOTS:
     void onAccountItemReady();
