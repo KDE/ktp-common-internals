@@ -24,6 +24,7 @@
 
 #include <KCategorizedSortFilterProxyModel>
 #include <KDebug>
+#include <KIcon>
 
 #include <TelepathyQt4/Account>
 
@@ -57,40 +58,67 @@ int AccountsListModel::rowCount(const QModelIndex &index) const
 
 QVariant AccountsListModel::data(const QModelIndex &index, int role) const
 {
-    // FIXME: This is a basic implementation just so I can see what's going
-    // on while developing this code further. Needs expanding.
     QVariant data;
+    Tp::AccountPtr account = m_readyAccounts.at(index.row())->account();
 
     switch(role)
     {
     case Qt::DisplayRole:
-        data = QVariant(m_readyAccounts.at(index.row())->account()->displayName());
+        data = QVariant(account->displayName());
         break;
+
+    case Qt::DecorationRole:
+        //FIXME: we need to move kopete protocol icons to oxygen..
+        data = QVariant(KIcon(account->icon()));
+        break;
+
+    case Qt::CheckStateRole:
+        if(account->isEnabled()) {
+            data = QVariant(Qt::Checked);
+        }
+        else {
+            data = QVariant(Qt::Unchecked);
+        }
+        break;
+
     case KCategorizedSortFilterProxyModel::CategoryDisplayRole:
-        if(m_readyAccounts.at(index.row())->account()->isValidAccount())
-        {
+        if(account->isValidAccount()) {
             data = QVariant(QString("Valid Accounts"));
         }
-        else
-        {
+        else {
             data = QVariant(QString("Invalid Accounts"));
         }
         break;
+
     case KCategorizedSortFilterProxyModel::CategorySortRole:
-        if(m_readyAccounts.at(index.row())->account()->isValidAccount())
-        {
+        if(account->isValidAccount()) {
             data = QVariant(4);
         }
-        else
-        {
+        else {
             data = QVariant(5);
         }
         break;
+
     default:
         break;
     }
 
     return data;
+}
+
+bool AccountsListModel::setData(const QModelIndex &index, const QVariant &value, int role)
+{
+    kDebug();
+    if(role == Qt::CheckStateRole) {
+        m_readyAccounts.at(index.row())->account()->setEnabled(value.toInt() == Qt::Checked);
+        return true;
+    }
+    return false;
+}
+
+Qt::ItemFlags AccountsListModel::flags(const QModelIndex &index) const
+{
+    return QAbstractItemModel::flags(index) | Qt::ItemIsUserCheckable;
 }
 
 void AccountsListModel::addAccount(const Tp::AccountPtr &account)
@@ -194,8 +222,17 @@ void AccountsListModel::onAccountItemRemoved()
 void AccountsListModel::onAccountItemUpdated()
 {
     kDebug();
+    
+    AccountItem *item = qobject_cast<AccountItem*>(sender());
 
-    // TODO: Implement me!
+    Q_ASSERT(item);
+    if (!item) {
+        kWarning() << "Not an AccountItem pointer:" << sender();
+        return;
+    }
+
+    QModelIndex index = createIndex(m_readyAccounts.lastIndexOf(item), 0);
+    emit dataChanged(index, index);
 }
 
 
