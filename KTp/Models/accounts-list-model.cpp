@@ -22,7 +22,6 @@
 
 #include "account-item.h"
 
-#include <KCategorizedSortFilterProxyModel>
 #include <KDebug>
 #include <KIcon>
 
@@ -78,24 +77,6 @@ QVariant AccountsListModel::data(const QModelIndex &index, int role) const
         }
         else {
             data = QVariant(Qt::Unchecked);
-        }
-        break;
-
-    case KCategorizedSortFilterProxyModel::CategoryDisplayRole:
-        if(account->isValidAccount()) {
-            data = QVariant(QString("Valid Accounts"));
-        }
-        else {
-            data = QVariant(QString("Invalid Accounts"));
-        }
-        break;
-
-    case KCategorizedSortFilterProxyModel::CategorySortRole:
-        if(account->isValidAccount()) {
-            data = QVariant(4);
-        }
-        else {
-            data = QVariant(5);
         }
         break;
 
@@ -160,6 +141,21 @@ void AccountsListModel::addAccount(const Tp::AccountPtr &account)
    }
 }
 
+void AccountsListModel::removeAccount(const QModelIndex &index)
+{
+    kDebug();
+
+    if(!index.isValid()) {
+        kDebug() << "Can't remove Account: Invalid index";
+        return;
+    }
+    AccountItem *accountItem = m_readyAccounts.at(index.row());
+
+    Q_ASSERT(accountItem);
+
+    accountItem->remove();
+}
+
 void AccountsListModel::onAccountItemReady()
 {
     kDebug();
@@ -202,8 +198,8 @@ void AccountsListModel::onAccountItemRemoved()
         return;
     }
 
-    beginRemoveRows(QModelIndex(), m_readyAccounts.lastIndexOf(item)-1,
-                    m_readyAccounts.lastIndexOf(item)-1);
+    beginRemoveRows(QModelIndex(), m_readyAccounts.lastIndexOf(item),
+                    m_readyAccounts.lastIndexOf(item));
     m_readyAccounts.removeAll(item);
     m_unreadyAccounts.removeAll(item);
     endRemoveRows();
