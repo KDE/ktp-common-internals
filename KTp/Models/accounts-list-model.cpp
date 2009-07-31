@@ -67,8 +67,7 @@ QVariant AccountsListModel::data(const QModelIndex &index, int role) const
         break;
 
     case Qt::DecorationRole:
-        //FIXME: we need to move kopete protocol icons to oxygen..
-        data = QVariant(KIcon(account->icon()));
+        data = QVariant(m_readyAccounts.at(index.row())->icon());
         break;
 
     case Qt::CheckStateRole:
