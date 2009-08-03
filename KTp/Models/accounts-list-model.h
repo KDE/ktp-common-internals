@@ -40,6 +40,7 @@ public:
     virtual Qt::ItemFlags flags(const QModelIndex &index) const;
     virtual bool setData(const QModelIndex &index, const QVariant &value, int role);
     void addAccount(const Tp::AccountPtr &account);
+    void editAccount(const QModelIndex &index);
     void removeAccount(const QModelIndex &index);
 
 private Q_SLOTS:

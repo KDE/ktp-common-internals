@@ -140,6 +140,25 @@ void AccountsListModel::addAccount(const Tp::AccountPtr &account)
    }
 }
 
+void AccountsListModel::editAccount(const QModelIndex &index)
+{
+    kDebug();
+
+    if(!index.isValid()) {
+        kWarning() << "Can't edit Account: Invalid index.";
+        return;
+    }
+
+    AccountItem *accountItem = m_readyAccounts.at(index.row());
+
+    if (!accountItem) {
+        kWarning() << "Account item is null.";
+        return;
+    }
+
+    accountItem->edit();
+}
+
 void AccountsListModel::removeAccount(const QModelIndex &index)
 {
     kDebug();
