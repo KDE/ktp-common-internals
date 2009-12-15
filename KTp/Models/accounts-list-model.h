@@ -43,6 +43,13 @@ public:
     void editAccount(const QModelIndex &index);
     void removeAccount(const QModelIndex &index);
 
+Q_SIGNALS:
+	void protocolSelected(QString, QString);
+	void setTitleForCustomPages(QString, QList<QString>);
+
+public Q_SLOTS:
+	void onTitleForCustomPages(QString, QList<QString>);
+
 private Q_SLOTS:
     void onAccountItemReady();
     void onAccountItemRemoved();

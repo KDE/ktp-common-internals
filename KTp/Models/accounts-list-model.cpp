@@ -156,6 +156,11 @@ void AccountsListModel::editAccount(const QModelIndex &index)
         return;
     }
 
+	connect(accountItem, SIGNAL(protocolSelected(QString, QString)),
+		this, SIGNAL(protocolSelected(QString, QString)));
+	connect(this, SIGNAL(setTitleForCustomPages(QString, QList<QString>)),
+			accountItem, SLOT(onTitleForCustomPages(QString, QList<QString>)));
+
     accountItem->edit();
 }
 
@@ -247,6 +252,13 @@ void AccountsListModel::onAccountItemUpdated()
 
     QModelIndex index = createIndex(m_readyAccounts.lastIndexOf(item), 0);
     emit dataChanged(index, index);
+}
+
+void AccountsListModel::onTitleForCustomPages(QString mandatoryPage, QList<QString> optionalPage)
+{
+	kDebug();
+
+	emit setTitleForCustomPages(mandatoryPage, optionalPage);
 }
 
 
