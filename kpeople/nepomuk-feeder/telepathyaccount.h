@@ -1,7 +1,8 @@
 /*
  * This file is part of telepathy-integration-daemon
  *
- * Copyright (C) 2009 Collabora Ltd. <http://www.collabora.co.uk/>
+ * Copyright (C) 2009-2010 Collabora Ltd. <info@collabora.co.uk>
+ *   @author George Goldberg <george.goldberg@collabora.co.uk>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -30,20 +31,25 @@
 #include <TelepathyQt4/Account>
 #include <TelepathyQt4/Connection>
 
+class KJob;
+class TelepathyAccountMonitor;
+
 namespace Tp {
     class PendingOperation;
 }
 
-class KJob;
-
-class TelepathyAccountMonitor;
-
+/**
+ * This class takes care of one TelepathyAccount on the Account Manager.
+ * It is responsible for keeping that account synced to Nepomuk, as well
+ * as creating TelepathyContact objects for the contents of that account's
+ * buddy list.
+ */
 class TelepathyAccount : public QObject
 {
     Q_OBJECT
 
 public:
-    TelepathyAccount(const QString &path, TelepathyAccountMonitor *parent = 0);
+    explicit TelepathyAccount(const QString &path, TelepathyAccountMonitor *parent = 0);
     ~TelepathyAccount();
 
 private Q_SLOTS:
@@ -61,7 +67,6 @@ private:
 
     QString m_path;
     Tp::AccountPtr m_account;
-
     Tp::ConnectionPtr m_connection;
 
     Nepomuk::IMAccount accountResource;

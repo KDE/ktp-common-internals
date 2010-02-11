@@ -21,9 +21,14 @@
 
 #include "telepathyaccountmonitor.h"
 
+// Ontology Vocabularies
+#include "nco.h"
+#include "pimo.h"
+
 #include <KDebug>
 
 #include <Nepomuk/ResourceManager>
+#include <Nepomuk/Thing>
 
 #include <QtCore/QString>
 
@@ -46,11 +51,48 @@ TelepathyAccountMonitor::TelepathyAccountMonitor(QObject *parent)
     connect(m_resourceManager,
             SIGNAL(error(QString, int)),
             SLOT(onNepomukError(QString, int)));
+
+    // Now do the initialization stuff for Nepomuk.
+    doNepomukSetup();
 }
 
 TelepathyAccountMonitor::~TelepathyAccountMonitor()
 {
     // Don't delete the Nepomuk Resource manager. Nepomuk should take care of this itself.
+}
+
+void TelepathyAccountMonitor::doNepomukSetup()
+{
+    // Here we get the "me" person contact.
+    // FIXME: Port to new OSCAF standard for accessing "me" as soon as it
+    // becomes available.
+    Nepomuk::Thing me(QUrl::fromEncoded("nepomuk:/myself"));
+
+    // FIXME: We should not create "me" if it doesn't exist once the above
+    // fixme has been dealt with.
+    if (!me.exists()) {
+        // The PIMO:Person representing "me" does not exist, so we need to create it.
+        me.addType(Nepomuk::Vocabulary::PIMO::Person());
+    }
+
+    // Loop through all the grounding instances of this person
+    Q_FOREACH (Nepomuk::Resource resource, me.groundingOccurrences()) {
+        // See if this grounding instance is of type nco:contact.
+        if (resource.hasType(Nepomuk::Vocabulary::NCO::PersonContact())) {
+            // FIXME: We are going to assume the first NCO::PersonContact is the
+            // right one. Can we improve this?
+            m_mePersonContact = resource;
+            break;
+        }
+    }
+
+    if (!m_mePersonContact.exists()) {
+        kWarning() << "Me NCO:PersonContact doesn't exist. Creating it...";
+        // FIXME: We shouldn't create this person contact, but for now we will
+        // to ease development :) (see above FIXME's)
+        m_mePersonContact = Nepomuk::PersonContact("nepomuk:/myself-person-contact");
+        me.addGroundingOccurrence(m_mePersonContact);
+    }
 }
 
 void TelepathyAccountMonitor::onAccountManagerReady(Tp::PendingOperation *op)
@@ -81,6 +123,11 @@ void TelepathyAccountMonitor::onAccountCreated(const QString &path)
 Tp::AccountManagerPtr TelepathyAccountMonitor::accountManager() const
 {
     return m_accountManager;
+}
+
+Nepomuk::PersonContact TelepathyAccountMonitor::mePersonContact() const
+{
+    return m_mePersonContact;
 }
 
 void TelepathyAccountMonitor::onNepomukError(const QString &uri, int errorCode)

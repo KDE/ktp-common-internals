@@ -53,6 +53,7 @@ public:
     ~TelepathyAccountMonitor();
 
     Tp::AccountManagerPtr accountManager() const;
+    Nepomuk::PersonContact mePersonContact() const;
 
 private Q_SLOTS:
     void onAccountManagerReady(Tp::PendingOperation *op);
@@ -62,8 +63,12 @@ private Q_SLOTS:
 private:
     Q_DISABLE_COPY(TelepathyAccountMonitor);
 
+    void doNepomukSetup();
+
     Tp::AccountManagerPtr m_accountManager;
     Nepomuk::ResourceManager *m_resourceManager;
+
+    Nepomuk::PersonContact m_mePersonContact;
 
 };
 

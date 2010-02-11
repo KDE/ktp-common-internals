@@ -101,41 +101,7 @@ void TelepathyAccount::onAccountReady(Tp::PendingOperation *op)
 
 void TelepathyAccount::doNepomukSetup()
 {
-    // FIXME: Move getting hold of "me" into the parent class so we
-    // don't repeat it for each account?
-    // Get the PIMO:Person for "me" from nepomuk
-    // FIXME: Port to new OSCAF standard for accessing "me" as soon as it
-    // becomes available.
-    Nepomuk::Thing me(QUrl::fromEncoded("nepomuk:/myself"));
-
-    // FIXME: We should not create "me" if it doesn't exist once the above
-    // fixme has been dealt with.
-    if (!me.exists()) {
-        // The PIMO:Person representing "me" does not exist, so we need to create it.
-        me.addType(Nepomuk::Vocabulary::PIMO::Person());
-    }
-
-    Nepomuk::PersonContact mePersonContact;
-
-    // Loop through all the grounding instances of this person
-    Q_FOREACH (Nepomuk::Resource resource, me.groundingOccurrences()) {
-        // See if this grounding instance is of type nco:contact.
-        if (resource.hasType(Nepomuk::Vocabulary::NCO::PersonContact())) {
-            // FIXME: We are going to assume the first NCO::PersonContact is the 
-            // right one. Can we improve this?
-            mePersonContact = resource;
-            break;
-        }
-    }
-
-    if (!mePersonContact.exists()) {
-        kWarning() << "Me NCO:PersonContact doesn't exist. Creating it...";
-        // FIXME: We shouldn't create this person contact, but for now we will
-        // to ease development :) (see above comments)
-        mePersonContact = Nepomuk::PersonContact("nepomuk:/myself-person-contact");
-        me.addGroundingOccurrence(mePersonContact);
-    }
-
+    Nepomuk::PersonContact mePersonContact = m_parent->mePersonContact();
     Nepomuk::IMAccount imAccount;
 
     imAccount = getNepomukImAccount(mePersonContact);
