@@ -134,7 +134,12 @@ void TelepathyAccount::doNepomukSetup()
                 // It matches, so set our member variable to it and stop looping.
                 m_accountResource = foundImAccount;
 
-                // TODO: Sync all the properties in case they changed behind our back on the AM.
+                // Sync any properties that have changed on the AM behind our back.
+                if (m_accountResource.property(Nepomuk::Vocabulary::NCO::imNickname()) != m_account->nickname()) {
+                    onNicknameChanged(m_account->nickname());
+                }
+                onCurrentPresenceChanged(m_account->currentPresence()); // We can always assume this one needs syncing.
+                // FIXME: Can Protocol and account properties change?
 
                 break;
         }
