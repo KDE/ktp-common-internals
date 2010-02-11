@@ -151,6 +151,10 @@ void TelepathyAccount::doNepomukSetup()
                                       m_account->parameters().value("account").toString());
         m_accountResource.addProperty(Nepomuk::Vocabulary::NCO::imNickname(),
                                       m_account->nickname());
+        m_accountResource.addProperty(Nepomuk::Vocabulary::NCO::imStatus(),
+                                      m_account->currentPresence().status);
+        m_accountResource.addProperty(Nepomuk::Vocabulary::NCO::imStatusMessage(),
+                                      m_account->currentPresence().statusMessage);
         m_accountResource.addProperty(Nepomuk::Vocabulary::Telepathy::accountIdentifier(),
                                       m_path);
 
@@ -212,6 +216,8 @@ void TelepathyAccount::onCurrentPresenceChanged(Tp::SimplePresence presence)
     m_accountResource.setProperty(Nepomuk::Vocabulary::NCO::imStatusMessage(),
                                   presence.statusMessage);
     // TODO: Add a Telepathy-specific property (in telepathy.trig) to represent the presence.type.
+    // TODO: When doing the above, also addProperty that property in doNepomukSetup() for newly
+    // created IMAccount resources.
 }
 
 
