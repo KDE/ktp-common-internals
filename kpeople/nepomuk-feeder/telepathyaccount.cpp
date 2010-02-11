@@ -55,8 +55,12 @@ TelepathyAccount::TelepathyAccount(const QString &path, TelepathyAccountMonitor 
     connect(m_account->becomeReady(features),
             SIGNAL(finished(Tp::PendingOperation*)),
             SLOT(onAccountReady(Tp::PendingOperation*)));
-/*
+
     // Connect to all the signals that indicate changes in properties we care about.
+    connect(m_account.data(),
+            SIGNAL(haveConnectionChanged(bool)),
+            SLOT(onHaveConnectionChanged(bool)));
+/*
     connect(m_account.data(),
             SIGNAL(currentPresenceChanged(Tp::SimplePresence)),
             SLOT(onCurrentPresenceChanged(Tp::SimplePresence)));
@@ -155,22 +159,21 @@ void TelepathyAccount::doNepomukSetup()
 
 void TelepathyAccount::onHaveConnectionChanged(bool haveConnection)
 {
-    /*
     if (haveConnection) {
         // We now have a connection to the account. Get the connection ready to use.
         if (!m_connection.isNull()) {
-            kWarning() << "Connection should be null, but is not :/";
+            kWarning() << "Connection should be null, but is not :/ Do nowt.";
             return;
         }
 
         m_connection = m_account->connection();
-        
+
         Tp::Features features;
         features << Tp::Connection::FeatureCore
                  << Tp::Connection::FeatureSimplePresence
                  << Tp::Connection::FeatureSelfContact
                  << Tp::Connection::FeatureRoster;
-        
+
         connect(m_connection->becomeReady(features),
                 SIGNAL(finished(Tp::PendingOperation*)),
                 SLOT(onConnectionReady(Tp::PendingOperation*)));
@@ -178,20 +181,20 @@ void TelepathyAccount::onHaveConnectionChanged(bool haveConnection)
         // Connection has gone down. Delete our pointer to it.
         m_connection.reset();
     }
-    */
 }
 
 void TelepathyAccount::onConnectionReady(Tp::PendingOperation *op)
 {
-    /*
     if (op->isError()) {
-        kWarning() << "Getting connection ready failed.";
+        kWarning() << "Getting connection ready failed."
+                   << op->errorName()
+                   << op->errorMessage();
         m_connection.reset();
         return;
     }
 
-    // TODO: Implement me!
-    */
+    // TODO: Create TelepathyContact objects to take care of all the
+    // contacts in the connection's roster.
 }
 
 
