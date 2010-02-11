@@ -1,7 +1,8 @@
 /*
  * This file is part of telepathy-integration-daemon
  *
- * Copyright (C) 2009 Collabora Ltd. <http://www.collabora.co.uk/>
+ * Copyright (C) 2009-2010 Collabora Ltd. <info@collabora.co.uk>
+ *   @author George Goldberg <george.goldberg@collabora.co.uk>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -32,6 +33,8 @@ extern "C"
 
 #include <Nepomuk/ResourceManager>
 
+#include <TelepathyQt4/Types>
+
 namespace
 {
     static void signal_handler(int signal)
@@ -47,12 +50,19 @@ namespace
 
 int main(int argc, char *argv[])
 {
-    KAboutData aboutData("telepathy-integration-daemon", 0, ki18n("Telepathy Integration Daemon"), "0.1");
+    KAboutData aboutData("telepathy-integration-daemon",
+                         0,
+                         ki18n("Telepathy Integration Daemon"),
+                         "0.1");
 
     KCmdLineArgs::init(argc, argv, &aboutData);
     KUniqueApplication app;
 
+    // Initialise Nepomuk.
     Nepomuk::ResourceManager::instance()->init();
+
+    // Initialise Telepathy.
+    Tp::registerTypes();
 
     // Create an instance of the Telepathy Account Monitor.
     TelepathyAccountMonitor *monitor = new TelepathyAccountMonitor(&app);
@@ -66,12 +76,12 @@ int main(int argc, char *argv[])
         kWarning() << "Setting up SIGTERM signal handler failed.";
     }
 
-    // Quite the application when the monitor is destroyed.
+    // Quie the application when the monitor is destroyed.
     QObject::connect(monitor, SIGNAL(destroyed()), &app, SLOT(quit()));
 
     kDebug() << "Let's go...";
 
     // Start event loop.
-    app.exec();
+    return app.exec();
 }
 
