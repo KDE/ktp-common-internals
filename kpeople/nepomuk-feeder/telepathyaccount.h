@@ -21,10 +21,14 @@
 #ifndef TELEPATHY_INTEGRATION_DAEMON_TELEPATHYACCOUNT_H
 #define TELEPATHY_INTEGRATION_DAEMON_TELEPATHYACCOUNT_H
 
+#include "imaccount.h"
+#include "personcontact.h"
+
 #include <QtCore/QObject>
 #include <QtCore/QString>
 
 #include <TelepathyQt4/Account>
+#include <TelepathyQt4/Connection>
 
 namespace Tp {
     class PendingOperation;
@@ -44,15 +48,23 @@ public:
 
 private Q_SLOTS:
     void onAccountReady(Tp::PendingOperation *op);
-    void onAgentInstanceCreateJobComplete(KJob *job);
+    void onHaveConnectionChanged(bool haveConnection);
+    void onConnectionReady(Tp::PendingOperation *op);
 
 private:
+    Q_DISABLE_COPY(TelepathyAccount);
+
     void doNepomukSetup();
-    void doAkonadiSetup();
+    Nepomuk::IMAccount getNepomukImAccount(const Nepomuk::PersonContact &mePersonContact);
 
     TelepathyAccountMonitor *m_parent;
+
     QString m_path;
     Tp::AccountPtr m_account;
+
+    Tp::ConnectionPtr m_connection;
+
+    Nepomuk::IMAccount accountResource;
 };
 
 

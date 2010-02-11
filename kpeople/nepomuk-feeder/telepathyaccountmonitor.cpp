@@ -1,7 +1,8 @@
 /*
  * This file is part of telepathy-integration-daemon
  *
- * Copyright (C) 2009 Collabora Ltd. <http://www.collabora.co.uk/>
+ * Copyright (C) 2009-2010 Collabora Ltd. <info@collabora.co.uk>
+ *   @author George Goldberg <george.goldberg@collabora.co.uk>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -19,70 +20,71 @@
  */
 
 #include "telepathyaccountmonitor.h"
+#include <Nepomuk/ResourceManager>
 
 #include <KDebug>
-#include <KGlobal>
 
+
+#include <QtCore/QString>
 #include <TelepathyQt4/PendingReady>
 
 TelepathyAccountMonitor::TelepathyAccountMonitor(QObject *parent)
- : QObject(parent),
-   m_config(KGlobal::config())
+ : QObject(parent)
 {
-    // Initialise the config group
-    m_contactResourcesConfigGroup = m_config->group("contact_resources");
-
     // Create an instance of the AccountManager and start to get it ready.
     m_accountManager = Tp::AccountManager::create();
 
     connect(m_accountManager->becomeReady(),
             SIGNAL(finished(Tp::PendingOperation*)),
             SLOT(onAccountManagerReady(Tp::PendingOperation*)));
+
+    Nepomuk::ResourceManager *nepomukResourceManager = Nepomuk::ResourceManager::instance();
+
+    connect(nepomukResourceManager,
+            SIGNAL(error(QString, int)),
+            SLOT(onNepomukError(QString, int)));
 }
 
 TelepathyAccountMonitor::~TelepathyAccountMonitor()
 {
 }
 
-Tp::AccountManagerPtr TelepathyAccountMonitor::accountManager()
-{
-    return m_accountManager;
-}
-
 void TelepathyAccountMonitor::onAccountManagerReady(Tp::PendingOperation *op)
 {
     if (op->isError()) {
         kWarning() << "Account manager cannot become ready:"
-                   << op->errorName() << "-" << op->errorMessage();
+                   << op->errorName()
+                   << "-"
+                   << op->errorMessage();
         return;
     }
 
-     // Account Manager is now ready. We should watch for any changes in the Accounts List.
+     // Account Manager is now ready. We should watch for any new accounts being created.
     connect(m_accountManager.data(),
             SIGNAL(accountCreated(const QString&)),
             SLOT(onAccountCreated(const QString&)));
-    connect(m_accountManager.data(),
-            SIGNAL(accountRemoved(const QString&)),
-            SLOT(onAccountRemoved(const QString&)));
 
-    foreach (const QString &path, m_accountManager->validAccountPaths()) {
+    // Take into account (ha ha) the accounts that already existed when the AM object became ready.
+    foreach (const QString &path, m_accountManager->allAccountPaths()) {
          onAccountCreated(path);
      }
 }
 
 void TelepathyAccountMonitor::onAccountCreated(const QString &path)
 {
-    m_accounts.insert(path, new TelepathyAccount(path, this));
+    new TelepathyAccount(path, this);
 }
 
-void TelepathyAccountMonitor::onAccountRemoved(const QString &path)
+Tp::AccountManagerPtr TelepathyAccountMonitor::accountManager() const
 {
-    Q_UNUSED(path);
-    // TODO: Implement me!
+    return m_accountManager;
 }
 
-KConfigGroup TelepathyAccountMonitor::contactResourcesConfigGroup()
+void TelepathyAccountMonitor::onNepomukError(const QString &uri, int errorCode)
 {
-    return m_contactResourcesConfigGroup;
+    kDebug() << "A Nepomuk Error occurred:" << uri << errorCode;
 }
+
+
+#include "telepathyaccountmonitor.moc"
 

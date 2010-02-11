@@ -8,11 +8,10 @@ include(KDE4Defaults)
 include(MacroLibrary)
 include(MacroOptionalAddSubdirectory)
 include(CheckIncludeFiles)
-find_package (KdepimLibs REQUIRED)
+include(NepomukAddOntologyClasses)
 
 find_package (TelepathyQt4 REQUIRED)
 find_package(Nepomuk REQUIRED)
-include(MacroAddOntology)
 
 # find the pimo.trig file from the kdebase installation
 find_file(PIMO_TRIG_SOURCE
@@ -55,6 +54,8 @@ include_directories(
 
 set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${KDE4_ENABLE_EXCEPTIONS}" )
 
+
+
 add_subdirectory(nie)
 
 ########### next target ###############
@@ -65,18 +66,19 @@ set(telepathy_integration_daemon_SRCS
     main.cpp
 )
 
-kde4_add_ontology(pimo_SRCS ${PIMO_TRIG_SOURCE} "PIMO" "Nepomuk::Vocabulary" "trig")
-kde4_add_ontology(nco_SRCS ${NCO_TRIG_SOURCE} "NCO" "Nepomuk::Vocabulary" "trig")
-kde4_add_ontology(tpaccount_SRCS ${CMAKE_CURRENT_SOURCE_DIR}/tpaccount.trig "TPACCOUNT" "Nepomuk::Vocabulary" "trig")
+soprano_add_ontology(pimo_SRCS ${PIMO_TRIG_SOURCE} "PIMO" "Nepomuk::Vocabulary" "trig")
+soprano_add_ontology(nco_SRCS ${NCO_TRIG_SOURCE} "NCO" "Nepomuk::Vocabulary" "trig")
+soprano_add_ontology(telepathy_SRCS ${CMAKE_CURRENT_SOURCE_DIR}/telepathy.trig "Telepathy" "Nepomuk::Vocabulary" "trig")
+
 
 kde4_add_executable(telepathy-integration-daemon ${telepathy_integration_daemon_SRCS}
                                                  ${pimo_SRCS}
                                                  ${nco_SRCS}
-                                                 ${tpaccount_SRCS}
+                                                 ${telepathy_SRCS}
+                                                 ${telepathy_full_SRCS}
 )
 
-target_link_libraries(telepathy-integration-daemon ${KDE4_AKONADI_LIBS}
-                                                   ${QT_QTCORE_LIBRARY}
+target_link_libraries(telepathy-integration-daemon ${QT_QTCORE_LIBRARY}
                                                    ${QT_QTDBUS_LIBRARY}
                                                    ${KDE4_KDECORE_LIBS}
                                                    ${TELEPATHY_QT4_LIBRARIES}

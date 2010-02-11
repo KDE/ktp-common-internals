@@ -69,6 +69,8 @@ int main(int argc, char *argv[])
     // Quite the application when the monitor is destroyed.
     QObject::connect(monitor, SIGNAL(destroyed()), &app, SLOT(quit()));
 
+    kDebug() << "Let's go...";
+
     // Start event loop.
     app.exec();
 }

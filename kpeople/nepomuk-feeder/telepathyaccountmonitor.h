@@ -1,7 +1,8 @@
 /*
  * This file is part of telepathy-integration-daemon
  *
- * Copyright (C) 2009 Collabora Ltd. <http://www.collabora.co.uk/>
+ * Copyright (C) 2009-2010 Collabora Ltd. <info@collabora.co.uk>
+ *   @author George Goldberg <george.goldberg@collabora.co.uk>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -23,9 +24,6 @@
 
 #include "telepathyaccount.h"
 
-#include <KConfigGroup>
-#include <KSharedConfig>
-
 #include <QtCore/QMap>
 #include <QtCore/QObject>
 #include <QtCore/QString>
@@ -36,6 +34,10 @@ namespace Tp {
     class PendingOperation;
 }
 
+/**
+ * Monitors the Telepathy Account Manager, ensuring that whenever an account is created, a
+ * TelepathyAccount object is created to monitor it.
+ */
 class TelepathyAccountMonitor : public QObject
 {
     Q_OBJECT
@@ -44,20 +46,18 @@ public:
     explicit TelepathyAccountMonitor(QObject *parent = 0);
     ~TelepathyAccountMonitor();
 
-    Tp::AccountManagerPtr accountManager();
-
-    KConfigGroup contactResourcesConfigGroup();
+    Tp::AccountManagerPtr accountManager() const;
 
 private Q_SLOTS:
     void onAccountManagerReady(Tp::PendingOperation *op);
     void onAccountCreated(const QString &path);
-    void onAccountRemoved(const QString &path);
+    void onNepomukError(const QString &uri, int errorCode);
 
 private:
+    Q_DISABLE_COPY(TelepathyAccountMonitor);
+
     Tp::AccountManagerPtr m_accountManager;
-    QMap<QString, TelepathyAccount*> m_accounts;
-    KSharedConfigPtr m_config;
-    KConfigGroup m_contactResourcesConfigGroup;
+
 };
 
 

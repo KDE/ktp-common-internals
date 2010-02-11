@@ -1,0 +1,34 @@
+@prefix rdf:     <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs:    <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix telepathy:     <http://nepomuk.kde.org/ontologies/2009/06/20/telepathy#> .
+@prefix nao:     <http://www.semanticdesktop.org/ontologies/2007/08/15/nao#> .
+@prefix nrl:     <http://www.semanticdesktop.org/ontologies/2007/08/15/nrl#> .
+@prefix nco:     <http://www.semanticdesktop.org/ontologies/2007/03/22/nco#> .
+@prefix xsd:     <http://www.w3.org/2001/XMLSchema#> .
+
+telepathy: {telepathy:accountIdentifier
+     a rdf:Property ;
+          rdfs:subPropertyOf nao:identifier ;
+          rdfs:comment "Identifier of a Local Telepathy Account (as given by the Telepathy Account Manaager).";
+          rdfs:domain nco:IMAccount ;
+          rdfs:label "accountIdentifier" ;
+          rdfs:range xsd:string .
+}
+
+<http://nepomuk.kde.org/ontologies/2009/06/20/telepathy/metadata>
+{
+    <http://nepomuk.kde.org/ontologies/2009/06/20/telepathy>
+          a       nrl:DocumentGraph , nrl:Ontology ;
+          nao:hasDefaultNamespace "http://nepomuk.kde.org/ontologies/2009/06/20/telepathy#" ;
+          nao:hasDefaultNamespaceAbbreviation "telepathy" ;
+          nao:lastModified "2009-06-20T20:46:32.866Z" ;
+          nao:serializationLanguage "TriG" ;
+          nao:status "Testing" ;
+          nrl:updatable "0" ;
+          nao:version "1" .
+
+    <http://nepomuk.kde.org/ontologies/2009/06/20/telepathy/metadata>
+          a       nrl:GraphMetadata , nrl:Ontology ;
+          nao:serializationLanguage "TriG" ;
+          nrl:coreGraphMetadataFor <http://nepomuk.kde.org/ontologies/2009/06/20/telepathy> .
+}
