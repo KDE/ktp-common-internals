@@ -135,6 +135,9 @@ void TelepathyAccount::doNepomukSetup()
             kDebug() << "Found the corresponding IMAccount in Nepomuk.";
                 // It matches, so set our member variable to it and stop looping.
                 m_accountResource = foundImAccount;
+
+                // TODO: Sync all the properties in case they changed behind our back on the AM.
+
                 break;
         }
     }
@@ -145,6 +148,7 @@ void TelepathyAccount::doNepomukSetup()
 
         m_accountResource.addProperty(Nepomuk::Vocabulary::NCO::imAccountType(),
                                       m_account->protocol());
+        // FIXME: Some IM Accounts don't have an ID as such, e.g. Link-Local-XMPP.
         m_accountResource.addProperty(Nepomuk::Vocabulary::NCO::imID(),
                                       m_account->parameters().value("account").toString());
         m_accountResource.addProperty(Nepomuk::Vocabulary::NCO::imNickname(),
