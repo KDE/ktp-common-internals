@@ -20,6 +20,13 @@ telepathy: {telepathy:accountIdentifier
           rdfs:domain nco:IMAccount ;
           rdfs:label "statusType" ;
           rdfs:range xsd:integer .
+
+            telepathy:isBuddyOf
+        a       rdf:Property ;
+          rdfs:comment "Indicates the local IM Account on whose buddy list this IM Account appears." ;
+          rdfs:domain nco:IMAccount ;
+          rdfs:label "isBuddyOf" ;
+          rdfs:range nco:IMAccount .
 }
 
 <http://nepomuk.kde.org/ontologies/2009/06/20/telepathy/metadata>
