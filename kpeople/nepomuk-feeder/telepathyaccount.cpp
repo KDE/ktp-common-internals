@@ -60,13 +60,13 @@ TelepathyAccount::TelepathyAccount(const QString &path, TelepathyAccountMonitor 
     connect(m_account.data(),
             SIGNAL(haveConnectionChanged(bool)),
             SLOT(onHaveConnectionChanged(bool)));
+    connect(m_account.data(),
+            SIGNAL(nicknameChanged(const QString &)),
+            SLOT(onNicknameChanged(const QString &)));
 /*
     connect(m_account.data(),
             SIGNAL(currentPresenceChanged(Tp::SimplePresence)),
             SLOT(onCurrentPresenceChanged(Tp::SimplePresence)));
-    connect(m_account.data(),
-            SIGNAL(displayNameChanged(QString)),
-            SLOT(onDisplayNameChanged(QString)));
             // ...... and any other properties we want to sync...
 */
 }
@@ -148,7 +148,7 @@ void TelepathyAccount::doNepomukSetup()
         m_accountResource.addProperty(Nepomuk::Vocabulary::NCO::imID(),
                                       m_account->parameters().value("account").toString());
         m_accountResource.addProperty(Nepomuk::Vocabulary::NCO::imNickname(),
-                                      m_account->displayName());
+                                      m_account->nickname());
         m_accountResource.addProperty(Nepomuk::Vocabulary::Telepathy::accountIdentifier(),
                                       m_path);
 
@@ -196,6 +196,13 @@ void TelepathyAccount::onConnectionReady(Tp::PendingOperation *op)
     // TODO: Create TelepathyContact objects to take care of all the
     // contacts in the connection's roster.
 }
+
+void TelepathyAccount::onNicknameChanged(const QString& nickname)
+{
+    m_accountResource.setProperty(Nepomuk::Vocabulary::NCO::imNickname(),
+                                  nickname);
+}
+
 
 
 #include "telepathyaccount.moc"
