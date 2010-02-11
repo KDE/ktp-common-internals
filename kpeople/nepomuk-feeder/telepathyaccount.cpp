@@ -63,12 +63,10 @@ TelepathyAccount::TelepathyAccount(const QString &path, TelepathyAccountMonitor 
     connect(m_account.data(),
             SIGNAL(nicknameChanged(const QString &)),
             SLOT(onNicknameChanged(const QString &)));
-/*
     connect(m_account.data(),
             SIGNAL(currentPresenceChanged(Tp::SimplePresence)),
             SLOT(onCurrentPresenceChanged(Tp::SimplePresence)));
             // ...... and any other properties we want to sync...
-*/
 }
 
 TelepathyAccount::~TelepathyAccount()
@@ -206,6 +204,16 @@ void TelepathyAccount::onNicknameChanged(const QString& nickname)
     m_accountResource.setProperty(Nepomuk::Vocabulary::NCO::imNickname(),
                                   nickname);
 }
+
+void TelepathyAccount::onCurrentPresenceChanged(Tp::SimplePresence presence)
+{
+    m_accountResource.setProperty(Nepomuk::Vocabulary::NCO::imStatus(),
+                                  presence.status);
+    m_accountResource.setProperty(Nepomuk::Vocabulary::NCO::imStatusMessage(),
+                                  presence.statusMessage);
+    // TODO: Add a Telepathy-specific property (in telepathy.trig) to represent the presence.type.
+}
+
 
 
 
