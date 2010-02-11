@@ -65,11 +65,10 @@ private:
 
     TelepathyAccountMonitor *m_parent;
 
-    QString m_path;
     Tp::AccountPtr m_account;
+    Nepomuk::IMAccount m_accountResource;
     Tp::ConnectionPtr m_connection;
-
-    Nepomuk::IMAccount accountResource;
+    QString m_path;
 };
 
 

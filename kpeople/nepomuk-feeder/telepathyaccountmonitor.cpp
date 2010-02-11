@@ -72,6 +72,7 @@ void TelepathyAccountMonitor::doNepomukSetup()
     // fixme has been dealt with.
     if (!me.exists()) {
         // The PIMO:Person representing "me" does not exist, so we need to create it.
+        kWarning() << "PIMO 'me' does not exist. Creating it.";
         me.addType(Nepomuk::Vocabulary::PIMO::Person());
     }
 
@@ -87,7 +88,7 @@ void TelepathyAccountMonitor::doNepomukSetup()
     }
 
     if (!m_mePersonContact.exists()) {
-        kWarning() << "Me NCO:PersonContact doesn't exist. Creating it...";
+        kWarning() << "PersonContact 'me' does not exist. Creating it.";
         // FIXME: We shouldn't create this person contact, but for now we will
         // to ease development :) (see above FIXME's)
         m_mePersonContact = Nepomuk::PersonContact("nepomuk:/myself-person-contact");
