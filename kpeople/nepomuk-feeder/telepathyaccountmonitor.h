@@ -24,19 +24,25 @@
 
 #include "telepathyaccount.h"
 
-#include <QtCore/QMap>
 #include <QtCore/QObject>
 #include <QtCore/QString>
 
 #include <TelepathyQt4/AccountManager>
+
+namespace Nepomuk {
+    class ResourceManager;
+}
 
 namespace Tp {
     class PendingOperation;
 }
 
 /**
- * Monitors the Telepathy Account Manager, ensuring that whenever an account is created, a
- * TelepathyAccount object is created to monitor it.
+ * Monitors the Telepathy Account Manager, ensuring that all existing accounts
+ * have a corresponding TelepathyAccount object within this daemon.
+ *
+ * This class is also responsible for keeping track and/or dealing with any
+ * errors that our connection to Nepomuk throws up.
  */
 class TelepathyAccountMonitor : public QObject
 {
@@ -57,6 +63,7 @@ private:
     Q_DISABLE_COPY(TelepathyAccountMonitor);
 
     Tp::AccountManagerPtr m_accountManager;
+    Nepomuk::ResourceManager *m_resourceManager;
 
 };
 

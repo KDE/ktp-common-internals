@@ -20,16 +20,18 @@
  */
 
 #include "telepathyaccountmonitor.h"
-#include <Nepomuk/ResourceManager>
 
 #include <KDebug>
 
+#include <Nepomuk/ResourceManager>
 
 #include <QtCore/QString>
+
 #include <TelepathyQt4/PendingReady>
 
 TelepathyAccountMonitor::TelepathyAccountMonitor(QObject *parent)
- : QObject(parent)
+ : QObject(parent),
+   m_resourceManager(0)
 {
     // Create an instance of the AccountManager and start to get it ready.
     m_accountManager = Tp::AccountManager::create();
@@ -38,15 +40,17 @@ TelepathyAccountMonitor::TelepathyAccountMonitor(QObject *parent)
             SIGNAL(finished(Tp::PendingOperation*)),
             SLOT(onAccountManagerReady(Tp::PendingOperation*)));
 
-    Nepomuk::ResourceManager *nepomukResourceManager = Nepomuk::ResourceManager::instance();
+    // Create an instance of the Nepomuk Resource Manager, and connect to it's error signal.
+    m_resourceManager = Nepomuk::ResourceManager::instance();
 
-    connect(nepomukResourceManager,
+    connect(m_resourceManager,
             SIGNAL(error(QString, int)),
             SLOT(onNepomukError(QString, int)));
 }
 
 TelepathyAccountMonitor::~TelepathyAccountMonitor()
 {
+    // Don't delete the Nepomuk Resource manager. Nepomuk should take care of this itself.
 }
 
 void TelepathyAccountMonitor::onAccountManagerReady(Tp::PendingOperation *op)
@@ -54,7 +58,6 @@ void TelepathyAccountMonitor::onAccountManagerReady(Tp::PendingOperation *op)
     if (op->isError()) {
         kWarning() << "Account manager cannot become ready:"
                    << op->errorName()
-                   << "-"
                    << op->errorMessage();
         return;
     }
@@ -82,7 +85,7 @@ Tp::AccountManagerPtr TelepathyAccountMonitor::accountManager() const
 
 void TelepathyAccountMonitor::onNepomukError(const QString &uri, int errorCode)
 {
-    kDebug() << "A Nepomuk Error occurred:" << uri << errorCode;
+    kWarning() << "A Nepomuk Error occurred:" << uri << errorCode;
 }
 
 
