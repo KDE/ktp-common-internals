@@ -88,6 +88,8 @@ void TelepathyAccount::onAccountReady(Tp::PendingOperation *op)
         return;
     }
 
+    kDebug() << this;
+
     // Check that this Account is set up in nepomuk.
     doNepomukSetup();
 
@@ -99,6 +101,7 @@ void TelepathyAccount::onAccountReady(Tp::PendingOperation *op)
 
 void TelepathyAccount::doNepomukSetup()
 {
+    kDebug() << this;
     // Get a copy of the "me" PersonContact.
     Nepomuk::PersonContact mePersonContact = m_parent->mePersonContact();
 
@@ -115,7 +118,7 @@ void TelepathyAccount::doNepomukSetup()
     // Iterate over all the IMAccounts found.
     while(it.next()) {
         Nepomuk::IMAccount foundImAccount(it.binding("a").uri());
-        kDebug() << "Found IM Account: " << foundImAccount.uri();
+        kDebug() << this << ": Found IM Account: " << foundImAccount.uri();
 
         // See if the Account has the same Telepathy Account Identifier as the account this
         // TelepathyAccount instance has been created to look after.
@@ -130,10 +133,10 @@ void TelepathyAccount::doNepomukSetup()
 
         // Exactly one identifier found. Check if it matches the one we are looking for.
         QString accountIdentifier = accountIdentifiers.first();
-        kDebug() << "Account Identifier:" << accountIdentifier;
+        kDebug() << this << ": Account Identifier:" << accountIdentifier;
 
         if (accountIdentifier == m_path) {
-            kDebug() << "Found the corresponding IMAccount in Nepomuk.";
+            kDebug() << this << ": Found the corresponding IMAccount in Nepomuk.";
                 // It matches, so set our member variable to it and stop looping.
                 m_accountResource = foundImAccount;
 
@@ -149,8 +152,8 @@ void TelepathyAccount::doNepomukSetup()
     }
 
     // If the accountResource is still empty, create a new IMAccount.
-    if (m_accountResource == Nepomuk::IMAccount()) {
-        kDebug() << "Could not find corresponding IMAccount in Nepomuk. Creating a new one.";
+    if (m_accountResource.uri().isEmpty()) {
+        kDebug() << this << ": Could not find corresponding IMAccount in Nepomuk. Creating a new one.";
 
         m_accountResource.addProperty(Nepomuk::Vocabulary::NCO::imAccountType(),
                                       m_account->protocol());
@@ -252,18 +255,24 @@ void TelepathyAccount::onContactsUpgraded(Tp::PendingOperation* op)
 
 void TelepathyAccount::onNicknameChanged(const QString& nickname)
 {
-    m_accountResource.setProperty(Nepomuk::Vocabulary::NCO::imNickname(),
-                                  nickname);
+    // Do not update any property on the account resource if it hasn't yet been created.
+    if (!m_accountResource.uri().isEmpty()) {
+        m_accountResource.setProperty(Nepomuk::Vocabulary::NCO::imNickname(),
+                                      nickname);
+    }
 }
 
 void TelepathyAccount::onCurrentPresenceChanged(Tp::SimplePresence presence)
 {
-    m_accountResource.setProperty(Nepomuk::Vocabulary::NCO::imStatus(),
-                                  presence.status);
-    m_accountResource.setProperty(Nepomuk::Vocabulary::NCO::imStatusMessage(),
-                                  presence.statusMessage);
-    m_accountResource.setProperty(Nepomuk::Vocabulary::Telepathy::statusType(),
-                                  presence.type);
+    // Do not update any property on the account resource if it hasn't yet been created.
+    if (!m_accountResource.uri().isEmpty()) {
+        m_accountResource.setProperty(Nepomuk::Vocabulary::NCO::imStatus(),
+                                      presence.status);
+        m_accountResource.setProperty(Nepomuk::Vocabulary::NCO::imStatusMessage(),
+                                      presence.statusMessage);
+        m_accountResource.setProperty(Nepomuk::Vocabulary::Telepathy::statusType(),
+                                      presence.type);
+    }
 }
 
 
