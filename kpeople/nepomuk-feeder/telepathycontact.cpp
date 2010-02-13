@@ -23,7 +23,17 @@
 
 #include "telepathyaccount.h"
 
+// Ontology Vocabularies
+#include "nco.h"
+#include "telepathy.h"
+
 #include <KDebug>
+
+#include <Nepomuk/ResourceManager>
+#include <Nepomuk/Variant>
+
+#include <Soprano/Model>
+#include <Soprano/QueryResultIterator>
 
 TelepathyContact::TelepathyContact(Tp::ContactPtr contact,
                                    Tp::ConnectionPtr connection,
@@ -44,11 +54,84 @@ TelepathyContact::TelepathyContact(Tp::ContactPtr contact,
     connect(m_connection.data(),
             SIGNAL(invalidated(Tp::DBusProxy*, const QString&, const QString&)),
             SLOT(deleteLater()));
+
+    // Find the Nepomuk resource for this contact, or create a new one if necessary.
+    doNepomukSetup();
 }
 
 TelepathyContact::~TelepathyContact()
 {
     kDebug();
+}
+
+void TelepathyContact::doNepomukSetup()
+{
+    // Query Nepomuk for all IM accounts that isBuddyOf the accountResource
+    QString query = QString("select distinct ?a ?b where { ?a %1 %2 . ?a a %3 . ?b %4 ?a . ?b a %5}")
+                            .arg(Soprano::Node::resourceToN3(Nepomuk::Vocabulary::Telepathy::isBuddyOf()))
+                            .arg(Soprano::Node::resourceToN3(m_accountResource.uri()))
+                            .arg(Soprano::Node::resourceToN3(Nepomuk::Vocabulary::NCO::IMAccount()))
+                            .arg(Soprano::Node::resourceToN3(Nepomuk::Vocabulary::NCO::hasIMAccount()))
+                            .arg(Soprano::Node::resourceToN3(Nepomuk::Vocabulary::NCO::PersonContact()));
+
+    Soprano::Model *model = Nepomuk::ResourceManager::instance()->mainModel();
+
+    Soprano::QueryResultIterator it = model->executeQuery(query, Soprano::Query::QueryLanguageSparql);
+
+    // Iterate over all the IMAccounts found.
+    while(it.next()) {
+        Nepomuk::IMAccount foundImAccount(it.binding("a").uri());
+        kDebug() << "Found IM Account: " << foundImAccount.uri();
+        Nepomuk::IMAccount foundPersonContact(it.binding("b").uri());
+        kDebug() << "Person Contact: " << foundPersonContact.uri();
+
+        // Check that the IM account only has one ID.
+        QStringList accountIDs = foundImAccount.imIDs();
+
+        if (accountIDs.size() != 1) {
+            kDebug() << "Account does not have 1 ID. Oops. Ignoring."
+                     << "Number of Identifiers: "
+                     << accountIDs.size();
+                     continue;
+        }
+
+        // Exactly one ID found. Check if it matches the one we are looking for.
+        QString accountID = accountIDs.first();
+        kDebug() << "Account ID:" << accountID;
+
+        if (accountID == m_contact->id()) {
+            kDebug() << "Found the corresponding IMAccount in Nepomuk.";
+                // It matches, so set our member variables to found resources and stop looping.
+                m_contactIMAccountResource = foundImAccount;
+                m_contactPersonContactResource = foundPersonContact;
+
+                // Sync any properties that may have changed since last time we were online.
+                if (m_contactIMAccountResource.property(Nepomuk::Vocabulary::NCO::imNickname())
+                    != m_contact->alias()) {
+                    //onNicknameChanged(m_account->nickname());
+                }
+                //onCurrentPresenceChanged(m_account->currentPresence()); // We can always assume this one needs syncing.
+                // FIXME: What other properties do we need to sync?
+
+                break;
+        }
+    }
+
+    // If the contactIMAccountResource is still empty, create a new IMAccount and PersonContact.
+    if (m_contactIMAccountResource.uri().isEmpty()) {
+        kDebug() << this << ": Create new IM Account and corresponding PersonContact";
+
+        m_contactIMAccountResource.addProperty(Nepomuk::Vocabulary::NCO::imID(),
+                                               m_contact->id());
+        m_contactIMAccountResource.addProperty(Nepomuk::Vocabulary::Telepathy::isBuddyOf(),
+                                               m_accountResource);
+        m_contactIMAccountResource.addProperty(Nepomuk::Vocabulary::NCO::imNickname(),
+                                               m_contact->alias());
+
+        m_contactPersonContactResource.addProperty(Nepomuk::Vocabulary::NCO::hasIMAccount(),
+                                                   m_contactIMAccountResource);
+        // FIXME: Store any other relevant Contact properties to Nepomuk.
+    }
 }
 
 

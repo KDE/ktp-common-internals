@@ -23,6 +23,7 @@
 #define TELEPATHY_INTEGRATION_DAEMON_TELEPATHYCONTACT_H
 
 #include "imaccount.h"
+#include "personcontact.h"
 
 #include <QtCore/QObject>
 
@@ -48,10 +49,14 @@ public:
 private:
     Q_DISABLE_COPY(TelepathyContact);
 
+    void doNepomukSetup();
+
     TelepathyAccount *m_parent;
     Tp::ContactPtr m_contact;
     Tp::ConnectionPtr m_connection;
     Nepomuk::IMAccount m_accountResource;
+    Nepomuk::IMAccount m_contactIMAccountResource;
+    Nepomuk::PersonContact m_contactPersonContactResource;
 };
 
 
