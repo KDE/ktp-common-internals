@@ -246,7 +246,7 @@ void TelepathyAccount::onContactsUpgraded(Tp::PendingOperation* op)
     // We have an upgraded contact list. Now we can create a TelepathyContact instance for
     // each contact.
     foreach (Tp::ContactPtr contact, pc->contacts()) {
-        new TelepathyContact(contact, m_connection, this);
+        new TelepathyContact(contact, m_connection, m_accountResource, this);
     }
 }
 

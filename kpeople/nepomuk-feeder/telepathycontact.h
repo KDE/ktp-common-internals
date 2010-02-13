@@ -22,6 +22,8 @@
 #ifndef TELEPATHY_INTEGRATION_DAEMON_TELEPATHYCONTACT_H
 #define TELEPATHY_INTEGRATION_DAEMON_TELEPATHYCONTACT_H
 
+#include "imaccount.h"
+
 #include <QtCore/QObject>
 
 #include <TelepathyQt4/Connection>
@@ -39,6 +41,7 @@ class TelepathyContact : public QObject
 public:
     explicit TelepathyContact(Tp::ContactPtr contact,
                               Tp::ConnectionPtr connection,
+                              Nepomuk::IMAccount accountResource,
                               TelepathyAccount *parent = 0);
     ~TelepathyContact();
 
@@ -48,6 +51,7 @@ private:
     TelepathyAccount *m_parent;
     Tp::ContactPtr m_contact;
     Tp::ConnectionPtr m_connection;
+    Nepomuk::IMAccount m_accountResource;
 };
 
 

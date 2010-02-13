@@ -27,11 +27,13 @@
 
 TelepathyContact::TelepathyContact(Tp::ContactPtr contact,
                                    Tp::ConnectionPtr connection,
+                                   Nepomuk::IMAccount accountResource,
                                    TelepathyAccount *parent)
  : QObject(parent),
    m_parent(parent),
    m_contact(contact),
-   m_connection(connection)
+   m_connection(connection),
+   m_accountResource(accountResource)
 {
     kDebug() << "New TelepathyContact Created:"
              << m_contact.data()
