@@ -52,8 +52,17 @@ TelepathyContact::TelepathyContact(Tp::ContactPtr contact,
 
     // We need to destroy ourself if the connection goes down.
     connect(m_connection.data(),
-            SIGNAL(invalidated(Tp::DBusProxy*, const QString&, const QString&)),
+            SIGNAL(invalidated(Tp::DBusProxy*,QString,QString)),
             SLOT(deleteLater()));
+
+    // Connect to signals for all properties we want to keep synced.
+    connect(m_contact.data(),
+            SIGNAL(simplePresenceChanged(QString,uint,QString)),
+            SLOT(onPresenceChanged(QString,uint,QString)));
+    connect(m_contact.data(),
+            SIGNAL(aliasChanged(QString)),
+            SLOT(onAliasChanged(QString)));
+    // FIXME: Connect to any other signals of sync-worthy properties here.
 
     // Find the Nepomuk resource for this contact, or create a new one if necessary.
     doNepomukSetup();
@@ -108,9 +117,11 @@ void TelepathyContact::doNepomukSetup()
                 // Sync any properties that may have changed since last time we were online.
                 if (m_contactIMAccountResource.property(Nepomuk::Vocabulary::NCO::imNickname())
                     != m_contact->alias()) {
-                    //onNicknameChanged(m_account->nickname());
+                    onAliasChanged(m_contact->alias());
                 }
-                //onCurrentPresenceChanged(m_account->currentPresence()); // We can always assume this one needs syncing.
+                onPresenceChanged(m_contact->presenceStatus(),
+                                  m_contact->presenceType(),
+                                  m_contact->presenceMessage()); // We can always assume this one needs syncing.
                 // FIXME: What other properties do we need to sync?
 
                 break;
@@ -127,10 +138,38 @@ void TelepathyContact::doNepomukSetup()
                                                m_accountResource);
         m_contactIMAccountResource.addProperty(Nepomuk::Vocabulary::NCO::imNickname(),
                                                m_contact->alias());
+        m_contactIMAccountResource.addProperty(Nepomuk::Vocabulary::NCO::imStatus(),
+                                               m_contact->presenceStatus());
+        m_contactIMAccountResource.addProperty(Nepomuk::Vocabulary::NCO::imStatusMessage(),
+                                               m_contact->presenceMessage());
+        m_contactIMAccountResource.addProperty(Nepomuk::Vocabulary::Telepathy::statusType(),
+                                               m_contact->presenceType());
 
         m_contactPersonContactResource.addProperty(Nepomuk::Vocabulary::NCO::hasIMAccount(),
                                                    m_contactIMAccountResource);
         // FIXME: Store any other relevant Contact properties to Nepomuk.
+    }
+}
+
+void TelepathyContact::onAliasChanged(const QString& alias)
+{
+    // Only set properties if we have already got the contactIMAccountResource.
+    if (!m_contactIMAccountResource.uri().isEmpty()) {
+        m_contactIMAccountResource.setProperty(Nepomuk::Vocabulary::NCO::imNickname(),
+                                               alias);
+    }
+}
+
+void TelepathyContact::onPresenceChanged(const QString& status, uint type, const QString& message)
+{
+    // Only set properties if we have already got the contactIMAccountResource.
+    if (!m_contactIMAccountResource.uri().isEmpty()) {
+        m_contactIMAccountResource.setProperty(Nepomuk::Vocabulary::NCO::imStatus(),
+                                               status);
+        m_contactIMAccountResource.setProperty(Nepomuk::Vocabulary::NCO::imStatusMessage(),
+                                               message);
+        m_contactIMAccountResource.setProperty(Nepomuk::Vocabulary::Telepathy::statusType(),
+                                               type);
     }
 }
 

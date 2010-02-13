@@ -46,6 +46,10 @@ public:
                               TelepathyAccount *parent = 0);
     ~TelepathyContact();
 
+private Q_SLOTS:
+    void onAliasChanged(const QString &alias);
+    void onPresenceChanged(const QString &status, uint type, const QString &message);
+
 private:
     Q_DISABLE_COPY(TelepathyContact);
 
