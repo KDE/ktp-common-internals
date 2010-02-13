@@ -24,6 +24,8 @@
 
 #include <QtCore/QObject>
 
+#include <TelepathyQt4/Contact>
+
 class TelepathyAccount;
 
 /**
@@ -34,13 +36,14 @@ class TelepathyContact : public QObject
     Q_OBJECT
 
 public:
-    explicit TelepathyContact(TelepathyAccount *parent = 0);
+    explicit TelepathyContact(Tp::ContactPtr contact, TelepathyAccount *parent = 0);
     ~TelepathyContact();
 
 private:
     Q_DISABLE_COPY(TelepathyContact);
 
     TelepathyAccount *m_parent;
+    Tp::ContactPtr m_contact;
 };
 
 

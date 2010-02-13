@@ -23,9 +23,10 @@
 
 #include "telepathyaccount.h"
 
-TelepathyContact::TelepathyContact(TelepathyAccount *parent)
+TelepathyContact::TelepathyContact(Tp::ContactPtr contact, TelepathyAccount *parent)
  : QObject(parent),
-   m_parent(parent)
+   m_parent(parent),
+   m_contact(contact)
 {
     // TODO: Implement me!
 }

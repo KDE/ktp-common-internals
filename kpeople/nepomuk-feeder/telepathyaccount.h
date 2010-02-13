@@ -58,6 +58,7 @@ private Q_SLOTS:
     void onConnectionReady(Tp::PendingOperation *op);
     void onNicknameChanged(const QString &nickname);
     void onCurrentPresenceChanged(Tp::SimplePresence presence);
+    void onContactsUpgraded(Tp::PendingOperation *op);
 
 private:
     Q_DISABLE_COPY(TelepathyAccount);

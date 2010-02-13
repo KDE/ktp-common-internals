@@ -22,6 +22,7 @@
 #include "telepathyaccount.h"
 
 #include "telepathyaccountmonitor.h"
+#include "telepathycontact.h"
 
 // Ontology Vocabularies
 #include "nco.h"
@@ -35,6 +36,8 @@
 #include <Soprano/Model>
 #include <Soprano/QueryResultIterator>
 
+#include <TelepathyQt4/ContactManager>
+#include <TelepathyQt4/PendingContacts>
 #include <TelepathyQt4/PendingOperation>
 #include <TelepathyQt4/PendingReady>
 
@@ -206,8 +209,45 @@ void TelepathyAccount::onConnectionReady(Tp::PendingOperation *op)
         return;
     }
 
-    // TODO: Create TelepathyContact objects to take care of all the
-    // contacts in the connection's roster.
+    // We have a ready connection. Get all the contact list, and upgrade the contacts to have
+    // all the features we want to store in Nepomuk.
+    if (!m_connection->contactManager()) {
+        kWarning() << "ContactManager is Null. Abort getting contacts.";
+        return;
+    }
+
+    Tp::Contacts contacts = m_connection->contactManager()->allKnownContacts();
+
+    QSet<Tp::Contact::Feature> features;
+    features << Tp::Contact::FeatureAlias
+             << Tp::Contact::FeatureSimplePresence;
+
+    connect(m_connection->contactManager()->upgradeContacts(contacts.toList(), features),
+            SIGNAL(finished(Tp::PendingOperation*)),
+            SLOT(onContactsUpgraded(Tp::PendingOperation*)));
+}
+
+void TelepathyAccount::onContactsUpgraded(Tp::PendingOperation* op)
+{
+    if (op->isError()) {
+        kWarning() << "Upgrading contacts failed."
+                   << op->errorName()
+                   << op->errorMessage();
+        return;
+    }
+
+    Tp::PendingContacts *pc = qobject_cast<Tp::PendingContacts*>(op);
+
+    if (!pc) {
+        kWarning() << "Casting to Tp::PendingContacts failed. Abort.";
+        return;
+    }
+
+    // We have an upgraded contact list. Now we can create a TelepathyContact instance for
+    // each contact.
+    foreach (Tp::ContactPtr contact, pc->contacts()) {
+        new TelepathyContact(contact, this);
+    }
 }
 
 void TelepathyAccount::onNicknameChanged(const QString& nickname)
@@ -225,8 +265,6 @@ void TelepathyAccount::onCurrentPresenceChanged(Tp::SimplePresence presence)
     m_accountResource.setProperty(Nepomuk::Vocabulary::Telepathy::statusType(),
                                   presence.type);
 }
-
-
 
 
 #include "telepathyaccount.moc"
