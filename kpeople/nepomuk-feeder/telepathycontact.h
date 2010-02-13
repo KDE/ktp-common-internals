@@ -24,6 +24,7 @@
 
 #include <QtCore/QObject>
 
+#include <TelepathyQt4/Connection>
 #include <TelepathyQt4/Contact>
 
 class TelepathyAccount;
@@ -36,7 +37,9 @@ class TelepathyContact : public QObject
     Q_OBJECT
 
 public:
-    explicit TelepathyContact(Tp::ContactPtr contact, TelepathyAccount *parent = 0);
+    explicit TelepathyContact(Tp::ContactPtr contact,
+                              Tp::ConnectionPtr connection,
+                              TelepathyAccount *parent = 0);
     ~TelepathyContact();
 
 private:
@@ -44,6 +47,7 @@ private:
 
     TelepathyAccount *m_parent;
     Tp::ContactPtr m_contact;
+    Tp::ConnectionPtr m_connection;
 };
 
 
