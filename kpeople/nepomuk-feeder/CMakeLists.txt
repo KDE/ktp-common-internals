@@ -79,6 +79,7 @@ add_subdirectory (nie)
 set (telepathy_integration_daemon_SRCS
      telepathyaccountmonitor.cpp
      telepathyaccount.cpp
+     telepathycontact.cpp
      main.cpp
 )
 
