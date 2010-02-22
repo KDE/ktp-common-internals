@@ -61,9 +61,6 @@ TelepathyAccount::TelepathyAccount(const QString &path, TelepathyAccountMonitor 
 
     // Connect to all the signals that indicate changes in properties we care about.
     connect(m_account.data(),
-            SIGNAL(haveConnectionChanged(bool)),
-            SLOT(onHaveConnectionChanged(bool)));
-    connect(m_account.data(),
             SIGNAL(nicknameChanged(const QString &)),
             SLOT(onNicknameChanged(const QString &)));
     connect(m_account.data(),
