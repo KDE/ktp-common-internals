@@ -171,6 +171,12 @@ void TelepathyAccount::doNepomukSetup()
         mePersonContact.addProperty(Nepomuk::Vocabulary::NCO::hasIMAccount(),
                                     m_accountResource);
     }
+
+    // Check if the account already has a connection, and
+    // synthesise a connection state change if it has.
+    if (m_account->haveConnection()) {
+        onHaveConnectionChanged(true);
+    }
 }
 
 void TelepathyAccount::onHaveConnectionChanged(bool haveConnection)
