@@ -27,6 +27,9 @@
 #include "nco.h"
 #include "telepathy.h"
 
+// Full Resource Classes
+#include "contactgroup.h"
+
 #include <KDebug>
 
 #include <Nepomuk/ResourceManager>
@@ -62,6 +65,12 @@ TelepathyContact::TelepathyContact(Tp::ContactPtr contact,
     connect(m_contact.data(),
             SIGNAL(aliasChanged(QString)),
             SLOT(onAliasChanged(QString)));
+    connect(m_contact.data(),
+            SIGNAL(addedToGroup(QString)),
+            SLOT(onAddedToGroup(QString)));
+    connect(m_contact.data(),
+            SIGNAL(removedFromGroup(QString)),
+            SLOT(onRemovedFromGroup(QString)));
     // FIXME: Connect to any other signals of sync-worthy properties here.
 
     // Find the Nepomuk resource for this contact, or create a new one if necessary.
@@ -90,9 +99,7 @@ void TelepathyContact::doNepomukSetup()
     // Iterate over all the IMAccounts found.
     while(it.next()) {
         Nepomuk::IMAccount foundImAccount(it.binding("a").uri());
-        kDebug() << "Found IM Account: " << foundImAccount.uri();
         Nepomuk::IMAccount foundPersonContact(it.binding("b").uri());
-        kDebug() << "Person Contact: " << foundPersonContact.uri();
 
         // Check that the IM account only has one ID.
         QStringList accountIDs = foundImAccount.imIDs();
@@ -106,10 +113,8 @@ void TelepathyContact::doNepomukSetup()
 
         // Exactly one ID found. Check if it matches the one we are looking for.
         QString accountID = accountIDs.first();
-        kDebug() << "Account ID:" << accountID;
 
         if (accountID == m_contact->id()) {
-            kDebug() << "Found the corresponding IMAccount in Nepomuk.";
                 // It matches, so set our member variables to found resources and stop looping.
                 m_contactIMAccountResource = foundImAccount;
                 m_contactPersonContactResource = foundPersonContact;
@@ -122,6 +127,11 @@ void TelepathyContact::doNepomukSetup()
                 onPresenceChanged(m_contact->presenceStatus(),
                                   m_contact->presenceType(),
                                   m_contact->presenceMessage()); // We can always assume this one needs syncing.
+                // Call onAddedToGroup for all the groups this contact is in. (it will ignore ones
+                // where Nepomuk already knows the contact is in this group.
+                foreach (const QString &group, m_contact->groups()) {
+                    onAddedToGroup(group);
+                }
                 // FIXME: What other properties do we need to sync?
 
                 break;
@@ -170,6 +180,63 @@ void TelepathyContact::onPresenceChanged(const QString& status, uint type, const
                                                message);
         m_contactIMAccountResource.setProperty(Nepomuk::Vocabulary::Telepathy::statusType(),
                                                type);
+    }
+}
+
+void TelepathyContact::onAddedToGroup(const QString &group)
+{
+    // Only update the properties if we already have the contactIMAccountResource.
+    if (!m_contactIMAccountResource.resourceUri().isEmpty()) {
+
+        // Check if the contact is already in that group
+        foreach(Nepomuk::ContactGroup g, m_contactPersonContactResource.belongsToGroups()) {
+            if (g.contactGroupName() == group) {
+                // Already in that group
+                return;
+            }
+        }
+
+        // Not already in that group. Check the group exists.
+        // FIXME: Once we have a "ContactList" resource for Telepathy Contacts, we should only
+        //        get the groups associated with that.
+        Nepomuk::ContactGroup groupResource;
+        foreach (Nepomuk::ContactGroup g, Nepomuk::ContactGroup::allContactGroups()) {
+            if (g.contactGroupName() == group) {
+                groupResource = g;
+                break;
+            }
+        }
+
+        // If the group doesn't already exist, create it.
+        if (groupResource.resourceUri().isEmpty()) {
+            kDebug() << "Resource URI is empty.";
+            // FIXME: Once we have a "ContactList" resource for Telepathy Contacts, we should
+            //        create this group as a child of that resource.
+            groupResource.setContactGroupName(group);
+        }
+
+        // Add the contact to the group.
+        m_contactPersonContactResource.addBelongsToGroup(groupResource);
+    }
+}
+
+void TelepathyContact::onRemovedFromGroup(const QString &group)
+{
+    // Only update the properties if we already have the contactIMAccountResource.
+    if (!m_contactIMAccountResource.resourceUri().isEmpty()) {
+
+        // Loop through all the contact's groups and if we find one with the
+        // right name, remove it from the list.
+        QList<Nepomuk::ContactGroup> oldGroups = m_contactPersonContactResource.belongsToGroups();
+        QList<Nepomuk::ContactGroup> newGroups = m_contactPersonContactResource.belongsToGroups();
+
+        foreach (const Nepomuk::ContactGroup &g, oldGroups) {
+            if (g.contactGroupName() == group) {
+                newGroups.removeAll(g);
+            }
+        }
+
+        m_contactPersonContactResource.setBelongsToGroups(newGroups);
     }
 }
 

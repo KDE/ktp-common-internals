@@ -188,7 +188,8 @@ void TelepathyAccount::onHaveConnectionChanged(bool haveConnection)
         features << Tp::Connection::FeatureCore
                  << Tp::Connection::FeatureSimplePresence
                  << Tp::Connection::FeatureSelfContact
-                 << Tp::Connection::FeatureRoster;
+                 << Tp::Connection::FeatureRoster
+                 << Tp::Connection::FeatureRosterGroups;
 
         connect(m_connection->becomeReady(features),
                 SIGNAL(finished(Tp::PendingOperation*)),
