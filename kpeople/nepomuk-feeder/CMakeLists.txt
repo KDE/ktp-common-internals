@@ -46,6 +46,51 @@ if (NOT NCO_TRIG_SOURCE)
     )
 endif (NOT NCO_TRIG_SOURCE)
 
+# Find nfo.trig, which is installed already by kdebase.
+find_file (NFO_TRIG_SOURCE
+           nfo.trig
+           PATHS "${DATA_INSTALL_DIR}" "${KDE4_DATA_DIR}"
+           ENV XDG_DATA_DIRS
+           PATH_SUFFIXES "ontology/nie"
+)
+
+# We depend on nfo.trig, so fail horribly if it's not found.
+if (NOT NFO_TRIG_SOURCE)
+    message (ERROR_FATAL
+             "Could not find nfo.trig NFO source file. Is kdebase-runtime installed?"
+    )
+endif (NOT NFO_TRIG_SOURCE)
+
+# Find nie.trig, which is installed already by kdebase.
+find_file (NIE_TRIG_SOURCE
+           nie.trig
+           PATHS "${DATA_INSTALL_DIR}" "${KDE4_DATA_DIR}"
+           ENV XDG_DATA_DIRS
+           PATH_SUFFIXES "ontology/nie"
+)
+
+# We depend on nie.trig, so fail horribly if it's not found.
+if (NOT NIE_TRIG_SOURCE)
+    message (ERROR_FATAL
+             "Could not find nie.trig NIE source file. Is kdebase-runtime installed?"
+    )
+endif (NOT NIE_TRIG_SOURCE)
+
+# Find nmo.trig, which is installed already by kdebase.
+find_file (NMO_TRIG_SOURCE
+           nmo.trig
+           PATHS "${DATA_INSTALL_DIR}" "${KDE4_DATA_DIR}"
+           ENV XDG_DATA_DIRS
+           PATH_SUFFIXES "ontology/nie"
+)
+
+# We depend on nmo.trig, so fail horribly if it's not found.
+if (NOT NMO_TRIG_SOURCE)
+    message (ERROR_FATAL
+             "Could not find nmo.trig NMO source file. Is kdebase-runtime installed?"
+    )
+endif (NOT NMO_TRIG_SOURCE)
+
 # Some magic win32 stuff. FIXME: What does this do?
 if (WIN32)
     set (LIB_INSTALL_DIR ${LIB_INSTALL_DIR}
@@ -70,11 +115,30 @@ set (CMAKE_CXX_FLAGS
      "${CMAKE_CXX_FLAGS} ${KDE4_ENABLE_EXCEPTIONS}"
 )
 
+###################################
+# First target - NIE static library
 
-# Build-system setup is now complete. Add any subdirectories we want to build too.
-add_subdirectory (nie)
+nepomuk_add_ontology_classes (nie_SRCS
+                              ONTOLOGIES
+                              ${NIE_TRIG_SOURCE}
+                              ${NFO_TRIG_SOURCE}
+                              ${NCO_TRIG_SOURCE}
+                              ${NMO_TRIG_SOURCE}
+                              ${CMAKE_CURRENT_SOURCE_DIR}/telepathy.trig
+)
 
-##### Main build target. #####
+kde4_add_library (nie
+                  STATIC
+                  ${nie_SRCS}
+)
+
+target_link_libraries (nie
+                       ${QT_QTCORE_LIBRARY}
+                       ${NEPOMUK_LIBRARIES}
+)
+
+####################################
+# Second target - integration daemon
 
 set (telepathy_integration_daemon_SRCS
      telepathyaccountmonitor.cpp
