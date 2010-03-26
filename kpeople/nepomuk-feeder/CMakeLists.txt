@@ -9,87 +9,12 @@ set (CMAKE_MODULE_PATH
 find_package (KDE4 REQUIRED)
 find_package (Nepomuk REQUIRED)
 find_package (TelepathyQt4 REQUIRED)
+set(SDO_MIN_VERSION "0.3.60")
+find_package(SharedDesktopOntologies ${SDO_MIN_VERSION} REQUIRED)
 
 include (CheckIncludeFiles)
 include (KDE4Defaults)
 include (MacroLibrary)
-include (MacroOptionalAddSubdirectory)
-include (NepomukAddOntologyClasses)
-
-# Find pimo.trig, which is installed already by kdebase.
-find_file (PIMO_TRIG_SOURCE
-           pimo.trig
-           PATHS "${DATA_INSTALL_DIR}" "${KDE4_DATA_DIR}"
-           ENV XDG_DATA_DIRS
-           PATH_SUFFIXES "ontology/pimo"
-)
-
-# We depend on pimo.trig, so fail horribly if it's not found.
-if (NOT PIMO_TRIG_SOURCE)
-    message (ERROR_FATAL
-             "Could not find pimo.trig PIMO source file. Is kdebase-runtime installed?"
-    )
-endif (NOT PIMO_TRIG_SOURCE)
-
-# Find nco.trig, which is installed already by kdebase.
-find_file (NCO_TRIG_SOURCE
-           nco.trig
-           PATHS "${DATA_INSTALL_DIR}" "${KDE4_DATA_DIR}"
-           ENV XDG_DATA_DIRS
-           PATH_SUFFIXES "ontology/nie"
-)
-
-# We depend on nco.trig, so fail horribly if it's not found.
-if (NOT NCO_TRIG_SOURCE)
-    message (ERROR_FATAL
-             "Could not find nco.trig NCO source file. Is kdebase-runtime installed?"
-    )
-endif (NOT NCO_TRIG_SOURCE)
-
-# Find nfo.trig, which is installed already by kdebase.
-find_file (NFO_TRIG_SOURCE
-           nfo.trig
-           PATHS "${DATA_INSTALL_DIR}" "${KDE4_DATA_DIR}"
-           ENV XDG_DATA_DIRS
-           PATH_SUFFIXES "ontology/nie"
-)
-
-# We depend on nfo.trig, so fail horribly if it's not found.
-if (NOT NFO_TRIG_SOURCE)
-    message (ERROR_FATAL
-             "Could not find nfo.trig NFO source file. Is kdebase-runtime installed?"
-    )
-endif (NOT NFO_TRIG_SOURCE)
-
-# Find nie.trig, which is installed already by kdebase.
-find_file (NIE_TRIG_SOURCE
-           nie.trig
-           PATHS "${DATA_INSTALL_DIR}" "${KDE4_DATA_DIR}"
-           ENV XDG_DATA_DIRS
-           PATH_SUFFIXES "ontology/nie"
-)
-
-# We depend on nie.trig, so fail horribly if it's not found.
-if (NOT NIE_TRIG_SOURCE)
-    message (ERROR_FATAL
-             "Could not find nie.trig NIE source file. Is kdebase-runtime installed?"
-    )
-endif (NOT NIE_TRIG_SOURCE)
-
-# Find nmo.trig, which is installed already by kdebase.
-find_file (NMO_TRIG_SOURCE
-           nmo.trig
-           PATHS "${DATA_INSTALL_DIR}" "${KDE4_DATA_DIR}"
-           ENV XDG_DATA_DIRS
-           PATH_SUFFIXES "ontology/nie"
-)
-
-# We depend on nmo.trig, so fail horribly if it's not found.
-if (NOT NMO_TRIG_SOURCE)
-    message (ERROR_FATAL
-             "Could not find nmo.trig NMO source file. Is kdebase-runtime installed?"
-    )
-endif (NOT NMO_TRIG_SOURCE)
 
 # Some magic win32 stuff. FIXME: What does this do?
 if (WIN32)
@@ -120,10 +45,10 @@ set (CMAKE_CXX_FLAGS
 
 nepomuk_add_ontology_classes (nie_SRCS
                               ONTOLOGIES
-                              ${NIE_TRIG_SOURCE}
-                              ${NFO_TRIG_SOURCE}
-                              ${NCO_TRIG_SOURCE}
-                              ${NMO_TRIG_SOURCE}
+                              ${SHAREDDESKTOPONTOLOGIES_ROOT_DIR}/nie/nie.trig
+                              ${SHAREDDESKTOPONTOLOGIES_ROOT_DIR}/nie/nfo.trig
+                              ${SHAREDDESKTOPONTOLOGIES_ROOT_DIR}/nie/nco.trig
+                              ${SHAREDDESKTOPONTOLOGIES_ROOT_DIR}/nie/nmo.trig
                               ${CMAKE_CURRENT_SOURCE_DIR}/telepathy.trig
 )
 
@@ -147,16 +72,16 @@ set (telepathy_integration_daemon_SRCS
      main.cpp
 )
 
-# Add the ontologys we want to build the vocabulary for.
+# Add the ontologies we want to build the vocabulary for.
 soprano_add_ontology (pimo_SRCS
-                      ${PIMO_TRIG_SOURCE}
+                      ${SHAREDDESKTOPONTOLOGIES_ROOT_DIR}/pimo/pimo.trig
                       "PIMO"
                       "Nepomuk::Vocabulary"
                       "trig"
 )
 
 soprano_add_ontology (nco_SRCS
-                      ${NCO_TRIG_SOURCE}
+                      ${SHAREDDESKTOPONTOLOGIES_ROOT_DIR}/nie/nco.trig
                       "NCO"
                       "Nepomuk::Vocabulary"
                       "trig"
