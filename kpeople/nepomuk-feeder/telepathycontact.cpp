@@ -29,6 +29,7 @@
 
 // Full Resource Classes
 #include "contactgroup.h"
+#include "dataobject.h"
 
 #include <KDebug>
 
@@ -79,6 +80,8 @@ TelepathyContact::TelepathyContact(Tp::ContactPtr contact,
 
 TelepathyContact::~TelepathyContact()
 {
+    // Remove from cache
+    m_parent->removeContact(m_contact);
     kDebug();
 }
 
@@ -239,6 +242,35 @@ void TelepathyContact::onRemovedFromGroup(const QString &group)
         m_contactPersonContactResource.setBelongsToGroups(newGroups);
     }
 }
+
+QString TelepathyContact::avatarToken() const
+{
+    // Only check the properties if we already have the contactPersonAccountResource.
+    if (!m_contactPersonContactResource.resourceUri().isEmpty()) {
+        // Return the stored token
+        return m_contactPersonContactResource.property(Nepomuk::Vocabulary::Telepathy::avatarToken()).toString();
+    }
+
+    kDebug() << "Resource URI empty";
+    return QString::null;
+}
+
+void TelepathyContact::setAvatar(const QString& token, const QByteArray& data)
+{
+    kDebug() << "Storing avatar for " << token << m_contact.data();
+    // Only update the properties if we already have the contactIMAccountResource.
+    if (!m_contactPersonContactResource.resourceUri().isEmpty()) {
+        // Add token...
+        m_contactPersonContactResource.setAvatarTokens(QStringList() << token);
+        // .. and the data itself
+        Nepomuk::InformationElement photo;
+        photo.setPlainTextContents(QStringList() << data.toBase64());
+        Nepomuk::DataObject dataObject(m_contactPersonContactResource);
+        dataObject.addInterpretedAs(photo);
+        m_contactPersonContactResource.setPhotos(QList<Nepomuk::DataObject>() << dataObject);
+    }
+}
+
 
 
 #include "telepathycontact.moc"

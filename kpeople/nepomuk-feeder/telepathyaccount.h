@@ -31,6 +31,7 @@
 #include <TelepathyQt4/Account>
 #include <TelepathyQt4/Connection>
 
+class TelepathyContact;
 class KJob;
 class TelepathyAccountMonitor;
 
@@ -52,6 +53,8 @@ public:
     explicit TelepathyAccount(const QString &path, TelepathyAccountMonitor *parent = 0);
     ~TelepathyAccount();
 
+    void removeContact(const Tp::ContactPtr &contact);
+
 private Q_SLOTS:
     void onAccountReady(Tp::PendingOperation *op);
     void onHaveConnectionChanged(bool haveConnection);
@@ -59,6 +62,9 @@ private Q_SLOTS:
     void onNicknameChanged(const QString &nickname);
     void onCurrentPresenceChanged(Tp::SimplePresence presence);
     void onContactsUpgraded(Tp::PendingOperation *op);
+    void onAvatarChanged(const Tp::Avatar &avatar);
+    void onContactAvatarRetrieved(uint contact, const QString &token, const QByteArray &avatar, const QString &mimetype);
+    void onContactAvatarUpdated(uint contact, const QString &token);
 
 private:
     Q_DISABLE_COPY(TelepathyAccount);
@@ -72,6 +78,8 @@ private:
     Nepomuk::IMAccount m_accountResource;
     Tp::ConnectionPtr m_connection;
     QString m_path;
+
+    QHash< Tp::ContactPtr, TelepathyContact* > m_contacts;
 };
 
 

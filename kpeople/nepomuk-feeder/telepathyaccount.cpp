@@ -28,10 +28,14 @@
 #include "nco.h"
 #include "telepathy.h"
 
+#include <informationelement.h>
+#include <dataobject.h>
+
 #include <KDebug>
 
 #include <Nepomuk/ResourceManager>
 #include <Nepomuk/Variant>
+#include <Nepomuk/Resource>
 
 #include <Soprano/Model>
 #include <Soprano/QueryResultIterator>
@@ -53,7 +57,8 @@ TelepathyAccount::TelepathyAccount(const QString &path, TelepathyAccountMonitor 
 
     Tp::Features features;
     features << Tp::Account::FeatureCore
-             << Tp::Account::FeatureProtocolInfo;
+             << Tp::Account::FeatureProtocolInfo
+             << Tp::Account::FeatureAvatar;
 
     connect(m_account->becomeReady(features),
             SIGNAL(finished(Tp::PendingOperation*)),
@@ -66,6 +71,9 @@ TelepathyAccount::TelepathyAccount(const QString &path, TelepathyAccountMonitor 
     connect(m_account.data(),
             SIGNAL(currentPresenceChanged(Tp::SimplePresence)),
             SLOT(onCurrentPresenceChanged(Tp::SimplePresence)));
+    connect(m_account.data(),
+            SIGNAL(avatarChanged(Tp::Avatar)),
+            SLOT(onAvatarChanged(Tp::Avatar)));
             // ...... and any other properties we want to sync...
 }
 
@@ -168,8 +176,15 @@ void TelepathyAccount::doNepomukSetup()
         m_accountResource.addProperty(Nepomuk::Vocabulary::Telepathy::accountIdentifier(),
                                       m_path);
 
+        Nepomuk::InformationElement photo;
+        photo.setPlainTextContents(QStringList() << m_account->avatar().avatarData.toBase64());
+        Nepomuk::DataObject dataObject(m_accountResource);
+        dataObject.addInterpretedAs(photo);
+        m_accountResource.addProperty(Nepomuk::Vocabulary::NCO::photo(),
+                                      dataObject);
+
         mePersonContact.addProperty(Nepomuk::Vocabulary::NCO::hasIMAccount(),
-                                    m_accountResource);
+                                     m_accountResource);
     }
 
     // Check if the account already has a connection, and
@@ -227,8 +242,18 @@ void TelepathyAccount::onConnectionReady(Tp::PendingOperation *op)
 
     QSet<Tp::Contact::Feature> features;
     features << Tp::Contact::FeatureAlias
-             << Tp::Contact::FeatureSimplePresence;
+             << Tp::Contact::FeatureSimplePresence
+             << Tp::Contact::FeatureAvatarToken;
 
+    // Handle contact avatars here, by using AvatarsInterface
+    connect(m_connection.data()->avatarsInterface(),
+            SIGNAL(AvatarRetrieved(uint,QString,QByteArray,QString)),
+            SLOT(onContactAvatarRetrieved(uint,QString,QByteArray,QString)));
+    connect(m_connection.data()->avatarsInterface(),
+            SIGNAL(AvatarUpdated(uint,QString)),
+            SLOT(onContactAvatarUpdated(uint,QString)));
+
+    // Retrieve contacts
     connect(m_connection->contactManager()->upgradeContacts(contacts.toList(), features),
             SIGNAL(finished(Tp::PendingOperation*)),
             SLOT(onContactsUpgraded(Tp::PendingOperation*)));
@@ -252,8 +277,34 @@ void TelepathyAccount::onContactsUpgraded(Tp::PendingOperation* op)
 
     // We have an upgraded contact list. Now we can create a TelepathyContact instance for
     // each contact.
+    // We also keep tracks of handles to do avatar retrieval (if needed)
+    Tp::UIntList avatarsToRetrieve;
     foreach (Tp::ContactPtr contact, pc->contacts()) {
-        new TelepathyContact(contact, m_connection, m_accountResource, this);
+        TelepathyContact *tpcontact = new TelepathyContact(contact, m_connection, m_accountResource, this);
+        m_contacts.insert(contact, tpcontact);
+        if (tpcontact->avatarToken().isEmpty()) {
+            // We totally need to retrieve the avatar
+            avatarsToRetrieve << contact->handle().toList();
+        } else {
+            kDebug() << "Our contact already has the avatar " << tpcontact->avatarToken();
+        }
+    }
+
+    if (!avatarsToRetrieve.isEmpty()) {
+        kDebug() << "Pulling avatars";
+        // Ok, pull the avatars here
+        QDBusPendingReply< Tp::AvatarTokenMap > reply =
+            m_connection.data()->avatarsInterface()->GetKnownAvatarTokens(avatarsToRetrieve);
+
+        reply.waitForFinished();
+        if (!reply.value().isEmpty()) {
+            Tp::AvatarTokenMap result = reply.value();
+            for (Tp::AvatarTokenMap::const_iterator i = result.constBegin(); i != result.constEnd(); ++i) {
+                if (!i.value().isEmpty()) {
+                    onContactAvatarUpdated(i.key(), i.value());
+                }
+            }
+        }
     }
 }
 
@@ -279,6 +330,60 @@ void TelepathyAccount::onCurrentPresenceChanged(Tp::SimplePresence presence)
     }
 }
 
+void TelepathyAccount::onAvatarChanged(const Tp::Avatar& avatar)
+{
+    // Do not update any property on the account resource if it hasn't yet been created.
+    if (!m_accountResource.uri().isEmpty()) {
+        // Store avatarData only. QImage will take care of determining the mimetype.
+        Nepomuk::InformationElement photo;
+        photo.setPlainTextContents(QStringList() << avatar.avatarData.toBase64());
+        Nepomuk::DataObject dataObject(m_accountResource);
+        dataObject.addInterpretedAs(photo);
+        m_accountResource.setProperty(Nepomuk::Vocabulary::NCO::photo(),
+                                      dataObject);
+    }
+}
+void TelepathyAccount::onContactAvatarRetrieved(uint contact, const QString& token, const QByteArray& avatar, const QString&)
+{
+    kDebug() << "Avatar retrieved" << contact << token;
+    // Retrieve the contact
+    Tp::ContactPtr tpContact = m_connection.data()->contactManager()->lookupContactByHandle(contact);
+
+    // Set the avatar
+    TelepathyContact *telepathyContact = m_contacts[tpContact];
+    if (telepathyContact) {
+        // Match. Let's set the avatar then
+        telepathyContact->setAvatar(token, avatar);
+    }
+}
+
+void TelepathyAccount::onContactAvatarUpdated(uint contact, const QString& token)
+{
+    kDebug() << "Avatar updated" << token << contact;
+    Tp::ContactPtr tpContact = m_connection.data()->contactManager()->lookupContactByHandle(contact);
+
+    // Now we need to check if we need to update the avatar
+    TelepathyContact *telepathyContact = m_contacts[tpContact];
+    if (telepathyContact) {
+        kDebug() << "match";
+        // Match. Now check if we need to retrieve the avatar
+        if (telepathyContact->avatarToken() != token) {
+            kDebug() << "retrieve";
+            // We do
+            QDBusPendingReply<void> reply = m_connection.data()->avatarsInterface()->RequestAvatars(tpContact->handle().toList());
+            if (reply.error().type() != QDBusError::NoError) {
+                // TODO: What to do in case of error?
+            }
+        }
+    }
+}
+
+void TelepathyAccount::removeContact(const Tp::ContactPtr &contact)
+{
+    if (!contact.isNull()) {
+        m_contacts.remove(contact);
+    }
+}
 
 #include "telepathyaccount.moc"
 

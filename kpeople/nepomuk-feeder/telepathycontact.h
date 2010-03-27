@@ -46,6 +46,9 @@ public:
                               TelepathyAccount *parent = 0);
     ~TelepathyContact();
 
+    QString avatarToken() const;
+    void setAvatar(const QString &token, const QByteArray &data);
+
 private Q_SLOTS:
     void onAliasChanged(const QString &alias);
     void onPresenceChanged(const QString &status, uint type, const QString &message);
