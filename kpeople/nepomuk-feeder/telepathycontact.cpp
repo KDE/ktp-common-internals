@@ -82,6 +82,13 @@ TelepathyContact::~TelepathyContact()
 {
     kDebug();
 
+    // If the IMAccount resource already exsits, set it to offline presence when we are destroyed.
+    if (!m_contactIMAccountResource.uri().isEmpty()) {
+        m_contactIMAccountResource.setProperty(Nepomuk::Vocabulary::NCO::imStatus(), "offline");
+        m_contactIMAccountResource.setProperty(Nepomuk::Vocabulary::NCO::imStatusMessage(), "");
+        m_contactIMAccountResource.setProperty(Nepomuk::Vocabulary::Telepathy::statusType(), 0);
+    }
+
     // Signal this contact is destroyed so it can be removed from the Hash.
     Q_EMIT contactDestroyed(m_contact);
 }
