@@ -53,8 +53,6 @@ public:
     explicit TelepathyAccount(const QString &path, TelepathyAccountMonitor *parent = 0);
     ~TelepathyAccount();
 
-    void removeContact(const Tp::ContactPtr &contact);
-
 private Q_SLOTS:
     void onAccountReady(Tp::PendingOperation *op);
     void onHaveConnectionChanged(bool haveConnection);
@@ -65,6 +63,7 @@ private Q_SLOTS:
     void onAvatarChanged(const Tp::Avatar &avatar);
     void onContactAvatarRetrieved(uint contact, const QString &token, const QByteArray &avatar, const QString &mimetype);
     void onContactAvatarUpdated(uint contact, const QString &token);
+    void onContactDestroyed(const Tp::ContactPtr &contact);
 
 private:
     Q_DISABLE_COPY(TelepathyAccount);

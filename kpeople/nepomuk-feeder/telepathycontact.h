@@ -49,6 +49,9 @@ public:
     QString avatarToken() const;
     void setAvatar(const QString &token, const QByteArray &data);
 
+Q_SIGNALS:
+    void contactDestroyed(const Tp::ContactPtr &contact);
+
 private Q_SLOTS:
     void onAliasChanged(const QString &alias);
     void onPresenceChanged(const QString &status, uint type, const QString &message);

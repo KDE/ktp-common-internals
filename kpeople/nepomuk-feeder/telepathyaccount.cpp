@@ -282,6 +282,13 @@ void TelepathyAccount::onContactsUpgraded(Tp::PendingOperation* op)
     foreach (Tp::ContactPtr contact, pc->contacts()) {
         TelepathyContact *tpcontact = new TelepathyContact(contact, m_connection, m_accountResource, this);
         m_contacts.insert(contact, tpcontact);
+
+        // We need to connect to the TelepathyContact's destroyed signal to remove it from the hash
+        // when it is detroyed.
+        connect(tpcontact,
+                SIGNAL(contactDestroyed(Tp::ContactPtr)),
+                SLOT(onContactDestroyed(Tp::ContactPtr)));
+
         if (tpcontact->avatarToken().isEmpty()) {
             // We totally need to retrieve the avatar
             avatarsToRetrieve << contact->handle().toList();
@@ -378,12 +385,13 @@ void TelepathyAccount::onContactAvatarUpdated(uint contact, const QString& token
     }
 }
 
-void TelepathyAccount::removeContact(const Tp::ContactPtr &contact)
+void TelepathyAccount::onContactDestroyed(const Tp::ContactPtr &contact)
 {
     if (!contact.isNull()) {
         m_contacts.remove(contact);
     }
 }
+
 
 #include "telepathyaccount.moc"
 

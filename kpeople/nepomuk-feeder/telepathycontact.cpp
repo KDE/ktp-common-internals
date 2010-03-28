@@ -80,9 +80,10 @@ TelepathyContact::TelepathyContact(Tp::ContactPtr contact,
 
 TelepathyContact::~TelepathyContact()
 {
-    // Remove from cache
-    m_parent->removeContact(m_contact);
     kDebug();
+
+    // Signal this contact is destroyed so it can be removed from the Hash.
+    Q_EMIT contactDestroyed(m_contact);
 }
 
 void TelepathyContact::doNepomukSetup()
