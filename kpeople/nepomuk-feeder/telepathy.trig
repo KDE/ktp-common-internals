@@ -22,7 +22,7 @@ telepathy: {telepathy:accountIdentifier
           rdfs:range xsd:integer .
 
             telepathy:isBuddyOf
-        a       rdf:Property ;
+     a rdf:Property ;
           rdfs:comment "Indicates the local IM Account on whose buddy list this IM Account appears." ;
           rdfs:domain nco:IMAccount ;
           rdfs:label "isBuddyOf" ;
@@ -34,6 +34,27 @@ telepathy: {telepathy:accountIdentifier
           rdfs:domain nco:Contact ;
           rdfs:label "avatarToken" ;
           rdfs:range xsd:string .
+
+          telepathy:isBlocked
+     a rdf:Property ;
+          rdfs:comment "Indicates whether this account has been blocked by the user or not, if the protocol supports it." ;
+          rdfs:domain nco:IMAccount ;
+          rdfs:label "isBlocked" ;
+          rdfs:range xsd:boolean .
+
+          telepathy:publishesPresenceTo
+     a rdf:Property ;
+          rdfs:comment "Indicates to which local IM Accounts this IMAccount publishes presence to" ;
+          rdfs:domain nco:IMAccount ;
+          rdfs:label "publishesPresenceTo" ;
+          rdfs:range nco:IMAccount .
+
+          telepathy:requestedSubscriptionTo
+     a rdf:Property ;
+          rdfs:comment "Indicates to which local IM Accounts this IMAccount requested subscription to" ;
+          rdfs:domain nco:IMAccount ;
+          rdfs:label "requestedSubscriptionTo" ;
+          rdfs:range nco:IMAccount .
 }
 
 <http://nepomuk.kde.org/ontologies/2009/06/20/telepathy/metadata>

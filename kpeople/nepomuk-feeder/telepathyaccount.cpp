@@ -246,12 +246,15 @@ void TelepathyAccount::onConnectionReady(Tp::PendingOperation *op)
              << Tp::Contact::FeatureAvatarToken;
 
     // Handle contact avatars here, by using AvatarsInterface
-    connect(m_connection.data()->avatarsInterface(),
+    connect(m_connection->avatarsInterface(),
             SIGNAL(AvatarRetrieved(uint,QString,QByteArray,QString)),
             SLOT(onContactAvatarRetrieved(uint,QString,QByteArray,QString)));
-    connect(m_connection.data()->avatarsInterface(),
+    connect(m_connection->avatarsInterface(),
             SIGNAL(AvatarUpdated(uint,QString)),
             SLOT(onContactAvatarUpdated(uint,QString)));
+    connect(m_connection->contactManager(),
+            SIGNAL(allKnownContactsChanged(Tp::Contacts,Tp::Contacts)),
+            SLOT(onAllKnownContactsChanged(Tp::Contacts,Tp::Contacts)));
 
     // Retrieve contacts
     connect(m_connection->contactManager()->upgradeContacts(contacts.toList(), features),
@@ -301,7 +304,7 @@ void TelepathyAccount::onContactsUpgraded(Tp::PendingOperation* op)
         kDebug() << "Pulling avatars";
         // Ok, pull the avatars here
         QDBusPendingReply< Tp::AvatarTokenMap > reply =
-            m_connection.data()->avatarsInterface()->GetKnownAvatarTokens(avatarsToRetrieve);
+            m_connection->avatarsInterface()->GetKnownAvatarTokens(avatarsToRetrieve);
 
         reply.waitForFinished();
         if (!reply.value().isEmpty()) {
@@ -354,7 +357,7 @@ void TelepathyAccount::onContactAvatarRetrieved(uint contact, const QString& tok
 {
     kDebug() << "Avatar retrieved" << contact << token;
     // Retrieve the contact
-    Tp::ContactPtr tpContact = m_connection.data()->contactManager()->lookupContactByHandle(contact);
+    Tp::ContactPtr tpContact = m_connection->contactManager()->lookupContactByHandle(contact);
 
     // Set the avatar
     TelepathyContact *telepathyContact = m_contacts[tpContact];
@@ -367,7 +370,7 @@ void TelepathyAccount::onContactAvatarRetrieved(uint contact, const QString& tok
 void TelepathyAccount::onContactAvatarUpdated(uint contact, const QString& token)
 {
     kDebug() << "Avatar updated" << token << contact;
-    Tp::ContactPtr tpContact = m_connection.data()->contactManager()->lookupContactByHandle(contact);
+    Tp::ContactPtr tpContact = m_connection->contactManager()->lookupContactByHandle(contact);
 
     // Now we need to check if we need to update the avatar
     TelepathyContact *telepathyContact = m_contacts[tpContact];
@@ -377,7 +380,8 @@ void TelepathyAccount::onContactAvatarUpdated(uint contact, const QString& token
         if (telepathyContact->avatarToken() != token) {
             kDebug() << "retrieve";
             // We do
-            QDBusPendingReply<void> reply = m_connection.data()->avatarsInterface()->RequestAvatars(tpContact->handle().toList());
+            QDBusPendingReply< void > reply =
+                m_connection->avatarsInterface()->RequestAvatars(tpContact->handle().toList());
             if (reply.error().type() != QDBusError::NoError) {
                 // TODO: What to do in case of error?
             }
@@ -389,6 +393,56 @@ void TelepathyAccount::onContactDestroyed(const Tp::ContactPtr &contact)
 {
     if (!contact.isNull()) {
         m_contacts.remove(contact);
+    }
+}
+
+void TelepathyAccount::onAllKnownContactsChanged(const Tp::Contacts& added, const Tp::Contacts& removed)
+{
+    // For each added contact, let's check if we need to add it to our roster.
+    Tp::Contacts realAdded;
+    foreach (const Tp::ContactPtr &contact, added) {
+        if (!m_contacts.contains(contact)) {
+            // It's a brand new one
+            realAdded << contact;
+        }
+    }
+
+    // Any contacts to actually add?
+    if (!realAdded.isEmpty()) {
+        kDebug() << "Some contacts have been added for real";
+        // Yes: let's upgrade them and let our usual handler handle the creation and everything else
+        QSet<Tp::Contact::Feature> features;
+        features << Tp::Contact::FeatureAlias
+                 << Tp::Contact::FeatureSimplePresence
+                 << Tp::Contact::FeatureAvatarToken;
+
+        // Retrieve contacts
+        connect(m_connection->contactManager()->upgradeContacts(realAdded.toList(), features),
+                SIGNAL(finished(Tp::PendingOperation*)),
+                SLOT(onContactsUpgraded(Tp::PendingOperation*)));
+    }
+
+    // Ok, now removals. Let's check again what we have and what we do not have
+    Tp::Contacts realRemoved;
+    foreach (const Tp::ContactPtr &contact, removed) {
+        if (m_contacts.contains(contact)) {
+            // It's been removed for real
+            realRemoved << contact;
+        }
+    }
+
+    // So, any real removals?
+    if (!realRemoved.isEmpty()) {
+        // Yes: take action.
+        kDebug() << "Some contacts have been removed for real";
+        foreach (const Tp::ContactPtr &contact, realRemoved) {
+            // The subscription state changed signal triggered in the contact should have already updated
+            // buddy properties. Here, instead:
+            // Remove it from our "cache" hash
+            m_contacts.remove(contact);
+            // Free the contact itself
+            contact->deleteLater();
+        }
     }
 }
 

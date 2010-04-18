@@ -72,10 +72,25 @@ TelepathyContact::TelepathyContact(Tp::ContactPtr contact,
     connect(m_contact.data(),
             SIGNAL(removedFromGroup(QString)),
             SLOT(onRemovedFromGroup(QString)));
+    // Watch over his subscription, publication and block status
+    connect(m_contact.data(),
+            SIGNAL(subscriptionStateChanged(Tp::Contact::PresenceState)),
+            SLOT(onSubscriptionStateChanged(Tp::Contact::PresenceState)));
+    connect(m_contact.data(),
+            SIGNAL(publishStateChanged(Tp::Contact::PresenceState)),
+            SLOT(onPublishStateChanged(Tp::Contact::PresenceState)));
+    connect(m_contact.data(),
+            SIGNAL(blockStatusChanged(bool)),
+            SLOT(onBlockStatusChanged(bool)));
     // FIXME: Connect to any other signals of sync-worthy properties here.
 
     // Find the Nepomuk resource for this contact, or create a new one if necessary.
     doNepomukSetup();
+
+    // Take the needed action for the current presence/subscription/block state
+    onPublishStateChanged(m_contact->publishState());
+    onSubscriptionStateChanged(m_contact->subscriptionState());
+    onBlockStatusChanged(m_contact->isBlocked());
 }
 
 TelepathyContact::~TelepathyContact()
@@ -155,8 +170,6 @@ void TelepathyContact::doNepomukSetup()
 
         m_contactIMAccountResource.addProperty(Nepomuk::Vocabulary::NCO::imID(),
                                                m_contact->id());
-        m_contactIMAccountResource.addProperty(Nepomuk::Vocabulary::Telepathy::isBuddyOf(),
-                                               m_accountResource);
         m_contactIMAccountResource.addProperty(Nepomuk::Vocabulary::NCO::imNickname(),
                                                m_contact->alias());
         m_contactIMAccountResource.addProperty(Nepomuk::Vocabulary::NCO::imStatus(),
@@ -196,6 +209,7 @@ void TelepathyContact::onPresenceChanged(const QString& status, uint type, const
 
 void TelepathyContact::onAddedToGroup(const QString &group)
 {
+    kDebug() << "On added to group " << group;
     // Only update the properties if we already have the contactIMAccountResource.
     if (!m_contactIMAccountResource.resourceUri().isEmpty()) {
 
@@ -203,6 +217,7 @@ void TelepathyContact::onAddedToGroup(const QString &group)
         foreach(Nepomuk::ContactGroup g, m_contactPersonContactResource.belongsToGroups()) {
             if (g.contactGroupName() == group) {
                 // Already in that group
+                kDebug() << "Already in that group " << group;
                 return;
             }
         }
@@ -227,12 +242,14 @@ void TelepathyContact::onAddedToGroup(const QString &group)
         }
 
         // Add the contact to the group.
+        kDebug() << "Added to " << group;
         m_contactPersonContactResource.addBelongsToGroup(groupResource);
     }
 }
 
 void TelepathyContact::onRemovedFromGroup(const QString &group)
 {
+    kDebug() << "On removed from group " << group;
     // Only update the properties if we already have the contactIMAccountResource.
     if (!m_contactIMAccountResource.resourceUri().isEmpty()) {
 
@@ -246,6 +263,8 @@ void TelepathyContact::onRemovedFromGroup(const QString &group)
                 newGroups.removeAll(g);
             }
         }
+
+        kDebug() << "Setting groups to " << newGroups;
 
         m_contactPersonContactResource.setBelongsToGroups(newGroups);
     }
@@ -279,7 +298,138 @@ void TelepathyContact::setAvatar(const QString& token, const QByteArray& data)
     }
 }
 
+void TelepathyContact::onBlockStatusChanged(bool blocked)
+{
+    // Only update the properties if we already have the contactIMAccountResource.
+    if (!m_contactPersonContactResource.resourceUri().isEmpty()) {
+        if (m_contactIMAccountResource.isBlockeds().isEmpty()) {
+            // Add the property
+            m_contactIMAccountResource.setProperty(Nepomuk::Vocabulary::Telepathy::isBlocked(),
+                                                   blocked);
+        }
 
+        if (blocked != m_contactIMAccountResource.isBlockeds().first()) {
+            m_contactIMAccountResource.setProperty(Nepomuk::Vocabulary::Telepathy::isBlocked(),
+                                                   blocked);
+        }
+    }
+}
+
+void TelepathyContact::onPublishStateChanged(Tp::Contact::PresenceState state)
+{
+    Q_UNUSED(state)
+    kDebug() << "Publication changed!";
+    switch (state) {
+        case Tp::Contact::PresenceStateYes:
+            // We can now see the contact's presence
+
+            // Only update the properties if we already have the contactIMAccountResource.
+            if (!m_contactIMAccountResource.resourceUri().isEmpty()) {
+                // If we're not yet isBuddyOf, let's become one.
+                if (!m_contactIMAccountResource.publishesPresenceTos().contains(m_accountResource)) {
+                    kDebug() << "We're not yet publishing presence to the account";
+                    m_contactIMAccountResource.addPublishesPresenceTo(m_accountResource);
+                }
+            }
+            kDebug() << "State yes, now it publishes to " << m_contactIMAccountResource.publishesPresenceTos();
+
+            break;
+        case Tp::Contact::PresenceStateNo:
+            // We can no longer see his presence
+
+            // Only update the properties if we already have the contactIMAccountResource.
+            if (!m_contactIMAccountResource.resourceUri().isEmpty()) {
+                // Remove the publishesPresenceTo property
+                if (m_contactIMAccountResource.publishesPresenceTos().contains(m_accountResource)) {
+                    // FIXME: The correct code should be:
+                    // m_contactIMAccountResource.removeProperty(Nepomuk::Vocabulary::Telepathy::publishesPresenceTo(),
+                    //                                           m_accountResource);
+                    // but it does not work
+                    m_contactIMAccountResource.removeProperty(Nepomuk::Vocabulary::Telepathy::publishesPresenceTo());
+                }
+            }
+            kDebug() << "State no, now it publishes to " << m_contactIMAccountResource.publishesPresenceTos();
+
+            break;
+        case Tp::Contact::PresenceStateAsk:
+            // Do nothing here
+            break;
+    }
+}
+
+void TelepathyContact::onSubscriptionStateChanged(Tp::Contact::PresenceState state)
+{
+    kDebug() << "Subscription changed!";
+    using namespace Nepomuk::Vocabulary;
+    switch (state) {
+        case Tp::Contact::PresenceStateYes:
+            // We are now subscribed.
+
+            // Only update the properties if we already have the contactIMAccountResource.
+            if (!m_contactIMAccountResource.resourceUri().isEmpty()) {
+                // If we're not yet isBuddyOf, let's become one.
+                if (!m_contactIMAccountResource.isBuddyOfs().contains(m_accountResource)) {
+                    kDebug() << "We're not yet buddies with the account";
+                    m_contactIMAccountResource.addIsBuddyOf(m_accountResource);
+                }
+                // If there was a request, clear it
+                if (m_contactIMAccountResource.requestedSubscriptionTos().contains(m_accountResource)) {
+                    // Remove the publishesPresenceTo property
+                    // FIXME: The correct code should be:
+                    // m_contactIMAccountResource.removeProperty(Telepathy::requestedSubscriptionTo(),
+                    //                                           m_accountResource);
+                    // but it does not work
+                    m_contactIMAccountResource.removeProperty(Telepathy::requestedSubscriptionTo());
+                }
+            }
+            kDebug() << "State yes, now it's buddy of " << m_contactIMAccountResource.isBuddyOfs();
+
+            break;
+        case Tp::Contact::PresenceStateNo:
+            // We are no longer subscribed. This means the user explicitely requested to clear
+            // the contact from his buddy list. Let's do it then.
+
+            // Only update the properties if we already have the contactIMAccountResource.
+            if (!m_contactIMAccountResource.resourceUri().isEmpty()) {
+                // Remove the isBuddyOf property, which will magically clear out the contact from our list
+                if (m_contactIMAccountResource.isBuddyOfs().contains(m_accountResource)) {
+                    // FIXME: The correct code should be:
+                    // m_contactIMAccountResource.removeProperty(Telepathy::isBuddyOf(),
+                    //                                           m_accountResource);
+                    // but it does not work
+                    m_contactIMAccountResource.removeProperty(Telepathy::isBuddyOf());
+                }
+
+                // If there was a request, clear it
+                if (m_contactIMAccountResource.requestedSubscriptionTos().contains(m_accountResource)) {
+                    // Remove the publishesPresenceTo property
+                    // FIXME: The correct code should be:
+                    // m_contactIMAccountResource.removeProperty(Telepathy::requestedSubscriptionTo(),
+                    //                                           m_accountResource);
+                    // but it does not work
+                    m_contactIMAccountResource.removeProperty(Telepathy::requestedSubscriptionTo());
+                }
+            }
+            kDebug() << "State no, now it's buddy of " << m_contactIMAccountResource.isBuddyOfs();
+
+            break;
+        case Tp::Contact::PresenceStateAsk:
+            // The contact asked to subscribe to us
+
+             // Only update the properties if we already have the contactIMAccountResource.
+            if (!m_contactIMAccountResource.resourceUri().isEmpty()) {
+                // If there was a request, clear it
+                if (!m_contactIMAccountResource.requestedSubscriptionTos().contains(m_accountResource)) {
+                    // Add the request
+                    m_contactIMAccountResource.addRequestedSubscriptionTo(m_accountResource);
+                }
+            }
+            kDebug() << "State ask, now it has requests towards "
+                     << m_contactIMAccountResource.requestedSubscriptionTos();
+
+            break;
+    }
+}
 
 #include "telepathycontact.moc"
 

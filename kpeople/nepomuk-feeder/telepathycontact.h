@@ -57,6 +57,9 @@ private Q_SLOTS:
     void onPresenceChanged(const QString &status, uint type, const QString &message);
     void onAddedToGroup(const QString &group);
     void onRemovedFromGroup(const QString &group);
+    void onBlockStatusChanged(bool blocked);
+    void onPublishStateChanged(Tp::Contact::PresenceState state);
+    void onSubscriptionStateChanged(Tp::Contact::PresenceState state);
 
 private:
     Q_DISABLE_COPY(TelepathyContact);
@@ -66,6 +69,7 @@ private:
     TelepathyAccount *m_parent;
     Tp::ContactPtr m_contact;
     Tp::ConnectionPtr m_connection;
+
     Nepomuk::IMAccount m_accountResource;
     Nepomuk::IMAccount m_contactIMAccountResource;
     Nepomuk::PersonContact m_contactPersonContactResource;

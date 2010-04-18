@@ -64,6 +64,7 @@ private Q_SLOTS:
     void onContactAvatarRetrieved(uint contact, const QString &token, const QByteArray &avatar, const QString &mimetype);
     void onContactAvatarUpdated(uint contact, const QString &token);
     void onContactDestroyed(const Tp::ContactPtr &contact);
+    void onAllKnownContactsChanged(const Tp::Contacts &added, const Tp::Contacts &removed);
 
 private:
     Q_DISABLE_COPY(TelepathyAccount);
