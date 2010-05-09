@@ -59,7 +59,7 @@ telepathy: {telepathy:accountIdentifier
 
 <http://nepomuk.kde.org/ontologies/2009/06/20/telepathy/metadata>
 {
-    <http://nepomuk.kde.org/ontologies/2009/06/20/telepathy>
+    telepathy:
           a       nrl:DocumentGraph , nrl:Ontology ;
           nao:hasDefaultNamespace "http://nepomuk.kde.org/ontologies/2009/06/20/telepathy#" ;
           nao:hasDefaultNamespaceAbbreviation "telepathy" ;
@@ -72,5 +72,5 @@ telepathy: {telepathy:accountIdentifier
     <http://nepomuk.kde.org/ontologies/2009/06/20/telepathy/metadata>
           a       nrl:GraphMetadata , nrl:Ontology ;
           nao:serializationLanguage "TriG" ;
-          nrl:coreGraphMetadataFor <http://nepomuk.kde.org/ontologies/2009/06/20/telepathy> .
+          nrl:coreGraphMetadataFor telepathy: .
 }
