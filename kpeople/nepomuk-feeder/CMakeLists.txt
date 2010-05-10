@@ -6,7 +6,8 @@ set (CMAKE_MODULE_PATH
      ${CMAKE_MODULE_PATH}
 )
 
-find_package (KDE4 REQUIRED)
+set(KDE_MIN_VERSION "4.4.75")
+find_package (KDE4 ${KDE_MIN_VERSION} REQUIRED)
 find_package (Nepomuk REQUIRED)
 find_package (TelepathyQt4 REQUIRED)
 set(SDO_MIN_VERSION "0.3.60")
@@ -108,6 +109,7 @@ target_link_libraries (telepathy-integration-daemon
                        ${KDE4_KDECORE_LIBS}
                        ${TELEPATHY_QT4_LIBRARIES}
                        ${NEPOMUK_LIBRARIES}
+                       ${NEPOMUK_QUERY_LIBRARIES}
                        nie
 )
 

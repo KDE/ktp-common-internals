@@ -36,8 +36,16 @@
 #include <Nepomuk/ResourceManager>
 #include <Nepomuk/Variant>
 
-#include <Soprano/Model>
-#include <Soprano/QueryResultIterator>
+#include <Nepomuk/Query/Query>
+#include <Nepomuk/Query/QueryServiceClient>
+#include <Nepomuk/Query/AndTerm>
+#include <Nepomuk/Query/ComparisonTerm>
+#include <Nepomuk/Query/LiteralTerm>
+#include <Nepomuk/Query/NegationTerm>
+#include <Nepomuk/Query/ResourceTerm>
+#include <Nepomuk/Query/ResourceTypeTerm>
+#include <Nepomuk/Query/Result>
+#include "telepathyaccountmonitor.h"
 
 TelepathyContact::TelepathyContact(Tp::ContactPtr contact,
                                    Tp::ConnectionPtr connection,
@@ -111,21 +119,45 @@ TelepathyContact::~TelepathyContact()
 void TelepathyContact::doNepomukSetup()
 {
     // Query Nepomuk for all IM accounts that isBuddyOf the accountResource
-    QString query = QString("select distinct ?a ?b where { ?a %1 %2 . ?a a %3 . ?b %4 ?a . ?b a %5}")
-                            .arg(Soprano::Node::resourceToN3(Nepomuk::Vocabulary::Telepathy::isBuddyOf()))
-                            .arg(Soprano::Node::resourceToN3(m_accountResource.uri()))
-                            .arg(Soprano::Node::resourceToN3(Nepomuk::Vocabulary::NCO::IMAccount()))
-                            .arg(Soprano::Node::resourceToN3(Nepomuk::Vocabulary::NCO::hasIMAccount()))
-                            .arg(Soprano::Node::resourceToN3(Nepomuk::Vocabulary::NCO::PersonContact()));
+    QList< Nepomuk::Query::Result > results;
+    {
+        using namespace Nepomuk::Query;
 
-    Soprano::Model *model = Nepomuk::ResourceManager::instance()->mainModel();
+        // Get the person contact owning this IMAccount
+        ComparisonTerm pcterm(Nepomuk::Vocabulary::NCO::hasIMAccount(),
+                              ResourceTypeTerm(Nepomuk::Vocabulary::NCO::PersonContact()));
+        pcterm.setVariableName("person");
+        pcterm.setInverted(true);
 
-    Soprano::QueryResultIterator it = model->executeQuery(query, Soprano::Query::QueryLanguageSparql);
+        // Get a copy of the "me" PersonContact.
+        Nepomuk::PersonContact mePersonContact = m_parent->monitor()->mePersonContact();
+        // Special case: if we're buddy of an account we do own, we want to create a new resource for that.
+        // This avoids race conditions and a lot of bad things.
+        ComparisonTerm accountTerm(Nepomuk::Vocabulary::NCO::hasIMAccount(), ResourceTerm(mePersonContact));
+        accountTerm.setInverted(true);
+
+        // And the ID has to match
+        ComparisonTerm idTerm(Nepomuk::Vocabulary::NCO::imID(),
+                              LiteralTerm(m_contact->id()), Nepomuk::Query::ComparisonTerm::Equal);
+
+        Query query(AndTerm(pcterm, idTerm, NegationTerm::negateTerm(accountTerm),
+                            ResourceTypeTerm(Nepomuk::Vocabulary::NCO::IMAccount())));
+
+        bool queryResult = true;
+        results = QueryServiceClient::syncQuery(query, &queryResult);
+
+        if (!queryResult) {
+            // TODO: Maybe an error notification here?
+        }
+    }
+    // TODO: Maybe check if there is more than one result, and throw an error?
+    kDebug() << "Querying contact " << m_contact->id() << m_accountResource.accountIdentifiers().first()
+             << ": found " << results.count();
 
     // Iterate over all the IMAccounts found.
-    while(it.next()) {
-        Nepomuk::IMAccount foundImAccount(it.binding("a").uri());
-        Nepomuk::IMAccount foundPersonContact(it.binding("b").uri());
+    foreach (const Nepomuk::Query::Result &result, results) {
+        Nepomuk::IMAccount foundImAccount(result.resource());
+        Nepomuk::IMAccount foundPersonContact(result.additionalBinding("person").uri());
 
         // Check that the IM account only has one ID.
         QStringList accountIDs = foundImAccount.imIDs();
@@ -137,31 +169,26 @@ void TelepathyContact::doNepomukSetup()
                      continue;
         }
 
-        // Exactly one ID found. Check if it matches the one we are looking for.
-        QString accountID = accountIDs.first();
+        // It matches, so set our member variables to found resources and stop looping.
+        m_contactIMAccountResource = foundImAccount;
+        m_contactPersonContactResource = foundPersonContact;
 
-        if (accountID == m_contact->id()) {
-                // It matches, so set our member variables to found resources and stop looping.
-                m_contactIMAccountResource = foundImAccount;
-                m_contactPersonContactResource = foundPersonContact;
-
-                // Sync any properties that may have changed since last time we were online.
-                if (m_contactIMAccountResource.property(Nepomuk::Vocabulary::NCO::imNickname())
-                    != m_contact->alias()) {
-                    onAliasChanged(m_contact->alias());
-                }
-                onPresenceChanged(m_contact->presenceStatus(),
-                                  m_contact->presenceType(),
-                                  m_contact->presenceMessage()); // We can always assume this one needs syncing.
-                // Call onAddedToGroup for all the groups this contact is in. (it will ignore ones
-                // where Nepomuk already knows the contact is in this group.
-                foreach (const QString &group, m_contact->groups()) {
-                    onAddedToGroup(group);
-                }
-                // FIXME: What other properties do we need to sync?
-
-                break;
+        // Sync any properties that may have changed since last time we were online.
+        if (m_contactIMAccountResource.property(Nepomuk::Vocabulary::NCO::imNickname())
+            != m_contact->alias()) {
+            onAliasChanged(m_contact->alias());
         }
+        onPresenceChanged(m_contact->presenceStatus(),
+                            m_contact->presenceType(),
+                            m_contact->presenceMessage()); // We can always assume this one needs syncing.
+        // Call onAddedToGroup for all the groups this contact is in. (it will ignore ones
+        // where Nepomuk already knows the contact is in this group.
+        foreach (const QString &group, m_contact->groups()) {
+            onAddedToGroup(group);
+        }
+        // FIXME: What other properties do we need to sync?
+
+        break;
     }
 
     // If the contactIMAccountResource is still empty, create a new IMAccount and PersonContact.

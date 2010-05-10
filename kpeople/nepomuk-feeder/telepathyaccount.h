@@ -53,6 +53,8 @@ public:
     explicit TelepathyAccount(const QString &path, TelepathyAccountMonitor *parent = 0);
     ~TelepathyAccount();
 
+    TelepathyAccountMonitor *monitor();
+
 private Q_SLOTS:
     void onAccountReady(Tp::PendingOperation *op);
     void onHaveConnectionChanged(bool haveConnection);

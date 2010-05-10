@@ -32,13 +32,20 @@
 #include <dataobject.h>
 
 #include <KDebug>
+#include <kdeversion.h>
 
 #include <Nepomuk/ResourceManager>
 #include <Nepomuk/Variant>
 #include <Nepomuk/Resource>
 
-#include <Soprano/Model>
-#include <Soprano/QueryResultIterator>
+#include <Nepomuk/Query/Query>
+#include <Nepomuk/Query/AndTerm>
+#include <Nepomuk/Query/ComparisonTerm>
+#include <Nepomuk/Query/LiteralTerm>
+#include <Nepomuk/Query/ResourceTerm>
+#include <Nepomuk/Query/ResourceTypeTerm>
+#include <Nepomuk/Query/QueryServiceClient>
+#include <Nepomuk/Query/Result>
 
 #include <TelepathyQt4/ContactManager>
 #include <TelepathyQt4/PendingContacts>
@@ -110,19 +117,35 @@ void TelepathyAccount::doNepomukSetup()
     // Get a copy of the "me" PersonContact.
     Nepomuk::PersonContact mePersonContact = m_parent->mePersonContact();
 
-    // Query Nepomuk for all IMAccounts that the "me" PersonContact has.
-    QString query = QString("select distinct ?a where { %1 %2 ?a . ?a a %3 }")
-                            .arg(Soprano::Node::resourceToN3(mePersonContact.resourceUri()))
-                            .arg(Soprano::Node::resourceToN3(Nepomuk::Vocabulary::NCO::hasIMAccount()))
-                            .arg(Soprano::Node::resourceToN3(Nepomuk::Vocabulary::NCO::IMAccount()));
+    // Query Nepomuk for IMAccount that the "me" PersonContact has with a specific path
+    QList< Nepomuk::Query::Result > results;
+    {
+        using namespace Nepomuk::Query;
 
-    Soprano::Model *model = Nepomuk::ResourceManager::instance()->mainModel();
+        // Match the account
+        ComparisonTerm accountTerm(Nepomuk::Vocabulary::NCO::hasIMAccount(), ResourceTerm(mePersonContact));
+        accountTerm.setInverted(true);
 
-    Soprano::QueryResultIterator it = model->executeQuery(query, Soprano::Query::QueryLanguageSparql);
+        // Match the ID
+        ComparisonTerm pathTerm(Nepomuk::Vocabulary::Telepathy::accountIdentifier(),
+                                LiteralTerm(m_path), Nepomuk::Query::ComparisonTerm::Equal);
+
+        Query query(AndTerm(accountTerm, pathTerm,
+                            ResourceTypeTerm(Nepomuk::Vocabulary::NCO::IMAccount())));
+
+        bool queryResult = true;
+        results = QueryServiceClient::syncQuery(query, &queryResult);
+
+        if (!queryResult) {
+            // TODO: Maybe an error notification here?
+        }
+    }
+    // TODO: Maybe check if there is more than one result, and throw an error?
+    kDebug() << results.size();
 
     // Iterate over all the IMAccounts found.
-    while(it.next()) {
-        Nepomuk::IMAccount foundImAccount(it.binding("a").uri());
+    foreach (const Nepomuk::Query::Result &result, results) {
+        Nepomuk::IMAccount foundImAccount(result.resource());
         kDebug() << this << ": Found IM Account: " << foundImAccount.uri();
 
         // See if the Account has the same Telepathy Account Identifier as the account this
@@ -136,30 +159,26 @@ void TelepathyAccount::doNepomukSetup()
                      continue;
         }
 
-        // Exactly one identifier found. Check if it matches the one we are looking for.
-        QString accountIdentifier = accountIdentifiers.first();
-        kDebug() << this << ": Account Identifier:" << accountIdentifier;
+        kDebug() << this << ": Found the corresponding IMAccount in Nepomuk.";
+        // It matches, so set our member variable to it and stop looping.
+        m_accountResource = foundImAccount;
 
-        if (accountIdentifier == m_path) {
-            kDebug() << this << ": Found the corresponding IMAccount in Nepomuk.";
-                // It matches, so set our member variable to it and stop looping.
-                m_accountResource = foundImAccount;
-
-                // Sync any properties that have changed on the AM behind our back.
-                if (m_accountResource.property(Nepomuk::Vocabulary::NCO::imNickname()) != m_account->nickname()) {
-                    onNicknameChanged(m_account->nickname());
-                }
-                onCurrentPresenceChanged(m_account->currentPresence()); // We can always assume this one needs syncing.
-                // FIXME: Can Protocol and account properties change?
-
-                break;
+        // Sync any properties that have changed on the AM behind our back.
+        if (m_accountResource.property(Nepomuk::Vocabulary::NCO::imNickname()) != m_account->nickname()) {
+            onNicknameChanged(m_account->nickname());
         }
+        onCurrentPresenceChanged(m_account->currentPresence()); // We can always assume this one needs syncing.
+        // FIXME: Can Protocol and account properties change?
+
+        break;
     }
 
     // If the accountResource is still empty, create a new IMAccount.
     if (m_accountResource.uri().isEmpty()) {
         kDebug() << this << ": Could not find corresponding IMAccount in Nepomuk. Creating a new one.";
 
+        m_accountResource.addProperty(Nepomuk::Vocabulary::Telepathy::accountIdentifier(),
+                                      m_path);
         m_accountResource.addProperty(Nepomuk::Vocabulary::NCO::imAccountType(),
                                       m_account->protocol());
         // FIXME: Some IM Accounts don't have an ID as such, e.g. Link-Local-XMPP.
@@ -173,8 +192,7 @@ void TelepathyAccount::doNepomukSetup()
                                       m_account->currentPresence().statusMessage);
         m_accountResource.addProperty(Nepomuk::Vocabulary::Telepathy::statusType(),
                                       m_account->currentPresence().type);
-        m_accountResource.addProperty(Nepomuk::Vocabulary::Telepathy::accountIdentifier(),
-                                      m_path);
+        kDebug() << m_accountResource.uri();
 
         Nepomuk::InformationElement photo;
         photo.setPlainTextContents(QStringList() << m_account->avatar().avatarData.toBase64());
@@ -183,8 +201,8 @@ void TelepathyAccount::doNepomukSetup()
         m_accountResource.addProperty(Nepomuk::Vocabulary::NCO::photo(),
                                       dataObject);
 
-        mePersonContact.addProperty(Nepomuk::Vocabulary::NCO::hasIMAccount(),
-                                     m_accountResource);
+        mePersonContact.addIMAccount(m_accountResource);
+        kDebug() << mePersonContact.iMAccounts();
     }
 
     // Check if the account already has a connection, and
@@ -444,6 +462,11 @@ void TelepathyAccount::onAllKnownContactsChanged(const Tp::Contacts& added, cons
             contact->deleteLater();
         }
     }
+}
+
+TelepathyAccountMonitor* TelepathyAccount::monitor()
+{
+    return m_parent;
 }
 
 
