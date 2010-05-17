@@ -164,7 +164,7 @@ void TelepathyContact::doNepomukSetup()
     // Iterate over all the IMAccounts found.
     foreach (const Nepomuk::Query::Result &result, results) {
         Nepomuk::IMAccount foundImAccount(result.resource());
-        Nepomuk::IMAccount foundPersonContact(result.additionalBinding("person").uri());
+        Nepomuk::IMAccount foundPersonContact(result.additionalBinding("person").toUrl());
 
         // Check that the IM account only has one ID.
         QStringList accountIDs = foundImAccount.imIDs();
