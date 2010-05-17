@@ -55,6 +55,29 @@ telepathy: {telepathy:accountIdentifier
           rdfs:domain nco:IMAccount ;
           rdfs:label "requestedSubscriptionTo" ;
           rdfs:range nco:IMAccount .
+
+          telepathy:IMCapability
+    a rdfs:Class ;
+          rdfs:label "IM Capabilities" ;
+          rdfs:comment "Features of a certain IM connection (depends on the IMAccount implementation used by the Contact)" ;
+          rdfs:subClassOf rdfs:Resource .
+
+    telepathy:im-capability-text-chat a nco:IMCapability .
+    telepathy:im-capability-media-calls a nco:IMCapability .
+    telepathy:im-capability-audio-calls a nco:IMCapability .
+    telepathy:im-capability-video-calls a nco:IMCapability .
+    telepathy:im-capability-upgrading-calls a nco:IMCapability .
+    telepathy:im-capability-file-transfers a nco:IMCapability .
+    telepathy:im-capability-stream-tubes a nco:IMCapability .
+    telepathy:im-capability-dbus-tubes a nco:IMCapability .
+
+            telepathy:imCapability
+    a rdf:Property ;
+            rdfs:label "imContact Capability";
+            rdfs:comment "Capabilities of an IM Contact, defining how can we interact with him";
+            rdfs:domain nco:IMAccount ;
+            rdfs:range nco:IMCapability .
+
 }
 
 <http://nepomuk.kde.org/ontologies/2009/06/20/telepathy/metadata>

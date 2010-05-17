@@ -60,11 +60,15 @@ private Q_SLOTS:
     void onBlockStatusChanged(bool blocked);
     void onPublishStateChanged(Tp::Contact::PresenceState state);
     void onSubscriptionStateChanged(Tp::Contact::PresenceState state);
+    void onCapabilitiesChanged(Tp::ContactCapabilities*);
 
 private:
     Q_DISABLE_COPY(TelepathyContact);
 
     void doNepomukSetup();
+    QList< Nepomuk::Resource > processCapability(const QUrl &capability,
+                                                 bool isSupported,
+                                                 const QList< Nepomuk::Resource >& resources);
 
     TelepathyAccount *m_parent;
     Tp::ContactPtr m_contact;

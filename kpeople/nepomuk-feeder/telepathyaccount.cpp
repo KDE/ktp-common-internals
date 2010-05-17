@@ -261,7 +261,8 @@ void TelepathyAccount::onConnectionReady(Tp::PendingOperation *op)
     QSet<Tp::Contact::Feature> features;
     features << Tp::Contact::FeatureAlias
              << Tp::Contact::FeatureSimplePresence
-             << Tp::Contact::FeatureAvatarToken;
+             << Tp::Contact::FeatureAvatarToken
+             << Tp::Contact::FeatureCapabilities;
 
     // Handle contact avatars here, by using AvatarsInterface
     connect(m_connection->avatarsInterface(),

@@ -22,6 +22,9 @@
 #include "telepathycontact.h"
 
 #include "telepathyaccount.h"
+#include "telepathyaccountmonitor.h"
+
+#include <TelepathyQt4/ContactCapabilities>
 
 // Ontology Vocabularies
 #include "nco.h"
@@ -30,6 +33,7 @@
 // Full Resource Classes
 #include "contactgroup.h"
 #include "dataobject.h"
+#include "imcapability.h"
 
 #include <KDebug>
 
@@ -45,7 +49,6 @@
 #include <Nepomuk/Query/ResourceTerm>
 #include <Nepomuk/Query/ResourceTypeTerm>
 #include <Nepomuk/Query/Result>
-#include "telepathyaccountmonitor.h"
 
 TelepathyContact::TelepathyContact(Tp::ContactPtr contact,
                                    Tp::ConnectionPtr connection,
@@ -80,6 +83,9 @@ TelepathyContact::TelepathyContact(Tp::ContactPtr contact,
     connect(m_contact.data(),
             SIGNAL(removedFromGroup(QString)),
             SLOT(onRemovedFromGroup(QString)));
+    connect(m_contact.data(),
+            SIGNAL(capabilitiesChanged(Tp::ContactCapabilities*)),
+            SLOT(onCapabilitiesChanged(Tp::ContactCapabilities*)));
     // Watch over his subscription, publication and block status
     connect(m_contact.data(),
             SIGNAL(subscriptionStateChanged(Tp::Contact::PresenceState)),
@@ -99,6 +105,7 @@ TelepathyContact::TelepathyContact(Tp::ContactPtr contact,
     onPublishStateChanged(m_contact->publishState());
     onSubscriptionStateChanged(m_contact->subscriptionState());
     onBlockStatusChanged(m_contact->isBlocked());
+    onCapabilitiesChanged(m_contact->capabilities());
 }
 
 TelepathyContact::~TelepathyContact()
@@ -456,6 +463,67 @@ void TelepathyContact::onSubscriptionStateChanged(Tp::Contact::PresenceState sta
 
             break;
     }
+}
+
+void TelepathyContact::onCapabilitiesChanged(Tp::ContactCapabilities* capabilities)
+{
+    QList< Nepomuk::Resource > imCapabilities = m_contactIMAccountResource.imCapabilitys();
+
+    // Process all the various capabilities
+    imCapabilities = processCapability(Nepomuk::Vocabulary::Telepathy::imcapabilityaudiocalls(),
+                                       capabilities->supportsAudioCalls(),
+                                       imCapabilities);
+    imCapabilities = processCapability(Nepomuk::Vocabulary::Telepathy::imcapabilitytextchat(),
+                                       capabilities->supportsTextChats(),
+                                       imCapabilities);
+    imCapabilities = processCapability(Nepomuk::Vocabulary::Telepathy::imcapabilityvideocalls(),
+                                       capabilities->supportsVideoCalls(),
+                                       imCapabilities);
+    imCapabilities = processCapability(Nepomuk::Vocabulary::Telepathy::imcapabilityupgradingcalls(),
+                                       capabilities->supportsUpgradingCalls(),
+                                       imCapabilities);
+
+    // Set them onto the resource now
+    m_contactIMAccountResource.setImCapabilitys(imCapabilities);
+
+    kDebug() << "Capabilities changed: "
+             << capabilities->supportsTextChats()
+             << capabilities->supportsAudioCalls()
+             << capabilities->supportsVideoCalls()
+             << capabilities->supportsUpgradingCalls();
+}
+
+QList< Nepomuk::Resource > TelepathyContact::processCapability(
+                const QUrl& capability,
+                bool isSupported,
+                const QList< Nepomuk::Resource >& resources)
+{
+    QList< Nepomuk::Resource > imCapabilities = resources;
+    if (isSupported) {
+        bool found = false;
+        foreach (const Nepomuk::Resource &cap, imCapabilities) {
+            if (cap.hasType(capability)) {
+                found = true;
+                break;
+            }
+        }
+        if (!found) {
+            Nepomuk::Resource res;
+            res.setTypes(QList< QUrl >() << capability);
+            imCapabilities << res;
+        }
+    } else {
+        QList< Nepomuk::Resource >::iterator it = imCapabilities.begin();
+        while (it != imCapabilities.end()) {
+            if ((*it).hasType(capability)) {
+                it = imCapabilities.erase(it);
+            } else {
+                ++it;
+            }
+        }
+    }
+
+    return imCapabilities;
 }
 
 #include "telepathycontact.moc"
