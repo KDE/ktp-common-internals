@@ -156,6 +156,7 @@ void AccountsListModel::editAccount(const QModelIndex &index)
         return;
     }
 
+      accountItem->disconnect();
 	connect(accountItem, SIGNAL(protocolSelected(QString, QString)),
 		this, SIGNAL(protocolSelected(QString, QString)));
 	connect(this, SIGNAL(setTitleForCustomPages(QString, QList<QString>)),
