@@ -1,4 +1,3 @@
-find_package (KTelepathyTestLib REQUIRED)
 include (KTelepathyTestLibMacros)
 
 include_directories(${KTELEPATHYTESTLIB_INCLUDE_DIR})

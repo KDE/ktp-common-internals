@@ -141,4 +141,8 @@ endmacro(INSTALL_ONTOLOGY)
 
 install_ontology (telepathy telepathy)
 
-add_subdirectory(tests)
+find_package (KTelepathyTestLib)
+
+if (KTelepathyTestLib_DIR)
+    add_subdirectory(tests)
+endif (KTelepathyTestLib_DIR)
