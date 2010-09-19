@@ -28,6 +28,7 @@
 
 // Ontology Vocabularies
 #include "nco.h"
+#include "pimo.h"
 #include "telepathy.h"
 
 // Full Resource Classes
@@ -38,6 +39,7 @@
 #include <KDebug>
 
 #include <Nepomuk/ResourceManager>
+#include <Nepomuk/Thing>
 #include <Nepomuk/Variant>
 
 #include <Nepomuk/Query/Query>
@@ -218,6 +220,10 @@ void TelepathyContact::doNepomukSetup()
         m_contactPersonContactResource.addProperty(Nepomuk::Vocabulary::NCO::hasIMAccount(),
                                                    m_contactIMAccountResource);
         // FIXME: Store any other relevant Contact properties to Nepomuk.
+        // Create a PIMO Person for the new contact.
+        Nepomuk::Thing pimoPerson;
+        pimoPerson.addType(Nepomuk::Vocabulary::PIMO::Person());
+        pimoPerson.addGroundingOccurrence(m_contactPersonContactResource);
     }
 }
 
