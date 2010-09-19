@@ -100,7 +100,7 @@ void TelepathyAccount::onAccountReady(Tp::PendingOperation *op)
         return;
     }
 
-    kDebug() << this;
+    kDebug() << "Account ready:" << this;
 
     // Check that this Account is set up in nepomuk.
     doNepomukSetup();
@@ -221,6 +221,8 @@ void TelepathyAccount::onHaveConnectionChanged(bool haveConnection)
             return;
         }
 
+        kDebug() << "Connection up:" << this;
+
         m_connection = m_account->connection();
 
         Tp::Features features;
@@ -236,6 +238,7 @@ void TelepathyAccount::onHaveConnectionChanged(bool haveConnection)
     } else {
         // Connection has gone down. Delete our pointer to it.
         m_connection.reset();
+        kDebug() << "Connection fell:" << this;
     }
 }
 
@@ -255,6 +258,8 @@ void TelepathyAccount::onConnectionReady(Tp::PendingOperation *op)
         kWarning() << "ContactManager is Null. Abort getting contacts.";
         return;
     }
+
+    kDebug() << "Connection ready:" << this;
 
     Tp::Contacts contacts = m_connection->contactManager()->allKnownContacts();
 
@@ -322,15 +327,17 @@ void TelepathyAccount::onContactsUpgraded(Tp::PendingOperation* op)
     if (!avatarsToRetrieve.isEmpty()) {
         kDebug() << "Pulling avatars";
         // Ok, pull the avatars here
-        QDBusPendingReply< Tp::AvatarTokenMap > reply =
-            m_connection->avatarsInterface()->GetKnownAvatarTokens(avatarsToRetrieve);
+        if (m_connection.data()->avatarsInterface()) {
+            QDBusPendingReply< Tp::AvatarTokenMap > reply =
+                m_connection.data()->avatarsInterface()->GetKnownAvatarTokens(avatarsToRetrieve);
 
-        reply.waitForFinished();
-        if (!reply.value().isEmpty()) {
-            Tp::AvatarTokenMap result = reply.value();
-            for (Tp::AvatarTokenMap::const_iterator i = result.constBegin(); i != result.constEnd(); ++i) {
-                if (!i.value().isEmpty()) {
-                    onContactAvatarUpdated(i.key(), i.value());
+            reply.waitForFinished();
+            if (!reply.value().isEmpty()) {
+                Tp::AvatarTokenMap result = reply.value();
+                for (Tp::AvatarTokenMap::const_iterator i = result.constBegin(); i != result.constEnd(); ++i) {
+                    if (!i.value().isEmpty()) {
+                        onContactAvatarUpdated(i.key(), i.value());
+                    }
                 }
             }
         }
@@ -367,7 +374,7 @@ void TelepathyAccount::onAvatarChanged(const Tp::Avatar& avatar)
         Nepomuk::InformationElement photo;
         photo.setPlainTextContents(QStringList() << avatar.avatarData.toBase64());
         Nepomuk::DataObject dataObject(m_accountResource);
-        dataObject.addInterpretedAs(photo);
+        dataObject.setInterpretedAses(QList< Nepomuk::InformationElement >() << photo);
         m_accountResource.setProperty(Nepomuk::Vocabulary::NCO::photo(),
                                       dataObject);
     }

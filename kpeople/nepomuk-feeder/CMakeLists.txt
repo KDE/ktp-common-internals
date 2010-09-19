@@ -31,6 +31,7 @@ set (KDE4_ICON_DIR
 )
 
 include_directories (${KDE4_INCLUDES}
+                     ${CMAKE_CURRENT_SOURCE_DIR}
                      ${KDEPIMLIBS_INCLUDE_DIRS}
                      ${TELEPATHY_QT4_INCLUDE_DIR}
                      ${NEPOMUK_INCLUDES}
@@ -64,13 +65,12 @@ target_link_libraries (nie
 )
 
 ####################################
-# Second target - integration daemon
+# Second target - integration daemon static library
 
-set (telepathy_integration_daemon_SRCS
+set (telepathy_integration_daemon_static_SRCS
      telepathyaccountmonitor.cpp
      telepathyaccount.cpp
      telepathycontact.cpp
-     main.cpp
 )
 
 # Add the ontologies we want to build the vocabulary for.
@@ -95,15 +95,15 @@ soprano_add_ontology (telepathy_SRCS
                       "trig"
 )
 
-# Build the daemon.
-kde4_add_executable (telepathy-integration-daemon
-                     ${telepathy_integration_daemon_SRCS}
-                     ${pimo_SRCS}
-                     ${nco_SRCS}
-                     ${telepathy_SRCS}
+kde4_add_library (telepathy-integration-daemon-static
+                  STATIC
+                  ${telepathy_integration_daemon_static_SRCS}
+                  ${pimo_SRCS}
+                  ${nco_SRCS}
+                  ${telepathy_SRCS}
 )
 
-target_link_libraries (telepathy-integration-daemon
+target_link_libraries (telepathy-integration-daemon-static
                        ${QT_QTCORE_LIBRARY}
                        ${QT_QTDBUS_LIBRARY}
                        ${KDE4_KDECORE_LIBS}
@@ -111,6 +111,18 @@ target_link_libraries (telepathy-integration-daemon
                        ${NEPOMUK_LIBRARIES}
                        ${NEPOMUK_QUERY_LIBRARIES}
                        nie
+)
+
+####################################
+# Third target - integration daemon
+
+# Build the daemon.
+kde4_add_executable (telepathy-integration-daemon
+                     main.cpp
+)
+
+target_link_libraries (telepathy-integration-daemon
+                       telepathy-integration-daemon-static
 )
 
 # Install the daemon.
@@ -128,3 +140,5 @@ macro(INSTALL_ONTOLOGY _name _group)
 endmacro(INSTALL_ONTOLOGY)
 
 install_ontology (telepathy telepathy)
+
+add_subdirectory(tests)

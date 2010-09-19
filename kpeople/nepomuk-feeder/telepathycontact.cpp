@@ -105,7 +105,9 @@ TelepathyContact::TelepathyContact(Tp::ContactPtr contact,
     onPublishStateChanged(m_contact->publishState());
     onSubscriptionStateChanged(m_contact->subscriptionState());
     onBlockStatusChanged(m_contact->isBlocked());
-    onCapabilitiesChanged(m_contact->capabilities());
+    if (contact->capabilities() != 0) {
+        onCapabilitiesChanged(m_contact->capabilities());
+    }
 }
 
 TelepathyContact::~TelepathyContact()
