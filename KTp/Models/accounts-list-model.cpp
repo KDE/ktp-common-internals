@@ -140,31 +140,6 @@ void AccountsListModel::addAccount(const Tp::AccountPtr &account)
    }
 }
 
-void AccountsListModel::editAccount(const QModelIndex &index)
-{
-    kDebug();
-
-    if(!index.isValid()) {
-        kWarning() << "Can't edit Account: Invalid index.";
-        return;
-    }
-
-    AccountItem *accountItem = m_readyAccounts.at(index.row());
-
-    if (!accountItem) {
-        kWarning() << "Account item is null.";
-        return;
-    }
-
-      accountItem->disconnect();
-	connect(accountItem, SIGNAL(protocolSelected(QString, QString)),
-		this, SIGNAL(protocolSelected(QString, QString)));
-	connect(this, SIGNAL(setTitleForCustomPages(QString, QList<QString>)),
-			accountItem, SLOT(onTitleForCustomPages(QString, QList<QString>)));
-
-    accountItem->edit();
-}
-
 void AccountsListModel::removeAccount(const QModelIndex &index)
 {
     kDebug();
@@ -178,6 +153,19 @@ void AccountsListModel::removeAccount(const QModelIndex &index)
     Q_ASSERT(accountItem);
 
     accountItem->remove();
+}
+
+AccountItem* AccountsListModel::itemForIndex(const QModelIndex &index)
+{
+    kDebug();
+
+    if(!index.isValid()) {
+        kWarning() << "Invalid index" << index;
+        return 0;
+    }
+
+    AccountItem *accountItem = m_readyAccounts.at(index.row());
+    return accountItem;
 }
 
 void AccountsListModel::onAccountItemReady()
