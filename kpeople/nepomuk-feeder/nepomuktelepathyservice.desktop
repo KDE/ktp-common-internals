@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Service
+ServiceTypes=NepomukService
+X-KDE-Library=nepomuktelepathyservice
+X-KDE-Nepomuk-autostart=true
+X-KDE-Nepomuk-start-on-demand=false
+X-KDE-Nepomuk-dependencies=nepomukstorage,nepomukqueryservice
+Name=Nepomuk Telepathy Service
+Comment=A Nepomuk service that imports Telepathy data

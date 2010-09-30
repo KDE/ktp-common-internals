@@ -10,7 +10,7 @@ kde4_add_library(tid-base-tests STATIC tid-base-test.cpp)
 target_link_libraries(tid-base-tests
                       ${KTELEPATHYTESTLIB_LIBRARIES}
                       ${QT_QTTEST_LIBRARY}
-                      telepathy-integration-daemon-static)
+                      nepomuktelepathyservice-static)
 
 ################################
 # Account test

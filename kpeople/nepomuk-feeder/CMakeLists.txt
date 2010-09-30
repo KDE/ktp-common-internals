@@ -64,10 +64,12 @@ target_link_libraries (nie
                        ${NEPOMUK_LIBRARIES}
 )
 
-####################################
-# Second target - integration daemon static library
+set_property(TARGET nie PROPERTY COMPILE_FLAGS -fPIC)
 
-set (telepathy_integration_daemon_static_SRCS
+####################################
+# Second target - nepomuktelepathyservice static library
+
+set (nepomuktelepathyservice_static_SRCS
      telepathyaccountmonitor.cpp
      telepathyaccount.cpp
      telepathycontact.cpp
@@ -95,41 +97,51 @@ soprano_add_ontology (telepathy_SRCS
                       "trig"
 )
 
-kde4_add_library (telepathy-integration-daemon-static
+kde4_add_library (nepomuktelepathyservice-static
                   STATIC
-                  ${telepathy_integration_daemon_static_SRCS}
+                  ${nepomuktelepathyservice_static_SRCS}
                   ${pimo_SRCS}
                   ${nco_SRCS}
                   ${telepathy_SRCS}
 )
 
-target_link_libraries (telepathy-integration-daemon-static
+target_link_libraries (nepomuktelepathyservice-static
                        ${QT_QTCORE_LIBRARY}
                        ${QT_QTDBUS_LIBRARY}
                        ${KDE4_KDECORE_LIBS}
                        ${TELEPATHY_QT4_LIBRARIES}
+                       ${SOPRANO_LIBRARIES}
                        ${NEPOMUK_LIBRARIES}
                        ${NEPOMUK_QUERY_LIBRARIES}
                        nie
 )
 
+set_property(TARGET nepomuktelepathyservice-static PROPERTY COMPILE_FLAGS -fPIC)
+
 ####################################
-# Third target - integration daemon
+# Third target - nepomuktelepatyservice
 
-# Build the daemon.
-kde4_add_executable (telepathy-integration-daemon
-                     main.cpp
+set (nepomuktelepathyservice_SRCS
+     nepomuktelepathyservice.cpp
 )
 
-target_link_libraries (telepathy-integration-daemon
-                       telepathy-integration-daemon-static
+# Build the service.
+kde4_add_plugin(nepomuktelepathyservice
+                ${nepomuktelepathyservice_SRCS}
 )
 
-# Install the daemon.
-install (TARGETS telepathy-integration-daemon
-         ${INSTALL_TARGETS_DEFAULT_ARGS}
+target_link_libraries (nepomuktelepathyservice
+                       nepomuktelepathyservice-static
 )
 
+# Install the service.
+install (TARGETS nepomuktelepathyservice
+         DESTINATION ${PLUGIN_INSTALL_DIR}
+)
+
+install (FILES nepomuktelepathyservice.desktop
+         DESTINATION ${SERVICES_INSTALL_DIR}
+)
 
 # Install the ontology
 macro(INSTALL_ONTOLOGY _name _group)
