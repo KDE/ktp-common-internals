@@ -1,5 +1,5 @@
 /*
- * This file is part of telepathy-integration-daemon
+ * This file is part of nepomuktelepathyservice
  *
  * Copyright (C) 2010 Daniele E. Domenichelli <daniele.domenichelli@gmail.com>
  *
