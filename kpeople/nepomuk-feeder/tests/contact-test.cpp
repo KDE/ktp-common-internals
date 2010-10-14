@@ -25,12 +25,12 @@
 #include <TelepathyQt4/PendingReady>
 #include <TelepathyQt4/ContactManager>
 #include <Soprano/Node>
-#include <telepathy.h>
-#include <nco.h>
+#include "ontologies/telepathy.h"
+#include "ontologies/nco.h"
 #include <Nepomuk/ResourceManager>
 #include <Soprano/QueryResultIterator>
 #include <Soprano/Model>
-#include <imaccount.h>
+#include "ontologies/imaccount.h"
 #include <TelepathyQt4/Account>
 #include <TelepathyQt4/PendingVoid>
 

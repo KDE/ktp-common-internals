@@ -22,8 +22,8 @@
 #ifndef TELEPATHY_INTEGRATION_DAEMON_TELEPATHYCONTACT_H
 #define TELEPATHY_INTEGRATION_DAEMON_TELEPATHYCONTACT_H
 
-#include "imaccount.h"
-#include "personcontact.h"
+#include "ontologies/imaccount.h"
+#include "ontologies/personcontact.h"
 
 #include <QtCore/QObject>
 

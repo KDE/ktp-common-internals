@@ -32,9 +32,9 @@
 #include <Nepomuk/Thing>
 #include <Nepomuk/Variant>
 
-#include <nco.h>
-#include <dataobject.h>
-#include <informationelement.h>
+#include "ontologies/nco.h"
+#include "ontologies/dataobject.h"
+#include "ontologies/informationelement.h"
 
 #include <TelepathyQt4/ConnectionManager>
 

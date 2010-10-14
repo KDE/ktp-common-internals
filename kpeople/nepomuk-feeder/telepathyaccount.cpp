@@ -25,11 +25,11 @@
 #include "telepathycontact.h"
 
 // Ontology Vocabularies
-#include "nco.h"
-#include "telepathy.h"
+#include "ontologies/nco.h"
+#include "ontologies/telepathy.h"
 
-#include <informationelement.h>
-#include <dataobject.h>
+#include "ontologies/informationelement.h"
+#include "ontologies/dataobject.h"
 
 #include <KDebug>
 #include <kdeversion.h>

@@ -22,8 +22,8 @@
 #include "telepathyaccountmonitor.h"
 
 // Ontology Vocabularies
-#include "nco.h"
-#include "pimo.h"
+#include "ontologies/nco.h"
+#include "ontologies/pimo.h"
 
 #include <KDebug>
 

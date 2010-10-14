@@ -23,7 +23,7 @@
 #define CONTACT_TEST_H
 
 #include <tid-base-test.h>
-#include <imaccount.h>
+#include "ontologies/imaccount.h"
 
 class ContactTest : public TidBaseTest
 {

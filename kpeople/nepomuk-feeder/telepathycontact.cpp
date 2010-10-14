@@ -27,14 +27,14 @@
 #include <TelepathyQt4/ContactCapabilities>
 
 // Ontology Vocabularies
-#include "nco.h"
-#include "pimo.h"
-#include "telepathy.h"
+#include "ontologies/nco.h"
+#include "ontologies/pimo.h"
+#include "ontologies/telepathy.h"
 
 // Full Resource Classes
-#include "contactgroup.h"
-#include "dataobject.h"
-#include "imcapability.h"
+#include "ontologies/contactgroup.h"
+#include "ontologies/dataobject.h"
+#include "ontologies/imcapability.h"
 
 #include <KDebug>
 

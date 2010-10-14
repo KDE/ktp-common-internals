@@ -28,7 +28,7 @@
 #include <Nepomuk/ResourceManager>
 #include <Nepomuk/Thing>
 
-#include <nco.h>
+#include "ontologies/nco.h"
 
 #include <TelepathyQt4/PendingAccount>
 #include <TelepathyQt4/PendingReady>

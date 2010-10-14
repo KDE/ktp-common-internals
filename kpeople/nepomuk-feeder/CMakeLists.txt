@@ -35,66 +35,22 @@ include_directories (${KDE4_INCLUDES}
                      ${KDEPIMLIBS_INCLUDE_DIRS}
                      ${TELEPATHY_QT4_INCLUDE_DIR}
                      ${NEPOMUK_INCLUDES}
-                     ${CMAKE_CURRENT_BINARY_DIR}/nie
+                     ${CMAKE_BINARY_DIR}
 )
 
 set (CMAKE_CXX_FLAGS
      "${CMAKE_CXX_FLAGS} ${KDE4_ENABLE_EXCEPTIONS}"
 )
 
-###################################
-# First target - NIE static library
-
-nepomuk_add_ontology_classes (nie_SRCS
-                              ONTOLOGIES
-                              ${SHAREDDESKTOPONTOLOGIES_ROOT_DIR}/nie/nie.trig
-                              ${SHAREDDESKTOPONTOLOGIES_ROOT_DIR}/nie/nfo.trig
-                              ${SHAREDDESKTOPONTOLOGIES_ROOT_DIR}/nie/nco.trig
-                              ${SHAREDDESKTOPONTOLOGIES_ROOT_DIR}/nie/nmo.trig
-                              ${CMAKE_CURRENT_SOURCE_DIR}/telepathy.trig
-)
-
-kde4_add_library (nie
-                  STATIC
-                  ${nie_SRCS}
-)
-
-target_link_libraries (nie
-                       ${QT_QTCORE_LIBRARY}
-                       ${NEPOMUK_LIBRARIES}
-)
-
-set_property(TARGET nie PROPERTY COMPILE_FLAGS -fPIC)
+add_subdirectory (ontologies)
 
 ####################################
-# Second target - nepomuktelepathyservice static library
+# First target - nepomuktelepathyservice static library
 
 set (nepomuktelepathyservice_static_SRCS
      telepathyaccountmonitor.cpp
      telepathyaccount.cpp
      telepathycontact.cpp
-)
-
-# Add the ontologies we want to build the vocabulary for.
-soprano_add_ontology (pimo_SRCS
-                      ${SHAREDDESKTOPONTOLOGIES_ROOT_DIR}/pimo/pimo.trig
-                      "PIMO"
-                      "Nepomuk::Vocabulary"
-                      "trig"
-)
-
-soprano_add_ontology (nco_SRCS
-                      ${SHAREDDESKTOPONTOLOGIES_ROOT_DIR}/nie/nco.trig
-                      "NCO"
-                      "Nepomuk::Vocabulary"
-                      "trig"
-)
-
-soprano_add_ontology (telepathy_SRCS
-                      ${CMAKE_CURRENT_SOURCE_DIR}/telepathy.trig
-                      "Telepathy"
-                      "Nepomuk::Vocabulary"
-                      "trig"
 )
 
 kde4_add_library (nepomuktelepathyservice-static
@@ -113,13 +69,13 @@ target_link_libraries (nepomuktelepathyservice-static
                        ${SOPRANO_LIBRARIES}
                        ${NEPOMUK_LIBRARIES}
                        ${NEPOMUK_QUERY_LIBRARIES}
-                       nie
+                       ontologies
 )
 
 set_property(TARGET nepomuktelepathyservice-static PROPERTY COMPILE_FLAGS -fPIC)
 
 ####################################
-# Third target - nepomuktelepatyservice
+# Second target - nepomuktelepatyservice
 
 set (nepomuktelepathyservice_SRCS
      nepomuktelepathyservice.cpp
