@@ -56,9 +56,6 @@ set (nepomuktelepathyservice_static_SRCS
 kde4_add_library (nepomuktelepathyservice-static
                   STATIC
                   ${nepomuktelepathyservice_static_SRCS}
-                  ${pimo_SRCS}
-                  ${nco_SRCS}
-                  ${telepathy_SRCS}
 )
 
 target_link_libraries (nepomuktelepathyservice-static
