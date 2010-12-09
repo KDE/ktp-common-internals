@@ -17,15 +17,15 @@ endif(TELEPATHY_QT4_INCLUDE_DIR AND TELEPATHY_QT4_LIBRARIES)
 
 find_package(PkgConfig)
 if(PKG_CONFIG_FOUND)
-    pkg_check_modules(PC_TELEPATHY_QT4 QUIET TelepathyQt4>=0.2.0)
+    pkg_check_modules(PC_TELEPATHY_QT4 QUIET TelepathyQt4>=0.5.1)
 endif(PKG_CONFIG_FOUND)
 
 find_path(TELEPATHY_QT4_INCLUDE_DIR
           NAMES TelepathyQt4/Types
           HINTS
-          ${PC_TELEPATHY_QT4_INCLUDEDIR}
-          ${PC_TELEPATHY_QT4_INCLUDE_DIRS}
-          ${PC_TELEPATHY_QT4_INCLUDES}
+          ${PC_TELEPATHY_QT4_INCLUDEDIR}/telepathy-1.0
+          ${PC_TELEPATHY_QT4_INCLUDE_DIRS}/telepathy-1.0
+          ${PC_TELEPATHY_QT4_INCLUDES}/telepathy-1.0
 )
 
 find_library(TELEPATHY_QT4_LIBRARIES

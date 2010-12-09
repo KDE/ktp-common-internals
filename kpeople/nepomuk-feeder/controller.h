@@ -1,5 +1,5 @@
 /*
- * This file is part of nepomuktelepathyservice
+ * This file is part of telepathy-nepomuk-service
  *
  * Copyright (C) 2009-2010 Collabora Ltd. <info@collabora.co.uk>
  *   @author George Goldberg <george.goldberg@collabora.co.uk>
@@ -19,57 +19,45 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef TELEPATHY_INTEGRATION_DAEMON_TELEPATHYACCOUNTMONITOR_H
-#define TELEPATHY_INTEGRATION_DAEMON_TELEPATHYACCOUNTMONITOR_H
-
-#include "telepathyaccount.h"
+#ifndef NEPOMUK_TELEPATHY_SERVICE_CONTROLLER_H
+#define NEPOMUK_TELEPATHY_SERVICE_CONTROLLER_H
 
 #include <QtCore/QObject>
-#include <QtCore/QString>
 
+#include <TelepathyQt4/Account>
 #include <TelepathyQt4/AccountManager>
-
-namespace Nepomuk {
-    class ResourceManager;
-}
 
 namespace Tp {
     class PendingOperation;
 }
 
+class Storage;
+
 /**
- * Monitors the Telepathy Account Manager, ensuring that all existing accounts
- * have a corresponding TelepathyAccount object within this daemon.
+ * Acts as the controller part of a MVC based system (with Storage and the Account/Channel/Contact
+ * wrapper classes acting as the rest of the system).
  *
- * This class is also responsible for keeping track and/or dealing with any
- * errors that our connection to Nepomuk throws up.
+ * This class monitors the Telepathy AccountManager and ensures that Account wrappers are created
+ * for every account on it.
  */
-class TelepathyAccountMonitor : public QObject
+class Controller : public QObject
 {
     Q_OBJECT
 
 public:
-    explicit TelepathyAccountMonitor(QObject *parent = 0);
-    ~TelepathyAccountMonitor();
-
-    Tp::AccountManagerPtr accountManager() const;
-    Nepomuk::PersonContact mePersonContact() const;
+    explicit Controller(QObject *parent = 0);
+    ~Controller();
 
 private Q_SLOTS:
     void onAccountManagerReady(Tp::PendingOperation *op);
-    void onAccountCreated(const QString &path);
-    void onNepomukError(const QString &uri, int errorCode);
+    void onNewAccount(const Tp::AccountPtr &account);
 
 private:
-    Q_DISABLE_COPY(TelepathyAccountMonitor);
+    Q_DISABLE_COPY(Controller);
 
-    void doNepomukSetup();
+    Storage *m_storage;
 
     Tp::AccountManagerPtr m_accountManager;
-    Nepomuk::ResourceManager *m_resourceManager;
-
-    Nepomuk::PersonContact m_mePersonContact;
-
 };
 
 

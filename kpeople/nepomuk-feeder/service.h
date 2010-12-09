@@ -1,5 +1,5 @@
 /*
- * This file is part of nepomuktelepathyservice
+ * This file is part of telepathy-nepomuk-service
  *
  * Copyright (C) 2010 Daniele E. Domenichelli <daniele.domenichelli@gmail.com>
  *
@@ -18,15 +18,12 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef NEPOMUKTELEPATHYSERVICE_H
-#define NEPOMUKTELEPATHYSERVICE_H
+#ifndef TELEPATHY_NEPOMUK_SERVICE_SERVICE_H
+#define TELEPATHY_NEPOMUK_SERVICE_SERVICE_H
 
 #include <Nepomuk/Service>
+
 #include <QtCore/QVariantList>
-
-
-namespace Nepomuk
-{
 
 class TelepathyService : public Nepomuk::Service
 {
@@ -37,6 +34,6 @@ public:
     ~TelepathyService();
 };
 
-} // namespace Nepomuk
 
-#endif // NEPOMUKTELEPATHYSERVICE_H
+#endif // TELEPATHY_NEPOMUK_SERVICE_SERVICE_H
+

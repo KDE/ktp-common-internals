@@ -21,62 +21,7 @@ telepathy: {telepathy:accountIdentifier
           rdfs:label "statusType" ;
           rdfs:range xsd:integer .
 
-            telepathy:isBuddyOf
-     a rdf:Property ;
-          rdfs:comment "Indicates the local IM Account on whose buddy list this IM Account appears." ;
-          rdfs:domain nco:IMAccount ;
-          rdfs:label "isBuddyOf" ;
-          rdfs:range nco:IMAccount .
 
-          telepathy:avatarToken
-     a rdf:Property ;
-          rdfs:comment "The current avatar token for the nco:photo of this contact";
-          rdfs:domain nco:Contact ;
-          rdfs:label "avatarToken" ;
-          rdfs:range xsd:string .
-
-          telepathy:isBlocked
-     a rdf:Property ;
-          rdfs:comment "Indicates whether this account has been blocked by the user or not, if the protocol supports it." ;
-          rdfs:domain nco:IMAccount ;
-          rdfs:label "isBlocked" ;
-          rdfs:range xsd:boolean .
-
-          telepathy:publishesPresenceTo
-     a rdf:Property ;
-          rdfs:comment "Indicates to which local IM Accounts this IMAccount publishes presence to" ;
-          rdfs:domain nco:IMAccount ;
-          rdfs:label "publishesPresenceTo" ;
-          rdfs:range nco:IMAccount .
-
-          telepathy:requestedSubscriptionTo
-     a rdf:Property ;
-          rdfs:comment "Indicates to which local IM Accounts this IMAccount requested subscription to" ;
-          rdfs:domain nco:IMAccount ;
-          rdfs:label "requestedSubscriptionTo" ;
-          rdfs:range nco:IMAccount .
-
-          telepathy:IMCapability
-    a rdfs:Class ;
-          rdfs:label "IM Capabilities" ;
-          rdfs:comment "Features of a certain IM connection (depends on the IMAccount implementation used by the Contact)" ;
-          rdfs:subClassOf rdfs:Resource .
-
-    telepathy:im-capability-text-chat a nco:IMCapability .
-    telepathy:im-capability-media-calls a nco:IMCapability .
-    telepathy:im-capability-audio-calls a nco:IMCapability .
-    telepathy:im-capability-video-calls a nco:IMCapability .
-    telepathy:im-capability-upgrading-calls a nco:IMCapability .
-    telepathy:im-capability-file-transfers a nco:IMCapability .
-    telepathy:im-capability-stream-tubes a nco:IMCapability .
-    telepathy:im-capability-dbus-tubes a nco:IMCapability .
-
-            telepathy:imCapability
-    a rdf:Property ;
-            rdfs:label "imContact Capability";
-            rdfs:comment "Capabilities of an IM Contact, defining how can we interact with him";
-            rdfs:domain nco:IMAccount ;
-            rdfs:range nco:IMCapability .
 
 }
 

@@ -1,5 +1,5 @@
 /*
- * This file is part of nepomuktelepathyservice
+ * This file is part of telepathy-nepomuk-service
  *
  * Copyright (C) 2009-2010 Collabora Ltd. <info@collabora.co.uk>
  *   @author George Goldberg <george.goldberg@collabora.co.uk>
@@ -20,25 +20,29 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#include "nepomuktelepathyservice.h"
+#include "service.h"
 
-#include "telepathyaccountmonitor.h"
-#include <Nepomuk/ResourceManager>
-#include <TelepathyQt4/Types>
+#include "controller.h"
+
+#include <KDebug>
 #include <KPluginFactory>
 
-using namespace Nepomuk;
+#include <Nepomuk/ResourceManager>
 
-TelepathyService::TelepathyService(QObject* parent, const QVariantList &)
+#include <TelepathyQt4/Types>
+
+TelepathyService::TelepathyService(QObject *parent, const QVariantList &)
     : Nepomuk::Service(parent, true)
 {
     // Initialise Telepathy.
     Tp::registerTypes();
 
     // Create an instance of the Telepathy Account Monitor.
-    TelepathyAccountMonitor *monitor = new TelepathyAccountMonitor(this);
+    new Controller(this);
 
     setServiceInitialized(true);
+
+    kDebug() << "We're off...";
 }
 
 TelepathyService::~TelepathyService()
@@ -47,3 +51,7 @@ TelepathyService::~TelepathyService()
 
 
 NEPOMUK_EXPORT_SERVICE( TelepathyService, "nepomuktelepathyservice" );
+
+
+#include "service.moc"
+
