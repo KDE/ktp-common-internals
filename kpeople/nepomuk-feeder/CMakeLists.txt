@@ -111,5 +111,5 @@ install_ontology (telepathy telepathy)
 find_package (KTelepathyTestLib)
 
 if (KTelepathyTestLib_DIR)
-  #  add_subdirectory(tests)
+    add_subdirectory(tests)
 endif (KTelepathyTestLib_DIR)
