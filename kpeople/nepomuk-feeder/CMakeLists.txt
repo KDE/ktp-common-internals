@@ -49,9 +49,10 @@ add_subdirectory (ontologies)
 
 set (nepomuktelepathyservice_static_SRCS
      controller.cpp
-     storage.cpp
      account.cpp
      contact.cpp
+     abstract-storage.cpp
+     nepomuk-storage.cpp
 )
 
 kde4_add_library (nepomuktelepathyservice-static

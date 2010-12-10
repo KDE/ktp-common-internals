@@ -1,9 +1,8 @@
 /*
  * This file is part of telepathy-nepomuk-service
  *
- * Copyright (C) 2009-2010 Collabora Ltd. <info@collabora.co.uk>
+ * Copyright (C) 2010 Collabora Ltd. <info@collabora.co.uk>
  *   @author George Goldberg <george.goldberg@collabora.co.uk>
- * Copyright (C) 2010 Daniele E. Domenichelli <daniele.domenichelli@gmail.com>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -20,40 +19,19 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#include "service.h"
+#include "abstract-storage.h"
 
-#include "controller.h"
-#include "nepomuk-storage.h"
-
-#include <KDebug>
-#include <KPluginFactory>
-
-#include <Nepomuk/ResourceManager>
-
-#include <TelepathyQt4/Types>
-
-TelepathyService::TelepathyService(QObject *parent, const QVariantList &)
-    : Nepomuk::Service(parent, true)
+AbstractStorage::AbstractStorage(QObject* parent)
+  : QObject(parent)
 {
-    // Initialise Telepathy.
-    Tp::registerTypes();
 
-    // Create an instance of the Telepathy Account Monitor.
-    m_controller = new Controller(new NepomukStorage(), this);
-
-    setServiceInitialized(true);
-
-    kDebug() << "We're off...";
 }
 
-TelepathyService::~TelepathyService()
+AbstractStorage::~AbstractStorage()
 {
-    m_controller->shutdown();
+
 }
 
 
-NEPOMUK_EXPORT_SERVICE( TelepathyService, "nepomuktelepathyservice" );
-
-
-#include "service.moc"
+#include "abstract-storage.h"
 

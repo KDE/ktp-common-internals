@@ -1,9 +1,8 @@
 /*
  * This file is part of telepathy-nepomuk-service
  *
- * Copyright (C) 2009-2010 Collabora Ltd. <info@collabora.co.uk>
+ * Copyright (C) 2010 Collabora Ltd. <info@collabora.co.uk>
  *   @author George Goldberg <george.goldberg@collabora.co.uk>
- * Copyright (C) 2010 Daniele E. Domenichelli <daniele.domenichelli@gmail.com>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -20,40 +19,32 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#include "service.h"
+#ifndef NEPOMUK_TELEPATHY_SERVICE_ABSTRACT_STORAGE_H
+#define NEPOMUK_TELEPATHY_SERVICE_ABSTRACT_STORAGE_H
 
-#include "controller.h"
-#include "nepomuk-storage.h"
+#include <QtCore/QObject>
+#include <QtCore/QString>
 
-#include <KDebug>
-#include <KPluginFactory>
-
-#include <Nepomuk/ResourceManager>
-
+#include <TelepathyQt4/Contact>
 #include <TelepathyQt4/Types>
 
-TelepathyService::TelepathyService(QObject *parent, const QVariantList &)
-    : Nepomuk::Service(parent, true)
+/**
+ * Abstract base class for all storage implementations. Primarily to ease
+ * unit testing, however, this could potentially be used to replace the Nepomuk
+ * storage layer with some other storage layer.
+ */
+class AbstractStorage : public QObject
 {
-    // Initialise Telepathy.
-    Tp::registerTypes();
+    Q_OBJECT
 
-    // Create an instance of the Telepathy Account Monitor.
-    m_controller = new Controller(new NepomukStorage(), this);
+public:
+    explicit AbstractStorage(QObject *parent = 0);
+    virtual ~AbstractStorage();
 
-    setServiceInitialized(true);
-
-    kDebug() << "We're off...";
-}
-
-TelepathyService::~TelepathyService()
-{
-    m_controller->shutdown();
-}
+private:
+    Q_DISABLE_COPY(AbstractStorage);
+};
 
 
-NEPOMUK_EXPORT_SERVICE( TelepathyService, "nepomuktelepathyservice" );
-
-
-#include "service.moc"
+#endif // Header guard
 

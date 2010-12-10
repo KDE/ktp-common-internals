@@ -22,13 +22,13 @@
 #include "controller.h"
 
 #include "account.h"
-#include "storage.h"
+#include "abstract-storage.h"
 
 #include <KDebug>
 
 #include <TelepathyQt4/PendingReady>
 
-Controller::Controller(Storage *storage, QObject *parent)
+Controller::Controller(AbstractStorage *storage, QObject *parent)
  : QObject(parent),
    m_storage(storage)
 {

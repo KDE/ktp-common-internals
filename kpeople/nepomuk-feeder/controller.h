@@ -31,7 +31,7 @@ namespace Tp {
     class PendingOperation;
 }
 
-class Storage;
+class AbstractStorage;
 
 /**
  * Acts as the controller part of a MVC based system (with Storage and the Account/Channel/Contact
@@ -45,7 +45,7 @@ class Controller : public QObject
     Q_OBJECT
 
 public:
-    explicit Controller(Storage *storage, QObject *parent = 0);
+    explicit Controller(AbstractStorage *storage, QObject *parent = 0);
     ~Controller();
 
     void shutdown();
@@ -57,7 +57,7 @@ private Q_SLOTS:
 private:
     Q_DISABLE_COPY(Controller);
 
-    Storage *m_storage;
+    AbstractStorage *m_storage;
 
     Tp::AccountManagerPtr m_accountManager;
 };

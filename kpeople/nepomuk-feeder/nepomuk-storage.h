@@ -19,8 +19,10 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef NEPOMUK_TELEPATHY_SERVICE_STORAGE_H
-#define NEPOMUK_TELEPATHY_SERVICE_STORAGE_H
+#ifndef NEPOMUK_TELEPATHY_SERVICE_NEPOMUK_STORAGE_H
+#define NEPOMUK_TELEPATHY_SERVICE_NEPOMUK_STORAGE_H
+
+#include "abstract-storage.h"
 
 #include "ontologies/imaccount.h"
 #include "ontologies/personcontact.h"
@@ -69,35 +71,35 @@ private:
 /**
  * All interaction with the Nepomuk database takes place in this class.
  */
-class Storage : public QObject
+class NepomukStorage : public AbstractStorage
 {
     Q_OBJECT
 
 public:
-    explicit Storage(QObject *parent = 0);
-    ~Storage();
+    explicit NepomukStorage(QObject *parent = 0);
+    virtual ~NepomukStorage();
 
 public Q_SLOTS:
-    void createAccount(const QString &path, const QString &id, const QString &protocol);
-    void destroyAccount(const QString &path);
-    void setAccountNickname(const QString &path, const QString &nickname);
-    void setAccountCurrentPresence(const QString &path, const Tp::SimplePresence &presence);
+    virtual void createAccount(const QString &path, const QString &id, const QString &protocol);
+    virtual void destroyAccount(const QString &path);
+    virtual void setAccountNickname(const QString &path, const QString &nickname);
+    virtual void setAccountCurrentPresence(const QString &path, const Tp::SimplePresence &presence);
 
-    void createContact(const QString &path, const QString &id);
-    void destroyContact(const QString &path, const QString &id);
-    void setContactAlias(const QString &path, const QString &id, const QString &alias);
-    void setContactPresence(const QString &path, const QString &id, const Tp::SimplePresence &presence);
-    void addContactToGroup(const QString &path, const QString &id, const QString &group);
-    void removeContactFromGroup(const QString &path, const QString &id, const QString &group);
-    void setContactBlockStatus(const QString &path, const QString &id, bool blocked);
-    void setContactPublishState(const QString &path, const QString &id, const Tp::Contact::PresenceState &state);
-    void setContactSubscriptionState(const QString &path, const QString &id, const Tp::Contact::PresenceState &state);
+    virtual void createContact(const QString &path, const QString &id);
+    virtual void destroyContact(const QString &path, const QString &id);
+    virtual void setContactAlias(const QString &path, const QString &id, const QString &alias);
+    virtual void setContactPresence(const QString &path, const QString &id, const Tp::SimplePresence &presence);
+    virtual void addContactToGroup(const QString &path, const QString &id, const QString &group);
+    virtual void removeContactFromGroup(const QString &path, const QString &id, const QString &group);
+    virtual void setContactBlockStatus(const QString &path, const QString &id, bool blocked);
+    virtual void setContactPublishState(const QString &path, const QString &id, const Tp::Contact::PresenceState &state);
+    virtual void setContactSubscriptionState(const QString &path, const QString &id, const Tp::Contact::PresenceState &state);
 
 private Q_SLOTS:
-    void onNepomukError(const QString &uri, int errorCode);
+    virtual void onNepomukError(const QString &uri, int errorCode);
 
 private:
-    Q_DISABLE_COPY(Storage);
+    Q_DISABLE_COPY(NepomukStorage);
 
     Nepomuk::ResourceManager *m_resourceManager;
     Nepomuk::PersonContact m_mePersonContact;

@@ -19,7 +19,7 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#include "storage.h"
+#include "nepomuk-storage.h"
 
 #include "ontologies/nco.h"
 #include "ontologies/pimo.h"
@@ -105,9 +105,11 @@ const Nepomuk::IMAccount &ContactResources::imAccount() const
 }
 
 
-Storage::Storage(QObject *parent)
-: QObject(parent)
+NepomukStorage::NepomukStorage(QObject *parent)
+: AbstractStorage(parent)
 {
+    kDebug();
+
     // Create an instance of the Nepomuk Resource Manager, and connect to it's error signal.
     m_resourceManager = Nepomuk::ResourceManager::instance();
 
@@ -148,17 +150,17 @@ Storage::Storage(QObject *parent)
     }
 }
 
-Storage::~Storage()
+NepomukStorage::~NepomukStorage()
 {
     // Don't delete the Nepomuk Resource manager. Nepomuk should take care of this itself.
 }
 
-void Storage::onNepomukError(const QString &uri, int errorCode)
+void NepomukStorage::onNepomukError(const QString &uri, int errorCode)
 {
     kWarning() << "A Nepomuk Error occurred:" << uri << errorCode;
 }
 
-void Storage::createAccount(const QString &path, const QString &id, const QString &protocol)
+void NepomukStorage::createAccount(const QString &path, const QString &id, const QString &protocol)
 {
     kDebug() << "Creating a new Account";
 
@@ -230,7 +232,7 @@ void Storage::createAccount(const QString &path, const QString &id, const QStrin
     m_accounts.insert(path, imAccount);
 }
 
-void Storage::destroyAccount(const QString &path)
+void NepomukStorage::destroyAccount(const QString &path)
 {
     // Check the account exists
     Q_ASSERT(m_accounts.contains(path));
@@ -247,7 +249,7 @@ void Storage::destroyAccount(const QString &path)
     account.setProperty(Nepomuk::Vocabulary::Telepathy::statusType(), Tp::ConnectionPresenceTypeUnknown);
 }
 
-void Storage::setAccountNickname(const QString &path, const QString &nickname)
+void NepomukStorage::setAccountNickname(const QString &path, const QString &nickname)
 {
     // Check the account exists
     Q_ASSERT(m_accounts.contains(path));
@@ -262,7 +264,7 @@ void Storage::setAccountNickname(const QString &path, const QString &nickname)
     account.setProperty(Nepomuk::Vocabulary::NCO::imNickname(), nickname);
 }
 
-void Storage::setAccountCurrentPresence(const QString &path, const Tp::SimplePresence &presence)
+void NepomukStorage::setAccountCurrentPresence(const QString &path, const Tp::SimplePresence &presence)
 {
     // Check the account exists
     Q_ASSERT(m_accounts.contains(path));
@@ -279,7 +281,7 @@ void Storage::setAccountCurrentPresence(const QString &path, const Tp::SimplePre
     account.setProperty(Nepomuk::Vocabulary::Telepathy::statusType(), presence.type);
 }
 
-void Storage::createContact(const QString &path, const QString &id)
+void NepomukStorage::createContact(const QString &path, const QString &id)
 {
     // First, check that we don't already have a record for this contact.
     ContactIdentifier identifier(path, id);
@@ -377,7 +379,7 @@ void Storage::createContact(const QString &path, const QString &id)
     m_contacts.insert(identifier, ContactResources(newPersonContact, newImAccount));
 }
 
-void Storage::destroyContact(const QString &path, const QString &id)
+void NepomukStorage::destroyContact(const QString &path, const QString &id)
 {
     ContactIdentifier identifier(path, id);
 
@@ -398,7 +400,7 @@ void Storage::destroyContact(const QString &path, const QString &id)
     imAccount.setProperty(Nepomuk::Vocabulary::Telepathy::statusType(), Tp::ConnectionPresenceTypeUnknown);
 }
 
-void Storage::setContactAlias(const QString &path, const QString &id, const QString &alias)
+void NepomukStorage::setContactAlias(const QString &path, const QString &id, const QString &alias)
 {
     ContactIdentifier identifier(path, id);
 
@@ -418,7 +420,7 @@ void Storage::setContactAlias(const QString &path, const QString &id, const QStr
     imAccount.setImNicknames(QStringList() << alias);
 }
 
-void Storage::setContactPresence(const QString &path,
+void NepomukStorage::setContactPresence(const QString &path,
                                  const QString &id,
                                  const Tp::SimplePresence &presence)
 {
@@ -442,17 +444,17 @@ void Storage::setContactPresence(const QString &path,
     imAccount.setImStatusMessages(QStringList() << presence.statusMessage);
 }
 
-void Storage::addContactToGroup(const QString &path, const QString &id, const QString &group)
+void NepomukStorage::addContactToGroup(const QString &path, const QString &id, const QString &group)
 {
     // TODO: Implement me!
 }
 
-void Storage::removeContactFromGroup(const QString &path, const QString &id, const QString &group)
+void NepomukStorage::removeContactFromGroup(const QString &path, const QString &id, const QString &group)
 {
     // TODO: Implement me!
 }
 
-void Storage::setContactBlockStatus(const QString &path, const QString &id, bool blocked)
+void NepomukStorage::setContactBlockStatus(const QString &path, const QString &id, bool blocked)
 {
     ContactIdentifier identifier(path, id);
 
@@ -472,7 +474,7 @@ void Storage::setContactBlockStatus(const QString &path, const QString &id, bool
     imAccount.setIsBlockeds(QList<bool>() << blocked);
 }
 
-void Storage::setContactPublishState(const QString &path,
+void NepomukStorage::setContactPublishState(const QString &path,
                                      const QString &id,
                                      const Tp::Contact::PresenceState &state)
 {
@@ -535,7 +537,7 @@ void Storage::setContactPublishState(const QString &path,
     }
 }
 
-void Storage::setContactSubscriptionState(const QString &path,
+void NepomukStorage::setContactSubscriptionState(const QString &path,
                                           const QString &id,
                                           const Tp::Contact::PresenceState &state)
 {
@@ -609,5 +611,5 @@ int qHash(ContactIdentifier c)
 }
 
 
-#include "storage.moc"
+#include "nepomuk-storage.moc"
 
