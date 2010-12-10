@@ -73,6 +73,19 @@ void Account::init()
 
 Account::~Account()
 {
+    kDebug();
+}
+
+void Account::shutdown()
+{
+    // Loop over all our children, and if they're Accounts, shut them down.
+    foreach (Contact *contact, m_contacts.values()) {
+        contact->shutdown();
+    }
+
+    kDebug();
+
+    // Emit a signal to say we were destroyed.
     emit accountDestroyed(m_account->objectPath());
 }
 

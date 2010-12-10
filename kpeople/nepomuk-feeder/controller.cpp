@@ -28,10 +28,13 @@
 
 #include <TelepathyQt4/PendingReady>
 
-Controller::Controller(QObject *parent)
+Controller::Controller(Storage *storage, QObject *parent)
  : QObject(parent),
-   m_storage(new Storage(this))
+   m_storage(storage)
 {
+    // Take ownership of the storage.
+    m_storage->setParent(this);
+
     // Set up the Factories.
     Tp::Features fAccountFactory;
     fAccountFactory << Tp::Account::FeatureCore
@@ -79,7 +82,7 @@ Controller::Controller(QObject *parent)
 
 Controller::~Controller()
 {
-
+    kDebug();
 }
 
 void Controller::onAccountManagerReady(Tp::PendingOperation *op)
@@ -142,6 +145,17 @@ void Controller::onNewAccount(const Tp::AccountPtr &account)
 
     // Now the signal connections are done, initialise the account.
     acc->init();
+}
+
+void Controller::shutdown()
+{
+    // Loop over all our children, and if they're Accounts, shut them down.
+    foreach (QObject *child, children()) {
+        Account *account = qobject_cast<Account*>(child);
+        if (account) {
+            account->shutdown();
+        }
+    }
 }
 
 

@@ -88,7 +88,10 @@ void Contact::init()
 Contact::~Contact()
 {
     kDebug();
+}
 
+void Contact::shutdown()
+{
     // Signal this contact is destroyed so it can be removed from the Hash.
     emit contactDestroyed(m_contact->id(), m_contact);
 }

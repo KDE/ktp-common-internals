@@ -23,6 +23,7 @@
 #include "service.h"
 
 #include "controller.h"
+#include "storage.h"
 
 #include <KDebug>
 #include <KPluginFactory>
@@ -38,7 +39,7 @@ TelepathyService::TelepathyService(QObject *parent, const QVariantList &)
     Tp::registerTypes();
 
     // Create an instance of the Telepathy Account Monitor.
-    new Controller(this);
+    m_controller = new Controller(new Storage(), this);
 
     setServiceInitialized(true);
 
@@ -47,6 +48,7 @@ TelepathyService::TelepathyService(QObject *parent, const QVariantList &)
 
 TelepathyService::~TelepathyService()
 {
+    m_controller->shutdown();
 }
 
 

@@ -25,6 +25,8 @@
 
 #include <QtCore/QVariantList>
 
+class Controller;
+
 class TelepathyService : public Nepomuk::Service
 {
     Q_OBJECT
@@ -32,6 +34,9 @@ class TelepathyService : public Nepomuk::Service
 public:
     TelepathyService(QObject* parent, const QVariantList&);
     ~TelepathyService();
+
+private:
+    Controller *m_controller;
 };
 
 

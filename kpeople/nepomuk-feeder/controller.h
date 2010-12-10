@@ -45,8 +45,10 @@ class Controller : public QObject
     Q_OBJECT
 
 public:
-    explicit Controller(QObject *parent = 0);
+    explicit Controller(Storage *storage, QObject *parent = 0);
     ~Controller();
+
+    void shutdown();
 
 private Q_SLOTS:
     void onAccountManagerReady(Tp::PendingOperation *op);

@@ -45,7 +45,9 @@ class Account : public QObject
 public:
     explicit Account(const Tp::AccountPtr &account, QObject *parent = 0);
     ~Account();
+
     void init();
+    void shutdown();
 
 Q_SIGNALS:
     void created(const QString &path, const QString &id, const QString &protocol);

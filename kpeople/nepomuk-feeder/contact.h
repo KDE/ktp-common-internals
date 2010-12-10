@@ -40,6 +40,7 @@ public:
     ~Contact();
 
     void init();
+    void shutdown();
 
 Q_SIGNALS:
     void created(const QString &id);
