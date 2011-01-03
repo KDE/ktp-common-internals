@@ -22,6 +22,16 @@ target_link_libraries(controller-test
 add_ktelepathy_dbus_test(ControllerTest ${CMAKE_CURRENT_BINARY_DIR}/controller-test)
 
 ################################
+# Storage test
+kde4_add_executable(storage-test storage-test.cpp)
+target_link_libraries(storage-test
+                      ${KTELEPATHYTESTLIB_LIBRARIES}
+                      ${QT_QTTEST_LIBRARY}
+                      nepomuktelepathyservice-static)
+add_ktelepathy_nepomuk_test(StorageTest ${CMAKE_CURRENT_BINARY_DIR}/storage-test)
+
+
+################################
 # Contact test
 #kde4_add_executable(contact-test contact-test.cpp)
 #target_link_libraries(contact-test tid-base-tests)
