@@ -41,7 +41,7 @@ target_link_libraries(storage-test
                       ${KTELEPATHYTESTLIB_LIBRARIES}
                       ${QT_QTTEST_LIBRARY}
                       nepomuktelepathyservice-static)
-#add_ktelepathy_nepomuk_test(StorageTest ${CMAKE_CURRENT_BINARY_DIR}/storage-test)
+add_ktelepathy_nepomuk_test(StorageTest ${CMAKE_CURRENT_BINARY_DIR}/storage-test)
 
 
 ################################

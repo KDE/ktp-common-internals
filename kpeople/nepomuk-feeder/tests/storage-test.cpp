@@ -181,9 +181,155 @@ void StorageTest::testCreateAccount()
     // Answer: for now, I don't think there's any point - but if an error in the query is found in
     // the future, then of course we should add a test for that error here to avoid it
     // regressing in the future (grundleborg).
+
+    // Cleanup the nepomuk resources created in this test case.
+    imAcc1.remove();
+    imAcc2.remove();
+    imAcc3.remove();
+    imAcc4.remove();
 }
 
+void StorageTest::testDestroyAccount()
+{
+    // Create the Storage.
+    m_storage = new NepomukStorage(this);
+    QVERIFY(m_storage);
 
+    QHash<QString, Nepomuk::IMAccount> *accounts = TestBackdoors::nepomukStorageAccounts(m_storage);
+
+    // Create an account on the storage.
+    m_storage->createAccount(QLatin1String("/foo/bar/baz"),
+                             QLatin1String("foo@bar.baz"),
+                             QLatin1String("test"));
+
+    // Check the Account is created
+    QCOMPARE(TestBackdoors::nepomukStorageAccounts(m_storage)->size(), 1);
+    QCOMPARE(TestBackdoors::nepomukStorageContacts(m_storage)->size(), 0);
+
+    // And in Nepomuk...
+    Nepomuk::IMAccount imAcc1 = accounts->value(QLatin1String("/foo/bar/baz"));
+    QVERIFY(imAcc1.exists());
+
+    // Now destroy the account.
+    m_storage->destroyAccount(QLatin1String("/foo/bar/baz"));
+
+    // The account remains in the list despite being destroyed.
+    QCOMPARE(TestBackdoors::nepomukStorageAccounts(m_storage)->size(), 1);
+    QCOMPARE(TestBackdoors::nepomukStorageContacts(m_storage)->size(), 0);
+
+    // And it should still exist in Nepomuk.
+    QVERIFY(imAcc1.exists());
+
+    // However, its presence changes.
+    QCOMPARE(imAcc1.imStatus(), QLatin1String("unknown"));
+    QCOMPARE(imAcc1.statusTypes().size(), 1);
+    QCOMPARE(imAcc1.statusTypes().first(), (long long)Tp::ConnectionPresenceTypeUnknown);
+
+    // Cleanup the nepomuk resources created in this test case.
+    imAcc1.remove();
+}
+
+void StorageTest::testSetAccountNickname()
+{
+    // Create the Storage.
+    m_storage = new NepomukStorage(this);
+    QVERIFY(m_storage);
+
+    QHash<QString, Nepomuk::IMAccount> *accounts = TestBackdoors::nepomukStorageAccounts(m_storage);
+
+    // Create an account on the storage.
+    m_storage->createAccount(QLatin1String("/foo/bar/baz"),
+                             QLatin1String("foo@bar.baz"),
+                             QLatin1String("test"));
+
+    // Check the Account is created
+    QCOMPARE(TestBackdoors::nepomukStorageAccounts(m_storage)->size(), 1);
+    QCOMPARE(TestBackdoors::nepomukStorageContacts(m_storage)->size(), 0);
+
+    // And in Nepomuk...
+    Nepomuk::IMAccount imAcc1 = accounts->value(QLatin1String("/foo/bar/baz"));
+    QVERIFY(imAcc1.exists());
+
+    // Check the nickname before we set it for the first time.
+    QCOMPARE(imAcc1.imNicknames().size(), 0);
+
+    // Set the nickname.
+    m_storage->setAccountNickname(QLatin1String("/foo/bar/baz"),
+                                  QLatin1String("Test Nickname"));
+
+    // Check Nepomuk resource contains the appropriate data.
+    QCOMPARE(imAcc1.imNicknames().size(), 1);
+    QCOMPARE(imAcc1.imNicknames().first(), QLatin1String("Test Nickname"));
+
+    // Change the Nickname.
+    m_storage->setAccountNickname(QLatin1String("/foo/bar/baz"),
+                                  QLatin1String("Test Nickname Changed"));
+
+    // Check the Nepomuk resource contains the appropriate data.
+    QCOMPARE(imAcc1.imNicknames().size(), 1);
+    QCOMPARE(imAcc1.imNicknames().first(), QLatin1String("Test Nickname Changed"));
+
+    // Cleanup the nepomuk resources created in this test case.
+    imAcc1.remove();
+}
+
+void StorageTest::testSetAccountCurrentPresence()
+{
+    // Create the Storage.
+    m_storage = new NepomukStorage(this);
+    QVERIFY(m_storage);
+
+    QHash<QString, Nepomuk::IMAccount> *accounts = TestBackdoors::nepomukStorageAccounts(m_storage);
+
+    // Create an account on the storage.
+    m_storage->createAccount(QLatin1String("/foo/bar/baz"),
+                             QLatin1String("foo@bar.baz"),
+                             QLatin1String("test"));
+
+    // Check the Account is created
+    QCOMPARE(TestBackdoors::nepomukStorageAccounts(m_storage)->size(), 1);
+    QCOMPARE(TestBackdoors::nepomukStorageContacts(m_storage)->size(), 0);
+
+    // And in Nepomuk...
+    Nepomuk::IMAccount imAcc1 = accounts->value(QLatin1String("/foo/bar/baz"));
+    QVERIFY(imAcc1.exists());
+
+    // Check the presence properties before we set them.
+    QVERIFY(imAcc1.imStatus().isEmpty());
+    QCOMPARE(imAcc1.imStatusMessages().size(), 0);
+    QCOMPARE(imAcc1.statusTypes().size(), 0);
+
+    // Set the presence.
+    Tp::SimplePresence p1;
+    p1.status = "away";
+    p1.statusMessage = "Hello";
+    p1.type = 4;
+    m_storage->setAccountCurrentPresence(QLatin1String("/foo/bar/baz"), p1);
+
+    // Check the nepomuk resources are correct.
+    QCOMPARE(imAcc1.imStatus(), QLatin1String("away"));
+    QCOMPARE(imAcc1.imStatusMessages().size(), 1);
+    QCOMPARE(imAcc1.imStatusMessages().first(), QLatin1String("Hello"));
+    QCOMPARE(imAcc1.statusTypes().size(), 1);
+    QCOMPARE(imAcc1.statusTypes().first(), (long long)4);
+
+    // Set the presence.
+    Tp::SimplePresence p2;
+    p2.status = "available";
+    p2.statusMessage = "Bye";
+    p2.type = 1;
+    m_storage->setAccountCurrentPresence(QLatin1String("/foo/bar/baz"), p2);
+
+    // Check the nepomuk resources are correct.
+    QCOMPARE(imAcc1.imStatus(), QLatin1String("available"));
+    QCOMPARE(imAcc1.imStatusMessages().size(), 1);
+    QCOMPARE(imAcc1.imStatusMessages().first(), QLatin1String("Bye"));
+    QCOMPARE(imAcc1.statusTypes().size(), 1);
+    QCOMPARE(imAcc1.statusTypes().first(), (long long)1);
+
+    // Cleanup the Nepomuk Resources used in this test
+    imAcc1.remove();
+}
 
 void StorageTest::cleanupTestCase()
 {
