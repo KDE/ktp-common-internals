@@ -101,6 +101,8 @@ private Q_SLOTS:
 private:
     Q_DISABLE_COPY(NepomukStorage);
 
+    friend class TestBackdoors;
+
     Nepomuk::ResourceManager *m_resourceManager;
     Nepomuk::PersonContact m_mePersonContact;
 
