@@ -89,7 +89,8 @@ void OnNewAccountFakeStorage::destroyAccount(const QString &path)
 
 
 ControllerTest::ControllerTest(QObject *parent)
-  : Test(parent)
+  : Test(parent),
+    m_controller(0)
 {
     kDebug();
 }
@@ -218,6 +219,7 @@ void ControllerTest::cleanupTestCase()
     // Clear re-used member variables.
     if (m_controller) {
         m_controller->deleteLater();
+        m_controller = 0;
     }
 
     m_accountManager.reset();
