@@ -40,6 +40,7 @@ private Q_SLOTS:
     void initTestCase();
 
     void testConstructorDestructor();
+    void testCreateAccount();
 
     void cleanupTestCase();
 

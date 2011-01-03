@@ -27,8 +27,8 @@
 class KDE_EXPORT TestBackdoors {
 public:
     static Nepomuk::PersonContact nepomukStorageMePersonContact(NepomukStorage *storage);
-    static QHash<QString, Nepomuk::IMAccount>& nepomukStorageAccounts(NepomukStorage *storage);
-    static QHash<ContactIdentifier, ContactResources>& nepomukStorageContacts(NepomukStorage *storage);
+    static QHash<QString, Nepomuk::IMAccount> *nepomukStorageAccounts(NepomukStorage *storage);
+    static QHash<ContactIdentifier, ContactResources> *nepomukStorageContacts(NepomukStorage *storage);
 };
 
 
