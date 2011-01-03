@@ -49,11 +49,15 @@ public Q_SLOTS:
     void constructorDestructorOnAccountDestroyedStorage();
     void constructorDestructorOnControllerDestroyed();
 
+    void onNewAccountOnAccountManagerReady(Tp::PendingOperation *op);
+    void onNewAccountOnAccountCreated(Tp::PendingOperation *op);
+    void onNewAccountOnAccountCreatedStorage();
+
 private Q_SLOTS:
     void initTestCase();
 
     void testConstructorDestructor();
-  //  void testOnNewAccount();
+    void testOnNewAccount();
   //  void testSignalRelays();
 
     void cleanupTestCase();
@@ -67,16 +71,32 @@ private:
 };
 
 /**
- * Fake subclass of the Storage class that we pass the controller in this unit
+ * Fake subclasses of the Storage class that we pass the controller in this unit
  * test to be able to see what slots the controller is calling on it.
  */
-class FakeStorage : public AbstractStorage
+class ConstructorDestructorFakeStorage : public AbstractStorage
 {
     Q_OBJECT
 
 public:
-    FakeStorage(ControllerTest *test);
-    virtual ~FakeStorage();
+    ConstructorDestructorFakeStorage(ControllerTest *test);
+    virtual ~ConstructorDestructorFakeStorage();
+
+public Q_SLOTS:
+    virtual void createAccount(const QString &path, const QString &id, const QString &protocol);
+    virtual void destroyAccount(const QString &path);
+
+private:
+    ControllerTest *m_test;
+};
+
+class OnNewAccountFakeStorage : public AbstractStorage
+{
+    Q_OBJECT
+
+public:
+    OnNewAccountFakeStorage(ControllerTest *test);
+    virtual ~OnNewAccountFakeStorage();
 
 public Q_SLOTS:
     virtual void createAccount(const QString &path, const QString &id, const QString &protocol);

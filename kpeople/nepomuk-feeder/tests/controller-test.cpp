@@ -32,18 +32,20 @@
 #include <TelepathyQt4/PendingReady>
 
 
-FakeStorage::FakeStorage(ControllerTest *test)
+ConstructorDestructorFakeStorage::ConstructorDestructorFakeStorage(ControllerTest *test)
   : m_test(test)
 {
     kDebug();
 }
 
-FakeStorage::~FakeStorage()
+ConstructorDestructorFakeStorage::~ConstructorDestructorFakeStorage()
 {
     kDebug();
 }
 
-void FakeStorage::createAccount(const QString &path, const QString &id, const QString &protocol)
+void ConstructorDestructorFakeStorage::createAccount(const QString &path,
+                                                     const QString &id,
+                                                     const QString &protocol)
 {
     Q_UNUSED(path);
     Q_UNUSED(id);
@@ -51,11 +53,38 @@ void FakeStorage::createAccount(const QString &path, const QString &id, const QS
     m_test->constructorDestructorOnAccountCreatedStorage();
 }
 
-void FakeStorage::destroyAccount(const QString &path)
+void ConstructorDestructorFakeStorage::destroyAccount(const QString &path)
 {
     Q_UNUSED(path);
     kDebug();
     m_test->constructorDestructorOnAccountDestroyedStorage();
+}
+
+OnNewAccountFakeStorage::OnNewAccountFakeStorage(ControllerTest *test)
+: m_test(test)
+{
+    kDebug();
+}
+
+OnNewAccountFakeStorage::~OnNewAccountFakeStorage()
+{
+    kDebug();
+}
+
+void OnNewAccountFakeStorage::createAccount(const QString &path,
+                                            const QString &id,
+                                            const QString &protocol)
+{
+    Q_UNUSED(path);
+    Q_UNUSED(id);
+    Q_UNUSED(protocol);
+    m_test->onNewAccountOnAccountCreatedStorage();
+}
+
+void OnNewAccountFakeStorage::destroyAccount(const QString &path)
+{
+    Q_UNUSED(path);
+    kDebug();
 }
 
 
@@ -87,7 +116,7 @@ void ControllerTest::testConstructorDestructor()
     QCOMPARE(mLoop->exec(), 1);
 
     // Now that we have an AM with an Account, we can instantiate the Storage and the Controller
-    m_controller = new Controller(new FakeStorage(this));
+    m_controller = new Controller(new ConstructorDestructorFakeStorage(this));
 
     QCOMPARE(mLoop->exec(), 2);
 
@@ -135,9 +164,63 @@ void ControllerTest::constructorDestructorOnControllerDestroyed()
     mLoop->exit(3);
 }
 
+void ControllerTest::testOnNewAccount()
+{
+    // Get an AM and get it ready.
+    m_accountManager = Tp::AccountManager::create();
+
+    connect(m_accountManager->becomeReady(Tp::Features() << Tp::AccountManager::FeatureCore),
+            SIGNAL(finished(Tp::PendingOperation*)),
+            SLOT(onNewAccountOnAccountManagerReady(Tp::PendingOperation*)));
+
+    QCOMPARE(mLoop->exec(), 1);
+
+    // Set up the Controller and Fake Storage
+    m_controller = new Controller(new OnNewAccountFakeStorage(this));
+
+    QVERIFY(m_controller);
+
+    // Add a new Account to the AM.
+    connect(m_accountManager->createAccount("test", "test", "test", QVariantMap()),
+            SIGNAL(finished(Tp::PendingOperation*)),
+            SLOT(onNewAccountOnAccountCreated(Tp::PendingOperation*)));
+
+    QCOMPARE(mLoop->exec(), 2);
+}
+
+void ControllerTest::onNewAccountOnAccountManagerReady(Tp::PendingOperation *op)
+{
+    QVERIFY(!op->isError());
+
+    mLoop->exit(1);
+}
+
+void ControllerTest::onNewAccountOnAccountCreated(Tp::PendingOperation *op)
+{
+    // Check that this actually succeeded.
+    QVERIFY(!op->isError());
+
+    // If it failed, exit the event loop.
+    if (op->isError()) {
+        mLoop->exit(0);
+    }
+}
+
+void ControllerTest::onNewAccountOnAccountCreatedStorage()
+{
+    mLoop->exit(2);
+}
+
 void ControllerTest::cleanupTestCase()
 {
     cleanupTestCaseImpl();
+
+    // Clear re-used member variables.
+    if (m_controller) {
+        m_controller->deleteLater();
+    }
+
+    m_accountManager.reset();
 }
 
 
