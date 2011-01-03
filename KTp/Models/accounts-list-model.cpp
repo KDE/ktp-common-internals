@@ -32,8 +32,7 @@ AccountsListModel::AccountsListModel(QObject *parent)
 {
     kDebug();
 
-    m_unreadyAccounts.clear();
-    m_readyAccounts.clear();
+    m_accounts.clear();
 }
 
 AccountsListModel::~AccountsListModel()
@@ -47,7 +46,7 @@ int AccountsListModel::rowCount(const QModelIndex &index) const
 {
     // If the index is the root item, then return the row count.
     if (index == QModelIndex()) {
-       return m_readyAccounts.size();
+       return m_accounts.size();
     }
 
     // Otherwise, return 0 (as this is a list model, so all items
@@ -58,7 +57,7 @@ int AccountsListModel::rowCount(const QModelIndex &index) const
 QVariant AccountsListModel::data(const QModelIndex &index, int role) const
 {
     QVariant data;
-    Tp::AccountPtr account = m_readyAccounts.at(index.row())->account();
+    Tp::AccountPtr account = m_accounts.at(index.row())->account();
 
     switch(role)
     {
@@ -67,7 +66,7 @@ QVariant AccountsListModel::data(const QModelIndex &index, int role) const
         break;
 
     case Qt::DecorationRole:
-        data = QVariant(m_readyAccounts.at(index.row())->icon());
+        data = QVariant(m_accounts.at(index.row())->icon());
         break;
 
     case Qt::CheckStateRole:
@@ -90,7 +89,7 @@ bool AccountsListModel::setData(const QModelIndex &index, const QVariant &value,
 {
     kDebug();
     if(role == Qt::CheckStateRole) {
-        m_readyAccounts.at(index.row())->account()->setEnabled(value.toInt() == Qt::Checked);
+        m_accounts.at(index.row())->account()->setEnabled(value.toInt() == Qt::Checked);
         return true;
     }
     return false;
@@ -103,20 +102,14 @@ Qt::ItemFlags AccountsListModel::flags(const QModelIndex &index) const
 
 void AccountsListModel::addAccount(const Tp::AccountPtr &account)
 {
+    qDebug() << "here 5";
     kDebug() << "Creating a new AccountItem from account:" << account.data();
 
     // Check if the account is already in the model.
     bool found = false;
 
-    foreach (const AccountItem* ai, m_unreadyAccounts) {
-        if (ai->account() == account) {
-            found = true;
-            break;
-        }
-    }
-
     if (!found) {
-        foreach (const AccountItem* ai, m_readyAccounts) {
+        foreach (const AccountItem* ai, m_accounts) {
             if (ai->account() == account) {
                 found = true;
                 break;
@@ -133,8 +126,11 @@ void AccountsListModel::addAccount(const Tp::AccountPtr &account)
                 << account.data();
 
        AccountItem *item = new AccountItem(account, this);
-       m_unreadyAccounts.append(item);
-       connect(item, SIGNAL(ready()), SLOT(onAccountItemReady()));
+
+       beginInsertRows(QModelIndex(), m_accounts.size(), m_accounts.size());
+       m_accounts.append(item);
+       endInsertRows();
+
        connect(item, SIGNAL(removed()), SLOT(onAccountItemRemoved()));
        connect(item, SIGNAL(updated()), SLOT(onAccountItemUpdated()));
    }
@@ -148,7 +144,7 @@ void AccountsListModel::removeAccount(const QModelIndex &index)
         kDebug() << "Can't remove Account: Invalid index";
         return;
     }
-    AccountItem *accountItem = m_readyAccounts.at(index.row());
+    AccountItem *accountItem = m_accounts.at(index.row());
 
     Q_ASSERT(accountItem);
 
@@ -164,39 +160,10 @@ AccountItem* AccountsListModel::itemForIndex(const QModelIndex &index)
         return 0;
     }
 
-    AccountItem *accountItem = m_readyAccounts.at(index.row());
+    AccountItem *accountItem = m_accounts.at(index.row());
     return accountItem;
 }
 
-void AccountsListModel::onAccountItemReady()
-{
-    kDebug();
-
-    AccountItem *item = qobject_cast<AccountItem*>(sender());
-
-    Q_ASSERT(item);
-    if (!item) {
-        kWarning() << "Not an AccountItem pointer:" << sender();
-        return;
-    }
-
-    Q_ASSERT(m_unreadyAccounts.contains(item));
-    if (!m_unreadyAccounts.contains(item)) {
-        kWarning() << "Unready Accounts list does not contain Account Item:" << item;
-        return;
-    }
-
-    Q_ASSERT(!m_readyAccounts.contains(item));
-    if (m_readyAccounts.contains(item)) {
-        kWarning() << "Ready Accounts list already contains Account Item:" << item;
-        return;
-    }
-
-    beginInsertRows(QModelIndex(), m_readyAccounts.size(), m_readyAccounts.size());
-    m_readyAccounts.append(item);
-    m_unreadyAccounts.removeAll(item);
-    endInsertRows();
-}
 
 void AccountsListModel::onAccountItemRemoved()
 {
@@ -210,20 +177,14 @@ void AccountsListModel::onAccountItemRemoved()
         return;
     }
 
-    beginRemoveRows(QModelIndex(), m_readyAccounts.lastIndexOf(item),
-                    m_readyAccounts.lastIndexOf(item));
-    m_readyAccounts.removeAll(item);
-    m_unreadyAccounts.removeAll(item);
+    beginRemoveRows(QModelIndex(), m_accounts.lastIndexOf(item),
+                    m_accounts.lastIndexOf(item));
+    m_accounts.removeAll(item);
     endRemoveRows();
 
-    Q_ASSERT(!m_readyAccounts.contains(item));
-    if (m_readyAccounts.contains(item)) {
+    Q_ASSERT(!m_accounts.contains(item));
+    if (m_accounts.contains(item)) {
         kWarning() << "Ready Accounts still contains Accout Item:" << item;
-    }
-
-    Q_ASSERT(!m_unreadyAccounts.contains(item));
-    if (m_unreadyAccounts.contains(item)) {
-        kWarning() << "Unready Accounts still contains Account Item:" << item;
     }
 }
 
@@ -239,7 +200,7 @@ void AccountsListModel::onAccountItemUpdated()
         return;
     }
 
-    QModelIndex index = createIndex(m_readyAccounts.lastIndexOf(item), 0);
+    QModelIndex index = createIndex(m_accounts.lastIndexOf(item), 0);
     emit dataChanged(index, index);
 }
 

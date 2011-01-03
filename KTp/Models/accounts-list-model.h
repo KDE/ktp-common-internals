@@ -51,13 +51,11 @@ public Q_SLOTS:
 	void onTitleForCustomPages(QString, QList<QString>);
 
 private Q_SLOTS:
-    void onAccountItemReady();
     void onAccountItemRemoved();
     void onAccountItemUpdated();
 
 private:
-    QList<AccountItem*> m_unreadyAccounts;
-    QList<AccountItem*> m_readyAccounts;
+    QList<AccountItem*> m_accounts;
 };
 
 
