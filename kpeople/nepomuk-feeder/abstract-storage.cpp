@@ -33,5 +33,5 @@ AbstractStorage::~AbstractStorage()
 }
 
 
-#include "abstract-storage.h"
+#include "abstract-storage.moc"
 
