@@ -41,6 +41,16 @@ private Q_SLOTS:
 
     void testConstructorDestructor();
     void testCreateAccount();
+//    void testDestroyAccount();
+//    void testSetAccountNickname();
+//    void testSetAccountCurrentPresence();
+//    void testCreateContact();
+//    void testDestroyContact();
+//    void testSetContactAlias();
+//    void testSetContactPresence();
+//    void testSetContactBlockedStatus();
+//    void testSetContactPublishState();
+//    void testSetContactSubscriptionState();
 
     void cleanupTestCase();
 
