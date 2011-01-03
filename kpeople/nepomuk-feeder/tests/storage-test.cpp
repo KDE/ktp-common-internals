@@ -337,7 +337,9 @@ void StorageTest::cleanupTestCase()
 
     // Clear re-used member variables.
     if (m_storage) {
+        connect(m_storage, SIGNAL(destroyed()), mLoop, SLOT(quit()));
         m_storage->deleteLater();
+        mLoop->exec();
         m_storage = 0;
     }
 }

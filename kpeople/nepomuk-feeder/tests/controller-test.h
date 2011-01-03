@@ -100,7 +100,6 @@ public:
 
 public Q_SLOTS:
     virtual void createAccount(const QString &path, const QString &id, const QString &protocol);
-    virtual void destroyAccount(const QString &path);
 
 private:
     ControllerTest *m_test;
