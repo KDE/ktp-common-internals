@@ -99,6 +99,11 @@ void ControllerTest::initTestCase()
     initTestCaseImpl();
 }
 
+void ControllerTest::init()
+{
+    initImpl();
+}
+
 void ControllerTest::testConstructorDestructor()
 {
     // First step of this test is to create an account on the AM already.
@@ -118,9 +123,11 @@ void ControllerTest::testConstructorDestructor()
     // Next test is to destroy the controller, and check the account is destroyed too.
     constructorDestructorAccountDestroyed = false;
     m_controller->shutdown();
-    m_controller->deleteLater();
 
     connect(m_controller, SIGNAL(destroyed()), SLOT(constructorDestructorOnControllerDestroyed()));
+    m_controller->deleteLater();
+    m_controller = 0;
+
     QCOMPARE(mLoop->exec(), 3);
     QVERIFY(constructorDestructorAccountDestroyed);
 }
@@ -206,9 +213,9 @@ void ControllerTest::onNewAccountOnAccountCreatedStorage()
     mLoop->exit(2);
 }
 
-void ControllerTest::cleanupTestCase()
+void ControllerTest::cleanup()
 {
-    cleanupTestCaseImpl();
+    cleanupImpl();
 
     // Clear re-used member variables.
     if (m_controller) {
@@ -219,6 +226,11 @@ void ControllerTest::cleanupTestCase()
     }
 
     m_accountManager.reset();
+}
+
+void ControllerTest::cleanupTestCase()
+{
+    cleanupTestCaseImpl();
 }
 
 

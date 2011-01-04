@@ -55,11 +55,13 @@ public Q_SLOTS:
 
 private Q_SLOTS:
     void initTestCase();
+    void init();
 
     void testConstructorDestructor();
     void testOnNewAccount();
   //  void testSignalRelays();
 
+    void cleanup();
     void cleanupTestCase();
 
 private:

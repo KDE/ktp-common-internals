@@ -38,6 +38,7 @@ public Q_SLOTS:
 
 private Q_SLOTS:
     void initTestCase();
+    void init();
 
     void testConstructorDestructor();
     void testCreateAccount();
@@ -52,6 +53,7 @@ private Q_SLOTS:
     void testSetContactPublishState();
     void testSetContactSubscriptionState();
 
+    void cleanup();
     void cleanupTestCase();
 
 private:

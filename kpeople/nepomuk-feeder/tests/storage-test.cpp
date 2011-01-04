@@ -44,6 +44,11 @@ void StorageTest::initTestCase()
     initTestCaseImpl();
 }
 
+void StorageTest::init()
+{
+    initImpl();
+}
+
 void StorageTest::testConstructorDestructor()
 {
     // First test constructing the NepomukStorage on a Nepomuk database with no relevant
@@ -955,9 +960,9 @@ void StorageTest::testSetContactSubscriptionState()
     pC2.remove();
 }
 
-void StorageTest::cleanupTestCase()
+void StorageTest::cleanup()
 {
-    cleanupTestCaseImpl();
+    cleanupImpl();
 
     // Clear re-used member variables.
     if (m_storage) {
@@ -966,6 +971,11 @@ void StorageTest::cleanupTestCase()
         mLoop->exec();
         m_storage = 0;
     }
+}
+
+void StorageTest::cleanupTestCase()
+{
+    cleanupTestCaseImpl();
 }
 
 
