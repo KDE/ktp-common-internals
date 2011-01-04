@@ -441,7 +441,13 @@ void NepomukStorage::setContactPresence(const QString &path,
     // Set the contact presence.
     imAccount.setImStatus(presence.status);
     imAccount.setStatusTypes(QList<long long int>() << presence.type);
-    imAccount.setImStatusMessages(QStringList() << presence.statusMessage);
+
+    QStringList statusMessage;
+    if (!presence.statusMessage.isEmpty()) {
+        statusMessage.append(presence.statusMessage);
+    }
+
+    imAccount.setImStatusMessages(statusMessage);
 }
 
 void NepomukStorage::addContactToGroup(const QString &path, const QString &id, const QString &group)
