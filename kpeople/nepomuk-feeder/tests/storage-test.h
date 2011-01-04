@@ -48,9 +48,9 @@ private Q_SLOTS:
     void testDestroyContact();
     void testSetContactAlias();
     void testSetContactPresence();
-//    void testSetContactBlockedStatus();
-//    void testSetContactPublishState();
-//    void testSetContactSubscriptionState();
+    void testSetContactBlockedStatus();
+    void testSetContactPublishState();
+    void testSetContactSubscriptionState();
 
     void cleanupTestCase();
 

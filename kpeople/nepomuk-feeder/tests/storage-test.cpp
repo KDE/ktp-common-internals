@@ -724,6 +724,237 @@ void StorageTest::testSetContactPresence()
     pC2.remove();
 }
 
+void StorageTest::testSetContactBlockedStatus()
+{
+    // Create the Storage.
+    m_storage = new NepomukStorage(this);
+    QVERIFY(m_storage);
+
+    QHash<QString, Nepomuk::IMAccount> *accounts = TestBackdoors::nepomukStorageAccounts(m_storage);
+    QHash<ContactIdentifier, ContactResources> *contacts = TestBackdoors::nepomukStorageContacts(m_storage);
+
+    // Create an account on the storage.
+    m_storage->createAccount(QLatin1String("/foo/bar/baz"),
+                             QLatin1String("foo@bar.baz"),
+                             QLatin1String("test"));
+
+    // Check the Account is created
+    QCOMPARE(TestBackdoors::nepomukStorageAccounts(m_storage)->size(), 1);
+    QCOMPARE(TestBackdoors::nepomukStorageContacts(m_storage)->size(), 0);
+
+    // And in Nepomuk...
+    Nepomuk::IMAccount imAcc1 = accounts->value(QLatin1String("/foo/bar/baz"));
+    QVERIFY(imAcc1.exists());
+    QCOMPARE(imAcc1.isAccessedByOf().size(), 0);
+
+    // Create a contact
+    m_storage->createContact(QLatin1String("/foo/bar/baz"),
+                             QLatin1String("test@remote-contact.com"));
+
+    // Check the Contact is created.
+    QCOMPARE(TestBackdoors::nepomukStorageAccounts(m_storage)->size(), 1);
+    QCOMPARE(TestBackdoors::nepomukStorageContacts(m_storage)->size(), 1);
+
+    // Check its identifier is correct.
+    ContactIdentifier cId2(QLatin1String("/foo/bar/baz"), QLatin1String("test@remote-contact.com"));
+    QVERIFY(contacts->contains(cId2));
+
+    // Check the Nepomuk resources are created correctly.
+    ContactResources cRes2 = contacts->value(cId2);
+    Nepomuk::IMAccount imAcc2 = cRes2.imAccount();
+    Nepomuk::PersonContact pC2 = cRes2.personContact();
+    QVERIFY(imAcc2.exists());
+    QVERIFY(pC2.exists());
+
+    // Check the default blocked status.
+    QCOMPARE(imAcc2.isBlockeds().size(), 0);
+
+    // Block the account.
+    m_storage->setContactBlockStatus(QLatin1String("/foo/bar/baz"),
+                                     QLatin1String("test@remote-contact.com"),
+                                     true);
+
+    // Check the Nepomuk resources
+    QCOMPARE(imAcc2.isBlockeds().size(), 1);
+    QCOMPARE(imAcc2.isBlockeds().first(), true);
+
+    // Unblock it
+    m_storage->setContactBlockStatus(QLatin1String("/foo/bar/baz"),
+                                     QLatin1String("test@remote-contact.com"),
+                                     false);
+
+    // Check the Nepomuk resources
+    QCOMPARE(imAcc2.isBlockeds().size(), 1);
+    QCOMPARE(imAcc2.isBlockeds().first(), false);
+
+    // Cleanup Nepomuk resources used in this test.
+    imAcc1.remove();
+    imAcc2.remove();
+    pC2.remove();
+}
+
+void StorageTest::testSetContactPublishState()
+{
+    // Create the Storage.
+    m_storage = new NepomukStorage(this);
+    QVERIFY(m_storage);
+
+    QHash<QString, Nepomuk::IMAccount> *accounts = TestBackdoors::nepomukStorageAccounts(m_storage);
+    QHash<ContactIdentifier, ContactResources> *contacts = TestBackdoors::nepomukStorageContacts(m_storage);
+
+    // Create an account on the storage.
+    m_storage->createAccount(QLatin1String("/foo/bar/baz"),
+                             QLatin1String("foo@bar.baz"),
+                             QLatin1String("test"));
+
+    // Check the Account is created
+    QCOMPARE(TestBackdoors::nepomukStorageAccounts(m_storage)->size(), 1);
+    QCOMPARE(TestBackdoors::nepomukStorageContacts(m_storage)->size(), 0);
+
+    // And in Nepomuk...
+    Nepomuk::IMAccount imAcc1 = accounts->value(QLatin1String("/foo/bar/baz"));
+    QVERIFY(imAcc1.exists());
+    QCOMPARE(imAcc1.isAccessedByOf().size(), 0);
+
+    // Create a contact
+    m_storage->createContact(QLatin1String("/foo/bar/baz"),
+                             QLatin1String("test@remote-contact.com"));
+
+    // Check the Contact is created.
+    QCOMPARE(TestBackdoors::nepomukStorageAccounts(m_storage)->size(), 1);
+    QCOMPARE(TestBackdoors::nepomukStorageContacts(m_storage)->size(), 1);
+
+    // Check its identifier is correct.
+    ContactIdentifier cId2(QLatin1String("/foo/bar/baz"), QLatin1String("test@remote-contact.com"));
+    QVERIFY(contacts->contains(cId2));
+
+    // Check the Nepomuk resources are created correctly.
+    ContactResources cRes2 = contacts->value(cId2);
+    Nepomuk::IMAccount imAcc2 = cRes2.imAccount();
+    Nepomuk::PersonContact pC2 = cRes2.personContact();
+    QVERIFY(imAcc2.exists());
+    QVERIFY(pC2.exists());
+
+    // Check the default publish state
+    QCOMPARE(imAcc2.publishesPresenceTos().size(), 0);
+    QCOMPARE(imAcc1.requestedPresenceSubscriptionTos().size(), 0);
+
+    // Set the publish state to Yes
+    m_storage->setContactPublishState(QLatin1String("/foo/bar/baz"),
+                                      QLatin1String("test@remote-contact.com"),
+                                      Tp::Contact::PresenceStateYes);
+
+    // Check
+    QCOMPARE(imAcc2.publishesPresenceTos().size(), 1);
+    QCOMPARE(imAcc2.publishesPresenceTos().first(), imAcc1);
+    QCOMPARE(imAcc1.requestedPresenceSubscriptionTos().size(), 0);
+
+    // Set the publish state to Request
+    m_storage->setContactPublishState(QLatin1String("/foo/bar/baz"),
+                                      QLatin1String("test@remote-contact.com"),
+                                      Tp::Contact::PresenceStateAsk);
+
+    // Check
+    QCOMPARE(imAcc2.publishesPresenceTos().size(), 0);
+    QCOMPARE(imAcc1.requestedPresenceSubscriptionTos().size(), 1);
+    QCOMPARE(imAcc1.requestedPresenceSubscriptionTos().first(), imAcc2);
+
+    // Set the publish state to no
+    m_storage->setContactPublishState(QLatin1String("/foo/bar/baz"),
+                                      QLatin1String("test@remote-contact.com"),
+                                      Tp::Contact::PresenceStateNo);
+
+    // Check
+    QCOMPARE(imAcc2.publishesPresenceTos().size(), 0);
+    QCOMPARE(imAcc1.requestedPresenceSubscriptionTos().size(), 0);
+
+    // Cleanup Nepomuk resources used in this test.
+    imAcc1.remove();
+    imAcc2.remove();
+    pC2.remove();
+}
+
+void StorageTest::testSetContactSubscriptionState()
+{
+    // Create the Storage.
+    m_storage = new NepomukStorage(this);
+    QVERIFY(m_storage);
+
+    QHash<QString, Nepomuk::IMAccount> *accounts = TestBackdoors::nepomukStorageAccounts(m_storage);
+    QHash<ContactIdentifier, ContactResources> *contacts = TestBackdoors::nepomukStorageContacts(m_storage);
+
+    // Create an account on the storage.
+    m_storage->createAccount(QLatin1String("/foo/bar/baz"),
+                             QLatin1String("foo@bar.baz"),
+                             QLatin1String("test"));
+
+    // Check the Account is created
+    QCOMPARE(TestBackdoors::nepomukStorageAccounts(m_storage)->size(), 1);
+    QCOMPARE(TestBackdoors::nepomukStorageContacts(m_storage)->size(), 0);
+
+    // And in Nepomuk...
+    Nepomuk::IMAccount imAcc1 = accounts->value(QLatin1String("/foo/bar/baz"));
+    QVERIFY(imAcc1.exists());
+    QCOMPARE(imAcc1.isAccessedByOf().size(), 0);
+
+    // Create a contact
+    m_storage->createContact(QLatin1String("/foo/bar/baz"),
+                             QLatin1String("test@remote-contact.com"));
+
+    // Check the Contact is created.
+    QCOMPARE(TestBackdoors::nepomukStorageAccounts(m_storage)->size(), 1);
+    QCOMPARE(TestBackdoors::nepomukStorageContacts(m_storage)->size(), 1);
+
+    // Check its identifier is correct.
+    ContactIdentifier cId2(QLatin1String("/foo/bar/baz"), QLatin1String("test@remote-contact.com"));
+    QVERIFY(contacts->contains(cId2));
+
+    // Check the Nepomuk resources are created correctly.
+    ContactResources cRes2 = contacts->value(cId2);
+    Nepomuk::IMAccount imAcc2 = cRes2.imAccount();
+    Nepomuk::PersonContact pC2 = cRes2.personContact();
+    QVERIFY(imAcc2.exists());
+    QVERIFY(pC2.exists());
+
+    // Check the default subscription state
+    QCOMPARE(imAcc1.publishesPresenceTos().size(), 0);
+    QCOMPARE(imAcc2.requestedPresenceSubscriptionTos().size(), 0);
+
+    // Set the subscribe state to Yes
+    m_storage->setContactSubscriptionState(QLatin1String("/foo/bar/baz"),
+                                           QLatin1String("test@remote-contact.com"),
+                                           Tp::Contact::PresenceStateYes);
+
+    // Check
+    QCOMPARE(imAcc1.publishesPresenceTos().size(), 1);
+    QCOMPARE(imAcc1.publishesPresenceTos().first(), imAcc2);
+    QCOMPARE(imAcc2.requestedPresenceSubscriptionTos().size(), 0);
+
+    // Set the subscribe state to Request
+    m_storage->setContactSubscriptionState(QLatin1String("/foo/bar/baz"),
+                                           QLatin1String("test@remote-contact.com"),
+                                           Tp::Contact::PresenceStateAsk);
+
+    // Check
+    QCOMPARE(imAcc1.publishesPresenceTos().size(), 0);
+    QCOMPARE(imAcc2.requestedPresenceSubscriptionTos().size(), 1);
+    QCOMPARE(imAcc2.requestedPresenceSubscriptionTos().first(), imAcc1);
+
+    // Set the subscribe state to no
+    m_storage->setContactSubscriptionState(QLatin1String("/foo/bar/baz"),
+                                           QLatin1String("test@remote-contact.com"),
+                                           Tp::Contact::PresenceStateNo);
+
+    // Check
+    QCOMPARE(imAcc1.publishesPresenceTos().size(), 0);
+    QCOMPARE(imAcc2.requestedPresenceSubscriptionTos().size(), 0);
+
+    // Cleanup Nepomuk resources used in this test.
+    imAcc1.remove();
+    imAcc2.remove();
+    pC2.remove();
+}
+
 void StorageTest::cleanupTestCase()
 {
     cleanupTestCaseImpl();
