@@ -1,8 +1,9 @@
 /*
- * This file is part of nepomuktelepathyservice
+ * This file is part of telepathy-nepomuk-service
  *
- * Copyright (C) 2009-2010 Collabora Ltd. <info@collabora.co.uk>
+ * Copyright (C) 2009-2011 Collabora Ltd. <info@collabora.co.uk>
  *   @author Dario Freddi <dario.freddi@collabora.co.uk>
+ *   @author George Goldberg <george.goldberg@collabora.co.uk>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -19,37 +20,46 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef ACCOUNT_TEST_H
-#define ACCOUNT_TEST_H
+#ifndef TELEPATHY_NEPOMUK_SERVICE_ACCOUNT_TEST_H
+#define TELEPATHY_NEPOMUK_SERVICE_ACCOUNT_TEST_H
 
-#include "tid-base-test.h"
+#include <KTelepathy/TestLib/Test>
 
-#include <TelepathyQt4/Types>
+#include <TelepathyQt4/Account>
+#include <TelepathyQt4/AccountManager>
 
-#include <Nepomuk/Resource>
+class Account;
 
-class TelepathyAccountMonitor;
-namespace Soprano {
-class StorageModel;
-}
-
-class KTempDir;
-class AccountTest : public TidBaseTest
+class AccountTest : public Test
 {
     Q_OBJECT
+
 public:
     AccountTest(QObject* parent = 0);
     virtual ~AccountTest();
 
+public Q_SLOTS:
+
 private Q_SLOTS:
     void initTestCase();
 
-    void testSetupAccountMonitor();
-    void testAccountCreation();
-    void testChangeNickname();
-    void testChangeAvatar();
+    void testInitShutdown();
+    //void testOnConnectionStatusChanged();
+    //void testOnCurrentPresenceChanged();
+    //void testOnNicknameChanged();
+    //void testOnAllKnownContactsChanged();
+    //void testOnNewContact();
+    //void testOnContactDestroyed();
+    //void testSignalRelays();
 
     void cleanupTestCase();
+
+private:
+    Tp::AccountManagerPtr m_accountManager;
+    Tp::AccountPtr m_account;
+    Account *m_accountObject;
 };
 
-#endif // ACCOUNT_TEST_H
+
+#endif // Header Guard
+
