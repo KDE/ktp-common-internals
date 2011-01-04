@@ -44,7 +44,7 @@ private Q_SLOTS:
     void testDestroyAccount();
     void testSetAccountNickname();
     void testSetAccountCurrentPresence();
-//    void testCreateContact();
+    void testCreateContact();
 //    void testDestroyContact();
 //    void testSetContactAlias();
 //    void testSetContactPresence();

@@ -26,7 +26,6 @@
 #include <KDebug>
 
 #include <qtest_kde.h>
-#include </home/gberg/development/build/work/collabora/telepathy-kde/ontologies/person.h>
 
 StorageTest::StorageTest(QObject *parent)
 : Test(parent),
@@ -329,6 +328,165 @@ void StorageTest::testSetAccountCurrentPresence()
 
     // Cleanup the Nepomuk Resources used in this test
     imAcc1.remove();
+}
+
+void StorageTest::testCreateContact()
+{
+    // Create the Storage.
+    m_storage = new NepomukStorage(this);
+    QVERIFY(m_storage);
+
+    QHash<QString, Nepomuk::IMAccount> *accounts = TestBackdoors::nepomukStorageAccounts(m_storage);
+    QHash<ContactIdentifier, ContactResources> *contacts = TestBackdoors::nepomukStorageContacts(m_storage);
+
+    // Create an account on the storage.
+    m_storage->createAccount(QLatin1String("/foo/bar/baz"),
+                             QLatin1String("foo@bar.baz"),
+                             QLatin1String("test"));
+
+    // Check the Account is created
+    QCOMPARE(TestBackdoors::nepomukStorageAccounts(m_storage)->size(), 1);
+    QCOMPARE(TestBackdoors::nepomukStorageContacts(m_storage)->size(), 0);
+
+    // And in Nepomuk...
+    Nepomuk::IMAccount imAcc1 = accounts->value(QLatin1String("/foo/bar/baz"));
+    QVERIFY(imAcc1.exists());
+    QCOMPARE(imAcc1.isAccessedByOf().size(), 0);
+
+    // Test 1: Create a contact which doesn't already exist.
+    m_storage->createContact(QLatin1String("/foo/bar/baz"),
+                             QLatin1String("test@remote-contact.com"));
+
+    // Check the Contact is created.
+    QCOMPARE(TestBackdoors::nepomukStorageAccounts(m_storage)->size(), 1);
+    QCOMPARE(TestBackdoors::nepomukStorageContacts(m_storage)->size(), 1);
+
+    // Check its identifier is correct.
+    ContactIdentifier cId2(QLatin1String("/foo/bar/baz"), QLatin1String("test@remote-contact.com"));
+    QVERIFY(contacts->contains(cId2));
+
+    // Check the Nepomuk resources are created correctly.
+    ContactResources cRes2 = contacts->value(cId2);
+    Nepomuk::IMAccount imAcc2 = cRes2.imAccount();
+    Nepomuk::PersonContact pC2 = cRes2.personContact();
+    QVERIFY(imAcc2.exists());
+    QVERIFY(pC2.exists());
+    QCOMPARE(imAcc2.imStatus(), QLatin1String("unknown"));
+    QCOMPARE(imAcc2.imIDs().size(), 1);
+    QCOMPARE(imAcc2.imIDs().first(), QLatin1String("test@remote-contact.com"));
+    QCOMPARE(imAcc2.statusTypes().size(), 1);
+    QCOMPARE(imAcc2.statusTypes().first(), (long long)Tp::ConnectionPresenceTypeUnknown);
+    QCOMPARE(imAcc2.imAccountTypes().size(), 1);
+    QCOMPARE(imAcc2.imAccountTypes().first(), QLatin1String("test"));
+    QCOMPARE(imAcc1.isAccessedByOf().size(), 1);
+    QCOMPARE(imAcc2.isAccessedBys().size(), 1);
+    QCOMPARE(imAcc2.isAccessedBys().first(), imAcc1);
+    QCOMPARE(pC2.iMAccounts().size(), 1);
+    QCOMPARE(pC2.iMAccounts().first(), imAcc2);
+
+    // Test 2: Create a contact which already exists in Nepomuk.
+    // Pre-populate Nepomuk with a valid contact
+    Nepomuk::IMAccount imAcc3;
+    Nepomuk::PersonContact pC3;
+    imAcc3.setImStatus("away");
+    imAcc3.setImIDs(QStringList() << "test2@remote-contact.com");
+    imAcc3.setStatusTypes(QList<long long int>() << Tp::ConnectionPresenceTypeAway);
+    imAcc3.setImAccountTypes(QStringList() << "test");
+    imAcc3.addIsAccessedBy(imAcc1);
+    pC3.addIMAccount(imAcc3);
+
+    // Check the pre-population worked.
+    QVERIFY(imAcc3.exists());
+    QVERIFY(pC3.exists());
+    QCOMPARE(imAcc3.imStatus(), QLatin1String("away"));
+    QCOMPARE(imAcc3.imIDs().size(), 1);
+    QCOMPARE(imAcc3.imIDs().first(), QLatin1String("test2@remote-contact.com"));
+    QCOMPARE(imAcc3.statusTypes().size(), 1);
+    QCOMPARE(imAcc3.statusTypes().first(), (long long)Tp::ConnectionPresenceTypeAway);
+    QCOMPARE(imAcc3.imAccountTypes().size(), 1);
+    QCOMPARE(imAcc3.imAccountTypes().first(), QLatin1String("test"));
+    QCOMPARE(imAcc1.isAccessedByOf().size(), 2);
+    QCOMPARE(imAcc3.isAccessedBys().size(), 1);
+    QCOMPARE(imAcc3.isAccessedBys().first(), imAcc1);
+    QCOMPARE(pC3.iMAccounts().size(), 1);
+    QCOMPARE(pC3.iMAccounts().first(), imAcc3);
+
+    // Tell the storage about the contact
+    m_storage->createContact(QLatin1String("/foo/bar/baz"),
+                             QLatin1String("test2@remote-contact.com"));
+
+    // Check that the contact was added to the storage.
+    QCOMPARE(TestBackdoors::nepomukStorageAccounts(m_storage)->size(), 1);
+    QCOMPARE(TestBackdoors::nepomukStorageContacts(m_storage)->size(), 2);
+
+    // Check its identifier is correct.
+    ContactIdentifier cId4(QLatin1String("/foo/bar/baz"), QLatin1String("test2@remote-contact.com"));
+    QVERIFY(contacts->contains(cId4));
+
+    // Check the Nepomuk resources still have the right values.
+    ContactResources cRes4 = contacts->value(cId4);
+    Nepomuk::IMAccount imAcc4 = cRes4.imAccount();
+    Nepomuk::PersonContact pC4 = cRes4.personContact();
+    QCOMPARE(imAcc4, imAcc3);
+    QCOMPARE(pC4, pC3);
+    QVERIFY(imAcc3.exists());
+    QVERIFY(pC3.exists());
+    QCOMPARE(imAcc3.imStatus(), QLatin1String("away"));
+    QCOMPARE(imAcc3.imIDs().size(), 1);
+    QCOMPARE(imAcc3.imIDs().first(), QLatin1String("test2@remote-contact.com"));
+    QCOMPARE(imAcc3.statusTypes().size(), 1);
+    QCOMPARE(imAcc3.statusTypes().first(), (long long)Tp::ConnectionPresenceTypeAway);
+    QCOMPARE(imAcc3.imAccountTypes().size(), 1);
+    QCOMPARE(imAcc3.imAccountTypes().first(), QLatin1String("test"));
+    QCOMPARE(imAcc1.isAccessedByOf().size(), 2);
+    QCOMPARE(imAcc3.isAccessedBys().size(), 1);
+    QCOMPARE(imAcc3.isAccessedBys().first(), imAcc1);
+    QCOMPARE(pC3.iMAccounts().size(), 1);
+    QCOMPARE(pC3.iMAccounts().first(), imAcc3);
+
+    // Test 3: Create a contact twice.
+    m_storage->createContact(QLatin1String("/foo/bar/baz"),
+                             QLatin1String("test@remote-contact.com"));
+
+    // Check the Contact is created.
+    QCOMPARE(TestBackdoors::nepomukStorageAccounts(m_storage)->size(), 1);
+    QCOMPARE(TestBackdoors::nepomukStorageContacts(m_storage)->size(), 2);
+
+    // Check its identifier is correct.
+    ContactIdentifier cId5(QLatin1String("/foo/bar/baz"), QLatin1String("test@remote-contact.com"));
+    QVERIFY(contacts->contains(cId5));
+
+    // Check the Nepomuk resources are created correctly.
+    ContactResources cRes5 = contacts->value(cId5);
+    Nepomuk::IMAccount imAcc5 = cRes5.imAccount();
+    Nepomuk::PersonContact pC5 = cRes5.personContact();
+    QCOMPARE(imAcc5, imAcc2);
+    QCOMPARE(pC5, pC2);
+    QVERIFY(imAcc2.exists());
+    QVERIFY(pC2.exists());
+    QCOMPARE(imAcc2.imStatus(), QLatin1String("unknown"));
+    QCOMPARE(imAcc2.imIDs().size(), 1);
+    QCOMPARE(imAcc2.imIDs().first(), QLatin1String("test@remote-contact.com"));
+    QCOMPARE(imAcc2.statusTypes().size(), 1);
+    QCOMPARE(imAcc2.statusTypes().first(), (long long)Tp::ConnectionPresenceTypeUnknown);
+    QCOMPARE(imAcc2.imAccountTypes().size(), 1);
+    QCOMPARE(imAcc2.imAccountTypes().first(), QLatin1String("test"));
+    QCOMPARE(imAcc1.isAccessedByOf().size(), 2);
+    QCOMPARE(imAcc2.isAccessedBys().size(), 1);
+    QCOMPARE(imAcc2.isAccessedBys().first(), imAcc1);
+    QCOMPARE(pC2.iMAccounts().size(), 1);
+    QCOMPARE(pC2.iMAccounts().first(), imAcc2);
+
+    // Cleanup Nepomuk Resources used in this test case.
+    imAcc1.remove();
+    imAcc2.remove();
+    pC2.remove();
+    imAcc3.remove();
+    pC3.remove();
+    imAcc4.remove();
+    pC4.remove();
+    imAcc5.remove();
+    pC5.remove();
 }
 
 void StorageTest::cleanupTestCase()
