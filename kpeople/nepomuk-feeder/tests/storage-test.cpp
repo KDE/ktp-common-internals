@@ -489,6 +489,72 @@ void StorageTest::testCreateContact()
     pC5.remove();
 }
 
+void StorageTest::testDestroyContact()
+{
+    // Create the Storage.
+    m_storage = new NepomukStorage(this);
+    QVERIFY(m_storage);
+
+    QHash<QString, Nepomuk::IMAccount> *accounts = TestBackdoors::nepomukStorageAccounts(m_storage);
+    QHash<ContactIdentifier, ContactResources> *contacts = TestBackdoors::nepomukStorageContacts(m_storage);
+
+    // Create an account on the storage.
+    m_storage->createAccount(QLatin1String("/foo/bar/baz"),
+                             QLatin1String("foo@bar.baz"),
+                             QLatin1String("test"));
+
+    // Check the Account is created
+    QCOMPARE(TestBackdoors::nepomukStorageAccounts(m_storage)->size(), 1);
+    QCOMPARE(TestBackdoors::nepomukStorageContacts(m_storage)->size(), 0);
+
+    // And in Nepomuk...
+    Nepomuk::IMAccount imAcc1 = accounts->value(QLatin1String("/foo/bar/baz"));
+    QVERIFY(imAcc1.exists());
+    QCOMPARE(imAcc1.isAccessedByOf().size(), 0);
+
+    // Create a contact
+    m_storage->createContact(QLatin1String("/foo/bar/baz"),
+                             QLatin1String("test@remote-contact.com"));
+
+    // Check the Contact is created.
+    QCOMPARE(TestBackdoors::nepomukStorageAccounts(m_storage)->size(), 1);
+    QCOMPARE(TestBackdoors::nepomukStorageContacts(m_storage)->size(), 1);
+
+    // Check its identifier is correct.
+    ContactIdentifier cId2(QLatin1String("/foo/bar/baz"), QLatin1String("test@remote-contact.com"));
+    QVERIFY(contacts->contains(cId2));
+
+    // Check the Nepomuk resources are created correctly.
+    ContactResources cRes2 = contacts->value(cId2);
+    Nepomuk::IMAccount imAcc2 = cRes2.imAccount();
+    Nepomuk::PersonContact pC2 = cRes2.personContact();
+    QVERIFY(imAcc2.exists());
+    QVERIFY(pC2.exists());
+
+    // Now destroy the contact
+    m_storage->destroyContact(QLatin1String("/foo/bar/baz"),
+                              QLatin1String("test@remote-contact.com"));
+
+    // The contact should still be in the list
+    QCOMPARE(TestBackdoors::nepomukStorageAccounts(m_storage)->size(), 1);
+    QCOMPARE(TestBackdoors::nepomukStorageContacts(m_storage)->size(), 1);
+    QVERIFY(contacts->contains(cId2));
+
+    // And still in Nepomuk
+    QVERIFY(imAcc2.exists());
+    QVERIFY(pC2.exists());
+
+    // It's presence should be unknown now
+    QCOMPARE(imAcc2.imStatus(), QLatin1String("unknown"));
+    QCOMPARE(imAcc2.statusTypes().size(), 1);
+    QCOMPARE(imAcc2.statusTypes().first(), (long long)Tp::ConnectionPresenceTypeUnknown);
+
+    // Cleanup Nepomuk Resources used in this test
+    imAcc1.remove();
+    imAcc2.remove();
+    pC2.remove();
+}
+
 void StorageTest::cleanupTestCase()
 {
     cleanupTestCaseImpl();
