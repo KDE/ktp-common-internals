@@ -42,16 +42,18 @@ public Q_SLOTS:
 
 private Q_SLOTS:
     void initTestCase();
+    void init();
 
     void testInitShutdown();
     //void testOnConnectionStatusChanged();
-    //void testOnCurrentPresenceChanged();
-    //void testOnNicknameChanged();
+    void testOnCurrentPresenceChanged();
+    void testOnNicknameChanged();
     //void testOnAllKnownContactsChanged();
     //void testOnNewContact();
     //void testOnContactDestroyed();
     //void testSignalRelays();
 
+    void cleanup();
     void cleanupTestCase();
 
 private:

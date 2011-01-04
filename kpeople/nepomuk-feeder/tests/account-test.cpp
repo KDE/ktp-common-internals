@@ -49,6 +49,11 @@ AccountTest::~AccountTest()
 void AccountTest::initTestCase()
 {
     initTestCaseImpl();
+}
+
+void AccountTest::init()
+{
+    initImpl();
 
     // Set up the account manager.
     Tp::Features fAccountFactory;
@@ -210,9 +215,67 @@ void AccountTest::testInitShutdown()
     QCOMPARE(qVariantValue<Tp::SimplePresence>(spyCurrentPresenceChanged2.first().at(1)), p2);
 }
 
-void AccountTest::cleanupTestCase()
+void AccountTest::testOnNicknameChanged()
 {
-    cleanupTestCaseImpl();
+    // Set up the account object.
+    m_accountObject = new Account(m_account, this);
+    m_accountObject->init();
+
+    // Check the default nickname
+    QCOMPARE(m_account->nickname(), QLatin1String("Bob"));
+
+    // Change the nickname
+    m_account->setNickname(QLatin1String("New Nickname"));
+
+    QSignalSpy spy(m_accountObject, SIGNAL(nicknameChanged(QString,QString)));
+    do {
+        mLoop->processEvents();
+    } while(spy.size() == 0);
+
+    // Check the correct signals were emitted.
+    QCOMPARE(spy.size(), 1);
+    QCOMPARE(spy.first().at(1).toString(), QLatin1String("New Nickname"));
+}
+
+void AccountTest::testOnCurrentPresenceChanged()
+{
+    // Set up the account object.
+    m_accountObject = new Account(m_account, this);
+    m_accountObject->init();
+
+    // Check the default presence
+    Tp::SimplePresence p1;
+    p1.status = QLatin1String("offline");
+    p1.type = Tp::ConnectionPresenceTypeOffline;
+    QCOMPARE(m_account->currentPresence().barePresence(), p1);
+
+    // Change the presence
+    Tp::SimplePresence p2;
+    p2.status = QLatin1String("away");
+    p2.statusMessage = QLatin1String("Not Here");
+    p2.type = Tp::ConnectionPresenceTypeAway;
+    m_account->setRequestedPresence(Tp::Presence(p2));
+
+    QSignalSpy spy(m_accountObject, SIGNAL(currentPresenceChanged(QString,Tp::SimplePresence)));
+    do {
+        mLoop->processEvents();
+    } while(spy.size() == 0);
+
+    // Check the correct signals were emitted.
+    QCOMPARE(spy.size(), 1);
+    QCOMPARE(qVariantValue<Tp::SimplePresence>(spy.first().at(1)), p2);
+}
+
+void AccountTest::cleanup()
+{
+    cleanupImpl();
+
+    // Remove the account from the AM.
+    connect(m_account->remove(),
+            SIGNAL(finished(Tp::PendingOperation*)),
+            mLoop,
+            SLOT(quit()));
+    QCOMPARE(mLoop->exec(), 0);
 
     // Clear TP objects
     m_account.reset();
@@ -225,6 +288,11 @@ void AccountTest::cleanupTestCase()
         mLoop->exec();
         m_accountObject = 0;
     }
+}
+
+void AccountTest::cleanupTestCase()
+{
+    cleanupTestCaseImpl();
 }
 
 
