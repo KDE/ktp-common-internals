@@ -102,7 +102,6 @@ Qt::ItemFlags AccountsListModel::flags(const QModelIndex &index) const
 
 void AccountsListModel::addAccount(const Tp::AccountPtr &account)
 {
-    qDebug() << "here 5";
     kDebug() << "Creating a new AccountItem from account:" << account.data();
 
     // Check if the account is already in the model.
