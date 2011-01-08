@@ -32,13 +32,13 @@ class AccountsListModel : public QAbstractListModel
     Q_OBJECT
     Q_DISABLE_COPY(AccountsListModel);
 
+public:
     enum Roles {
         ConnectionStateDisplayRole = Qt::UserRole+1,
         ConnectionStateIconRole = Qt::UserRole+2,
         ConnectionErrorMessageDisplayRole = Qt::UserRole+3
     };
 
-public:
     explicit AccountsListModel(QObject *parent = 0);
     virtual ~AccountsListModel();
     virtual int rowCount(const QModelIndex &index) const;
