@@ -100,10 +100,8 @@ bool AccountsListModel::setData(const QModelIndex &index, const QVariant &value,
 {
     kDebug();
     if(role == Qt::CheckStateRole) {
-        if(m_accounts.at(index.row())->account()) {
-            m_accounts.at(index.row())->account()->setEnabled(value.toInt() == Qt::Checked);
-            return true;
-        }
+        m_accounts.at(index.row())->account()->setEnabled(value.toInt() == Qt::Checked);
+        return true;
     }
     return false;
 }
