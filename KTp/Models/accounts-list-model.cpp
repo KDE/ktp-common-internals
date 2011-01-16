@@ -38,8 +38,6 @@ AccountsListModel::AccountsListModel(QObject *parent)
 AccountsListModel::~AccountsListModel()
 {
     kDebug();
-
-    // TODO: Implement me!
 }
 
 int AccountsListModel::rowCount(const QModelIndex &index) const
@@ -187,15 +185,12 @@ void AccountsListModel::onAccountItemRemoved()
         return;
     }
 
-    beginRemoveRows(QModelIndex(), m_accounts.lastIndexOf(item),
+    beginRemoveRows(QModelIndex(), m_accounts.indexOf(item),
                     m_accounts.lastIndexOf(item));
     m_accounts.removeAll(item);
     endRemoveRows();
 
-    Q_ASSERT(!m_accounts.contains(item));
-    if (m_accounts.contains(item)) {
-        kWarning() << "Ready Accounts still contains Accout Item:" << item;
-    }
+    delete item;
 }
 
 void AccountsListModel::onAccountItemUpdated()
