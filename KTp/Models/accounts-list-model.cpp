@@ -31,8 +31,6 @@ AccountsListModel::AccountsListModel(QObject *parent)
  : QAbstractListModel(parent)
 {
     kDebug();
-
-    m_accounts.clear();
 }
 
 AccountsListModel::~AccountsListModel()
@@ -40,10 +38,10 @@ AccountsListModel::~AccountsListModel()
     kDebug();
 }
 
-int AccountsListModel::rowCount(const QModelIndex &index) const
+int AccountsListModel::rowCount(const QModelIndex & parent) const
 {
     // If the index is the root item, then return the row count.
-    if (index == QModelIndex()) {
+    if (parent == QModelIndex()) {
        return m_accounts.size();
     }
 
@@ -52,8 +50,21 @@ int AccountsListModel::rowCount(const QModelIndex &index) const
     return 0;
 }
 
+int AccountsListModel::columnCount(const QModelIndex& parent) const
+{
+    Q_UNUSED(parent);
+
+    // Column count is always 1
+    return 1;
+}
+
+
 QVariant AccountsListModel::data(const QModelIndex &index, int role) const
 {
+    if(!index.isValid()) {
+        return QVariant();
+    }
+
     QVariant data;
     Tp::AccountPtr account = m_accounts.at(index.row())->account();
 
@@ -96,16 +107,37 @@ QVariant AccountsListModel::data(const QModelIndex &index, int role) const
 
 bool AccountsListModel::setData(const QModelIndex &index, const QVariant &value, int role)
 {
-    kDebug();
+    if(!index.isValid()) {
+        return false;
+    }
+
     if(role == Qt::CheckStateRole) {
         m_accounts.at(index.row())->account()->setEnabled(value.toInt() == Qt::Checked);
         return true;
     }
+
     return false;
 }
 
+QModelIndex AccountsListModel::index(int row, int column, const QModelIndex& parent) const
+{
+    if(row < 0 || column < 0 || parent != QModelIndex()) {
+        return QModelIndex();
+    }
+
+    if(row < rowCount() && column < columnCount()) {
+        return createIndex(row, column);
+    }
+
+    return QModelIndex();
+}
+
+
 Qt::ItemFlags AccountsListModel::flags(const QModelIndex &index) const
 {
+    if(!index.isValid()) {
+        return QAbstractItemModel::flags(index);
+    }
     return QAbstractItemModel::flags(index) | Qt::ItemIsUserCheckable;
 }
 
@@ -126,22 +158,22 @@ void AccountsListModel::addAccount(const Tp::AccountPtr &account)
     }
 
     if (found) {
-       kWarning() << "Requested to add account"
-                  << account.data()
-                  << "to model, but it is already present. Doing nothing.";
-   } else {
-       kDebug() << "Account not already in model. Create new AccountItem from account:"
-                << account.data();
+        kWarning() << "Requested to add account"
+                   << account.data()
+                   << "to model, but it is already present. Doing nothing.";
+    } else {
+        kDebug() << "Account not already in model. Create new AccountItem from account:"
+                 << account.data();
 
-       AccountItem *item = new AccountItem(account, this);
+        AccountItem *item = new AccountItem(account, this);
 
-       beginInsertRows(QModelIndex(), m_accounts.size(), m_accounts.size());
-       m_accounts.append(item);
-       endInsertRows();
+        beginInsertRows(QModelIndex(), m_accounts.size(), m_accounts.size());
+        m_accounts.append(item);
+        endInsertRows();
 
-       connect(item, SIGNAL(removed()), SLOT(onAccountItemRemoved()));
-       connect(item, SIGNAL(updated()), SLOT(onAccountItemUpdated()));
-   }
+        connect(item, SIGNAL(removed()), SLOT(onAccountItemRemoved()));
+        connect(item, SIGNAL(updated()), SLOT(onAccountItemUpdated()));
+    }
 }
 
 void AccountsListModel::removeAccount(const QModelIndex &index)
@@ -172,7 +204,6 @@ AccountItem* AccountsListModel::itemForIndex(const QModelIndex &index)
     return accountItem;
 }
 
-
 void AccountsListModel::onAccountItemRemoved()
 {
     kDebug();
@@ -185,11 +216,14 @@ void AccountsListModel::onAccountItemRemoved()
         return;
     }
 
-    beginRemoveRows(QModelIndex(), m_accounts.indexOf(item),
-                    m_accounts.lastIndexOf(item));
+    // We can be pretty sure that there is only one reference to a specific AccountItem in the list
+    // If we screw up here, the styling delegate will screw up even more
+    beginRemoveRows(QModelIndex(), m_accounts.indexOf(item), m_accounts.indexOf(item));
     m_accounts.removeAll(item);
     endRemoveRows();
 
+    // FIXME: Workaround until the KWidgetItemDelegate gets fixed (probably KDE 4.7)
+    reset();
     delete item;
 }
 
@@ -211,9 +245,9 @@ void AccountsListModel::onAccountItemUpdated()
 
 void AccountsListModel::onTitleForCustomPages(QString mandatoryPage, QList<QString> optionalPage)
 {
-	kDebug();
+    kDebug();
 
-	emit setTitleForCustomPages(mandatoryPage, optionalPage);
+    emit setTitleForCustomPages(mandatoryPage, optionalPage);
 }
 
 
