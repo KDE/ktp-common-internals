@@ -42,11 +42,38 @@
 #include <Nepomuk/Query/QueryServiceClient>
 #include <Nepomuk/Query/Result>
 
+#include <QtCore/QSharedData>
+
 #include <TelepathyQt4/Constants>
 
+class ContactIdentifier::Data : public QSharedData {
+public:
+    Data(const QString &a, const QString &c)
+      : accountId(a),
+        contactId(c)
+    { }
+
+    Data(const Data &other)
+      : QSharedData(other),
+        accountId(other.accountId),
+        contactId(other.contactId)
+    { }
+
+    ~Data()
+    { }
+
+    QString accountId;
+    QString contactId;
+};
+
 ContactIdentifier::ContactIdentifier(const QString &accountId, const QString &contactId)
-  : m_accountId(accountId),
-    m_contactId(contactId)
+  : d(new Data(accountId, contactId))
+{
+
+}
+
+ContactIdentifier::ContactIdentifier(const ContactIdentifier &other)
+  : d(other.d)
 {
 
 }
@@ -58,12 +85,12 @@ ContactIdentifier::~ContactIdentifier()
 
 const QString &ContactIdentifier::accountId() const
 {
-    return m_accountId;
+    return d->accountId;
 }
 
 const QString &ContactIdentifier::contactId() const
 {
-    return m_contactId;
+    return d->contactId;
 }
 
 bool ContactIdentifier::operator==(const ContactIdentifier& other) const
@@ -76,15 +103,45 @@ bool ContactIdentifier::operator!=(const ContactIdentifier& other) const
     return !(*this == other);
 }
 
+
+class ContactResources::Data : public QSharedData {
+public:
+    Data(const Nepomuk::PersonContact &p, const Nepomuk::IMAccount &i)
+      : personContact(p),
+        imAccount(i)
+    { }
+
+    Data()
+    { }
+
+    Data(const Data &other)
+      : QSharedData(other),
+        personContact(other.personContact),
+        imAccount(other.imAccount)
+    { }
+
+    ~Data()
+    { }
+
+    Nepomuk::PersonContact personContact;
+    Nepomuk::IMAccount imAccount;
+};
+
 ContactResources::ContactResources(const Nepomuk::PersonContact &personContact,
                                    const Nepomuk::IMAccount &imAccount)
-  : m_personContact(personContact),
-    m_imAccount(imAccount)
+  : d(new Data(personContact, imAccount))
 {
 
 }
 
 ContactResources::ContactResources()
+  : d(new Data())
+{
+
+}
+
+ContactResources::ContactResources(const ContactResources &other)
+  : d(other.d)
 {
 
 }
@@ -96,12 +153,12 @@ ContactResources::~ContactResources()
 
 const Nepomuk::PersonContact &ContactResources::personContact() const
 {
-    return m_personContact;
+    return d->personContact;
 }
 
 const Nepomuk::IMAccount &ContactResources::imAccount() const
 {
-    return m_imAccount;
+    return d->imAccount;
 }
 
 

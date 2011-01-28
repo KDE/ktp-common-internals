@@ -28,6 +28,7 @@
 #include "ontologies/personcontact.h"
 
 #include <QtCore/QObject>
+#include <QtCore/QSharedDataPointer>
 #include <QtCore/QString>
 
 #include <TelepathyQt4/Contact>
@@ -40,6 +41,7 @@ namespace Nepomuk {
 class ContactIdentifier {
 public:
     ContactIdentifier(const QString &accountId, const QString &contactId);
+    ContactIdentifier(const ContactIdentifier &other);
     ~ContactIdentifier();
 
     const QString &accountId() const;
@@ -49,8 +51,8 @@ public:
     bool operator!=(const ContactIdentifier &other) const;
 
 private:
-    QString m_accountId;
-    QString m_contactId;
+    class Data;
+    QSharedDataPointer<Data> d;
 };
 
 int qHash(ContactIdentifier c);
@@ -59,6 +61,7 @@ class ContactResources {
 public:
     ContactResources(const Nepomuk::PersonContact &personContact,
                      const Nepomuk::IMAccount &imAccount);
+    ContactResources(const ContactResources &other);
     ContactResources();
     ~ContactResources();
 
@@ -66,8 +69,8 @@ public:
     const Nepomuk::IMAccount &imAccount() const;
 
 private:
-    Nepomuk::PersonContact m_personContact;
-    Nepomuk::IMAccount m_imAccount;
+    class Data;
+    QSharedDataPointer<Data> d;
 };
 
 /**
