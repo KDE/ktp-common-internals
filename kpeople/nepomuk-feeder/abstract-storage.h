@@ -41,6 +41,22 @@ public:
     explicit AbstractStorage(QObject *parent = 0);
     virtual ~AbstractStorage();
 
+public Q_SLOTS:
+    virtual void createAccount(const QString &path, const QString &id, const QString &protocol) = 0;
+    virtual void destroyAccount(const QString &path) = 0;
+    virtual void setAccountNickname(const QString &path, const QString &nickname) = 0;
+    virtual void setAccountCurrentPresence(const QString &path, const Tp::SimplePresence &presence) = 0;
+    
+    virtual void createContact(const QString &path, const QString &id) = 0;
+    virtual void destroyContact(const QString &path, const QString &id) = 0;
+    virtual void setContactAlias(const QString &path, const QString &id, const QString &alias) = 0;
+    virtual void setContactPresence(const QString &path, const QString &id, const Tp::SimplePresence &presence) = 0;
+    virtual void addContactToGroup(const QString &path, const QString &id, const QString &group) = 0;
+    virtual void removeContactFromGroup(const QString &path, const QString &id, const QString &group) = 0;
+    virtual void setContactBlockStatus(const QString &path, const QString &id, bool blocked) = 0;
+    virtual void setContactPublishState(const QString &path, const QString &id, const Tp::Contact::PresenceState &state) = 0;
+    virtual void setContactSubscriptionState(const QString &path, const QString &id, const Tp::Contact::PresenceState &state) = 0;
+
 private:
     Q_DISABLE_COPY(AbstractStorage);
 };

@@ -88,6 +88,19 @@ public Q_SLOTS:
     virtual void createAccount(const QString &path, const QString &id, const QString &protocol);
     virtual void destroyAccount(const QString &path);
 
+    // Not used
+    virtual void setAccountNickname(const QString &, const QString &) { }
+    virtual void setAccountCurrentPresence(const QString &, const Tp::SimplePresence &) { }
+    virtual void createContact(const QString &, const QString &) { }
+    virtual void destroyContact(const QString &, const QString &) { }
+    virtual void setContactAlias(const QString &, const QString &, const QString &) { }
+    virtual void setContactPresence(const QString &, const QString &, const Tp::SimplePresence &) { }
+    virtual void addContactToGroup(const QString &, const QString &, const QString &) { }
+    virtual void removeContactFromGroup(const QString &, const QString &, const QString &) { }
+    virtual void setContactBlockStatus(const QString &, const QString &, bool) { }
+    virtual void setContactPublishState(const QString &, const QString &, const Tp::Contact::PresenceState &) { }
+    virtual void setContactSubscriptionState(const QString &, const QString &, const Tp::Contact::PresenceState &) { }
+
 private:
     ControllerTest *m_test;
 };
@@ -102,6 +115,20 @@ public:
 
 public Q_SLOTS:
     virtual void createAccount(const QString &path, const QString &id, const QString &protocol);
+
+    // Not used
+    virtual void destroyAccount(const QString &) { }
+    virtual void setAccountNickname(const QString &, const QString &) { }
+    virtual void setAccountCurrentPresence(const QString &, const Tp::SimplePresence &) { }
+    virtual void createContact(const QString &, const QString &) { }
+    virtual void destroyContact(const QString &, const QString &) { }
+    virtual void setContactAlias(const QString &, const QString &, const QString &) { }
+    virtual void setContactPresence(const QString &, const QString &, const Tp::SimplePresence &) { }
+    virtual void addContactToGroup(const QString &, const QString &, const QString &) { }
+    virtual void removeContactFromGroup(const QString &, const QString &, const QString &) { }
+    virtual void setContactBlockStatus(const QString &, const QString &, bool) { }
+    virtual void setContactPublishState(const QString &, const QString &, const Tp::Contact::PresenceState &) { }
+    virtual void setContactSubscriptionState(const QString &, const QString &, const Tp::Contact::PresenceState &) { }
 
 private:
     ControllerTest *m_test;
