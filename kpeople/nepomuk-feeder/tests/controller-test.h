@@ -95,8 +95,7 @@ public Q_SLOTS:
     virtual void destroyContact(const QString &, const QString &) { }
     virtual void setContactAlias(const QString &, const QString &, const QString &) { }
     virtual void setContactPresence(const QString &, const QString &, const Tp::SimplePresence &) { }
-    virtual void addContactToGroup(const QString &, const QString &, const QString &) { }
-    virtual void removeContactFromGroup(const QString &, const QString &, const QString &) { }
+    virtual void setContactGroups(const QString &, const QString &, const QStringList &) { }
     virtual void setContactBlockStatus(const QString &, const QString &, bool) { }
     virtual void setContactPublishState(const QString &, const QString &, const Tp::Contact::PresenceState &) { }
     virtual void setContactSubscriptionState(const QString &, const QString &, const Tp::Contact::PresenceState &) { }
@@ -124,8 +123,7 @@ public Q_SLOTS:
     virtual void destroyContact(const QString &, const QString &) { }
     virtual void setContactAlias(const QString &, const QString &, const QString &) { }
     virtual void setContactPresence(const QString &, const QString &, const Tp::SimplePresence &) { }
-    virtual void addContactToGroup(const QString &, const QString &, const QString &) { }
-    virtual void removeContactFromGroup(const QString &, const QString &, const QString &) { }
+    virtual void setContactGroups(const QString &, const QString &, const QStringList &) { }
     virtual void setContactBlockStatus(const QString &, const QString &, bool) { }
     virtual void setContactPublishState(const QString &, const QString &, const Tp::Contact::PresenceState &) { }
     virtual void setContactSubscriptionState(const QString &, const QString &, const Tp::Contact::PresenceState &) { }

@@ -94,8 +94,7 @@ public Q_SLOTS:
     virtual void destroyContact(const QString &path, const QString &id);
     virtual void setContactAlias(const QString &path, const QString &id, const QString &alias);
     virtual void setContactPresence(const QString &path, const QString &id, const Tp::SimplePresence &presence);
-    virtual void addContactToGroup(const QString &path, const QString &id, const QString &group);
-    virtual void removeContactFromGroup(const QString &path, const QString &id, const QString &group);
+    virtual void setContactGroups(const QString &path, const QString &id, const QStringList &groups);
     virtual void setContactBlockStatus(const QString &path, const QString &id, bool blocked);
     virtual void setContactPublishState(const QString &path, const QString &id, const Tp::Contact::PresenceState &state);
     virtual void setContactSubscriptionState(const QString &path, const QString &id, const Tp::Contact::PresenceState &state);

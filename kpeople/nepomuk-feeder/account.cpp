@@ -171,11 +171,8 @@ void Account::onNewContact(const Tp::ContactPtr &contact)
                 SIGNAL(presenceChanged(QString,Tp::SimplePresence)),
                 SLOT(onContactPresenceChanged(QString,Tp::SimplePresence)));
         connect(c,
-                SIGNAL(addedToGroup(QString,QString)),
-                SLOT(onContactAddedToGroup(QString,QString)));
-        connect(c,
-                SIGNAL(removedFromGroup(QString,QString)),
-                SLOT(onContactRemovedFromGroup(QString,QString)));
+                SIGNAL(groupsChanged(QString,QStringList)),
+                SLOT(onContactGroupsChanged(QString,QStringList)));
         connect(c,
                 SIGNAL(blockStatusChanged(QString,bool)),
                 SLOT(onContactBlockStatusChanged(QString,bool)));
@@ -213,14 +210,9 @@ void Account::onContactPresenceChanged(const QString &id, const Tp::SimplePresen
     emit contactPresenceChanged(m_account->objectPath(), id, presence);
 }
 
-void Account::onContactAddedToGroup(const QString &id, const QString &group)
+void Account::onContactGroupsChanged(const QString &id, const QStringList &groups)
 {
-    emit contactAddedToGroup(m_account->objectPath(), id, group);
-}
-
-void Account::onContactRemovedFromGroup(const QString &id, const QString &group)
-{
-    emit contactRemovedFromGroup(m_account->objectPath(), id, group);
+    emit contactGroupsChanged(m_account->objectPath(), id, groups);
 }
 
 void Account::onContactBlockStatusChanged(const QString &id, bool blocked)

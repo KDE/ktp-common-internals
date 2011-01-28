@@ -47,8 +47,7 @@ Q_SIGNALS:
     void contactDestroyed(const QString &id, const Tp::ContactPtr &contact);
     void aliasChanged(const QString &id, const QString &alias);
     void presenceChanged(const QString &id, const Tp::SimplePresence &presence);
-    void addedToGroup(const QString &id, const QString &group);
-    void removedFromGroup(const QString &id, const QString &group);
+    void groupsChanged(const QString &id, const QStringList &groups);
     void blockStatusChanged(const QString &id, bool blocked);
     void publishStateChanged(const QString &id, const Tp::Contact::PresenceState &state);
     void subscriptionStateChanged(const QString &id, const Tp::Contact::PresenceState &state);

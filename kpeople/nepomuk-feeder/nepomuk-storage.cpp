@@ -21,6 +21,7 @@
 
 #include "nepomuk-storage.h"
 
+#include "ontologies/contactgroup.h"
 #include "ontologies/nco.h"
 #include "ontologies/pimo.h"
 #include "ontologies/telepathy.h"
@@ -504,14 +505,68 @@ void NepomukStorage::setContactPresence(const QString &path,
     imAccount.setImStatusMessages(statusMessage);
 }
 
-void NepomukStorage::addContactToGroup(const QString &path, const QString &id, const QString &group)
+void NepomukStorage::setContactGroups(const QString &path,
+                                      const QString &id,
+                                      const QStringList &groups)
 {
-    // TODO: Implement me!
-}
+    ContactIdentifier identifier(path, id);
 
-void NepomukStorage::removeContactFromGroup(const QString &path, const QString &id, const QString &group)
-{
-    // TODO: Implement me!
+    // Check the Contact exists.
+    Q_ASSERT(m_contacts.contains(identifier));
+    if (!m_contacts.contains(identifier)) {
+        kWarning() << "Contact not found.";
+        return;
+    }
+
+    ContactResources resources = m_contacts.value(identifier);
+    Nepomuk::PersonContact personContact = resources.personContact();
+
+    // Set the contact groups.
+    // First remove any groups we are no longer a member of.
+    QList<Nepomuk::ContactGroup> newGroups = personContact.belongsToGroups();
+
+    foreach (const Nepomuk::ContactGroup &group, personContact.belongsToGroups()) {
+        if (!groups.contains(group.contactGroupName())) {
+            newGroups.removeAll(group);
+        }
+    }
+
+    // Now add any groups we are newly a member of.
+    bool found;
+    foreach (const QString &groupName, groups) {
+        found = false;
+        foreach (const Nepomuk::ContactGroup &cGroup, newGroups) {
+            if (cGroup.contactGroupName() == groupName) {
+                found = true;
+                break;
+            }
+        }
+
+        if (!found) {
+            // Not already in that group. Check the group exists.
+            // FIXME: Once we have a "ContactList" resource for Telepathy Contacts, we should only
+            //        get the groups associated with that.
+            Nepomuk::ContactGroup groupResource;
+            foreach (const Nepomuk::ContactGroup &g, Nepomuk::ContactGroup::allContactGroups()) {
+                if (g.contactGroupName() == groupName) {
+                    groupResource = g;
+                    break;
+                }
+            }
+
+            // If the group doesn't already exist, create it.
+            if (groupResource.resourceUri().isEmpty()) {
+                // FIXME: Once we have a "ContactList" resource for Telepathy Contacts, we should
+                //        create this group as a child of that resource.
+                groupResource.setContactGroupName(groupName);
+            }
+
+            newGroups.append(groupResource);
+        }
+    }
+
+    // Update the groups property with the new list
+    personContact.setBelongsToGroups(newGroups);
 }
 
 void NepomukStorage::setContactBlockStatus(const QString &path, const QString &id, bool blocked)

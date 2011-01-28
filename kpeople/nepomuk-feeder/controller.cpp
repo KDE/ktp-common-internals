@@ -132,10 +132,8 @@ void Controller::onNewAccount(const Tp::AccountPtr &account)
             m_storage, SLOT(setContactAlias(QString,QString,QString)));
     connect(acc, SIGNAL(contactPresenceChanged(QString,QString,Tp::SimplePresence)),
             m_storage, SLOT(setContactPresence(QString,QString,Tp::SimplePresence)));
-    connect(acc, SIGNAL(contactAddedToGroup(QString,QString,QString)),
-            m_storage, SLOT(addContactToGroup(QString,QString,QString)));
-    connect(acc, SIGNAL(contactRemovedFromGroup(QString,QString,QString)),
-            m_storage, SLOT(removeContactFromGroup(QString,QString,QString)));
+    connect(acc, SIGNAL(contactGroupsChanged(QString,QString,QStringList)),
+            m_storage, SLOT(setContactGroups(QString,QString,QStringList)));
     connect(acc, SIGNAL(contactBlockStatusChanged(QString,QString,bool)),
             m_storage, SLOT(setContactBlockStatus(QString,QString,bool)));
     connect(acc, SIGNAL(contactPublishStateChanged(QString,QString,Tp::Contact::PresenceState)),

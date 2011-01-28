@@ -59,8 +59,7 @@ Q_SIGNALS:
     void contactDestroyed(const QString &path, const QString &id);
     void contactAliasChanged(const QString &path, const QString &id, const QString &alias);
     void contactPresenceChanged(const QString &path, const QString &id, const Tp::SimplePresence &presence);
-    void contactAddedToGroup(const QString &path, const QString &id, const QString &group);
-    void contactRemovedFromGroup(const QString &path, const QString &id, const QString &group);
+    void contactGroupsChanged(const QString &path, const QString &id, const QStringList &groups);
     void contactBlockStatusChanged(const QString &path, const QString &id, bool blocked);
     void contactPublishStateChanged(const QString &path, const QString &id, const Tp::Contact::PresenceState &state);
     void contactSubscriptionStateChanged(const QString &path, const QString &id, const Tp::Contact::PresenceState &state);
@@ -76,8 +75,7 @@ private Q_SLOTS:
     void onContactCreated(const QString &id);
     void onContactAliasChanged(const QString &id, const QString &alias);
     void onContactPresenceChanged(const QString &id, const Tp::SimplePresence &presence);
-    void onContactAddedToGroup(const QString &id, const QString &group);
-    void onContactRemovedFromGroup(const QString &id, const QString &group);
+    void onContactGroupsChanged(const QString &id, const QStringList &groups);
     void onContactBlockStatusChanged(const QString &id, bool blocked);
     void onContactPublishStateChanged(const QString &id, const Tp::Contact::PresenceState &state);
     void onContactSubscriptionStateChanged(const QString &id, const Tp::Contact::PresenceState &state);

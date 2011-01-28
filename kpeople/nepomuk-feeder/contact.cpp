@@ -111,14 +111,14 @@ void Contact::onAddedToGroup(const QString &group)
 {
     kDebug() << "On added to group " << group;
 
-    emit addedToGroup(m_contact->id(), group);
+    emit groupsChanged(m_contact->id(), m_contact->groups());
 }
 
 void Contact::onRemovedFromGroup(const QString &group)
 {
     kDebug() << "On removed from group " << group;
 
-    emit removedFromGroup(m_contact->id(), group);
+    emit groupsChanged(m_contact->id(), m_contact->groups());
 }
 
 void Contact::onBlockStatusChanged(bool blocked)
