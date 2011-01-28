@@ -68,7 +68,7 @@ Q_SIGNALS:
 private Q_SLOTS:
     void onConnectionStatusChanged(Tp::ConnectionStatus status);
     void onNicknameChanged(const QString &nickname);
-    void onCurrentPresenceChanged(Tp::Presence presence);
+    void onCurrentPresenceChanged(const Tp::Presence &presence);
     void onAllKnownContactsChanged(const Tp::Contacts &added, const Tp::Contacts &removed);
     void onNewContact(const Tp::ContactPtr &contact);
     void onContactDestroyed(const QString &id, const Tp::ContactPtr &contact);

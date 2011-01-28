@@ -128,7 +128,7 @@ void Account::onNicknameChanged(const QString& nickname)
     emit nicknameChanged(m_account->objectPath(), nickname);
 }
 
-void Account::onCurrentPresenceChanged(Tp::Presence presence)
+void Account::onCurrentPresenceChanged(const Tp::Presence &presence)
 {
     emit currentPresenceChanged(m_account->objectPath(), presence.barePresence());
 }
