@@ -53,6 +53,8 @@ private:
     QString m_contactId;
 };
 
+int qHash(ContactIdentifier c);
+
 class ContactResources {
 public:
     ContactResources(const Nepomuk::PersonContact &personContact,
@@ -109,8 +111,6 @@ private:
     QHash<QString, Nepomuk::IMAccount> m_accounts;
     QHash<ContactIdentifier, ContactResources> m_contacts;
 };
-
-int qHash(ContactIdentifier c);
 
 
 #endif // Header guard
