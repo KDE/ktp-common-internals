@@ -43,8 +43,8 @@ void Account::init()
 {
     // Connect to all the signals that indicate changes in properties we care about.
     connect(m_account.data(),
-            SIGNAL(nicknameChanged(const QString &)),
-            SLOT(onNicknameChanged(const QString &)));
+            SIGNAL(nicknameChanged(QString)),
+            SLOT(onNicknameChanged(QString)));
     connect(m_account.data(),
             SIGNAL(currentPresenceChanged(Tp::Presence)),
             SLOT(onCurrentPresenceChanged(Tp::Presence)));
@@ -54,7 +54,6 @@ void Account::init()
     // ...... and any other properties we want to sync...
     connect(m_account.data(),
             SIGNAL(connectionStatusChanged(Tp::ConnectionStatus)),
-            this,
             SLOT(onConnectionStatusChanged(Tp::ConnectionStatus)));
 
     // Emit a signal to notify the storage that a new account has been constructed
@@ -159,24 +158,33 @@ void Account::onNewContact(const Tp::ContactPtr &contact)
         m_contacts.insert(contact, c);
 
         // Connect to all its signals
-        connect(c, SIGNAL(created(QString)),
-                this, SLOT(onContactCreated(QString)));
-        connect(c, SIGNAL(contactDestroyed(QString,Tp::ContactPtr)),
-                this, SLOT(onContactDestroyed(QString,Tp::ContactPtr)));
-        connect(c, SIGNAL(aliasChanged(QString,QString)),
-                this, SLOT(onContactAliasChanged(QString,QString)));
-        connect(c, SIGNAL(presenceChanged(QString,Tp::SimplePresence)),
-                this, SLOT(onContactPresenceChanged(QString,Tp::SimplePresence)));
-        connect(c, SIGNAL(addedToGroup(QString,QString)),
-                this, SLOT(onContactAddedToGroup(QString,QString)));
-        connect(c, SIGNAL(removedFromGroup(QString,QString)),
-                this, SLOT(onContactRemovedFromGroup(QString,QString)));
-        connect(c, SIGNAL(blockStatusChanged(QString,bool)),
-                this, SLOT(onContactBlockStatusChanged(QString,bool)));
-        connect(c, SIGNAL(publishStateChanged(QString,Tp::Contact::PresenceState)),
-                this, SLOT(onContactPublishStateChanged(QString,Tp::Contact::PresenceState)));
-        connect(c, SIGNAL(subscriptionStateChanged(QString,Tp::Contact::PresenceState)),
-                this, SLOT(onContactSubscriptionStateChanged(QString,Tp::Contact::PresenceState)));
+        connect(c,
+                SIGNAL(created(QString)),
+                SLOT(onContactCreated(QString)));
+        connect(c,
+                SIGNAL(contactDestroyed(QString,Tp::ContactPtr)),
+                SLOT(onContactDestroyed(QString,Tp::ContactPtr)));
+        connect(c,
+                SIGNAL(aliasChanged(QString,QString)),
+                SLOT(onContactAliasChanged(QString,QString)));
+        connect(c,
+                SIGNAL(presenceChanged(QString,Tp::SimplePresence)),
+                SLOT(onContactPresenceChanged(QString,Tp::SimplePresence)));
+        connect(c,
+                SIGNAL(addedToGroup(QString,QString)),
+                SLOT(onContactAddedToGroup(QString,QString)));
+        connect(c,
+                SIGNAL(removedFromGroup(QString,QString)),
+                SLOT(onContactRemovedFromGroup(QString,QString)));
+        connect(c,
+                SIGNAL(blockStatusChanged(QString,bool)),
+                SLOT(onContactBlockStatusChanged(QString,bool)));
+        connect(c,
+                SIGNAL(publishStateChanged(QString,Tp::Contact::PresenceState)),
+                SLOT(onContactPublishStateChanged(QString,Tp::Contact::PresenceState)));
+        connect(c,
+                SIGNAL(subscriptionStateChanged(QString,Tp::Contact::PresenceState)),
+                SLOT(onContactSubscriptionStateChanged(QString,Tp::Contact::PresenceState)));
 
         c->init();
     }

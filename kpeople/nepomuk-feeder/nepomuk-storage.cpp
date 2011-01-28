@@ -114,8 +114,8 @@ NepomukStorage::NepomukStorage(QObject *parent)
     m_resourceManager = Nepomuk::ResourceManager::instance();
 
     connect(m_resourceManager,
-            SIGNAL(error(QString, int)),
-            SLOT(onNepomukError(QString, int)));
+            SIGNAL(error(QString,int)),
+            SLOT(onNepomukError(QString,int)));
 
     // Here we get the "me" person contact.
     // FIXME: Port to new OSCAF standard for accessing "me" as soon as it

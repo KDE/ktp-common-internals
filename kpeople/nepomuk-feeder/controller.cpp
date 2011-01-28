@@ -98,8 +98,8 @@ void Controller::onAccountManagerReady(Tp::PendingOperation *op)
 
      // Account Manager is now ready. We should watch for any new accounts being created.
     connect(m_accountManager.data(),
-            SIGNAL(newAccount(const Tp::AccountPtr &)),
-            SLOT(onNewAccount(const Tp::AccountPtr &)));
+            SIGNAL(newAccount(Tp::AccountPtr)),
+            SLOT(onNewAccount(Tp::AccountPtr)));
 
     // Take into account (ha ha) the accounts that already existed when the AM object became ready.
     foreach (const Tp::AccountPtr &account, m_accountManager->allAccounts()) {
