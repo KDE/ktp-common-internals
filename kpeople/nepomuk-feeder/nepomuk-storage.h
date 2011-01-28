@@ -98,7 +98,7 @@ public Q_SLOTS:
     virtual void setContactSubscriptionState(const QString &path, const QString &id, const Tp::Contact::PresenceState &state);
 
 private Q_SLOTS:
-    virtual void onNepomukError(const QString &uri, int errorCode);
+    void onNepomukError(const QString &uri, int errorCode);
 
 private:
     Q_DISABLE_COPY(NepomukStorage);
