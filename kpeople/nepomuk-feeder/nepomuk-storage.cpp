@@ -393,7 +393,6 @@ void NepomukStorage::destroyContact(const QString &path, const QString &id)
     ContactResources resources = m_contacts.value(identifier);
 
     Nepomuk::IMAccount imAccount = resources.imAccount();
-    Nepomuk::PersonContact personContact = resources.personContact();
 
     // The contact object has been destroyed, so we should set it's presence to unknown.
     imAccount.setProperty(Nepomuk::Vocabulary::NCO::imStatus(), QString::fromLatin1("unknown"));
@@ -414,7 +413,6 @@ void NepomukStorage::setContactAlias(const QString &path, const QString &id, con
     ContactResources resources = m_contacts.value(identifier);
 
     Nepomuk::IMAccount imAccount = resources.imAccount();
-    Nepomuk::PersonContact personContact = resources.personContact();
 
     // Set the Contact Alias.
     imAccount.setImNicknames(QStringList() << alias);
@@ -436,7 +434,6 @@ void NepomukStorage::setContactPresence(const QString &path,
     ContactResources resources = m_contacts.value(identifier);
 
     Nepomuk::IMAccount imAccount = resources.imAccount();
-    Nepomuk::PersonContact personContact = resources.personContact();
 
     // Set the contact presence.
     imAccount.setImStatus(presence.status);
@@ -474,7 +471,6 @@ void NepomukStorage::setContactBlockStatus(const QString &path, const QString &i
     ContactResources resources = m_contacts.value(identifier);
 
     Nepomuk::IMAccount imAccount = resources.imAccount();
-    Nepomuk::PersonContact personContact = resources.personContact();
 
     // Set the blocked status.
     imAccount.setIsBlockeds(QList<bool>() << blocked);
@@ -496,7 +492,6 @@ void NepomukStorage::setContactPublishState(const QString &path,
     ContactResources resources = m_contacts.value(identifier);
 
     Nepomuk::IMAccount imAccount = resources.imAccount();
-    Nepomuk::PersonContact personContact = resources.personContact();
 
     // Get the local related account.
     Q_ASSERT(m_accounts.contains(path));
@@ -559,7 +554,6 @@ void NepomukStorage::setContactSubscriptionState(const QString &path,
     ContactResources resources = m_contacts.value(identifier);
 
     Nepomuk::IMAccount imAccount = resources.imAccount();
-    Nepomuk::PersonContact personContact = resources.personContact();
 
     // Get the local related account.
     Q_ASSERT(m_accounts.contains(path));
