@@ -23,6 +23,8 @@
 
 #include "test-backdoors.h"
 
+#include "ontologies/contactgroup.h"
+
 #include <KDebug>
 
 #include <qtest_kde.h>
@@ -727,6 +729,116 @@ void StorageTest::testSetContactPresence()
     imAcc1.remove();
     imAcc2.remove();
     pC2.remove();
+}
+
+void StorageTest::testSetContactGroups()
+{
+    // Create the Storage.
+    m_storage = new NepomukStorage(this);
+    QVERIFY(m_storage);
+
+    QHash<QString, Nepomuk::IMAccount> *accounts = TestBackdoors::nepomukStorageAccounts(m_storage);
+    QHash<ContactIdentifier, ContactResources> *contacts = TestBackdoors::nepomukStorageContacts(m_storage);
+
+    // Create an account on the storage.
+    m_storage->createAccount(QLatin1String("/foo/bar/baz"),
+                             QLatin1String("foo@bar.baz"),
+                             QLatin1String("test"));
+
+    // Check the Account is created
+    QCOMPARE(TestBackdoors::nepomukStorageAccounts(m_storage)->size(), 1);
+    QCOMPARE(TestBackdoors::nepomukStorageContacts(m_storage)->size(), 0);
+
+    // And in Nepomuk...
+    Nepomuk::IMAccount imAcc1 = accounts->value(QLatin1String("/foo/bar/baz"));
+    QVERIFY(imAcc1.exists());
+    QCOMPARE(imAcc1.isAccessedByOf().size(), 0);
+
+    // Create a contact
+    m_storage->createContact(QLatin1String("/foo/bar/baz"),
+                             QLatin1String("test@remote-contact.com"));
+
+    // Check the Contact is created.
+    QCOMPARE(TestBackdoors::nepomukStorageAccounts(m_storage)->size(), 1);
+    QCOMPARE(TestBackdoors::nepomukStorageContacts(m_storage)->size(), 1);
+
+    // Check its identifier is correct.
+    ContactIdentifier cId2(QLatin1String("/foo/bar/baz"), QLatin1String("test@remote-contact.com"));
+    QVERIFY(contacts->contains(cId2));
+
+    // Check the Nepomuk resources are created correctly.
+    ContactResources cRes2 = contacts->value(cId2);
+    Nepomuk::IMAccount imAcc2 = cRes2.imAccount();
+    Nepomuk::PersonContact pC2 = cRes2.personContact();
+    QVERIFY(imAcc2.exists());
+    QVERIFY(pC2.exists());
+
+    // Check that the groups property is initially empty.
+    QCOMPARE(pC2.belongsToGroups().size(), 0);
+    QCOMPARE(Nepomuk::ContactGroup::allContactGroups().size(), 0);
+
+    // Add to a group that doesn't already exist
+    m_storage->setContactGroups(QLatin1String("/foo/bar/baz"), QLatin1String("test@remote-contact.com"),
+                                QStringList() << QLatin1String("testgroup1"));
+
+    // Add to a group we're already in
+    QCOMPARE(Nepomuk::ContactGroup::allContactGroups().size(), 1);
+    QCOMPARE(pC2.belongsToGroups().size(), 1);
+    QCOMPARE(pC2.belongsToGroups().first().contactGroupName(), QLatin1String("testgroup1"));
+
+    // Create a group in Nepomuk so we can try adding ourselves to an already existing group and
+    // check it succeeds.
+    Nepomuk::ContactGroup g2;
+    QVERIFY(!g2.exists());
+    g2.setContactGroupName(QLatin1String("testgroup2"));
+    QCOMPARE(g2.contactGroupName(), QLatin1String("testgroup2"));
+    QVERIFY(g2.exists());
+    QCOMPARE(Nepomuk::ContactGroup::allContactGroups().size(), 2);
+
+    // Add the contact to that group.
+    m_storage->setContactGroups(QLatin1String("/foo/bar/baz"), QLatin1String("test@remote-contact.com"),
+                                QStringList() << QLatin1String("testgroup1") << QLatin1String("testgroup2"));
+
+    // Check it worked OK
+    QCOMPARE(Nepomuk::ContactGroup::allContactGroups().size(), 2);
+    QCOMPARE(pC2.belongsToGroups().size(), 2);
+    QVERIFY(!(pC2.belongsToGroups().at(0) == g2) ^ !(pC2.belongsToGroups().at(1) == g2));
+
+    // Remove from a group
+    m_storage->setContactGroups(QLatin1String("/foo/bar/baz"), QLatin1String("test@remote-contact.com"),
+                                QStringList() << QLatin1String("testgroup1"));
+
+    // Check it worked OK
+    QCOMPARE(Nepomuk::ContactGroup::allContactGroups().size(), 2);
+    QCOMPARE(pC2.belongsToGroups().size(), 1);
+    QCOMPARE(pC2.belongsToGroups().first().contactGroupName(), QLatin1String("testgroup1"));
+
+    // Add ourselves to two groups, one of which doesn't yet exist
+    m_storage->setContactGroups(QLatin1String("/foo/bar/baz"), QLatin1String("test@remote-contact.com"),
+                                QStringList() << QLatin1String("testgroup1") << QLatin1String("testgroup2")
+                                              << QLatin1String("testgroup3"));
+
+    // Check it worked OK
+    QCOMPARE(Nepomuk::ContactGroup::allContactGroups().size(), 3);
+    QCOMPARE(pC2.belongsToGroups().size(), 3);
+
+    // Remove ourselves from two groups
+    m_storage->setContactGroups(QLatin1String("/foo/bar/baz"), QLatin1String("test@remote-contact.com"),
+                                QStringList() << QLatin1String("testgroup2")
+                                              << QLatin1String("testgroup3"));
+
+    // Check it worked OK
+    QCOMPARE(Nepomuk::ContactGroup::allContactGroups().size(), 3);
+    QCOMPARE(pC2.belongsToGroups().size(), 2);
+
+    // Cleanup
+    imAcc1.remove();
+    imAcc2.remove();
+    pC2.remove();
+
+    foreach (Nepomuk::ContactGroup g, Nepomuk::ContactGroup::allContactGroups()) {
+        g.remove();
+    }
 }
 
 void StorageTest::testSetContactBlockedStatus()
