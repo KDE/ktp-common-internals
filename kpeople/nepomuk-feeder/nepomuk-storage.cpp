@@ -423,6 +423,8 @@ void NepomukStorage::createContact(const QString &path, const QString &id)
 
     Nepomuk::PersonContact newPersonContact;
     Nepomuk::IMAccount newImAccount;
+    Nepomuk::Thing newPimoPerson;
+    newPimoPerson.addType(Nepomuk::Vocabulary::PIMO::Person());
 
     newImAccount.setImStatus("unknown");
     newImAccount.setImIDs(QStringList() << id);
@@ -432,6 +434,8 @@ void NepomukStorage::createContact(const QString &path, const QString &id)
     newImAccount.addIsAccessedBy(account);
 
     newPersonContact.addIMAccount(newImAccount);
+
+    newPimoPerson.addGroundingOccurrence(newPersonContact);
 
     // Add it to the Contacts list.
     m_contacts.insert(identifier, ContactResources(newPersonContact, newImAccount));
