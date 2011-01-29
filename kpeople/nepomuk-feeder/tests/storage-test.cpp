@@ -24,8 +24,13 @@
 #include "test-backdoors.h"
 
 #include "ontologies/contactgroup.h"
+#include "ontologies/pimo.h"
 
 #include <KDebug>
+
+#include <Nepomuk/Resource>
+#include <Nepomuk/ResourceManager>
+#include <Nepomuk/Thing>
 
 #include <qtest_kde.h>
 
@@ -360,6 +365,9 @@ void StorageTest::testCreateContact()
     QVERIFY(imAcc1.exists());
     QCOMPARE(imAcc1.isAccessedByOf().size(), 0);
 
+    // Check there is only 1 PIMO Person in Nepomuk.
+    QCOMPARE(Nepomuk::ResourceManager::instance()->allResourcesOfType(Nepomuk::Vocabulary::PIMO::Person()).size(), 1);
+
     // Test 1: Create a contact which doesn't already exist.
     m_storage->createContact(QLatin1String("/foo/bar/baz"),
                              QLatin1String("test@remote-contact.com"));
@@ -390,6 +398,16 @@ void StorageTest::testCreateContact()
     QCOMPARE(imAcc2.isAccessedBys().first(), imAcc1);
     QCOMPARE(pC2.iMAccounts().size(), 1);
     QCOMPARE(pC2.iMAccounts().first(), imAcc2);
+
+    // Check the PIMO Person.
+    QCOMPARE(Nepomuk::ResourceManager::instance()->allResourcesOfType(Nepomuk::Vocabulary::PIMO::Person()).size(), 2);
+
+    foreach (Nepomuk::Resource r, Nepomuk::ResourceManager::instance()->allResourcesOfType(Nepomuk::Vocabulary::PIMO::Person())) {
+        if (r != Nepomuk::Resource("nepomuk:/myself")) {
+            Nepomuk::Thing t(r);
+            QVERIFY(t.groundingOccurrences().contains(pC2));
+        }
+    }
 
     // Test 2: Create a contact which already exists in Nepomuk.
     // Pre-populate Nepomuk with a valid contact
