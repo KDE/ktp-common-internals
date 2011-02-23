@@ -21,19 +21,19 @@
 #ifndef _TelepathyQt4Yell_Models_accounts_model_h_HEADER_GUARD_
 #define _TelepathyQt4Yell_Models_accounts_model_h_HEADER_GUARD_
 
-#include <accounts-model-item.h>
+#include <QAbstractListModel>
 
 #include <TelepathyQt4/Account>
 #include <TelepathyQt4/AccountManager>
 #include <TelepathyQt4/TextChannel>
 #include <TelepathyQt4/Types>
 
-#include <QAbstractListModel>
+#include "accounts-model-item.h"
 
 namespace Tpy
 {
 
-class TELEPATHY_QT4_YELL_MODELS_EXPORT AccountsModel : public QAbstractItemModel
+class AccountsModel : public QAbstractItemModel
 {
     Q_OBJECT
     Q_DISABLE_COPY(AccountsModel)

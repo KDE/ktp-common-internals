@@ -23,7 +23,6 @@
 
 #include "accounts-model-item.h"
 #include "accounts-model.h"
-#include "avatar-image-provider.h"
 #include "contact-model-item.h"
 
 namespace Tpy

@@ -28,7 +28,7 @@
 namespace Tpy
 {
 
-struct TELEPATHY_QT4_YELL_MODELS_NO_EXPORT AccountsModel::Private
+struct AccountsModel::Private
 {
     Private(const Tp::AccountManagerPtr &am)
         : mAM(am)

@@ -24,12 +24,10 @@
 #include <QObject>
 #include <QVariant>
 
-#include "global.h"
-
 namespace Tpy
 {
 
-class TELEPATHY_QT4_YELL_MODELS_EXPORT TreeNode : public QObject
+class TreeNode : public QObject
 {
     Q_OBJECT
     Q_DISABLE_COPY(TreeNode)
