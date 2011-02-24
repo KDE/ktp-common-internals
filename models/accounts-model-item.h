@@ -1,8 +1,10 @@
 /*
- * This file is part of TelepathyQt4
+ * Accounts model item, represents an account in the contactlist tree
+ * This file is based on TelepathyQt4Yell Models
  *
  * Copyright (C) 2010 Collabora Ltd. <http://www.collabora.co.uk/>
- *
+ * Copyright (C) 2011 Martin Klapetek <martin dot klapetek at gmail dot com>
+ * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
@@ -18,17 +20,14 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef _TelepathyQt4Yell_Models_accounts_model_item_h_HEADER_GUARD_
-#define _TelepathyQt4Yell_Models_accounts_model_item_h_HEADER_GUARD_
+#ifndef TELEPATHY_ACCOUNTS_MODEL_ITEM_H
+#define TELEPATHY_ACCOUNTS_MODEL_ITEM_H
 
 #include <TelepathyQt4/Constants>
 #include <TelepathyQt4/Contact>
 #include <TelepathyQt4/Types>
 
 #include "tree-node.h"
-
-namespace Tpy
-{
 
 class AccountsModelItem : public TreeNode
 {
@@ -73,6 +72,4 @@ private:
     Private *mPriv;
 };
 
-}
-
-#endif // _TelepathyQt4Yell_Models_accounts_model_item_h_HEADER_GUARD_
+#endif // TELEPATHY_ACCOUNTS_MODEL_ITEM_H

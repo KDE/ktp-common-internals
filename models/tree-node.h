@@ -1,8 +1,10 @@
-/*
- * This file is part of TelepathyQt4
+/*                                                                         *
+ * Tree model node
+ * This file is based on TelepathyQt4Yell Models
  *
  * Copyright (C) 2010 Collabora Ltd. <http://www.collabora.co.uk/>
- *
+ * Copyright (C) 2011 Martin Klapetek <martin dot klapetek at gmail dot com>
+ * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
@@ -18,14 +20,11 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef _TelepathyQt4Yell_Models_tree_node_h_HEADER_GUARD_
-#define _TelepathyQt4Yell_Models_tree_node_h_HEADER_GUARD_
+#ifndef TELEPATHY_TREE_NODE_H
+#define TELEPATHY_TREE_NODE_H
 
 #include <QObject>
 #include <QVariant>
-
-namespace Tpy
-{
 
 class TreeNode : public QObject
 {
@@ -62,6 +61,4 @@ private:
     Private *mPriv;
 };
 
-}
-
-#endif // _TelepathyQt4Yell_Models_tree_node_h_HEADER_GUARD_
+#endif // TELEPATHY_TREE_NODE_H

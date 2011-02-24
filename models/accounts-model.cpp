@@ -1,7 +1,9 @@
 /*
- * This file is part of TelepathyQt4
+ * Accounts and contacts model
+ * This file is based on TelepathyQt4Yell Models
  *
  * Copyright (C) 2010 Collabora Ltd. <http://www.collabora.co.uk/>
+ * Copyright (C) 2011 Martin Klapetek <martin dot klapetek at gmail dot com>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -24,9 +26,6 @@
 #include "accounts-model.h"
 #include "accounts-model-item.h"
 #include "contact-model-item.h"
-
-namespace Tpy
-{
 
 struct AccountsModel::Private
 {
@@ -304,6 +303,4 @@ QModelIndex AccountsModel::parent(const QModelIndex &index) const
         // no parent: return root node
         return QModelIndex();
     }
-}
-
 }
