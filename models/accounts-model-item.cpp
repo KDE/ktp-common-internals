@@ -63,6 +63,7 @@ AccountsModelItem::AccountsModelItem(const Tp::AccountPtr &account)
                 SIGNAL(allKnownContactsChanged(Tp::Contacts,Tp::Contacts,
                                                Tp::Channel::GroupMemberChangeDetails)),
                 SLOT(onContactsChanged(Tp::Contacts,Tp::Contacts)));
+        QTimer::singleShot(0, this, SLOT(addKnownContacts()));
     }
 
     connect(mPriv->mAccount.data(),
@@ -345,6 +346,7 @@ void AccountsModelItem::addKnownContacts()
         // get the list of contact ids in the children
         QStringList idList;
         int numElems = size();
+
         for (int i = 0; i < numElems; ++i) {
             ContactModelItem *item = qobject_cast<ContactModelItem *>(childAt(i));
             if (item) {
