@@ -112,7 +112,7 @@ Q_SIGNALS:
     void accountCountChanged();
     void accountConnectionStatusChanged(const QString &accountId, int status);
 
-protected Q_SLOTS:
+public Q_SLOTS:
     void onNewAccount(const Tp::AccountPtr &account);
     void onItemChanged(TreeNode *node);
     void onItemsAdded(TreeNode *parent, const QList<TreeNode *> &nodes);
