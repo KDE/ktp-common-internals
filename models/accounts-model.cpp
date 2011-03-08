@@ -70,9 +70,9 @@ AccountsModel::AccountsModel(const Tp::AccountManagerPtr &am, QObject *parent)
         }
     }
 
-    connect(mPriv->mAM.data(),
-            SIGNAL(newAccount(Tp::AccountPtr)),
-            SLOT(onNewAccount(Tp::AccountPtr)));
+//     connect(mPriv->mAM.data(),
+//             SIGNAL(newAccount(Tp::AccountPtr)),
+//             SLOT(onNewAccount(Tp::AccountPtr)));
 
     QHash<int, QByteArray> roles;
     roles[ItemRole] = "item";
