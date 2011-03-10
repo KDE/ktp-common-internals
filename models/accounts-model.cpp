@@ -26,6 +26,7 @@
 #include "accounts-model.h"
 #include "accounts-model-item.h"
 #include "contact-model-item.h"
+#include <KDebug>
 
 struct AccountsModel::Private
 {
@@ -153,12 +154,12 @@ void AccountsModel::onItemsAdded(TreeNode *parent, const QList<TreeNode *> &node
 void AccountsModel::onItemsRemoved(TreeNode *parent, int first, int last)
 {
     QModelIndex parentIndex = index(parent);
-    QList<TreeNode *> removedItems;
-    beginRemoveRows(parentIndex, first, last);
-    for (int i = last; i >= first; i--) {
-        parent->childAt(i)->remove();
-    }
-    endRemoveRows();
+//     QList<TreeNode *> removedItems;
+//     beginRemoveRows(parentIndex, first, last);
+//     for (int i = last; i >= first; i--) {
+//         parent->childAt(i)->remove();
+//     }
+//     endRemoveRows();
     
     beginRemoveRows(index(parent->parent()), parentIndex.row(), parentIndex.row());
     parent->remove();
