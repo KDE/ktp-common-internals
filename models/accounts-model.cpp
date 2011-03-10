@@ -54,9 +54,11 @@ AccountsModel::AccountsModel(const Tp::AccountManagerPtr &am, QObject *parent)
     connect(mPriv->mTree,
             SIGNAL(changed(TreeNode*)),
             SLOT(onItemChanged(TreeNode*)));
+    
     connect(mPriv->mTree,
             SIGNAL(childrenAdded(TreeNode*,QList<TreeNode*>)),
             SLOT(onItemsAdded(TreeNode*,QList<TreeNode*>)));
+    
     connect(mPriv->mTree,
             SIGNAL(childrenRemoved(TreeNode*,int,int)),
             SLOT(onItemsRemoved(TreeNode*,int,int)));
@@ -141,7 +143,6 @@ void AccountsModel::onItemsAdded(TreeNode *parent, const QList<TreeNode *> &node
 {
     QModelIndex parentIndex = index(parent);
     int currentSize = rowCount(parentIndex);
-    //debug() << "adding rows from" << currentSize << "to" << (currentSize + nodes.size() - 1);
     beginInsertRows(parentIndex, currentSize, currentSize + nodes.size() - 1);
     foreach (TreeNode *node, nodes) {
         parent->addChild(node);
