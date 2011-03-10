@@ -158,8 +158,12 @@ void AccountsModel::onItemsRemoved(TreeNode *parent, int first, int last)
     for (int i = last; i >= first; i--) {
         parent->childAt(i)->remove();
     }
+    endRemoveRows();
+    
+    beginRemoveRows(index(parent->parent()), parentIndex.row(), parentIndex.row());
     parent->remove();
     endRemoveRows();
+    
     emit accountCountChanged();
 }
 
