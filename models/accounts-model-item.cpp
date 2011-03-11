@@ -136,57 +136,57 @@ AccountsModelItem::~AccountsModelItem()
 QVariant AccountsModelItem::data(int role) const
 {
     switch (role) {
-        case AccountsModel::ItemRole:
-            return QVariant::fromValue(
-                const_cast<QObject *>(
-                    static_cast<const QObject *>(this)));
-        case AccountsModel::IdRole:
-            return mPriv->mAccount->uniqueIdentifier();
-        case AccountsModel::AvatarRole:
-            return QVariant(); //TODO: Return account icon
-        case AccountsModel::ValidRole:
-            return mPriv->mAccount->isValid();
-        case AccountsModel::EnabledRole:
-            return mPriv->mAccount->isEnabled();
-        case AccountsModel::ConnectionManagerNameRole:
-            return mPriv->mAccount->cmName();
-        case AccountsModel::ProtocolNameRole:
-            return mPriv->mAccount->protocolName();
-        case AccountsModel::DisplayNameRole:
-        case Qt::DisplayRole:
-            return mPriv->mAccount->displayName();
-        case AccountsModel::IconRole:
-            return mPriv->mAccount->iconName();
-        case AccountsModel::NicknameRole:
-            return mPriv->mAccount->nickname();
-        case AccountsModel::ConnectsAutomaticallyRole:
-            return mPriv->mAccount->connectsAutomatically();
-        case AccountsModel::ChangingPresenceRole:
-            return mPriv->mAccount->isChangingPresence();
-        case AccountsModel::AutomaticPresenceRole:
-            return mPriv->mAccount->automaticPresence().status();
-        case AccountsModel::AutomaticPresenceTypeRole:
-            return mPriv->mAccount->automaticPresence().type();
-        case AccountsModel::AutomaticPresenceStatusMessageRole:
-            return mPriv->mAccount->automaticPresence().statusMessage();
-        case AccountsModel::CurrentPresenceRole:
-            return mPriv->mAccount->currentPresence().status();
-        case AccountsModel::CurrentPresenceTypeRole:
-            return mPriv->mAccount->currentPresence().type();
-        case AccountsModel::CurrentPresenceStatusMessageRole:
-            return mPriv->mAccount->currentPresence().statusMessage();
-        case AccountsModel::RequestedPresenceRole:
-            return mPriv->mAccount->requestedPresence().status();
-        case AccountsModel::RequestedPresenceTypeRole:
-            return mPriv->mAccount->requestedPresence().type();
-        case AccountsModel::RequestedPresenceStatusMessageRole:
-            return mPriv->mAccount->requestedPresence().statusMessage();
-        case AccountsModel::ConnectionStatusRole:
-            return mPriv->mAccount->connectionStatus();
-        case AccountsModel::ConnectionStatusReasonRole:
-            return mPriv->mAccount->connectionStatusReason();
-        default:
-            return QVariant();
+    case AccountsModel::ItemRole:
+        return QVariant::fromValue(
+                   const_cast<QObject *>(
+                       static_cast<const QObject *>(this)));
+    case AccountsModel::IdRole:
+        return mPriv->mAccount->uniqueIdentifier();
+    case AccountsModel::AvatarRole:
+        return QVariant(); //TODO: Return account icon
+    case AccountsModel::ValidRole:
+        return mPriv->mAccount->isValid();
+    case AccountsModel::EnabledRole:
+        return mPriv->mAccount->isEnabled();
+    case AccountsModel::ConnectionManagerNameRole:
+        return mPriv->mAccount->cmName();
+    case AccountsModel::ProtocolNameRole:
+        return mPriv->mAccount->protocolName();
+    case AccountsModel::DisplayNameRole:
+    case Qt::DisplayRole:
+        return mPriv->mAccount->displayName();
+    case AccountsModel::IconRole:
+        return mPriv->mAccount->iconName();
+    case AccountsModel::NicknameRole:
+        return mPriv->mAccount->nickname();
+    case AccountsModel::ConnectsAutomaticallyRole:
+        return mPriv->mAccount->connectsAutomatically();
+    case AccountsModel::ChangingPresenceRole:
+        return mPriv->mAccount->isChangingPresence();
+    case AccountsModel::AutomaticPresenceRole:
+        return mPriv->mAccount->automaticPresence().status();
+    case AccountsModel::AutomaticPresenceTypeRole:
+        return mPriv->mAccount->automaticPresence().type();
+    case AccountsModel::AutomaticPresenceStatusMessageRole:
+        return mPriv->mAccount->automaticPresence().statusMessage();
+    case AccountsModel::CurrentPresenceRole:
+        return mPriv->mAccount->currentPresence().status();
+    case AccountsModel::CurrentPresenceTypeRole:
+        return mPriv->mAccount->currentPresence().type();
+    case AccountsModel::CurrentPresenceStatusMessageRole:
+        return mPriv->mAccount->currentPresence().statusMessage();
+    case AccountsModel::RequestedPresenceRole:
+        return mPriv->mAccount->requestedPresence().status();
+    case AccountsModel::RequestedPresenceTypeRole:
+        return mPriv->mAccount->requestedPresence().type();
+    case AccountsModel::RequestedPresenceStatusMessageRole:
+        return mPriv->mAccount->requestedPresence().statusMessage();
+    case AccountsModel::ConnectionStatusRole:
+        return mPriv->mAccount->connectionStatus();
+    case AccountsModel::ConnectionStatusReasonRole:
+        return mPriv->mAccount->connectionStatusReason();
+    default:
+        return QVariant();
     }
 }
 
@@ -212,7 +212,7 @@ bool AccountsModelItem::setData(int role, const QVariant &value)
 
 Tp::AccountPtr AccountsModelItem::account() const
 {
-     return mPriv->mAccount;
+    return mPriv->mAccount;
 }
 
 void AccountsModelItem::setEnabled(bool value)

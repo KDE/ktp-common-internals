@@ -77,11 +77,13 @@ void TreeNode::addChild(TreeNode *node)
             SIGNAL(childrenRemoved(TreeNode*,int,int)));
 }
 
-int TreeNode::indexOf(TreeNode *node) const {
+int TreeNode::indexOf(TreeNode *node) const
+{
     return mPriv->mChildren.indexOf(node);
 }
 
-int TreeNode::size() const {
+int TreeNode::size() const
+{
     return mPriv->mChildren.size();
 }
 

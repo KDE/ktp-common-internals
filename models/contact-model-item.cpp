@@ -83,55 +83,54 @@ ContactModelItem::~ContactModelItem()
 
 QVariant ContactModelItem::data(int role) const
 {
-    switch (role)
-    {
-        case AccountsModel::ItemRole:
-            return QVariant::fromValue(
-                const_cast<QObject *>(
-                    static_cast<const QObject *>(this)));
-        case AccountsModel::IdRole:
-            return mPriv->mContact->id();
-        case Qt::DisplayRole:
-        case AccountsModel::AliasRole:
-            return mPriv->mContact->alias();
-        case AccountsModel::PresenceStatusRole:
-            return mPriv->mContact->presence().status();
-        case AccountsModel::PresenceTypeRole:
-            return mPriv->mContact->presence().type();
-        case AccountsModel::PresenceMessageRole:
-            return mPriv->mContact->presence().statusMessage();
-        case AccountsModel::SubscriptionStateRole:
-            return mPriv->mContact->subscriptionState();
-        case AccountsModel::PublishStateRole:
-            return mPriv->mContact->publishState();
-        case AccountsModel::BlockedRole:
-            return mPriv->mContact->isBlocked();
-        case AccountsModel::GroupsRole:
-            return mPriv->mContact->groups();
-        case AccountsModel::AvatarRole:
-            return mPriv->mContact->avatarData().fileName;
-        case Qt::DecorationRole:
-            return QImage(mPriv->mContact->avatarData().fileName);
-        case AccountsModel::TextChatCapabilityRole:
-            return mPriv->mContact->capabilities().textChats();
-        case AccountsModel::MediaCallCapabilityRole:
-            return mPriv->mContact->capabilities().streamedMediaCalls();
-        case AccountsModel::AudioCallCapabilityRole:
-            return mPriv->mContact->capabilities().streamedMediaAudioCalls();
-        case AccountsModel::VideoCallCapabilityRole:
-            return mPriv->mContact->capabilities().streamedMediaVideoCalls();
-        case AccountsModel::UpgradeCallCapabilityRole:
-            return mPriv->mContact->capabilities().upgradingStreamedMediaCalls();
-        case AccountsModel::FileTransferCapabilityRole: {
-            foreach (const Tp::RequestableChannelClassSpec &rccSpec, mPriv->mContact->capabilities().allClassSpecs()) {
-                if (rccSpec.supports(Tp::RequestableChannelClassSpec::fileTransfer())) {
-                    return true;
-                }
+    switch (role) {
+    case AccountsModel::ItemRole:
+        return QVariant::fromValue(
+                   const_cast<QObject *>(
+                       static_cast<const QObject *>(this)));
+    case AccountsModel::IdRole:
+        return mPriv->mContact->id();
+    case Qt::DisplayRole:
+    case AccountsModel::AliasRole:
+        return mPriv->mContact->alias();
+    case AccountsModel::PresenceStatusRole:
+        return mPriv->mContact->presence().status();
+    case AccountsModel::PresenceTypeRole:
+        return mPriv->mContact->presence().type();
+    case AccountsModel::PresenceMessageRole:
+        return mPriv->mContact->presence().statusMessage();
+    case AccountsModel::SubscriptionStateRole:
+        return mPriv->mContact->subscriptionState();
+    case AccountsModel::PublishStateRole:
+        return mPriv->mContact->publishState();
+    case AccountsModel::BlockedRole:
+        return mPriv->mContact->isBlocked();
+    case AccountsModel::GroupsRole:
+        return mPriv->mContact->groups();
+    case AccountsModel::AvatarRole:
+        return mPriv->mContact->avatarData().fileName;
+    case Qt::DecorationRole:
+        return QImage(mPriv->mContact->avatarData().fileName);
+    case AccountsModel::TextChatCapabilityRole:
+        return mPriv->mContact->capabilities().textChats();
+    case AccountsModel::MediaCallCapabilityRole:
+        return mPriv->mContact->capabilities().streamedMediaCalls();
+    case AccountsModel::AudioCallCapabilityRole:
+        return mPriv->mContact->capabilities().streamedMediaAudioCalls();
+    case AccountsModel::VideoCallCapabilityRole:
+        return mPriv->mContact->capabilities().streamedMediaVideoCalls();
+    case AccountsModel::UpgradeCallCapabilityRole:
+        return mPriv->mContact->capabilities().upgradingStreamedMediaCalls();
+    case AccountsModel::FileTransferCapabilityRole: {
+        foreach(const Tp::RequestableChannelClassSpec & rccSpec, mPriv->mContact->capabilities().allClassSpecs()) {
+            if (rccSpec.supports(Tp::RequestableChannelClassSpec::fileTransfer())) {
+                return true;
             }
-            return false;
         }
-        default:
-            break;
+        return false;
+    }
+    default:
+        break;
     }
 
     return QVariant();
@@ -140,29 +139,29 @@ QVariant ContactModelItem::data(int role) const
 bool ContactModelItem::setData(int role, const QVariant &value)
 {
     switch (role) {
-        case AccountsModel::PublishStateRole: {
-            Tp::Contact::PresenceState state;
-            state = (Tp::Contact::PresenceState) value.toInt();
-            switch (state) {
-                case Tp::Contact::PresenceStateYes:
-                    // authorize the contact and request its presence publication
-                    mPriv->mContact->authorizePresencePublication();
-                    mPriv->mContact->requestPresenceSubscription();
-                    return true;
-                case Tp::Contact::PresenceStateNo: {
-                    // reject the presence publication and remove the contact
-                    mPriv->mContact->removePresencePublication();
-                    QList<Tp::ContactPtr> contacts;
-                    contacts << mPriv->mContact;
-                    mPriv->mContact->manager()->removeContacts(contacts);
-                    return true;
-                }
-                default:
-                    return false;
-            }
+    case AccountsModel::PublishStateRole: {
+        Tp::Contact::PresenceState state;
+        state = (Tp::Contact::PresenceState) value.toInt();
+        switch (state) {
+        case Tp::Contact::PresenceStateYes:
+            // authorize the contact and request its presence publication
+            mPriv->mContact->authorizePresencePublication();
+            mPriv->mContact->requestPresenceSubscription();
+            return true;
+        case Tp::Contact::PresenceStateNo: {
+            // reject the presence publication and remove the contact
+            mPriv->mContact->removePresencePublication();
+            QList<Tp::ContactPtr> contacts;
+            contacts << mPriv->mContact;
+            mPriv->mContact->manager()->removeContacts(contacts);
+            return true;
         }
         default:
             return false;
+        }
+    }
+    default:
+        return false;
     }
 }
 

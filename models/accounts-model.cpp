@@ -283,8 +283,7 @@ QModelIndex AccountsModel::index(TreeNode *node) const
 {
     if (node->parent()) {
         return createIndex(node->parent()->indexOf(node), 0, node);
-    }
-    else {
+    } else {
         return QModelIndex();
     }
 }
