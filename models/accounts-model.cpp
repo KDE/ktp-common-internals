@@ -54,11 +54,11 @@ AccountsModel::AccountsModel(const Tp::AccountManagerPtr &am, QObject *parent)
     connect(mPriv->mTree,
             SIGNAL(changed(TreeNode*)),
             SLOT(onItemChanged(TreeNode*)));
-    
+
     connect(mPriv->mTree,
             SIGNAL(childrenAdded(TreeNode*,QList<TreeNode*>)),
             SLOT(onItemsAdded(TreeNode*,QList<TreeNode*>)));
-    
+
     connect(mPriv->mTree,
             SIGNAL(childrenRemoved(TreeNode*,int,int)),
             SLOT(onItemsRemoved(TreeNode*,int,int)));
@@ -157,7 +157,7 @@ void AccountsModel::onItemsRemoved(TreeNode *parent, int first, int last)
     beginRemoveRows(index(parent->parent()), parentIndex.row(), parentIndex.row());
     parent->remove();
     endRemoveRows();
-    
+
     emit accountCountChanged();
 }
 

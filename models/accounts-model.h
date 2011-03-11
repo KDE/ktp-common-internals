@@ -95,7 +95,6 @@ public:
     virtual QVariant data(const QModelIndex &index, int role) const;
     Tp::AccountPtr accountForIndex(const QModelIndex &index) const;
     Tp::ContactPtr contactForIndex(const QModelIndex &index) const;
-    
     Tp::AccountPtr accountForContactIndex(const QModelIndex &index) const;
 
     virtual Qt::ItemFlags flags(const QModelIndex &index) const;
