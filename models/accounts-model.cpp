@@ -64,17 +64,15 @@ AccountsModel::AccountsModel(const Tp::AccountManagerPtr &am, QObject *parent)
             SLOT(onItemsRemoved(TreeNode*,int,int)));
 
     foreach (Tp::AccountPtr account, mPriv->mAM->allAccounts()) {
-        if(account->isEnabled() && account->connectionStatus() == Tp::ConnectionStatusConnected) {
-            AccountsModelItem *item = new AccountsModelItem(account);
-            connect(item, SIGNAL(connectionStatusChanged(QString,int)),
-                    this, SIGNAL(accountConnectionStatusChanged(QString,int)));
-            mPriv->mTree->addChild(item);
-        }
+        AccountsModelItem *item = new AccountsModelItem(account);
+        connect(item, SIGNAL(connectionStatusChanged(QString,int)),
+                this, SIGNAL(accountConnectionStatusChanged(QString,int)));
+        mPriv->mTree->addChild(item);
     }
 
-//     connect(mPriv->mAM.data(),
-//             SIGNAL(newAccount(Tp::AccountPtr)),
-//             SLOT(onNewAccount(Tp::AccountPtr)));
+    connect(mPriv->mAM.data(),
+            SIGNAL(newAccount(Tp::AccountPtr)),
+            SLOT(onNewAccount(Tp::AccountPtr)));
 
     QHash<int, QByteArray> roles;
     roles[ItemRole] = "item";
@@ -154,8 +152,11 @@ void AccountsModel::onItemsAdded(TreeNode *parent, const QList<TreeNode *> &node
 void AccountsModel::onItemsRemoved(TreeNode *parent, int first, int last)
 {
     QModelIndex parentIndex = index(parent);
-    beginRemoveRows(index(parent->parent()), parentIndex.row(), parentIndex.row());
-    parent->remove();
+    QList<TreeNode *> removedItems;
+    beginRemoveRows(parentIndex, first, last);
+    for (int i = last; i >= first; i--) {
+        parent->childAt(i)->remove();
+    }
     endRemoveRows();
 
     emit accountCountChanged();
