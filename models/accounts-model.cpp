@@ -234,6 +234,17 @@ Tp::AccountPtr AccountsModel::accountForIndex(const QModelIndex &index) const
     }
 }
 
+Tp::ContactPtr AccountsModel::contactForIndex(const QModelIndex& index) const
+{
+    TreeNode *contactNode = mPriv->node(index);
+    ContactModelItem *item = qobject_cast<ContactModelItem *>(contactNode);
+    if (item) {
+        return item->contact();
+    } else {
+        return Tp::ContactPtr();
+    }
+}
+
 Tp::AccountPtr AccountsModel::accountForContactIndex(const QModelIndex& index) const
 {
     TreeNode *contactNode = mPriv->node(index);
