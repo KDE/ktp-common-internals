@@ -296,7 +296,7 @@ void AccountTest::cleanupTestCase()
 }
 
 
-QTEST_KDEMAIN(AccountTest, GUI)
+QTEST_KDEMAIN_CORE(AccountTest)
 
 
 #include "account-test.moc"

@@ -24,7 +24,7 @@
 
 #include "nepomuk-storage.h"
 
-class KDE_EXPORT TestBackdoors {
+class TestBackdoors {
 public:
     static Nepomuk::PersonContact nepomukStorageMePersonContact(NepomukStorage *storage);
     static QHash<QString, Nepomuk::IMAccount> *nepomukStorageAccounts(NepomukStorage *storage);

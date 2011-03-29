@@ -234,7 +234,7 @@ void ControllerTest::cleanupTestCase()
 }
 
 
-QTEST_KDEMAIN(ControllerTest, GUI)
+QTEST_KDEMAIN_CORE(ControllerTest)
 
 
 #include "controller-test.moc"
