@@ -429,7 +429,7 @@ void NepomukStorage::createContact(const QString &path, const QString &id)
     newImAccount.setImStatus("unknown");
     newImAccount.setImIDs(QStringList() << id);
     newImAccount.setStatusTypes(QList<long long int>() << Tp::ConnectionPresenceTypeUnknown);
-    newImAccount.setImAccountTypes(QStringList() << account.imAccountTypes().first());
+    newImAccount.setImAccountType(account.imAccountType());
 
     newImAccount.addIsAccessedBy(account);
 
@@ -501,12 +501,7 @@ void NepomukStorage::setContactPresence(const QString &path,
     imAccount.setImStatus(presence.status);
     imAccount.setStatusTypes(QList<long long int>() << presence.type);
 
-    QStringList statusMessage;
-    if (!presence.statusMessage.isEmpty()) {
-        statusMessage.append(presence.statusMessage);
-    }
-
-    imAccount.setImStatusMessages(statusMessage);
+    imAccount.setImStatusMessage(presence.statusMessage);
 }
 
 void NepomukStorage::setContactGroups(const QString &path,
@@ -589,7 +584,7 @@ void NepomukStorage::setContactBlockStatus(const QString &path, const QString &i
     Nepomuk::IMAccount imAccount = resources.imAccount();
 
     // Set the blocked status.
-    imAccount.setIsBlockeds(QList<bool>() << blocked);
+    imAccount.setIsBlocked(blocked);
 }
 
 void NepomukStorage::setContactPublishState(const QString &path,
