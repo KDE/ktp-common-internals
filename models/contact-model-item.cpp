@@ -85,9 +85,7 @@ QVariant ContactModelItem::data(int role) const
 {
     switch (role) {
     case AccountsModel::ItemRole:
-        return QVariant::fromValue(
-                   const_cast<QObject *>(
-                       static_cast<const QObject *>(this)));
+        return QVariant::fromValue((ContactModelItem*)this);
     case AccountsModel::IdRole:
         return mPriv->mContact->id();
     case Qt::DisplayRole:

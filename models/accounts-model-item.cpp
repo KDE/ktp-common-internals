@@ -137,9 +137,7 @@ QVariant AccountsModelItem::data(int role) const
 {
     switch (role) {
     case AccountsModel::ItemRole:
-        return QVariant::fromValue(
-                   const_cast<QObject *>(
-                       static_cast<const QObject *>(this)));
+        return QVariant::fromValue((AccountsModelItem*)this);
     case AccountsModel::IdRole:
         return mPriv->mAccount->uniqueIdentifier();
     case AccountsModel::AvatarRole:

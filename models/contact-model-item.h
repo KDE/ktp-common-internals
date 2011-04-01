@@ -25,6 +25,8 @@
 
 #include <TelepathyQt4/Types>
 
+#include <QtCore/QVariant> //needed for declare metatype
+
 #include "tree-node.h"
 
 class ContactModelItem : public TreeNode
@@ -49,5 +51,8 @@ private:
     friend struct Private;
     Private *mPriv;
 };
+
+Q_DECLARE_METATYPE(ContactModelItem*);
+
 
 #endif // TELEPATHY_CONTACT_MODEL_ITEM_H
