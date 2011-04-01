@@ -282,6 +282,8 @@ void AccountsModelItem::onContactsChanged(const Tp::Contacts &addedContacts,
 
 void AccountsModelItem::onStatusChanged(Tp::ConnectionStatus status)
 {
+    onChanged();
+
     emit connectionStatusChanged(mPriv->mAccount->uniqueIdentifier(), status);
 }
 
