@@ -9,7 +9,7 @@
 telepathy: {telepathy:accountIdentifier
      a rdf:Property ;
           rdfs:subPropertyOf nao:identifier ;
-          rdfs:comment "Identifier of a Local Telepathy Account (as given by the Telepathy Account Manaager).";
+          rdfs:comment "Identifier of a Local Telepathy Account (as given by the Telepathy Account Manager).";
           rdfs:domain nco:IMAccount ;
           rdfs:label "accountIdentifier" ;
           rdfs:range xsd:string .
