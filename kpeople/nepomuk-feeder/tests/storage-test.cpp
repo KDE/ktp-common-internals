@@ -125,8 +125,7 @@ void StorageTest::testCreateAccount()
     QCOMPARE(imAcc1.imIDs().first(), QLatin1String("foo@bar.baz"));
     QCOMPARE(imAcc1.accountIdentifiers().size(), 1);
     QCOMPARE(imAcc1.accountIdentifiers().first(), QLatin1String("/foo/bar/baz"));
-    QCOMPARE(imAcc1.imAccountTypes().size(), 1);
-    QCOMPARE(imAcc1.imAccountTypes().first(), QLatin1String("test"));
+    QCOMPARE(imAcc1.imAccountType(), QLatin1String("test"));
 
     // Check that it is correctly related to the mePersonContact.
     QCOMPARE(mePersonContact.iMAccounts().size(), 1);
@@ -136,7 +135,7 @@ void StorageTest::testCreateAccount()
     Nepomuk::IMAccount imAcc2;
     imAcc2.setAccountIdentifiers(QStringList() << QLatin1String("/foo/bar/baz/bong"));
     imAcc2.setImIDs(QStringList() << QLatin1String("foo.bar@baz.bong"));
-    imAcc2.setImAccountTypes(QStringList() << QLatin1String("test"));
+    imAcc2.setImAccountType(QLatin1String("test"));
     QVERIFY(imAcc2.exists());
     mePersonContact.addIMAccount(imAcc2);
 
@@ -156,8 +155,7 @@ void StorageTest::testCreateAccount()
     QCOMPARE(imAcc3.imIDs().first(), QLatin1String("foo.bar@baz.bong"));
     QCOMPARE(imAcc3.accountIdentifiers().size(), 1);
     QCOMPARE(imAcc3.accountIdentifiers().first(), QLatin1String("/foo/bar/baz/bong"));
-    QCOMPARE(imAcc3.imAccountTypes().size(), 1);
-    QCOMPARE(imAcc3.imAccountTypes().first(), QLatin1String("test"));
+    QCOMPARE(imAcc3.imAccountType(), QLatin1String("test"));
     QCOMPARE(imAcc2, imAcc3);
 
     // Check that it is correctly related to the mePersonContact.
@@ -179,8 +177,7 @@ void StorageTest::testCreateAccount()
     QCOMPARE(imAcc4.imIDs().first(), QLatin1String("foo@bar.baz"));
     QCOMPARE(imAcc4.accountIdentifiers().size(), 1);
     QCOMPARE(imAcc4.accountIdentifiers().first(), QLatin1String("/foo/bar/baz"));
-    QCOMPARE(imAcc4.imAccountTypes().size(), 1);
-    QCOMPARE(imAcc4.imAccountTypes().first(), QLatin1String("test"));
+    QCOMPARE(imAcc4.imAccountType(), QLatin1String("test"));
     QCOMPARE(imAcc4, imAcc1);
 
     // Check that it is correctly related to the mePersonContact.
@@ -307,7 +304,7 @@ void StorageTest::testSetAccountCurrentPresence()
 
     // Check the presence properties before we set them.
     QVERIFY(imAcc1.imStatus().isEmpty());
-    QCOMPARE(imAcc1.imStatusMessages().size(), 0);
+    QVERIFY(imAcc1.imStatusMessage().isEmpty());
     QCOMPARE(imAcc1.statusTypes().size(), 0);
 
     // Set the presence.
@@ -319,8 +316,7 @@ void StorageTest::testSetAccountCurrentPresence()
 
     // Check the nepomuk resources are correct.
     QCOMPARE(imAcc1.imStatus(), QLatin1String("away"));
-    QCOMPARE(imAcc1.imStatusMessages().size(), 1);
-    QCOMPARE(imAcc1.imStatusMessages().first(), QLatin1String("Hello"));
+    QCOMPARE(imAcc1.imStatusMessage(), QLatin1String("Hello"));
     QCOMPARE(imAcc1.statusTypes().size(), 1);
     QCOMPARE(imAcc1.statusTypes().first(), Q_INT64_C(4));
 
@@ -333,8 +329,7 @@ void StorageTest::testSetAccountCurrentPresence()
 
     // Check the nepomuk resources are correct.
     QCOMPARE(imAcc1.imStatus(), QLatin1String("available"));
-    QCOMPARE(imAcc1.imStatusMessages().size(), 1);
-    QCOMPARE(imAcc1.imStatusMessages().first(), QLatin1String("Bye"));
+    QCOMPARE(imAcc1.imStatusMessage(), QLatin1String("Bye"));
     QCOMPARE(imAcc1.statusTypes().size(), 1);
     QCOMPARE(imAcc1.statusTypes().first(), Q_INT64_C(1));
 
@@ -391,8 +386,7 @@ void StorageTest::testCreateContact()
     QCOMPARE(imAcc2.imIDs().first(), QLatin1String("test@remote-contact.com"));
     QCOMPARE(imAcc2.statusTypes().size(), 1);
     QCOMPARE(imAcc2.statusTypes().first(), (qint64)Tp::ConnectionPresenceTypeUnknown);
-    QCOMPARE(imAcc2.imAccountTypes().size(), 1);
-    QCOMPARE(imAcc2.imAccountTypes().first(), QLatin1String("test"));
+    QCOMPARE(imAcc2.imAccountType(), QLatin1String("test"));
     QCOMPARE(imAcc1.isAccessedByOf().size(), 1);
     QCOMPARE(imAcc2.isAccessedBys().size(), 1);
     QCOMPARE(imAcc2.isAccessedBys().first(), imAcc1);
@@ -416,7 +410,7 @@ void StorageTest::testCreateContact()
     imAcc3.setImStatus("away");
     imAcc3.setImIDs(QStringList() << "test2@remote-contact.com");
     imAcc3.setStatusTypes(QList<qint64>() << Tp::ConnectionPresenceTypeAway);
-    imAcc3.setImAccountTypes(QStringList() << "test");
+    imAcc3.setImAccountType(QLatin1String("test"));
     imAcc3.addIsAccessedBy(imAcc1);
     pC3.addIMAccount(imAcc3);
 
@@ -428,8 +422,7 @@ void StorageTest::testCreateContact()
     QCOMPARE(imAcc3.imIDs().first(), QLatin1String("test2@remote-contact.com"));
     QCOMPARE(imAcc3.statusTypes().size(), 1);
     QCOMPARE(imAcc3.statusTypes().first(), (qint64)Tp::ConnectionPresenceTypeAway);
-    QCOMPARE(imAcc3.imAccountTypes().size(), 1);
-    QCOMPARE(imAcc3.imAccountTypes().first(), QLatin1String("test"));
+    QCOMPARE(imAcc3.imAccountType(), QLatin1String("test"));
     QCOMPARE(imAcc1.isAccessedByOf().size(), 2);
     QCOMPARE(imAcc3.isAccessedBys().size(), 1);
     QCOMPARE(imAcc3.isAccessedBys().first(), imAcc1);
@@ -461,8 +454,7 @@ void StorageTest::testCreateContact()
     QCOMPARE(imAcc3.imIDs().first(), QLatin1String("test2@remote-contact.com"));
     QCOMPARE(imAcc3.statusTypes().size(), 1);
     QCOMPARE(imAcc3.statusTypes().first(), (qint64)Tp::ConnectionPresenceTypeAway);
-    QCOMPARE(imAcc3.imAccountTypes().size(), 1);
-    QCOMPARE(imAcc3.imAccountTypes().first(), QLatin1String("test"));
+    QCOMPARE(imAcc3.imAccountType(), QLatin1String("test"));
     QCOMPARE(imAcc1.isAccessedByOf().size(), 2);
     QCOMPARE(imAcc3.isAccessedBys().size(), 1);
     QCOMPARE(imAcc3.isAccessedBys().first(), imAcc1);
@@ -494,8 +486,7 @@ void StorageTest::testCreateContact()
     QCOMPARE(imAcc2.imIDs().first(), QLatin1String("test@remote-contact.com"));
     QCOMPARE(imAcc2.statusTypes().size(), 1);
     QCOMPARE(imAcc2.statusTypes().first(), (qint64)Tp::ConnectionPresenceTypeUnknown);
-    QCOMPARE(imAcc2.imAccountTypes().size(), 1);
-    QCOMPARE(imAcc2.imAccountTypes().first(), QLatin1String("test"));
+    QCOMPARE(imAcc2.imAccountType(), QLatin1String("test"));
     QCOMPARE(imAcc1.isAccessedByOf().size(), 2);
     QCOMPARE(imAcc2.isAccessedBys().size(), 1);
     QCOMPARE(imAcc2.isAccessedBys().first(), imAcc1);
@@ -693,7 +684,7 @@ void StorageTest::testSetContactPresence()
 
     // Check the Presence is default.
     QCOMPARE(imAcc2.imStatus(), QLatin1String("unknown"));
-    QCOMPARE(imAcc2.imStatusMessages().size(), 0);
+    QVERIFY(imAcc2.imStatusMessage().isEmpty());
     QCOMPARE(imAcc2.statusTypes().size(), 1);
     QCOMPARE(imAcc2.statusTypes().first(), (qint64)Tp::ConnectionPresenceTypeUnknown);
 
@@ -708,8 +699,7 @@ void StorageTest::testSetContactPresence()
 
     // Check the presence now.
     QCOMPARE(imAcc2.imStatus(), QLatin1String("available"));
-    QCOMPARE(imAcc2.imStatusMessages().size(), 1);
-    QCOMPARE(imAcc2.imStatusMessages().first(), QLatin1String("foo"));
+    QCOMPARE(imAcc2.imStatusMessage(), QLatin1String("foo"));
     QCOMPARE(imAcc2.statusTypes().size(), 1);
     QCOMPARE(imAcc2.statusTypes().first(), (qint64)Tp::ConnectionPresenceTypeAvailable);
 
@@ -724,8 +714,7 @@ void StorageTest::testSetContactPresence()
 
     // Check the presence now.
     QCOMPARE(imAcc2.imStatus(), QLatin1String("away"));
-    QCOMPARE(imAcc2.imStatusMessages().size(), 1);
-    QCOMPARE(imAcc2.imStatusMessages().first(), QLatin1String("bar"));
+    QCOMPARE(imAcc2.imStatusMessage(), QLatin1String("bar"));
     QCOMPARE(imAcc2.statusTypes().size(), 1);
     QCOMPARE(imAcc2.statusTypes().first(), (qint64)Tp::ConnectionPresenceTypeAway);
 
@@ -739,7 +728,7 @@ void StorageTest::testSetContactPresence()
 
     // Check the presence now.
     QCOMPARE(imAcc2.imStatus(), QLatin1String("offline"));
-    QCOMPARE(imAcc2.imStatusMessages().size(), 0);
+    QVERIFY(imAcc2.imStatusMessage().isEmpty());
     QCOMPARE(imAcc2.statusTypes().size(), 1);
     QCOMPARE(imAcc2.statusTypes().first(), (qint64)Tp::ConnectionPresenceTypeOffline);
 
@@ -902,7 +891,7 @@ void StorageTest::testSetContactBlockedStatus()
     QVERIFY(pC2.exists());
 
     // Check the default blocked status.
-    QCOMPARE(imAcc2.isBlockeds().size(), 0);
+    QCOMPARE(imAcc2.isBlocked(), false);
 
     // Block the account.
     m_storage->setContactBlockStatus(QLatin1String("/foo/bar/baz"),
@@ -910,8 +899,7 @@ void StorageTest::testSetContactBlockedStatus()
                                      true);
 
     // Check the Nepomuk resources
-    QCOMPARE(imAcc2.isBlockeds().size(), 1);
-    QCOMPARE(imAcc2.isBlockeds().first(), true);
+    QCOMPARE(imAcc2.isBlocked(), true);
 
     // Unblock it
     m_storage->setContactBlockStatus(QLatin1String("/foo/bar/baz"),
@@ -919,8 +907,7 @@ void StorageTest::testSetContactBlockedStatus()
                                      false);
 
     // Check the Nepomuk resources
-    QCOMPARE(imAcc2.isBlockeds().size(), 1);
-    QCOMPARE(imAcc2.isBlockeds().first(), false);
+    QCOMPARE(imAcc2.isBlocked(), false);
 
     // Cleanup Nepomuk resources used in this test.
     imAcc1.remove();
