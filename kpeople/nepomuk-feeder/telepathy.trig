@@ -12,14 +12,16 @@ telepathy: {telepathy:accountIdentifier
           rdfs:comment "Identifier of a Local Telepathy Account (as given by the Telepathy Account Manager).";
           rdfs:domain nco:IMAccount ;
           rdfs:label "accountIdentifier" ;
-          rdfs:range xsd:string .
+          rdfs:range xsd:string ;
+          nrl:maxCardinality "1".
 
             telepathy:statusType
      a rdf:Property ;
           rdfs:comment "The current presence type as defined by the Telepathy Spec. Invalid values (by the Telepathy spec) should be considered as 0, Unset.";
           rdfs:domain nco:IMAccount ;
           rdfs:label "statusType" ;
-          rdfs:range xsd:integer .
+          rdfs:range xsd:integer ;
+          nrl:maxCardinality "1" .
 
 
 

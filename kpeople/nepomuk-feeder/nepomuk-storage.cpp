@@ -261,12 +261,8 @@ void NepomukStorage::createAccount(const QString &path, const QString &id, const
 
         // See if the Account has the same Telepathy Account Identifier as the account this
         // TelepathyAccount instance has been created to look after.
-        QStringList accountIdentifiers = foundImAccount.accountIdentifiers();
-
-        if (accountIdentifiers.size() != 1) {
-            kDebug() << "Account does not have 1 Telepathy Account Identifier. Oops. Ignoring."
-                     << "Number of Identifiers: "
-                     << accountIdentifiers.size();
+        if (foundImAccount.accountIdentifier().isEmpty()) {
+            kDebug() << "Account does not have a Telepathy Account Identifier. Oops. Ignoring.";
             continue;
         }
 
@@ -428,7 +424,7 @@ void NepomukStorage::createContact(const QString &path, const QString &id)
 
     newImAccount.setImStatus("unknown");
     newImAccount.setImIDs(QStringList() << id);
-    newImAccount.setStatusTypes(QList<long long int>() << Tp::ConnectionPresenceTypeUnknown);
+    newImAccount.setStatusType(Tp::ConnectionPresenceTypeUnknown);
     newImAccount.setImAccountType(account.imAccountType());
 
     newImAccount.addIsAccessedBy(account);
@@ -499,7 +495,7 @@ void NepomukStorage::setContactPresence(const QString &path,
 
     // Set the contact presence.
     imAccount.setImStatus(presence.status);
-    imAccount.setStatusTypes(QList<long long int>() << presence.type);
+    imAccount.setStatusType(presence.type);
 
     imAccount.setImStatusMessage(presence.statusMessage);
 }
