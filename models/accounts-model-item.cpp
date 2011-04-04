@@ -306,9 +306,21 @@ void AccountsModelItem::onConnectionChanged(const Tp::ConnectionPtr &connection)
                                            Tp::Channel::GroupMemberChangeDetails)),
             SLOT(onContactsChanged(Tp::Contacts,Tp::Contacts)));
 
-    clearContacts();
-    addKnownContacts();
+    connect(manager.data(),
+            SIGNAL(stateChanged(Tp::ContactListState)),
+            SLOT(onContactManagerStateChanged(Tp::ContactListState)));
+    onContactManagerStateChanged(manager->state());
 }
+
+void AccountsModelItem::onContactManagerStateChanged(Tp::ContactListState state)
+{
+    if (state == Tp::ContactListStateSuccess) {
+        clearContacts();
+        addKnownContacts();
+    }
+}
+
+
 
 void AccountsModelItem::clearContacts()
 {
