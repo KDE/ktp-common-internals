@@ -64,6 +64,7 @@ private Q_SLOTS:
 
     void onStatusChanged(Tp::ConnectionStatus status);
 
+    void onNewConnection();
     void onConnectionChanged(const Tp::ConnectionPtr &connection);
     void onContactManagerStateChanged(Tp::ContactListState state);
     void onContactsChanged(const Tp::Contacts &added,

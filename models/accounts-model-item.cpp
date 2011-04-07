@@ -58,12 +58,7 @@ AccountsModelItem::AccountsModelItem(const Tp::AccountPtr &account)
     : mPriv(new Private(account))
 {
     if (!mPriv->mAccount->connection().isNull()) {
-        Tp::ContactManagerPtr manager = account->connection()->contactManager();
-        connect(manager.data(),
-                SIGNAL(allKnownContactsChanged(Tp::Contacts,Tp::Contacts,
-                                               Tp::Channel::GroupMemberChangeDetails)),
-                SLOT(onContactsChanged(Tp::Contacts,Tp::Contacts)));
-        QTimer::singleShot(0, this, SLOT(addKnownContacts()));
+        QTimer::singleShot(0, this, SLOT(onNewConnection()));
     }
 
     connect(mPriv->mAccount.data(),
@@ -285,6 +280,11 @@ void AccountsModelItem::onStatusChanged(Tp::ConnectionStatus status)
     onChanged();
 
     emit connectionStatusChanged(mPriv->mAccount->uniqueIdentifier(), status);
+}
+
+void AccountsModelItem::onNewConnection()
+{
+  onConnectionChanged(mPriv->mAccount->connection());
 }
 
 void AccountsModelItem::onConnectionChanged(const Tp::ConnectionPtr &connection)
