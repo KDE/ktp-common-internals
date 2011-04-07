@@ -136,7 +136,7 @@ QVariant AccountsModelItem::data(int role) const
     case AccountsModel::IdRole:
         return mPriv->mAccount->uniqueIdentifier();
     case AccountsModel::AvatarRole:
-        return QVariant(); //TODO: Return account icon
+        return QVariant::fromValue(mPriv->mAccount->avatar());
     case AccountsModel::ValidRole:
         return mPriv->mAccount->isValid();
     case AccountsModel::EnabledRole:
@@ -197,6 +197,9 @@ bool AccountsModelItem::setData(int role, const QVariant &value)
         return true;
     case AccountsModel::NicknameRole:
         setNickname(value.toString());
+        return true;
+    case AccountsModel::AvatarRole:
+        mPriv->mAccount->setAvatar(value.value<Tp::Avatar>());
         return true;
     default:
         return false;
