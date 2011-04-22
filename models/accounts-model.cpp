@@ -118,7 +118,7 @@ AccountsModel::AccountsModel(const Tp::AccountManagerPtr &am, QObject *parent)
 
 AccountsModel::~AccountsModel()
 {
-    delete mPriv->mTree;
+    mPriv->mTree->deleteLater();
     delete mPriv;
 }
 
