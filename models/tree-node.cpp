@@ -123,3 +123,5 @@ void TreeNode::remove()
 
     deleteLater();
 }
+
+#include "tree-node.moc"

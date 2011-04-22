@@ -20,10 +20,11 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
+#include "accounts-model.h"
+
 #include <TelepathyQt4/ContactManager>
 #include <TelepathyQt4/PendingReady>
 
-#include "accounts-model.h"
 #include "accounts-model-item.h"
 #include "contact-model-item.h"
 
@@ -303,3 +304,5 @@ QModelIndex AccountsModel::parent(const QModelIndex &index) const
         return QModelIndex();
     }
 }
+
+#include "accounts-model.moc"

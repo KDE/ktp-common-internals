@@ -20,6 +20,8 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
+#include "contact-model-item.h"
+
 #include <QImage>
 
 #include <TelepathyQt4/AvatarData>
@@ -28,7 +30,6 @@
 #include <TelepathyQt4/RequestableChannelClassSpec>
 
 #include "accounts-model.h"
-#include "contact-model-item.h"
 
 struct ContactModelItem::Private
 {
@@ -172,3 +173,5 @@ Tp::ContactPtr ContactModelItem::contact() const
 {
     return mPriv->mContact;
 }
+
+#include "contact-model-item.moc"
