@@ -299,7 +299,9 @@ void AccountsModelItem::onConnectionChanged(const Tp::ConnectionPtr &connection)
     if (connection.isNull()
             || !connection->isValid()
             || connection->status() == Tp::ConnectionStatusDisconnected) {
-        emit childrenRemoved(this, 0, size() - 1);
+        if (size() > 0) {
+            emit childrenRemoved(this, 0, size() - 1);
+        }
         return;
     }
 
