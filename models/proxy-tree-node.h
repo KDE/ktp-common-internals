@@ -1,8 +1,6 @@
-/*                                                                         *
- * Tree model node
- * This file is based on TelepathyQt4Yell Models
+/*
+ * Proxy tree model node
  *
- * Copyright (C) 2010 Collabora Ltd. <info@collabora.co.uk>
  * Copyright (C) 2011 Martin Klapetek <martin dot klapetek at gmail dot com>
  *
  * This library is free software; you can redistribute it and/or
@@ -20,42 +18,33 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef TELEPATHY_TREE_NODE_H
-#define TELEPATHY_TREE_NODE_H
+#ifndef TELEPATHY_PROXY_TREE_NODE_H
+#define TELEPATHY_PROXY_TREE_NODE_H
 
 #include <QObject>
 #include <QVariant>
+#include "tree-node.h"
 
-class TreeNode : public QObject
+class ContactModelItem;
+class ProxyTreeNode : public TreeNode
 {
     Q_OBJECT
-    Q_DISABLE_COPY(TreeNode)
+    Q_DISABLE_COPY(ProxyTreeNode)
 
 public:
-    TreeNode();
+    ProxyTreeNode(ContactModelItem* sourceNode);
 
-    virtual ~TreeNode();
-
-    TreeNode *childAt(int index) const;
-
-    void addChild(TreeNode *node);
-
-    int indexOf(TreeNode *node) const;
-
-    int size() const;
-
-    TreeNode *parent() const;
+    virtual ~ProxyTreeNode();
 
     virtual QVariant data(int role) const;
     virtual bool setData(int role, const QVariant &value);
 
 public Q_SLOTS:
-    virtual void remove();
+    void onSourceNodeRemoved();
 
 Q_SIGNALS:
-    void changed(TreeNode *);
-    void childrenAdded(TreeNode *parent, const QList<TreeNode *> &nodes);
-    void childrenRemoved(TreeNode *parent, int first, int last);
+    void contactAddedToGroup(const QString& group);
+    void contactRemovedFromGroup(const QString& group);
 
 private:
     struct Private;
@@ -63,4 +52,4 @@ private:
     Private *mPriv;
 };
 
-#endif // TELEPATHY_TREE_NODE_H
+#endif // TELEPATHY_PROXY_TREE_NODE_H
