@@ -32,6 +32,8 @@
 
 #include "accounts-model-item.h"
 
+class ContactModelItem;
+
 class AccountsModel : public QAbstractItemModel
 {
     Q_OBJECT
@@ -93,10 +95,8 @@ public:
     virtual int rowCount(const QModelIndex &parent = QModelIndex()) const;
     virtual int columnCount(const QModelIndex &parent = QModelIndex()) const;
     virtual QVariant data(const QModelIndex &index, int role) const;
-    Tp::AccountPtr accountForIndex(const QModelIndex &index) const;
-    Tp::ContactPtr contactForIndex(const QModelIndex &index) const;
 
-    Tp::AccountPtr accountForContactIndex(const QModelIndex &index) const;
+    Tp::AccountPtr accountForContactItem(ContactModelItem* contactItem) const;
 
     virtual Qt::ItemFlags flags(const QModelIndex &index) const;
     virtual bool setData(const QModelIndex &index, const QVariant &value, int role = Qt::EditRole);
