@@ -41,6 +41,7 @@ public:
 
 public Q_SLOTS:
     void onSourceNodeRemoved();
+    void onSourceChanged();
 
 Q_SIGNALS:
     void contactAddedToGroup(const QString& group);

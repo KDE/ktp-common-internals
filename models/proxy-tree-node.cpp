@@ -23,6 +23,7 @@
 #include "proxy-tree-node.h"
 #include "tree-node.h"
 #include "contact-model-item.h"
+#include "accounts-model.h"
 
 struct ProxyTreeNode::Private
 {
@@ -54,7 +55,7 @@ ProxyTreeNode::ProxyTreeNode(ContactModelItem *sourceNode)
 
     connect(sourceNode,
             SIGNAL(changed(TreeNode*)),
-            SIGNAL(changed(TreeNode*)));
+            SLOT(onSourceChanged()));
 }
 
 ProxyTreeNode::~ProxyTreeNode()
@@ -81,4 +82,9 @@ void ProxyTreeNode::onSourceNodeRemoved()
     emit childrenRemoved(parent(), index, index);
 
     remove();
+}
+
+void ProxyTreeNode::onSourceChanged()
+{
+    emit changed(this);
 }
