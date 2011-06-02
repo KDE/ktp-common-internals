@@ -255,7 +255,7 @@ void GroupsModel::removeContactFromGroup(ProxyTreeNode* proxyNode, const QString
         disconnect(proxyNode, SIGNAL(contactAddedToGroup(QString)), 0, 0);
         disconnect(proxyNode, SIGNAL(contactRemovedFromGroup(QString)), 0, 0);
 
-        //if the the contact has no groups left, then put it in Ungroupped group
+        //if the the contact has no groups left, then put it in Ungrouped group
         if (contactGroups.isEmpty()) {
             addContactToGroups(proxyNode->data(AccountsModel::ItemRole).value<ContactModelItem*>(), contactGroups);
         }
@@ -280,13 +280,13 @@ void GroupsModel::addContactToGroups(ContactModelItem* contactItem, QStringList 
 {
     kDebug() << "Contact groups:" << groups;
 
-    //check if the contact is in Ungroupped group, if it is, it needs to be removed from there
-    bool checkUngroupped = false;
-    //if the contact has no groups, create an 'Ungroupped' group for it
+    //check if the contact is in Ungrouped group, if it is, it needs to be removed from there
+    bool checkUngrouped = false;
+    //if the contact has no groups, create an 'Ungrouped' group for it
     if (groups.isEmpty()) {
-        groups.append("Ungroupped"); //FIXME i18n
+        groups.append("Ungrouped"); //FIXME i18n
     } else {
-        checkUngroupped = true;
+        checkUngrouped = true;
     }
 
     groups.removeDuplicates();
@@ -306,16 +306,16 @@ void GroupsModel::addContactToGroups(ContactModelItem* contactItem, QStringList 
                 kDebug() << "Existing group found for" << group;
                 groupItem = savedGroupItem;
 
-                if (!checkUngroupped) {
+                if (!checkUngrouped) {
                     break;
                 }
             }
-            if (checkUngroupped) {
-                if (savedGroupItem->groupName() == "Ungroupped") {
+            if (checkUngrouped) {
+                if (savedGroupItem->groupName() == "Ungrouped") {
                     for (int i = 0; i < savedGroupItem->size(); i++) {
                         ProxyTreeNode *tmpNode = qobject_cast<ProxyTreeNode*>(savedGroupItem->childAt(i));
                         if (tmpNode->data(AccountsModel::ItemRole).value<ContactModelItem*>()->contact()->id() == contactItem->contact()->id()) {
-                            removeContactFromGroup(tmpNode, QString("Ungroupped"));
+                            removeContactFromGroup(tmpNode, QString("Ungrouped"));
                             if (groupExists) {
                                 break;
                             }
