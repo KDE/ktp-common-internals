@@ -60,13 +60,14 @@ void Contact::init()
             SIGNAL(capabilitiesChanged(Tp::ContactCapabilities)),
             SLOT(onCapabilitiesChanged(Tp::ContactCapabilities)));
     connect(m_contact.data(),
-            SIGNAL(subscriptionStateChanged(Tp::Contact::PresenceState,Tp::Channel::GroupMemberChangeDetails)),
+            SIGNAL(subscriptionStateChanged(Tp::Contact::PresenceState)),
             SLOT(onSubscriptionStateChanged(Tp::Contact::PresenceState)));
     connect(m_contact.data(),
-            SIGNAL(publishStateChanged(Tp::Contact::PresenceState,Tp::Channel::GroupMemberChangeDetails)),
+            SIGNAL(publishStateChanged(Tp::Contact::PresenceState, QString)),
             SLOT(onPublishStateChanged(Tp::Contact::PresenceState)));
+    // FIXME: Add support to the ontology for the message QString.
     connect(m_contact.data(),
-            SIGNAL(blockStatusChanged(bool,Tp::Channel::GroupMemberChangeDetails)),
+            SIGNAL(blockStatusChanged(bool)),
             SLOT(onBlockStatusChanged(bool)));
     // FIXME: Connect to any other signals of sync-worthy properties here.
 
