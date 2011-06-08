@@ -1,7 +1,7 @@
 /*
  * This file is part of telepathy-nepomuk-service
  *
- * Copyright (C) 2010 Collabora Ltd. <info@collabora.co.uk>
+ * Copyright (C) 2010-2011 Collabora Ltd. <info@collabora.co.uk>
  *   @author George Goldberg <george.goldberg@collabora.co.uk>
  *
  * This library is free software; you can redistribute it and/or
@@ -75,15 +75,15 @@ void Contact::init()
     emit created(m_contact->id());
 
     // Synthesize all the properties being changed
-    // FIXME: Make this bit correct
-    /*
-    onPublishStateChanged(m_contact->publishState());
+    // FIXME: Make sure all needed properties are included
+    onPresenceChanged(m_contact->presence());
+    onAliasChanged(m_contact->alias());
+    onAddedToGroup(QString());  // Arg is ignored.
+    // No need to call onRemovedFromGroup too since does the same as added.
+    onCapabilitiesChanged(m_contact->capabilities());
     onSubscriptionStateChanged(m_contact->subscriptionState());
+    onPublishStateChanged(m_contact->publishState());
     onBlockStatusChanged(m_contact->isBlocked());
-    if (contact->capabilities() != 0) {
-        onCapabilitiesChanged(m_contact->capabilities());
-    }
-    */
 }
 
 Contact::~Contact()
