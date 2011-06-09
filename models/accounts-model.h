@@ -86,6 +86,9 @@ public:
         UpgradeCallCapabilityRole,
         FileTransferCapabilityRole,
 
+        TotalUsersCountRole,
+        OnlineUsersCountRole,
+
         CustomRole // a placemark for custom roles in inherited models
     };
 

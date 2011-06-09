@@ -154,6 +154,19 @@ QModelIndex GroupsModel::parent(const QModelIndex &index) const
 
 void GroupsModel::onItemChanged(TreeNode* node)
 {
+    if (node->parent()) {
+        //if it is a group item
+        if (node->parent() == mPriv->mTree) {
+            GroupsModelItem *groupItem = qobject_cast<GroupsModelItem*>(node);
+            Q_ASSERT(groupItem);
+            groupItem->countOnlineContacts();
+        } else {
+            GroupsModelItem *groupItem = qobject_cast<GroupsModelItem*>(node->parent());
+            Q_ASSERT(groupItem);
+            groupItem->countOnlineContacts();
+            emit dataChanged(index(node->parent()), index(node->parent()));
+        }
+    }
     emit dataChanged(index(node), index(node));
 }
 
@@ -178,6 +191,8 @@ void GroupsModel::onItemsRemoved(TreeNode *parent, int first, int last)
         parent->childAt(i)->remove();
     }
     endRemoveRows();
+
+    onItemChanged(parent);
 }
 
 
@@ -242,10 +257,7 @@ void GroupsModel::onContactRemovedFromGroup(const QString& group)
 
 void GroupsModel::removeContactFromGroup(ProxyTreeNode* proxyNode, const QString& group)
 {
-    kDebug() << "Removing contact from" << group;
-
     QStringList contactGroups = proxyNode->data(AccountsModel::ItemRole).value<ContactModelItem*>()->contact()->groups();
-    kDebug() << "Left groups are:" << contactGroups;
 
     contactGroups.removeOne(group);
 
@@ -278,8 +290,6 @@ void GroupsModel::addContactToGroups(ContactModelItem* contactItem, const QStrin
 
 void GroupsModel::addContactToGroups(ContactModelItem* contactItem, QStringList groups)
 {
-    kDebug() << "Contact groups:" << groups;
-
     //check if the contact is in Ungrouped group, if it is, it needs to be removed from there
     bool checkUngrouped = false;
     //if the contact has no groups, create an 'Ungrouped' group for it
@@ -295,15 +305,11 @@ void GroupsModel::addContactToGroups(ContactModelItem* contactItem, QStringList 
         bool groupExists = false;
         GroupsModelItem *groupItem;
 
-        kDebug() << "Adding" << contactItem->contact()->alias() << "to" << group;
-
         //check if the group already exists first
         for (int i = 0; i < mPriv->mTree->children().size(); i++) {
-//         foreach (GroupsModelItem *savedGroupItem, mPriv->mTree->children()) {
             GroupsModelItem *savedGroupItem = qobject_cast<GroupsModelItem*>(mPriv->mTree->childAt(i));
             if (savedGroupItem->groupName() == group) {
                 groupExists = true;
-                kDebug() << "Existing group found for" << group;
                 groupItem = savedGroupItem;
 
                 if (!checkUngrouped) {
@@ -326,7 +332,6 @@ void GroupsModel::addContactToGroups(ContactModelItem* contactItem, QStringList 
         }
 
         if (!groupExists) {
-            kDebug() << "Creating new group for" << group;
             groupItem = new GroupsModelItem(group);
             onItemsAdded(mPriv->mTree, QList<TreeNode *>() << groupItem);
         }

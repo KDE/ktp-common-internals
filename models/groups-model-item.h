@@ -53,7 +53,7 @@ public:
     void removeProxyContact(ProxyTreeNode* proxyNode);
     void removeContact(ContactModelItem* contact);
 
-//     void clearContacts();
+    void countOnlineContacts();
 
 private Q_SLOTS:
 

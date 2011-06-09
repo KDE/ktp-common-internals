@@ -32,7 +32,8 @@
 struct GroupsModelItem::Private
 {
     Private(const QString &groupName)
-        : mGroupName(groupName)
+        : mGroupName(groupName),
+          mOnlineUsersCount(0)
     {
     }
 
@@ -40,6 +41,7 @@ struct GroupsModelItem::Private
     QString groupName();
 
     QString mGroupName;
+    int mOnlineUsersCount;
 };
 
 void GroupsModelItem::Private::setGroupName(const QString& value)
@@ -69,6 +71,10 @@ QVariant GroupsModelItem::data(int role) const
         return QVariant::fromValue((GroupsModelItem*)this);
     case GroupsModel::GroupNameRole:
         return mPriv->mGroupName;
+    case AccountsModel::TotalUsersCountRole:
+        return size();
+    case AccountsModel::OnlineUsersCountRole:
+        return mPriv->mOnlineUsersCount;
     default:
         return QVariant();
     }
@@ -98,19 +104,43 @@ QString GroupsModelItem::groupName()
 void GroupsModelItem::addProxyContact(ProxyTreeNode *proxyNode)
 {
     emit childrenAdded(this, QList<TreeNode*>() << proxyNode);
+
+    //the group counters needs to be updated
+    emit changed(this);
 }
 
 void GroupsModelItem::removeProxyContact(ProxyTreeNode *proxyNode)
 {
     emit childrenRemoved(this, indexOf(proxyNode), indexOf(proxyNode));
+
+    //the group counters needs to be updated
+    emit changed(this);
 }
 
 void GroupsModelItem::removeContact(ContactModelItem* contact)
 {
-    for (int i = 0; i < children().size(); i++) {
+    for (int i = 0; i < size(); i++) {
         ProxyTreeNode* proxyNode = qobject_cast<ProxyTreeNode*>(childAt(i));
         if (proxyNode->data(AccountsModel::ItemRole).value<ContactModelItem*>() == contact) {
             proxyNode->remove();
         }
     }
+
+    //the group counters needs to be updated
+    emit changed(this);
+}
+
+void GroupsModelItem::countOnlineContacts()
+{
+    int tmpCounter = 0;
+    for (int i = 0; i < size(); ++i) {
+        ProxyTreeNode* proxyNode = qobject_cast<ProxyTreeNode*>(childAt(i));
+        Q_ASSERT(proxyNode);
+        if (proxyNode->data(AccountsModel::PresenceTypeRole).toUInt() != Tp::ConnectionPresenceTypeOffline
+            && proxyNode->data(AccountsModel::PresenceTypeRole).toUInt() != Tp::ConnectionPresenceTypeUnknown) {
+            tmpCounter++;
+        }
+    }
+
+    mPriv->mOnlineUsersCount = tmpCounter;
 }

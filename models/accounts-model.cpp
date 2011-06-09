@@ -134,6 +134,15 @@ void AccountsModel::onNewAccount(const Tp::AccountPtr &account)
 
 void AccountsModel::onItemChanged(TreeNode *node)
 {
+    if (node->parent()) {
+        //if it is a group item
+        if (node->parent() == mPriv->mTree) {
+            qobject_cast<AccountsModelItem*>(node)->countOnlineContacts();
+        } else {
+            qobject_cast<AccountsModelItem*>(node->parent())->countOnlineContacts();
+            emit dataChanged(index(node->parent()), index(node->parent()));
+        }
+    }
     QModelIndex accountIndex = index(node);
     emit dataChanged(accountIndex, accountIndex);
 }

@@ -53,6 +53,8 @@ public:
 
     void clearContacts();
 
+    void countOnlineContacts();
+
 Q_SIGNALS:
     void connectionStatusChanged(const QString &accountId, int status);
 

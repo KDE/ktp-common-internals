@@ -31,7 +31,8 @@
 struct AccountsModelItem::Private
 {
     Private(const Tp::AccountPtr &account)
-        : mAccount(account)
+        : mAccount(account),
+          mOnlineCount(0)
     {
     }
 
@@ -39,6 +40,7 @@ struct AccountsModelItem::Private
     void setStatusMessage(const QString &value);
 
     Tp::AccountPtr mAccount;
+    int mOnlineCount;
 };
 
 void AccountsModelItem::Private::setStatus(const QString &value)
@@ -179,6 +181,10 @@ QVariant AccountsModelItem::data(int role) const
         return mPriv->mAccount->connectionStatus();
     case AccountsModel::ConnectionStatusReasonRole:
         return mPriv->mAccount->connectionStatusReason();
+    case AccountsModel::TotalUsersCountRole:
+        return size();
+    case AccountsModel::OnlineUsersCountRole:
+        return mPriv->mOnlineCount;
     default:
         return QVariant();
     }
@@ -277,6 +283,8 @@ void AccountsModelItem::onContactsChanged(const Tp::Contacts &addedContacts,
         }
     }
     emit childrenAdded(this, newNodes);
+
+    countOnlineContacts();
 }
 
 void AccountsModelItem::onStatusChanged(Tp::ConnectionStatus status)
@@ -383,6 +391,23 @@ void AccountsModelItem::addKnownContacts()
     if (newNodes.count() > 0) {
         emit childrenAdded(this, newNodes);
     }
+
+    countOnlineContacts();
+}
+
+void AccountsModelItem::countOnlineContacts()
+{
+    int tmpCounter = 0;
+    for (int i = 0; i < size(); ++i) {
+        ContactModelItem* contactNode = qobject_cast<ContactModelItem*>(childAt(i));
+        Q_ASSERT(contactNode);
+        if (contactNode->data(AccountsModel::PresenceTypeRole).toUInt() != Tp::ConnectionPresenceTypeOffline
+            && contactNode->data(AccountsModel::PresenceTypeRole).toUInt() != Tp::ConnectionPresenceTypeUnknown) {
+            tmpCounter++;
+        }
+    }
+
+    mPriv->mOnlineCount = tmpCounter;
 }
 
 #include "accounts-model-item.moc"
