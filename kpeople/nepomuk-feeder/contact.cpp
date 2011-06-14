@@ -139,7 +139,7 @@ void Contact::onSubscriptionStateChanged(Tp::Contact::PresenceState state)
 
 void Contact::onCapabilitiesChanged(const Tp::ContactCapabilities &capabilities)
 {
-    // FIXME: Implement me!
+    emit capabilitiesChanged(m_contact->id(), capabilities);
 }
 
 

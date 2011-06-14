@@ -1,7 +1,7 @@
 /*
  * This file is part of telepathy-nepomuk-service
  *
- * Copyright (C) 2009-2010 Collabora Ltd. <info@collabora.co.uk>
+ * Copyright (C) 2009-2011 Collabora Ltd. <info@collabora.co.uk>
  *   @author George Goldberg <george.goldberg@collabora.co.uk>
  *
  * This library is free software; you can redistribute it and/or
@@ -140,6 +140,8 @@ void Controller::onNewAccount(const Tp::AccountPtr &account)
             m_storage, SLOT(setContactPublishState(QString,QString,Tp::Contact::PresenceState)));
     connect(acc, SIGNAL(contactSubscriptionStateChanged(QString,QString,Tp::Contact::PresenceState)),
             m_storage, SLOT(setContactSubscriptionState(QString,QString,Tp::Contact::PresenceState)));
+    connect(acc, SIGNAL(contactCapabilitiesChanged(QString,QString,Tp::ContactCapabilities)),
+            m_storage, SLOT(setContactCapabilities(QString,QString,Tp::ContactCapabilities)));
 
     // Now the signal connections are done, initialise the account.
     acc->init();

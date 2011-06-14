@@ -53,6 +53,7 @@ private Q_SLOTS:
     void testSetContactBlockedStatus();
     void testSetContactPublishState();
     void testSetContactSubscriptionState();
+    void testSetContactCapabilities();
 
     void cleanup();
     void cleanupTestCase();

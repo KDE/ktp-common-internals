@@ -1,7 +1,7 @@
 /*
  * This file is part of telepathy-nepomuk-service
  *
- * Copyright (C) 2009-2010 Collabora Ltd. <info@collabora.co.uk>
+ * Copyright (C) 2009-2011 Collabora Ltd. <info@collabora.co.uk>
  *   @author George Goldberg <george.goldberg@collabora.co.uk>
  *
  * This library is free software; you can redistribute it and/or
@@ -182,6 +182,9 @@ void Account::onNewContact(const Tp::ContactPtr &contact)
         connect(c,
                 SIGNAL(subscriptionStateChanged(QString,Tp::Contact::PresenceState)),
                 SLOT(onContactSubscriptionStateChanged(QString,Tp::Contact::PresenceState)));
+        connect(c,
+                SIGNAL(capabilitiesChanged(QString,Tp::ContactCapabilities)),
+                SLOT(onContactCapabilitiesChanged(QString,Tp::ContactCapabilities)));
 
         c->init();
     }
@@ -228,6 +231,11 @@ void Account::onContactPublishStateChanged(const QString &id, const Tp::Contact:
 void Account::onContactSubscriptionStateChanged(const QString &id, const Tp::Contact::PresenceState &state)
 {
     emit contactSubscriptionStateChanged(m_account->objectPath(), id, state);
+}
+
+void Account::onContactCapabilitiesChanged(const QString &id, const Tp::ContactCapabilities &capabilities)
+{
+    emit contactCapabilitiesChanged(m_account->objectPath(), id, capabilities);
 }
 
 

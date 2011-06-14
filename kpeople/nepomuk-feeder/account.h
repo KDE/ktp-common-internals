@@ -1,7 +1,7 @@
 /*
  * This file is part of telepathy-nepomuk-service
  *
- * Copyright (C) 2009-2010 Collabora Ltd. <info@collabora.co.uk>
+ * Copyright (C) 2009-2011 Collabora Ltd. <info@collabora.co.uk>
  *   @author George Goldberg <george.goldberg@collabora.co.uk>
  *
  * This library is free software; you can redistribute it and/or
@@ -63,6 +63,7 @@ Q_SIGNALS:
     void contactBlockStatusChanged(const QString &path, const QString &id, bool blocked);
     void contactPublishStateChanged(const QString &path, const QString &id, const Tp::Contact::PresenceState &state);
     void contactSubscriptionStateChanged(const QString &path, const QString &id, const Tp::Contact::PresenceState &state);
+    void contactCapabilitiesChanged(const QString &path, const QString &id, const Tp::ContactCapabilities &capabilities);
 
 private Q_SLOTS:
     void onConnectionStatusChanged(Tp::ConnectionStatus status);
@@ -79,6 +80,7 @@ private Q_SLOTS:
     void onContactBlockStatusChanged(const QString &id, bool blocked);
     void onContactPublishStateChanged(const QString &id, const Tp::Contact::PresenceState &state);
     void onContactSubscriptionStateChanged(const QString &id, const Tp::Contact::PresenceState &state);
+    void onContactCapabilitiesChanged(const QString &id, const Tp::ContactCapabilities &capabilities);
 
 private:
     Q_DISABLE_COPY(Account);

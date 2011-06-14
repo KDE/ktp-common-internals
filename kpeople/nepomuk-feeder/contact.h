@@ -1,7 +1,7 @@
 /*
  * This file is part of telepathy-nepomuk-service
  *
- * Copyright (C) 2010 Collabora Ltd. <info@collabora.co.uk>
+ * Copyright (C) 2010-2011 Collabora Ltd. <info@collabora.co.uk>
  *   @author George Goldberg <george.goldberg@collabora.co.uk>
  *
  * This library is free software; you can redistribute it and/or
@@ -51,6 +51,7 @@ Q_SIGNALS:
     void blockStatusChanged(const QString &id, bool blocked);
     void publishStateChanged(const QString &id, const Tp::Contact::PresenceState &state);
     void subscriptionStateChanged(const QString &id, const Tp::Contact::PresenceState &state);
+    void capabilitiesChanged(const QString &id, const Tp::ContactCapabilities &capabilities);
 
 private Q_SLOTS:
     void onAliasChanged(const QString &alias);

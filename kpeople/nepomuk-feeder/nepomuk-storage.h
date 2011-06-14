@@ -1,7 +1,7 @@
 /*
  * This file is part of telepathy-nepomuk-service
  *
- * Copyright (C) 2009-2010 Collabora Ltd. <info@collabora.co.uk>
+ * Copyright (C) 2009-2011 Collabora Ltd. <info@collabora.co.uk>
  *   @author George Goldberg <george.goldberg@collabora.co.uk>
  *
  * This library is free software; you can redistribute it and/or
@@ -98,6 +98,7 @@ public Q_SLOTS:
     virtual void setContactBlockStatus(const QString &path, const QString &id, bool blocked);
     virtual void setContactPublishState(const QString &path, const QString &id, const Tp::Contact::PresenceState &state);
     virtual void setContactSubscriptionState(const QString &path, const QString &id, const Tp::Contact::PresenceState &state);
+    virtual void setContactCapabilities(const QString &path, const QString &id, const Tp::ContactCapabilities &capabilities);
 
 private Q_SLOTS:
     void onNepomukError(const QString &uri, int errorCode);

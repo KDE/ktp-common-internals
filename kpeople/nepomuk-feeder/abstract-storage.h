@@ -1,7 +1,7 @@
 /*
  * This file is part of telepathy-nepomuk-service
  *
- * Copyright (C) 2010 Collabora Ltd. <info@collabora.co.uk>
+ * Copyright (C) 2010-2011 Collabora Ltd. <info@collabora.co.uk>
  *   @author George Goldberg <george.goldberg@collabora.co.uk>
  *
  * This library is free software; you can redistribute it and/or
@@ -26,6 +26,7 @@
 #include <QtCore/QString>
 
 #include <TelepathyQt4/Contact>
+#include <TelepathyQt4/ContactCapabilities>
 #include <TelepathyQt4/Types>
 
 /**
@@ -55,6 +56,7 @@ public Q_SLOTS:
     virtual void setContactBlockStatus(const QString &path, const QString &id, bool blocked) = 0;
     virtual void setContactPublishState(const QString &path, const QString &id, const Tp::Contact::PresenceState &state) = 0;
     virtual void setContactSubscriptionState(const QString &path, const QString &id, const Tp::Contact::PresenceState &state) = 0;
+    virtual void setContactCapabilities(const QString &path, const QString &id, const Tp::ContactCapabilities &capabilities) = 0;
 
 private:
     Q_DISABLE_COPY(AbstractStorage);

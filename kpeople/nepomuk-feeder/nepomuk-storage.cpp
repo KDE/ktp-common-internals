@@ -1,7 +1,7 @@
 /*
  * This file is part of telepathy-nepomuk-service
  *
- * Copyright (C) 2009-2010 Collabora Ltd. <info@collabora.co.uk>
+ * Copyright (C) 2009-2011 Collabora Ltd. <info@collabora.co.uk>
  *   @author George Goldberg <george.goldberg@collabora.co.uk>
  *
  * This library is free software; you can redistribute it and/or
@@ -25,6 +25,7 @@
 #include "ontologies/nco.h"
 #include "ontologies/pimo.h"
 #include "ontologies/telepathy.h"
+#include "ontologies/imcapability.h"
 
 #include <KDebug>
 
@@ -705,6 +706,50 @@ void NepomukStorage::setContactSubscriptionState(const QString &path,
         kWarning() << "Invalid Tp::Contact::PresenceState received.";
         Q_ASSERT(false);
     }
+}
+
+void NepomukStorage::setContactCapabilities(const QString &path,
+                                           const QString &id,
+                                           const Tp::ContactCapabilities &capabilities)
+{
+    ContactIdentifier identifier(path, id);
+
+    // Check the Contact exists.
+    Q_ASSERT(m_contacts.contains(identifier));
+    if (!m_contacts.contains(identifier)) {
+        kWarning() << "Contact not found.";
+        return;
+    }
+
+    ContactResources resources = m_contacts.value(identifier);
+
+    Nepomuk::IMAccount imAccount = resources.imAccount();
+
+    // For each supported (by the ontology) capability, check it and save the correct value
+    QSet<Nepomuk::IMCapability> caps(imAccount.iMCapabilitys().toSet());
+
+    if (capabilities.textChats()) {
+        caps.insert(Nepomuk::Vocabulary::NCO::imCapabilityText());
+    } else {
+        caps.remove(Nepomuk::Vocabulary::NCO::imCapabilityText());
+    }
+
+    if (capabilities.streamedMediaAudioCalls()) {
+        caps.insert(Nepomuk::Vocabulary::NCO::imCapabilityAudio());
+    } else {
+        caps.remove(Nepomuk::Vocabulary::NCO::imCapabilityAudio());
+    }
+
+    if (capabilities.streamedMediaVideoCalls()) {
+        caps.insert(Nepomuk::Vocabulary::NCO::imCapabilityVideo());
+    } else {
+        caps.remove(Nepomuk::Vocabulary::NCO::imCapabilityVideo());
+    }
+
+    // FIXME: Add other caps to the ontologies so that we can add them here.
+
+    // Save the new list of caps.
+    imAccount.setIMCapabilitys(caps.toList());
 }
 
 

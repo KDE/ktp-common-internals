@@ -1,7 +1,7 @@
 /*
  * This file is part of nepomuktelepathyservice
  *
- * Copyright (C) 2010 Collabora Ltd. <info@collabora.co.uk>
+ * Copyright (C) 2010-2011 Collabora Ltd. <info@collabora.co.uk>
  *   @author George Goldberg <george.goldberg@collabora.co.uk>
  *
  * This library is free software; you can redistribute it and/or
@@ -99,6 +99,7 @@ public Q_SLOTS:
     virtual void setContactBlockStatus(const QString &, const QString &, bool) { }
     virtual void setContactPublishState(const QString &, const QString &, const Tp::Contact::PresenceState &) { }
     virtual void setContactSubscriptionState(const QString &, const QString &, const Tp::Contact::PresenceState &) { }
+    virtual void setContactCapabilities(const QString &, const QString &, const Tp::ContactCapabilities &) { }
 
 private:
     ControllerTest *m_test;
@@ -127,6 +128,7 @@ public Q_SLOTS:
     virtual void setContactBlockStatus(const QString &, const QString &, bool) { }
     virtual void setContactPublishState(const QString &, const QString &, const Tp::Contact::PresenceState &) { }
     virtual void setContactSubscriptionState(const QString &, const QString &, const Tp::Contact::PresenceState &) { }
+    virtual void setContactCapabilities(const QString &, const QString &, const Tp::ContactCapabilities &) { }
 
 private:
     ControllerTest *m_test;
