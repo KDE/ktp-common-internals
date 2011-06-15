@@ -142,6 +142,8 @@ void Controller::onNewAccount(const Tp::AccountPtr &account)
             m_storage, SLOT(setContactSubscriptionState(QString,QString,Tp::Contact::PresenceState)));
     connect(acc, SIGNAL(contactCapabilitiesChanged(QString,QString,Tp::ContactCapabilities)),
             m_storage, SLOT(setContactCapabilities(QString,QString,Tp::ContactCapabilities)));
+    connect(acc, SIGNAL(contactAvatarChanged(QString,QString,Tp::AvatarData)),
+            m_storage, SLOT(setContactAvatar(QString,QString,Tp::AvatarData)));
 
     // Now the signal connections are done, initialise the account.
     acc->init();

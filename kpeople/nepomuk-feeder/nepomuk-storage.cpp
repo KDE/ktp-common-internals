@@ -26,6 +26,8 @@
 #include "ontologies/pimo.h"
 #include "ontologies/telepathy.h"
 #include "ontologies/imcapability.h"
+#include "ontologies/personcontact.h"
+#include "ontologies/dataobject.h"
 
 #include <KDebug>
 
@@ -47,6 +49,7 @@
 #include <QtCore/QSharedData>
 
 #include <TelepathyQt4/Constants>
+#include <TelepathyQt4/AvatarData>
 
 class ContactIdentifier::Data : public QSharedData {
 public:
@@ -750,6 +753,49 @@ void NepomukStorage::setContactCapabilities(const QString &path,
 
     // Save the new list of caps.
     imAccount.setIMCapabilitys(caps.toList());
+}
+
+void NepomukStorage::setContactAvatar(const QString &path,
+                                      const QString &id,
+                                      const Tp::AvatarData &avatar)
+{
+    ContactIdentifier identifier(path, id);
+
+    // Check the Contact exists.
+    Q_ASSERT(m_contacts.contains(identifier));
+    if (!m_contacts.contains(identifier)) {
+        kWarning() << "Contact not found.";
+        return;
+    }
+
+    ContactResources resources = m_contacts.value(identifier);
+
+    Nepomuk::PersonContact personContact = resources.personContact();
+    Nepomuk::IMAccount imAccount = resources.imAccount();
+
+    // Get the resource uri of the avatar.
+    Nepomuk::DataObject avatarPhoto = imAccount.avatar();
+
+    // Get all the photos of the person contact
+    QList<Nepomuk::DataObject> photos = personContact.photos();
+
+    // Remove the one we are removing.
+    photos.removeAll(avatarPhoto);
+
+    // Update the photos
+    personContact.setPhotos(photos);
+
+    if (avatar.fileName.isEmpty()) {
+        kDebug() << "No avatar set.";
+        // Remove the avatar property
+        imAccount.removeProperty(Nepomuk::Vocabulary::Telepathy::avatar());
+
+    } else {
+        // Add the new avatar to Nepomuk, both as the avatar and as a photo.
+        Nepomuk::Resource newAvatarPhoto(avatar.fileName);
+        personContact.addPhoto(newAvatarPhoto);
+        imAccount.setAvatar(newAvatarPhoto);
+    }
 }
 
 

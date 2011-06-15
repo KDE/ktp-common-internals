@@ -22,6 +22,7 @@
 #include "contact.h"
 
 #include <TelepathyQt4/Connection>
+#include <TelepathyQt4/Contact>
 #include <TelepathyQt4/ContactCapabilities>
 #include <TelepathyQt4/ContactManager>
 
@@ -69,6 +70,9 @@ void Contact::init()
     connect(m_contact.data(),
             SIGNAL(blockStatusChanged(bool)),
             SLOT(onBlockStatusChanged(bool)));
+    connect(m_contact.data(),
+            SIGNAL(avatarDataChanged(Tp::AvatarData)),
+            SLOT(onAvatarDataChanged(Tp::AvatarData)));
     // FIXME: Connect to any other signals of sync-worthy properties here.
 
     // Emit a signal to notify the controller that a new contact has been created.
@@ -84,6 +88,14 @@ void Contact::init()
     onSubscriptionStateChanged(m_contact->subscriptionState());
     onPublishStateChanged(m_contact->publishState());
     onBlockStatusChanged(m_contact->isBlocked());
+
+    // Become ready asynchronously with the avatar data, since this may take some time and we
+    // don't want to delay the rest of the contact's attributes being ready.
+    // Fire and forget because we can't do anything even if this fails.
+    Tp::Features f;
+    f << Tp::Contact::FeatureAvatarData
+      << Tp::Contact::FeatureAvatarToken;
+    m_contact->manager()->upgradeContacts(QList<Tp::ContactPtr>() << m_contact, f);
 }
 
 Contact::~Contact()
@@ -140,6 +152,11 @@ void Contact::onSubscriptionStateChanged(Tp::Contact::PresenceState state)
 void Contact::onCapabilitiesChanged(const Tp::ContactCapabilities &capabilities)
 {
     emit capabilitiesChanged(m_contact->id(), capabilities);
+}
+
+void Contact::onAvatarDataChanged(const Tp::AvatarData &avatar)
+{
+    emit avatarChanged(m_contact->id(), avatar);
 }
 
 

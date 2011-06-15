@@ -64,6 +64,7 @@ Q_SIGNALS:
     void contactPublishStateChanged(const QString &path, const QString &id, const Tp::Contact::PresenceState &state);
     void contactSubscriptionStateChanged(const QString &path, const QString &id, const Tp::Contact::PresenceState &state);
     void contactCapabilitiesChanged(const QString &path, const QString &id, const Tp::ContactCapabilities &capabilities);
+    void contactAvatarChanged(const QString &path, const QString &id, const Tp::AvatarData &avatar);
 
 private Q_SLOTS:
     void onConnectionStatusChanged(Tp::ConnectionStatus status);
@@ -81,6 +82,7 @@ private Q_SLOTS:
     void onContactPublishStateChanged(const QString &id, const Tp::Contact::PresenceState &state);
     void onContactSubscriptionStateChanged(const QString &id, const Tp::Contact::PresenceState &state);
     void onContactCapabilitiesChanged(const QString &id, const Tp::ContactCapabilities &capabilities);
+    void onContactAvatarChanged(const QString &id, const Tp::AvatarData &avatar);
 
 private:
     Q_DISABLE_COPY(Account);

@@ -100,6 +100,7 @@ public Q_SLOTS:
     virtual void setContactPublishState(const QString &, const QString &, const Tp::Contact::PresenceState &) { }
     virtual void setContactSubscriptionState(const QString &, const QString &, const Tp::Contact::PresenceState &) { }
     virtual void setContactCapabilities(const QString &, const QString &, const Tp::ContactCapabilities &) { }
+    virtual void setContactAvatar(const QString &, const QString &, const Tp::AvatarData &) { }
 
 private:
     ControllerTest *m_test;
@@ -129,6 +130,7 @@ public Q_SLOTS:
     virtual void setContactPublishState(const QString &, const QString &, const Tp::Contact::PresenceState &) { }
     virtual void setContactSubscriptionState(const QString &, const QString &, const Tp::Contact::PresenceState &) { }
     virtual void setContactCapabilities(const QString &, const QString &, const Tp::ContactCapabilities &) { }
+    virtual void setContactAvatar(const QString &, const QString &, const Tp::AvatarData &) { }
 
 private:
     ControllerTest *m_test;

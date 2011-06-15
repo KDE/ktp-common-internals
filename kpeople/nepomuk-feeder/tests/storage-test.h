@@ -54,6 +54,7 @@ private Q_SLOTS:
     void testSetContactPublishState();
     void testSetContactSubscriptionState();
     void testSetContactCapabilities();
+    void testSetAvatar();
 
     void cleanup();
     void cleanupTestCase();

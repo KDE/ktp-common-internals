@@ -52,6 +52,7 @@ Q_SIGNALS:
     void publishStateChanged(const QString &id, const Tp::Contact::PresenceState &state);
     void subscriptionStateChanged(const QString &id, const Tp::Contact::PresenceState &state);
     void capabilitiesChanged(const QString &id, const Tp::ContactCapabilities &capabilities);
+    void avatarChanged(const QString &id, const Tp::AvatarData &avatar);
 
 private Q_SLOTS:
     void onAliasChanged(const QString &alias);
@@ -62,6 +63,7 @@ private Q_SLOTS:
     void onPublishStateChanged(Tp::Contact::PresenceState state);
     void onSubscriptionStateChanged(Tp::Contact::PresenceState state);
     void onCapabilitiesChanged(const Tp::ContactCapabilities &capabilities);
+    void onAvatarDataChanged(const Tp::AvatarData &avatar);
 
 private:
     Q_DISABLE_COPY(Contact);

@@ -57,6 +57,7 @@ public Q_SLOTS:
     virtual void setContactPublishState(const QString &path, const QString &id, const Tp::Contact::PresenceState &state) = 0;
     virtual void setContactSubscriptionState(const QString &path, const QString &id, const Tp::Contact::PresenceState &state) = 0;
     virtual void setContactCapabilities(const QString &path, const QString &id, const Tp::ContactCapabilities &capabilities) = 0;
+    virtual void setContactAvatar(const QString &path, const QString &id, const Tp::AvatarData &avatar) = 0;
 
 private:
     Q_DISABLE_COPY(AbstractStorage);

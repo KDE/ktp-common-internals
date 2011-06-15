@@ -4,6 +4,7 @@
 @prefix nao:     <http://www.semanticdesktop.org/ontologies/2007/08/15/nao#> .
 @prefix nrl:     <http://www.semanticdesktop.org/ontologies/2007/08/15/nrl#> .
 @prefix nco:     <http://www.semanticdesktop.org/ontologies/2007/03/22/nco#> .
+@prefix nie:     <http://www.semanticdesktop.org/ontologies/2007/01/19/nie/#> .
 @prefix xsd:     <http://www.w3.org/2001/XMLSchema#> .
 
 telepathy: {telepathy:accountIdentifier
@@ -23,8 +24,13 @@ telepathy: {telepathy:accountIdentifier
           rdfs:range xsd:integer ;
           nrl:maxCardinality "1" .
 
-
-
+            telepathy:avatar
+     a rdf:Property ;
+          rdfs:comment "The photo which is the IM Account's avatar. This is a special case of the nco:photo property of the parent nco:personContact." ;
+          rdfs:domain nco:IMAccount ;
+          rdfs:label "avatar" ;
+          rdfs:range nie:DataObject ;
+          nrl:maxCardinality "1" .
 }
 
 <http://nepomuk.kde.org/ontologies/2009/06/20/telepathy/metadata>

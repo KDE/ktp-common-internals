@@ -99,6 +99,7 @@ public Q_SLOTS:
     virtual void setContactPublishState(const QString &path, const QString &id, const Tp::Contact::PresenceState &state);
     virtual void setContactSubscriptionState(const QString &path, const QString &id, const Tp::Contact::PresenceState &state);
     virtual void setContactCapabilities(const QString &path, const QString &id, const Tp::ContactCapabilities &capabilities);
+    virtual void setContactAvatar(const QString &path, const QString &id, const Tp::AvatarData &avatar);
 
 private Q_SLOTS:
     void onNepomukError(const QString &uri, int errorCode);
