@@ -265,7 +265,12 @@ bool AccountsModel::setData(const QModelIndex &index, const QVariant &value, int
 QModelIndex AccountsModel::index(int row, int column, const QModelIndex &parent) const
 {
     TreeNode *parentNode = mPriv->node(parent);
-    return createIndex(row, column, parentNode->childAt(row));
+    Q_ASSERT(parentNode);
+    if (row < parentNode->size()) {
+        return createIndex(row, column, parentNode->childAt(row));
+    }
+
+    return QModelIndex();
 }
 
 QModelIndex AccountsModel::index(TreeNode *node) const
