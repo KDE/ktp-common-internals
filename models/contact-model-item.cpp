@@ -57,6 +57,9 @@ ContactModelItem::ContactModelItem(const Tp::ContactPtr &contact)
     connect(contact.data(),
             SIGNAL(presenceChanged(Tp::Presence)),
             SLOT(onChanged()));
+    connect(contact->manager()->connection()->selfContact().data(),
+            SIGNAL(capabilitiesChanged(Tp::ContactCapabilities)),
+            SLOT(onChanged()));
     connect(contact.data(),
             SIGNAL(capabilitiesChanged(Tp::ContactCapabilities)),
             SLOT(onChanged()));
@@ -115,18 +118,13 @@ QVariant ContactModelItem::data(int role) const
     case AccountsModel::MediaCallCapabilityRole:
         return mPriv->mContact->capabilities().streamedMediaCalls();
     case AccountsModel::AudioCallCapabilityRole:
-        return mPriv->mContact->capabilities().streamedMediaAudioCalls();
+        return audioCallCapability();
     case AccountsModel::VideoCallCapabilityRole:
-        return mPriv->mContact->capabilities().streamedMediaVideoCalls();
+        return videoCallCapability();
     case AccountsModel::UpgradeCallCapabilityRole:
         return mPriv->mContact->capabilities().upgradingStreamedMediaCalls();
     case AccountsModel::FileTransferCapabilityRole: {
-        foreach(const Tp::RequestableChannelClassSpec & rccSpec, mPriv->mContact->capabilities().allClassSpecs()) {
-            if (rccSpec.supports(Tp::RequestableChannelClassSpec::fileTransfer())) {
-                return true;
-            }
-        }
-        return false;
+        return fileTransferCapability();
     }
     default:
         break;
@@ -172,6 +170,28 @@ void ContactModelItem::onChanged()
 Tp::ContactPtr ContactModelItem::contact() const
 {
     return mPriv->mContact;
+}
+
+//return true if both you and the contact can handle audio calls.
+bool ContactModelItem::audioCallCapability() const
+{
+    bool contactCanStreamAudio = mPriv->mContact->capabilities().streamedMediaAudioCalls();
+    bool selfCanStreamAudio = mPriv->mContact->manager()->connection()->selfContact()->capabilities().streamedMediaAudioCalls();
+    return contactCanStreamAudio && selfCanStreamAudio;
+}
+
+bool ContactModelItem::videoCallCapability() const
+{
+    bool contactCanStreamVideo = mPriv->mContact->capabilities().streamedMediaVideoCalls();
+    bool selfCanStreamVideo = mPriv->mContact->manager()->connection()->selfContact()->capabilities().streamedMediaVideoCalls();
+    return contactCanStreamVideo && selfCanStreamVideo;
+}
+
+bool ContactModelItem::fileTransferCapability() const
+{
+    bool contactCanHandleFiles = mPriv->mContact->capabilities().fileTransfers();
+    bool selfCanHandleFiles = mPriv->mContact->manager()->connection()->selfContact()->capabilities().fileTransfers();
+    return contactCanHandleFiles && selfCanHandleFiles;
 }
 
 #include "contact-model-item.moc"

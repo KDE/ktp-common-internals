@@ -58,6 +58,11 @@ Q_SIGNALS:
     void childrenRemoved(TreeNode *parent, int first, int last);
 
 private:
+
+    bool audioCallCapability() const;
+    bool videoCallCapability() const;
+    bool fileTransferCapability() const;
+
     struct Private;
     friend struct Private;
     Private *mPriv;
