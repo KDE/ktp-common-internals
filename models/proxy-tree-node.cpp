@@ -80,8 +80,6 @@ void ProxyTreeNode::onSourceNodeRemoved()
 {
     int index = parent()->indexOf(this);
     emit childrenRemoved(parent(), index, index);
-
-    remove();
 }
 
 void ProxyTreeNode::onSourceChanged()
