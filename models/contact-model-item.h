@@ -47,6 +47,10 @@ public Q_SLOTS:
     void onChanged();
 
 private:
+    bool audioCallCapability() const;
+    bool videoCallCapability() const;
+    bool fileTransferCapability() const;
+
     struct Private;
     friend struct Private;
     Private *mPriv;
