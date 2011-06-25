@@ -51,7 +51,6 @@ public:
 
     void addProxyContact(ProxyTreeNode* proxyNode);
     void removeProxyContact(ProxyTreeNode* proxyNode);
-    void removeContact(ContactModelItem* contact);
 
     void countOnlineContacts();
 

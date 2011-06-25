@@ -117,19 +117,6 @@ void GroupsModelItem::removeProxyContact(ProxyTreeNode *proxyNode)
     emit changed(this);
 }
 
-void GroupsModelItem::removeContact(ContactModelItem* contact)
-{
-    for (int i = 0; i < size(); i++) {
-        ProxyTreeNode* proxyNode = qobject_cast<ProxyTreeNode*>(childAt(i));
-        if (proxyNode->data(AccountsModel::ItemRole).value<ContactModelItem*>() == contact) {
-            proxyNode->remove();
-        }
-    }
-
-    //the group counters needs to be updated
-    emit changed(this);
-}
-
 void GroupsModelItem::countOnlineContacts()
 {
     int tmpCounter = 0;
