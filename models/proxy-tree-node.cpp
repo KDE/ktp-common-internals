@@ -78,6 +78,7 @@ bool ProxyTreeNode::setData(int role, const QVariant &value)
 
 void ProxyTreeNode::onSourceNodeRemoved()
 {
+    mPriv->mSource = 0;
     int index = parent()->indexOf(this);
     emit childrenRemoved(parent(), index, index);
 }
