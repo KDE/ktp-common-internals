@@ -155,6 +155,11 @@ void StorageTest::testCreateAccount()
     QVERIFY(imAcc2.exists());
     mePersonContact.addIMAccount(imAcc2);
 
+    // Need to delete the storage class to get it to see the newly added account.
+    m_storage->deleteLater();
+    m_storage = new NepomukStorage(this);
+    accounts = TestBackdoors::nepomukStorageAccounts(m_storage);
+
     // Now tell the storage about that account.
     m_storage->createAccount(QLatin1String("/foo/bar/baz/bong"),
                              QLatin1String("foo.bar@baz.bong"),
@@ -437,6 +442,12 @@ void StorageTest::testCreateContact()
     QCOMPARE(imAcc3.isAccessedBys().first(), imAcc1);
     QCOMPARE(pC3.iMAccounts().size(), 1);
     QCOMPARE(pC3.iMAccounts().first(), imAcc3);
+
+    // Recreate the Storage class to get it to reload the contacts
+    m_storage->deleteLater();
+    m_storage = new NepomukStorage(this);
+    accounts = TestBackdoors::nepomukStorageAccounts(m_storage);
+    contacts = TestBackdoors::nepomukStorageContacts(m_storage);
 
     // Tell the storage about the contact
     m_storage->createContact(QLatin1String("/foo/bar/baz"),

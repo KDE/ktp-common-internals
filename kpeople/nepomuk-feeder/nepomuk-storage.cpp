@@ -172,12 +172,18 @@ NepomukStorage::NepomukStorage(QObject *parent)
 {
     kDebug();
 
+    // *********************************************************************************************
+    // Nepomuk error handling
+
     // Create an instance of the Nepomuk Resource Manager, and connect to it's error signal.
     m_resourceManager = Nepomuk::ResourceManager::instance();
 
     connect(m_resourceManager,
             SIGNAL(error(QString,int)),
             SLOT(onNepomukError(QString,int)));
+
+    // *********************************************************************************************
+    // Get the ME PIMO:Person and NCO:PersonContact (creating them if necessary)
 
     // Here we get the "me" person contact.
     // FIXME: Port to new OSCAF standard for accessing "me" as soon as it
@@ -210,6 +216,106 @@ NepomukStorage::NepomukStorage(QObject *parent)
         m_mePersonContact = Nepomuk::PersonContact("nepomuk:/myself-person-contact");
         me.addGroundingOccurrence(m_mePersonContact);
     }
+
+    // *********************************************************************************************
+    // Load all the relevant accounts and contacts that are already in Nepomuk.
+
+    // We load everything now, because this is much more efficient than re-running a query for each
+    // and every account and contact individually when we get to that one.
+
+    // Query Nepomuk for all of the ME PersonContact's IMAccounts.
+    QList<Nepomuk::Query::Result> results;
+    {
+        using namespace Nepomuk::Query;
+
+        ComparisonTerm accountTerm(Nepomuk::Vocabulary::NCO::hasIMAccount(),
+                                   ResourceTerm(m_mePersonContact));
+        accountTerm.setInverted(true);
+
+        Query query(AndTerm(accountTerm, ResourceTypeTerm(Nepomuk::Vocabulary::NCO::IMAccount())));
+
+        bool queryResult = true;
+        results = QueryServiceClient::syncQuery(query, &queryResult);
+
+        if (!queryResult) {
+            kWarning() << "Query failed.";
+        }
+    }
+
+    kDebug() << results.size();
+
+    // Iterate over all the IMAccounts found.
+    foreach (const Nepomuk::Query::Result &result, results) {
+        Nepomuk::IMAccount foundImAccount(result.resource());
+        kDebug() << this << ": Found IM Account: " << foundImAccount.uri();
+
+        // If no Telepathy identifier, then the account is ignored.
+        if (foundImAccount.accountIdentifier().isEmpty()) {
+            kDebug() << "Account does not have a Telepathy Account Identifier. Oops. Ignoring.";
+            continue;
+        }
+
+        kDebug() << "Found a Telepathy account in Nepomuk, ID:"
+                 << foundImAccount.accountIdentifier();
+
+        // If it does have a telepathy identifier, then it is added to the cache.
+        m_accounts.insert(foundImAccount.accountIdentifier(), foundImAccount);
+    }
+
+    // Query Nepomuk for all know Contacts.
+    {
+        using namespace Nepomuk::Query;
+
+        // Get the person contact owning this IMAccount
+        ComparisonTerm pcterm(Nepomuk::Vocabulary::NCO::hasIMAccount(),
+                              ResourceTypeTerm(Nepomuk::Vocabulary::NCO::PersonContact()));
+        pcterm.setVariableName("person");
+        pcterm.setInverted(true);
+
+        // Special case: if we're buddy of an account we do own, we want to create a new
+        // resource for that.
+        // This avoids race conditions and a lot of bad things.
+        ComparisonTerm accountTerm(Nepomuk::Vocabulary::NCO::hasIMAccount(),
+                                   ResourceTerm(m_mePersonContact));
+        accountTerm.setInverted(true);
+
+        ComparisonTerm accessedByTerm(Nepomuk::Vocabulary::NCO::isAccessedBy(),
+                                      ResourceTypeTerm(Nepomuk::Vocabulary::NCO::IMAccount()));
+        accessedByTerm.setVariableName("accessedBy");
+
+        Query query(AndTerm(pcterm, NegationTerm::negateTerm(accountTerm), accessedByTerm,
+                            ResourceTypeTerm(Nepomuk::Vocabulary::NCO::IMAccount())));
+
+        bool queryResult = true;
+        results = QueryServiceClient::syncQuery(query, &queryResult);
+
+        if (!queryResult) {
+            kWarning() << "Query failed.";
+        }
+    }
+
+    // Iterate over all the IMAccounts found.
+    foreach (const Nepomuk::Query::Result &result, results) {
+        Nepomuk::IMAccount foundImAccount(result.resource());
+        Nepomuk::IMAccount foundPersonContact(result.additionalBinding("person").toUrl());
+        Nepomuk::IMAccount foundImAccountAccessedBy(result.additionalBinding("accessedBy").toUrl());
+
+        // Check that the IM account only has one ID.
+        QStringList accountIDs = foundImAccount.imIDs();
+
+        if (accountIDs.size() != 1) {
+            kDebug() << "Account does not have 1 ID. Oops. Ignoring."
+            << "Number of Identifiers: "
+            << accountIDs.size();
+            continue;
+        }
+
+        // Cache the contact
+        m_contacts.insert(ContactIdentifier(foundImAccountAccessedBy.accountIdentifier(),
+                                            foundImAccount.imIDs().first()),
+                          ContactResources(foundPersonContact, foundImAccount));
+        kDebug() << "Contact found in Nepomuk. Caching.";
+    }
 }
 
 NepomukStorage::~NepomukStorage()
@@ -229,51 +335,6 @@ void NepomukStorage::createAccount(const QString &path, const QString &id, const
     // First check if we already have this account.
     if (m_accounts.contains(path)) {
         kWarning() << "Account has already been created.";
-        return;
-    }
-
-    // Query Nepomuk for IMAccount that the "me" PersonContact has with a specific path
-    QList< Nepomuk::Query::Result > results;
-    {
-        using namespace Nepomuk::Query;
-
-        // Match the account
-        ComparisonTerm accountTerm(Nepomuk::Vocabulary::NCO::hasIMAccount(), ResourceTerm(m_mePersonContact));
-        accountTerm.setInverted(true);
-
-        // Match the ID
-        ComparisonTerm pathTerm(Nepomuk::Vocabulary::Telepathy::accountIdentifier(),
-                                LiteralTerm(path), Nepomuk::Query::ComparisonTerm::Equal);
-
-        Query query(AndTerm(accountTerm, pathTerm,
-                            ResourceTypeTerm(Nepomuk::Vocabulary::NCO::IMAccount())));
-
-        bool queryResult = true;
-        results = QueryServiceClient::syncQuery(query, &queryResult);
-
-        if (!queryResult) {
-            // TODO: Maybe an error notification here?
-        }
-    }
-    // TODO: Maybe check if there is more than one result, and throw an error?
-    kDebug() << results.size();
-
-    // Iterate over all the IMAccounts found.
-    foreach (const Nepomuk::Query::Result &result, results) {
-        Nepomuk::IMAccount foundImAccount(result.resource());
-        kDebug() << this << ": Found IM Account: " << foundImAccount.uri();
-
-        // See if the Account has the same Telepathy Account Identifier as the account this
-        // TelepathyAccount instance has been created to look after.
-        if (foundImAccount.accountIdentifier().isEmpty()) {
-            kDebug() << "Account does not have a Telepathy Account Identifier. Oops. Ignoring.";
-            continue;
-        }
-
-        kDebug() << this << ": Found the corresponding IMAccount in Nepomuk.";
-        // It matches.
-        // Add the IMAccount to the hash.
-        m_accounts.insert(path, foundImAccount);
         return;
     }
 
@@ -348,78 +409,15 @@ void NepomukStorage::createContact(const QString &path, const QString &id)
         return;
     }
 
-    kDebug() << "Don't yet have a record for this contact. Query Nepomuk.";
-
-    // Assume that the Account this contact is related to exists.
-    Q_ASSERT(m_accounts.contains(path));
-    if (!m_accounts.contains(path)) {
-        kWarning() << "Account not found.";
-        return;
-    }
-
-    // Get the local account this contact is related to.
-    Nepomuk::IMAccount account = m_accounts.value(path);
-
-    // Query Nepomuk for all IM accounts that isBuddyOf the local account.
-    QList< Nepomuk::Query::Result > results;
-    {
-        using namespace Nepomuk::Query;
-
-        // Get the person contact owning this IMAccount
-        ComparisonTerm pcterm(Nepomuk::Vocabulary::NCO::hasIMAccount(),
-                              ResourceTypeTerm(Nepomuk::Vocabulary::NCO::PersonContact()));
-        pcterm.setVariableName("person");
-        pcterm.setInverted(true);
-
-        // Special case: if we're buddy of an account we do own, we want to create a new
-        // resource for that.
-        // This avoids race conditions and a lot of bad things.
-        ComparisonTerm accountTerm(Nepomuk::Vocabulary::NCO::hasIMAccount(),
-                                   ResourceTerm(m_mePersonContact));
-        accountTerm.setInverted(true);
-
-        // And the ID has to match
-        ComparisonTerm idTerm(Nepomuk::Vocabulary::NCO::imID(),
-                              LiteralTerm(id), Nepomuk::Query::ComparisonTerm::Equal);
-
-        // And the account has to be accessedBy this account.
-        ComparisonTerm accessedByTerm(Nepomuk::Vocabulary::NCO::isAccessedBy(),
-                                      ResourceTerm(account), Nepomuk::Query::ComparisonTerm::Equal);
-
-        Query query(AndTerm(pcterm, idTerm, NegationTerm::negateTerm(accountTerm), accessedByTerm,
-                            ResourceTypeTerm(Nepomuk::Vocabulary::NCO::IMAccount())));
-
-        bool queryResult = true;
-        results = QueryServiceClient::syncQuery(query, &queryResult);
-
-        if (!queryResult) {
-            // TODO: Maybe an error notification here?
-        }
-    }
-    // TODO: Maybe check if there is more than one result, and throw an error?
-
-    // Iterate over all the IMAccounts found.
-    foreach (const Nepomuk::Query::Result &result, results) {
-        Nepomuk::IMAccount foundImAccount(result.resource());
-        Nepomuk::IMAccount foundPersonContact(result.additionalBinding("person").toUrl());
-
-        // Check that the IM account only has one ID.
-        QStringList accountIDs = foundImAccount.imIDs();
-
-        if (accountIDs.size() != 1) {
-            kDebug() << "Account does not have 1 ID. Oops. Ignoring."
-                        << "Number of Identifiers: "
-                           << accountIDs.size();
-                           continue;
-        }
-        // It matches, so cache the contact record.
-        m_contacts.insert(identifier, ContactResources(foundPersonContact, foundImAccount));
-        kDebug() << "Contact found in Nepomuk. Caching and Returning.";
-        return;
-    }
-
     // Contact not found. Need to create it.
     kDebug() << "Contact not found in Nepomuk. Creating it.";
+
+    Nepomuk::IMAccount account(m_accounts.value(path));
+    Q_ASSERT(m_accounts.keys().contains(path));
+    if (!m_accounts.keys().contains(path)) {
+        kWarning() << "Corresponding account not cached.";
+        return;
+    }
 
     Nepomuk::PersonContact newPersonContact;
     Nepomuk::IMAccount newImAccount;
