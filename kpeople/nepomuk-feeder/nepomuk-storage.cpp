@@ -474,8 +474,10 @@ void NepomukStorage::setContactAlias(const QString &path, const QString &id, con
 
     Nepomuk::IMAccount imAccount = resources.imAccount();
 
-    // Set the Contact Alias.
-    imAccount.setImNicknames(QStringList() << alias);
+    if (!imAccount.imNicknames().contains(alias)) {
+        // Set the Contact Alias.
+        imAccount.setImNicknames(QStringList() << alias);
+    }
 }
 
 void NepomukStorage::setContactPresence(const QString &path,
@@ -496,16 +498,24 @@ void NepomukStorage::setContactPresence(const QString &path,
     Nepomuk::IMAccount imAccount = resources.imAccount();
 
     // Set the contact presence.
-    imAccount.setImStatus(presence.status);
-    imAccount.setStatusType(presence.type);
+    if (imAccount.imStatus() != presence.status) {
+        imAccount.setImStatus(presence.status);
+    }
 
-    imAccount.setImStatusMessage(presence.statusMessage);
+    if (imAccount.statusType() != presence.type) {
+        imAccount.setStatusType(presence.type);
+    }
+
+    if (imAccount.imStatusMessage() != presence.statusMessage) {
+        imAccount.setImStatusMessage(presence.statusMessage);
+    }
 }
 
 void NepomukStorage::setContactGroups(const QString &path,
                                       const QString &id,
                                       const QStringList &groups)
 {
+    kDebug() << "Set Groups Starting";
     ContactIdentifier identifier(path, id);
 
     // Check the Contact exists.
@@ -564,6 +574,7 @@ void NepomukStorage::setContactGroups(const QString &path,
 
     // Update the groups property with the new list
     personContact.setBelongsToGroups(newGroups);
+    kDebug() << "Set Groups Ending";
 }
 
 void NepomukStorage::setContactBlockStatus(const QString &path, const QString &id, bool blocked)
@@ -582,7 +593,9 @@ void NepomukStorage::setContactBlockStatus(const QString &path, const QString &i
     Nepomuk::IMAccount imAccount = resources.imAccount();
 
     // Set the blocked status.
-    imAccount.setIsBlocked(blocked);
+    if (imAccount.isBlocked() != blocked) {
+        imAccount.setIsBlocked(blocked);
+    }
 }
 
 void NepomukStorage::setContactPublishState(const QString &path,
