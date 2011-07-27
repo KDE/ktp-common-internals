@@ -53,8 +53,8 @@ void Account::init()
     //            SLOT(onAvatarChanged(Tp::Avatar)));
     // ...... and any other properties we want to sync...
     connect(m_account.data(),
-            SIGNAL(connectionStatusChanged(Tp::ConnectionStatus)),
-            SLOT(onConnectionStatusChanged(Tp::ConnectionStatus)));
+            SIGNAL(connectionChanged(Tp::ConnectionPtr)),
+            SLOT(onConnectionChanged(Tp::ConnectionPtr)));
 
     // Emit a signal to notify the storage that a new account has been constructed
     // FIXME: Some IM Accounts don't have an ID as such, e.g. Link-Local-XMPP.
@@ -67,7 +67,7 @@ void Account::init()
     onNicknameChanged(m_account->nickname());
 
     // Now that the storage stuff is done, simulate emission of all the account signals.
-    onConnectionStatusChanged(m_account->connectionStatus());
+    onConnectionChanged(m_account->connection());
 }
 
 Account::~Account()
@@ -88,17 +88,9 @@ void Account::shutdown()
     emit accountDestroyed(m_account->objectPath());
 }
 
-void Account::onConnectionStatusChanged(Tp::ConnectionStatus status)
+void Account::onConnectionChanged(Tp::ConnectionPtr connection)
 {
-    if (status == Tp::ConnectionStatusConnected) {
-        // We now have a connection to the account. Get the connection ready to use.
-        if (!m_connection.isNull()) {
-            kWarning() << "Connection should be null, but is not :/ Do nowt.";
-            return;
-        }
-
-        kDebug() << "Connection up:" << this;
-
+    if (! connection.isNull()) {
         m_connection = m_account->connection();
 
         if (!m_connection->contactManager()) {

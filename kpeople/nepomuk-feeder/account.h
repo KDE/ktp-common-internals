@@ -67,7 +67,7 @@ Q_SIGNALS:
     void contactAvatarChanged(const QString &path, const QString &id, const Tp::AvatarData &avatar);
 
 private Q_SLOTS:
-    void onConnectionStatusChanged(Tp::ConnectionStatus status);
+    void onConnectionChanged(Tp::ConnectionPtr connection);
     void onNicknameChanged(const QString &nickname);
     void onCurrentPresenceChanged(const Tp::Presence &presence);
     void onAllKnownContactsChanged(const Tp::Contacts &added, const Tp::Contacts &removed);
@@ -86,6 +86,8 @@ private Q_SLOTS:
 
 private:
     Q_DISABLE_COPY(Account);
+
+    void loadContacts();
 
     Tp::AccountPtr m_account;
     Tp::ConnectionPtr m_connection;
