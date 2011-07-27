@@ -88,16 +88,32 @@ void Account::shutdown()
     emit accountDestroyed(m_account->objectPath());
 }
 
-void Account::onConnectionChanged(Tp::ConnectionPtr connection)
+void Account::onConnectionChanged(const Tp::ConnectionPtr &connection)
 {
     if (! connection.isNull()) {
-        m_connection = m_account->connection();
+        m_connection = connection;
 
         if (!m_connection->contactManager()) {
             kWarning() << "ContactManager is Null. Abort getting contacts.";
             return;
         }
 
+        //add contacts as soon as the contact manager is ready.
+        connect(m_connection->contactManager().data(), SIGNAL(stateChanged(Tp::ContactListState)), SLOT(onContactManagerStateChanged(Tp::ContactListState)));
+        onContactManagerStateChanged(m_connection->contactManager()->state());
+
+    } else {
+        // Connection has gone down. Delete our pointer to it.
+        m_connection.reset();
+        kDebug() << "Connection closed:" << this;
+    }
+}
+
+void Account::onContactManagerStateChanged(Tp::ContactListState state)
+{
+    kDebug() << "contact manager state changed to " << state;
+
+    if (state == Tp::ContactListStateSuccess)  {
         Tp::Contacts contacts = m_connection->contactManager()->allKnownContacts();
 
         // Create wrapper objects for all the Contacts.
@@ -106,13 +122,9 @@ void Account::onConnectionChanged(Tp::ConnectionPtr connection)
             onNewContact(contact);
         }
         kDebug() << "Loop over.";
-
-    } else {
-        // Connection has gone down. Delete our pointer to it.
-        m_connection.reset();
-        kDebug() << "Connection closed:" << this;
     }
 }
+
 
 void Account::onNicknameChanged(const QString& nickname)
 {
@@ -237,6 +249,7 @@ void Account::onContactAvatarChanged(const QString &id, const Tp::AvatarData &av
 {
     emit contactAvatarChanged(m_account->objectPath(), id, avatar);
 }
+
 
 
 #include "account.moc"

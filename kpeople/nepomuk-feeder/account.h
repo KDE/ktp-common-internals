@@ -67,7 +67,8 @@ Q_SIGNALS:
     void contactAvatarChanged(const QString &path, const QString &id, const Tp::AvatarData &avatar);
 
 private Q_SLOTS:
-    void onConnectionChanged(Tp::ConnectionPtr connection);
+    void onConnectionChanged(const Tp::ConnectionPtr &connection);
+    void onContactManagerStateChanged(Tp::ContactListState state);
     void onNicknameChanged(const QString &nickname);
     void onCurrentPresenceChanged(const Tp::Presence &presence);
     void onAllKnownContactsChanged(const Tp::Contacts &added, const Tp::Contacts &removed);
