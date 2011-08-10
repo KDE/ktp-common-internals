@@ -32,8 +32,21 @@ Controller::Controller(AbstractStorage *storage, QObject *parent)
  : QObject(parent),
    m_storage(storage)
 {
-    // Take ownership of the storage.
+    // Become the parent of the Storage class.
     m_storage->setParent(this);
+
+    // We must wait for the storage to be initialised before anything else happens.
+    connect(m_storage, SIGNAL(initialised(bool)), SLOT(onStorageInitialised(bool)));
+}
+
+void Controller::onStorageInitialised(bool success)
+{
+    if (!success) {
+        emit storageInitialisationFailed();
+        return;
+    }
+
+    kDebug() << "Storage initialisation succeeded. Setting up Telepathy stuff now.";
 
     // Set up the Factories.
     Tp::Features fAccountFactory;

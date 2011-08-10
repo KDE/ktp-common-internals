@@ -35,6 +35,9 @@ public:
     TelepathyService(QObject* parent, const QVariantList&);
     ~TelepathyService();
 
+public Q_SLOTS:
+    void onStorageInitialisationFailed();
+
 private:
     Controller *m_controller;
 };

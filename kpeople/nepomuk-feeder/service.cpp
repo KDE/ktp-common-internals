@@ -41,6 +41,10 @@ TelepathyService::TelepathyService(QObject *parent, const QVariantList &)
     // Create an instance of the Telepathy Account Monitor.
     m_controller = new Controller(new NepomukStorage(), this);
 
+    connect(m_controller,
+            SIGNAL(storageInitialisationFailed()),
+            SLOT(onStorageInitialisationFailed()));
+
     setServiceInitialized(true);
 
     kDebug() << "We're off...";
@@ -49,6 +53,14 @@ TelepathyService::TelepathyService(QObject *parent, const QVariantList &)
 TelepathyService::~TelepathyService()
 {
     m_controller->shutdown();
+}
+
+void TelepathyService::onStorageInitialisationFailed()
+{
+    kDebug() << "Storage initialisation failed. Terminate the service.";
+
+    // Terminate the service
+    deleteLater();
 }
 
 

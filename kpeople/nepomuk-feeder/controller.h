@@ -50,9 +50,13 @@ public:
 
     void shutdown();
 
+Q_SIGNALS:
+    void storageInitialisationFailed();
+
 private Q_SLOTS:
     void onAccountManagerReady(Tp::PendingOperation *op);
     void onNewAccount(const Tp::AccountPtr &account);
+    void onStorageInitialised(bool success);
 
 private:
     Q_DISABLE_COPY(Controller);

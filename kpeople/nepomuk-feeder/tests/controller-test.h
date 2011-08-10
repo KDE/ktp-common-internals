@@ -88,6 +88,8 @@ public Q_SLOTS:
     virtual void createAccount(const QString &path, const QString &id, const QString &protocol);
     virtual void destroyAccount(const QString &path);
 
+    virtual void emitInitialisedSignal();
+
     // Not used
     virtual void setAccountNickname(const QString &, const QString &) { }
     virtual void setAccountCurrentPresence(const QString &, const Tp::SimplePresence &) { }
@@ -116,6 +118,8 @@ public:
 
 public Q_SLOTS:
     virtual void createAccount(const QString &path, const QString &id, const QString &protocol);
+
+    virtual void emitInitialisedSignal();
 
     // Not used
     virtual void destroyAccount(const QString &) { }

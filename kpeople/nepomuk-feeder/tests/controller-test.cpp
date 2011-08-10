@@ -28,6 +28,8 @@
 
 #include <qtest_kde.h>
 
+#include <QtCore/QTimer>
+
 #include <TelepathyQt4/PendingAccount>
 #include <TelepathyQt4/PendingReady>
 
@@ -36,11 +38,18 @@ ConstructorDestructorFakeStorage::ConstructorDestructorFakeStorage(ControllerTes
   : m_test(test)
 {
     kDebug();
+
+    QTimer::singleShot(0, this, SIGNAL(emitInitialisedSignal()));
 }
 
 ConstructorDestructorFakeStorage::~ConstructorDestructorFakeStorage()
 {
     kDebug();
+}
+
+void ConstructorDestructorFakeStorage::emitInitialisedSignal()
+{
+    emit initialised(true);
 }
 
 void ConstructorDestructorFakeStorage::createAccount(const QString &path,
@@ -64,11 +73,19 @@ OnNewAccountFakeStorage::OnNewAccountFakeStorage(ControllerTest *test)
 : m_test(test)
 {
     kDebug();
+
+    QTimer::singleShot(0, this, SIGNAL(emitInitialisedSignal()));
 }
 
 OnNewAccountFakeStorage::~OnNewAccountFakeStorage()
 {
     kDebug();
+}
+
+
+void OnNewAccountFakeStorage::emitInitialisedSignal()
+{
+    emit initialised(true);
 }
 
 void OnNewAccountFakeStorage::createAccount(const QString &path,

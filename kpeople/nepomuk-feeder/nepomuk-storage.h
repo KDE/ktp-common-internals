@@ -36,12 +36,16 @@
 
 namespace Nepomuk {
     class ResourceManager;
+    namespace Query {
+        class Result;
+    }
 }
 
 class ContactIdentifier {
 public:
     ContactIdentifier(const QString &accountId, const QString &contactId);
     ContactIdentifier(const ContactIdentifier &other);
+    ContactIdentifier();
     ~ContactIdentifier();
 
     const QString &accountId() const;
@@ -67,6 +71,9 @@ public:
 
     const Nepomuk::PersonContact &personContact() const;
     const Nepomuk::IMAccount &imAccount() const;
+
+    bool operator==(const ContactResources &other) const;
+    bool operator!=(const ContactResources &other) const;
 
 private:
     class Data;
@@ -103,6 +110,17 @@ public Q_SLOTS:
 
 private Q_SLOTS:
     void onNepomukError(const QString &uri, int errorCode);
+    void init();
+
+    void onAccountsQueryNewEntries(const QList<Nepomuk::Query::Result> &entries);
+    void onAccountsQueryEntriesRemoved(const QList<QUrl> &entries);
+    void onAccountsQueryError(const QString &errorMessage);
+    void onAccountsQueryFinishedListing();
+
+    void onContactsQueryNewEntries(const QList<Nepomuk::Query::Result> &entries);
+    void onContactsQueryEntriesRemoved(const QList<QUrl> &entries);
+    void onContactsQueryError(const QString &errorMessage);
+    void onContactsQueryFinishedListing();
 
 private:
     Q_DISABLE_COPY(NepomukStorage);

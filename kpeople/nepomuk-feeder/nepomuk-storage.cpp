@@ -47,6 +47,7 @@
 #include <Nepomuk/Query/Result>
 
 #include <QtCore/QSharedData>
+#include <QtCore/QTimer>
 
 #include <TelepathyQt4/Constants>
 #include <TelepathyQt4/AvatarData>
@@ -64,6 +65,9 @@ public:
         contactId(other.contactId)
     { }
 
+    Data()
+    { }
+
     ~Data()
     { }
 
@@ -79,6 +83,12 @@ ContactIdentifier::ContactIdentifier(const QString &accountId, const QString &co
 
 ContactIdentifier::ContactIdentifier(const ContactIdentifier &other)
   : d(other.d)
+{
+
+}
+
+ContactIdentifier::ContactIdentifier()
+  : d(new Data())
 {
 
 }
@@ -166,6 +176,16 @@ const Nepomuk::IMAccount &ContactResources::imAccount() const
     return d->imAccount;
 }
 
+bool ContactResources::operator==(const ContactResources& other) const
+{
+    return ((other.personContact() == personContact()) && (other.imAccount() == imAccount()));
+}
+
+bool ContactResources::operator!=(const ContactResources& other) const
+{
+    return !(*this == other);
+}
+
 
 NepomukStorage::NepomukStorage(QObject *parent)
 : AbstractStorage(parent)
@@ -182,6 +202,22 @@ NepomukStorage::NepomukStorage(QObject *parent)
             SIGNAL(error(QString,int)),
             SLOT(onNepomukError(QString,int)));
 
+    QTimer::singleShot(0, this, SLOT(init()));
+}
+
+NepomukStorage::~NepomukStorage()
+{
+    // Don't delete the Nepomuk Resource manager. Nepomuk should take care of this itself.
+    kDebug();
+}
+
+void NepomukStorage::onNepomukError(const QString &uri, int errorCode)
+{
+    kWarning() << "A Nepomuk Error occurred:" << uri << errorCode;
+}
+
+void NepomukStorage::init()
+{
     // *********************************************************************************************
     // Get the ME PIMO:Person and NCO:PersonContact (creating them if necessary)
 
@@ -224,28 +260,39 @@ NepomukStorage::NepomukStorage(QObject *parent)
     // and every account and contact individually when we get to that one.
 
     // Query Nepomuk for all of the ME PersonContact's IMAccounts.
-    QList<Nepomuk::Query::Result> results;
     {
         using namespace Nepomuk::Query;
 
+        // Construct the query
         ComparisonTerm accountTerm(Nepomuk::Vocabulary::NCO::hasIMAccount(),
                                    ResourceTerm(m_mePersonContact));
         accountTerm.setInverted(true);
 
         Query query(AndTerm(accountTerm, ResourceTypeTerm(Nepomuk::Vocabulary::NCO::IMAccount())));
 
-        bool queryResult = true;
-        results = QueryServiceClient::syncQuery(query, &queryResult);
-
-        if (!queryResult) {
-            kWarning() << "Query failed.";
-        }
+        // Connect to the result signals and launch the query.
+        QueryServiceClient *client = new QueryServiceClient(this);
+        connect(client,
+                SIGNAL(newEntries(QList<Nepomuk::Query::Result>)),
+                SLOT(onAccountsQueryNewEntries(QList<Nepomuk::Query::Result>)));
+        connect(client,
+                SIGNAL(entriesRemoved(QList<QUrl>)),
+                SLOT(onAccountsQueryEntriesRemoved(QList<QUrl>)));
+        connect(client,
+                SIGNAL(error(QString)),
+                SLOT(onAccountsQueryError(QString)));
+        connect(client,
+                SIGNAL(finishedListing()),
+                SLOT(onAccountsQueryFinishedListing()));
+        client->query(query);
     }
+}
 
-    kDebug() << results.size();
-
+void NepomukStorage::onAccountsQueryNewEntries(const QList<Nepomuk::Query::Result> &entries)
+{
+    kDebug();
     // Iterate over all the IMAccounts found.
-    foreach (const Nepomuk::Query::Result &result, results) {
+    foreach (const Nepomuk::Query::Result &result, entries) {
         Nepomuk::IMAccount foundImAccount(result.resource());
         kDebug() << this << ": Found IM Account: " << foundImAccount.uri();
 
@@ -256,11 +303,34 @@ NepomukStorage::NepomukStorage(QObject *parent)
         }
 
         kDebug() << "Found a Telepathy account in Nepomuk, ID:"
-                 << foundImAccount.accountIdentifier();
+        << foundImAccount.accountIdentifier();
 
         // If it does have a telepathy identifier, then it is added to the cache.
         m_accounts.insert(foundImAccount.accountIdentifier(), foundImAccount);
     }
+
+}
+
+void NepomukStorage::onAccountsQueryEntriesRemoved(const QList<QUrl> &entries)
+{
+    kDebug();
+    // Remove the account from the cache
+    foreach (const QUrl &url, entries) {
+        m_accounts.remove(m_accounts.key(url));
+    }
+}
+
+void NepomukStorage::onAccountsQueryError(const QString &errorMessage)
+{
+    kWarning() << "A Nepomuk Error occurred:" << errorMessage;
+
+    emit initialised(false);
+}
+
+void NepomukStorage::onAccountsQueryFinishedListing()
+{
+    kDebug() << "Accounts Query Finished Successfully.";
+    // Got all the accounts, now move on to the contacts.
 
     // Query Nepomuk for all know Contacts.
     {
@@ -268,7 +338,7 @@ NepomukStorage::NepomukStorage(QObject *parent)
 
         // Get the person contact owning this IMAccount
         ComparisonTerm pcterm(Nepomuk::Vocabulary::NCO::hasIMAccount(),
-                              ResourceTypeTerm(Nepomuk::Vocabulary::NCO::PersonContact()));
+                            ResourceTypeTerm(Nepomuk::Vocabulary::NCO::PersonContact()));
         pcterm.setVariableName("person");
         pcterm.setInverted(true);
 
@@ -276,26 +346,37 @@ NepomukStorage::NepomukStorage(QObject *parent)
         // resource for that.
         // This avoids race conditions and a lot of bad things.
         ComparisonTerm accountTerm(Nepomuk::Vocabulary::NCO::hasIMAccount(),
-                                   ResourceTerm(m_mePersonContact));
+                                ResourceTerm(m_mePersonContact));
         accountTerm.setInverted(true);
 
         ComparisonTerm accessedByTerm(Nepomuk::Vocabulary::NCO::isAccessedBy(),
-                                      ResourceTypeTerm(Nepomuk::Vocabulary::NCO::IMAccount()));
+                                    ResourceTypeTerm(Nepomuk::Vocabulary::NCO::IMAccount()));
         accessedByTerm.setVariableName("accessedBy");
 
         Query query(AndTerm(pcterm, NegationTerm::negateTerm(accountTerm), accessedByTerm,
                             ResourceTypeTerm(Nepomuk::Vocabulary::NCO::IMAccount())));
 
-        bool queryResult = true;
-        results = QueryServiceClient::syncQuery(query, &queryResult);
-
-        if (!queryResult) {
-            kWarning() << "Query failed.";
-        }
+        QueryServiceClient *client = new QueryServiceClient(this);
+        connect(client,
+                SIGNAL(newEntries(QList<Nepomuk::Query::Result>)),
+                SLOT(onContactsQueryNewEntries(QList<Nepomuk::Query::Result>)));
+        connect(client,
+                SIGNAL(entriesRemoved(QList<QUrl>)),
+                SLOT(onContactsQueryEntriesRemoved(QList<QUrl>)));
+        connect(client,
+                SIGNAL(error(QString)),
+                SLOT(onContactsQueryError(QString)));
+        connect(client,
+                SIGNAL(finishedListing()),
+                SLOT(onContactsQueryFinishedListing()));
+        client->query(query);
     }
+}
 
+void NepomukStorage::onContactsQueryNewEntries(const QList< Nepomuk::Query::Result > &entries)
+{
     // Iterate over all the IMAccounts found.
-    foreach (const Nepomuk::Query::Result &result, results) {
+    foreach (const Nepomuk::Query::Result &result, entries) {
         Nepomuk::IMAccount foundImAccount(result.resource());
         Nepomuk::IMAccount foundPersonContact(result.additionalBinding("person").toUrl());
         Nepomuk::IMAccount foundImAccountAccessedBy(result.additionalBinding("accessedBy").toUrl());
@@ -313,19 +394,35 @@ NepomukStorage::NepomukStorage(QObject *parent)
         // Cache the contact
         m_contacts.insert(ContactIdentifier(foundImAccountAccessedBy.accountIdentifier(),
                                             foundImAccount.imIDs().first()),
-                          ContactResources(foundPersonContact, foundImAccount));
+                            ContactResources(foundPersonContact, foundImAccount));
         kDebug() << "Contact found in Nepomuk. Caching.";
     }
 }
 
-NepomukStorage::~NepomukStorage()
+void NepomukStorage::onContactsQueryEntriesRemoved(const QList<QUrl> &entries)
 {
-    // Don't delete the Nepomuk Resource manager. Nepomuk should take care of this itself.
+    foreach (const QUrl &entry, entries) {
+        foreach (const ContactResources &resources, m_contacts.values()) {
+            if (resources.personContact().resourceUri() == entry) {
+                m_contacts.remove(m_contacts.key(resources));
+                break;
+            }
+        }
+    }
 }
 
-void NepomukStorage::onNepomukError(const QString &uri, int errorCode)
+void NepomukStorage::onContactsQueryError(const QString &errorMessage)
 {
-    kWarning() << "A Nepomuk Error occurred:" << uri << errorCode;
+    kWarning() << "A Nepomuk Error occurred:" << errorMessage;
+
+    emit initialised(false);
+}
+
+void NepomukStorage::onContactsQueryFinishedListing()
+{
+    kDebug() << "Contacts Query Finished Successfully.";
+
+    emit initialised(true);
 }
 
 void NepomukStorage::createAccount(const QString &path, const QString &id, const QString &protocol)

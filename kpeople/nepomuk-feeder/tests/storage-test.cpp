@@ -78,6 +78,7 @@ void StorageTest::testConstructorDestructor()
     // First test constructing the NepomukStorage on a Nepomuk database with no relevant
     // data already in it.
     m_storage = new NepomukStorage(this);
+    QTest::kWaitForSignal(m_storage, SIGNAL(initialised(bool)), 0);
 
     // Check that the Nepomuk mePersonContact has been created.
     QVERIFY(TestBackdoors::nepomukStorageMePersonContact(m_storage).exists());
@@ -95,6 +96,7 @@ void StorageTest::testConstructorDestructor()
 
     // Next, try constructing a NepomukStorage instance where the mePersonContact already exists.
     m_storage = new NepomukStorage(this);
+    QTest::kWaitForSignal(m_storage, SIGNAL(initialised(bool)), 0);
 
     // Check that the Nepomuk mePersonContact has been created.
     QVERIFY(TestBackdoors::nepomukStorageMePersonContact(m_storage).exists());
@@ -114,6 +116,7 @@ void StorageTest::testConstructorDestructor()
 void StorageTest::testCreateAccount()
 {
     m_storage = new NepomukStorage(this);
+    QTest::kWaitForSignal(m_storage, SIGNAL(initialised(bool)), 0);
     Nepomuk::PersonContact mePersonContact = TestBackdoors::nepomukStorageMePersonContact(m_storage);
     QHash<QString, Nepomuk::IMAccount> *accounts = TestBackdoors::nepomukStorageAccounts(m_storage);
 
@@ -158,6 +161,7 @@ void StorageTest::testCreateAccount()
     // Need to delete the storage class to get it to see the newly added account.
     m_storage->deleteLater();
     m_storage = new NepomukStorage(this);
+    QTest::kWaitForSignal(m_storage, SIGNAL(initialised(bool)), 0);
     accounts = TestBackdoors::nepomukStorageAccounts(m_storage);
 
     // Now tell the storage about that account.
@@ -220,6 +224,7 @@ void StorageTest::testDestroyAccount()
 {
     // Create the Storage.
     m_storage = new NepomukStorage(this);
+    QTest::kWaitForSignal(m_storage, SIGNAL(initialised(bool)), 0);
     QVERIFY(m_storage);
 
     QHash<QString, Nepomuk::IMAccount> *accounts = TestBackdoors::nepomukStorageAccounts(m_storage);
@@ -259,6 +264,7 @@ void StorageTest::testSetAccountNickname()
 {
     // Create the Storage.
     m_storage = new NepomukStorage(this);
+    QTest::kWaitForSignal(m_storage, SIGNAL(initialised(bool)), 0);
     QVERIFY(m_storage);
 
     QHash<QString, Nepomuk::IMAccount> *accounts = TestBackdoors::nepomukStorageAccounts(m_storage);
@@ -303,6 +309,7 @@ void StorageTest::testSetAccountCurrentPresence()
 {
     // Create the Storage.
     m_storage = new NepomukStorage(this);
+    QTest::kWaitForSignal(m_storage, SIGNAL(initialised(bool)), 0);
     QVERIFY(m_storage);
 
     QHash<QString, Nepomuk::IMAccount> *accounts = TestBackdoors::nepomukStorageAccounts(m_storage);
@@ -357,6 +364,7 @@ void StorageTest::testCreateContact()
 {
     // Create the Storage.
     m_storage = new NepomukStorage(this);
+    QTest::kWaitForSignal(m_storage, SIGNAL(initialised(bool)), 0);
     QVERIFY(m_storage);
 
     QHash<QString, Nepomuk::IMAccount> *accounts = TestBackdoors::nepomukStorageAccounts(m_storage);
@@ -446,6 +454,7 @@ void StorageTest::testCreateContact()
     // Recreate the Storage class to get it to reload the contacts
     m_storage->deleteLater();
     m_storage = new NepomukStorage(this);
+    QTest::kWaitForSignal(m_storage, SIGNAL(initialised(bool)), 0);
     accounts = TestBackdoors::nepomukStorageAccounts(m_storage);
     contacts = TestBackdoors::nepomukStorageContacts(m_storage);
 
@@ -527,6 +536,7 @@ void StorageTest::testDestroyContact()
 {
     // Create the Storage.
     m_storage = new NepomukStorage(this);
+    QTest::kWaitForSignal(m_storage, SIGNAL(initialised(bool)), 0);
     QVERIFY(m_storage);
 
     QHash<QString, Nepomuk::IMAccount> *accounts = TestBackdoors::nepomukStorageAccounts(m_storage);
@@ -592,6 +602,7 @@ void StorageTest::testSetContactAlias()
 {
     // Create the Storage.
     m_storage = new NepomukStorage(this);
+    QTest::kWaitForSignal(m_storage, SIGNAL(initialised(bool)), 0);
     QVERIFY(m_storage);
 
     QHash<QString, Nepomuk::IMAccount> *accounts = TestBackdoors::nepomukStorageAccounts(m_storage);
@@ -661,6 +672,7 @@ void StorageTest::testSetContactPresence()
 {
     // Create the Storage.
     m_storage = new NepomukStorage(this);
+    QTest::kWaitForSignal(m_storage, SIGNAL(initialised(bool)), 0);
     QVERIFY(m_storage);
 
     QHash<QString, Nepomuk::IMAccount> *accounts = TestBackdoors::nepomukStorageAccounts(m_storage);
@@ -755,6 +767,7 @@ void StorageTest::testSetContactGroups()
 {
     // Create the Storage.
     m_storage = new NepomukStorage(this);
+    QTest::kWaitForSignal(m_storage, SIGNAL(initialised(bool)), 0);
     QVERIFY(m_storage);
 
     QHash<QString, Nepomuk::IMAccount> *accounts = TestBackdoors::nepomukStorageAccounts(m_storage);
@@ -865,6 +878,7 @@ void StorageTest::testSetContactBlockedStatus()
 {
     // Create the Storage.
     m_storage = new NepomukStorage(this);
+    QTest::kWaitForSignal(m_storage, SIGNAL(initialised(bool)), 0);
     QVERIFY(m_storage);
 
     QHash<QString, Nepomuk::IMAccount> *accounts = TestBackdoors::nepomukStorageAccounts(m_storage);
@@ -932,6 +946,7 @@ void StorageTest::testSetContactPublishState()
 {
     // Create the Storage.
     m_storage = new NepomukStorage(this);
+    QTest::kWaitForSignal(m_storage, SIGNAL(initialised(bool)), 0);
     QVERIFY(m_storage);
 
     QHash<QString, Nepomuk::IMAccount> *accounts = TestBackdoors::nepomukStorageAccounts(m_storage);
@@ -1013,6 +1028,7 @@ void StorageTest::testSetContactSubscriptionState()
 {
     // Create the Storage.
     m_storage = new NepomukStorage(this);
+    QTest::kWaitForSignal(m_storage, SIGNAL(initialised(bool)), 0);
     QVERIFY(m_storage);
 
     QHash<QString, Nepomuk::IMAccount> *accounts = TestBackdoors::nepomukStorageAccounts(m_storage);
@@ -1094,6 +1110,7 @@ void StorageTest::testSetContactCapabilities()
 {
     // Create the Storage.
     m_storage = new NepomukStorage(this);
+    QTest::kWaitForSignal(m_storage, SIGNAL(initialised(bool)), 0);
     QVERIFY(m_storage);
 
     QHash<QString, Nepomuk::IMAccount> *accounts = TestBackdoors::nepomukStorageAccounts(m_storage);
@@ -1202,6 +1219,7 @@ void StorageTest::testSetAvatar()
 {
     // Create the Storage.
     m_storage = new NepomukStorage(this);
+    QTest::kWaitForSignal(m_storage, SIGNAL(initialised(bool)), 0);
     QVERIFY(m_storage);
 
     QHash<QString, Nepomuk::IMAccount> *accounts = TestBackdoors::nepomukStorageAccounts(m_storage);

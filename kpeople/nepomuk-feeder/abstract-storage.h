@@ -59,6 +59,9 @@ public Q_SLOTS:
     virtual void setContactCapabilities(const QString &path, const QString &id, const Tp::ContactCapabilities &capabilities) = 0;
     virtual void setContactAvatar(const QString &path, const QString &id, const Tp::AvatarData &avatar) = 0;
 
+Q_SIGNALS:
+    void initialised(bool success);
+
 private:
     Q_DISABLE_COPY(AbstractStorage);
 };
