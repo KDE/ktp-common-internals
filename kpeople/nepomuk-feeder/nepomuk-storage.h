@@ -92,6 +92,7 @@ public:
     virtual ~NepomukStorage();
 
 public Q_SLOTS:
+    virtual void cleanupAccounts(const QList<QString> &paths);
     virtual void createAccount(const QString &path, const QString &id, const QString &protocol);
     virtual void destroyAccount(const QString &path);
     virtual void setAccountNickname(const QString &path, const QString &nickname);

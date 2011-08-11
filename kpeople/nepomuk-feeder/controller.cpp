@@ -114,6 +114,14 @@ void Controller::onAccountManagerReady(Tp::PendingOperation *op)
             SIGNAL(newAccount(Tp::AccountPtr)),
             SLOT(onNewAccount(Tp::AccountPtr)));
 
+    // Signal the full list of accounts to the storage so it can check that the list in Nepomuk
+    // corresponds to the list on the AM.
+    QList<QString> accounts;
+    foreach (const Tp::AccountPtr &account, m_accountManager->allAccounts()) {
+        accounts.append(account->objectPath());
+    }
+    m_storage->cleanupAccounts(accounts);
+
     // Take into account (ha ha) the accounts that already existed when the AM object became ready.
     foreach (const Tp::AccountPtr &account, m_accountManager->allAccounts()) {
         onNewAccount(account);

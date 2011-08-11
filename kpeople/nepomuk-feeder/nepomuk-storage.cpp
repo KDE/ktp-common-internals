@@ -425,6 +425,29 @@ void NepomukStorage::onContactsQueryFinishedListing()
     emit initialised(true);
 }
 
+void NepomukStorage::cleanupAccounts(const QList<QString> &paths)
+{
+    kDebug();
+
+    // Go through all the accounts in the cache and make any that are not in the list we
+    // received from the controller are removed??? Do as a batch job for better performance.
+    foreach (const QString &aid, m_accounts.keys()) {
+        if (!paths.contains(aid)) {
+            // TODO: Do this properly once the ontology supports this
+            // TODO: Do this as a batch job to reduce the number of nepomuk queries that result.
+            // TODO: What do we do with an account in nepomuk which the use has removed?
+        }
+    }
+
+    // Go through all the accounts that we have received from the controller and create any
+    // new ones in neponmuk. Do this as a batch job to improve performance.
+    foreach (const QString &path, paths) {
+        if (!m_accounts.keys().contains(path)) {
+            // TODO: Implement me to do this as a batch job???
+            //       For now, we just let the constructed signal do this one at a time.
+        }
+    }
+}
 void NepomukStorage::createAccount(const QString &path, const QString &id, const QString &protocol)
 {
     kDebug() << "Creating a new Account";

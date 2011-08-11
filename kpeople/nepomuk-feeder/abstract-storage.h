@@ -52,6 +52,15 @@ public:
 
 public Q_SLOTS:
     /**
+     * Invoked when the account manager is readied, this method allows the storage class to alter
+     * accounts that are no longer in the account manager as well as batch-adding any new accounts
+     * that are not yet in the store.
+     *
+     * \param paths the object paths (unique identifiers) of the complete list of Telepathy Accounts.
+     */
+    virtual void cleanupAccounts(const QList<QString> &paths) = 0;
+
+    /**
      * Invoked when a Telepathy Account is constructed.
      *
      * \param path the object path (unique identifier) of the account
@@ -88,7 +97,7 @@ public Q_SLOTS:
 
     /**
      * Invoked when the contact list of a Telepathy Account becomes available, this method allows
-     * the storage class to alter accounts that are no longer part of the server-side contact list
+     * the storage class to alter contacts that are no longer part of the server-side contact list
      * as well as batch-adding any contacts to the store that have been added to the server-side
      * contact list since the last run.
      *

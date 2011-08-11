@@ -91,6 +91,7 @@ public Q_SLOTS:
     virtual void emitInitialisedSignal();
 
     // Not used
+    virtual void cleanupAccounts(const QList<QString> &) { }
     virtual void setAccountNickname(const QString &, const QString &) { }
     virtual void setAccountCurrentPresence(const QString &, const Tp::SimplePresence &) { }
     virtual void cleanupAccountContacts(const QString &, const QList<QString> &) { }
@@ -123,6 +124,7 @@ public Q_SLOTS:
     virtual void emitInitialisedSignal();
 
     // Not used
+    virtual void cleanupAccounts(const QList<QString> &) { }
     virtual void destroyAccount(const QString &) { }
     virtual void setAccountNickname(const QString &, const QString &) { }
     virtual void setAccountCurrentPresence(const QString &, const Tp::SimplePresence &) { }
