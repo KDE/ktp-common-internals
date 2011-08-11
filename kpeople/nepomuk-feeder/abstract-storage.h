@@ -47,6 +47,7 @@ public Q_SLOTS:
     virtual void destroyAccount(const QString &path) = 0;
     virtual void setAccountNickname(const QString &path, const QString &nickname) = 0;
     virtual void setAccountCurrentPresence(const QString &path, const Tp::SimplePresence &presence) = 0;
+    virtual void cleanupAccountContacts(const QString &path, const QList<QString> &ids) = 0;
 
     virtual void createContact(const QString &path, const QString &id) = 0;
     virtual void destroyContact(const QString &path, const QString &id) = 0;

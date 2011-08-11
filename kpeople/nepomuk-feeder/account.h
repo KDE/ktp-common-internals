@@ -54,6 +54,7 @@ Q_SIGNALS:
     void accountDestroyed(const QString &path);
     void nicknameChanged(const QString &path, const QString &nickname);
     void currentPresenceChanged(const QString &path, const Tp::SimplePresence &presence);
+    void initialContactsLoaded(const QString &path, const QList<QString> &ids);
 
     void contactCreated(const QString &path, const QString &id);
     void contactDestroyed(const QString &path, const QString &id);

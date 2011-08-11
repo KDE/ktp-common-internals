@@ -497,6 +497,44 @@ void NepomukStorage::setAccountCurrentPresence(const QString &path, const Tp::Si
     account.setProperty(Nepomuk::Vocabulary::Telepathy::statusType(), presence.type);
 }
 
+void NepomukStorage::cleanupAccountContacts(const QString &path, const QList<QString> &ids)
+{
+    kDebug();
+
+    // Go through all the contacts in the cache and make any that are not in the list we
+    // received from the account into Ghost Contacts. Do this as a batch job to improve performance.
+    foreach (const ContactIdentifier &cid, m_contacts.keys()) {
+        if (cid.accountId() == path) {
+            if (!ids.contains(cid.contactId())) {
+                // TODO: Do this properly once the ontology supports this
+                // TODO: Do this as a batch job to reduce the number of nepomuk queries that result.
+                kDebug() << "Ghosting contact: " << cid.contactId();
+                setContactPublishState(path, cid.contactId(), Tp::Contact::PresenceStateNo);
+                setContactSubscriptionState(path, cid.contactId(), Tp::Contact::PresenceStateNo);
+            }
+        }
+    }
+
+    // Go through all the contacts that we have received from the account and create any
+    // new ones in neponmuk. Do this as a batch job to improve performance.
+    foreach (const QString &id, ids) {
+        bool found = false;
+        foreach (const ContactIdentifier &cid, m_contacts.keys()) {
+            if (cid.accountId() == path) {
+                if (cid.contactId() == id) {
+                    found = true;
+                    break;
+                }
+            }
+        }
+        if (!found) {
+            // TODO: Add all these accounts as a batch job
+            kDebug() << "Adding contact:" << id;
+            createContact(path, id);
+        }
+    }
+}
+
 void NepomukStorage::createContact(const QString &path, const QString &id)
 {
     // First, check that we don't already have a record for this contact.

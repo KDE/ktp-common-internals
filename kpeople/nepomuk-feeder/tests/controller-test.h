@@ -93,6 +93,7 @@ public Q_SLOTS:
     // Not used
     virtual void setAccountNickname(const QString &, const QString &) { }
     virtual void setAccountCurrentPresence(const QString &, const Tp::SimplePresence &) { }
+    virtual void cleanupAccountContacts(const QString &, const QList<QString> &) { }
     virtual void createContact(const QString &, const QString &) { }
     virtual void destroyContact(const QString &, const QString &) { }
     virtual void setContactAlias(const QString &, const QString &, const QString &) { }
@@ -125,6 +126,7 @@ public Q_SLOTS:
     virtual void destroyAccount(const QString &) { }
     virtual void setAccountNickname(const QString &, const QString &) { }
     virtual void setAccountCurrentPresence(const QString &, const Tp::SimplePresence &) { }
+    virtual void cleanupAccountContacts(const QString &, const QList<QString> &) { }
     virtual void createContact(const QString &, const QString &) { }
     virtual void destroyContact(const QString &, const QString &) { }
     virtual void setContactAlias(const QString &, const QString &, const QString &) { }

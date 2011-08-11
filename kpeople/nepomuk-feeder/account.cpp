@@ -99,7 +99,10 @@ void Account::onConnectionChanged(const Tp::ConnectionPtr &connection)
         }
 
         //add contacts as soon as the contact manager is ready.
-        connect(m_connection->contactManager().data(), SIGNAL(stateChanged(Tp::ContactListState)), SLOT(onContactManagerStateChanged(Tp::ContactListState)));
+        connect(m_connection->contactManager().data(),
+                SIGNAL(stateChanged(Tp::ContactListState)),
+                SLOT(onContactManagerStateChanged(Tp::ContactListState)));
+        // Simulate a state change signal in case it is already ready.
         onContactManagerStateChanged(m_connection->contactManager()->state());
 
     } else {
@@ -115,6 +118,15 @@ void Account::onContactManagerStateChanged(Tp::ContactListState state)
 
     if (state == Tp::ContactListStateSuccess)  {
         Tp::Contacts contacts = m_connection->contactManager()->allKnownContacts();
+
+        // Create the hash containing all the contacts to notify the storage of the
+        // full set of contacts that still exist when the account is connected.
+        // This *must* be done before creating the contact wrapper objects.
+        QList<QString> initialContacts;
+        foreach (const Tp::ContactPtr &contact, contacts) {
+            initialContacts.append(contact->id());
+        }
+        emit initialContactsLoaded(m_account->objectPath(), initialContacts);
 
         // Create wrapper objects for all the Contacts.
         foreach (const Tp::ContactPtr &contact, contacts) {
