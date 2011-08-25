@@ -20,6 +20,12 @@
 #include "telepathyContactList.h"
 
 #include <KStandardDirs>
+// #include <KUrl>
+//
+// #include <Nepomuk/File>
+// #include <Nepomuk/Vocabulary/NIE>
+// #include <Nepomuk/ResourceManager>
+// #include <Nepomuk/Variant>
 
 #include <QtDeclarative/QDeclarativeEngine>
 #include <QtDeclarative/QDeclarativeContext>
@@ -48,6 +54,20 @@ int TelepathyContactList::appletWidth() const
     return geometry().width();
 }
 
+// QString TelepathyContactList::extractAvatarPathFromNepomuk(const QString &nepomukUri)
+// {
+//     /// TODO The resource doesn't have a file url
+//     /// The Telepathy Nepomuk service isn't pushing the data properly. So wait till this is done for avatar support
+//     Nepomuk::Resource asd(nepomukUri.toUrl());
+//     qDebug() << "REsourCE is FILE: " << asd.isFile();
+//     qDebug() << "INCOMING URI is: " << nepomukUri.toString();
+//     Nepomuk::File file(KUrl(nepomukUri.toString()));
+//     qDebug() << "VALID: " << file.isValid();
+//     qDebug() << "TEST 2 NIE: " << asd.property(Nepomuk::Vocabulary::NIE::url()).toString();
+//
+//     return nepomukUri.toString();
+// }
+
 void TelepathyContactList::init()
 {
     // load QML part of the plasmoid
@@ -58,7 +78,6 @@ void TelepathyContactList::init()
 
         // make C++ Plasma::Applet available to QML for resize signal
         m_declarative->engine()->rootContext()->setContextProperty("TelepathyContactList", this);
-//         m_declarative->engine()->rootContext()->setContextProperty("TelepathyContactListModel", /* model goes here */);
 
         // setup qml object so that we can talk to the declarative part
         m_qmlObject = dynamic_cast<QObject*>(m_declarative->rootObject());

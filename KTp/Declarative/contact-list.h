@@ -37,6 +37,8 @@ public:
     int appletWidth() const;      /** returns plasma applet's width */
     void init();
 
+public slots:
+//     QString extractAvatarPathFromNepomuk(const QString &nepomukUri);
 
 private:
     Plasma::DeclarativeWidget *m_declarative;
