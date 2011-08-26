@@ -37,6 +37,7 @@ TelepathyContactList::TelepathyContactList(QObject* parent, const QVariantList& 
 {
     // set plasmoid size
     setMinimumSize(250, 400);
+    setAspectRatioMode(Plasma::IgnoreAspectRatio);
 }
 
 TelepathyContactList::~TelepathyContactList()
