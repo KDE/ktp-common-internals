@@ -247,7 +247,7 @@ Tp::AccountPtr AccountsModel::accountForContactItem(ContactModelItem *contactIte
 Qt::ItemFlags AccountsModel::flags(const QModelIndex &index) const
 {
     if (index.isValid()) {
-        return Qt::ItemIsEnabled;
+        return Qt::ItemIsEnabled | Qt::ItemIsSelectable;
     }
 
     return QAbstractItemModel::flags(index) | Qt::ItemIsEditable;
