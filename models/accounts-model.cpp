@@ -247,7 +247,12 @@ Tp::AccountPtr AccountsModel::accountForContactItem(ContactModelItem *contactIte
 Qt::ItemFlags AccountsModel::flags(const QModelIndex &index) const
 {
     if (index.isValid()) {
-        return Qt::ItemIsEnabled | Qt::ItemIsSelectable;
+        bool isContact = index.data(AccountsModel::ItemRole).userType() == qMetaTypeId<ContactModelItem*>();
+        if (isContact) {
+            return Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsDragEnabled;
+        } else {
+            return Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsDropEnabled;
+        }
     }
 
     return QAbstractItemModel::flags(index) | Qt::ItemIsEditable;

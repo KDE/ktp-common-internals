@@ -20,11 +20,12 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
+#include "groups-model.h"
+
 #include <TelepathyQt4/ContactManager>
 #include <TelepathyQt4/Contact>
 #include <TelepathyQt4/PendingReady>
 
-#include "groups-model.h"
 #include "groups-model-item.h"
 #include "proxy-tree-node.h"
 #include "accounts-model.h"
@@ -103,10 +104,92 @@ QVariant GroupsModel::data(const QModelIndex &index, int role) const
 Qt::ItemFlags GroupsModel::flags(const QModelIndex &index) const
 {
     if (index.isValid()) {
-        return Qt::ItemIsEnabled;
+        bool isGroup = index.data(AccountsModel::ItemRole).userType() == qMetaTypeId<GroupsModelItem*>();
+        if (isGroup) {
+            return Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsDropEnabled;
+        } else {
+            return Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsDragEnabled;
+        }
     }
 
     return QAbstractItemModel::flags(index) | Qt::ItemIsEditable;
+}
+
+Qt::DropActions GroupsModel::supportedDropActions() const
+{
+    return Qt::CopyAction | Qt::MoveAction;
+}
+
+QStringList GroupsModel::mimeTypes() const
+{
+    QStringList types;
+    types << "application/vnd.telepathy.contact";
+    return types;
+}
+
+QMimeData* GroupsModel::mimeData(const QModelIndexList& indexes) const
+{
+    QMimeData *mimeData = new QMimeData();
+    QByteArray encodedData;
+
+    QDataStream stream(&encodedData, QIODevice::WriteOnly);
+
+    foreach (const QModelIndex &index, indexes) {
+        if (index.isValid()) {
+            ContactModelItem *c = data(index, AccountsModel::ItemRole).value<ContactModelItem*>();
+            //We put a contact ID and its account ID to the stream, so we can later recreate the contact using AccountsModel
+            stream << c->contact().data()->id() << mPriv->mAM->accountForContactItem(c).data()->uniqueIdentifier();
+        }
+    }
+
+    mimeData->setData("application/vnd.telepathy.contact", encodedData);
+    return mimeData;
+}
+
+bool GroupsModel::dropMimeData(const QMimeData* data, Qt::DropAction action, int row, int column, const QModelIndex& parent)
+{
+    if (action == Qt::IgnoreAction) {
+        return true;
+    }
+
+    if (!data->hasFormat("application/vnd.telepathy.contact")) {
+        return false;
+    }
+
+    if (column > 0) {
+        return false;
+    }
+
+    QByteArray encodedData = data->data("application/vnd.telepathy.contact");
+    QDataStream stream(&encodedData, QIODevice::ReadOnly);
+    QList<ContactModelItem*> contacts;
+
+    while (!stream.atEnd()) {
+        QString contact;
+        QString account;
+        //get contact and account out of the stream
+        stream >> contact >> account;
+        //casted pointer is checked below, before first use
+        contacts.append(qobject_cast<ContactModelItem*>(mPriv->mAM->contactItemForId(account, contact)));
+    }
+
+    foreach (ContactModelItem *contact, contacts) {
+        Q_ASSERT(contact);
+        QString group = parent.data(GroupsModel::GroupNameRole).toString();
+
+        kDebug() << contact->contact().data()->alias() << "added to group" << group;
+
+        if (group != QLatin1String("Ungrouped")) { //FIXME: consider i18n
+            //FIXME: Should we connect this somewhere?
+            Tp::PendingOperation *op = contact->contact().data()->manager().data()->addContactsToGroup(group,
+                                                                                                       QList<Tp::ContactPtr>() << contact->contact());
+
+            connect(op, SIGNAL(finished(Tp::PendingOperation*)),
+                    this, SIGNAL(operationFinished(Tp::PendingOperation*)));
+        }
+    }
+
+    return true;
 }
 
 bool GroupsModel::setData(const QModelIndex &index, const QVariant &value, int role)
@@ -272,9 +355,10 @@ void GroupsModel::removeContactFromGroup(ProxyTreeNode* proxyNode, const QString
             addContactToGroups(proxyNode->data(AccountsModel::ItemRole).value<ContactModelItem*>(), contactGroups);
         }
 
-//         beginRemoveRows(index(proxyNode->parent()), proxyNode->parent()->indexOf(proxyNode), proxyNode->parent()->indexOf(proxyNode));
         qobject_cast<GroupsModelItem*>(proxyNode->parent())->removeProxyContact(proxyNode);
-//         endRemoveRows();
+        ContactModelItem *contactItem = proxyNode->data(AccountsModel::ItemRole).value<ContactModelItem*>();
+        Q_ASSERT(contactItem);
+        contactItem->contact().data()->manager().data()->removeContactsFromGroup(group, QList<Tp::ContactPtr>() << contactItem->contact());
     }
 }
 
@@ -301,7 +385,7 @@ void GroupsModel::addContactToGroups(ContactModelItem* contactItem, QStringList 
 
     groups.removeDuplicates();
 
-    foreach (QString group, groups) {
+    foreach (const QString &group, groups) {
         bool groupExists = false;
         GroupsModelItem *groupItem;
 
@@ -347,4 +431,3 @@ void GroupsModel::addContactToGroups(ContactModelItem* contactItem, QStringList 
 
     }
 }
-

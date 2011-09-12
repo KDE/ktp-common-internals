@@ -20,10 +20,11 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
+#include "groups-model-item.h"
+
 #include <TelepathyQt4/Account>
 #include <TelepathyQt4/ContactManager>
 
-#include "groups-model-item.h"
 #include "groups-model.h"
 #include "accounts-model.h"
 #include "proxy-tree-node.h"

@@ -57,6 +57,7 @@ public:
     virtual QVariant data(const QModelIndex &index, int role) const;
 
     virtual Qt::ItemFlags flags(const QModelIndex &index) const;
+    virtual Qt::DropActions supportedDropActions() const;
     virtual bool setData(const QModelIndex &index, const QVariant &value, int role = Qt::EditRole);
     virtual QModelIndex index(int row, int column = 0, const QModelIndex &parent = QModelIndex()) const;
     virtual QModelIndex index(TreeNode *node) const;
@@ -69,9 +70,13 @@ public:
 
     void removeContactFromGroup(ProxyTreeNode* proxyNode, const QString& group);
 
-// Q_SIGNALS:
-//     void accountCountChanged();
-//     void accountConnectionStatusChanged(const QString &accountId, int status);
+    virtual QStringList mimeTypes() const;
+    virtual QMimeData* mimeData(const QModelIndexList &indexes) const;
+    virtual bool dropMimeData(const QMimeData *data, Qt::DropAction action, int row, int column, const QModelIndex &parent);
+
+Q_SIGNALS:
+    //a signal for reemitting the operation status, used for displaying errors in GUI
+    void operationFinished(Tp::PendingOperation *op);
 
 private Q_SLOTS:
 //     void onNewAccount(const Tp::AccountPtr &account);
