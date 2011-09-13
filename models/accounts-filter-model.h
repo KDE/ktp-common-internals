@@ -53,8 +53,10 @@ public:
     bool isSortedByPresence() const;
 
 public slots:
-    void showOfflineUsers(bool showOfflineUsers);
+    void setShowOfflineUsers(bool showOfflineUsers);
     void setFilterString(const QString &str);
+    /// This overloaded method takes into account showing/hiding offline users
+    void clearFilterStringAndHideOfflineUsers(const bool& showOfflineUsers);
     void clearFilterString();
     /**
      * \brief Lets the proxy know whether the model should get sorted by presence or not.

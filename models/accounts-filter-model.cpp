@@ -27,7 +27,6 @@
 #include "contact-model-item.h"
 #include "accounts-model-item.h"
 
-
 #include <KDebug>
 
 AccountsFilterModel::AccountsFilterModel(QObject *parent)
@@ -47,7 +46,7 @@ AccountsFilterModel::AccountsFilterModel(QObject *parent)
     m_presenceSorting[Tp::ConnectionPresenceTypeOffline] = 6;
 }
 
-void AccountsFilterModel::showOfflineUsers(bool showOfflineUsers)
+void AccountsFilterModel::setShowOfflineUsers(bool showOfflineUsers)
 {
     m_showOfflineUsers = showOfflineUsers;
     invalidateFilter();
@@ -127,7 +126,14 @@ void AccountsFilterModel::setFilterString(const QString &str)
 {
     m_filterString = str;
     m_filterByName = true;
+    m_showOfflineUsers = true;
     invalidateFilter();
+}
+
+void AccountsFilterModel::clearFilterStringAndHideOfflineUsers(const bool &showOfflineUsers)
+{
+    m_showOfflineUsers = showOfflineUsers;
+    clearFilterString();
 }
 
 void AccountsFilterModel::clearFilterString()
@@ -137,7 +143,7 @@ void AccountsFilterModel::clearFilterString()
     invalidateFilter();
 }
 
-bool AccountsFilterModel::lessThan( const QModelIndex &left, const QModelIndex &right ) const
+bool AccountsFilterModel::lessThan(const QModelIndex &left, const QModelIndex &right) const
 {
     uint leftPresence;
     uint rightPresence;
