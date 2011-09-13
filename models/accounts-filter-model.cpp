@@ -35,7 +35,16 @@ AccountsFilterModel::AccountsFilterModel(QObject *parent)
       m_showOfflineUsers(false),
       m_filterByName(false)
 {
-
+    m_presenceSorting[Tp::ConnectionPresenceTypeAvailable] = 0;
+    m_presenceSorting[Tp::ConnectionPresenceTypeBusy] = 1;
+    m_presenceSorting[Tp::ConnectionPresenceTypeHidden] = 2;
+    m_presenceSorting[Tp::ConnectionPresenceTypeAway] = 3;
+    m_presenceSorting[Tp::ConnectionPresenceTypeExtendedAway] = 4;
+    //don't distinguish between the following three presences
+    m_presenceSorting[Tp::ConnectionPresenceTypeError] = 5;
+    m_presenceSorting[Tp::ConnectionPresenceTypeUnknown] = 5;
+    m_presenceSorting[Tp::ConnectionPresenceTypeUnset] = 5;
+    m_presenceSorting[Tp::ConnectionPresenceTypeOffline] = 6;
 }
 
 void AccountsFilterModel::showOfflineUsers(bool showOfflineUsers)
@@ -130,34 +139,34 @@ void AccountsFilterModel::clearFilterString()
 
 bool AccountsFilterModel::lessThan( const QModelIndex &left, const QModelIndex &right ) const
 {
-        uint leftPresence;
-        uint rightPresence;
+    uint leftPresence;
+    uint rightPresence;
 
-        QString leftDisplayedName = sourceModel()->data(left).toString();
-        QString rightDisplayedName = sourceModel()->data(right).toString();
+    QString leftDisplayedName = sourceModel()->data(left).toString();
+    QString rightDisplayedName = sourceModel()->data(right).toString();
 
-        if (sortRole() == AccountsModel::PresenceTypeRole) {
-            leftPresence = sourceModel()->data(left, AccountsModel::PresenceTypeRole).toUInt();
-            rightPresence = sourceModel()->data(right, AccountsModel::PresenceTypeRole).toUInt();
+    if (sortRole() == AccountsModel::PresenceTypeRole) {
+        leftPresence = sourceModel()->data(left, AccountsModel::PresenceTypeRole).toUInt();
+        rightPresence = sourceModel()->data(right, AccountsModel::PresenceTypeRole).toUInt();
 
-            if (leftPresence == rightPresence) {
-                return QString::localeAwareCompare(leftDisplayedName, rightDisplayedName) < 0;
-            } else {
-                if (leftPresence == Tp::ConnectionPresenceTypeAvailable) {
-                    return true;
-                }
-                if (leftPresence == Tp::ConnectionPresenceTypeUnset ||
-                        leftPresence == Tp::ConnectionPresenceTypeOffline ||
-                        leftPresence == Tp::ConnectionPresenceTypeUnknown ||
-                        leftPresence == Tp::ConnectionPresenceTypeError) {
-                    return false;
-                }
-
-                return leftPresence < rightPresence;
-            }
-        } else {
+        if (leftPresence == rightPresence) {
             return QString::localeAwareCompare(leftDisplayedName, rightDisplayedName) < 0;
+        } else {
+            if (leftPresence == Tp::ConnectionPresenceTypeAvailable) {
+                return true;
+            }
+            if (leftPresence == Tp::ConnectionPresenceTypeUnset ||
+                    leftPresence == Tp::ConnectionPresenceTypeOffline ||
+                    leftPresence == Tp::ConnectionPresenceTypeUnknown ||
+                    leftPresence == Tp::ConnectionPresenceTypeError) {
+                return false;
+            }
+
+            return m_presenceSorting[leftPresence] < m_presenceSorting[rightPresence];
         }
+    } else {
+        return QString::localeAwareCompare(leftDisplayedName, rightDisplayedName) < 0;
+    }
 }
 
 void AccountsFilterModel::setSortByPresence(bool enabled)

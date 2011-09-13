@@ -42,7 +42,7 @@ class AccountsFilterModel : public QSortFilterProxyModel
 
 public:
     AccountsFilterModel(QObject *parent = 0);
-    
+
     bool showOfflineUsers() const;
 
     /**
@@ -81,6 +81,9 @@ private:
 
     /// Holds the string which is searched in the model
     QString m_filterString;
+
+    /// Sets the sorting order of presences
+    QHash<uint, int> m_presenceSorting;
 };
 
 #endif // ACCOUNTFILTERMODEL_H
