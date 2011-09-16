@@ -302,4 +302,31 @@ QModelIndex AccountsModel::parent(const QModelIndex &index) const
     }
 }
 
+QStringList AccountsModel::mimeTypes() const
+{
+    QStringList types;
+    types << "application/vnd.telepathy.contact";
+    return types;
+}
+
+QMimeData* AccountsModel::mimeData(const QModelIndexList& indexes) const
+{
+    QMimeData *mimeData = new QMimeData();
+    QByteArray encodedData;
+
+    QDataStream stream(&encodedData, QIODevice::WriteOnly);
+
+    foreach (const QModelIndex &index, indexes) {
+        if (index.isValid()) {
+            ContactModelItem *c = data(index, AccountsModel::ItemRole).value<ContactModelItem*>();
+            //We put a contact ID and its account ID to the stream, so we can later recreate the contact using AccountsModel
+            stream << c->contact().data()->id() << accountForContactItem(c).data()->uniqueIdentifier();
+        }
+    }
+
+    mimeData->setData("application/vnd.telepathy.contact", encodedData);
+    return mimeData;
+}
+
+
 #include "accounts-model.moc"

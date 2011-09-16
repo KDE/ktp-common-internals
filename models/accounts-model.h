@@ -107,6 +107,9 @@ public:
     virtual QModelIndex index(TreeNode *node) const;
     virtual QModelIndex parent(const QModelIndex &index) const;
 
+    virtual QStringList mimeTypes() const;
+    virtual QMimeData* mimeData(const QModelIndexList &indexes) const;
+
     int accountCount() const;
     Q_INVOKABLE QObject *accountItemForId(const QString &id) const;
     Q_INVOKABLE QObject *contactItemForId(const QString &accountId, const QString &contactId) const;
