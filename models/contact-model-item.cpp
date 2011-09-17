@@ -123,9 +123,10 @@ QVariant ContactModelItem::data(int role) const
         return videoCallCapability();
     case AccountsModel::UpgradeCallCapabilityRole:
         return mPriv->mContact->capabilities().upgradingStreamedMediaCalls();
-    case AccountsModel::FileTransferCapabilityRole: {
+    case AccountsModel::FileTransferCapabilityRole:
         return fileTransferCapability();
-    }
+    case AccountsModel::DesktopSharingCapabilityRole:
+        return desktopSharingCapability();
     default:
         break;
     }
@@ -192,6 +193,13 @@ bool ContactModelItem::fileTransferCapability() const
     bool contactCanHandleFiles = mPriv->mContact->capabilities().fileTransfers();
     bool selfCanHandleFiles = mPriv->mContact->manager()->connection()->selfContact()->capabilities().fileTransfers();
     return contactCanHandleFiles && selfCanHandleFiles;
+}
+
+bool ContactModelItem::desktopSharingCapability() const
+{
+    bool contactCanHandleRfb = mPriv->mContact->capabilities().streamTubes("rfb");
+    bool selfCanHandleRfb = mPriv->mContact->manager()->connection()->selfContact()->capabilities().streamTubes("rfb");
+    return contactCanHandleRfb && selfCanHandleRfb;
 }
 
 #include "contact-model-item.moc"

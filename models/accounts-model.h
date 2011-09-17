@@ -85,6 +85,7 @@ public:
         VideoCallCapabilityRole,
         UpgradeCallCapabilityRole,
         FileTransferCapabilityRole,
+        DesktopSharingCapabilityRole,
 
         TotalUsersCountRole,
         OnlineUsersCountRole,

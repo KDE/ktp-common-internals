@@ -50,6 +50,7 @@ private:
     bool audioCallCapability() const;
     bool videoCallCapability() const;
     bool fileTransferCapability() const;
+    bool desktopSharingCapability() const;
 
     struct Private;
     friend struct Private;
