@@ -230,7 +230,7 @@ void AccountsListModel::onAccountItemRemoved()
 void AccountsListModel::onAccountItemUpdated()
 {
     kDebug();
-    
+
     AccountItem *item = qobject_cast<AccountItem*>(sender());
 
     Q_ASSERT(item);
@@ -252,4 +252,3 @@ void AccountsListModel::onTitleForCustomPages(QString mandatoryPage, QList<QStri
 
 
 #include "accounts-list-model.moc"
-
