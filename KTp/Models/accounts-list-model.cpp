@@ -98,6 +98,11 @@ QVariant AccountsListModel::data(const QModelIndex &index, int role) const
     case AccountsListModel::ConnectionErrorMessageDisplayRole:
         data = QVariant(m_accounts.at(index.row())->connectionStatusReason());
         break;
+
+    case AccountsListModel::ConnectionProtocolNameRole:
+        data = QVariant(m_accounts.at(index.row())->connectionProtocolName());
+        break;
+
     default:
         break;
     }
