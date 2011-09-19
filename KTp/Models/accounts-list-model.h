@@ -52,11 +52,11 @@ public:
     AccountItem* itemForIndex(const QModelIndex &index);
 
 Q_SIGNALS:
-	void protocolSelected(QString, QString);
-	void setTitleForCustomPages(QString, QList<QString>);
+    void protocolSelected(QString, QString);
+    void setTitleForCustomPages(QString, QList<QString>);
 
 public Q_SLOTS:
-	void onTitleForCustomPages(QString, QList<QString>);
+    void onTitleForCustomPages(QString, QList<QString>);
 
 private Q_SLOTS:
     void onAccountItemRemoved();
