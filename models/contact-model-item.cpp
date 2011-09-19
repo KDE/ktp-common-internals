@@ -21,15 +21,23 @@
  */
 
 #include "contact-model-item.h"
+#include "accounts-model.h"
+#include "../service-availability-checker.h"
 
 #include <QImage>
+
+#include <KGlobal>
 
 #include <TelepathyQt4/AvatarData>
 #include <TelepathyQt4/ContactCapabilities>
 #include <TelepathyQt4/ContactManager>
 #include <TelepathyQt4/RequestableChannelClassSpec>
 
-#include "accounts-model.h"
+
+
+K_GLOBAL_STATIC_WITH_ARGS(ServiceAvailabilityChecker, s_krfbAvailableChecker,
+                          (QLatin1String("org.freedesktop.Telepathy.Client.krfb_rfb_handler")));
+
 
 struct ContactModelItem::Private
 {
@@ -44,6 +52,7 @@ struct ContactModelItem::Private
 ContactModelItem::ContactModelItem(const Tp::ContactPtr &contact)
     : mPriv(new Private(contact))
 {
+    (void) s_krfbAvailableChecker.operator->(); //start the d-bus query the first time this is called
 
     connect(contact.data(),
             SIGNAL(aliasChanged(QString)),
@@ -198,7 +207,7 @@ bool ContactModelItem::fileTransferCapability() const
 bool ContactModelItem::desktopSharingCapability() const
 {
     bool contactCanHandleRfb = mPriv->mContact->capabilities().streamTubes("rfb");
-    bool selfCanHandleRfb = mPriv->mContact->manager()->connection()->selfContact()->capabilities().streamTubes("rfb");
+    bool selfCanHandleRfb = s_krfbAvailableChecker->isAvailable();
     return contactCanHandleRfb && selfCanHandleRfb;
 }
 
