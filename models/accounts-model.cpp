@@ -113,6 +113,7 @@ AccountsModel::AccountsModel(const Tp::AccountManagerPtr &am, QObject *parent)
     roles[VideoCallCapabilityRole] = "videoCall";
     roles[UpgradeCallCapabilityRole] = "upgradeCall";
     roles[FileTransferCapabilityRole] = "fileTransfer";
+    roles[DesktopSharingCapabilityRole] = "desktopSharing";
     setRoleNames(roles);
 }
 
