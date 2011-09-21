@@ -80,14 +80,14 @@ void ServiceAvailabilityChecker::onCallFinished(QDBusPendingCallWatcher *watcher
     if (!reply.isValid()) {
         kDebug() << "Got error while introspecting service availability:" << reply.error();
     } else {
-        bool *var = (watcher->objectName() == QLatin1String("ListActivatableNamesWatcher"))
-                            ? &d->serviceActivatable : &d->serviceAvailable;
-
-        if (!*var) {
-            *var = reply.value().contains(d->serviceName);
+        if (watcher->objectName() == QLatin1String("ListActivatableNamesWatcher")) {
+            d->serviceActivatable = reply.value().contains(d->serviceName);
         } else {
-            Q_ASSERT(var == &d->serviceAvailable); //this is the serviceAvailable variable
-            //... and onServiceOwnerChanged() got there first...
+            if (!d->serviceAvailable) {
+                d->serviceAvailable = reply.value().contains(d->serviceName);
+            }
+            //else onServiceOwnerChanged() has been emitted before the introspection finished
+            //so the reply we got here may be incorrect, claiming that the service is not available
         }
     }
 
