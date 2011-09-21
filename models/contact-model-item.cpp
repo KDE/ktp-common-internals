@@ -52,7 +52,10 @@ struct ContactModelItem::Private
 ContactModelItem::ContactModelItem(const Tp::ContactPtr &contact)
     : mPriv(new Private(contact))
 {
-    (void) s_krfbAvailableChecker.operator->(); //start the d-bus query the first time this is called
+    //This effectively constructs the s_krfbAvailableChecker object the first
+    //time that this code is executed. This is to start the d-bus query early, so
+    //that data are available when we need them later in desktopSharingCapability()
+    (void) s_krfbAvailableChecker.operator->();
 
     connect(contact.data(),
             SIGNAL(aliasChanged(QString)),
