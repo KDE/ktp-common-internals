@@ -48,6 +48,7 @@ public:
     static bool s_persist;
     static bool s_debug;
 
+    int initialTimeout;
     int timeout;
     QTimer *timer;
     bool firstJobStarted;
@@ -99,7 +100,14 @@ KComponentData TelepathyHandlerApplication::Private::initHack()
 
 void TelepathyHandlerApplication::Private::init(int initialTimeout, int timeout)
 {
-    q->setQuitOnLastWindowClosed(false);
+    this->initialTimeout = timeout;
+    this->timeout = timeout;
+
+    // If timeout < 0 we let the application exit when the last window is closed,
+    // Otherwise we handle it with the timeout
+    if (timeout >= 0) {
+        q->setQuitOnLastWindowClosed(false);
+    }
 
     Tp::registerTypes();
     //Enable telepathy-Qt4 debug
@@ -111,10 +119,11 @@ void TelepathyHandlerApplication::Private::init(int initialTimeout, int timeout)
     }
 
     if (!Private::s_persist) {
-        this->timeout = timeout;
         timer = new QTimer(q);
-        q->connect(timer, SIGNAL(timeout()), q, SLOT(_k_onInitialTimeout()));
-        timer->start(initialTimeout);
+        if (initialTimeout >= 0) {
+            q->connect(timer, SIGNAL(timeout()), q, SLOT(_k_onInitialTimeout()));
+            timer->start(initialTimeout);
+        }
     }
 }
 
@@ -158,8 +167,12 @@ int TelepathyHandlerApplication::newJob()
             d->timer->stop();
         }
         if (!d->firstJobStarted) {
-            disconnect(d->timer, SIGNAL(timeout()), app, SLOT(_k_onInitialTimeout()));
-            connect(d->timer, SIGNAL(timeout()), app, SLOT(_k_onTimeout()));
+            if (d->initialTimeout) {
+                disconnect(d->timer, SIGNAL(timeout()), app, SLOT(_k_onInitialTimeout()));
+            }
+            if (d->timeout >= 0) {
+                connect(d->timer, SIGNAL(timeout()), app, SLOT(_k_onTimeout()));
+            }
             d->firstJobStarted = true;
         }
     }
@@ -173,7 +186,7 @@ void TelepathyHandlerApplication::jobFinished()
 
     if (d->jobCount.fetchAndAddOrdered(-1) <= 1) {
         kDebug() << "No other jobs at the moment. Starting timer.";
-        if (!Private::s_persist) {
+        if (!Private::s_persist && d->timeout >= 0) {
             d->timer->start(d->timeout);
         }
     }
