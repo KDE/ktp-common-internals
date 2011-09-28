@@ -26,6 +26,9 @@
 #include <TelepathyQt4/Types>
 #include <TelepathyQt4/Debug>
 
+
+extern bool kde_kdebug_enable_dbus_interface;
+
 namespace KTelepathy {
 
 class TelepathyHandlerApplication::Private
@@ -102,6 +105,10 @@ void TelepathyHandlerApplication::Private::init(int initialTimeout, int timeout)
     //Enable telepathy-Qt4 debug
     Tp::enableDebug(s_debug);
     Tp::enableWarnings(true);
+
+    if (s_debug) {
+        kde_kdebug_enable_dbus_interface = true;
+    }
 
     if (!Private::s_persist) {
         this->timeout = timeout;
