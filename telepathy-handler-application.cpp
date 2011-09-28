@@ -185,8 +185,8 @@ void TelepathyHandlerApplication::jobFinished()
     TelepathyHandlerApplication::Private *d = app->d;
 
     if (d->jobCount.fetchAndAddOrdered(-1) <= 1) {
-        kDebug() << "No other jobs at the moment. Starting timer.";
         if (!Private::s_persist && d->timeout >= 0) {
+            kDebug() << "No other jobs at the moment. Starting timer.";
             d->timer->start(d->timeout);
         }
     }
