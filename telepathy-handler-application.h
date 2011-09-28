@@ -16,8 +16,8 @@
 * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#ifndef UNIQUE_TP_HANDLER_H
-#define UNIQUE_TP_HANDLER_H
+#ifndef TELEPATHY_HANDLER_APPLICATION_H
+#define TELEPATHY_HANDLER_APPLICATION_H
 
 #include <KApplication>
 
@@ -68,4 +68,4 @@ private:
 
 } // namespace KTelepathy
 
-#endif // UNIQUE_TP_HANDLER_H
+#endif // TELEPATHY_HANDLER_APPLICATION_H
