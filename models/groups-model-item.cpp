@@ -70,6 +70,8 @@ QVariant GroupsModelItem::data(int role) const
     switch (role) {
     case AccountsModel::ItemRole:
         return QVariant::fromValue((GroupsModelItem*)this);
+    case AccountsModel::IdRole:
+        /* drop through*/
     case GroupsModel::GroupNameRole:
         return mPriv->mGroupName;
     case AccountsModel::TotalUsersCountRole:
