@@ -23,7 +23,7 @@
 #include <KDebug>
 
 
-const QLatin1String WalletInterface::s_folderName = QLatin1String("kde-telepathy");
+const QLatin1String WalletInterface::s_folderName = QLatin1String("telepathy-kde");
 
 
 WalletInterface::WalletInterface(WId winId):
@@ -82,4 +82,20 @@ void WalletInterface::setPassword(const Tp::AccountPtr &account, const QString &
 
     m_wallet->setFolder(s_folderName);
     m_wallet->writePassword(account->uniqueIdentifier(), password);
+    //sync normally happens on close, but in this case we need it to happen /now/ as it needs to be synced before the auth-client starts
+    m_wallet->sync();
+}
+
+void WalletInterface::removePassword(const Tp::AccountPtr &account)
+{
+    if (m_wallet.isNull()) {
+        return;
+    }
+
+    if (! m_wallet->hasFolder(s_folderName)) {
+        return;
+    }
+
+    m_wallet->setFolder(s_folderName);
+    m_wallet->removeEntry(account->uniqueIdentifier());
 }

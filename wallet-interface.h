@@ -42,6 +42,10 @@ public:
 
     /** Set the password entry for the given account to a new password*/
     void setPassword(const Tp::AccountPtr &account, const QString &password);
+
+    /** Remove the entry from kwallet*/
+    void removePassword(const Tp::AccountPtr &account);
+
 private:
     static const QLatin1String s_folderName;
 
