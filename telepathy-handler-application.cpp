@@ -31,6 +31,23 @@ extern bool kde_kdebug_enable_dbus_interface;
 
 namespace KTelepathy {
 
+
+namespace {
+int s_tpqt4DebugArea;
+
+#if (0) //TODO check tp version
+static void tpDebugCallback(const QString &libraryName,
+                            const QString &libraryVersion,
+                            QtMsgType type,
+                            const QString &msg)
+{
+    Q_UNUSED(libraryName)
+    Q_UNUSED(libraryVersion)
+    kDebugStream(type, s_tpqt4DebugArea, __FILE__, __LINE__, "Telepathy-Qt4") << qPrintable(msg);
+}
+#endif
+}
+
 class TelepathyHandlerApplication::Private
 {
 public:
@@ -95,6 +112,9 @@ KComponentData TelepathyHandlerApplication::Private::initHack()
     KCmdLineArgs *args = KCmdLineArgs::parsedArgs("kde-telepathy");
     Private::s_persist = args->isSet("persist");
     Private::s_debug = args->isSet("debug");
+
+    s_tpqt4DebugArea = KDebug::registerArea("Telepathy-Qt4");
+
     return cData;
 }
 
@@ -109,14 +129,22 @@ void TelepathyHandlerApplication::Private::init(int initialTimeout, int timeout)
         q->setQuitOnLastWindowClosed(false);
     }
 
+    // Register TpQt4 types
     Tp::registerTypes();
-    //Enable telepathy-Qt4 debug
+
+#if (0) // TODO check tp version
+    // Redirect Tp debug and warnings to KDebug output
+    Tp::setDebugCallback(&tpDebugCallback);
+#endif
+
+    // Enable telepathy-Qt4 debug
     Tp::enableDebug(s_debug);
     Tp::enableWarnings(true);
 
-    if (s_debug) {
-        kde_kdebug_enable_dbus_interface = true;
-    }
+    // Enable KDebug DBus interface
+    // FIXME This must be enabled here because there is a bug in plasma
+    //       it should be removed when this is fixed
+    kde_kdebug_enable_dbus_interface = s_debug;
 
     if (!Private::s_persist) {
         timer = new QTimer(q);

@@ -33,6 +33,7 @@ namespace KTelepathy {
  * - Adds the --persist option to inhibit automatic exit.
  * - Adds the --debug option to enable telepathy-qt4 debug
  * - Enables telepathy-qt4 warnings
+ * - Use Tp-Qt4 callback for redirecting debug output into KDebug
  */
 class TelepathyHandlerApplication : public KApplication
 {
