@@ -100,7 +100,7 @@ KComponentData TelepathyHandlerApplication::Private::initHack()
 
 void TelepathyHandlerApplication::Private::init(int initialTimeout, int timeout)
 {
-    this->initialTimeout = timeout;
+    this->initialTimeout = initialTimeout;
     this->timeout = timeout;
 
     // If timeout < 0 we let the application exit when the last window is closed,
