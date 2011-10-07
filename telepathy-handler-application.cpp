@@ -35,7 +35,6 @@ namespace KTelepathy {
 namespace {
 int s_tpqt4DebugArea;
 
-#if (0) //TODO check tp version
 static void tpDebugCallback(const QString &libraryName,
                             const QString &libraryVersion,
                             QtMsgType type,
@@ -45,7 +44,6 @@ static void tpDebugCallback(const QString &libraryName,
     Q_UNUSED(libraryVersion)
     kDebugStream(type, s_tpqt4DebugArea, __FILE__, __LINE__, "Telepathy-Qt4") << qPrintable(msg);
 }
-#endif
 }
 
 class TelepathyHandlerApplication::Private
@@ -132,10 +130,8 @@ void TelepathyHandlerApplication::Private::init(int initialTimeout, int timeout)
     // Register TpQt4 types
     Tp::registerTypes();
 
-#if (0) // TODO check tp version
     // Redirect Tp debug and warnings to KDebug output
     Tp::setDebugCallback(&tpDebugCallback);
-#endif
 
     // Enable telepathy-Qt4 debug
     Tp::enableDebug(s_debug);
