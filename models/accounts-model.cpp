@@ -245,6 +245,11 @@ Tp::AccountPtr AccountsModel::accountForContactItem(ContactModelItem *contactIte
     }
 }
 
+Tp::AccountPtr AccountsModel::accountPtrForPath(const QString& accountPath) const
+{
+    return mPriv->mAM->accountForPath(accountPath);
+}
+
 Qt::ItemFlags AccountsModel::flags(const QModelIndex &index) const
 {
     if (index.isValid()) {
@@ -321,7 +326,7 @@ QMimeData* AccountsModel::mimeData(const QModelIndexList& indexes) const
         if (index.isValid()) {
             ContactModelItem *c = data(index, AccountsModel::ItemRole).value<ContactModelItem*>();
             //We put a contact ID and its account ID to the stream, so we can later recreate the contact using AccountsModel
-            stream << c->contact().data()->id() << accountForContactItem(c).data()->uniqueIdentifier();
+            stream << c->contact().data()->id() << accountForContactItem(c).data()->objectPath();
         }
     }
 

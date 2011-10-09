@@ -101,6 +101,7 @@ public:
     virtual QVariant data(const QModelIndex &index, int role) const;
 
     Tp::AccountPtr accountForContactItem(ContactModelItem* contactItem) const;
+    Tp::AccountPtr accountPtrForPath(const QString &accountPath) const;
 
     virtual Qt::ItemFlags flags(const QModelIndex &index) const;
     virtual bool setData(const QModelIndex &index, const QVariant &value, int role = Qt::EditRole);

@@ -138,7 +138,7 @@ QMimeData* GroupsModel::mimeData(const QModelIndexList& indexes) const
         if (index.isValid()) {
             ContactModelItem *c = data(index, AccountsModel::ItemRole).value<ContactModelItem*>();
             //We put a contact ID and its account ID to the stream, so we can later recreate the contact using AccountsModel
-            stream << c->contact().data()->id() << mPriv->mAM->accountForContactItem(c).data()->uniqueIdentifier();
+            stream << c->contact().data()->id() << mPriv->mAM->accountForContactItem(c).data()->objectPath();
         }
     }
 
@@ -167,10 +167,14 @@ bool GroupsModel::dropMimeData(const QMimeData* data, Qt::DropAction action, int
     while (!stream.atEnd()) {
         QString contact;
         QString account;
+
         //get contact and account out of the stream
         stream >> contact >> account;
+
+        Tp::AccountPtr accountPtr = mPriv->mAM->accountPtrForPath(account);
+
         //casted pointer is checked below, before first use
-        contacts.append(qobject_cast<ContactModelItem*>(mPriv->mAM->contactItemForId(account, contact)));
+        contacts.append(qobject_cast<ContactModelItem*>(mPriv->mAM->contactItemForId(accountPtr->uniqueIdentifier(), contact)));
     }
 
     foreach (ContactModelItem *contact, contacts) {
