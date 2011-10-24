@@ -34,7 +34,6 @@ class GlobalPresence : public QObject
 {
     Q_OBJECT
 public:
-
     explicit GlobalPresence(QObject *parent = 0);
 
     /** Set the account manager to use
@@ -53,15 +52,26 @@ public:
     /** Returns true if any account is changing state (i.e connecting*/
     bool isChangingPresence() const;
 
-    /** Set all enabled accounts to the specified presence*/
-    void setPresence(const Tp::Presence &presence);
+    /** Returns true if there is any enabled account */
+    bool hasEnabledAccounts() const;
 
-signals:
+    Tp::AccountSetPtr onlineAccounts() const;
+
+Q_SIGNALS:
     void requestedPresenceChanged(const Tp::Presence &customPresence);
     void currentPresenceChanged(const Tp::Presence &presence);
     void changingPresence(bool isChanging);
 
-private slots:
+public Q_SLOTS:
+    /** Set all enabled accounts to the specified presence*/
+    void setPresence(const Tp::Presence &presence);
+
+    /**Saves the current presence to memory*/
+    void saveCurrentPresence();
+    /**Restores the saved presence from memory */
+    void restoreSavedPresence();
+
+private Q_SLOTS:
     void onCurrentPresenceChanged();
     void onRequestedPresenceChanged();
     void onChangingPresence();
@@ -70,7 +80,10 @@ private slots:
 
 private:
     Tp::AccountSetPtr m_enabledAccounts;
+    Tp::AccountSetPtr m_onlineAccounts;
 
+    /**Saved presence for later restoration (for example after returning from auto-away) */
+    Tp::Presence m_savedPresence;
     /** A cache of the last sent requested presence, to avoid resignalling*/
     Tp::Presence m_requestedPresence;
     /** A cache of the last sent presence*/

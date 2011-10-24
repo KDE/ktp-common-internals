@@ -145,4 +145,28 @@ void GlobalPresence::onChangingPresence()
     }
 }
 
+bool GlobalPresence::hasEnabledAccounts() const
+{
+    if (m_enabledAccounts->accounts().isEmpty()) {
+        return false;
+    }
+
+    return true;
+}
+
+void GlobalPresence::saveCurrentPresence()
+{
+    m_savedPresence = m_currentPresence;
+}
+
+void GlobalPresence::restoreSavedPresence()
+{
+    setPresence(m_savedPresence);
+}
+
+Tp::AccountSetPtr GlobalPresence::onlineAccounts() const
+{
+    return m_onlineAccounts;
+}
+
 #include "global-presence.moc"
