@@ -192,7 +192,7 @@ bool GroupsModel::dropMimeData(const QMimeData* data, Qt::DropAction action, int
 
         kDebug() << contact->contact().data()->alias() << "added to group" << group;
 
-        if (group != m_ungroupedString) {
+        if (group != mPriv->m_ungroupedString) {
             //FIXME: Should we connect this somewhere?
             Tp::PendingOperation *op = contact->contact().data()->manager().data()->addContactsToGroup(group,
                                                                                                        QList<Tp::ContactPtr>() << contact->contact());
@@ -391,7 +391,7 @@ void GroupsModel::addContactToGroups(ContactModelItem* contactItem, QStringList 
     bool checkUngrouped = false;
     //if the contact has no groups, create an 'Ungrouped' group for it
     if (groups.isEmpty()) {
-        groups.append(m_ungroupedString);
+        groups.append(mPriv->m_ungroupedString);
     } else {
         checkUngrouped = true;
     }
@@ -414,11 +414,11 @@ void GroupsModel::addContactToGroups(ContactModelItem* contactItem, QStringList 
                 }
             }
             if (checkUngrouped) {
-                if (savedGroupItem->groupName() == m_ungroupedString) {
+                if (savedGroupItem->groupName() == mPriv->m_ungroupedString) {
                     for (int i = 0; i < savedGroupItem->size(); i++) {
                         ProxyTreeNode *tmpNode = qobject_cast<ProxyTreeNode*>(savedGroupItem->childAt(i));
                         if (tmpNode->data(AccountsModel::ItemRole).value<ContactModelItem*>()->contact()->id() == contactItem->contact()->id()) {
-                            removeContactFromGroup(tmpNode, m_ungroupedString);
+                            removeContactFromGroup(tmpNode, mPriv->m_ungroupedString);
                             if (groupExists) {
                                 break;
                             }
