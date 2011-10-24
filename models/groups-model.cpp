@@ -32,18 +32,26 @@
 #include "contact-model-item.h"
 
 #include <KDebug>
+#include <KGlobal>
+#include <KLocale>
+#include <KLocalizedString>
 
 struct GroupsModel::Private
 {
     Private(AccountsModel *am)
         : mAM(am)
     {
+        KGlobal::locale()->insertCatalog(QLatin1String("telepathy-common-internals"));
+        m_ungroupedString = i18n("Ungrouped");
     }
 
     TreeNode *node(const QModelIndex &index) const;
 
     AccountsModel *mAM;
     TreeNode *mTree;
+
+    ///translated string for 'Ungrouped'
+    QString m_ungroupedString;
 };
 
 TreeNode *GroupsModel::Private::node(const QModelIndex &index) const
@@ -56,6 +64,7 @@ GroupsModel::GroupsModel(AccountsModel *am, QObject *parent)
     : QAbstractItemModel(parent),
       mPriv(new GroupsModel::Private(am))
 {
+
     mPriv->mTree = new TreeNode;
 
     connect(mPriv->mTree,
@@ -183,7 +192,7 @@ bool GroupsModel::dropMimeData(const QMimeData* data, Qt::DropAction action, int
 
         kDebug() << contact->contact().data()->alias() << "added to group" << group;
 
-        if (group != QLatin1String("Ungrouped")) { //FIXME: consider i18n
+        if (group != m_ungroupedString) {
             //FIXME: Should we connect this somewhere?
             Tp::PendingOperation *op = contact->contact().data()->manager().data()->addContactsToGroup(group,
                                                                                                        QList<Tp::ContactPtr>() << contact->contact());
@@ -382,7 +391,7 @@ void GroupsModel::addContactToGroups(ContactModelItem* contactItem, QStringList 
     bool checkUngrouped = false;
     //if the contact has no groups, create an 'Ungrouped' group for it
     if (groups.isEmpty()) {
-        groups.append("Ungrouped"); //FIXME i18n
+        groups.append(m_ungroupedString);
     } else {
         checkUngrouped = true;
     }
@@ -405,11 +414,11 @@ void GroupsModel::addContactToGroups(ContactModelItem* contactItem, QStringList 
                 }
             }
             if (checkUngrouped) {
-                if (savedGroupItem->groupName() == "Ungrouped") {
+                if (savedGroupItem->groupName() == m_ungroupedString) {
                     for (int i = 0; i < savedGroupItem->size(); i++) {
                         ProxyTreeNode *tmpNode = qobject_cast<ProxyTreeNode*>(savedGroupItem->childAt(i));
                         if (tmpNode->data(AccountsModel::ItemRole).value<ContactModelItem*>()->contact()->id() == contactItem->contact()->id()) {
-                            removeContactFromGroup(tmpNode, QString("Ungrouped"));
+                            removeContactFromGroup(tmpNode, m_ungroupedString);
                             if (groupExists) {
                                 break;
                             }
