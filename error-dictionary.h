@@ -31,14 +31,18 @@ public:
     static ErrorDictionary *instance();
     virtual ~ErrorDictionary();
 
-    ///Returns an error message usable for displaying to the user
-    QString displayErrorMessage(const QString& dbusErrorName) const;
+    ///Returns a verbose error message usable for displaying to the user
+    QString displayVerboseErrorMessage(const QString& dbusErrorName) const;
+
+    ///Returns a short error message usable for little space
+    QString displayShortErrorMessage(const QString& dbusErrorName) const;
 
 private:
     ErrorDictionary(QObject *parent);
-    QHash<QString, QString> m_dict;
+    QHash<QString, QString> m_verboseDict;
+    QHash<QString, QString> m_shortDict;
 
-    static ErrorDictionary *m_instance;
+    static ErrorDictionary *s_instance;
 };
 
 #endif // ERROR_DICTIONARY_H
