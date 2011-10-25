@@ -23,6 +23,7 @@
 #include <KLocalizedString>
 #include <KGlobal>
 #include <KLocale>
+#include <KDebug>
 
 ErrorDictionary* ErrorDictionary::s_instance = NULL;
 
@@ -147,7 +148,8 @@ ErrorDictionary::ErrorDictionary(QObject* parent = 0)
              i18nc("Verbose user visible error string", "The channel was terminated for no apparent reason"));
     m_verboseDict.insert(QLatin1String("org.freedesktop.Telepathy.Error.WouldBreakAnonymity"),
              i18nc("Verbose user visible error string", "This operation can not be finished as it would break your anonymity request"));
-
+    m_verboseDict.insert(QLatin1String("org.freedesktop.DBus.Error.NoReply"),
+             i18nc("Verbose user visible error string", "Some of the IM components are not working correctly (and your system does not tell us which one)"));
 
     m_shortDict.insert(QLatin1String("org.freedesktop.Telepathy.Error.AlreadyConnected"),
              i18nc("Short user visible error string", "Connected elsewhere"));
@@ -255,6 +257,8 @@ ErrorDictionary::ErrorDictionary(QObject* parent = 0)
              i18nc("Short user visible error string", "Channel terminated"));
     m_shortDict.insert(QLatin1String("org.freedesktop.Telepathy.Error.WouldBreakAnonymity"),
              i18nc("Short user visible error string", "Anonymity break possible"));
+    m_shortDict.insert(QLatin1String("org.freedesktop.DBus.Error.NoReply"),
+             i18nc("Short user visible error string", "Internal component error"));
 }
 
 ErrorDictionary::~ErrorDictionary()
@@ -264,10 +268,20 @@ ErrorDictionary::~ErrorDictionary()
 
 QString ErrorDictionary::displayVerboseErrorMessage(const QString& dbusErrorName) const
 {
-    return m_verboseDict.value(dbusErrorName);
+    if (!m_verboseDict.contains(dbusErrorName)) {
+        return i18nc("User visible error string", "An unknown error was encountered (%1), please report this", dbusErrorName);
+    } else {
+        return m_verboseDict.value(dbusErrorName);
+    }
 }
 
 QString ErrorDictionary::displayShortErrorMessage(const QString& dbusErrorName) const
 {
-    return m_shortDict.value(dbusErrorName);
+    if (!m_shortDict.contains(dbusErrorName)) {
+        //print the error so users can send it in
+        kWarning() << "Unknown error encountered:" << dbusErrorName;
+        return i18nc("User visible error string", "Unknown error");
+    } else {
+        return m_shortDict.value(dbusErrorName);
+    }
 }
