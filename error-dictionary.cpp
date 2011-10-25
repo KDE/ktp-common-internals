@@ -78,7 +78,7 @@ ErrorDictionary::ErrorDictionary(QObject* parent = 0)
     m_dict.insert(QLatin1String("org.freedesktop.Telepathy.Error.Confused"),
              i18n("Congratulate yourself - you just reached an impossible situation"));
     m_dict.insert(QLatin1String("org.freedesktop.Telepathy.Error.ConnectionFailed"),
-             i18n("Could not estabilish connection"));
+             i18n("Could not establish connection"));
     m_dict.insert(QLatin1String("org.freedesktop.Telepathy.Error.ConnectionLost"),
              i18n("Connection to server was lost"));
     m_dict.insert(QLatin1String("org.freedesktop.Telepathy.Error.ConnectionRefused"),
@@ -92,7 +92,7 @@ ErrorDictionary::ErrorDictionary(QObject* parent = 0)
     m_dict.insert(QLatin1String("org.freedesktop.Telepathy.Error.EmergencyCallsNotSupported"),
              i18n("Sorry, emergency calls are not supported"));
     m_dict.insert(QLatin1String("org.freedesktop.Telepathy.Error.EncryptionError"),
-             i18n("An encryption error has occured"));
+             i18n("An encryption error has occurred"));
     m_dict.insert(QLatin1String("org.freedesktop.Telepathy.Error.EncryptionNotAvailable"),
              i18n("Requested encryption is not available"));
     m_dict.insert(QLatin1String("org.freedesktop.Telepathy.Error.InsufficientBalance"),
@@ -104,7 +104,7 @@ ErrorDictionary::ErrorDictionary(QObject* parent = 0)
     m_dict.insert(QLatin1String("org.freedesktop.Telepathy.Error.Media.CodecsIncompatible"),
              i18n("You appear to not have any common codec with the other side"));
     m_dict.insert(QLatin1String("org.freedesktop.Telepathy.Error.Media.StreamingError"),
-             i18n("A streaming error has occured (probably not your network related)"));
+             i18n("A streaming error has occurred (probably not your network related)"));
     m_dict.insert(QLatin1String("org.freedesktop.Telepathy.Error.Media.UnsupportedType"),
              i18n("The requested media stream type is not available"));
     m_dict.insert(QLatin1String("org.freedesktop.Telepathy.Error.NetworkError"),
@@ -136,7 +136,7 @@ ErrorDictionary::ErrorDictionary(QObject* parent = 0)
     m_dict.insert(QLatin1String("org.freedesktop.Telepathy.Error.ServiceBusy"),
              i18n("Your request hit a busy resource somewhere along the way and the operation was unable to finish"));
     m_dict.insert(QLatin1String("org.freedesktop.Telepathy.Error.ServiceConfused"),
-             i18n("An internal error has occured (known as the 'Confused service error')"));
+             i18n("An internal error has occurred (known as the 'Confused service error')"));
     m_dict.insert(QLatin1String("org.freedesktop.Telepathy.Error.SoftwareUpgradeRequired"),
              i18n("You are using too old software. Please try updating all Telepathy packages to a newer version"));
     m_dict.insert(QLatin1String("org.freedesktop.Telepathy.Error.Terminated"),
