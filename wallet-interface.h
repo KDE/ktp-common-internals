@@ -37,16 +37,16 @@ public:
     WalletInterface(WId winId);
     virtual ~WalletInterface();
 
-    /** Returns true if a password is stored for this acount*/
-    bool hasPassword(const Tp::AccountPtr &account);
+    /** Returns true if a password is stored for the given account */
+    bool hasPassword(const Tp::AccountPtr &account) const;
 
-    /** Returns the stored password*/
-    QString password(const Tp::AccountPtr &account);
+    /** Returns the stored password for the given account */
+    QString password(const Tp::AccountPtr &account) const;
 
-    /** Set the password entry for the given account to a new password*/
+    /** Set the password for the given account to a new password */
     void setPassword(const Tp::AccountPtr &account, const QString &password);
 
-    /** Remove the entry from kwallet*/
+    /** Remove the password for the given account from kwallet */
     void removePassword(const Tp::AccountPtr &account);
 
 private:

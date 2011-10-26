@@ -36,31 +36,24 @@ WalletInterface::~WalletInterface()
 {
 }
 
-bool WalletInterface::hasPassword(const Tp::AccountPtr &account)
+bool WalletInterface::hasPassword(const Tp::AccountPtr &account) const
 {
-    if (m_wallet.isNull()) {
+    if (m_wallet.isNull() || !m_wallet->hasFolder(s_folderName)) {
         return false;
     }
 
-    if (m_wallet->hasFolder(s_folderName)) {
-        m_wallet->setFolder(s_folderName);
-        if (m_wallet->hasEntry(account->uniqueIdentifier())) {
-            return true;
-        }
-    }
-    return false;
+    m_wallet->setFolder(s_folderName);
+    return m_wallet->hasEntry(account->uniqueIdentifier());
 }
 
-QString WalletInterface::password(const Tp::AccountPtr &account)
+QString WalletInterface::password(const Tp::AccountPtr &account) const
 {
-    if (m_wallet.isNull()) {
+    if (m_wallet.isNull() || !m_wallet->hasFolder(s_folderName)) {
         return QString();
     }
 
     m_wallet->setFolder(s_folderName);
-
     QString password;
-
     if (m_wallet->hasEntry(account->uniqueIdentifier())) {
         int rc = m_wallet->readPassword(account->uniqueIdentifier(), password);
         if (rc != 0) {
@@ -77,7 +70,7 @@ void WalletInterface::setPassword(const Tp::AccountPtr &account, const QString &
         return;
     }
 
-    if (! m_wallet->hasFolder(s_folderName)) {
+    if (!m_wallet->hasFolder(s_folderName)) {
         m_wallet->createFolder(s_folderName);
     }
 
@@ -89,14 +82,11 @@ void WalletInterface::setPassword(const Tp::AccountPtr &account, const QString &
 
 void WalletInterface::removePassword(const Tp::AccountPtr &account)
 {
-    if (m_wallet.isNull()) {
-        return;
-    }
-
-    if (! m_wallet->hasFolder(s_folderName)) {
+    if (m_wallet.isNull() || !m_wallet->hasFolder(s_folderName)) {
         return;
     }
 
     m_wallet->setFolder(s_folderName);
     m_wallet->removeEntry(account->uniqueIdentifier());
+    m_wallet->sync();
 }
