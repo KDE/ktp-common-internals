@@ -196,3 +196,8 @@ void WalletInterface::removeAccount(const Tp::AccountPtr& account)
     removePassword(account);
     removeAllEntries(account);
 }
+
+bool WalletInterface::isOpen() const
+{
+    return (!m_wallet.isNull() && m_wallet->isOpen());
+}

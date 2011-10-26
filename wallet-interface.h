@@ -67,6 +67,9 @@ public:
     /** Remove entries and password for the account from kwallet */
     void removeAccount(const Tp::AccountPtr &account);
 
+    /** Determine if the wallet is open, and is a valid wallet handle */
+    bool isOpen() const;
+
 private:
     static const QLatin1String s_folderName;
     static const QLatin1String s_mapsPrefix;
