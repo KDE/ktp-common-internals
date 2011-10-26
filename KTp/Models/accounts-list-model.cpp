@@ -27,7 +27,6 @@
 
 #include <TelepathyQt4/Account>
 
-#include "common/error-dictionary.h"
 
 AccountsListModel::AccountsListModel(QObject *parent)
  : QAbstractListModel(parent)
@@ -98,7 +97,7 @@ QVariant AccountsListModel::data(const QModelIndex &index, int role) const
         break;
 
     case AccountsListModel::ConnectionErrorMessageDisplayRole:
-        data = QVariant(ErrorDictionary::instance()->displayShortErrorMessage(m_accounts.at(index.row())->account().data()->connectionError()));
+        data = QVariant(m_accounts.at(index.row())->connectionStatusReason());
         break;
 
     case AccountsListModel::ConnectionProtocolNameRole:
