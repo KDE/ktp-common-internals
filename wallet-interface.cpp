@@ -190,3 +190,9 @@ void WalletInterface::removeAllEntries(const Tp::AccountPtr& account)
     m_wallet->setFolder(s_folderName);
     m_wallet->removeEntry(s_mapsPrefix + account->uniqueIdentifier());
 }
+
+void WalletInterface::removeAccount(const Tp::AccountPtr& account)
+{
+    removePassword(account);
+    removeAllEntries(account);
+}

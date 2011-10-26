@@ -64,6 +64,9 @@ public:
     /** Remove all the entries for the given account from kwallet */
     void removeAllEntries(const Tp::AccountPtr &account);
 
+    /** Remove entries and password for the account from kwallet */
+    void removeAccount(const Tp::AccountPtr &account);
+
 private:
     static const QLatin1String s_folderName;
     static const QLatin1String s_mapsPrefix;
