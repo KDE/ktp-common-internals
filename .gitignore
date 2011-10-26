@@ -1,0 +1,9 @@
+*.directory
+*~
+.*.sw[p,o]
+/build
+tags
+.swp.*
+.kdev4/
+*.kdev4
+.kdev_include_paths
