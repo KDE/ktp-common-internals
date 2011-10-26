@@ -27,6 +27,9 @@
 
 #include <QScopedPointer>
 
+namespace KTelepathy
+{
+
 class WalletInterface
 {
 public:
@@ -52,5 +55,7 @@ private:
     QScopedPointer<KWallet::Wallet> m_wallet;
 
 };
+
+} // namespace KTelepathy
 
 #endif // WALLETINTERFACE_H

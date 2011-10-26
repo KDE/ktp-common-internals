@@ -22,6 +22,7 @@
 
 #include <KDebug>
 
+using KTelepathy::WalletInterface;
 
 const QLatin1String WalletInterface::s_folderName = QLatin1String("telepathy-kde");
 
