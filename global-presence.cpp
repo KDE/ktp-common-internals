@@ -51,6 +51,7 @@ void GlobalPresence::setAccountManager(const Tp::AccountManagerPtr &accountManag
     }
 
     m_enabledAccounts = accountManager->enabledAccounts();
+    m_onlineAccounts = accountManager->onlineAccounts();
 
     Q_FOREACH(const Tp::AccountPtr &account, m_enabledAccounts->accounts()) {
         onAccountAdded(account);
