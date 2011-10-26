@@ -52,6 +52,7 @@ public:
 private:
     static const QLatin1String s_folderName;
 
+    //TODO Library: move private members in a private class
     QScopedPointer<KWallet::Wallet> m_wallet;
 
 };
