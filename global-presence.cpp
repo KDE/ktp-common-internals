@@ -105,12 +105,13 @@ void GlobalPresence::onCurrentPresenceChanged()
         }
     }
 
-    qDebug() << "current presence changed";
+    kDebug() << "Current presence changed";
 
     if (highestCurrentPresence.type() != m_currentPresence.type() ||
-            highestCurrentPresence.status() != m_requestedPresence.status()) {
+            highestCurrentPresence.status() != m_currentPresence.status() ||
+            highestCurrentPresence.statusMessage() != m_currentPresence.statusMessage()) {
+
         m_currentPresence = highestCurrentPresence;
-        qDebug() << "emit";
         Q_EMIT currentPresenceChanged(m_currentPresence);
     }
 }
@@ -120,7 +121,7 @@ void GlobalPresence::onRequestedPresenceChanged()
     Tp::Presence highestRequestedPresence = Tp::Presence::offline();
     Q_FOREACH(const Tp::AccountPtr &account, m_enabledAccounts->accounts()) {
         if (m_presenceSorting[account->requestedPresence().type()] < m_presenceSorting[highestRequestedPresence.type()]) {
-            highestRequestedPresence = account->currentPresence();
+            highestRequestedPresence = account->requestedPresence();
         }
     }
 
@@ -157,11 +158,13 @@ bool GlobalPresence::hasEnabledAccounts() const
 
 void GlobalPresence::saveCurrentPresence()
 {
+    kDebug() << "Saving presence with message:" << m_currentPresence.statusMessage();
     m_savedPresence = m_currentPresence;
 }
 
 void GlobalPresence::restoreSavedPresence()
 {
+    kDebug() << m_savedPresence.statusMessage();
     setPresence(m_savedPresence);
 }
 
