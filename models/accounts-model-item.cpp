@@ -282,7 +282,9 @@ void AccountsModelItem::onContactsChanged(const Tp::Contacts &addedContacts,
             newNodes.append(new ContactModelItem(contact));
         }
     }
-    emit childrenAdded(this, newNodes);
+    if (!newNodes.isEmpty()) {
+        emit childrenAdded(this, newNodes);
+    }
 
     countOnlineContacts();
 }
