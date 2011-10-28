@@ -36,6 +36,9 @@ public:
     bool operator <(const KPresence &other) const;
 
     QString displayString() const;
+
+    /** Returns an int representation of the presence type sorted by priority. 0 - most online, 7 - offline */
+    int sortPriority(const Tp::ConnectionPresenceType &type);
 };
 
 #endif // KPRESENCE_H

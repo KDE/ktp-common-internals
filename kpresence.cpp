@@ -53,24 +53,9 @@ KIcon KPresence::icon() const
 
 bool KPresence::operator <(const KPresence &other) const
 {
-    /// Sets the sorting order of presences
-    QHash<uint, int> m_presenceSorting;
-
-    m_presenceSorting[Tp::ConnectionPresenceTypeAvailable] = 0;
-    m_presenceSorting[Tp::ConnectionPresenceTypeBusy] = 1;
-    m_presenceSorting[Tp::ConnectionPresenceTypeHidden] = 2;
-    m_presenceSorting[Tp::ConnectionPresenceTypeAway] = 3;
-    m_presenceSorting[Tp::ConnectionPresenceTypeExtendedAway] = 4;
-    m_presenceSorting[Tp::ConnectionPresenceTypeHidden] = 5;
-    //don't distinguish between the following three presences
-    m_presenceSorting[Tp::ConnectionPresenceTypeError] = 6;
-    m_presenceSorting[Tp::ConnectionPresenceTypeUnknown] = 6;
-    m_presenceSorting[Tp::ConnectionPresenceTypeUnset] = 6;
-    m_presenceSorting[Tp::ConnectionPresenceTypeOffline] = 7;
-
-    if (m_presenceSorting[type()] < m_presenceSorting[other.type()]) {
+    if (sortPriority(type()) < sortPriority(other.type())) {
         return true;
-    } else if (m_presenceSorting[type()] == m_presenceSorting[other.type()]) {
+    } else if (sortPriority(type()) == sortPriority(other.type())) {
         return (statusMessage() < other.statusMessage());
     } else {
         return false;
@@ -95,4 +80,32 @@ QString KPresence::displayString() const
         default:
             return QString();
     }
+}
+
+int KPresence::sortPriority(const Tp::ConnectionPresenceType &type)
+{
+    switch(type) {
+        case Tp::ConnectionPresenceTypeAvailable:
+            return 0;
+        case Tp::ConnectionPresenceTypeBusy:
+            return 1;
+        case Tp::ConnectionPresenceTypeHidden:
+            return 2;
+        case Tp::ConnectionPresenceTypeAway:
+            return 3;
+        case Tp::ConnectionPresenceTypeExtendedAway:
+            return 4;
+        case Tp::ConnectionPresenceTypeHidden:
+            return 5;
+        //don't distinguish between the following three presences
+        case Tp::ConnectionPresenceTypeError:
+        case Tp::ConnectionPresenceTypeUnknown:
+        case Tp::ConnectionPresenceTypeUnset:
+            return 6;
+        case Tp::ConnectionPresenceTypeOffline:
+        default:
+            return 7;
+    }
+
+    return -1;
 }
