@@ -95,16 +95,14 @@ int KPresence::sortPriority(const Tp::ConnectionPresenceType &type)
             return 3;
         case Tp::ConnectionPresenceTypeExtendedAway:
             return 4;
-        case Tp::ConnectionPresenceTypeHidden:
-            return 5;
         //don't distinguish between the following three presences
         case Tp::ConnectionPresenceTypeError:
         case Tp::ConnectionPresenceTypeUnknown:
         case Tp::ConnectionPresenceTypeUnset:
-            return 6;
+            return 5;
         case Tp::ConnectionPresenceTypeOffline:
         default:
-            return 7;
+            return 6;
     }
 
     return -1;
