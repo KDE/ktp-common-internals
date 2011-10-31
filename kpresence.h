@@ -38,7 +38,7 @@ public:
     QString displayString() const;
 
     /** Returns an int representation of the presence type sorted by priority. 0 - most online, 7 - offline */
-    int sortPriority(const Tp::ConnectionPresenceType &type);
+    int sortPriority(const Tp::ConnectionPresenceType &type) const;
 };
 
 #endif // KPRESENCE_H

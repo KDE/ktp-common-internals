@@ -82,7 +82,7 @@ QString KPresence::displayString() const
     }
 }
 
-int KPresence::sortPriority(const Tp::ConnectionPresenceType &type)
+int KPresence::sortPriority(const Tp::ConnectionPresenceType &type) const
 {
     switch(type) {
         case Tp::ConnectionPresenceTypeAvailable:
