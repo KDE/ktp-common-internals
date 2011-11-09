@@ -42,7 +42,7 @@ static void tpDebugCallback(const QString &libraryName,
 {
     Q_UNUSED(libraryName)
     Q_UNUSED(libraryVersion)
-    kDebugStream(type, s_tpqt4DebugArea, __FILE__, __LINE__, "Telepathy-Qt4") << qPrintable(msg);
+    kDebugStream(type, s_tpqt4DebugArea, __FILE__, __LINE__, 0) << qPrintable(msg);
 }
 }
 
