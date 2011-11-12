@@ -26,24 +26,19 @@
 
 class Conversation;
 
-class KDE_TELEPATHY_CHAT_EXPORT ConversationWatcher : public QObject, public Tp::AbstractClientObserver 
+class KDE_TELEPATHY_CHAT_EXPORT ConversationWatcher : public QObject
 {
 Q_OBJECT
 
 public:
-    virtual void observeChannels(const Tp::MethodInvocationContextPtr<>& context,
-								 const Tp::AccountPtr& account,
-								 const Tp::ConnectionPtr& connection,
-								 const QList< Tp::ChannelPtr >& channels,
-								 const Tp::ChannelDispatchOperationPtr& dispatchOperation,
-								 const QList< Tp::ChannelRequestPtr >& requestsSatisfied,
-								 const Tp::AbstractClientObserver::ObserverInfo& observerInfo
-								);
     ConversationWatcher();
     ~ConversationWatcher();
 
 Q_SIGNALS:
-	void newConversation(Conversation&);
+	void newConversation(Conversation *con);
+private:
+	class ConversationClientObserver;
+	Tp::SharedPtr<ConversationClientObserver> d;
 };
 
 #endif // CONVERSATION_WATCHER_H
