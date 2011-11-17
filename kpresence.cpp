@@ -37,15 +37,15 @@ KIcon KPresence::icon() const
     case Tp::ConnectionPresenceTypeAvailable:
         return KIcon(QLatin1String("user-online"));
     case Tp::ConnectionPresenceTypeBusy:
-        return KIcon("user-busy");
+        return KIcon(QLatin1String("user-busy"));
     case Tp::ConnectionPresenceTypeAway:
-        return KIcon("user-away");
+        return KIcon(QLatin1String("user-away"));
     case Tp::ConnectionPresenceTypeExtendedAway:
-        return KIcon("user-away-extended");
+        return KIcon(QLatin1String("user-away-extended"));
     case Tp::ConnectionPresenceTypeHidden:
-        return KIcon("user-invisible");
+        return KIcon(QLatin1String("user-invisible"));
     case Tp::ConnectionPresenceTypeOffline:
-        return KIcon("user-offline");
+        return KIcon(QLatin1String("user-offline"));
     default:
         return KIcon();
     }
