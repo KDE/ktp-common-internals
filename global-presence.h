@@ -89,9 +89,6 @@ private:
     /** A cache of the last sent presence*/
     Tp::Presence m_currentPresence;
     bool m_changingPresence;
-
-    /// Sets the sorting order of presences
-    QHash<uint, int> m_presenceSorting;
 };
 
 #endif // GLOBALPRESENCE_H

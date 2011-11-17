@@ -20,6 +20,8 @@
 
 #include "global-presence.h"
 
+#include "kpresence.h"
+
 #include <TelepathyQt4/AccountSet>
 #include <TelepathyQt4/Account>
 
@@ -31,17 +33,6 @@ GlobalPresence::GlobalPresence(QObject *parent)
       m_currentPresence(Tp::Presence::offline()),
       m_changingPresence(false)
 {
-    m_presenceSorting[Tp::ConnectionPresenceTypeAvailable] = 0;
-    m_presenceSorting[Tp::ConnectionPresenceTypeBusy] = 1;
-    m_presenceSorting[Tp::ConnectionPresenceTypeHidden] = 2;
-    m_presenceSorting[Tp::ConnectionPresenceTypeAway] = 3;
-    m_presenceSorting[Tp::ConnectionPresenceTypeExtendedAway] = 4;
-    //don't distinguish between the following three presences
-    m_presenceSorting[Tp::ConnectionPresenceTypeError] = 5;
-    m_presenceSorting[Tp::ConnectionPresenceTypeUnknown] = 5;
-    m_presenceSorting[Tp::ConnectionPresenceTypeUnset] = 5;
-    m_presenceSorting[Tp::ConnectionPresenceTypeOffline] = 6;
-
 }
 
 void GlobalPresence::setAccountManager(const Tp::AccountManagerPtr &accountManager)
@@ -100,7 +91,7 @@ void GlobalPresence::onCurrentPresenceChanged()
 {
     Tp::Presence highestCurrentPresence = Tp::Presence::offline();
     Q_FOREACH(const Tp::AccountPtr &account, m_enabledAccounts->accounts()) {
-        if (m_presenceSorting[account->currentPresence().type()] < m_presenceSorting[highestCurrentPresence.type()]) {
+        if (KPresence::sortPriority(account->currentPresence().type()) < KPresence::sortPriority(highestCurrentPresence.type())) {
             highestCurrentPresence = account->currentPresence();
         }
     }
@@ -120,7 +111,7 @@ void GlobalPresence::onRequestedPresenceChanged()
 {
     Tp::Presence highestRequestedPresence = Tp::Presence::offline();
     Q_FOREACH(const Tp::AccountPtr &account, m_enabledAccounts->accounts()) {
-        if (m_presenceSorting[account->requestedPresence().type()] < m_presenceSorting[highestRequestedPresence.type()]) {
+        if (KPresence::sortPriority(account->requestedPresence().type()) < KPresence::sortPriority(highestRequestedPresence.type())) {
             highestRequestedPresence = account->requestedPresence();
         }
     }
