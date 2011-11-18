@@ -22,10 +22,12 @@
 
 #include <QWidget>
 
+#include <kdemacros.h>
+
 namespace KTelepathy
 {
 
-class CircularCountdown : public QWidget
+class KDE_EXPORT CircularCountdown : public QWidget
 {
     Q_OBJECT
 

@@ -23,6 +23,8 @@
 
 #include <QSortFilterProxyModel>
 
+#include <kdemacros.h>
+
 class AccountsModelItem;
 class ContactModelItem;
 
@@ -36,7 +38,7 @@ class ContactModelItem;
   *     By name
   *     By presence
   */
-class AccountsFilterModel : public QSortFilterProxyModel
+class KDE_EXPORT AccountsFilterModel : public QSortFilterProxyModel
 {
     Q_OBJECT
 

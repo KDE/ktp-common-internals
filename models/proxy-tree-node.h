@@ -23,10 +23,13 @@
 
 #include <QObject>
 #include <QVariant>
+
+#include <kdemacros.h>
+
 #include "tree-node.h"
 
 class ContactModelItem;
-class ProxyTreeNode : public TreeNode
+class KDE_EXPORT ProxyTreeNode : public TreeNode
 {
     Q_OBJECT
     Q_DISABLE_COPY(ProxyTreeNode)

@@ -26,6 +26,7 @@
 #include <TelepathyQt4/Contact>
 #include <TelepathyQt4/PendingReady>
 
+#include "accounts-model-item.h"
 #include "groups-model-item.h"
 #include "proxy-tree-node.h"
 #include "accounts-model.h"

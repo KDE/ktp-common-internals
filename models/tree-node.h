@@ -26,7 +26,9 @@
 #include <QObject>
 #include <QVariant>
 
-class TreeNode : public QObject
+#include <kdemacros.h>
+
+class KDE_EXPORT TreeNode : public QObject
 {
     Q_OBJECT
     Q_DISABLE_COPY(TreeNode)

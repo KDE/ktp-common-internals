@@ -27,9 +27,11 @@
 
 #include <QtCore/QVariant> //needed for declare metatype
 
+#include <kdemacros.h>
+
 #include "tree-node.h"
 
-class ContactModelItem : public TreeNode
+class KDE_EXPORT ContactModelItem : public TreeNode
 {
     Q_OBJECT
     Q_DISABLE_COPY(ContactModelItem)
