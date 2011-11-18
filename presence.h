@@ -18,8 +18,8 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef KPRESENCE_H
-#define KPRESENCE_H
+#ifndef PRESENCE_H
+#define PRESENCE_H
 
 #include <TelepathyQt4/Presence>
 
@@ -30,15 +30,15 @@
 namespace KTelepathy
 {
 
-class KDE_EXPORT KPresence : public Tp::Presence
+class KDE_EXPORT Presence : public Tp::Presence
 {
 public:
-    KPresence();
-    KPresence(const Tp::Presence &presence);
+    Presence();
+    Presence(const Tp::Presence &presence);
     KIcon icon() const;
 
     /** Returns which presence is "more available" */
-    bool operator <(const KPresence &other) const;
+    bool operator <(const Presence &other) const;
 
     QString displayString() const;
 
@@ -48,4 +48,4 @@ public:
 
 }
 
-#endif // KPRESENCE_H
+#endif // PRESENCE_H

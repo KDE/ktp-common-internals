@@ -18,23 +18,24 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#include "kpresence.h"
+#include "presence.h"
+
 #include <KLocalizedString>
 
 namespace KTelepathy
 {
 
-KPresence::KPresence() :
+Presence::Presence() :
     Tp::Presence()
 {
 }
 
-KPresence::KPresence(const Tp::Presence &presence) :
+Presence::Presence(const Tp::Presence &presence) :
     Tp::Presence(presence)
 {
 }
 
-KIcon KPresence::icon() const
+KIcon Presence::icon() const
 {
     switch (type()) {
     case Tp::ConnectionPresenceTypeAvailable:
@@ -54,7 +55,7 @@ KIcon KPresence::icon() const
     }
 }
 
-bool KPresence::operator <(const KPresence &other) const
+bool Presence::operator <(const Presence &other) const
 {
     if (sortPriority(type()) < sortPriority(other.type())) {
         return true;
@@ -65,7 +66,7 @@ bool KPresence::operator <(const KPresence &other) const
     }
 }
 
-QString KPresence::displayString() const
+QString Presence::displayString() const
 {
     switch (type()) {
         case Tp::ConnectionPresenceTypeAvailable:
@@ -85,7 +86,7 @@ QString KPresence::displayString() const
     }
 }
 
-int KPresence::sortPriority(const Tp::ConnectionPresenceType &type)
+int Presence::sortPriority(const Tp::ConnectionPresenceType &type)
 {
     switch(type) {
         case Tp::ConnectionPresenceTypeAvailable:

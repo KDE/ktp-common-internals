@@ -27,7 +27,7 @@
 #include "contact-model-item.h"
 #include "accounts-model-item.h"
 
-#include <kpresence.h>
+#include <presence.h>
 
 #include <KDebug>
 
@@ -160,7 +160,7 @@ bool AccountsFilterModel::lessThan(const QModelIndex &left, const QModelIndex &r
                 return false;
             }
 
-            return KTelepathy::KPresence::sortPriority(leftPresence) < KTelepathy::KPresence::sortPriority(rightPresence);
+            return KTelepathy::Presence::sortPriority(leftPresence) < KTelepathy::Presence::sortPriority(rightPresence);
         }
     } else {
         return QString::localeAwareCompare(leftDisplayedName, rightDisplayedName) < 0;

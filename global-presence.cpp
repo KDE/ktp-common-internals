@@ -20,7 +20,7 @@
 
 #include "global-presence.h"
 
-#include "kpresence.h"
+#include "presence.h"
 
 #include <TelepathyQt4/AccountSet>
 #include <TelepathyQt4/Account>
@@ -94,7 +94,7 @@ void GlobalPresence::onCurrentPresenceChanged()
 {
     Tp::Presence highestCurrentPresence = Tp::Presence::offline();
     Q_FOREACH(const Tp::AccountPtr &account, m_enabledAccounts->accounts()) {
-        if (KPresence::sortPriority(account->currentPresence().type()) < KPresence::sortPriority(highestCurrentPresence.type())) {
+        if (Presence::sortPriority(account->currentPresence().type()) < Presence::sortPriority(highestCurrentPresence.type())) {
             highestCurrentPresence = account->currentPresence();
         }
     }
@@ -114,7 +114,7 @@ void GlobalPresence::onRequestedPresenceChanged()
 {
     Tp::Presence highestRequestedPresence = Tp::Presence::offline();
     Q_FOREACH(const Tp::AccountPtr &account, m_enabledAccounts->accounts()) {
-        if (KPresence::sortPriority(account->requestedPresence().type()) < KPresence::sortPriority(highestRequestedPresence.type())) {
+        if (Presence::sortPriority(account->requestedPresence().type()) < Presence::sortPriority(highestRequestedPresence.type())) {
             highestRequestedPresence = account->requestedPresence();
         }
     }
