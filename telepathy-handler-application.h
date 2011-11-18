@@ -22,7 +22,8 @@
 #include <KApplication>
 
 
-namespace KTelepathy {
+namespace KTelepathy
+{
 
 /**
  * \brief A KApplication that exits the application when there are no running jobs

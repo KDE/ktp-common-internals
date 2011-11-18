@@ -25,6 +25,9 @@
 
 #include <KIcon>
 
+namespace KTelepathy
+{
+
 class KPresence : public Tp::Presence
 {
 public:
@@ -40,5 +43,7 @@ public:
     /** Returns an int representation of the presence type sorted by priority. 0 - most online, 7 - offline */
     static int sortPriority(const Tp::ConnectionPresenceType &type);
 };
+
+}
 
 #endif // KPRESENCE_H

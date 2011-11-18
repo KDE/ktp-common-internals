@@ -24,6 +24,9 @@
 
 #include <KDebug>
 
+namespace KTelepathy
+{
+
 struct ServiceAvailabilityChecker::Private
 {
     QString serviceName;
@@ -102,6 +105,8 @@ void ServiceAvailabilityChecker::onServiceOwnerChanged(const QString & service,
     if (service == d->serviceName) {
         d->serviceAvailable = !newOwner.isEmpty();
     }
+}
+
 }
 
 #include "service-availability-checker.moc"

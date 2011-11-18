@@ -25,6 +25,8 @@
 #include <TelepathyQt4/AccountManager>
 #include <TelepathyQt4/AccountSet>
 
+namespace KTelepathy
+{
 
 /** This class handles the presence between all enabled accounts
  * It shows the highest current available presence, indicates if any accounts are changing, and what they are changing to.
@@ -90,5 +92,7 @@ private:
     Tp::Presence m_currentPresence;
     bool m_changingPresence;
 };
+
+}
 
 #endif // GLOBALPRESENCE_H

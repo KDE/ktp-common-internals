@@ -23,6 +23,8 @@
 
 #include <QString>
 
+namespace KTelepathy
+{
 namespace ErrorDictionary
 {
     ///Returns a verbose error message usable for displaying to the user
@@ -30,6 +32,7 @@ namespace ErrorDictionary
 
     ///Returns a short error message usable for little space
     QString displayShortErrorMessage(const QString& dbusErrorName);
-};
+}
+}
 
 #endif // ERROR_DICTIONARY_H

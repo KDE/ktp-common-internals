@@ -22,6 +22,9 @@
 
 class QDBusPendingCallWatcher;
 
+namespace KTelepathy
+{
+
 /**
  * This class watches if a given d-bus service is either
  * available on the bus or can be activated on demand.
@@ -46,5 +49,7 @@ private:
     struct Private;
     Private * const d;
 };
+
+}
 
 #endif // SERVICE_AVAILABILITY_CHECKER_H

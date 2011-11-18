@@ -27,6 +27,9 @@
 
 #include <KDebug>
 
+namespace KTelepathy
+{
+
 GlobalPresence::GlobalPresence(QObject *parent)
     : QObject(parent),
       m_requestedPresence(Tp::Presence::offline()),
@@ -162,6 +165,8 @@ void GlobalPresence::restoreSavedPresence()
 Tp::AccountSetPtr GlobalPresence::onlineAccounts() const
 {
     return m_onlineAccounts;
+}
+
 }
 
 #include "global-presence.moc"

@@ -35,7 +35,7 @@
 
 
 
-K_GLOBAL_STATIC_WITH_ARGS(ServiceAvailabilityChecker, s_krfbAvailableChecker,
+K_GLOBAL_STATIC_WITH_ARGS(KTelepathy::ServiceAvailabilityChecker, s_krfbAvailableChecker,
                           (QLatin1String("org.freedesktop.Telepathy.Client.krfb_rfb_handler")));
 
 

@@ -29,8 +29,8 @@
 
 extern bool kde_kdebug_enable_dbus_interface;
 
-namespace KTelepathy {
-
+namespace KTelepathy
+{
 
 namespace {
 int s_tpqt4DebugArea;

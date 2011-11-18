@@ -26,6 +26,9 @@
 #include <QPair>
 #include <QStringList>
 
+namespace KTelepathy
+{
+
 /**
  * Usefull data container
  *
@@ -84,5 +87,7 @@ private:
      */
     static TextParser *s_instance;
 };
+
+}
 
 #endif // TEXT_PARSER_H

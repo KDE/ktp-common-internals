@@ -23,6 +23,9 @@
 #include <QPaintEvent>
 #include <QTimeLine>
 
+namespace KTelepathy
+{
+
 class CircularCountdown::Private
 {
 public:
@@ -111,4 +114,6 @@ void CircularCountdown::pause() {
 
 void CircularCountdown::resume() {
     d->timeLine->resume();
+}
+
 }

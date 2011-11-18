@@ -23,6 +23,9 @@
 
 #include <QtCore/QLatin1String>
 
+namespace KTelepathy
+{
+
 TextParser* TextParser::s_instance = NULL;
 
 /**
@@ -86,4 +89,6 @@ TextUrlData TextParser::extractUrlData(const QString& text, bool doUrlFixup)
 
 TextParser::~TextParser()
 {
+}
+
 }

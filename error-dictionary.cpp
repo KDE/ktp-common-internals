@@ -28,6 +28,9 @@
 #include <KLocale>
 #include <KDebug>
 
+namespace KTelepathy
+{
+
 QString ErrorDictionary::displayVerboseErrorMessage(const QString& dbusErrorName)
 {
     if (dbusErrorName == QLatin1String(TP_QT4_ERROR_ALREADY_CONNECTED)) {
@@ -242,4 +245,6 @@ QString ErrorDictionary::displayShortErrorMessage(const QString& dbusErrorName)
         kWarning() << "Unknown error encountered:" << dbusErrorName;
         return i18nc("User visible error string", "Unknown error");
     }
+}
+
 }

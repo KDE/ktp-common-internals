@@ -21,6 +21,9 @@
 #include "kpresence.h"
 #include <KLocalizedString>
 
+namespace KTelepathy
+{
+
 KPresence::KPresence() :
     Tp::Presence()
 {
@@ -106,4 +109,6 @@ int KPresence::sortPriority(const Tp::ConnectionPresenceType &type)
     }
 
     return -1;
+}
+
 }

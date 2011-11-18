@@ -22,6 +22,9 @@
 
 #include <QWidget>
 
+namespace KTelepathy
+{
+
 class CircularCountdown : public QWidget
 {
     Q_OBJECT
@@ -51,5 +54,7 @@ private:
     class Private;
     Private * const d;
 };
+
+}
 
 #endif // CIRCULARCOUNTDOWN_H
