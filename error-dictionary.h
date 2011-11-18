@@ -21,28 +21,15 @@
 #ifndef ERROR_DICTIONARY_H
 #define ERROR_DICTIONARY_H
 
-#include <QObject>
-#include <QHash>
+#include <QString>
 
-class ErrorDictionary : public QObject
+namespace ErrorDictionary
 {
-
-public:
-    static ErrorDictionary *instance();
-    virtual ~ErrorDictionary();
-
     ///Returns a verbose error message usable for displaying to the user
-    QString displayVerboseErrorMessage(const QString& dbusErrorName) const;
+    QString displayVerboseErrorMessage(const QString& dbusErrorName);
 
     ///Returns a short error message usable for little space
-    QString displayShortErrorMessage(const QString& dbusErrorName) const;
-
-private:
-    ErrorDictionary(QObject *parent);
-    QHash<QString, QString> m_verboseDict;
-    QHash<QString, QString> m_shortDict;
-
-    static ErrorDictionary *s_instance;
+    QString displayShortErrorMessage(const QString& dbusErrorName);
 };
 
 #endif // ERROR_DICTIONARY_H
