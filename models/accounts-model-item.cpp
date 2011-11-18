@@ -245,22 +245,22 @@ void AccountsModelItem::setRequestedPresence(int type, const QString &status, co
 void AccountsModelItem::onRemoved()
 {
     int index = parent()->indexOf(this);
-    emit childrenRemoved(parent(), index, index);
+    Q_EMIT childrenRemoved(parent(), index, index);
 }
 
 void AccountsModelItem::onChanged()
 {
-    emit changed(this);
+    Q_EMIT changed(this);
 }
 
 void AccountsModelItem::onContactsChanged(const Tp::Contacts &addedContacts,
         const Tp::Contacts &removedContacts)
 {
-    foreach (const Tp::ContactPtr &contact, removedContacts) {
+    Q_FOREACH (const Tp::ContactPtr &contact, removedContacts) {
         for (int i = 0; i < size(); ++i) {
             ContactModelItem *item = qobject_cast<ContactModelItem *>(childAt(i));
             if (item->contact() == contact) {
-                emit childrenRemoved(this, i, i);
+                Q_EMIT childrenRemoved(this, i, i);
                 break;
             }
         }
@@ -277,13 +277,13 @@ void AccountsModelItem::onContactsChanged(const Tp::Contacts &addedContacts,
     }
 
     QList<TreeNode *> newNodes;
-    foreach (const Tp::ContactPtr &contact, addedContacts) {
+    Q_FOREACH (const Tp::ContactPtr &contact, addedContacts) {
         if (!idList.contains(contact->id())) {
             newNodes.append(new ContactModelItem(contact));
         }
     }
     if (!newNodes.isEmpty()) {
-        emit childrenAdded(this, newNodes);
+        Q_EMIT childrenAdded(this, newNodes);
     }
 
     countOnlineContacts();
@@ -293,7 +293,7 @@ void AccountsModelItem::onStatusChanged(Tp::ConnectionStatus status)
 {
     onChanged();
 
-    emit connectionStatusChanged(mPriv->mAccount->uniqueIdentifier(), status);
+    Q_EMIT connectionStatusChanged(mPriv->mAccount->uniqueIdentifier(), status);
 }
 
 void AccountsModelItem::onNewConnection()
@@ -310,7 +310,7 @@ void AccountsModelItem::onConnectionChanged(const Tp::ConnectionPtr &connection)
             || !connection->isValid()
             || connection->status() == Tp::ConnectionStatusDisconnected) {
         if (size() > 0) {
-            emit childrenRemoved(this, 0, size() - 1);
+            Q_EMIT childrenRemoved(this, 0, size() - 1);
         }
         return;
     }
@@ -356,7 +356,7 @@ void AccountsModelItem::clearContacts()
                 }
             }
             if (!exists) {
-                emit childrenRemoved(this, i, i);
+                Q_EMIT childrenRemoved(this, i, i);
             }
         }
     }
@@ -383,7 +383,7 @@ void AccountsModelItem::addKnownContacts()
         }
 
         // only add the contact item if it is new
-        foreach (const Tp::ContactPtr &contact, contacts) {
+        Q_FOREACH (const Tp::ContactPtr &contact, contacts) {
             if (!idList.contains(contact->id())) {
                 newNodes.append(new ContactModelItem(contact));
             }
@@ -391,7 +391,7 @@ void AccountsModelItem::addKnownContacts()
     }
 
     if (newNodes.count() > 0) {
-        emit childrenAdded(this, newNodes);
+        Q_EMIT childrenAdded(this, newNodes);
     }
 
     countOnlineContacts();

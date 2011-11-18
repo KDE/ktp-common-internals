@@ -52,7 +52,7 @@ public:
      */
     bool isSortedByPresence() const;
 
-public slots:
+public Q_SLOTS:
     void setShowOfflineUsers(bool showOfflineUsers);
     void setFilterString(const QString &str);
     /// This overloaded method takes into account showing/hiding offline users

@@ -81,10 +81,10 @@ void ProxyTreeNode::onSourceNodeRemoved()
 {
     mPriv->mSource = 0;
     int index = parent()->indexOf(this);
-    emit childrenRemoved(parent(), index, index);
+    Q_EMIT childrenRemoved(parent(), index, index);
 }
 
 void ProxyTreeNode::onSourceChanged()
 {
-    emit changed(this);
+    Q_EMIT changed(this);
 }

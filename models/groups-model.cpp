@@ -143,7 +143,7 @@ QMimeData* GroupsModel::mimeData(const QModelIndexList& indexes) const
 
     QDataStream stream(&encodedData, QIODevice::WriteOnly);
 
-    foreach (const QModelIndex &index, indexes) {
+    Q_FOREACH (const QModelIndex &index, indexes) {
         if (index.isValid()) {
             ContactModelItem *c = data(index, AccountsModel::ItemRole).value<ContactModelItem*>();
             //We put a contact ID and its account ID to the stream, so we can later recreate the contact using AccountsModel
@@ -186,7 +186,7 @@ bool GroupsModel::dropMimeData(const QMimeData* data, Qt::DropAction action, int
         contacts.append(qobject_cast<ContactModelItem*>(mPriv->mAM->contactItemForId(accountPtr->uniqueIdentifier(), contact)));
     }
 
-    foreach (ContactModelItem *contact, contacts) {
+    Q_FOREACH (ContactModelItem *contact, contacts) {
         Q_ASSERT(contact);
         QString group = parent.data(GroupsModel::GroupNameRole).toString();
 
@@ -260,10 +260,10 @@ void GroupsModel::onItemChanged(TreeNode* node)
             GroupsModelItem *groupItem = qobject_cast<GroupsModelItem*>(node->parent());
             Q_ASSERT(groupItem);
             groupItem->countOnlineContacts();
-            emit dataChanged(index(node->parent()), index(node->parent()));
+            Q_EMIT dataChanged(index(node->parent()), index(node->parent()));
         }
     }
-    emit dataChanged(index(node), index(node));
+    Q_EMIT dataChanged(index(node), index(node));
 }
 
 void GroupsModel::onItemsAdded(TreeNode *parent, const QList<TreeNode *> &nodes)
@@ -271,7 +271,7 @@ void GroupsModel::onItemsAdded(TreeNode *parent, const QList<TreeNode *> &nodes)
     QModelIndex parentIndex = index(parent);
     int currentSize = rowCount(parentIndex);
     beginInsertRows(parentIndex, currentSize, currentSize + nodes.size() - 1);
-    foreach (TreeNode *node, nodes) {
+    Q_FOREACH (TreeNode *node, nodes) {
         parent->addChild(node);
     }
     endInsertRows();
@@ -296,8 +296,8 @@ void GroupsModel::onSourceItemsAdded(TreeNode *parent, const QList<TreeNode *> &
 {
     kDebug() << "Adding" << nodes.size() << "nodes...";
     QModelIndex parentIndex = index(parent);
-    int currentSize = rowCount(parentIndex);
-    foreach (TreeNode *node, nodes) {
+
+    Q_FOREACH (TreeNode *node, nodes) {
         ContactModelItem *contactItem = qobject_cast<ContactModelItem*>(node);
         QStringList groups = contactItem->contact()->groups();
         addContactToGroups(contactItem, groups);
@@ -398,7 +398,7 @@ void GroupsModel::addContactToGroups(ContactModelItem* contactItem, QStringList 
 
     groups.removeDuplicates();
 
-    foreach (const QString &group, groups) {
+    Q_FOREACH (const QString &group, groups) {
         bool groupExists = false;
         GroupsModelItem *groupItem;
 

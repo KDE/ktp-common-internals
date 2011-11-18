@@ -106,18 +106,18 @@ QString GroupsModelItem::groupName()
 
 void GroupsModelItem::addProxyContact(ProxyTreeNode *proxyNode)
 {
-    emit childrenAdded(this, QList<TreeNode*>() << proxyNode);
+    Q_EMIT childrenAdded(this, QList<TreeNode*>() << proxyNode);
 
     //the group counters needs to be updated
-    emit changed(this);
+    Q_EMIT changed(this);
 }
 
 void GroupsModelItem::removeProxyContact(ProxyTreeNode *proxyNode)
 {
-    emit childrenRemoved(this, indexOf(proxyNode), indexOf(proxyNode));
+    Q_EMIT childrenRemoved(this, indexOf(proxyNode), indexOf(proxyNode));
 
     //the group counters needs to be updated
-    emit changed(this);
+    Q_EMIT changed(this);
 }
 
 void GroupsModelItem::countOnlineContacts()

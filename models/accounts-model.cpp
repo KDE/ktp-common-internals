@@ -64,7 +64,7 @@ AccountsModel::AccountsModel(const Tp::AccountManagerPtr &am, QObject *parent)
             SIGNAL(childrenRemoved(TreeNode*,int,int)),
             SLOT(onItemsRemoved(TreeNode*,int,int)));
 
-    foreach (Tp::AccountPtr account, mPriv->mAM->allAccounts()) {
+    Q_FOREACH (Tp::AccountPtr account, mPriv->mAM->allAccounts()) {
         AccountsModelItem *item = new AccountsModelItem(account);
         connect(item, SIGNAL(connectionStatusChanged(QString,int)),
                 this, SIGNAL(accountConnectionStatusChanged(QString,int)));
@@ -141,11 +141,11 @@ void AccountsModel::onItemChanged(TreeNode *node)
             qobject_cast<AccountsModelItem*>(node)->countOnlineContacts();
         } else {
             qobject_cast<AccountsModelItem*>(node->parent())->countOnlineContacts();
-            emit dataChanged(index(node->parent()), index(node->parent()));
+            Q_EMIT dataChanged(index(node->parent()), index(node->parent()));
         }
     }
     QModelIndex accountIndex = index(node);
-    emit dataChanged(accountIndex, accountIndex);
+    Q_EMIT dataChanged(accountIndex, accountIndex);
 }
 
 void AccountsModel::onItemsAdded(TreeNode *parent, const QList<TreeNode *> &nodes)
@@ -153,11 +153,11 @@ void AccountsModel::onItemsAdded(TreeNode *parent, const QList<TreeNode *> &node
     QModelIndex parentIndex = index(parent);
     int currentSize = rowCount(parentIndex);
     beginInsertRows(parentIndex, currentSize, currentSize + nodes.size() - 1);
-    foreach (TreeNode *node, nodes) {
+    Q_FOREACH (TreeNode *node, nodes) {
         parent->addChild(node);
     }
     endInsertRows();
-    emit accountCountChanged();
+    Q_EMIT accountCountChanged();
 }
 
 void AccountsModel::onItemsRemoved(TreeNode *parent, int first, int last)
@@ -170,7 +170,7 @@ void AccountsModel::onItemsRemoved(TreeNode *parent, int first, int last)
     }
     endRemoveRows();
 
-    emit accountCountChanged();
+    Q_EMIT accountCountChanged();
 }
 
 int AccountsModel::accountCount() const
@@ -322,7 +322,7 @@ QMimeData* AccountsModel::mimeData(const QModelIndexList& indexes) const
 
     QDataStream stream(&encodedData, QIODevice::WriteOnly);
 
-    foreach (const QModelIndex &index, indexes) {
+    Q_FOREACH (const QModelIndex &index, indexes) {
         if (index.isValid()) {
             ContactModelItem *c = data(index, AccountsModel::ItemRole).value<ContactModelItem*>();
             //We put a contact ID and its account ID to the stream, so we can later recreate the contact using AccountsModel

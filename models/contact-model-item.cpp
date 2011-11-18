@@ -177,7 +177,7 @@ bool ContactModelItem::setData(int role, const QVariant &value)
 
 void ContactModelItem::onChanged()
 {
-    emit changed(this);
+    Q_EMIT changed(this);
 }
 
 Tp::ContactPtr ContactModelItem::contact() const
