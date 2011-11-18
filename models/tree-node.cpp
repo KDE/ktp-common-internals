@@ -94,11 +94,14 @@ TreeNode *TreeNode::parent() const
 
 QVariant TreeNode::data(int role) const
 {
+    Q_UNUSED(role);
     return QVariant();
 }
 
 bool TreeNode::setData(int role, const QVariant &value)
 {
+    Q_UNUSED(role);
+    Q_UNUSED(value);
     return false;
 }
 

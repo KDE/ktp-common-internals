@@ -74,6 +74,8 @@ QVariant ProxyTreeNode::data(int role) const
 
 bool ProxyTreeNode::setData(int role, const QVariant &value)
 {
+    Q_UNUSED(role);
+    Q_UNUSED(value);
     return false;
 }
 

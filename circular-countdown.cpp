@@ -63,6 +63,8 @@ CircularCountdown::~CircularCountdown()
 }
 
 void CircularCountdown::paintEvent(QPaintEvent *event) {
+    Q_UNUSED(event);
+
     if (d->timeLine->state() == QTimeLine::Running || d->timeLine->state() == QTimeLine::Paused) {
         QPainter painter(this);
         //always take parent widget's palette and use it's Base color

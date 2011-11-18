@@ -27,7 +27,7 @@
 #include "contact-model-item.h"
 #include "accounts-model-item.h"
 
-#include <common/kpresence.h>
+#include <kpresence.h>
 
 #include <KDebug>
 

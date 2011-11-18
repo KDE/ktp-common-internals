@@ -93,6 +93,7 @@ GroupsModel::~GroupsModel()
 
 int GroupsModel::columnCount(const QModelIndex &parent) const
 {
+    Q_UNUSED(parent);
     return 1;
 }
 
@@ -157,6 +158,8 @@ QMimeData* GroupsModel::mimeData(const QModelIndexList& indexes) const
 
 bool GroupsModel::dropMimeData(const QMimeData* data, Qt::DropAction action, int row, int column, const QModelIndex& parent)
 {
+    Q_UNUSED(row);
+
     if (action == Qt::IgnoreAction) {
         return true;
     }
@@ -306,7 +309,9 @@ void GroupsModel::onSourceItemsAdded(TreeNode *parent, const QList<TreeNode *> &
 
 void GroupsModel::onSourceItemsRemoved(TreeNode* parent, int first, int last)
 {
-
+    Q_UNUSED(parent);
+    Q_UNUSED(first);
+    Q_UNUSED(last);
 }
 
 void GroupsModel::loadAccountsModel()
@@ -400,7 +405,7 @@ void GroupsModel::addContactToGroups(ContactModelItem* contactItem, QStringList 
 
     Q_FOREACH (const QString &group, groups) {
         bool groupExists = false;
-        GroupsModelItem *groupItem;
+        GroupsModelItem *groupItem = 0;
 
         //check if the group already exists first
         for (int i = 0; i < mPriv->mTree->children().size(); i++) {
@@ -428,7 +433,7 @@ void GroupsModel::addContactToGroups(ContactModelItem* contactItem, QStringList 
             }
         }
 
-        if (!groupExists) {
+        if (!groupExists && groupItem) {
             groupItem = new GroupsModelItem(group);
             onItemsAdded(mPriv->mTree, QList<TreeNode *>() << groupItem);
         }
