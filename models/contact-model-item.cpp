@@ -209,7 +209,7 @@ bool ContactModelItem::fileTransferCapability() const
 
 bool ContactModelItem::desktopSharingCapability() const
 {
-    bool contactCanHandleRfb = mPriv->mContact->capabilities().streamTubes("rfb");
+    bool contactCanHandleRfb = mPriv->mContact->capabilities().streamTubes(QLatin1String("rfb"));
     bool selfCanHandleRfb = s_krfbAvailableChecker->isAvailable();
     return contactCanHandleRfb && selfCanHandleRfb;
 }

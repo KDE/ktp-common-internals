@@ -311,7 +311,7 @@ QModelIndex AccountsModel::parent(const QModelIndex &index) const
 QStringList AccountsModel::mimeTypes() const
 {
     QStringList types;
-    types << "application/vnd.telepathy.contact";
+    types << QLatin1String("application/vnd.telepathy.contact");
     return types;
 }
 
@@ -330,7 +330,7 @@ QMimeData* AccountsModel::mimeData(const QModelIndexList& indexes) const
         }
     }
 
-    mimeData->setData("application/vnd.telepathy.contact", encodedData);
+    mimeData->setData(QLatin1String("application/vnd.telepathy.contact"), encodedData);
     return mimeData;
 }
 

@@ -132,7 +132,7 @@ Qt::DropActions GroupsModel::supportedDropActions() const
 QStringList GroupsModel::mimeTypes() const
 {
     QStringList types;
-    types << "application/vnd.telepathy.contact";
+    types << QLatin1String("application/vnd.telepathy.contact");
     return types;
 }
 
@@ -151,7 +151,7 @@ QMimeData* GroupsModel::mimeData(const QModelIndexList& indexes) const
         }
     }
 
-    mimeData->setData("application/vnd.telepathy.contact", encodedData);
+    mimeData->setData(QLatin1String("application/vnd.telepathy.contact"), encodedData);
     return mimeData;
 }
 
@@ -161,7 +161,7 @@ bool GroupsModel::dropMimeData(const QMimeData* data, Qt::DropAction action, int
         return true;
     }
 
-    if (!data->hasFormat("application/vnd.telepathy.contact")) {
+    if (!data->hasFormat(QLatin1String("application/vnd.telepathy.contact"))) {
         return false;
     }
 
@@ -169,7 +169,7 @@ bool GroupsModel::dropMimeData(const QMimeData* data, Qt::DropAction action, int
         return false;
     }
 
-    QByteArray encodedData = data->data("application/vnd.telepathy.contact");
+    QByteArray encodedData = data->data(QLatin1String("application/vnd.telepathy.contact"));
     QDataStream stream(&encodedData, QIODevice::ReadOnly);
     QList<ContactModelItem*> contacts;
 
