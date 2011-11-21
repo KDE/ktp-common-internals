@@ -29,7 +29,7 @@ TestBackdoors::nepomukStorageMePersonContact(NepomukStorage *storage)
     return storage->m_mePersonContact;
 }
 
-QHash<QString, Nepomuk::IMAccount> *
+QHash<QString, AccountResources> *
 TestBackdoors::nepomukStorageAccounts(NepomukStorage *storage)
 {
     Q_ASSERT(storage);

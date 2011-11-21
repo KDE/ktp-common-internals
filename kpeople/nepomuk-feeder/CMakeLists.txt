@@ -88,6 +88,7 @@ kde4_add_plugin(nepomuktelepathyservice
 
 target_link_libraries (nepomuktelepathyservice
                        nepomuktelepathyservice-static
+                       nepomukdatamanagement
 )
 
 # Install the service.
@@ -112,5 +113,5 @@ install_ontology (telepathy telepathy)
 find_package (KTelepathyTestLib)
 
 if (KTelepathyTestLib_DIR)
-    add_subdirectory(tests)
+    #add_subdirectory(tests)
 endif (KTelepathyTestLib_DIR)

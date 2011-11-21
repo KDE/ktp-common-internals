@@ -36,10 +36,35 @@
 
 namespace Nepomuk {
     class ResourceManager;
+    class SimpleResourceGraph;
     namespace Query {
         class Result;
     }
 }
+
+class KJob;
+
+class AccountResources {
+public:
+    AccountResources(const QUrl &account,
+                     const QString &protocol);
+    AccountResources(const AccountResources &other);
+    AccountResources(const QUrl &url);
+    AccountResources();
+    ~AccountResources();
+
+    const QUrl &account() const;
+    const QString &protocol() const;
+
+    bool operator==(const AccountResources &other) const;
+    bool operator!=(const AccountResources &other) const;
+    bool operator==(const QUrl &other) const;
+    bool operator!=(const QUrl &other) const;
+
+private:
+    class Data;
+    QSharedDataPointer<Data> d;
+};
 
 class ContactIdentifier {
 public:
@@ -63,14 +88,16 @@ int qHash(ContactIdentifier c);
 
 class ContactResources {
 public:
-    ContactResources(const Nepomuk::PersonContact &personContact,
-                     const Nepomuk::IMAccount &imAccount);
+    ContactResources(const QUrl &person,
+                     const QUrl &personContact,
+                     const QUrl &imAccount);
     ContactResources(const ContactResources &other);
     ContactResources();
     ~ContactResources();
 
-    const Nepomuk::PersonContact &personContact() const;
-    const Nepomuk::IMAccount &imAccount() const;
+    const QUrl &person() const;
+    const QUrl &personContact() const;
+    const QUrl &imAccount() const;
 
     bool operator==(const ContactResources &other) const;
     bool operator!=(const ContactResources &other) const;
@@ -113,6 +140,7 @@ public Q_SLOTS:
 private Q_SLOTS:
     void onNepomukError(const QString &uri, int errorCode);
     void init();
+    void onSaveJobResult(KJob *job);
 
     void onAccountsQueryNewEntries(const QList<Nepomuk::Query::Result> &entries);
     void onAccountsQueryEntriesRemoved(const QList<QUrl> &entries);
@@ -129,10 +157,12 @@ private:
 
     friend class TestBackdoors;
 
-    Nepomuk::ResourceManager *m_resourceManager;
-    Nepomuk::PersonContact m_mePersonContact;
+    void saveGraph(const Nepomuk::SimpleResourceGraph &graph);
 
-    QHash<QString, Nepomuk::IMAccount> m_accounts;
+    Nepomuk::ResourceManager *m_resourceManager;
+    QUrl m_mePersonContact;
+
+    QHash<QString, AccountResources> m_accounts;
     QHash<ContactIdentifier, ContactResources> m_contacts;
 };
 
