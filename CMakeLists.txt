@@ -49,6 +49,8 @@ set (telepathy_common_internals_private_HDRS
      telepathy-handler-application.h
      text-parser.h
      wallet-interface.h
+
+     ktelepathy-export.h
 )
 
 kde4_add_library (telepathykdecommoninternalsprivate SHARED

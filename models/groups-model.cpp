@@ -434,7 +434,7 @@ void GroupsModel::addContactToGroups(ContactModelItem* contactItem, QStringList 
             }
         }
 
-        if (!groupExists && groupItem) {
+        if (!groupExists && !groupItem) {
             groupItem = new GroupsModelItem(group);
             onItemsAdded(mPriv->mTree, QList<TreeNode *>() << groupItem);
         }
