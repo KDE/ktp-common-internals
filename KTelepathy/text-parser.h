@@ -26,7 +26,7 @@
 #include <QPair>
 #include <QStringList>
 
-#include <ktelepathy-export.h>
+#include <KTelepathy/ktelepathy-export.h>
 
 namespace KTp
 {

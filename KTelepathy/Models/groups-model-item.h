@@ -29,9 +29,9 @@
 
 #include <QtCore/QVariant> //needed for declare metatype
 
-#include "tree-node.h"
+#include <KTelepathy/Models/tree-node.h>
 
-#include "ktelepathy-export.h"
+#include <KTelepathy/ktelepathy-export.h>
 
 class ContactModelItem;
 class ProxyTreeNode;

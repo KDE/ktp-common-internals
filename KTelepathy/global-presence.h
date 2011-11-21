@@ -25,7 +25,7 @@
 #include <TelepathyQt4/AccountManager>
 #include <TelepathyQt4/AccountSet>
 
-#include <ktelepathy-export.h>
+#include <KTelepathy/ktelepathy-export.h>
 
 namespace KTp
 {

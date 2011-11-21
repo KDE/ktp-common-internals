@@ -21,7 +21,7 @@
 
 #include <KApplication>
 
-#include <ktelepathy-export.h>
+#include <KTelepathy/ktelepathy-export.h>
 
 namespace KTp
 {

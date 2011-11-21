@@ -29,9 +29,9 @@
 
 #include <QtCore/QVariant> //needed for declare metatype
 
-#include <ktelepathy-export.h>
+#include <KTelepathy/ktelepathy-export.h>
 
-#include "tree-node.h"
+#include <KTelepathy/Models/tree-node.h>
 
 class KTELEPATHY_EXPORT AccountsModelItem : public TreeNode
 {

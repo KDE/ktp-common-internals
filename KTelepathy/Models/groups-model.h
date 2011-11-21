@@ -30,7 +30,7 @@
 #include <TelepathyQt4/TextChannel>
 #include <TelepathyQt4/Types>
 
-#include <ktelepathy-export.h>
+#include <KTelepathy/ktelepathy-export.h>
 
 class ContactModelItem;
 class GroupsModelItem;
