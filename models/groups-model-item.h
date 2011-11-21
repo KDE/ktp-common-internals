@@ -31,10 +31,12 @@
 
 #include "tree-node.h"
 
+#include "ktelepathy-export.h"
+
 class ContactModelItem;
 class ProxyTreeNode;
 
-class GroupsModelItem : public TreeNode
+class KTELEPATHY_EXPORT GroupsModelItem : public TreeNode
 {
     Q_OBJECT
     Q_DISABLE_COPY(GroupsModelItem)
