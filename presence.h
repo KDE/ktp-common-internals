@@ -25,12 +25,12 @@
 
 #include <KIcon>
 
-#include <kdemacros.h>
+#include <ktelepathy-export.h>
 
 namespace KTelepathy
 {
 
-class KDE_EXPORT Presence : public Tp::Presence
+class KTELEPATHY_EXPORT Presence : public Tp::Presence
 {
 public:
     Presence();

@@ -30,7 +30,7 @@
 #include <TelepathyQt4/TextChannel>
 #include <TelepathyQt4/Types>
 
-#include <kdemacros.h>
+#include <ktelepathy-export.h>
 
 class ContactModelItem;
 class GroupsModelItem;
@@ -38,7 +38,7 @@ class AccountsModel;
 class ProxyTreeNode;
 class TreeNode;
 
-class KDE_EXPORT GroupsModel : public QAbstractItemModel
+class KTELEPATHY_EXPORT GroupsModel : public QAbstractItemModel
 {
     Q_OBJECT
 //    Q_DISABLE_COPY(GroupsModel)const AccountsModel& am, QObject* parentconst AccontsModel& am, QObject* parent

@@ -26,9 +26,9 @@
 #include <QObject>
 #include <QVariant>
 
-#include <kdemacros.h>
+#include <ktelepathy-export.h>
 
-class KDE_EXPORT TreeNode : public QObject
+class KTELEPATHY_EXPORT TreeNode : public QObject
 {
     Q_OBJECT
     Q_DISABLE_COPY(TreeNode)

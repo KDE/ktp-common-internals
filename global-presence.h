@@ -25,7 +25,7 @@
 #include <TelepathyQt4/AccountManager>
 #include <TelepathyQt4/AccountSet>
 
-#include <kdemacros.h>
+#include <ktelepathy-export.h>
 
 namespace KTelepathy
 {
@@ -34,7 +34,7 @@ namespace KTelepathy
  * It shows the highest current available presence, indicates if any accounts are changing, and what they are changing to.
 */
 
-class KDE_EXPORT GlobalPresence : public QObject
+class KTELEPATHY_EXPORT GlobalPresence : public QObject
 {
     Q_OBJECT
 public:

@@ -21,7 +21,7 @@
 
 #include <KApplication>
 
-#include <kdemacros.h>
+#include <ktelepathy-export.h>
 
 namespace KTelepathy
 {
@@ -37,7 +37,7 @@ namespace KTelepathy
  * - Enables telepathy-qt4 warnings
  * - Use Tp-Qt4 callback for redirecting debug output into KDebug
  */
-class KDE_EXPORT TelepathyHandlerApplication : public KApplication
+class KTELEPATHY_EXPORT TelepathyHandlerApplication : public KApplication
 {
     Q_OBJECT
 

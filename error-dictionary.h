@@ -23,17 +23,17 @@
 
 #include <QString>
 
-#include <kdemacros.h>
+#include <ktelepathy-export.h>
 
 namespace KTelepathy
 {
 namespace ErrorDictionary
 {
     ///Returns a verbose error message usable for displaying to the user
-    KDE_EXPORT QString displayVerboseErrorMessage(const QString& dbusErrorName);
+    KTELEPATHY_EXPORT QString displayVerboseErrorMessage(const QString& dbusErrorName);
 
     ///Returns a short error message usable for little space
-    KDE_EXPORT QString displayShortErrorMessage(const QString& dbusErrorName);
+    KTELEPATHY_EXPORT QString displayShortErrorMessage(const QString& dbusErrorName);
 }
 }
 

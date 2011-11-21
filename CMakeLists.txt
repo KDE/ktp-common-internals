@@ -59,7 +59,7 @@ kde4_add_library (telepathykdecommoninternalsprivate SHARED
 set_target_properties(telepathykdecommoninternalsprivate PROPERTIES
                                                          VERSION ${KTELEPATHY_VERSION}
                                                          SOVERSION ${KTELEPATHY_SONUMBER}
-                     )
+                                                         DEFINE_SYMBOL MAKE_KTELEPATHY_LIB)
 
 target_link_libraries (telepathykdecommoninternalsprivate
                        ${KDE4_KDECORE_LIBS}

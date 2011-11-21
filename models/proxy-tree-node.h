@@ -24,12 +24,12 @@
 #include <QObject>
 #include <QVariant>
 
-#include <kdemacros.h>
+#include <ktelepathy-export.h>
 
 #include "tree-node.h"
 
 class ContactModelItem;
-class KDE_EXPORT ProxyTreeNode : public TreeNode
+class KTELEPATHY_EXPORT ProxyTreeNode : public TreeNode
 {
     Q_OBJECT
     Q_DISABLE_COPY(ProxyTreeNode)

@@ -20,7 +20,7 @@
 
 #include <QtCore/QObject>
 
-#include <kdemacros.h>
+#include <ktelepathy-export.h>
 
 class QDBusPendingCallWatcher;
 
@@ -31,7 +31,7 @@ namespace KTelepathy
  * This class watches if a given d-bus service is either
  * available on the bus or can be activated on demand.
  */
-class KDE_EXPORT ServiceAvailabilityChecker : public QObject
+class KTELEPATHY_EXPORT ServiceAvailabilityChecker : public QObject
 {
     Q_OBJECT
 public:

@@ -27,12 +27,12 @@
 
 #include <QScopedPointer>
 
-#include <kdemacros.h>
+#include <ktelepathy-export.h>
 
 namespace KTelepathy
 {
 
-class KDE_EXPORT WalletInterface
+class KTELEPATHY_EXPORT WalletInterface
 {
 public:
 

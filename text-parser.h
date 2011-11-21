@@ -26,7 +26,7 @@
 #include <QPair>
 #include <QStringList>
 
-#include <kdemacros.h>
+#include <ktelepathy-export.h>
 
 namespace KTelepathy
 {
@@ -37,7 +37,7 @@ namespace KTelepathy
  * @var QList urlRanges
  * @var QStringList fixedUrls
  */
-struct KDE_EXPORT TextUrlData
+struct KTELEPATHY_EXPORT TextUrlData
 {
     QList<QPair<int, int> > urlRanges;
     QStringList fixedUrls;
@@ -47,7 +47,7 @@ struct KDE_EXPORT TextUrlData
  * TextParser
  *
  */
-class KDE_EXPORT TextParser : public QObject
+class KTELEPATHY_EXPORT TextParser : public QObject
 {
 
 public:
