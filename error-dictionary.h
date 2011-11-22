@@ -25,7 +25,7 @@
 
 #include <ktelepathy-export.h>
 
-namespace KTelepathy
+namespace KTp
 {
 namespace ErrorDictionary
 {

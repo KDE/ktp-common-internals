@@ -29,7 +29,7 @@
 
 extern bool kde_kdebug_enable_dbus_interface;
 
-namespace KTelepathy
+namespace KTp
 {
 
 namespace {
@@ -216,6 +216,6 @@ void TelepathyHandlerApplication::jobFinished()
     }
 }
 
-} // namespace KTelepathy
+} // namespace KTp
 
 #include "telepathy-handler-application.moc"

@@ -22,7 +22,7 @@
 
 #include <KLocalizedString>
 
-namespace KTelepathy
+namespace KTp
 {
 
 Presence::Presence() :

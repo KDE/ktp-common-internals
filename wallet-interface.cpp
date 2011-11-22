@@ -22,7 +22,7 @@
 
 #include <KDebug>
 
-using KTelepathy::WalletInterface;
+using KTp::WalletInterface;
 
 const QLatin1String WalletInterface::s_folderName = QLatin1String("telepathy-kde");
 const QLatin1String WalletInterface::s_mapsPrefix = QLatin1String("maps/");

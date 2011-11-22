@@ -28,7 +28,7 @@
 
 #include <ktelepathy-export.h>
 
-namespace KTelepathy
+namespace KTp
 {
 
 /**

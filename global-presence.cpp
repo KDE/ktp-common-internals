@@ -27,7 +27,7 @@
 
 #include <KDebug>
 
-namespace KTelepathy
+namespace KTp
 {
 
 GlobalPresence::GlobalPresence(QObject *parent)

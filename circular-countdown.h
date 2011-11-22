@@ -24,7 +24,7 @@
 
 #include <ktelepathy-export.h>
 
-namespace KTelepathy
+namespace KTp
 {
 
 class KTELEPATHY_EXPORT CircularCountdown : public QWidget

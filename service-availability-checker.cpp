@@ -24,7 +24,7 @@
 
 #include <KDebug>
 
-namespace KTelepathy
+namespace KTp
 {
 
 struct ServiceAvailabilityChecker::Private

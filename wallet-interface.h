@@ -29,7 +29,7 @@
 
 #include <ktelepathy-export.h>
 
-namespace KTelepathy
+namespace KTp
 {
 
 class KTELEPATHY_EXPORT WalletInterface
@@ -81,6 +81,6 @@ private:
 
 };
 
-} // namespace KTelepathy
+} // namespace KTp
 
 #endif // WALLETINTERFACE_H

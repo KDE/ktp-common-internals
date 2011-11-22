@@ -23,7 +23,7 @@
 
 #include <ktelepathy-export.h>
 
-namespace KTelepathy
+namespace KTp
 {
 
 /**
@@ -69,6 +69,6 @@ private:
     Q_PRIVATE_SLOT(d, void _k_onTimeout())
 };
 
-} // namespace KTelepathy
+} // namespace KTp
 
 #endif // TELEPATHY_HANDLER_APPLICATION_H

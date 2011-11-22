@@ -23,7 +23,7 @@
 #include <QPaintEvent>
 #include <QTimeLine>
 
-namespace KTelepathy
+namespace KTp
 {
 
 class CircularCountdown::Private

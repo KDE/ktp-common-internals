@@ -24,7 +24,7 @@
 
 class QDBusPendingCallWatcher;
 
-namespace KTelepathy
+namespace KTp
 {
 
 /**

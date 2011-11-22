@@ -23,7 +23,7 @@
 
 #include <QtCore/QLatin1String>
 
-namespace KTelepathy
+namespace KTp
 {
 
 TextParser* TextParser::s_instance = NULL;

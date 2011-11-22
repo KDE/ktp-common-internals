@@ -28,7 +28,7 @@
 #include <KLocale>
 #include <KDebug>
 
-namespace KTelepathy
+namespace KTp
 {
 
 QString ErrorDictionary::displayVerboseErrorMessage(const QString& dbusErrorName)

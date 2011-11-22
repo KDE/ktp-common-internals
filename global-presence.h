@@ -27,7 +27,7 @@
 
 #include <ktelepathy-export.h>
 
-namespace KTelepathy
+namespace KTp
 {
 
 /** This class handles the presence between all enabled accounts

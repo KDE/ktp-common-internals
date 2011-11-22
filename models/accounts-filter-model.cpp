@@ -160,7 +160,7 @@ bool AccountsFilterModel::lessThan(const QModelIndex &left, const QModelIndex &r
                 return false;
             }
 
-            return KTelepathy::Presence::sortPriority(leftPresence) < KTelepathy::Presence::sortPriority(rightPresence);
+            return KTp::Presence::sortPriority(leftPresence) < KTp::Presence::sortPriority(rightPresence);
         }
     } else {
         return QString::localeAwareCompare(leftDisplayedName, rightDisplayedName) < 0;
