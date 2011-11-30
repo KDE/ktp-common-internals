@@ -47,6 +47,6 @@ install (TARGETS telepathykdemodelsprivate
 )
 
 install (FILES ${telepathy_models_private_HDRS}
-         DESTINATION ${TELEPATHY_QT4_INCLUDE_DIR}/KTelepathy/Models
+         DESTINATION ${INCLUDE_INSTALL_DIR}/KTelepathy/Models
 )
 

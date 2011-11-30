@@ -46,7 +46,7 @@ install (TARGETS telepathykdecommoninternalsprivate
 )
 
 install (FILES ${telepathy_common_internals_private_HDRS}
-         DESTINATION ${TELEPATHY_QT4_INCLUDE_DIR}/KTelepathy
+         DESTINATION ${INCLUDE_INSTALL_DIR}/KTelepathy
 )
 
 
