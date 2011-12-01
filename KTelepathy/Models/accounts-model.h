@@ -73,6 +73,7 @@ public:
 
         // contact roles
         AliasRole,
+        PresenceRole,
         PresenceStatusRole,
         PresenceTypeRole,
         PresenceMessageRole,

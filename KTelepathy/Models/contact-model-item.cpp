@@ -23,6 +23,7 @@
 #include "contact-model-item.h"
 #include "accounts-model.h"
 #include "../service-availability-checker.h"
+#include "presence.h"
 
 #include <QImage>
 
@@ -107,6 +108,8 @@ QVariant ContactModelItem::data(int role) const
     case Qt::DisplayRole:
     case AccountsModel::AliasRole:
         return mPriv->mContact->alias();
+    case AccountsModel::PresenceRole:
+        return QVariant::fromValue(KTp::Presence(mPriv->mContact->presence()));
     case AccountsModel::PresenceStatusRole:
         return mPriv->mContact->presence().status();
     case AccountsModel::PresenceTypeRole:

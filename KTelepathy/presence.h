@@ -48,4 +48,6 @@ public:
 
 }
 
+Q_DECLARE_METATYPE(KTp::Presence);
+
 #endif // PRESENCE_H
