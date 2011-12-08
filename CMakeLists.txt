@@ -10,7 +10,7 @@ set (KTELEPATHY_VERSION "0.3.0")
 set (KTELEPATHY_SONUMBER 0)
 
 find_package (KDE4 REQUIRED)
-find_package (TelepathyQt4 0.7.1 REQUIRED)
+find_package (TelepathyQt4 0.8.9 REQUIRED)
 
 # set some default settings
 include (KDE4Defaults)
