@@ -22,8 +22,8 @@
 #define GLOBALPRESENCE_H
 
 #include <QObject>
-#include <TelepathyQt4/AccountManager>
-#include <TelepathyQt4/AccountSet>
+#include <TelepathyQt/AccountManager>
+#include <TelepathyQt/AccountSet>
 
 #include <KTelepathy/ktelepathy-export.h>
 

@@ -21,7 +21,7 @@
 #ifndef WALLETINTERFACE_H
 #define WALLETINTERFACE_H
 
-#include <TelepathyQt4/Account>
+#include <TelepathyQt/Account>
 
 #include <KWallet/Wallet>
 

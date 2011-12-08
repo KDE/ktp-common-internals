@@ -1,6 +1,6 @@
 /*
  * Tree model node
- * This file is based on TelepathyQt4Yell Models
+ * This file is based on TelepathyQtYell Models
  *
  * Copyright (C) 2010 Collabora Ltd. <info@collabora.co.uk>
  * Copyright (C) 2011 Martin Klapetek <martin dot klapetek at gmail dot com>

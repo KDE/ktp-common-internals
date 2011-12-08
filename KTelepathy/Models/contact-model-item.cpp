@@ -1,6 +1,6 @@
 /*
  * Contacts model item, represents a contact in the contactlist tree
- * This file is based on TelepathyQt4Yell Models
+ * This file is based on TelepathyQtYell Models
  *
  * Copyright (C) 2010 Collabora Ltd. <info@collabora.co.uk>
  * Copyright (C) 2011 Martin Klapetek <martin dot klapetek at gmail dot com>
@@ -29,10 +29,10 @@
 
 #include <KGlobal>
 
-#include <TelepathyQt4/AvatarData>
-#include <TelepathyQt4/ContactCapabilities>
-#include <TelepathyQt4/ContactManager>
-#include <TelepathyQt4/RequestableChannelClassSpec>
+#include <TelepathyQt/AvatarData>
+#include <TelepathyQt/ContactCapabilities>
+#include <TelepathyQt/ContactManager>
+#include <TelepathyQt/RequestableChannelClassSpec>
 
 
 

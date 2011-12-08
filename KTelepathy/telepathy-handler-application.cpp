@@ -23,8 +23,8 @@
 #include <KCmdLineArgs>
 #include <KDebug>
 
-#include <TelepathyQt4/Types>
-#include <TelepathyQt4/Debug>
+#include <TelepathyQt/Types>
+#include <TelepathyQt/Debug>
 
 
 extern bool kde_kdebug_enable_dbus_interface;

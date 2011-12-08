@@ -1,6 +1,6 @@
 /*
  * Accounts and contacts model
- * This file is based on TelepathyQt4Yell Models
+ * This file is based on TelepathyQtYell Models
  *
  * Copyright (C) 2010 Collabora Ltd. <info@collabora.co.uk>
  * Copyright (C) 2011 Martin Klapetek <martin dot klapetek at gmail dot com>
@@ -25,10 +25,10 @@
 
 #include <QAbstractListModel>
 
-#include <TelepathyQt4/Account>
-#include <TelepathyQt4/AccountManager>
-#include <TelepathyQt4/TextChannel>
-#include <TelepathyQt4/Types>
+#include <TelepathyQt/Account>
+#include <TelepathyQt/AccountManager>
+#include <TelepathyQt/TextChannel>
+#include <TelepathyQt/Types>
 
 #include <KTelepathy/ktelepathy-export.h>
 

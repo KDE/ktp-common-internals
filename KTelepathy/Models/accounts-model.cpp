@@ -1,6 +1,6 @@
 /*
  * Accounts and contacts model
- * This file is based on TelepathyQt4Yell Models
+ * This file is based on TelepathyQtYell Models
  *
  * Copyright (C) 2010 Collabora Ltd. <info@collabora.co.uk>
  * Copyright (C) 2011 Martin Klapetek <martin dot klapetek at gmail dot com>
@@ -22,8 +22,8 @@
 
 #include "accounts-model.h"
 
-#include <TelepathyQt4/ContactManager>
-#include <TelepathyQt4/PendingReady>
+#include <TelepathyQt/ContactManager>
+#include <TelepathyQt/PendingReady>
 
 #include "accounts-model-item.h"
 #include "contact-model-item.h"
