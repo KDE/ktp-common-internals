@@ -25,7 +25,7 @@
 #include <KDebug>
 #include <KIcon>
 
-#include <TelepathyQt4/Account>
+#include <TelepathyQt/Account>
 
 
 AccountsListModel::AccountsListModel(QObject *parent)

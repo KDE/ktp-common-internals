@@ -23,7 +23,7 @@
 
 #include <QtCore/QAbstractListModel>
 
-#include <TelepathyQt4/Account>
+#include <TelepathyQt/Account>
 
 class AccountItem;
 
