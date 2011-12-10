@@ -1,6 +1,6 @@
 /*
  * Accounts model item, represents an account in the contactlist tree
- * This file is based on TelepathyQt4Yell Models
+ * This file is based on TelepathyQtYell Models
  *
  * Copyright (C) 2010 Collabora Ltd. <info@collabora.co.uk>
  * Copyright (C) 2011 Martin Klapetek <martin dot klapetek at gmail dot com>
@@ -23,9 +23,9 @@
 #ifndef TELEPATHY_ACCOUNTS_MODEL_ITEM_H
 #define TELEPATHY_ACCOUNTS_MODEL_ITEM_H
 
-#include <TelepathyQt4/Constants>
-#include <TelepathyQt4/Contact>
-#include <TelepathyQt4/Types>
+#include <TelepathyQt/Constants>
+#include <TelepathyQt/Contact>
+#include <TelepathyQt/Types>
 
 #include <QtCore/QVariant> //needed for declare metatype
 

@@ -1,6 +1,6 @@
 /*
  * Contact groups model item, represents a group in the contactlist tree
- * This file is based on TelepathyQt4Yell Models
+ * This file is based on TelepathyQtYell Models
  *
  * Copyright (C) 2010 Collabora Ltd. <http://www.collabora.co.uk/>
  * Copyright (C) 2011 Martin Klapetek <martin dot klapetek at gmail dot com>
@@ -22,8 +22,8 @@
 
 #include "groups-model-item.h"
 
-#include <TelepathyQt4/Account>
-#include <TelepathyQt4/ContactManager>
+#include <TelepathyQt/Account>
+#include <TelepathyQt/ContactManager>
 
 #include "groups-model.h"
 #include "accounts-model.h"

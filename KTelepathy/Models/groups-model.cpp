@@ -1,6 +1,6 @@
 /*
  * Contact groups model
- * This file is based on TelepathyQt4Yell Models
+ * This file is based on TelepathyQtYell Models
  *
  * Copyright (C) 2010 Collabora Ltd. <http://www.collabora.co.uk/>
  * Copyright (C) 2011 Martin Klapetek <martin dot klapetek at gmail dot com>
@@ -22,9 +22,9 @@
 
 #include "groups-model.h"
 
-#include <TelepathyQt4/ContactManager>
-#include <TelepathyQt4/Contact>
-#include <TelepathyQt4/PendingReady>
+#include <TelepathyQt/ContactManager>
+#include <TelepathyQt/Contact>
+#include <TelepathyQt/PendingReady>
 
 #include "accounts-model-item.h"
 #include "groups-model-item.h"

@@ -22,8 +22,8 @@
 
 #include "presence.h"
 
-#include <TelepathyQt4/AccountSet>
-#include <TelepathyQt4/Account>
+#include <TelepathyQt/AccountSet>
+#include <TelepathyQt/Account>
 
 #include <KDebug>
 

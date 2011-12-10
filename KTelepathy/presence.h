@@ -21,7 +21,7 @@
 #ifndef PRESENCE_H
 #define PRESENCE_H
 
-#include <TelepathyQt4/Presence>
+#include <TelepathyQt/Presence>
 
 #include <KIcon>
 
