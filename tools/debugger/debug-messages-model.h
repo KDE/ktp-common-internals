@@ -1,0 +1,59 @@
+/*
+    Copyright (C) 2011 Collabora Ltd. <info@collabora.com>
+      @author George Kiagiadakis <george.kiagiadakis@collabora.com>
+
+    This library is free software; you can redistribute it and/or modify
+    it under the terms of the GNU Lesser General Public License as published
+    by the Free Software Foundation; either version 2.1 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU Lesser General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+#ifndef DEBUG_MESSAGES_MODEL_H
+#define DEBUG_MESSAGES_MODEL_H
+
+#include <QtCore/QAbstractListModel>
+#include <TelepathyQt/DebugReceiver>
+#include <TelepathyQt/PendingDebugMessageList>
+
+class DebugMessagesModel : public QAbstractListModel
+{
+    Q_OBJECT
+public:
+    explicit DebugMessagesModel(const QString & service, QObject *parent = 0);
+    virtual ~DebugMessagesModel();
+
+    enum Role {
+        TimestampRole = Qt::UserRole,
+        LevelRole,
+        DomainRole,
+        MessageRole,
+        ServiceRole
+    };
+
+    virtual QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const;
+    virtual int rowCount(const QModelIndex& parent = QModelIndex()) const;
+
+private Q_SLOTS:
+    void onServiceRegistered(const QString & service);
+    void onServiceUnregistered(const QString & service);
+    void onDebugReceiverReady(Tp::PendingOperation *op);
+    void onFetchMessagesFinished(Tp::PendingOperation *op);
+    void onNewDebugMessage(const Tp::DebugMessage & msg);
+
+private:
+    QString m_serviceName;
+    Tp::DebugReceiverPtr m_debugReceiver;
+    Tp::DebugMessageList m_messages;
+    Tp::DebugMessageList m_tmpCache;
+    QDBusServiceWatcher *m_serviceWatcher;
+    bool m_ready;
+};
+
+#endif // DEBUG_MESSAGES_MODEL_H
