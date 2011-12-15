@@ -26,6 +26,7 @@
 #include <TelepathyQt/AccountSet>
 
 #include <KTelepathy/ktelepathy-export.h>
+#include "presence.h"
 
 namespace KTp
 {
@@ -47,11 +48,11 @@ public:
 
 
     /** The most online presence of any account*/
-    Tp::Presence currentPresence() const;
+    Presence currentPresence() const;
 
     /** The most online presence requested for any account if any of the accounts are changing state.
       otherwise returns current presence*/
-    Tp::Presence requestedPresence() const;
+    Presence requestedPresence() const;
 
     /** Returns true if any account is changing state (i.e connecting*/
     bool isChangingPresence() const;
@@ -62,8 +63,8 @@ public:
     Tp::AccountSetPtr onlineAccounts() const;
 
 Q_SIGNALS:
-    void requestedPresenceChanged(const Tp::Presence &customPresence);
-    void currentPresenceChanged(const Tp::Presence &presence);
+    void requestedPresenceChanged(const KTp::Presence &customPresence);
+    void currentPresenceChanged(const KTp::Presence &presence);
     void changingPresence(bool isChanging);
 
 public Q_SLOTS:
@@ -87,11 +88,11 @@ private:
     Tp::AccountSetPtr m_onlineAccounts;
 
     /**Saved presence for later restoration (for example after returning from auto-away) */
-    Tp::Presence m_savedPresence;
+    KTp::Presence m_savedPresence;
     /** A cache of the last sent requested presence, to avoid resignalling*/
-    Tp::Presence m_requestedPresence;
+    KTp::Presence m_requestedPresence;
     /** A cache of the last sent presence*/
-    Tp::Presence m_currentPresence;
+    KTp::Presence m_currentPresence;
     bool m_changingPresence;
 };
 

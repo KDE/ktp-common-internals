@@ -32,8 +32,8 @@ namespace KTp
 
 GlobalPresence::GlobalPresence(QObject *parent)
     : QObject(parent),
-      m_requestedPresence(Tp::Presence::offline()),
-      m_currentPresence(Tp::Presence::offline()),
+      m_requestedPresence(Presence(Tp::Presence::offline())),
+      m_currentPresence(Presence(Tp::Presence::offline())),
       m_changingPresence(false)
 {
 }
@@ -59,12 +59,12 @@ void GlobalPresence::setAccountManager(const Tp::AccountManagerPtr &accountManag
 }
 
 
-Tp::Presence GlobalPresence::currentPresence() const
+Presence GlobalPresence::currentPresence() const
 {
     return m_currentPresence;
 }
 
-Tp::Presence GlobalPresence::requestedPresence() const
+Presence GlobalPresence::requestedPresence() const
 {
     return m_requestedPresence;
 }
@@ -74,14 +74,12 @@ bool GlobalPresence::isChangingPresence() const
     return m_changingPresence;
 }
 
-
 void GlobalPresence::setPresence(const Tp::Presence &presence)
 {
     Q_FOREACH(const Tp::AccountPtr &account, m_enabledAccounts->accounts()) {
         account->setRequestedPresence(presence);
     }
 }
-
 
 void GlobalPresence::onAccountAdded(const Tp::AccountPtr &account)
 {
@@ -105,7 +103,7 @@ void GlobalPresence::onCurrentPresenceChanged()
             highestCurrentPresence.status() != m_currentPresence.status() ||
             highestCurrentPresence.statusMessage() != m_currentPresence.statusMessage()) {
 
-        m_currentPresence = highestCurrentPresence;
+        m_currentPresence = Presence(highestCurrentPresence);
         Q_EMIT currentPresenceChanged(m_currentPresence);
     }
 }
@@ -121,7 +119,7 @@ void GlobalPresence::onRequestedPresenceChanged()
 
     if (highestRequestedPresence.type() != m_requestedPresence.type() &&
             highestRequestedPresence.status() != m_requestedPresence.status()) {
-        m_requestedPresence = highestRequestedPresence;
+        m_requestedPresence = Presence(highestRequestedPresence);
         Q_EMIT requestedPresenceChanged(m_requestedPresence);
     }
 }
