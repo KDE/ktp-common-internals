@@ -70,17 +70,17 @@ QString Presence::displayString() const
 {
     switch (type()) {
         case Tp::ConnectionPresenceTypeAvailable:
-            return i18n("Available");
+            return i18nc("IM presence: a person is available", "Available");
         case Tp::ConnectionPresenceTypeBusy:
-            return i18n("Busy");
+            return i18nc("IM presence: a person is busy", "Busy");
         case Tp::ConnectionPresenceTypeAway:
-            return i18n("Away");
+            return i18nc("IM presence: a person is away", "Away");
         case Tp::ConnectionPresenceTypeExtendedAway:
-            return i18n("Not available");
+            return i18nc("IM presence: a person is not available", "Not available");
         case Tp::ConnectionPresenceTypeHidden:
-            return i18n("Invisible");
+            return i18nc("IM presence: a person is invisible", "Invisible");
         case Tp::ConnectionPresenceTypeOffline:
-            return i18n("Offline");
+            return i18nc("IM presence: a person is offline", "Offline");
         default:
             return QString();
     }

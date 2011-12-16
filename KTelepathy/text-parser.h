@@ -32,7 +32,7 @@ namespace KTp
 {
 
 /**
- * Usefull data container
+ * Useful data container
  *
  * @var QList urlRanges
  * @var QStringList fixedUrls

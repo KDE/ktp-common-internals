@@ -35,7 +35,7 @@ class KTELEPATHY_EXPORT ServiceAvailabilityChecker : public QObject
 {
     Q_OBJECT
 public:
-    ServiceAvailabilityChecker(const QString & serviceName, QObject *parent = 0);
+    explicit ServiceAvailabilityChecker(const QString & serviceName, QObject *parent = 0);
     virtual ~ServiceAvailabilityChecker();
 
     bool isAvailable() const;
