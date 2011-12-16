@@ -34,7 +34,8 @@
 AccountsFilterModel::AccountsFilterModel(QObject *parent)
     : QSortFilterProxyModel(parent),
       m_showOfflineUsers(false),
-      m_filterByName(false)
+      m_filterByName(false),
+      m_filterByFileTransferCapability(false)
 {
 }
 
@@ -47,6 +48,12 @@ void AccountsFilterModel::setShowOfflineUsers(bool showOfflineUsers)
 bool AccountsFilterModel::showOfflineUsers() const
 {
     return m_showOfflineUsers;
+}
+
+void AccountsFilterModel::setFilterByFileTransferCapability(bool filterByFileTransferCapability)
+{
+    m_filterByFileTransferCapability = filterByFileTransferCapability;
+    invalidateFilter();
 }
 
 bool AccountsFilterModel::filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent) const
@@ -92,6 +99,11 @@ bool AccountsFilterModel::filterAcceptsContact(const QModelIndex &index) const
         rowAccepted = false;
     }
 
+    //check if contact has file-transfer capability
+    if (m_filterByFileTransferCapability && !index.data(AccountsModel::FileTransferCapabilityRole).toBool()) {
+        rowAccepted = false;
+    }
+
     //filter offline users out
     if (!m_showOfflineUsers &&
             ((index.data(AccountsModel::PresenceTypeRole).toUInt()
@@ -118,7 +130,6 @@ void AccountsFilterModel::setFilterString(const QString &str)
 {
     m_filterString = str;
     m_filterByName = true;
-    m_showOfflineUsers = true;
     invalidateFilter();
 }
 

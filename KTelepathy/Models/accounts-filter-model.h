@@ -56,6 +56,7 @@ public:
 
 public Q_SLOTS:
     void setShowOfflineUsers(bool showOfflineUsers);
+    void setFilterByFileTransferCapability(bool filterByFileTransferCapability);
     void setFilterString(const QString &str);
     /// This overloaded method takes into account showing/hiding offline users
     void clearFilterStringAndHideOfflineUsers(const bool& showOfflineUsers);
@@ -82,6 +83,7 @@ private:
 
     /// Used when searching for contact
     bool m_filterByName;
+    bool m_filterByFileTransferCapability;
 
     /// Holds the string which is searched in the model
     QString m_filterString;
