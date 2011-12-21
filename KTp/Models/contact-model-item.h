@@ -1,5 +1,5 @@
-/*                                                                         *
- * Tree model node
+/*
+ * Contacts model item, represents a contact in the contactlist tree
  * This file is based on TelepathyQtYell Models
  *
  * Copyright (C) 2010 Collabora Ltd. <info@collabora.co.uk>
@@ -20,49 +20,46 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef TELEPATHY_TREE_NODE_H
-#define TELEPATHY_TREE_NODE_H
+#ifndef TELEPATHY_CONTACT_MODEL_ITEM_H
+#define TELEPATHY_CONTACT_MODEL_ITEM_H
 
-#include <QObject>
-#include <QVariant>
+#include <TelepathyQt/Types>
 
-#include <KTelepathy/ktelepathy-export.h>
+#include <QtCore/QVariant> //needed for declare metatype
 
-class KTELEPATHY_EXPORT TreeNode : public QObject
+#include <KTp/ktelepathy-export.h>
+
+#include <KTp/Models/tree-node.h>
+
+class KTELEPATHY_EXPORT ContactModelItem : public TreeNode
 {
     Q_OBJECT
-    Q_DISABLE_COPY(TreeNode)
+    Q_DISABLE_COPY(ContactModelItem)
 
 public:
-    TreeNode();
+    ContactModelItem(const Tp::ContactPtr &contact);
+    virtual ~ContactModelItem();
 
-    virtual ~TreeNode();
+    Q_INVOKABLE virtual QVariant data(int role) const;
+    Q_INVOKABLE virtual bool setData(int role, const QVariant &value);
 
-    TreeNode *childAt(int index) const;
-
-    void addChild(TreeNode *node);
-
-    int indexOf(TreeNode *node) const;
-
-    int size() const;
-
-    TreeNode *parent() const;
-
-    virtual QVariant data(int role) const;
-    virtual bool setData(int role, const QVariant &value);
+    Tp::ContactPtr contact() const;
 
 public Q_SLOTS:
-    virtual void remove();
-
-Q_SIGNALS:
-    void changed(TreeNode *);
-    void childrenAdded(TreeNode *parent, const QList<TreeNode *> &nodes);
-    void childrenRemoved(TreeNode *parent, int first, int last);
+    void onChanged();
 
 private:
+    bool audioCallCapability() const;
+    bool videoCallCapability() const;
+    bool fileTransferCapability() const;
+    bool desktopSharingCapability() const;
+
     struct Private;
     friend struct Private;
     Private *mPriv;
 };
 
-#endif // TELEPATHY_TREE_NODE_H
+Q_DECLARE_METATYPE(ContactModelItem*);
+
+
+#endif // TELEPATHY_CONTACT_MODEL_ITEM_H

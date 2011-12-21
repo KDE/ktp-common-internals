@@ -23,7 +23,7 @@
 
 #include <QSortFilterProxyModel>
 
-#include <KTelepathy/ktelepathy-export.h>
+#include <KTp/ktelepathy-export.h>
 
 class AccountsModelItem;
 class ContactModelItem;

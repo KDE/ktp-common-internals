@@ -25,7 +25,7 @@
 #include <TelepathyQt/AccountManager>
 #include <TelepathyQt/AccountSet>
 
-#include <KTelepathy/ktelepathy-export.h>
+#include <KTp/ktelepathy-export.h>
 #include "presence.h"
 
 namespace KTp

@@ -29,4 +29,4 @@ include_directories (${KDE4_INCLUDES}
                      ${TELEPATHY_QT4_INCLUDE_DIR}
 )
 
-add_subdirectory(KTelepathy)
+add_subdirectory(KTp)

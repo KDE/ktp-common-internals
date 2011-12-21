@@ -1,5 +1,5 @@
 /*
-    Telepathy error dictionary - usable strings for dbus messages
+    Circular countdown widget
     Copyright (C) 2011  Martin Klapetek <martin.klapetek@gmail.com>
 
     This library is free software; you can redistribute it and/or
@@ -17,24 +17,46 @@
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
+#ifndef CIRCULARCOUNTDOWN_H
+#define CIRCULARCOUNTDOWN_H
 
-#ifndef ERROR_DICTIONARY_H
-#define ERROR_DICTIONARY_H
+#include <QWidget>
 
-#include <QString>
-
-#include <KTelepathy/ktelepathy-export.h>
+#include <KTp/ktelepathy-export.h>
 
 namespace KTp
 {
-namespace ErrorDictionary
+
+class KTELEPATHY_EXPORT CircularCountdown : public QWidget
 {
-    ///Returns a verbose error message usable for displaying to the user
-    KTELEPATHY_EXPORT QString displayVerboseErrorMessage(const QString& dbusErrorName);
+    Q_OBJECT
 
-    ///Returns a short error message usable for little space
-    KTELEPATHY_EXPORT QString displayShortErrorMessage(const QString& dbusErrorName);
-}
+public:
+    explicit CircularCountdown(int msec = 5000, QWidget *parent = 0);
+    ~CircularCountdown();
+
+    void setDuration(int msec);
+    int duration() const;
+
+public Q_SLOTS:
+    void start();
+    void stop();
+    void pause();
+    void resume();
+
+Q_SIGNALS:
+    void timeout();
+
+
+protected:
+     void paintEvent(QPaintEvent *event);
+     QSize sizeHint() const;
+
+private:
+    class Private;
+    Private * const d;
+};
+
 }
 
-#endif // ERROR_DICTIONARY_H
+#endif // CIRCULARCOUNTDOWN_H

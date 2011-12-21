@@ -24,9 +24,9 @@
 #include <QObject>
 #include <QVariant>
 
-#include <KTelepathy/ktelepathy-export.h>
+#include <KTp/ktelepathy-export.h>
 
-#include <KTelepathy/Models/tree-node.h>
+#include <KTp/Models/tree-node.h>
 
 class ContactModelItem;
 class KTELEPATHY_EXPORT ProxyTreeNode : public TreeNode
