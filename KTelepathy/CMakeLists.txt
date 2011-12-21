@@ -25,23 +25,23 @@ set (telepathy_common_internals_private_HDRS
      ktelepathy-export.h
 )
 
-kde4_add_library (telepathykdecommoninternalsprivate SHARED
+kde4_add_library (ktpcommoninternalsprivate SHARED
                  ${telepathy_common_internals_private_SRCS}
 )
 
 #Raise SOVERSION for every 0.x cycle
-set_target_properties(telepathykdecommoninternalsprivate PROPERTIES
+set_target_properties(ktpcommoninternalsprivate PROPERTIES
                                                          VERSION ${KTELEPATHY_VERSION}
                                                          SOVERSION ${KTELEPATHY_SONUMBER}
                                                          DEFINE_SYMBOL MAKE_KTELEPATHY_LIB)
 
-target_link_libraries (telepathykdecommoninternalsprivate
+target_link_libraries (ktpcommoninternalsprivate
                        ${KDE4_KDECORE_LIBS}
                        ${TELEPATHY_QT4_LIBRARIES}
                        ${KDE4_KDEUI_LIBS}
 )
 
-install (TARGETS telepathykdecommoninternalsprivate
+install (TARGETS ktpcommoninternalsprivate
          DESTINATION ${LIB_INSTALL_DIR}
 )
 

@@ -25,24 +25,24 @@ set (telepathy_models_private_HDRS
     tree-node.h
 )
 
-kde4_add_library (telepathykdemodelsprivate SHARED
+kde4_add_library (ktpmodelsprivate SHARED
                  ${telepathy_models_private_SRCS}
 )
 
 #Raise SOVERSION for every 0.x cycle
-set_target_properties(telepathykdemodelsprivate PROPERTIES
+set_target_properties(ktpmodelsprivate PROPERTIES
                                                 VERSION ${KTELEPATHY_VERSION}
                                                 SOVERSION ${KTELEPATHY_SONUMBER}
                                                 DEFINE_SYMBOL MAKE_KTELEPATHY_LIB)
 
-target_link_libraries (telepathykdemodelsprivate
+target_link_libraries (ktpmodelsprivate
                        ${KDE4_KDECORE_LIBS}
                        ${TELEPATHY_QT4_LIBRARIES}
                        ${KDE4_KDEUI_LIBS}
-                       telepathykdecommoninternalsprivate
+                       ktpcommoninternalsprivate
 )
 
-install (TARGETS telepathykdemodelsprivate
+install (TARGETS ktpmodelsprivate
          DESTINATION ${LIB_INSTALL_DIR}
 )
 
