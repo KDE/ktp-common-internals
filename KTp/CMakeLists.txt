@@ -1,7 +1,7 @@
 include_directories (${CMAKE_CURRENT_BINARY_DIR}
                      ${CMAKE_CURRENT_SOURCE_DIR})
 
-set (telepathy_common_internals_private_SRCS
+set (ktp_common_internals_private_SRCS
      circular-countdown.cpp
      error-dictionary.cpp
      global-presence.cpp
@@ -12,7 +12,7 @@ set (telepathy_common_internals_private_SRCS
      wallet-interface.cpp
 )
 
-set (telepathy_common_internals_private_HDRS
+set (ktp_common_internals_private_HDRS
      circular-countdown.h
      error-dictionary.h
      global-presence.h
@@ -26,7 +26,7 @@ set (telepathy_common_internals_private_HDRS
 )
 
 kde4_add_library (ktpcommoninternalsprivate SHARED
-                 ${telepathy_common_internals_private_SRCS}
+                 ${ktp_common_internals_private_SRCS}
 )
 
 #Raise SOVERSION for every 0.x cycle
@@ -45,7 +45,7 @@ install (TARGETS ktpcommoninternalsprivate
          DESTINATION ${LIB_INSTALL_DIR}
 )
 
-install (FILES ${telepathy_common_internals_private_HDRS}
+install (FILES ${ktp_common_internals_private_HDRS}
          DESTINATION ${INCLUDE_INSTALL_DIR}/KTp
 )
 

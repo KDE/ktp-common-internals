@@ -3,7 +3,7 @@ include_directories (${CMAKE_CURRENT_BINARY_DIR}
                      ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
-set (telepathy_models_private_SRCS
+set (ktp_models_private_SRCS
     accounts-filter-model.cpp
     accounts-model-item.cpp
     accounts-model.cpp
@@ -14,7 +14,7 @@ set (telepathy_models_private_SRCS
     tree-node.cpp
 )
 
-set (telepathy_models_private_HDRS
+set (ktp_models_private_HDRS
     accounts-filter-model.h
     accounts-model-item.h
     accounts-model.h
@@ -26,7 +26,7 @@ set (telepathy_models_private_HDRS
 )
 
 kde4_add_library (ktpmodelsprivate SHARED
-                 ${telepathy_models_private_SRCS}
+                 ${ktp_models_private_SRCS}
 )
 
 #Raise SOVERSION for every 0.x cycle
@@ -46,7 +46,7 @@ install (TARGETS ktpmodelsprivate
          DESTINATION ${LIB_INSTALL_DIR}
 )
 
-install (FILES ${telepathy_models_private_HDRS}
+install (FILES ${ktp_models_private_HDRS}
          DESTINATION ${INCLUDE_INSTALL_DIR}/KTp/Models
 )
 
