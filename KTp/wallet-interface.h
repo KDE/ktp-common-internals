@@ -32,7 +32,7 @@
 namespace KTp
 {
 
-class KTELEPATHY_EXPORT WalletInterface
+class KTP_EXPORT WalletInterface
 {
 public:
 

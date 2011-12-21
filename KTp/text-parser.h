@@ -37,7 +37,7 @@ namespace KTp
  * @var QList urlRanges
  * @var QStringList fixedUrls
  */
-struct KTELEPATHY_EXPORT TextUrlData
+struct KTP_EXPORT TextUrlData
 {
     QList<QPair<int, int> > urlRanges;
     QStringList fixedUrls;
@@ -47,7 +47,7 @@ struct KTELEPATHY_EXPORT TextUrlData
  * TextParser
  *
  */
-class KTELEPATHY_EXPORT TextParser : public QObject
+class KTP_EXPORT TextParser : public QObject
 {
 
 public:

@@ -33,7 +33,7 @@
 
 #include <KTp/Models/tree-node.h>
 
-class KTELEPATHY_EXPORT AccountsModelItem : public TreeNode
+class KTP_EXPORT AccountsModelItem : public TreeNode
 {
     Q_OBJECT
     Q_DISABLE_COPY(AccountsModelItem)

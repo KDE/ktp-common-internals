@@ -5,9 +5,9 @@ set (CMAKE_MODULE_PATH
      ${CMAKE_MODULE_PATH}
 )
 
-set (KTELEPATHY_VERSION "0.3.0")
+set (KTP_VERSION "0.3.0")
 # Bump for every 0.x release, or whenever BC changes
-set (KTELEPATHY_SONUMBER 0)
+set (KTP_SONUMBER 0)
 
 find_package (KDE4 REQUIRED)
 find_package (TelepathyQt4 0.8.9 REQUIRED)

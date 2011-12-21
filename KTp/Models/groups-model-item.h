@@ -36,7 +36,7 @@
 class ContactModelItem;
 class ProxyTreeNode;
 
-class KTELEPATHY_EXPORT GroupsModelItem : public TreeNode
+class KTP_EXPORT GroupsModelItem : public TreeNode
 {
     Q_OBJECT
     Q_DISABLE_COPY(GroupsModelItem)

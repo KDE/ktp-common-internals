@@ -37,7 +37,7 @@ namespace KTp
  * - Enables telepathy-qt4 warnings
  * - Use Tp-Qt4 callback for redirecting debug output into KDebug
  */
-class KTELEPATHY_EXPORT TelepathyHandlerApplication : public KApplication
+class KTP_EXPORT TelepathyHandlerApplication : public KApplication
 {
     Q_OBJECT
 

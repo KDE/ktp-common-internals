@@ -29,7 +29,7 @@
 #include <KTp/Models/tree-node.h>
 
 class ContactModelItem;
-class KTELEPATHY_EXPORT ProxyTreeNode : public TreeNode
+class KTP_EXPORT ProxyTreeNode : public TreeNode
 {
     Q_OBJECT
     Q_DISABLE_COPY(ProxyTreeNode)

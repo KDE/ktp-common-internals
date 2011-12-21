@@ -30,7 +30,7 @@
 namespace KTp
 {
 
-class KTELEPATHY_EXPORT Presence : public Tp::Presence
+class KTP_EXPORT Presence : public Tp::Presence
 {
 public:
     Presence();

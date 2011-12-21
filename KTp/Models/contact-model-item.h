@@ -31,7 +31,7 @@
 
 #include <KTp/Models/tree-node.h>
 
-class KTELEPATHY_EXPORT ContactModelItem : public TreeNode
+class KTP_EXPORT ContactModelItem : public TreeNode
 {
     Q_OBJECT
     Q_DISABLE_COPY(ContactModelItem)

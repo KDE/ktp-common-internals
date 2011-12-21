@@ -31,9 +31,9 @@ kde4_add_library (ktpmodelsprivate SHARED
 
 #Raise SOVERSION for every 0.x cycle
 set_target_properties(ktpmodelsprivate PROPERTIES
-                                                VERSION ${KTELEPATHY_VERSION}
-                                                SOVERSION ${KTELEPATHY_SONUMBER}
-                                                DEFINE_SYMBOL MAKE_KTELEPATHY_LIB)
+                                                VERSION ${KTP_VERSION}
+                                                SOVERSION ${KTP_SONUMBER}
+                                                DEFINE_SYMBOL MAKE_KTP_LIB)
 
 target_link_libraries (ktpmodelsprivate
                        ${KDE4_KDECORE_LIBS}

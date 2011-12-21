@@ -38,7 +38,7 @@ class ContactModelItem;
   *     By name
   *     By presence
   */
-class KTELEPATHY_EXPORT AccountsFilterModel : public QSortFilterProxyModel
+class KTP_EXPORT AccountsFilterModel : public QSortFilterProxyModel
 {
     Q_OBJECT
 

@@ -18,8 +18,8 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef KTELEPATHY_EXPORT_H
-#define KTELEPATHY_EXPORT_H
+#ifndef KTP_EXPORT_H
+#define KTP_EXPORT_H
 
 /** \file ktelepathy-export.h
     \brief Contains Macros for exporting symbols
@@ -29,15 +29,15 @@
 
 #include <QtCore/QtGlobal>
 
-#ifndef KTELEPATHY_EXPORT
-# if defined(MAKE_KTELEPATHY_LIB)
+#ifndef KTP_EXPORT
+# if defined(MAKE_KTP_LIB)
 /* We are building this library */
-#  define KTELEPATHY_EXPORT Q_DECL_EXPORT
+#  define KTP_EXPORT Q_DECL_EXPORT
 # else
 /* We are using this library */
-#  define KTELEPATHY_EXPORT Q_DECL_IMPORT
+#  define KTP_EXPORT Q_DECL_IMPORT
 # endif
 #endif
 
-#endif /*KTELEPATHY_EXPORT_H*/
+#endif /*KTP_EXPORT_H*/
 
