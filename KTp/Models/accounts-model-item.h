@@ -29,7 +29,7 @@
 
 #include <QtCore/QVariant> //needed for declare metatype
 
-#include <KTp/ktelepathy-export.h>
+#include <KTp/ktp-export.h>
 
 #include <KTp/Models/tree-node.h>
 

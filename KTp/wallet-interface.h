@@ -27,7 +27,7 @@
 
 #include <QScopedPointer>
 
-#include <KTp/ktelepathy-export.h>
+#include <KTp/ktp-export.h>
 
 namespace KTp
 {

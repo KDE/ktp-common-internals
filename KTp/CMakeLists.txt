@@ -22,7 +22,7 @@ set (telepathy_common_internals_private_HDRS
      text-parser.h
      wallet-interface.h
 
-     ktelepathy-export.h
+     ktp-export.h
 )
 
 kde4_add_library (ktpcommoninternalsprivate SHARED

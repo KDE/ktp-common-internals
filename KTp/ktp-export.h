@@ -21,7 +21,7 @@
 #ifndef KTP_EXPORT_H
 #define KTP_EXPORT_H
 
-/** \file ktelepathy-export.h
+/** \file ktp-export.h
     \brief Contains Macros for exporting symbols
 
     This file contains macros needed for exporting/importing symbols

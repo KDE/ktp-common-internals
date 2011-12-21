@@ -31,7 +31,7 @@
 
 #include <KTp/Models/tree-node.h>
 
-#include <KTp/ktelepathy-export.h>
+#include <KTp/ktp-export.h>
 
 class ContactModelItem;
 class ProxyTreeNode;

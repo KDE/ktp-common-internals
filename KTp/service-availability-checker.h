@@ -20,7 +20,7 @@
 
 #include <QtCore/QObject>
 
-#include <KTp/ktelepathy-export.h>
+#include <KTp/ktp-export.h>
 
 class QDBusPendingCallWatcher;
 

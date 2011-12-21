@@ -26,7 +26,7 @@
 #include <QObject>
 #include <QVariant>
 
-#include <KTp/ktelepathy-export.h>
+#include <KTp/ktp-export.h>
 
 class KTP_EXPORT TreeNode : public QObject
 {
