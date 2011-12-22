@@ -23,7 +23,7 @@
 
 #include <QSortFilterProxyModel>
 
-#include <KTelepathy/ktelepathy-export.h>
+#include <KTp/ktp-export.h>
 
 class AccountsModelItem;
 class ContactModelItem;
@@ -38,7 +38,7 @@ class ContactModelItem;
   *     By name
   *     By presence
   */
-class KTELEPATHY_EXPORT AccountsFilterModel : public QSortFilterProxyModel
+class KTP_EXPORT AccountsFilterModel : public QSortFilterProxyModel
 {
     Q_OBJECT
 

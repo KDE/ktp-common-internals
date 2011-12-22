@@ -22,12 +22,12 @@
 
 #include <QWidget>
 
-#include <KTelepathy/ktelepathy-export.h>
+#include <KTp/ktp-export.h>
 
 namespace KTp
 {
 
-class KTELEPATHY_EXPORT CircularCountdown : public QWidget
+class KTP_EXPORT CircularCountdown : public QWidget
 {
     Q_OBJECT
 

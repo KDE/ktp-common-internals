@@ -25,12 +25,12 @@
 
 #include <KIcon>
 
-#include <KTelepathy/ktelepathy-export.h>
+#include <KTp/ktp-export.h>
 
 namespace KTp
 {
 
-class KTELEPATHY_EXPORT Presence : public Tp::Presence
+class KTP_EXPORT Presence : public Tp::Presence
 {
 public:
     Presence();

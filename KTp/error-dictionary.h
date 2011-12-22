@@ -23,17 +23,17 @@
 
 #include <QString>
 
-#include <KTelepathy/ktelepathy-export.h>
+#include <KTp/ktp-export.h>
 
 namespace KTp
 {
 namespace ErrorDictionary
 {
     ///Returns a verbose error message usable for displaying to the user
-    KTELEPATHY_EXPORT QString displayVerboseErrorMessage(const QString& dbusErrorName);
+    KTP_EXPORT QString displayVerboseErrorMessage(const QString& dbusErrorName);
 
     ///Returns a short error message usable for little space
-    KTELEPATHY_EXPORT QString displayShortErrorMessage(const QString& dbusErrorName);
+    KTP_EXPORT QString displayShortErrorMessage(const QString& dbusErrorName);
 }
 }
 

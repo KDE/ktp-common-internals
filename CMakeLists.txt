@@ -1,13 +1,13 @@
-project(telepathy-common-internals)
+project(ktp-common-internals)
 
 set (CMAKE_MODULE_PATH
      "${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules"
      ${CMAKE_MODULE_PATH}
 )
 
-set (KTELEPATHY_VERSION "0.3.0")
+set (KTP_VERSION "0.3.0")
 # Bump for every 0.x release, or whenever BC changes
-set (KTELEPATHY_SONUMBER 0)
+set (KTP_SONUMBER 0)
 
 find_package (KDE4 REQUIRED)
 find_package (TelepathyQt4 0.8.9 REQUIRED)
@@ -29,4 +29,4 @@ include_directories (${KDE4_INCLUDES}
                      ${TELEPATHY_QT4_INCLUDE_DIR}
 )
 
-add_subdirectory(KTelepathy)
+add_subdirectory(KTp)

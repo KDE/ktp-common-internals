@@ -30,12 +30,12 @@
 #include <TelepathyQt/TextChannel>
 #include <TelepathyQt/Types>
 
-#include <KTelepathy/ktelepathy-export.h>
+#include <KTp/ktp-export.h>
 
 class ContactModelItem;
 class TreeNode;
 
-class KTELEPATHY_EXPORT AccountsModel : public QAbstractItemModel
+class KTP_EXPORT AccountsModel : public QAbstractItemModel
 {
     Q_OBJECT
     Q_DISABLE_COPY(AccountsModel)

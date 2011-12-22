@@ -29,11 +29,11 @@
 
 #include <QtCore/QVariant> //needed for declare metatype
 
-#include <KTelepathy/ktelepathy-export.h>
+#include <KTp/ktp-export.h>
 
-#include <KTelepathy/Models/tree-node.h>
+#include <KTp/Models/tree-node.h>
 
-class KTELEPATHY_EXPORT AccountsModelItem : public TreeNode
+class KTP_EXPORT AccountsModelItem : public TreeNode
 {
     Q_OBJECT
     Q_DISABLE_COPY(AccountsModelItem)

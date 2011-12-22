@@ -42,7 +42,7 @@ struct GroupsModel::Private
     Private(AccountsModel *am)
         : mAM(am)
     {
-        KGlobal::locale()->insertCatalog(QLatin1String("telepathy-common-internals"));
+        KGlobal::locale()->insertCatalog(QLatin1String("ktp-common-internals"));
         m_ungroupedString = i18n("Ungrouped");
     }
 

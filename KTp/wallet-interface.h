@@ -27,12 +27,12 @@
 
 #include <QScopedPointer>
 
-#include <KTelepathy/ktelepathy-export.h>
+#include <KTp/ktp-export.h>
 
 namespace KTp
 {
 
-class KTELEPATHY_EXPORT WalletInterface
+class KTP_EXPORT WalletInterface
 {
 public:
 

@@ -26,9 +26,9 @@
 #include <QObject>
 #include <QVariant>
 
-#include <KTelepathy/ktelepathy-export.h>
+#include <KTp/ktp-export.h>
 
-class KTELEPATHY_EXPORT TreeNode : public QObject
+class KTP_EXPORT TreeNode : public QObject
 {
     Q_OBJECT
     Q_DISABLE_COPY(TreeNode)

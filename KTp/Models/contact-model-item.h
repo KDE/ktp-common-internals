@@ -1,8 +1,8 @@
 /*
- * Contact groups model item, represents a group in the contactlist tree
+ * Contacts model item, represents a contact in the contactlist tree
  * This file is based on TelepathyQtYell Models
  *
- * Copyright (C) 2010 Collabora Ltd. <info@collabora.com>
+ * Copyright (C) 2010 Collabora Ltd. <info@collabora.co.uk>
  * Copyright (C) 2011 Martin Klapetek <martin dot klapetek at gmail dot com>
  *
  * This library is free software; you can redistribute it and/or
@@ -20,51 +20,46 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef TELEPATHY_GROUPS_MODEL_ITEM_H
-#define TELEPATHY_GROUPS_MODEL_ITEM_H
+#ifndef TELEPATHY_CONTACT_MODEL_ITEM_H
+#define TELEPATHY_CONTACT_MODEL_ITEM_H
 
-#include <TelepathyQt/Constants>
-#include <TelepathyQt/Contact>
 #include <TelepathyQt/Types>
 
 #include <QtCore/QVariant> //needed for declare metatype
 
-#include <KTelepathy/Models/tree-node.h>
+#include <KTp/ktp-export.h>
 
-#include <KTelepathy/ktelepathy-export.h>
+#include <KTp/Models/tree-node.h>
 
-class ContactModelItem;
-class ProxyTreeNode;
-
-class KTELEPATHY_EXPORT GroupsModelItem : public TreeNode
+class KTP_EXPORT ContactModelItem : public TreeNode
 {
     Q_OBJECT
-    Q_DISABLE_COPY(GroupsModelItem)
+    Q_DISABLE_COPY(ContactModelItem)
 
 public:
-    GroupsModelItem(const QString &groupName);
-    virtual ~GroupsModelItem();
+    ContactModelItem(const Tp::ContactPtr &contact);
+    virtual ~ContactModelItem();
 
     Q_INVOKABLE virtual QVariant data(int role) const;
-    virtual bool setData(int role, const QVariant &value);
+    Q_INVOKABLE virtual bool setData(int role, const QVariant &value);
 
-    Q_INVOKABLE void setGroupName(const QString &value);
-    QString groupName();
+    Tp::ContactPtr contact() const;
 
-    void addProxyContact(ProxyTreeNode* proxyNode);
-    void removeProxyContact(ProxyTreeNode* proxyNode);
-
-    void countOnlineContacts();
-
-private Q_SLOTS:
-
+public Q_SLOTS:
+    void onChanged();
 
 private:
+    bool audioCallCapability() const;
+    bool videoCallCapability() const;
+    bool fileTransferCapability() const;
+    bool desktopSharingCapability() const;
+
     struct Private;
     friend struct Private;
     Private *mPriv;
 };
 
-Q_DECLARE_METATYPE(GroupsModelItem*);
+Q_DECLARE_METATYPE(ContactModelItem*);
 
-#endif // TELEPATHY_GROUPS_MODEL_ITEM_H
+
+#endif // TELEPATHY_CONTACT_MODEL_ITEM_H
