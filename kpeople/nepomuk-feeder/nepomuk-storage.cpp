@@ -1159,7 +1159,9 @@ void NepomukStorage::setContactAvatar(const QString &path,
 int qHash(ContactIdentifier c)
 {
     // FIXME: This is a shit way of doing it.
-    QString temp = c.accountId();
+    QString temp;
+    temp.reserve( c.accountId().size() + 8 + c.contactId().size() );
+    temp.append(c.accountId());
     temp.append(QLatin1String("#--__--#"));
     temp.append(c.contactId());
     return qHash(temp);
