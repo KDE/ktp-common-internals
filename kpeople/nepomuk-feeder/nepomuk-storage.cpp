@@ -33,6 +33,7 @@
 #include <KJob>
 
 #include <nepomuk/datamanagement.h>
+#include <nepomuk/storeresourcesjob.h>
 #include <Nepomuk/Resource>
 #include <Nepomuk/ResourceManager>
 #include <nepomuk/simpleresource.h>
