@@ -4,7 +4,7 @@
 @prefix nao:     <http://www.semanticdesktop.org/ontologies/2007/08/15/nao#> .
 @prefix nrl:     <http://www.semanticdesktop.org/ontologies/2007/08/15/nrl#> .
 @prefix nco:     <http://www.semanticdesktop.org/ontologies/2007/03/22/nco#> .
-@prefix nie:     <http://www.semanticdesktop.org/ontologies/2007/01/19/nie/#> .
+@prefix nie:     <http://www.semanticdesktop.org/ontologies/2007/01/19/nie#> .
 @prefix xsd:     <http://www.w3.org/2001/XMLSchema#> .
 
 telepathy: {telepathy:accountIdentifier
