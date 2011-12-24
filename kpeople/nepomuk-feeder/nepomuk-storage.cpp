@@ -625,62 +625,62 @@ void NepomukStorage::createAccount(const QString &path, const QString &id, const
 
 void NepomukStorage::destroyAccount(const QString &path)
 {
-    // Check the account exists
-    Q_ASSERT(m_accounts.contains(path));
-    if (!m_accounts.contains(path)) {
-        kWarning() << "Account not found.";
-        return;
-    }
-/*
-    Nepomuk::SimpleResource account(m_accounts.value(path).account());
     // The account object has been destroyed, which means we no longer know the presence of the
     // account, so it should be set to unknown.
-    account.setProperty(Nepomuk::Vocabulary::NCO::imStatus(), QString::fromLatin1("unknown"));
-    account.setProperty(Nepomuk::Vocabulary::Telepathy::statusType(), Tp::ConnectionPresenceTypeUnknown);
 
-    // Save changes
-    saveGraph(Nepomuk::SimpleResourceGraph() << account);*/
+    Tp::SimplePresence presence;
+    presence.status = QLatin1String("unknown");
+    presence.type = Tp::ConnectionPresenceTypeUnknown;
+
+    setAccountCurrentPresence(path, presence);
 }
 
 void NepomukStorage::setAccountNickname(const QString &path, const QString &nickname)
 {
-    kDebug() << "Not Implemented";
-    kDebug() << path << nickname;
-//     // Check the account exists
-//     Q_ASSERT(m_accounts.contains(path));
-//     if (!m_accounts.contains(path)) {
-//         kWarning() << "Account not found.";
-//         return;
-//     }
-//
-//     Nepomuk::SimpleResource account(m_accounts.value(path).account());
-//
-//     // Update the nickname property of the account.
-//     account.setProperty(Nepomuk::Vocabulary::NCO::imNickname(), nickname);
-//
-//     saveGraph(Nepomuk::SimpleResourceGraph() << account);
-}
-
-void NepomukStorage::setAccountCurrentPresence(const QString &path, const Tp::SimplePresence &presence)
-{
-    kDebug() << "Not Implemented";
-    kDebug() << path << presence.status;
-    /*
     // Check the account exists
-    Q_ASSERT(m_accounts.contains(path));
-    if (!m_accounts.contains(path)) {
+    QHash<QString, AccountResources>::const_iterator it = m_accounts.find(path);
+    const bool found = (m_accounts.constEnd() != it);
+    Q_ASSERT(found);
+    if (!found) {
         kWarning() << "Account not found.";
         return;
     }
 
-    Nepomuk::SimpleResource account(m_accounts.value(path).account());
+    QUrl accountUri = it.value().account();
+
+    KJob *job = Nepomuk::setProperty(QList<QUrl>() << accountUri, NCO::imNickname(), QVariantList() << nickname);
+    job->exec();
+    if( job->error() ) {
+        kWarning() << job->errorString();
+    }
+}
+
+void NepomukStorage::setAccountCurrentPresence(const QString &path, const Tp::SimplePresence &presence)
+{
+    // Check the account exists
+    QHash<QString, AccountResources>::const_iterator it = m_accounts.find(path);
+    const bool found = (m_accounts.constEnd() != it);
+    Q_ASSERT(found);
+    if (!found) {
+        kWarning() << "Account not found.";
+        return;
+    }
+
+    QUrl accountUri = it.value().account();
+
+    Nepomuk::SimpleResource account( accountUri );
 
     // Update the Presence properties.
     account.setProperty(Nepomuk::Vocabulary::NCO::imStatus(), presence.status);
     account.setProperty(Nepomuk::Vocabulary::NCO::imStatusMessage(), presence.statusMessage);
     account.setProperty(Nepomuk::Vocabulary::Telepathy::statusType(), presence.type);
 
-    saveGraph(Nepomuk::SimpleResourceGraph() << account);*/
+    KJob *job = Nepomuk::storeResources(Nepomuk::SimpleResourceGraph() << account,
+                                        Nepomuk::IdentifyNew, Nepomuk::OverwriteProperties );
+    job->exec();
+    if( job->error() ) {
+        kWarning() << job->errorString();
+    }
 }
 
 void NepomukStorage::cleanupAccountContacts(const QString &path, const QList<QString> &ids)
