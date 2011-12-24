@@ -4,6 +4,8 @@
  * Copyright (C) 2009-2011 Collabora Ltd. <info@collabora.co.uk>
  *   @author George Goldberg <george.goldberg@collabora.co.uk>
  *
+ * Copyright (C) 2011 Vishesh Handa <handa.vish@gmail.com>
+ *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
@@ -687,38 +689,32 @@ void NepomukStorage::cleanupAccountContacts(const QString &path, const QList<QSt
 {
     kDebug() << path << ids;
 
-//     // Go through all the contacts in the cache and make any that are not in the list we
-//     // received from the account into Ghost Contacts. Do this as a batch job to improve performance.
-//     foreach (const ContactIdentifier &cid, m_contacts.keys()) {
-//         if (cid.accountId() == path) {
-//             if (!ids.contains(cid.contactId())) {
-//                 // TODO: Do this properly once the ontology supports this
-//                 // TODO: Do this as a batch job to reduce the number of nepomuk queries that result.
-//                 kDebug() << "Ghosting contact: " << cid.contactId();
-//                 setContactPublishState(path, cid.contactId(), Tp::Contact::PresenceStateNo);
-//                 setContactSubscriptionState(path, cid.contactId(), Tp::Contact::PresenceStateNo);
-//             }
-//         }
-//     }
-//
-//     // Go through all the contacts that we have received from the account and create any
-//     // new ones in neponmuk. Do this as a batch job to improve performance.
-//     foreach (const QString &id, ids) {
-//         bool found = false;
-//         foreach (const ContactIdentifier &cid, m_contacts.keys()) {
-//             if (cid.accountId() == path) {
-//                 if (cid.contactId() == id) {
-//                     found = true;
-//                     break;
-//                 }
-//             }
-//         }
-//         if (!found) {
-//             // TODO: Add all these accounts as a batch job
-//             kDebug() << "Adding contact:" << id;
-//             createContact(path, id);
-//         }
-//     }
+    QSet<QString> idSet = ids.toSet();
+
+    // Go through all the contacts in the cache and make any that are not in the list we
+    // received from the account into Ghost Contacts. Do this as a batch job to improve performance.
+    foreach (const ContactIdentifier &cid, m_contacts.keys()) {
+        if (cid.accountId() == path) {
+            if (!idSet.contains(cid.contactId())) {
+                // TODO: Do this properly once the ontology supports this
+                // TODO: Do this as a batch job to reduce the number of nepomuk queries that result.
+                kDebug() << "Ghosting contact: " << cid.contactId();
+                setContactPublishState(path, cid.contactId(), Tp::Contact::PresenceStateNo);
+                setContactSubscriptionState(path, cid.contactId(), Tp::Contact::PresenceStateNo);
+            }
+        }
+    }
+
+    // Go through all the contacts that we have received from the account and create any
+    // new ones in Nepomuk. Do this as a batch job to improve performance.
+    QSet<QString> nepomukIds;
+    foreach( const ContactIdentifier& ci, m_contacts.keys() )
+        nepomukIds.insert( ci.contactId() );
+
+    QSet<QString> newIds = idSet.subtract( nepomukIds );
+    foreach( const QString& id, newIds ) {
+        createContact(path, id);
+    }
 }
 
 void NepomukStorage::createContact(const QString &path, const QString &id)
