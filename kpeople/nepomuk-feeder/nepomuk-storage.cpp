@@ -787,33 +787,11 @@ void NepomukStorage::createContact(const QString &path, const QString &id)
 
 void NepomukStorage::destroyContact(const QString &path, const QString &id)
 {
-    //vHanda: we could probably just call setContactPresence with a custom "unknown" presense.
-    kDebug() << path << id;
-    ContactIdentifier identifier(path, id);
+    Tp::SimplePresence presence;
+    presence.status = QLatin1String("unknown");
+    presence.type = Tp::ConnectionPresenceTypeUnknown;
 
-    // Check if the Contact exists.
-    QHash<ContactIdentifier, ContactResources>::const_iterator it = m_contacts.find(identifier);
-    const bool found = (it != m_contacts.constEnd());
-    Q_ASSERT(found);
-    if (!found) {
-        kWarning() << "Contact not found.";
-        return;
-    }
-
-    ContactResources resources = it.value();
-
-    Nepomuk::SimpleResource imAccount(resources.imAccount());
-    imAccount.setProperty(Nepomuk::Vocabulary::NCO::imStatus(), QString::fromLatin1("unknown"));
-    imAccount.setProperty(Nepomuk::Vocabulary::Telepathy::statusType(), Tp::ConnectionPresenceTypeUnknown);
-
-    // We're using 'OverwriteProperties' cause the above properties can already have existing
-    // values which we don't care about
-    KJob *job = Nepomuk::storeResources( Nepomuk::SimpleResourceGraph() << imAccount,
-                                         Nepomuk::IdentifyNew, Nepomuk::OverwriteProperties );
-    job->exec();
-    if( job->error() ) {
-        kWarning() << job->errorString();
-    }
+    setContactPresence(path, id, presence);
 }
 
 void NepomukStorage::setContactAlias(const QString &path, const QString &id, const QString &alias)
