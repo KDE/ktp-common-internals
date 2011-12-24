@@ -556,14 +556,23 @@ void NepomukStorage::cleanupAccounts(const QList<QString> &paths)
 
     // Go through all our accounts and remove all the ones that are not there in the path
     // list given by the controller
-    foreach (const QString &aid, m_accounts.keys()) {
-        if (!pathSet.contains(aid)) {
-
-            kWarning() << "Should remove : " << aid << m_accounts.value(aid).account();
-            // TODO: Do this properly once the ontology supports this
-            // TODO: Do this as a batch job to reduce the number of nepomuk queries that result.
-            // TODO: What do we do with an account in nepomuk which the use has removed?
+    QList<QUrl> removedAccounts;
+    QMutableHashIterator<QString, AccountResources> it( m_accounts );
+    while( it.hasNext() ) {
+        it.next();
+        if (!pathSet.contains(it.key())) {
+            removedAccounts << it.value().account();
+            it.remove();
         }
+    }
+
+    // TODO: Do this properly once the ontology supports this
+    // TODO: What do we do with an account in nepomuk which the use has removed?
+    //       For now we're just deleting them
+    KJob *job = Nepomuk::removeResources( removedAccounts, Nepomuk::RemoveSubResoures );
+    job->exec();
+    if( job->error() ) {
+        kWarning() << job->errorString();
     }
 
     // Go through all the accounts that we have received from the controller and create any
@@ -746,6 +755,7 @@ void NepomukStorage::createContact(const QString &path, const QString &id)
     newPimoPerson.addType(Nepomuk::Vocabulary::PIMO::Person());
 
     Nepomuk::SimpleResource newImAccount;
+    //TODO: Somehow add this imAccount as a sub resource the account, maybe.
     newImAccount.addType(Nepomuk::Vocabulary::NCO::IMAccount());
     newImAccount.setProperty(Nepomuk::Vocabulary::NCO::imStatus(), QString::fromLatin1("unknown"));
     newImAccount.setProperty(Nepomuk::Vocabulary::NCO::imID(), id);
