@@ -255,12 +255,7 @@ Tp::AccountPtr AccountsModel::accountPtrForPath(const QString& accountPath) cons
 Qt::ItemFlags AccountsModel::flags(const QModelIndex &index) const
 {
     if (index.isValid()) {
-        bool isContact = index.data(AccountsModel::ItemRole).userType() == qMetaTypeId<ContactModelItem*>();
-        if (isContact) {
-            return Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsDragEnabled;
-        } else {
-            return Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsDropEnabled;
-        }
+        return Qt::ItemIsEnabled | Qt::ItemIsSelectable;
     }
 
     return QAbstractItemModel::flags(index) | Qt::ItemIsEditable;
@@ -309,32 +304,5 @@ QModelIndex AccountsModel::parent(const QModelIndex &index) const
         return QModelIndex();
     }
 }
-
-QStringList AccountsModel::mimeTypes() const
-{
-    QStringList types;
-    types << QLatin1String("application/vnd.telepathy.contact");
-    return types;
-}
-
-QMimeData* AccountsModel::mimeData(const QModelIndexList& indexes) const
-{
-    QMimeData *mimeData = new QMimeData();
-    QByteArray encodedData;
-
-    QDataStream stream(&encodedData, QIODevice::WriteOnly);
-
-    Q_FOREACH (const QModelIndex &index, indexes) {
-        if (index.isValid()) {
-            ContactModelItem *c = data(index, AccountsModel::ItemRole).value<ContactModelItem*>();
-            //We put a contact ID and its account ID to the stream, so we can later recreate the contact using AccountsModel
-            stream << c->contact().data()->id() << accountForContactItem(c).data()->objectPath();
-        }
-    }
-
-    mimeData->setData(QLatin1String("application/vnd.telepathy.contact"), encodedData);
-    return mimeData;
-}
-
 
 #include "accounts-model.moc"
