@@ -34,6 +34,7 @@ class AccountsListModel : public QAbstractListModel
 
 public:
     enum Roles {
+        ConnectionStateRole = Qt::UserRole,
         ConnectionStateDisplayRole = Qt::UserRole+1,
         ConnectionStateIconRole,
         ConnectionErrorMessageDisplayRole,
