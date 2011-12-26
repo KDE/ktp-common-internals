@@ -28,6 +28,8 @@
 #include "accounts-model.h"
 #include "contact-model-item.h"
 
+#include <KIcon>
+
 struct AccountsModelItem::Private
 {
     Private(const Tp::AccountPtr &account)
@@ -151,6 +153,8 @@ QVariant AccountsModelItem::data(int role) const
     case AccountsModel::DisplayNameRole:
     case Qt::DisplayRole:
         return mPriv->mAccount->displayName();
+    case Qt::DecorationRole:
+        return KIcon(mPriv->mAccount->iconName());
     case AccountsModel::IconRole:
         return mPriv->mAccount->iconName();
     case AccountsModel::NicknameRole:
