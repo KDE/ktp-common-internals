@@ -35,9 +35,10 @@ class AccountsListModel : public QAbstractListModel
 public:
     enum Roles {
         ConnectionStateDisplayRole = Qt::UserRole+1,
-        ConnectionStateIconRole = Qt::UserRole+2,
-        ConnectionErrorMessageDisplayRole = Qt::UserRole+3,
-        ConnectionProtocolNameRole = Qt::UserRole+4
+        ConnectionStateIconRole,
+        ConnectionErrorMessageDisplayRole,
+        ConnectionProtocolNameRole,
+        AccountItemRole
     };
 
     explicit AccountsListModel(QObject *parent = 0);

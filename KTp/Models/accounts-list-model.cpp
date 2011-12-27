@@ -104,6 +104,10 @@ QVariant AccountsListModel::data(const QModelIndex &index, int role) const
         data = QVariant(m_accounts.at(index.row())->connectionProtocolName());
         break;
 
+    case AccountsListModel::AccountItemRole:
+        data = QVariant::fromValue<AccountItem*>(m_accounts.at(index.row()));
+        break;
+
     default:
         break;
     }
@@ -118,8 +122,8 @@ bool AccountsListModel::setData(const QModelIndex &index, const QVariant &value,
     }
     kDebug();
     if(role == Qt::CheckStateRole) {
-        m_accounts.at(index.row())->account()->setEnabled(value.toInt() == Qt::Checked);
-        kDebug() << "shit";
+        //this is index from QSortFilterProxyModel
+        index.data(AccountItemRole).value<AccountItem*>()->account()->setEnabled(value.toInt() == Qt::Checked);
         return true;
     }
 
@@ -230,7 +234,7 @@ void AccountsListModel::onAccountItemRemoved()
     endRemoveRows();
 
     // FIXME: Workaround until the KWidgetItemDelegate gets fixed (probably KDE 4.7)
-    reset();
+    //reset();
     delete item;
 }
 
