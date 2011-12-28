@@ -95,8 +95,10 @@ public:
         CustomRole // a placemark for custom roles in inherited models
     };
 
-    explicit AccountsModel(const Tp::AccountManagerPtr &am, QObject *parent = 0);
+    explicit AccountsModel(QObject *parent = 0);
     virtual ~AccountsModel();
+    
+    void setAccountManager(const Tp::AccountManagerPtr &am);
 
     virtual int rowCount(const QModelIndex &parent = QModelIndex()) const;
     virtual int columnCount(const QModelIndex &parent = QModelIndex()) const;

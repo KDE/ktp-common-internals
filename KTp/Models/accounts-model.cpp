@@ -28,10 +28,11 @@
 #include "accounts-model-item.h"
 #include "contact-model-item.h"
 
+#include <KDebug>
+
 struct AccountsModel::Private
 {
-    Private(const Tp::AccountManagerPtr &am)
-        : mAM(am)
+    Private()
     {
     }
 
@@ -47,9 +48,9 @@ TreeNode *AccountsModel::Private::node(const QModelIndex &index) const
     return node ? node : mTree;
 }
 
-AccountsModel::AccountsModel(const Tp::AccountManagerPtr &am, QObject *parent)
+AccountsModel::AccountsModel(QObject *parent)
     : QAbstractItemModel(parent),
-      mPriv(new AccountsModel::Private(am))
+      mPriv(new AccountsModel::Private())
 {
     mPriv->mTree = new TreeNode;
     connect(mPriv->mTree,
@@ -63,18 +64,7 @@ AccountsModel::AccountsModel(const Tp::AccountManagerPtr &am, QObject *parent)
     connect(mPriv->mTree,
             SIGNAL(childrenRemoved(TreeNode*,int,int)),
             SLOT(onItemsRemoved(TreeNode*,int,int)));
-
-    Q_FOREACH (Tp::AccountPtr account, mPriv->mAM->allAccounts()) {
-        AccountsModelItem *item = new AccountsModelItem(account);
-        connect(item, SIGNAL(connectionStatusChanged(QString,int)),
-                this, SIGNAL(accountConnectionStatusChanged(QString,int)));
-        mPriv->mTree->addChild(item);
-    }
-
-    connect(mPriv->mAM.data(),
-            SIGNAL(newAccount(Tp::AccountPtr)),
-            SLOT(onNewAccount(Tp::AccountPtr)));
-
+    
     QHash<int, QByteArray> roles;
     roles[ItemRole] = "item";
     roles[IdRole] = "id";
@@ -122,6 +112,25 @@ AccountsModel::~AccountsModel()
 {
     mPriv->mTree->deleteLater();
     delete mPriv;
+}
+
+void AccountsModel::setAccountManager(const Tp::AccountManagerPtr &am)
+{
+    if (! mPriv->mAM.isNull()) {
+        kDebug() << "account manager already set, ignoring";
+    }
+    
+    if (!am->isReady()) {
+        kDebug() << "Ready Account Manager expected";
+    }
+    mPriv->mAM = am;
+    Q_FOREACH (Tp::AccountPtr account, mPriv->mAM->allAccounts()) {
+       onNewAccount(account);
+    }
+    
+    connect(mPriv->mAM.data(),
+            SIGNAL(newAccount(Tp::AccountPtr)),
+            SLOT(onNewAccount(Tp::AccountPtr)));
 }
 
 void AccountsModel::onNewAccount(const Tp::AccountPtr &account)
@@ -249,6 +258,9 @@ Tp::AccountPtr AccountsModel::accountForContactItem(ContactModelItem *contactIte
 
 Tp::AccountPtr AccountsModel::accountPtrForPath(const QString& accountPath) const
 {
+    if (mPriv->mAM.isNull()) {
+        return Tp::AccountPtr();
+    }
     return mPriv->mAM->accountForPath(accountPath);
 }
 
