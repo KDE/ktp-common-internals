@@ -161,7 +161,7 @@ void AccountsListModel::addAccount(const Tp::AccountPtr &account)
     bool found = false;
 
     if (!found) {
-        foreach (const AccountItem* ai, m_accounts) {
+        Q_FOREACH (const AccountItem* ai, m_accounts) {
             if (ai->account() == account) {
                 found = true;
                 break;
