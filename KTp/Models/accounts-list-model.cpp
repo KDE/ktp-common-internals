@@ -244,12 +244,12 @@ void AccountsListModel::onAccountItemUpdated()
     }
 
     QModelIndex index = createIndex(m_accounts.lastIndexOf(item), 0);
-    emit dataChanged(index, index);
+    Q_EMIT dataChanged(index, index);
 }
 
 void AccountsListModel::onTitleForCustomPages(QString mandatoryPage, QList<QString> optionalPage)
 {
-    emit setTitleForCustomPages(mandatoryPage, optionalPage);
+    Q_EMIT setTitleForCustomPages(mandatoryPage, optionalPage);
 }
 
 
