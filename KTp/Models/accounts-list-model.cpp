@@ -67,7 +67,7 @@ QVariant AccountsListModel::data(const QModelIndex &index, int role) const
     QVariant data;
     Tp::AccountPtr account = m_accounts.at(index.row())->account();
 
-    switch(role) {
+    switch (role) {
     case Qt::DisplayRole:
         data = QVariant(account->displayName());
         break;
