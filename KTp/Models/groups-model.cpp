@@ -65,7 +65,6 @@ GroupsModel::GroupsModel(AccountsModel *am, QObject *parent)
     : QAbstractItemModel(parent),
       mPriv(new GroupsModel::Private(am))
 {
-
     mPriv->mTree = new TreeNode;
 
     connect(mPriv->mTree,
@@ -80,7 +79,13 @@ GroupsModel::GroupsModel(AccountsModel *am, QObject *parent)
             SIGNAL(childrenRemoved(TreeNode*,int,int)),
             SLOT(onItemsRemoved(TreeNode*,int,int)));
 
-    loadAccountsModel();
+    connect(am,
+            SIGNAL(rowsInserted(QModelIndex,int,int)),
+            SLOT(onSourceAccountAdded(QModelIndex,int,int)));
+    if (am->rowCount() > 0) {
+        onSourceAccountAdded(QModelIndex(), 0, am->rowCount()-1);
+    }
+
     QHash<int, QByteArray> roles;
     roles[GroupNameRole] = "groupName";
     setRoleNames(roles);
@@ -208,7 +213,7 @@ void GroupsModel::onItemsRemoved(TreeNode *parent, int first, int last)
 }
 
 
-void GroupsModel::onSourceItemsAdded(TreeNode *parent, const QList<TreeNode *> &nodes)
+void GroupsModel::onSourceContactsAdded(TreeNode *parent, const QList<TreeNode *> &nodes)
 {
     kDebug() << "Adding" << nodes.size() << "nodes...";
     QModelIndex parentIndex = index(parent);
@@ -220,41 +225,40 @@ void GroupsModel::onSourceItemsAdded(TreeNode *parent, const QList<TreeNode *> &
     }
 }
 
-void GroupsModel::onSourceItemsRemoved(TreeNode* parent, int first, int last)
+void GroupsModel::onSourceContactsRemoved(TreeNode* parent, int first, int last)
 {
     Q_UNUSED(parent);
     Q_UNUSED(first);
     Q_UNUSED(last);
 }
 
-void GroupsModel::loadAccountsModel()
+void GroupsModel::onSourceAccountAdded(const QModelIndex &parent, int start, int end)
 {
-    for (int x = 0; x < mPriv->mAM->rowCount(); x++) {
-        QModelIndex parent = mPriv->mAM->index(x, 0);
-        for (int i = 0; i < mPriv->mAM->rowCount(parent); i++) {
-            if (mPriv->mAM->data(mPriv->mAM->index(i, 0, parent),
-                                 AccountsModel::ItemRole).userType() == qMetaTypeId<ContactModelItem*>()) {
+    //only care about top level inclusion.
+    if (parent.isValid() ) {
+        return;
+    }
 
-                QStringList groups = mPriv->mAM->data(mPriv->mAM->index(i, 0, parent),
-                                                      AccountsModel::GroupsRole).toStringList();
-
-                ContactModelItem *contactItem = mPriv->mAM->data(mPriv->mAM->index(i, 0, parent),
-                                                                 AccountsModel::ItemRole).value<ContactModelItem*>();
-
-                addContactToGroups(contactItem, groups);
+    for (int i=start; i <= end; i++) {
+        AccountsModelItem *accountItem =mPriv->mAM->index(i).data(AccountsModel::ItemRole).value<AccountsModelItem*>();
+        if (accountItem) {
+            for (int i = 0; i < accountItem->size(); i++) {
+                ContactModelItem *contactItem= qobject_cast<ContactModelItem*>(accountItem->childAt(i));
+                if (contactItem) {
+                    qDebug() << "contact item found";
+                    QStringList groups = contactItem->data(AccountsModel::GroupsRole).toStringList();
+                    addContactToGroups(contactItem, groups);
+                }
             }
+
+            //we need to connect accounts onSourceContactsAdded/onSourceContactsRemoved to watch for changes
+            //and process them directly (directly add/remove the nodes)
+            connect(accountItem, SIGNAL(childrenAdded(TreeNode*,QList<TreeNode*>)),
+                    this, SLOT(onSourceContactsAdded(TreeNode*,QList<TreeNode*>)));
+
+            connect(accountItem, SIGNAL(childrenRemoved(TreeNode*,int,int)),
+                    this, SLOT(onSourceContactsRemoved(TreeNode*,int,int)));
         }
-
-        //we need to connect accounts onItemsAdded/onItemsRemoved to watch for changes
-        //and process them directly (directly add/remove the nodes)
-        AccountsModelItem *accountItem = mPriv->mAM->data(parent, AccountsModel::ItemRole).value<AccountsModelItem*>();
-        connect(accountItem, SIGNAL(childrenAdded(TreeNode*,QList<TreeNode*>)),
-                this, SLOT(onSourceItemsAdded(TreeNode*,QList<TreeNode*>)));
-
-        connect(accountItem, SIGNAL(childrenRemoved(TreeNode*,int,int)),
-                this, SLOT(onSourceItemsRemoved(TreeNode*,int,int)));
-
-        kDebug() << "Connecting" << accountItem->account()->displayName() << "to groups model";
 
     }
 }

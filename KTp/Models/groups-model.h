@@ -78,12 +78,12 @@ Q_SIGNALS:
 private Q_SLOTS:
 //     void onNewAccount(const Tp::AccountPtr &account);
     void onItemChanged(TreeNode *node);
-    void loadAccountsModel();
+    void onSourceAccountAdded(const QModelIndex &parent, int start, int end);
     void onItemsAdded(TreeNode *parent, const QList<TreeNode *> &nodes);
     void onItemsRemoved(TreeNode *parent, int first, int last);
 
-    void onSourceItemsAdded(TreeNode *parent, const QList<TreeNode *> &nodes);
-    void onSourceItemsRemoved(TreeNode *parent, int first, int last);
+    void onSourceContactsAdded(TreeNode *parent, const QList<TreeNode *> &nodes);
+    void onSourceContactsRemoved(TreeNode *parent, int first, int last);
     void onContactAddedToGroup(const QString &group);
     void onContactRemovedFromGroup(const QString &group);
 
