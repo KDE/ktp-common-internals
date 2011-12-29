@@ -31,12 +31,10 @@
 AccountsListModel::AccountsListModel(QObject *parent)
  : QAbstractListModel(parent)
 {
-    kDebug();
 }
 
 AccountsListModel::~AccountsListModel()
 {
-    kDebug();
 }
 
 int AccountsListModel::rowCount(const QModelIndex & parent) const
@@ -124,7 +122,6 @@ bool AccountsListModel::setData(const QModelIndex &index, const QVariant &value,
     if(!index.isValid()) {
         return false;
     }
-    kDebug();
     if(role == Qt::CheckStateRole) {
         //this is index from QSortFilterProxyModel
         index.data(AccountItemRole).value<AccountItem*>()->account()->setEnabled(value.toInt() == Qt::Checked);
@@ -193,8 +190,6 @@ void AccountsListModel::addAccount(const Tp::AccountPtr &account)
 
 void AccountsListModel::removeAccount(const QModelIndex &index)
 {
-    kDebug();
-
     if(!index.isValid()) {
         kDebug() << "Can't remove Account: Invalid index";
         return;
@@ -208,8 +203,6 @@ void AccountsListModel::removeAccount(const QModelIndex &index)
 
 AccountItem* AccountsListModel::itemForIndex(const QModelIndex &index)
 {
-    kDebug();
-
     if(!index.isValid()) {
         kWarning() << "Invalid index" << index;
         return 0;
@@ -221,8 +214,6 @@ AccountItem* AccountsListModel::itemForIndex(const QModelIndex &index)
 
 void AccountsListModel::onAccountItemRemoved()
 {
-    kDebug();
-
     AccountItem *item = qobject_cast<AccountItem*>(sender());
 
     Q_ASSERT(item);
@@ -244,8 +235,6 @@ void AccountsListModel::onAccountItemRemoved()
 
 void AccountsListModel::onAccountItemUpdated()
 {
-    kDebug();
-
     AccountItem *item = qobject_cast<AccountItem*>(sender());
 
     Q_ASSERT(item);
@@ -260,8 +249,6 @@ void AccountsListModel::onAccountItemUpdated()
 
 void AccountsListModel::onTitleForCustomPages(QString mandatoryPage, QList<QString> optionalPage)
 {
-    kDebug();
-
     emit setTitleForCustomPages(mandatoryPage, optionalPage);
 }
 
