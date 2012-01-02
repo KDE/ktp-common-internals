@@ -25,9 +25,9 @@
 #include <QtCore/QObject>
 #include <QtCore/QString>
 
-#include <TelepathyQt4/Contact>
-#include <TelepathyQt4/ContactCapabilities>
-#include <TelepathyQt4/Types>
+#include <TelepathyQt/Contact>
+#include <TelepathyQt/ContactCapabilities>
+#include <TelepathyQt/Types>
 
 /**
  * Abstract interface class for storage implementations. This allows fake storage classes to be used
@@ -74,7 +74,7 @@ public Q_SLOTS:
      * being invoked does not indicate that the Telepathy Account has actually been removed by the
      * user, simply that the object in the Telepathy Nepomuk Service that wraps the Account has
      * been destroyed.
-     * 
+     *
      * \param path the object path (unique identifier) of the account
      */
     virtual void destroyAccount(const QString &path) = 0;

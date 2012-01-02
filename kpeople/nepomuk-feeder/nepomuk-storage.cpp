@@ -24,8 +24,6 @@
 #include "nepomuk-storage.h"
 
 #include "ontologies/contactgroup.h"
-#include "ontologies/nco.h"
-#include "ontologies/pimo.h"
 #include "ontologies/telepathy.h"
 #include "ontologies/imcapability.h"
 #include "ontologies/personcontact.h"
@@ -43,6 +41,9 @@
 #include <Nepomuk/Thing>
 #include <Nepomuk/Variant>
 
+#include <Nepomuk/Vocabulary/NCO>
+#include <Nepomuk/Vocabulary/PIMO>
+
 #include <Nepomuk/Query/Query>
 #include <Nepomuk/Query/AndTerm>
 #include <Nepomuk/Query/ComparisonTerm>
@@ -56,8 +57,8 @@
 #include <QtCore/QSharedData>
 #include <QtCore/QTimer>
 
-#include <TelepathyQt4/Constants>
-#include <TelepathyQt4/AvatarData>
+#include <TelepathyQt/Constants>
+#include <TelepathyQt/AvatarData>
 
 using namespace Nepomuk::Vocabulary;
 

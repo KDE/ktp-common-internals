@@ -30,7 +30,7 @@
 
 #include <Nepomuk/ResourceManager>
 
-#include <TelepathyQt4/Types>
+#include <TelepathyQt/Types>
 
 TelepathyService::TelepathyService(QObject *parent, const QVariantList &)
     : Nepomuk::Service(parent, true)

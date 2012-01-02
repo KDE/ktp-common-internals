@@ -26,7 +26,7 @@
 
 #include <KDebug>
 
-#include <TelepathyQt4/PendingReady>
+#include <TelepathyQt/PendingReady>
 
 Controller::Controller(AbstractStorage *storage, QObject *parent)
  : QObject(parent),

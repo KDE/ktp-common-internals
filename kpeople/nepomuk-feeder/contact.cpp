@@ -21,10 +21,10 @@
 
 #include "contact.h"
 
-#include <TelepathyQt4/Connection>
-#include <TelepathyQt4/Contact>
-#include <TelepathyQt4/ContactCapabilities>
-#include <TelepathyQt4/ContactManager>
+#include <TelepathyQt/Connection>
+#include <TelepathyQt/Contact>
+#include <TelepathyQt/ContactCapabilities>
+#include <TelepathyQt/ContactManager>
 
 #include <KDebug>
 

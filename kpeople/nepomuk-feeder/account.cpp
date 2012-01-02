@@ -25,10 +25,10 @@
 
 #include <KDebug>
 
-#include <TelepathyQt4/ContactManager>
-#include <TelepathyQt4/PendingContacts>
-#include <TelepathyQt4/PendingOperation>
-#include <TelepathyQt4/PendingReady>
+#include <TelepathyQt/ContactManager>
+#include <TelepathyQt/PendingContacts>
+#include <TelepathyQt/PendingOperation>
+#include <TelepathyQt/PendingReady>
 
 Account::Account(const Tp::AccountPtr &account, QObject *parent)
  : QObject(parent),

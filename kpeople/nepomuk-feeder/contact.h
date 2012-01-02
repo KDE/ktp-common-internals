@@ -24,9 +24,9 @@
 
 #include <QtCore/QObject>
 
-#include <TelepathyQt4/Connection>
-#include <TelepathyQt4/Contact>
-#include <TelepathyQt4/Presence>
+#include <TelepathyQt/Connection>
+#include <TelepathyQt/Contact>
+#include <TelepathyQt/Presence>
 
 /**
  * This class wraps one Telepathy Contact.

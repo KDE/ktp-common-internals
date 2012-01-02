@@ -31,8 +31,8 @@
 #include <QtCore/QSharedDataPointer>
 #include <QtCore/QString>
 
-#include <TelepathyQt4/Contact>
-#include <TelepathyQt4/Types>
+#include <TelepathyQt/Contact>
+#include <TelepathyQt/Types>
 
 namespace Nepomuk {
     class ResourceManager;

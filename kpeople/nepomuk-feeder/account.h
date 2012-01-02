@@ -26,8 +26,8 @@
 
 #include <QtCore/QObject>
 
-#include <TelepathyQt4/Account>
-#include <TelepathyQt4/Connection>
+#include <TelepathyQt/Account>
+#include <TelepathyQt/Connection>
 
 namespace Tp {
     class PendingOperation;
