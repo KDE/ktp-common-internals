@@ -59,6 +59,7 @@
 
 #include <TelepathyQt/Constants>
 #include <TelepathyQt/AvatarData>
+#include <Soprano/Vocabulary/NAO>
 
 using namespace Nepomuk::Vocabulary;
 
@@ -817,6 +818,16 @@ void NepomukStorage::setContactAlias(const QString &path, const QString &id, con
     job->exec();
     if( job->error() ) {
         kWarning() << job->errorString();
+    }
+
+    if (!Nepomuk::Resource(resources.person()).hasProperty(Soprano::Vocabulary::NAO::prefLabel())) {
+        KJob *job = Nepomuk::setProperty( QList<QUrl>() << resources.person(), Soprano::Vocabulary::NAO::prefLabel(),
+                                          QVariantList() << alias );
+
+        job->exec();
+        if( job->error() ) {
+            kWarning() << job->errorString();
+        }
     }
 }
 
