@@ -761,7 +761,7 @@ void NepomukStorage::createContact(const QString &path, const QString &id)
     newImAccount.addType(Nepomuk::Vocabulary::NCO::IMAccount());
     newImAccount.setProperty(Nepomuk::Vocabulary::NCO::imStatus(), QString::fromLatin1("unknown"));
     newImAccount.setProperty(Nepomuk::Vocabulary::NCO::imID(), id);
-    newImAccount.setProperty(Nepomuk::Vocabulary::Telepathy::statusType(), Tp::ConnectionPresenceTypeUnknown);
+    newImAccount.setProperty(Nepomuk::Vocabulary::NCO::imStatusType(), Tp::ConnectionPresenceTypeUnknown);
     newImAccount.setProperty(Nepomuk::Vocabulary::NCO::imAccountType(), accountRes.protocol());
     newImAccount.addProperty(Nepomuk::Vocabulary::NCO::isAccessedBy(), accountUri);
 
