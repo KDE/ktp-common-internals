@@ -286,7 +286,7 @@ QModelIndex AccountsModel::index(int row, int column, const QModelIndex &parent)
 {
     TreeNode *parentNode = mPriv->node(parent);
     Q_ASSERT(parentNode);
-    if (row < parentNode->size()) {
+    if (row >= 0 && row < parentNode->size() && column == 0) {
         return createIndex(row, column, parentNode->childAt(row));
     }
 

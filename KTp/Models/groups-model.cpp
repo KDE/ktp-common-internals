@@ -138,7 +138,7 @@ bool GroupsModel::setData(const QModelIndex &index, const QVariant &value, int r
 QModelIndex GroupsModel::index(int row, int column, const QModelIndex &parent) const
 {
     TreeNode *parentNode = mPriv->node(parent);
-    if (row < parentNode->size()) {
+    if (row >= 0 && row < parentNode->size() && column == 0) {
         return createIndex(row, column, parentNode->childAt(row));
     }
 
