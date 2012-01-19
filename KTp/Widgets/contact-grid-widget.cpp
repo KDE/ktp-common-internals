@@ -49,21 +49,21 @@ KTp::ContactGridDelegate::~ContactGridDelegate()
 void KTp::ContactGridDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
     QStyle *style = QApplication::style();
-    int textHeight = option.fontMetrics.height()*2;
+    int textHeight = option.fontMetrics.height() * 2;
 
     style->drawPrimitive(QStyle::PE_PanelItemViewItem, &option, painter);
 
-    QRect avatarRect = option.rect.adjusted(0,0,0,-textHeight);
-    QRect textRect = option.rect.adjusted(0,option.rect.height()-textHeight,0,-3);
+    QRect avatarRect = option.rect.adjusted(0, 0, 0, -textHeight);
+    QRect textRect = option.rect.adjusted(0, option.rect.height() - textHeight, 0, -3);
 
     QPixmap avatar = index.data(Qt::DecorationRole).value<QPixmap>();
     if (avatar.isNull()) {
-        avatar = KIcon(QLatin1String("im-user-online")).pixmap(QSize(70,70));
+        avatar = KIcon(QLatin1String("im-user-online")).pixmap(QSize(70, 70));
     }
 
     //resize larger avatars
-    if (avatar.width() > 80 || avatar.height()> 80) {
-        avatar = avatar.scaled(QSize(80,80), Qt::KeepAspectRatio);
+    if (avatar.width() > 80 || avatar.height() > 80) {
+        avatar = avatar.scaled(QSize(80, 80), Qt::KeepAspectRatio);
         //draw leaving paddings on smaller (or non square) avatars
     }
     style->drawItemPixmap(painter, avatarRect, Qt::AlignCenter, avatar);
@@ -79,7 +79,7 @@ void KTp::ContactGridDelegate::paint(QPainter *painter, const QStyleOptionViewIt
 QSize KTp::ContactGridDelegate::sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
     Q_UNUSED(index);
-    int textHeight = option.fontMetrics.height()*2;
+    int textHeight = option.fontMetrics.height() * 2;
     return QSize(84, 80 + textHeight + 3);
 }
 

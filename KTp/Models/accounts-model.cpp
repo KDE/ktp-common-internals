@@ -64,7 +64,7 @@ AccountsModel::AccountsModel(QObject *parent)
     connect(mPriv->mTree,
             SIGNAL(childrenRemoved(TreeNode*,int,int)),
             SLOT(onItemsRemoved(TreeNode*,int,int)));
-    
+
     QHash<int, QByteArray> roles;
     roles[ItemRole] = "item";
     roles[IdRole] = "id";
@@ -119,7 +119,7 @@ void AccountsModel::setAccountManager(const Tp::AccountManagerPtr &am)
     if (! mPriv->mAM.isNull()) {
         kDebug() << "account manager already set, ignoring";
     }
-    
+
     if (!am->isReady()) {
         kDebug() << "Ready Account Manager expected";
     }
@@ -127,7 +127,7 @@ void AccountsModel::setAccountManager(const Tp::AccountManagerPtr &am)
     Q_FOREACH (Tp::AccountPtr account, mPriv->mAM->allAccounts()) {
        onNewAccount(account);
     }
-    
+
     connect(mPriv->mAM.data(),
             SIGNAL(newAccount(Tp::AccountPtr)),
             SLOT(onNewAccount(Tp::AccountPtr)));
