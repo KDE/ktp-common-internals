@@ -168,6 +168,7 @@ KTp::ContactGridWidget::ContactGridWidget(AccountsModel* model, QWidget *parent)
 
 KTp::ContactGridWidget::~ContactGridWidget()
 {
+    delete d;
 }
 
 bool KTp::ContactGridWidget::hasSelection() const
