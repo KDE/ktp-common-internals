@@ -36,14 +36,30 @@
 #include <KTp/Models/flat-model-proxy.h>
 
 
+class KTp::ContactGridDelegate::Private
+{
+public:
+    Private(KTp::ContactGridDelegate *parent)
+        : q(parent)
+    {
+    }
+
+    ~Private()
+    {
+    }
+
+    KTp::ContactGridDelegate *q;
+};
+
 KTp::ContactGridDelegate::ContactGridDelegate(QObject *parent)
     : QAbstractItemDelegate(parent),
-      d(0)
+      d(new KTp::ContactGridDelegate::Private(this))
 {
 }
 
 KTp::ContactGridDelegate::~ContactGridDelegate()
 {
+    delete d;
 }
 
 void KTp::ContactGridDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
