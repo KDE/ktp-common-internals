@@ -3,13 +3,11 @@ include_directories (${CMAKE_CURRENT_BINARY_DIR}
 )
 
 set (ktp_widgets_private_SRCS
-    flat-model-proxy.cpp
     contact-grid-widget.cpp
 )
 
 set (ktp_widgets_private_HDRS
-#    flat-model-proxy.h
-    contact-grid-widget.h
+     contact-grid-widget.h
 )
 
 kde4_add_library (ktpwidgetsprivate SHARED

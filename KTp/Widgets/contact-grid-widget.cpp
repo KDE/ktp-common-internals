@@ -19,7 +19,6 @@
 
 
 #include "contact-grid-widget.h"
-#include "flat-model-proxy.h"
 
 #include <KDE/KIcon>
 #include <KDE/KLineEdit>
@@ -34,6 +33,7 @@
 #include <KTp/Models/accounts-model.h>
 #include <KTp/Models/accounts-filter-model.h>
 #include <KTp/Models/contact-model-item.h>
+#include <KTp/Models/flat-model-proxy.h>
 
 
 KTp::ContactGridDelegate::ContactGridDelegate(QObject *parent)
