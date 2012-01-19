@@ -46,6 +46,8 @@ public:
       */
     void setAccountManager(const Tp::AccountManagerPtr &accountManager);
 
+    /** Returns connecting if any account is connecting, else connected if at least one account is connected, disconnected otherwise*/
+    Tp::ConnectionStatus connectionStatus() const;
 
     /** The most online presence of any account*/
     Presence currentPresence() const;
@@ -66,6 +68,7 @@ Q_SIGNALS:
     void requestedPresenceChanged(const KTp::Presence &customPresence);
     void currentPresenceChanged(const KTp::Presence &presence);
     void changingPresence(bool isChanging);
+    void connectionStatusChanged(Tp::ConnectionStatus);
 
 public Q_SLOTS:
     /** Set all enabled accounts to the specified presence*/
@@ -80,6 +83,7 @@ private Q_SLOTS:
     void onCurrentPresenceChanged();
     void onRequestedPresenceChanged();
     void onChangingPresence();
+    void onConnectionStatusChanged();
 
     void onAccountAdded(const Tp::AccountPtr &account);
 
@@ -93,6 +97,8 @@ private:
     KTp::Presence m_requestedPresence;
     /** A cache of the last sent presence*/
     KTp::Presence m_currentPresence;
+
+    Tp::ConnectionStatus m_connectionStatus;
     bool m_changingPresence;
 };
 

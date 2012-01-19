@@ -59,6 +59,11 @@ void GlobalPresence::setAccountManager(const Tp::AccountManagerPtr &accountManag
 }
 
 
+Tp::ConnectionStatus GlobalPresence::connectionStatus() const
+{
+    return m_connectionStatus;
+}
+
 Presence GlobalPresence::currentPresence() const
 {
     return m_currentPresence;
@@ -83,6 +88,7 @@ void GlobalPresence::setPresence(const Tp::Presence &presence)
 
 void GlobalPresence::onAccountAdded(const Tp::AccountPtr &account)
 {
+    connect(account.data(), SIGNAL(connectionStatusChanged(Tp::ConnectionStatus)), SLOT(onConnectionStatusChanged()));
     connect(account.data(), SIGNAL(changingPresence(bool)), SLOT(onChangingPresence()));
     connect(account.data(), SIGNAL(requestedPresenceChanged(Tp::Presence)), SLOT(onRequestedPresenceChanged()));
     connect(account.data(), SIGNAL(currentPresenceChanged(Tp::Presence)), SLOT(onCurrentPresenceChanged()));
@@ -139,6 +145,34 @@ void GlobalPresence::onChangingPresence()
     }
 }
 
+void GlobalPresence::onConnectionStatusChanged()
+{
+    Tp::ConnectionStatus connectionStatus = Tp::ConnectionStatusDisconnected;
+
+    Q_FOREACH(const Tp::AccountPtr &account, m_enabledAccounts->accounts()) {
+        switch (account->connectionStatus()) {
+        case Tp::ConnectionStatusConnecting:
+            //connecting is the highest state, use this always
+            connectionStatus = Tp::ConnectionStatusConnecting;
+            break;
+        case Tp::ConnectionStatusConnected:
+            //only set to connected if we're not at connecting
+            if (connectionStatus == Tp::ConnectionStatusDisconnected) {
+                connectionStatus = Tp::ConnectionStatusConnected;
+            }
+            break;
+        default:
+            break;
+        }
+    }
+
+    if (connectionStatus != m_connectionStatus) {
+        m_connectionStatus = connectionStatus;
+        Q_EMIT connectionStatusChanged(m_connectionStatus);
+    }
+}
+
+
 bool GlobalPresence::hasEnabledAccounts() const
 {
     if (m_enabledAccounts->accounts().isEmpty()) {
@@ -166,5 +200,6 @@ Tp::AccountSetPtr GlobalPresence::onlineAccounts() const
 }
 
 }
+
 
 #include "global-presence.moc"
