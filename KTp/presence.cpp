@@ -21,6 +21,7 @@
 #include "presence.h"
 
 #include <KLocalizedString>
+#include <KIconLoader>
 
 namespace KTp
 {
@@ -35,21 +36,33 @@ Presence::Presence(const Tp::Presence &presence) :
 {
 }
 
-KIcon Presence::icon() const
+KIcon Presence::icon(QStringList overlays) const
 {
     switch (type()) {
     case Tp::ConnectionPresenceTypeAvailable:
-        return KIcon(QLatin1String("user-online"));
+        return KIcon(QLatin1String("user-online"),
+                     KIconLoader::global(),
+                     overlays);
     case Tp::ConnectionPresenceTypeBusy:
-        return KIcon(QLatin1String("user-busy"));
+        return KIcon(QLatin1String("user-busy"),
+                     KIconLoader::global(),
+                     overlays);
     case Tp::ConnectionPresenceTypeAway:
-        return KIcon(QLatin1String("user-away"));
+        return KIcon(QLatin1String("user-away"),
+                     KIconLoader::global(),
+                     overlays);
     case Tp::ConnectionPresenceTypeExtendedAway:
-        return KIcon(QLatin1String("user-away-extended"));
+        return KIcon(QLatin1String("user-away-extended"),
+                     KIconLoader::global(),
+                     overlays);
     case Tp::ConnectionPresenceTypeHidden:
-        return KIcon(QLatin1String("user-invisible"));
+        return KIcon(QLatin1String("user-invisible"),
+                     KIconLoader::global(),
+                     overlays);
     case Tp::ConnectionPresenceTypeOffline:
-        return KIcon(QLatin1String("user-offline"));
+        return KIcon(QLatin1String("user-offline"),
+                     KIconLoader::global(),
+                     overlays);
     default:
         return KIcon();
     }
