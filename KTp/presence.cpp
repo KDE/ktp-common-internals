@@ -46,7 +46,7 @@ KIcon Presence::icon(bool useImIcons) const
     case Tp::ConnectionPresenceTypeExtendedAway:
     case Tp::ConnectionPresenceTypeHidden:
     case Tp::ConnectionPresenceTypeOffline:
-        return KIcon(iconString(useImIcons));
+        return KIcon(iconName(useImIcons));
     default:
         return KIcon();
     }
@@ -60,7 +60,7 @@ KIcon Presence::icon(QStringList overlays, bool useImIcons) const
     case Tp::ConnectionPresenceTypeExtendedAway:
     case Tp::ConnectionPresenceTypeHidden:
     case Tp::ConnectionPresenceTypeOffline:
-        return KIcon(iconString(useImIcons),
+        return KIcon(iconName(useImIcons),
                      KIconLoader::global(),
                      overlays);
     default:
@@ -68,7 +68,7 @@ KIcon Presence::icon(QStringList overlays, bool useImIcons) const
     }
 }
 
-QString Presence::iconString(bool useImIcons) const
+QString Presence::iconName(bool useImIcons) const
 {
     switch (type()) {
     case Tp::ConnectionPresenceTypeAvailable:
