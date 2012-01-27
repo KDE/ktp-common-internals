@@ -36,6 +36,20 @@ Presence::Presence(const Tp::Presence &presence) :
 {
 }
 
+KIcon Presence::icon(bool useImIcons) const
+{
+    switch (type()) {
+    case Tp::ConnectionPresenceTypeAvailable:
+    case Tp::ConnectionPresenceTypeBusy:
+    case Tp::ConnectionPresenceTypeAway:
+    case Tp::ConnectionPresenceTypeExtendedAway:
+    case Tp::ConnectionPresenceTypeHidden:
+    case Tp::ConnectionPresenceTypeOffline:
+        return KIcon(iconString(useImIcons));
+    default:
+        return KIcon();
+    }
+}
 KIcon Presence::icon(QStringList overlays, bool useImIcons) const
 {
     switch (type()) {
