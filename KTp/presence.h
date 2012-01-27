@@ -36,16 +36,50 @@ class KTP_EXPORT Presence : public Tp::Presence
 public:
     Presence();
     Presence(const Tp::Presence &presence);
+
+    /**
+     * \brief Get the icon for the presence.
+     *
+     * \param useImIcons Use im-user-* icons instead of the user-* (i.e. the "pawn" icons instead of the "circles").
+     * \return The icon for the current presence.
+     */
     KIcon icon(bool useImIcons = false) const;
+
+    /**
+     * \brief Get the icon for the presence with the specified overlays.
+     *
+     * \param overlays The overlays to apply at the icon.
+     * \param useImIcons Use im-user-* icons instead of the user-* (i.e. the "pawn" icons instead of the "circles").
+     * \return The icon for the current presence.
+     */
     KIcon icon(QStringList overlays, bool useImIcons = false) const;
+
+    /**
+     * \brief Get the name of the icon for the presence.
+     *
+     * This is useful for example if you want to create an icon using the presence as overlay.
+     * \param useImIcons Use im-user-* icons instead of the user-* (i.e. the "pawn" icons instead of the "circles").
+     * \return The name of the icon for the current presence.
+     */
     QString iconName(bool useImIcons = false) const;
 
-    /** Returns which presence is "more available" */
-    bool operator <(const Presence &other) const;
-
+    /**
+     * \brief Get a i18n string representing the presence.
+     *
+     * \return An i18n string representing the presence.
+     */
     QString displayString() const;
 
-    /** Returns an int representation of the presence type sorted by priority. 0 - most online, 7 - offline */
+    /**
+     * \brief Returns which presence is "more available"
+     */
+    bool operator <(const Presence &other) const;
+
+    /**
+     * \brief Returns an int representation of the presence type sorted by priority.
+     *
+     * 0 - most online, 7 - offline
+     */
     static int sortPriority(const Tp::ConnectionPresenceType &type);
 };
 
