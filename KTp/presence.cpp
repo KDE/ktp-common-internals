@@ -2,6 +2,7 @@
  * Global Presence - wrap Tp::Presence with KDE functionality
  *
  * Copyright (C) 2011 David Edmundson <kde@davidedmundson.co.uk>
+ * Copyright (C) 2012 Daniele E. Domenichelli <daniele.domenichelli@gmail.com>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -21,6 +22,7 @@
 #include "presence.h"
 
 #include <KLocalizedString>
+#include <KIconLoader>
 
 namespace KTp
 {
@@ -35,23 +37,55 @@ Presence::Presence(const Tp::Presence &presence) :
 {
 }
 
-KIcon Presence::icon() const
+KIcon Presence::icon(bool useImIcons) const
 {
     switch (type()) {
     case Tp::ConnectionPresenceTypeAvailable:
-        return KIcon(QLatin1String("user-online"));
     case Tp::ConnectionPresenceTypeBusy:
-        return KIcon(QLatin1String("user-busy"));
     case Tp::ConnectionPresenceTypeAway:
-        return KIcon(QLatin1String("user-away"));
     case Tp::ConnectionPresenceTypeExtendedAway:
-        return KIcon(QLatin1String("user-away-extended"));
     case Tp::ConnectionPresenceTypeHidden:
-        return KIcon(QLatin1String("user-invisible"));
     case Tp::ConnectionPresenceTypeOffline:
-        return KIcon(QLatin1String("user-offline"));
+        return KIcon(iconName(useImIcons));
     default:
         return KIcon();
+    }
+}
+KIcon Presence::icon(QStringList overlays, bool useImIcons) const
+{
+    switch (type()) {
+    case Tp::ConnectionPresenceTypeAvailable:
+    case Tp::ConnectionPresenceTypeBusy:
+    case Tp::ConnectionPresenceTypeAway:
+    case Tp::ConnectionPresenceTypeExtendedAway:
+    case Tp::ConnectionPresenceTypeHidden:
+    case Tp::ConnectionPresenceTypeOffline:
+        return KIcon(iconName(useImIcons),
+                     KIconLoader::global(),
+                     overlays);
+    default:
+        return KIcon();
+    }
+}
+
+QString Presence::iconName(bool useImIcons) const
+{
+    switch (type()) {
+    case Tp::ConnectionPresenceTypeAvailable:
+        return useImIcons ? QLatin1String("im-user") : QLatin1String("user-online");
+    case Tp::ConnectionPresenceTypeBusy:
+        return useImIcons ? QLatin1String("im-user-busy") : QLatin1String("user-busy");
+    case Tp::ConnectionPresenceTypeAway:
+        return useImIcons ? QLatin1String("im-user-away") : QLatin1String("user-away");
+    case Tp::ConnectionPresenceTypeExtendedAway:
+        // FIXME Request an icon "im-user-away-extended"
+        return useImIcons ? QLatin1String("im-user-away") : QLatin1String("user-away-extended");
+    case Tp::ConnectionPresenceTypeHidden:
+        return useImIcons ? QLatin1String("im-invisible-user") : QLatin1String("user-invisible");
+    case Tp::ConnectionPresenceTypeOffline:
+        return useImIcons ? QLatin1String("im-user-offline") : QLatin1String("user-offline");
+    default:
+        return QString();
     }
 }
 
