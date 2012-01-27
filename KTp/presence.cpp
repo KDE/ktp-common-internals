@@ -36,31 +36,16 @@ Presence::Presence(const Tp::Presence &presence) :
 {
 }
 
-KIcon Presence::icon(QStringList overlays) const
+KIcon Presence::icon(QStringList overlays, bool useImIcons) const
 {
     switch (type()) {
     case Tp::ConnectionPresenceTypeAvailable:
-        return KIcon(QLatin1String("user-online"),
-                     KIconLoader::global(),
-                     overlays);
     case Tp::ConnectionPresenceTypeBusy:
-        return KIcon(QLatin1String("user-busy"),
-                     KIconLoader::global(),
-                     overlays);
     case Tp::ConnectionPresenceTypeAway:
-        return KIcon(QLatin1String("user-away"),
-                     KIconLoader::global(),
-                     overlays);
     case Tp::ConnectionPresenceTypeExtendedAway:
-        return KIcon(QLatin1String("user-away-extended"),
-                     KIconLoader::global(),
-                     overlays);
     case Tp::ConnectionPresenceTypeHidden:
-        return KIcon(QLatin1String("user-invisible"),
-                     KIconLoader::global(),
-                     overlays);
     case Tp::ConnectionPresenceTypeOffline:
-        return KIcon(QLatin1String("user-offline"),
+        return KIcon(iconString(useImIcons),
                      KIconLoader::global(),
                      overlays);
     default:
@@ -68,21 +53,22 @@ KIcon Presence::icon(QStringList overlays) const
     }
 }
 
-QString Presence::iconString() const
+QString Presence::iconString(bool useImIcons) const
 {
     switch (type()) {
     case Tp::ConnectionPresenceTypeAvailable:
-        return QLatin1String("user-online");
+        return useImIcons ? QLatin1String("im-user") : QLatin1String("user-online");
     case Tp::ConnectionPresenceTypeBusy:
-        return QLatin1String("user-busy");
+        return useImIcons ? QLatin1String("im-user-busy") : QLatin1String("user-busy");
     case Tp::ConnectionPresenceTypeAway:
-        return QLatin1String("user-away");
+        return useImIcons ? QLatin1String("im-user-away") : QLatin1String("user-away");
     case Tp::ConnectionPresenceTypeExtendedAway:
-        return QLatin1String("user-away-extended");
+        // FIXME Request an icon "im-user-away-extended"
+        return useImIcons ? QLatin1String("im-user-away") : QLatin1String("user-away-extended");
     case Tp::ConnectionPresenceTypeHidden:
-        return QLatin1String("user-invisible");
+        return useImIcons ? QLatin1String("im-invisible-user") : QLatin1String("user-invisible");
     case Tp::ConnectionPresenceTypeOffline:
-        return QLatin1String("user-offline");
+        return useImIcons ? QLatin1String("im-user-offline") : QLatin1String("user-offline");
     default:
         return QString();
     }

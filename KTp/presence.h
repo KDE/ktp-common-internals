@@ -35,8 +35,8 @@ class KTP_EXPORT Presence : public Tp::Presence
 public:
     Presence();
     Presence(const Tp::Presence &presence);
-    KIcon icon(QStringList overlays = QStringList()) const;
-    QString iconString() const;
+    KIcon icon(QStringList overlays = QStringList(), bool useImIcons = false) const;
+    QString iconString(bool useImIcons = false) const;
 
     /** Returns which presence is "more available" */
     bool operator <(const Presence &other) const;
