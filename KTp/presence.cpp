@@ -39,33 +39,21 @@ Presence::Presence(const Tp::Presence &presence) :
 
 KIcon Presence::icon(bool useImIcons) const
 {
-    switch (type()) {
-    case Tp::ConnectionPresenceTypeAvailable:
-    case Tp::ConnectionPresenceTypeBusy:
-    case Tp::ConnectionPresenceTypeAway:
-    case Tp::ConnectionPresenceTypeExtendedAway:
-    case Tp::ConnectionPresenceTypeHidden:
-    case Tp::ConnectionPresenceTypeOffline:
-        return KIcon(iconName(useImIcons));
-    default:
-        return KIcon();
+    const QString &name(iconName(useImIcons));
+    if (!name.isEmpty()) {
+        return KIcon(name);
     }
+    return KIcon();
 }
 KIcon Presence::icon(QStringList overlays, bool useImIcons) const
 {
-    switch (type()) {
-    case Tp::ConnectionPresenceTypeAvailable:
-    case Tp::ConnectionPresenceTypeBusy:
-    case Tp::ConnectionPresenceTypeAway:
-    case Tp::ConnectionPresenceTypeExtendedAway:
-    case Tp::ConnectionPresenceTypeHidden:
-    case Tp::ConnectionPresenceTypeOffline:
-        return KIcon(iconName(useImIcons),
+    const QString &name(iconName(useImIcons));
+    if (!name.isEmpty()) {
+        return KIcon(name,
                      KIconLoader::global(),
                      overlays);
-    default:
-        return KIcon();
     }
+    return KIcon();
 }
 
 QString Presence::iconName(bool useImIcons) const
