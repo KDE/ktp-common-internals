@@ -36,6 +36,7 @@ public:
     Presence();
     Presence(const Tp::Presence &presence);
     KIcon icon(QStringList overlays = QStringList()) const;
+    QString iconString() const;
 
     /** Returns which presence is "more available" */
     bool operator <(const Presence &other) const;

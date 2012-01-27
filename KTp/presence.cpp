@@ -68,6 +68,26 @@ KIcon Presence::icon(QStringList overlays) const
     }
 }
 
+QString Presence::iconString() const
+{
+    switch (type()) {
+    case Tp::ConnectionPresenceTypeAvailable:
+        return QLatin1String("user-online");
+    case Tp::ConnectionPresenceTypeBusy:
+        return QLatin1String("user-busy");
+    case Tp::ConnectionPresenceTypeAway:
+        return QLatin1String("user-away");
+    case Tp::ConnectionPresenceTypeExtendedAway:
+        return QLatin1String("user-away-extended");
+    case Tp::ConnectionPresenceTypeHidden:
+        return QLatin1String("user-invisible");
+    case Tp::ConnectionPresenceTypeOffline:
+        return QLatin1String("user-offline");
+    default:
+        return QString();
+    }
+}
+
 bool Presence::operator <(const Presence &other) const
 {
     if (sortPriority(type()) < sortPriority(other.type())) {
