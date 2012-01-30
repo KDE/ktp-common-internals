@@ -20,14 +20,12 @@
 #ifndef MESSAGES_MODEL_H
 #define MESSAGES_MODEL_H
 
-#include "ktpchat_export.h"
-
 #include <QAbstractItemModel>
 #include <TelepathyQt/TextChannel>
 #include "conversation-que-manager.h"
 
 
-class KDE_TELEPATHY_CHAT_EXPORT MessagesModel : public QAbstractListModel, public Queable
+class MessagesModel : public QAbstractListModel, public Queable
 {
     Q_OBJECT
     Q_PROPERTY(bool visibleToUser READ isVisibleToUser WRITE setVisibleToUser NOTIFY visibleToUserChanged);
