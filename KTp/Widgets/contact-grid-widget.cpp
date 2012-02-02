@@ -74,12 +74,10 @@ void KTp::ContactGridDelegate::paint(QPainter *painter, const QStyleOptionViewIt
 
     QPixmap avatar = index.data(Qt::DecorationRole).value<QPixmap>();
     if (avatar.isNull()) {
-        avatar = KIcon(QLatin1String("im-user-online")).pixmap(QSize(70, 70));
-    }
-
-    //resize larger avatars
-    if (avatar.width() > 80 || avatar.height() > 80) {
-        avatar = avatar.scaled(QSize(80, 80), Qt::KeepAspectRatio);
+        avatar = KIcon(QLatin1String("im-user-online")).pixmap(option.decorationSize);
+    } else if (avatar.width() > option.decorationSize.width() || avatar.height() > option.decorationSize.height()) {
+        //resize larger avatars if required
+        avatar = avatar.scaled(option.decorationSize, Qt::KeepAspectRatio);
         //draw leaving paddings on smaller (or non square) avatars
     }
     style->drawItemPixmap(painter, avatarRect, Qt::AlignCenter, avatar);
@@ -96,7 +94,7 @@ QSize KTp::ContactGridDelegate::sizeHint(const QStyleOptionViewItem &option, con
 {
     Q_UNUSED(index);
     int textHeight = option.fontMetrics.height() * 2;
-    return QSize(84, 80 + textHeight + 3);
+    return QSize(option.decorationSize.width() + 4, option.decorationSize.height() + textHeight + 3);
 }
 
 // -----------------------------------------------------------------------------
@@ -140,7 +138,6 @@ void KTp::ContactGridWidget::Private::_k_onSelectionChanged(QItemSelection newSe
         return;
     }
 
-    kDebug() << "Emitting selectionChanged" << q->selectedAccount()->displayName() << q->selectedContact()->alias();
     Q_EMIT q->selectionChanged(q->selectedAccount(), q->selectedContact());
 }
 
@@ -160,6 +157,7 @@ KTp::ContactGridWidget::ContactGridWidget(AccountsModel* model, QWidget *parent)
     d->contactGridView->setResizeMode(QListView::Adjust);
     d->contactGridView->setSpacing(5);
     d->contactGridView->setViewMode(QListView::IconMode);
+    d->contactGridView->setIconSize(QSize(80, 80));
 
     d->contactFilterLineEdit->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
     d->contactFilterLineEdit->setClearButtonShown(true);
@@ -170,7 +168,7 @@ KTp::ContactGridWidget::ContactGridWidget(AccountsModel* model, QWidget *parent)
     setLayout(d->layout);
 
     d->contactGridView->setModel(d->flatProxyModel);
-    d->contactGridView->setItemDelegate(new ContactGridDelegate(this));
+    d->contactGridView->setItemDelegate(new ContactGridDelegate(d->contactGridView));
 
     connect(d->contactGridView->selectionModel(),
             SIGNAL(selectionChanged(QItemSelection,QItemSelection)),
@@ -179,12 +177,78 @@ KTp::ContactGridWidget::ContactGridWidget(AccountsModel* model, QWidget *parent)
     connect(d->contactFilterLineEdit,
             SIGNAL(textChanged(QString)),
             d->filterModel,
-            SLOT(setFilterString(QString)));
+            SLOT(setDisplayNameFilterString(QString)));
 }
 
 KTp::ContactGridWidget::~ContactGridWidget()
 {
     delete d;
+}
+
+bool KTp::ContactGridWidget::isDisplayNameFilterBarShown() const
+{
+    return !d->contactFilterLineEdit->isHidden();
+}
+
+bool KTp::ContactGridWidget::isDisplayNameFilterBarHidden() const
+{
+    return !isDisplayNameFilterBarShown();
+}
+
+void KTp::ContactGridWidget::setDisplayNameFilterBarShown(bool displayNameFilterBarShown)
+{
+    if (displayNameFilterBarShown != isDisplayNameFilterBarShown()) {
+        clearDisplayNameFilter();
+        d->contactFilterLineEdit->setShown(displayNameFilterBarShown);
+        Q_EMIT displayNameFilterBarShownChanged(displayNameFilterBarShown);
+    }
+}
+
+void KTp::ContactGridWidget::setDisplayNameFilterBarHidden(bool displayNameFilterBarHidden)
+{
+    setDisplayNameFilterBarShown(!displayNameFilterBarHidden);
+}
+
+void KTp::ContactGridWidget::showDisplayNameFilterBar()
+{
+    setDisplayNameFilterBarShown(true);
+}
+
+void KTp::ContactGridWidget::hideDisplayNameFilterBar()
+{
+    setDisplayNameFilterBarShown(false);
+}
+
+QString KTp::ContactGridWidget::displayNameFilter() const
+{
+    return d->contactFilterLineEdit->text();
+}
+
+void KTp::ContactGridWidget::clearDisplayNameFilter()
+{
+    setDisplayNameFilter(QString());
+}
+
+void KTp::ContactGridWidget::setDisplayNameFilter(const QString& displayNameFilter)
+{
+    if (displayNameFilter != d->contactFilterLineEdit->text()) {
+        d->contactFilterLineEdit->setText(displayNameFilter);
+        Q_EMIT displayNameFilterChanged(displayNameFilter);
+    }
+}
+
+QSize KTp::ContactGridWidget::iconSize() const
+{
+    return d->contactGridView->iconSize();
+}
+
+void KTp::ContactGridWidget::setIconSize(const QSize& iconSize)
+{
+    kDebug();
+    if (iconSize != d->contactGridView->iconSize()) {
+        d->contactGridView->setIconSize(iconSize);
+        Q_EMIT iconSizeChanged(iconSize);
+    }
 }
 
 bool KTp::ContactGridWidget::hasSelection() const
@@ -202,35 +266,9 @@ Tp::ContactPtr KTp::ContactGridWidget::selectedContact() const
     return d->contactGridView->currentIndex().data(AccountsModel::ItemRole).value<ContactModelItem*>()->contact();
 }
 
-void KTp::ContactGridWidget::setShowOfflineUsers(bool showOfflineUsers)
+AccountsFilterModel* KTp::ContactGridWidget::filter() const
 {
-    d->filterModel->setShowOfflineUsers(showOfflineUsers);
-}
-
-void KTp::ContactGridWidget::setFilterByFileTransferCapability(bool filterByFileTransferCapability)
-{
-    d->filterModel->setFilterByFileTransferCapability(filterByFileTransferCapability);
-}
-
-void KTp::ContactGridWidget::setNameFilterBarShown(bool nameFilterBarShown)
-{
-    d->contactFilterLineEdit->clear();
-    d->contactFilterLineEdit->setShown(nameFilterBarShown);
-}
-
-void KTp::ContactGridWidget::showNameFilterBar()
-{
-    setNameFilterBarShown(true);
-}
-
-void KTp::ContactGridWidget::hideNameFilterBar()
-{
-    setNameFilterBarShown(false);
-}
-
-void KTp::ContactGridWidget::setNameFilter(const QString& nameFilter)
-{
-    d->contactFilterLineEdit->setText(nameFilter);
+    return d->filterModel;
 }
 
 

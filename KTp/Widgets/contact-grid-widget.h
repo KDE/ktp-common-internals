@@ -27,9 +27,9 @@
 #include <KTp/ktp-export.h>
 
 class AccountsModel;
+class AccountsFilterModel;
 namespace KTp
 {
-
 
 class ContactGridDelegate : public QAbstractItemDelegate
 {
@@ -54,23 +54,45 @@ class KTP_EXPORT ContactGridWidget : public QWidget
     Q_OBJECT
     Q_DISABLE_COPY(ContactGridWidget)
 
-    Q_PRIVATE_SLOT(d, void _k_onSelectionChanged(QItemSelection,QItemSelection));
+    Q_PROPERTY(bool displayNameFilterBarShown
+               READ isDisplayNameFilterBarShown
+               WRITE setDisplayNameFilterBarShown
+               NOTIFY displayNameFilterBarShownChanged)
+    Q_PROPERTY(QString displayNameFilter
+               READ displayNameFilter
+               RESET clearDisplayNameFilter
+               WRITE setDisplayNameFilter)
+    Q_PROPERTY(QSize iconSize
+               READ iconSize
+               WRITE setIconSize
+               NOTIFY iconSizeChanged)
 
 public:
-   explicit ContactGridWidget(AccountsModel *model, QWidget *parent = 0);
-   virtual ~ContactGridWidget();
+    explicit ContactGridWidget(AccountsModel *model, QWidget *parent = 0);
+    virtual ~ContactGridWidget();
+
+    virtual bool isDisplayNameFilterBarShown() const;
+    virtual bool isDisplayNameFilterBarHidden() const;
+    Q_SLOT virtual void setDisplayNameFilterBarShown(bool displayNameFilterBarShown);
+    Q_SLOT virtual void setDisplayNameFilterBarHidden(bool displayNameFilterBarHidden);
+    Q_SLOT virtual void showDisplayNameFilterBar();
+    Q_SLOT virtual void hideDisplayNameFilterBar();
+    Q_SIGNAL void displayNameFilterBarShownChanged(bool displayNameFilterBarShown);
+
+    virtual QString displayNameFilter() const;
+    Q_SLOT virtual void clearDisplayNameFilter();
+    Q_SLOT virtual void setDisplayNameFilter(const QString &displayNameFilter);
+    Q_SIGNAL void displayNameFilterChanged(const QString &displayNameFilter);
+
+    virtual QSize iconSize() const;
+    Q_SLOT virtual void setIconSize(const QSize &iconSize);
+    Q_SIGNAL void iconSizeChanged(const QSize &iconSize);
+
+    virtual AccountsFilterModel* filter() const;
 
     virtual bool hasSelection() const;
     virtual Tp::AccountPtr selectedAccount() const;
     virtual Tp::ContactPtr selectedContact() const;
-
-    virtual void setShowOfflineUsers(bool showOfflineUsers);
-    virtual void setFilterByFileTransferCapability(bool filterByFileTransferCapability);
-
-    virtual void showNameFilterBar();
-    virtual void hideNameFilterBar();
-    virtual void setNameFilterBarShown(bool filterbarShown);
-    virtual void setNameFilter(const QString &nameFilter);
 
 Q_SIGNALS:
     void selectionChanged(Tp::AccountPtr selectedAccount, Tp::ContactPtr selectedContact);
@@ -78,6 +100,8 @@ Q_SIGNALS:
 private:
     class Private;
     Private * const d;
+
+    Q_PRIVATE_SLOT(d, void _k_onSelectionChanged(QItemSelection,QItemSelection));
 
 }; // class ContactGridWidget
 
