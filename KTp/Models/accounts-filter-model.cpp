@@ -41,12 +41,11 @@ public:
           presenceTypeFilterFlags(DoNotFilterByCapability),
           capabilityFilterFlags(DoNotFilterByCapability),
           subscriptionStateFilterFlags(DoNotFilterBySubscription),
-          globalFilterMatchFlags(Qt::MatchStartsWith | Qt::MatchWrap),
-//           displayNameFilterMatchFlags(Qt::MatchStartsWith | Qt::MatchWrap),
-          displayNameFilterMatchFlags(Qt::MatchContains | Qt::MatchWrap),
-          nicknameFilterMatchFlags(Qt::MatchStartsWith | Qt::MatchWrap),
-          aliasFilterMatchFlags(Qt::MatchStartsWith | Qt::MatchWrap),
-          groupsFilterMatchFlags(Qt::MatchStartsWith | Qt::MatchWrap)
+          globalFilterMatchFlags(Qt::MatchContains),
+          displayNameFilterMatchFlags(Qt::MatchContains),
+          nicknameFilterMatchFlags(Qt::MatchContains),
+          aliasFilterMatchFlags(Qt::MatchContains),
+          groupsFilterMatchFlags(Qt::MatchContains)
     {
     }
 
