@@ -23,6 +23,14 @@
 #include <Plasma/Applet>
 #include <Plasma/DeclarativeWidget>
 
+#include <TelepathyQt4/Types>
+
+class AccountsModel;
+
+namespace Tp {
+class PendingOperation;
+}
+
 class TelepathyContactList : public Plasma::Applet
 {
     Q_OBJECT
@@ -37,12 +45,15 @@ public:
     int appletWidth() const;      /** returns plasma applet's width */
     void init();
 
-public slots:
+private slots:
+    void onAccountManagerReady(Tp::PendingOperation *op);
 //     QString extractAvatarPathFromNepomuk(const QString &nepomukUri);
 
 private:
     Plasma::DeclarativeWidget *m_declarative;
     QObject *m_qmlObject;
+    Tp::AccountManagerPtr m_accountManager;
+    AccountsModel *m_model;
 };
 
 #endif  // TELEPATHY_CONTACT_LIST_H
