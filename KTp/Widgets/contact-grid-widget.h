@@ -31,24 +31,6 @@ class AccountsFilterModel;
 namespace KTp
 {
 
-class ContactGridDelegate : public QAbstractItemDelegate
-{
-    Q_OBJECT
-    Q_DISABLE_COPY(ContactGridDelegate)
-
-public:
-    ContactGridDelegate(QObject *parent);
-    virtual ~ContactGridDelegate();
-
-    virtual void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
-    virtual QSize sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const;
-
-private:
-    class Private;
-    Private * const d;
-
-}; // class ContactGridDelegate
-
 class KTP_EXPORT ContactGridWidget : public QWidget
 {
     Q_OBJECT

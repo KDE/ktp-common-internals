@@ -35,6 +35,28 @@
 #include <KTp/Models/contact-model-item.h>
 #include <KTp/Models/flat-model-proxy.h>
 
+namespace KTp {
+
+class ContactGridDelegate : public QAbstractItemDelegate
+{
+    Q_OBJECT
+    Q_DISABLE_COPY(ContactGridDelegate)
+
+public:
+    ContactGridDelegate(QObject *parent);
+    virtual ~ContactGridDelegate();
+
+    virtual void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
+    virtual QSize sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const;
+
+private:
+    class Private;
+    Private * const d;
+
+}; // class ContactGridDelegate
+
+} // namespace KTp
+
 
 class KTp::ContactGridDelegate::Private
 {
@@ -273,3 +295,4 @@ AccountsFilterModel* KTp::ContactGridWidget::filter() const
 
 
 #include "contact-grid-widget.moc"
+#include "moc_contact-grid-widget.cpp"
