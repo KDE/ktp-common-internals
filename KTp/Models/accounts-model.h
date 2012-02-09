@@ -97,7 +97,7 @@ public:
 
     explicit AccountsModel(QObject *parent = 0);
     virtual ~AccountsModel();
-    
+
     void setAccountManager(const Tp::AccountManagerPtr &am);
 
     virtual int rowCount(const QModelIndex &parent = QModelIndex()) const;

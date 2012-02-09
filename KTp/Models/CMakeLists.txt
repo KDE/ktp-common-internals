@@ -12,6 +12,7 @@ set (ktp_models_private_SRCS
     groups-model.cpp
     proxy-tree-node.cpp
     tree-node.cpp
+    flat-model-proxy.cpp
 )
 
 set (ktp_models_private_HDRS
@@ -23,6 +24,7 @@ set (ktp_models_private_HDRS
     groups-model.h
     proxy-tree-node.h
     tree-node.h
+    flat-model-proxy.h
 )
 
 kde4_add_library (ktpmodelsprivate SHARED

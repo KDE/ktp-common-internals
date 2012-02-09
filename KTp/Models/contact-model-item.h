@@ -61,5 +61,4 @@ private:
 
 Q_DECLARE_METATYPE(ContactModelItem*);
 
-
 #endif // TELEPATHY_CONTACT_MODEL_ITEM_H
