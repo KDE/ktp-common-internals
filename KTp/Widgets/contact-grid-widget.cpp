@@ -207,40 +207,6 @@ KTp::ContactGridWidget::~ContactGridWidget()
     delete d;
 }
 
-bool KTp::ContactGridWidget::isDisplayNameFilterBarShown() const
-{
-    return !d->contactFilterLineEdit->isHidden();
-}
-
-bool KTp::ContactGridWidget::isDisplayNameFilterBarHidden() const
-{
-    return !isDisplayNameFilterBarShown();
-}
-
-void KTp::ContactGridWidget::setDisplayNameFilterBarShown(bool displayNameFilterBarShown)
-{
-    if (displayNameFilterBarShown != isDisplayNameFilterBarShown()) {
-        clearDisplayNameFilter();
-        d->contactFilterLineEdit->setShown(displayNameFilterBarShown);
-        Q_EMIT displayNameFilterBarShownChanged(displayNameFilterBarShown);
-    }
-}
-
-void KTp::ContactGridWidget::setDisplayNameFilterBarHidden(bool displayNameFilterBarHidden)
-{
-    setDisplayNameFilterBarShown(!displayNameFilterBarHidden);
-}
-
-void KTp::ContactGridWidget::showDisplayNameFilterBar()
-{
-    setDisplayNameFilterBarShown(true);
-}
-
-void KTp::ContactGridWidget::hideDisplayNameFilterBar()
-{
-    setDisplayNameFilterBarShown(false);
-}
-
 QString KTp::ContactGridWidget::displayNameFilter() const
 {
     return d->contactFilterLineEdit->text();
@@ -293,6 +259,10 @@ AccountsFilterModel* KTp::ContactGridWidget::filter() const
     return d->filterModel;
 }
 
+KLineEdit* KTp::ContactGridWidget::contactFilterLineEdit() const
+{
+    return d->contactFilterLineEdit;
+}
 
 #include "contact-grid-widget.moc"
 #include "moc_contact-grid-widget.cpp"

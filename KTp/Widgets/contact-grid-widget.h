@@ -26,6 +26,7 @@
 #include <TelepathyQt/Types>
 #include <KTp/ktp-export.h>
 
+class KLineEdit;
 class AccountsModel;
 class AccountsFilterModel;
 namespace KTp
@@ -36,10 +37,6 @@ class KTP_EXPORT ContactGridWidget : public QWidget
     Q_OBJECT
     Q_DISABLE_COPY(ContactGridWidget)
 
-    Q_PROPERTY(bool displayNameFilterBarShown
-               READ isDisplayNameFilterBarShown
-               WRITE setDisplayNameFilterBarShown
-               NOTIFY displayNameFilterBarShownChanged)
     Q_PROPERTY(QString displayNameFilter
                READ displayNameFilter
                RESET clearDisplayNameFilter
@@ -53,14 +50,6 @@ public:
     explicit ContactGridWidget(AccountsModel *model, QWidget *parent = 0);
     virtual ~ContactGridWidget();
 
-    virtual bool isDisplayNameFilterBarShown() const;
-    virtual bool isDisplayNameFilterBarHidden() const;
-    Q_SLOT virtual void setDisplayNameFilterBarShown(bool displayNameFilterBarShown);
-    Q_SLOT virtual void setDisplayNameFilterBarHidden(bool displayNameFilterBarHidden);
-    Q_SLOT virtual void showDisplayNameFilterBar();
-    Q_SLOT virtual void hideDisplayNameFilterBar();
-    Q_SIGNAL void displayNameFilterBarShownChanged(bool displayNameFilterBarShown);
-
     virtual QString displayNameFilter() const;
     Q_SLOT virtual void clearDisplayNameFilter();
     Q_SLOT virtual void setDisplayNameFilter(const QString &displayNameFilter);
@@ -71,6 +60,7 @@ public:
     Q_SIGNAL void iconSizeChanged(const QSize &iconSize);
 
     virtual AccountsFilterModel* filter() const;
+    virtual KLineEdit* contactFilterLineEdit() const;
 
     virtual bool hasSelection() const;
     virtual Tp::AccountPtr selectedAccount() const;
