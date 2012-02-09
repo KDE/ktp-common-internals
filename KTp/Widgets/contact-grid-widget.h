@@ -61,12 +61,12 @@ class KTP_EXPORT ContactGridWidget : public QWidget
     Q_PROPERTY(QString displayNameFilter
                READ displayNameFilter
                RESET clearDisplayNameFilter
-               WRITE setDisplayNameFilter)
+               WRITE setDisplayNameFilter
+               NOTIFY displayNameFilterChanged)
     Q_PROPERTY(QSize iconSize
                READ iconSize
                WRITE setIconSize
                NOTIFY iconSizeChanged)
-
 public:
     explicit ContactGridWidget(AccountsModel *model, QWidget *parent = 0);
     virtual ~ContactGridWidget();
