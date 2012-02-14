@@ -20,7 +20,7 @@
  */
 
 #include "test-backdoors.h"
-
+/*
 Nepomuk::PersonContact
 TestBackdoors::nepomukStorageMePersonContact(NepomukStorage *storage)
 {
@@ -45,4 +45,4 @@ TestBackdoors::nepomukStorageContacts(NepomukStorage *storage)
 
     return &storage->m_contacts;
 }
-
+*/

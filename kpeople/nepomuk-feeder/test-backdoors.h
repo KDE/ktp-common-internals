@@ -26,9 +26,9 @@
 
 class TestBackdoors {
 public:
-    static Nepomuk::PersonContact nepomukStorageMePersonContact(NepomukStorage *storage);
-    static QHash<QString, AccountResources> *nepomukStorageAccounts(NepomukStorage *storage);
-    static QHash<ContactIdentifier, ContactResources> *nepomukStorageContacts(NepomukStorage *storage);
+    //static Nepomuk::PersonContact nepomukStorageMePersonContact(NepomukStorage *storage);
+    //static QHash<QString, AccountResources> *nepomukStorageAccounts(NepomukStorage *storage);
+    //static QHash<ContactIdentifier, ContactResources> *nepomukStorageContacts(NepomukStorage *storage);
 };
 
 

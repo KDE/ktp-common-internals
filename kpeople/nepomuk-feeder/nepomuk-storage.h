@@ -24,9 +24,6 @@
 
 #include "abstract-storage.h"
 
-#include "ontologies/imaccount.h"
-#include "ontologies/personcontact.h"
-
 #include <QtCore/QObject>
 #include <QtCore/QSharedDataPointer>
 #include <QtCore/QString>

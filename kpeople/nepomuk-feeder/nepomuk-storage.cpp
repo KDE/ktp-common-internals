@@ -22,12 +22,7 @@
  */
 
 #include "nepomuk-storage.h"
-
-#include "ontologies/contactgroup.h"
 #include "ontologies/telepathy.h"
-#include "ontologies/imcapability.h"
-#include "ontologies/personcontact.h"
-#include "ontologies/dataobject.h"
 
 #include <KDebug>
 #include <KJob>
