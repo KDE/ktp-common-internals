@@ -261,6 +261,11 @@ bool ContactResources::operator!=(const ContactResources& other) const
     return !(*this == other);
 }
 
+bool ContactResources::isEmpty() const
+{
+    return d->person.isEmpty() && d->personContact.isEmpty() && d->imAccount.isEmpty();
+}
+
 
 NepomukStorage::NepomukStorage(QObject *parent)
 : AbstractStorage(parent)
@@ -278,6 +283,9 @@ NepomukStorage::NepomukStorage(QObject *parent)
             SLOT(onNepomukError(QString,int)));
 
     QTimer::singleShot(0, this, SLOT(init()));
+
+    m_contactsTimer.setSingleShot( true );
+    connect( &m_contactsTimer, SIGNAL(timeout()), this, SLOT(onContactTimer()) );
 }
 
 NepomukStorage::~NepomukStorage()
@@ -582,14 +590,6 @@ void NepomukStorage::cleanupAccounts(const QList<QString> &paths)
     }
 }
 
-void NepomukStorage::saveGraph(const Nepomuk::SimpleResourceGraph &graph)
-{
-    KJob *job = Nepomuk::storeResources(graph, Nepomuk::IdentifyNew, Nepomuk::OverwriteProperties);
-    connect(job, SIGNAL(result(KJob*)),
-            this, SLOT(onSaveJobResult(KJob*)));
-    job->start();
-}
-
 void NepomukStorage::createAccount(const QString &path, const QString &id, const QString &protocol)
 {
     kDebug() << "Creating a new Account";
@@ -691,6 +691,33 @@ void NepomukStorage::setAccountCurrentPresence(const QString &path, const Tp::Si
     }
 }
 
+//
+// Contact Functions
+//
+
+ContactResources NepomukStorage::findContact(const QString& path, const QString& id)
+{
+    const ContactIdentifier identifier(path, id);
+
+    // Check the Contact exists.
+    QHash<ContactIdentifier, ContactResources>::const_iterator it = m_contacts.find(identifier);
+    const bool found = (it != m_contacts.constEnd());
+    if (!found) {
+        kWarning() << "Contact not found:" << path << id;
+        return ContactResources();
+    }
+
+    return it.value();
+}
+
+void NepomukStorage::fireContactTimer()
+{
+    if( !m_contactsTimer.isActive() )
+        m_contactsTimer.start( 500 );
+}
+
+
+
 void NepomukStorage::cleanupAccountContacts(const QString &path, const QList<QString> &ids)
 {
     kDebug() << path << ids;
@@ -725,15 +752,15 @@ void NepomukStorage::cleanupAccountContacts(const QString &path, const QList<QSt
 
 void NepomukStorage::createContact(const QString &path, const QString &id)
 {
-    kDebug() << path << id;
     // First, check that we don't already have a record for this contact.
     ContactIdentifier identifier(path, id);
     if (m_contacts.contains(identifier)) {
-        kDebug() << "Contact record already exists. Return.";
+//        kDebug() << "Contact record already exists. Return.";
         return;
     }
 
     // Contact not found. Need to create it.
+    kDebug() << path << id;
     kDebug() << "Contact not found in Nepomuk. Creating it.";
 
     Q_ASSERT(m_accounts.contains(path));
@@ -793,29 +820,20 @@ void NepomukStorage::destroyContact(const QString &path, const QString &id)
 
 void NepomukStorage::setContactAlias(const QString &path, const QString &id, const QString &alias)
 {
-    ContactIdentifier identifier(path, id);
-
-    // Check the Contact exists.
-    QHash<ContactIdentifier, ContactResources>::const_iterator it = m_contacts.find(identifier);
-    const bool found = (it != m_contacts.constEnd());
-    Q_ASSERT(found);
-    if (!found) {
-        kWarning() << "Contact not found.";
+    ContactResources contact = findContact(path, id);
+    if( contact.isEmpty() )
         return;
-    }
 
-    ContactResources resources = it.value();
+    QUrl imAccountUri = contact.imAccount();
 
-    // vHanda: FIXME: Can a person have multiple nick names?
-    KJob *job = Nepomuk::setProperty( QList<QUrl>() << resources.imAccount(), NCO::imNickname(),
-                                      QVariantList() << alias );
+    Nepomuk::SimpleResource &res = m_contactGraph[imAccountUri];
+    res.setUri( imAccountUri );
+    res.setProperty( NCO::imNickname(), alias );
 
-    job->exec();
-    if( job->error() ) {
-        kWarning() << job->errorString();
-    }
+    fireContactTimer();
 
-    if (!Nepomuk::Resource(resources.person()).hasProperty(Soprano::Vocabulary::NAO::prefLabel())) {
+    // vHanda; WTF!! This is not good.
+    /*if (!Nepomuk::Resource(resources.person()).hasProperty(Soprano::Vocabulary::NAO::prefLabel())) {
         KJob *job = Nepomuk::setProperty( QList<QUrl>() << resources.person(), Soprano::Vocabulary::NAO::prefLabel(),
                                           QVariantList() << alias );
 
@@ -823,40 +841,28 @@ void NepomukStorage::setContactAlias(const QString &path, const QString &id, con
         if( job->error() ) {
             kWarning() << job->errorString();
         }
-    }
+    }*/
 }
 
 void NepomukStorage::setContactPresence(const QString &path,
                                  const QString &id,
                                  const Tp::SimplePresence &presence)
 {
-    ContactIdentifier identifier(path, id);
-
-    // Check the Contact exists.
-    QHash<ContactIdentifier, ContactResources>::const_iterator it = m_contacts.find(identifier);
-    const bool found = (it != m_contacts.constEnd());
-    Q_ASSERT(found);
-    if (!found) {
-        kWarning() << "Contact not found.";
+    ContactResources contact = findContact(path, id);
+    if( contact.isEmpty() )
         return;
-    }
 
-    ContactResources resources = it.value();
+    QUrl imAccountUri = contact.imAccount();
 
-    Nepomuk::SimpleResource imAccount(resources.imAccount());
-    // Set the contact presence.
+    hasInvalidResources();
+    Nepomuk::SimpleResource &imAccount = m_contactGraph[imAccountUri];
+    imAccount.setUri( imAccountUri );
     imAccount.setProperty(NCO::imStatus(), presence.status);
-    imAccount.setProperty(Telepathy::statusType(), presence.type);
     imAccount.setProperty(NCO::imStatusMessage(), presence.statusMessage);
+    imAccount.setProperty(Telepathy::statusType(), presence.type);
 
-    // We're using 'OverwriteProperties' cause the above properties can already have existing
-    // values which we don't care about
-    KJob *job = Nepomuk::storeResources( Nepomuk::SimpleResourceGraph() << imAccount,
-                                         Nepomuk::IdentifyNew, Nepomuk::OverwriteProperties );
-    job->exec();
-    if( job->error() ) {
-        kWarning() << job->errorString();
-    }
+    hasInvalidResources();
+    fireContactTimer();
 }
 
 void NepomukStorage::setContactGroups(const QString &path,
@@ -929,27 +935,19 @@ void NepomukStorage::setContactGroups(const QString &path,
 
 void NepomukStorage::setContactBlockStatus(const QString &path, const QString &id, bool blocked)
 {
-    ContactIdentifier identifier(path, id);
-
-    // Check if the Contact exists.
-    QHash<ContactIdentifier, ContactResources>::const_iterator it = m_contacts.find(identifier);
-    const bool found = (it != m_contacts.constEnd());
-    Q_ASSERT(found);
-    if (!found) {
-        kWarning() << "Contact not found.";
+    ContactResources contact = findContact(path, id);
+    if( contact.isEmpty() )
         return;
-    }
 
-    ContactResources resources = it.value();
+    QUrl imAccountUri = contact.imAccount();
 
-    // vHanda: FIXME: Can a person have multiple nick names?
-    KJob *job = Nepomuk::setProperty( QList<QUrl>() << resources.imAccount(), NCO::isBlocked(),
-                                      QVariantList() << blocked );
+    hasInvalidResources();
+    Nepomuk::SimpleResource &imAccount = m_contactGraph[imAccountUri];
+    imAccount.setUri( imAccountUri );
+    imAccount.setProperty( NCO::isBlocked(), blocked );
 
-    job->exec();
-    if( job->error() ) {
-        kWarning() << job->errorString();
-    }
+    hasInvalidResources();
+    fireContactTimer();
 }
 
 void NepomukStorage::setContactPublishState(const QString &path,
@@ -1077,22 +1075,14 @@ void NepomukStorage::setContactCapabilities(const QString &path,
                                            const QString &id,
                                            const Tp::ContactCapabilities &capabilities)
 {
-    ContactIdentifier identifier(path, id);
-
-    // Check the Contact exists.
-    QHash<ContactIdentifier, ContactResources>::const_iterator it = m_contacts.find(identifier);
-    const bool found = (it != m_contacts.constEnd());
-    Q_ASSERT(found);
-    if (!found) {
-        kWarning() << "Contact not found.";
+    ContactResources contact = findContact(path, id);
+    if( contact.isEmpty() )
         return;
-    }
 
-    ContactResources resources = it.value();
-
-    Nepomuk::SimpleResource imAccount(resources.imAccount());
+    QUrl imAccountUri = contact.imAccount();
 
     // For each supported (by the ontology) capability, check it and save the correct value
+    // FIXME: Add other caps to the ontologies so that we can add them here.
     QVariantList capList;
     if (capabilities.textChats())
         capList << NCO::imCapabilityText();
@@ -1101,38 +1091,27 @@ void NepomukStorage::setContactCapabilities(const QString &path,
     if (capabilities.streamedMediaVideoCalls())
         capList << NCO::imCapabilityVideo();
 
-    // FIXME: Add other caps to the ontologies so that we can add them here.
+    hasInvalidResources();
+    Nepomuk::SimpleResource &imAccount = m_contactGraph[imAccountUri];
+    imAccount.setUri( imAccountUri );
+    imAccount.setProperty( NCO::hasIMCapability(), capList );
 
-    KJob *job = Nepomuk::setProperty( QList<QUrl>() << resources.imAccount(),
-                                      NCO::hasIMCapability(),
-                                      capList );
-    job->exec();
-    if( job->error() ) {
-        kWarning() << job->errorString();
-    }
+    hasInvalidResources();
+    fireContactTimer();
 }
 
 void NepomukStorage::setContactAvatar(const QString &path,
                                       const QString &id,
                                       const Tp::AvatarData &avatar)
 {
-    ContactIdentifier identifier(path, id);
-
-    // Check the Contact exists.
-    QHash<ContactIdentifier, ContactResources>::const_iterator it = m_contacts.find(identifier);
-    const bool found = (it != m_contacts.constEnd());
-    Q_ASSERT(found);
-    if (!found) {
-        kWarning() << "Contact not found.";
+    ContactResources contact = findContact(path, id);
+    if( contact.isEmpty() )
         return;
-    }
-
-    ContactResources resources = it.value();
 
     if( avatar.fileName.isEmpty() ) {
-        kDebug() << "No Avatar set";
+        //kDebug() << "No Avatar set";
 
-        KJob *job = Nepomuk::removeProperties( QList<QUrl>() << resources.imAccount(),
+        KJob *job = Nepomuk::removeProperties( QList<QUrl>() << contact.imAccount(),
                                                QList<QUrl>() << Telepathy::avatar() );
         job->exec();
         if( job->error() ) {
@@ -1142,26 +1121,43 @@ void NepomukStorage::setContactAvatar(const QString &path,
     }
 
     //FIXME: Remove the old avatar from the photos list?
-    // Otherwise
-    Nepomuk::SimpleResource personContact(resources.personContact());
-    Nepomuk::SimpleResource imAccount(resources.imAccount());
-
     QUrl fileUrl( avatar.fileName );
     fileUrl.setScheme(QLatin1String("file"));
 
+    hasInvalidResources();
+    Nepomuk::SimpleResource& personContact = m_contactGraph[contact.personContact()];
+    personContact.setUri(contact.personContact());
     personContact.setProperty( NCO::photo(), fileUrl );
+
+    hasInvalidResources();
+    Nepomuk::SimpleResource& imAccount = m_contactGraph[contact.imAccount()];
+    imAccount.setUri(contact.imAccount());
     imAccount.setProperty( Telepathy::avatar(), fileUrl );
 
-    KJob *job = Nepomuk::storeResources( Nepomuk::SimpleResourceGraph() << personContact << imAccount,
-                                         Nepomuk::IdentifyNew, Nepomuk::OverwriteProperties );
-    job->exec();
-    if( job->error() ) {
-        kWarning() << job->errorString();
-    }
-
+    hasInvalidResources();
+    fireContactTimer();
     //TODO: Find a way to index the file as well.
 }
 
+void NepomukStorage::onContactTimer()
+{
+//    kDebug() << m_contactGraph;
+    hasInvalidResources();
+    KJob *job = Nepomuk::storeResources( m_contactGraph, Nepomuk::IdentifyNew, Nepomuk::OverwriteProperties );
+    connect( job, SIGNAL(finished(KJob*)), this, SLOT(onContactGraphJob(KJob*)) );
+
+    m_contactGraph.clear();
+}
+
+void NepomukStorage::onContactGraphJob(KJob* job)
+{
+    if( job->error() ) {
+        kWarning() << job->errorString();
+    }
+    else {
+        kWarning() << "Done";
+    }
+}
 
 int qHash(ContactIdentifier c)
 {
@@ -1172,6 +1168,26 @@ int qHash(ContactIdentifier c)
     temp.append(QLatin1String("#--__--#"));
     temp.append(c.contactId());
     return qHash(temp);
+}
+
+bool NepomukStorage::hasInvalidResources() const
+{
+    /*QList<Nepomuk::SimpleResource> list = m_contactGraph.toList();
+    foreach( const Nepomuk::SimpleResource& res, list ) {
+        if( !res.isValid() ) {
+            kWarning() << "Found invalid resource";
+            Q_ASSERT( false );
+            return true;
+        }
+        if( res.contains( Telepathy::statusType() ) ) {
+            QVariantList list = res.property( Telepathy::statusType() );
+            if( list.size() > 1 ) {
+                kWarning() << "oh noez!!";
+                Q_ASSERT( false );
+            }
+        }
+    }*/
+    return false;
 }
 
 

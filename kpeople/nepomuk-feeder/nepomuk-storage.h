@@ -31,9 +31,11 @@
 #include <TelepathyQt/Contact>
 #include <TelepathyQt/Types>
 
+#include <nepomuk/simpleresourcegraph.h>
+#include <KJob>
+
 namespace Nepomuk {
     class ResourceManager;
-    class SimpleResourceGraph;
     namespace Query {
         class Result;
     }
@@ -99,6 +101,7 @@ public:
     bool operator==(const ContactResources &other) const;
     bool operator!=(const ContactResources &other) const;
 
+    bool isEmpty() const;
 private:
     class Data;
     QSharedDataPointer<Data> d;
@@ -149,18 +152,25 @@ private Q_SLOTS:
     void onContactsQueryError(const QString &errorMessage);
     void onContactsQueryFinishedListing();
 
+    void onContactTimer();
+    void onContactGraphJob(KJob *job);
 private:
     Q_DISABLE_COPY(NepomukStorage);
 
     friend class TestBackdoors;
-
-    void saveGraph(const Nepomuk::SimpleResourceGraph &graph);
 
     Nepomuk::ResourceManager *m_resourceManager;
     QUrl m_mePersonContact;
 
     QHash<QString, AccountResources> m_accounts;
     QHash<ContactIdentifier, ContactResources> m_contacts;
+
+    Nepomuk::SimpleResourceGraph m_contactGraph;
+    QTimer m_contactsTimer;
+
+    ContactResources findContact(const QString& path, const QString& id);
+    void fireContactTimer();
+    bool hasInvalidResources() const;
 };
 
 

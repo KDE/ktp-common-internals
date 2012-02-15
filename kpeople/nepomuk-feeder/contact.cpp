@@ -100,7 +100,7 @@ void Contact::init()
 
 Contact::~Contact()
 {
-    kDebug();
+    //kDebug();
 }
 
 void Contact::shutdown()
@@ -122,14 +122,14 @@ void Contact::onPresenceChanged(const Tp::Presence &presence)
 
 void Contact::onAddedToGroup(const QString &group)
 {
-    kDebug() << "On added to group " << group;
+//    kDebug() << "On added to group " << group;
 
     emit groupsChanged(m_contact->id(), m_contact->groups());
 }
 
 void Contact::onRemovedFromGroup(const QString &group)
 {
-    kDebug() << "On removed from group " << group;
+//    kDebug() << "On removed from group " << group;
 
     emit groupsChanged(m_contact->id(), m_contact->groups());
 }
