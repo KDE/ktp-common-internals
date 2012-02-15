@@ -869,68 +869,37 @@ void NepomukStorage::setContactGroups(const QString &path,
                                       const QString &id,
                                       const QStringList &groups)
 {
-//     kDebug() << path << id << groups;
-//     ContactIdentifier identifier(path, id);
-//
-//     // Check if the Contact exists.
-//     QHash<ContactIdentifier, ContactResources>::const_iterator it = m_contacts.find(identifier);
-//     const bool found = (it != m_contacts.constEnd());
-//     Q_ASSERT(found);
-//     if (!found) {
-//         kWarning() << "Contact not found.";
-//         return;
-//     }
-//
-//     ContactResources resources = it.value();
-//     Nepomuk::PersonContact personContact = resources.personContact();
-//
-//     // Set the contact groups.
-//     // First remove any groups we are no longer a member of.
-//     QList<Nepomuk::ContactGroup> newGroups = personContact.belongsToGroups();
-//
-//     foreach (const Nepomuk::ContactGroup &group, personContact.belongsToGroups()) {
-//         if (!groups.contains(group.contactGroupName())) {
-//             newGroups.removeAll(group);
-//         }
-//     }
-//
-//     // Now add any groups we are newly a member of.
-//     bool found;
-//     foreach (const QString &groupName, groups) {
-//         found = false;
-//         foreach (const Nepomuk::ContactGroup &cGroup, newGroups) {
-//             if (cGroup.contactGroupName() == groupName) {
-//                 found = true;
-//                 break;
-//             }
-//         }
-//
-//         if (!found) {
-//             // Not already in that group. Check the group exists.
-//             // FIXME: Once we have a "ContactList" resource for Telepathy Contacts, we should only
-//             //        get the groups associated with that.
-//             Nepomuk::ContactGroup groupResource;
-//             foreach (const Nepomuk::ContactGroup &g, Nepomuk::ContactGroup::allContactGroups()) {
-//                 if (g.contactGroupName() == groupName) {
-//                     groupResource = g;
-//                     break;
-//                 }
-//             }
-//
-//             // If the group doesn't already exist, create it.
-//             if (groupResource.resourceUri().isEmpty()) {
-//                 // FIXME: Once we have a "ContactList" resource for Telepathy Contacts, we should
-//                 //        create this group as a child of that resource.
-//                 groupResource.setContactGroupName(groupName);
-//             }
-//
-//             newGroups.append(groupResource);
-//         }
-//     }
-//
-//     // Update the groups property with the new list
-//     personContact.setBelongsToGroups(newGroups);
-//     kDebug() << "Set Groups Ending";
+    //kDebug() << path << id << groups;
+    ContactResources contact = findContact(path, id);
+    if( contact.isEmpty() )
+        return;
+
+    if( groups.isEmpty() ) {
+        KJob* job = Nepomuk::removeProperties( QList<QUrl>() << contact.personContact(),
+                                               QList<QUrl>() << NCO::belongsToGroup() );
+        //TODO: Add some error handling
+        //TODO: Maybe remove empty groups?
+        return;
+    }
+
+    //FIXME: Ideally cache all the group uris
+    QVariantList groupUris;
+    foreach( const QString& groupName, groups ) {
+        Nepomuk::SimpleResource groupRes;
+        groupRes.addType( NCO::ContactGroup() );
+        groupRes.setProperty( NCO::contactGroupName(), groupName );
+
+        groupUris << groupRes.uri();
+        m_contactGraph << groupRes;
+    }
+
+    QUrl contactUri = contact.personContact();
+
+    Nepomuk::SimpleResource &contactRes = m_contactGraph[contactUri];
+    contactRes.setUri( contactUri );
+    contactRes.setProperty( NCO::belongsToGroup(), groupUris );
+
+    fireContactTimer();
 }
 
 void NepomukStorage::setContactBlockStatus(const QString &path, const QString &id, bool blocked)
@@ -1153,9 +1122,7 @@ void NepomukStorage::onContactGraphJob(KJob* job)
 {
     if( job->error() ) {
         kWarning() << job->errorString();
-    }
-    else {
-        kWarning() << "Done";
+        return;
     }
 }
 
