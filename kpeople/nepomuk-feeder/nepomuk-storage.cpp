@@ -508,26 +508,26 @@ void NepomukStorage::onContactsQueryNewEntries(const QList< Nepomuk::Query::Resu
         QUrl foundImAccountAccessedBy(result.additionalBinding("accessedBy").toUrl());
         QString foundImAccountIdentifier(result.additionalBinding("accountIdentifier").toString());
 
-        kDebug() << "Account Identifier: " << foundImAccountIdentifier;
-        kDebug() << "PIMO:Person" << foundPerson;
+        //kDebug() << "Account Identifier: " << foundImAccountIdentifier;
+        //kDebug() << "PIMO:Person" << foundPerson;
 
         // Check that the IM account only has one ID.
         QStringList accountIDs = result.additionalBinding("imIds").toStringList();
 
         if (accountIDs.size() != 1) {
             kWarning() << "Account does not have 1 ID. Oops. Ignoring."
-            << "Number of Identifiers: "
-            << accountIDs.size();
+                       << "Number of Identifiers: "
+                       << accountIDs.size();
             continue;
         }
 
-        kDebug() << "IM ID:" << accountIDs.first();
+        //kDebug() << "IM ID:" << accountIDs.first();
 
         // Cache the contact
         m_contacts.insert(ContactIdentifier(foundImAccountIdentifier,
                                             accountIDs.first()),
                             ContactResources(foundPerson, foundPersonContact, foundImAccount));
-        kDebug() << "Contact found in Nepomuk. Caching.";
+        //kDebug() << "Contact found in Nepomuk. Caching.";
     }
 }
 
@@ -559,9 +559,6 @@ void NepomukStorage::onContactsQueryFinishedListing()
 
 void NepomukStorage::cleanupAccounts(const QList<QString> &paths)
 {
-    kDebug() << paths;
-    kDebug() << "Our list: " << m_accounts.keys();
-
     QSet<QString> pathSet = paths.toSet();
 
     // Go through all our accounts and remove all the ones that are not there in the path
@@ -579,20 +576,22 @@ void NepomukStorage::cleanupAccounts(const QList<QString> &paths)
     // TODO: Do this properly once the ontology supports this
     // TODO: What do we do with an account in nepomuk which the use has removed?
     //       For now we're just deleting them
-    KJob *job = Nepomuk::removeResources( removedAccounts, Nepomuk::RemoveSubResoures );
-    job->exec();
-    if( job->error() ) {
-        kWarning() << job->errorString();
+    if( !removedAccounts.isEmpty() ) {
+        KJob *job = Nepomuk::removeResources( removedAccounts, Nepomuk::RemoveSubResoures );
+        job->exec();
+        if( job->error() ) {
+            kWarning() << job->errorString();
+        }
     }
 
     // Go through all the accounts that we have received from the controller and create any
     // new ones in neponmuk. Do this as a batch job to improve performance.
-    foreach (const QString &path, paths) {
+    /*foreach (const QString &path, paths) {
         if (!m_accounts.keys().contains(path)) {
             // TODO: Implement me to do this as a batch job???
             //       For now, we just let the constructed signal do this one at a time.
         }
-    }
+    }*/
 }
 
 void NepomukStorage::createAccount(const QString &path, const QString &id, const QString &protocol)
@@ -709,8 +708,6 @@ void NepomukStorage::fireGraphTimer()
 
 void NepomukStorage::cleanupAccountContacts(const QString &path, const QList<QString> &ids)
 {
-    kDebug() << path << ids;
-
     QSet<QString> idSet = ids.toSet();
 
     // Go through all the contacts in the cache and make any that are not in the list we
@@ -728,7 +725,7 @@ void NepomukStorage::cleanupAccountContacts(const QString &path, const QList<QSt
     }
 
     // Go through all the contacts that we have received from the account and create any
-    // new ones in Nepomuk. Do this as a batch job to improve performance.
+    // new ones in Nepomuk.
     QSet<QString> nepomukIds;
     foreach( const ContactIdentifier& ci, m_contacts.keys() )
         nepomukIds.insert( ci.contactId() );

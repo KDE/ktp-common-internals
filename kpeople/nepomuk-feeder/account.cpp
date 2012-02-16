@@ -114,7 +114,7 @@ void Account::onConnectionChanged(const Tp::ConnectionPtr &connection)
 
 void Account::onContactManagerStateChanged(Tp::ContactListState state)
 {
-    kDebug() << "contact manager state changed to " << state;
+//    kDebug() << "contact manager state changed to " << state;
 
     if (state == Tp::ContactListStateSuccess)  {
         Tp::Contacts contacts = m_connection->contactManager()->allKnownContacts();
@@ -130,10 +130,9 @@ void Account::onContactManagerStateChanged(Tp::ContactListState state)
 
         // Create wrapper objects for all the Contacts.
         foreach (const Tp::ContactPtr &contact, contacts) {
-            kDebug();
             onNewContact(contact);
         }
-        kDebug() << "Loop over.";
+//        kDebug() << "Loop over.";
     }
 }
 
@@ -164,7 +163,6 @@ void Account::onAllKnownContactsChanged(const Tp::Contacts& added, const Tp::Con
 
 void Account::onNewContact(const Tp::ContactPtr &contact)
 {
-    kDebug();
     // Only create a new contact if one doesn't already exist.
     if (!m_contacts.contains(contact)) {
         // Create a new Contact wrapper objectPath

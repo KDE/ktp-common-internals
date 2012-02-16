@@ -34,7 +34,7 @@ Contact::Contact(const Tp::ContactPtr &contact, QObject *parent)
 {
     // Do nothing here because the signals/slots need to be connected in our
     // parent class before we start doing stuff.
-    kDebug() << "Creating new contact";
+    //kDebug() << "Creating new contact";
 }
 
 void Contact::init()
