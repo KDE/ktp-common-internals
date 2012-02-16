@@ -4,6 +4,8 @@
  * Copyright (C) 2009-2011 Collabora Ltd. <info@collabora.co.uk>
  *   @author George Goldberg <george.goldberg@collabora.co.uk>
  *
+ * Copyright (C) 2011-2012 Vishesh Handa <handa.vish@gmail.com>
+ *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
@@ -60,6 +62,7 @@ public:
     bool operator==(const QUrl &other) const;
     bool operator!=(const QUrl &other) const;
 
+    bool isEmpty() const;
 private:
     class Data;
     QSharedDataPointer<Data> d;
@@ -166,11 +169,13 @@ private:
     QHash<ContactIdentifier, ContactResources> m_contacts;
 
     QList<ContactIdentifier> m_unresolvedContacts;
-    Nepomuk::SimpleResourceGraph m_contactGraph;
-    QTimer m_contactsTimer;
+    Nepomuk::SimpleResourceGraph m_graph;
+    QTimer m_graphTimer;
 
     ContactResources findContact(const QString& path, const QString& id);
-    void fireContactTimer();
+    AccountResources findAccount(const QString& path);
+
+    void fireGraphTimer();
     bool hasInvalidResources() const;
 };
 
