@@ -4,7 +4,7 @@
  * Copyright (C) 2009-2011 Collabora Ltd. <info@collabora.co.uk>
  *   @author George Goldberg <george.goldberg@collabora.co.uk>
  *
- * Copyright (C) 2011 Vishesh Handa <handa.vish@gmail.com>
+ * Copyright (C) 2011-2012 Vishesh Handa <handa.vish@gmail.com>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -790,23 +790,14 @@ void NepomukStorage::createContact(const QString &path, const QString &id)
     newPersonContact.addProperty(Nepomuk::Vocabulary::NCO::hasIMAccount(), newImAccount);
     newPimoPerson.addProperty(Nepomuk::Vocabulary::PIMO::groundingOccurrence(), newPersonContact);
 
-    Nepomuk::SimpleResourceGraph graph;
-    graph << newPersonContact << newImAccount << newPimoPerson;
+    m_contactGraph << newPersonContact << newImAccount << newPimoPerson;
+    m_contacts.insert( identifier, ContactResources(newPimoPerson.uri(),
+                                                    newPersonContact.uri(),
+                                                    newImAccount.uri()) );
 
-    Nepomuk::StoreResourcesJob *job = Nepomuk::storeResources( graph );
-    job->exec();
-    if( job->error() ) {
-        kWarning() << job->errorString();
-        return;
-    }
-
-    QHash< QUrl, QUrl > mappings = job->mappings();
-
-    // Add it to the Contacts list.
-    m_contacts.insert( identifier,
-                       ContactResources(mappings.value(newPimoPerson.uri()),
-                                        mappings.value(newPersonContact.uri()),
-                                        mappings.value(newImAccount.uri())) );
+    // Insert into a list so that their real uri can be set later on
+    m_unresolvedContacts.append( identifier );
+    fireContactTimer();
 }
 
 void NepomukStorage::destroyContact(const QString &path, const QString &id)
@@ -1124,6 +1115,25 @@ void NepomukStorage::onContactGraphJob(KJob* job)
         kWarning() << job->errorString();
         return;
     }
+    Nepomuk::StoreResourcesJob* sjob = dynamic_cast<Nepomuk::StoreResourcesJob*>(job);
+    QHash<QUrl, QUrl> mappings = sjob->mappings();
+
+    QList<ContactIdentifier> unresolvedContacts;
+    foreach( const ContactIdentifier& identifier, m_unresolvedContacts ) {
+        ContactResources& res = m_contacts[identifier];
+        QUrl personUri = mappings.value( res.person() );
+        QUrl contactUri = mappings.value( res.personContact() );
+        QUrl accountUri = mappings.value( res.imAccount() );
+
+        if( personUri.isEmpty() || contactUri.isEmpty() || accountUri.isEmpty() ) {
+            unresolvedContacts << identifier;
+            return;
+        }
+
+        m_contacts[identifier] = ContactResources(personUri, contactUri, accountUri);
+    }
+
+    m_unresolvedContacts = unresolvedContacts;
 }
 
 int qHash(ContactIdentifier c)
