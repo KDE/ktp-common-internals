@@ -22,7 +22,7 @@
  */
 
 #include "nepomuk-storage.h"
-#include "ontologies/telepathy.h"
+#include "telepathy.h"
 
 #include <KDebug>
 #include <KJob>

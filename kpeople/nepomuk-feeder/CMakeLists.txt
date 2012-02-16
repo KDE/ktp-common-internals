@@ -16,6 +16,7 @@ find_package(SharedDesktopOntologies ${SDO_MIN_VERSION} REQUIRED)
 include (CheckIncludeFiles)
 include (KDE4Defaults)
 include (MacroLibrary)
+include (SopranoAddOntology)
 
 # Some magic win32 stuff. FIXME: What does this do?
 if (WIN32)
@@ -42,8 +43,6 @@ set (CMAKE_CXX_FLAGS
      "${CMAKE_CXX_FLAGS} ${KDE4_ENABLE_EXCEPTIONS}"
 )
 
-add_subdirectory (ontologies)
-
 ####################################
 # First target - nepomuktelepathyservice static library
 
@@ -54,6 +53,13 @@ set (nepomuktelepathyservice_static_SRCS
      abstract-storage.cpp
      nepomuk-storage.cpp
      test-backdoors.cpp
+)
+
+soprano_add_ontology (nepomuktelepathyservice_static_SRCS
+                      ${CMAKE_SOURCE_DIR}/telepathy.trig
+                      "Telepathy"
+                      "Nepomuk::Vocabulary"
+                      "trig"
 )
 
 kde4_add_library (nepomuktelepathyservice-static
@@ -69,7 +75,6 @@ target_link_libraries (nepomuktelepathyservice-static
                        ${SOPRANO_LIBRARIES}
                        ${NEPOMUK_LIBRARIES}
                        ${NEPOMUK_QUERY_LIBRARIES}
-                       ontologies
 )
 
 set_property(TARGET nepomuktelepathyservice-static PROPERTY COMPILE_FLAGS -fPIC)
