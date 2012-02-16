@@ -617,23 +617,12 @@ void NepomukStorage::createAccount(const QString &path, const QString &id, const
     Nepomuk::SimpleResource mePersonContact(m_mePersonContact);
     mePersonContact.addProperty(Nepomuk::Vocabulary::NCO::hasIMAccount(), imAccount);
 
-    // Add all changed resources to a graph and save it.
-    Nepomuk::SimpleResourceGraph graph;
-    graph << imAccount << mePersonContact;
+    m_graph << imAccount << mePersonContact;
+    m_accounts.insert(path, AccountResources(imAccount.uri(), protocol));
 
-    Nepomuk::StoreResourcesJob *job = Nepomuk::storeResources(graph);
-    job->exec();
-    if( job->error() ) {
-        kWarning() << job->errorString();
-        return;
-    }
+    m_unresolvedAccounts << path;
 
-    QUrl accountUri = job->mappings().value( imAccount.uri() );
-    Q_ASSERT(!accountUri.isEmpty());
-
-    kDebug() << ">>>>>***** The Account URI is:" << accountUri;
-    // Add the account to the list.
-    m_accounts.insert(path, AccountResources(accountUri, protocol));
+    fireGraphTimer();
 }
 
 void NepomukStorage::destroyAccount(const QString &path)
@@ -1131,22 +1120,42 @@ void NepomukStorage::onContactGraphJob(KJob* job)
     Nepomuk::StoreResourcesJob* sjob = dynamic_cast<Nepomuk::StoreResourcesJob*>(job);
     QHash<QUrl, QUrl> mappings = sjob->mappings();
 
+    //
+    // Resolve all the contacts
+    //
     QList<ContactIdentifier> unresolvedContacts;
     foreach( const ContactIdentifier& identifier, m_unresolvedContacts ) {
-        ContactResources& res = m_contacts[identifier];
+        const ContactResources& res = m_contacts[identifier];
         QUrl personUri = mappings.value( res.person() );
         QUrl contactUri = mappings.value( res.personContact() );
         QUrl accountUri = mappings.value( res.imAccount() );
 
         if( personUri.isEmpty() || contactUri.isEmpty() || accountUri.isEmpty() ) {
             unresolvedContacts << identifier;
-            return;
+            continue;
         }
 
         m_contacts[identifier] = ContactResources(personUri, contactUri, accountUri);
     }
 
     m_unresolvedContacts = unresolvedContacts;
+
+    //
+    // Resolve all the accounts
+    //
+    QList<QString> unresolvedAccounts;
+    foreach( const QString& path, m_unresolvedAccounts ) {
+        const AccountResources& res = m_accounts[path];
+        const QUrl accountUri = mappings.value( res.account() );
+
+        if( accountUri.isEmpty() ) {
+            unresolvedAccounts << path;
+            continue;
+        }
+
+        m_accounts[path] = AccountResources(accountUri, res.protocol());
+    }
+    m_unresolvedAccounts = unresolvedAccounts;
 }
 
 void NepomukStorage::onRemovePropertiesJob(KJob* job)
