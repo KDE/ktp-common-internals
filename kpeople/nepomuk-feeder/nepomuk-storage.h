@@ -157,6 +157,7 @@ private Q_SLOTS:
 
     void onContactTimer();
     void onContactGraphJob(KJob *job);
+    void onRemovePropertiesJob(KJob *job);
 private:
     Q_DISABLE_COPY(NepomukStorage);
 

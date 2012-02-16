@@ -868,7 +868,7 @@ void NepomukStorage::setContactGroups(const QString &path,
     if( groups.isEmpty() ) {
         KJob* job = Nepomuk::removeProperties( QList<QUrl>() << contact.personContact(),
                                                QList<QUrl>() << NCO::belongsToGroup() );
-        //TODO: Add some error handling
+        connect( job, SIGNAL(finished(KJob*)), this, SLOT(onRemovePropertiesJob(KJob*)) );
         //TODO: Maybe remove empty groups?
         return;
     }
@@ -914,121 +914,134 @@ void NepomukStorage::setContactPublishState(const QString &path,
                                      const QString &id,
                                      const Tp::Contact::PresenceState &state)
 {
-    /*
-    ContactIdentifier identifier(path, id);
-
-    // Check if the Contact exists.
-    QHash<ContactIdentifier, ContactResources>::const_iterator it = m_contacts.find(identifier);
-    const bool found = (it != m_contacts.constEnd());
-    Q_ASSERT(found);
-    if (!found) {
-        kWarning() << "Contact not found.";
+    ContactResources contact = findContact(path, id);
+    if( contact.isEmpty() )
         return;
-    }
 
-    ContactResources resources = it.value();
-
-    // Get the local related account.
-    Q_ASSERT(m_accounts.contains(path));
-    if (!m_accounts.contains(path)) {
-        kWarning() << "Account not found.";
+    AccountResources account = m_accounts.value(path);
+    if( account.isEmpty() )
         return;
-    }
 
-    QUrl imAccountUri = resources.imAccount();
-    QUrl localAccountUri = m_accounts.value(path).account();*/
+    QUrl imAccountUri = contact.imAccount();
+    QUrl localAccountUri = account.account();
 
-    //FIXME: Implment me properly using Nepomuk::Resource (when it is ported to the DMS)
+    bool usRequest = false;
+    bool themPublish = false;
+
     // Change the relationships based on the PresenceState value.
-//     if (state == Tp::Contact::PresenceStateYes) {
-//         // Add publishes to us.
-//
-//         KJob *job = Nepomuk::addProperty( NCO::publishesPresenceTo(), localAccountUri );
-//         job->exec();
-//         if( job->error() ) {
-//             kWarning() << job->errorString();
-//         }
-//
-//         // Remove requested from us.
-//         localAccount.remove(Nepomuk::Vocabulary::NCO::requestedPresenceSubscriptionTo(), imAccount.uri());
-//
-//     } else if (state == Tp::Contact::PresenceStateAsk) {
-//         // We request subscription to them
-//         localAccount.addProperty(Nepomuk::Vocabulary::NCO::requestedPresenceSubscriptionTo(), localAccount.uri());
-//
-//         // Remove us from their publish list.
-//         imAccount.remove(Nepomuk::Vocabulary::NCO::publishesPresenceTo(), localAccount.uri());
-//
-//     } else if (state == Tp::Contact::PresenceStateNo) {
-//         // Remove us from the requested-to-them list
-//         localAccount.remove(Nepomuk::Vocabulary::NCO::requestedPresenceSubscriptionTo(), imAccount.uri());
-//
-//         // Remove us from their publish list
-//         imAccount.remove(Nepomuk::Vocabulary::NCO::publishesPresenceTo(), localAccount.uri());
-//
-//     } else {
-//         kWarning() << "Invalid Tp::Contact::PresenceState received.";
-//         Q_ASSERT(false);
-//     }
+    switch( state ) {
+        case Tp::Contact::PresenceStateYes:
+            themPublish = true;
+            break;
+
+        case Tp::Contact::PresenceStateAsk:
+            usRequest = true;
+            break;
+
+        case Tp::Contact::PresenceStateNo:
+            break;
+
+        default:
+            kWarning() << "Invalid Tp::Contact::PresenceState received.";
+            Q_ASSERT(false);
+    }
+
+    if( usRequest ) {
+        Nepomuk::SimpleResource &localAccountRes = m_graph[localAccountUri];
+        localAccountRes.setUri( localAccountUri );
+        localAccountRes.setProperty( NCO::requestedPresenceSubscriptionTo(), imAccountUri );
+
+        fireGraphTimer();
+    }
+    else {
+        // Remove us from the requested-to-them list
+        KJob* job = Nepomuk::removeProperty( QList<QUrl>() << localAccountUri,
+                                             NCO::requestedPresenceSubscriptionTo(),
+                                             QVariantList() << imAccountUri );
+        connect( job, SIGNAL(finished(KJob*)), this, SLOT(onRemovePropertiesJob(KJob*)) );
+    }
+
+    if( themPublish ) {
+        Nepomuk::SimpleResource &imAccount = m_graph[imAccountUri];
+        imAccount.setUri( imAccountUri );
+        imAccount.setProperty( NCO::publishesPresenceTo(), localAccountUri );
+
+        fireGraphTimer();
+    }
+    else {
+        // Remove us from their publish list
+        KJob* job = Nepomuk::removeProperty( QList<QUrl>() << imAccountUri,
+                                             NCO::publishesPresenceTo(),
+                                             QVariantList() << localAccountUri );
+        connect( job, SIGNAL(finished(KJob*)), this, SLOT(onRemovePropertiesJob(KJob*)) );
+    }
 }
 
 void NepomukStorage::setContactSubscriptionState(const QString &path,
                                           const QString &id,
                                           const Tp::Contact::PresenceState &state)
 {
-//    kDebug() << "Not implemented";
-//    kDebug() << path << id << state;
-    /*
-    ContactIdentifier identifier(path, id);
-
-    // Check the Contact exists.
-    Q_ASSERT(m_contacts.contains(identifier));
-    if (!m_contacts.contains(identifier)) {
-        kWarning() << "Contact not found.";
+    ContactResources contact = findContact(path, id);
+    if( contact.isEmpty() )
         return;
-    }
 
-    ContactResources resources = m_contacts.value(identifier);
-
-    Nepomuk::SimpleResource imAccount(resources.imAccount());
-
-    // Get the local related account.
-    Q_ASSERT(m_accounts.contains(path));
-    if (!m_accounts.contains(path)) {
-        kWarning() << "Account not found.";
+    AccountResources account = m_accounts.value(path);
+    if( account.isEmpty() )
         return;
-    }
 
-    Nepomuk::SimpleResource localAccount(m_accounts.value(path).account());
+    QUrl imAccountUri = contact.imAccount();
+    QUrl localAccountUri = account.account();
+
+    bool usPublish = false;
+    bool themRequest = false;
 
     // Change the relationships based on the PresenceState value.
-    if (state == Tp::Contact::PresenceStateYes) {
-        // Add we publishes to them.
-        localAccount.addProperty(Nepomuk::Vocabulary::NCO::publishesPresenceTo(), imAccount.uri());
+    switch( state ) {
+        case Tp::Contact::PresenceStateYes:
+            usPublish = true;
+            break;
 
-        // Remove requested from them.
-        imAccount.remove(Nepomuk::Vocabulary::NCO::requestedPresenceSubscriptionTo(), localAccount.uri());
+        case Tp::Contact::PresenceStateAsk:
+            themRequest = true;
+            break;
 
-    } else if (state ==  Tp::Contact::PresenceStateAsk) {
-        // They request subscription to us
-        imAccount.addProperty(Nepomuk::Vocabulary::NCO::requestedPresenceSubscriptionTo(), localAccount.uri());
+        case Tp::Contact::PresenceStateNo:
+            break;
 
-        // Remove them from our publish list.
-        localAccount.remove(Nepomuk::Vocabulary::NCO::publishesPresenceTo(), imAccount.uri());
-
-    } else if (state == Tp::Contact::PresenceStateNo) {
-        // Remove them from the requested-to-us list
-        imAccount.remove(Nepomuk::Vocabulary::NCO::requestedPresenceSubscriptionTo(), localAccount.uri());
-
-        // Remove them from our publish list
-        localAccount.remove(Nepomuk::Vocabulary::NCO::publishesPresenceTo(), imAccount.uri());
-
-    } else {
-        kWarning() << "Invalid Tp::Contact::PresenceState received.";
-        Q_ASSERT(false);
+        default:
+            kWarning() << "Invalid Tp::Contact::PresenceState received.";
+            Q_ASSERT(false);
     }
 
-    saveGraph(Nepomuk::SimpleResourceGraph() << imAccount << localAccount);*/
+    if( usPublish ) {
+        Nepomuk::SimpleResource &localAccountRes = m_graph[localAccountUri];
+        localAccountRes.setUri( localAccountUri );
+        localAccountRes.setProperty( NCO::requestedPresenceSubscriptionTo(), imAccountUri );
+
+        fireGraphTimer();
+    }
+    else {
+        // Remove us from the requested-to-them list
+        KJob* job = Nepomuk::removeProperty( QList<QUrl>() << localAccountUri,
+                                             NCO::publishesPresenceTo(),
+                                             QVariantList() << imAccountUri );
+        connect( job, SIGNAL(finished(KJob*)), this, SLOT(onRemovePropertiesJob(KJob*)) );
+    }
+
+    if( themRequest ) {
+        Nepomuk::SimpleResource &imAccount = m_graph[imAccountUri];
+        imAccount.setUri( imAccountUri );
+        imAccount.setProperty( NCO::requestedPresenceSubscriptionTo(), localAccountUri );
+
+        fireGraphTimer();
+    }
+    else {
+        // Remove us from their publish list
+        KJob* job = Nepomuk::removeProperty( QList<QUrl>() << imAccountUri,
+                                             NCO::requestedPresenceSubscriptionTo(),
+                                             QVariantList() << localAccountUri );
+        connect( job, SIGNAL(finished(KJob*)), this, SLOT(onRemovePropertiesJob(KJob*)) );
+    }
 }
 
 void NepomukStorage::setContactCapabilities(const QString &path,
@@ -1134,6 +1147,14 @@ void NepomukStorage::onContactGraphJob(KJob* job)
     }
 
     m_unresolvedContacts = unresolvedContacts;
+}
+
+void NepomukStorage::onRemovePropertiesJob(KJob* job)
+{
+    if( job->error() ) {
+        kWarning() << job->errorString();
+        return;
+    }
 }
 
 int qHash(ContactIdentifier c)
