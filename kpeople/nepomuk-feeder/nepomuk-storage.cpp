@@ -38,6 +38,7 @@
 
 #include <Nepomuk/Vocabulary/NCO>
 #include <Nepomuk/Vocabulary/PIMO>
+#include <Soprano/Vocabulary/RDF>
 
 #include <Nepomuk/Query/Query>
 #include <Nepomuk/Query/AndTerm>
@@ -55,8 +56,11 @@
 #include <TelepathyQt/Constants>
 #include <TelepathyQt/AvatarData>
 #include <Soprano/Vocabulary/NAO>
+#include <Soprano/Model>
+#include <Soprano/QueryResultIterator>
 
 using namespace Nepomuk::Vocabulary;
+using namespace Soprano::Vocabulary;
 
 class AccountResources::Data : public QSharedData {
 public:
@@ -322,34 +326,50 @@ void NepomukStorage::init()
     // Here we get the "me" person contact.
     // FIXME: Port to new OSCAF standard for accessing "me" as soon as it
     // becomes available.
-    Nepomuk::Thing me(QUrl::fromEncoded("nepomuk:/myself"));
+    QUrl meUri("nepomuk:/me");
 
-    // FIXME: We should not create "me" if it doesn't exist once the above
-    // fixme has been dealt with.
-    if (!me.exists()) {
-        // The PIMO:Person representing "me" does not exist, so we need to create it.
-        kWarning() << "PIMO 'me' does not exist. Creating it.";
-        me.addType(Nepomuk::Vocabulary::PIMO::Person());
+    Soprano::Model* model = Nepomuk::ResourceManager::instance()->mainModel();
+    bool exists = model->containsAnyStatement( meUri, RDF::type(), PIMO::Person() );
+    if( !exists ) {
+        // It should have been created by the Storage Service
+        // TODO: Create it
+        kWarning() << "nepomuk:/me doesn't exist!! Aborting";
+        return;
     }
 
-    // Loop through all the grounding instances of this person
-    Q_FOREACH (Nepomuk::Resource resource, me.groundingOccurrences()) {
-        // See if this grounding instance is of type nco:contact.
-        if (resource.hasType(Nepomuk::Vocabulary::NCO::PersonContact())) {
-            // FIXME: We are going to assume the first NCO::PersonContact is the
-            // right one. Can we improve this?
-            m_mePersonContact = resource.resourceUri();
-            break;
+    QString query = QString::fromLatin1("select ?o where { <nepomuk:/me> %1 ?o. ?o a %2 .}")
+                    .arg( Soprano::Node::resourceToN3( PIMO::groundingOccurrence() ),
+                          Soprano::Node::resourceToN3( NCO::PersonContact() ) );
+
+    Soprano::QueryResultIterator it = model->executeQuery( query, Soprano::Query::QueryLanguageSparql );
+
+    QList<QUrl> groundingOccurrences;
+    while( it.next() ) {
+        groundingOccurrences << it["o"].uri();
+    }
+
+    if( groundingOccurrences.isEmpty() ) {
+        Nepomuk::SimpleResource personContact;
+        personContact.addType( NCO::PersonContact() );
+
+        Nepomuk::SimpleResource me( meUri );
+        me.addProperty( PIMO::groundingOccurrence(), personContact );
+
+        Nepomuk::SimpleResourceGraph graph;
+        graph << me << personContact;
+
+        Nepomuk::StoreResourcesJob * job = Nepomuk::storeResources( graph );
+        job->exec();
+
+        if( job->error() ) {
+            kWarning() << job->errorString();
+            return;
         }
+        groundingOccurrences << job->mappings().value( personContact.uri() );
     }
 
-    if (!Nepomuk::Resource(m_mePersonContact).exists()) {
-        kWarning() << "PersonContact 'me' does not exist. Creating it.";
-        // FIXME: We shouldn't create this person contact, but for now we will
-        // to ease development :) (see above FIXME's)
-        m_mePersonContact = "nepomuk:/myself-person-contact";
-        me.addGroundingOccurrence(m_mePersonContact);
-    }
+    //FIXME: Use all of them, not just the first one
+    m_mePersonContact = groundingOccurrences.first();
 
     // *********************************************************************************************
     // Load all the relevant accounts and contacts that are already in Nepomuk.
