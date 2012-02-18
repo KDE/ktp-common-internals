@@ -826,19 +826,9 @@ void NepomukStorage::setContactAlias(const QString &path, const QString &id, con
     Nepomuk::SimpleResource &res = m_graph[imAccountUri];
     res.setUri( imAccountUri );
     res.setProperty( NCO::imNickname(), alias );
+    res.setProperty( NAO::prefLabel(), alias );
 
     fireGraphTimer();
-
-    // vHanda; WTF!! This is not good.
-    /*if (!Nepomuk::Resource(resources.person()).hasProperty(Soprano::Vocabulary::NAO::prefLabel())) {
-        KJob *job = Nepomuk::setProperty( QList<QUrl>() << resources.person(), Soprano::Vocabulary::NAO::prefLabel(),
-                                          QVariantList() << alias );
-
-        job->exec();
-        if( job->error() ) {
-            kWarning() << job->errorString();
-        }
-    }*/
 }
 
 void NepomukStorage::setContactPresence(const QString &path,
