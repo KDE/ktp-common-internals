@@ -411,6 +411,8 @@ void NepomukStorage::init()
         connect(client,
                 SIGNAL(finishedListing()),
                 SLOT(onAccountsQueryFinishedListing()));
+        connect(client, SIGNAL(finishedListing()),
+                client, SLOT(deleteLater()));
         kDebug() << "Me Query : " << query.toSparqlQuery();
         client->query(query);
     }
@@ -513,6 +515,8 @@ void NepomukStorage::onAccountsQueryFinishedListing()
         connect(client,
                 SIGNAL(finishedListing()),
                 SLOT(onContactsQueryFinishedListing()));
+        connect(client, SIGNAL(finishedListing()),
+                client, SLOT(deleteLater()));
         client->query(query);
     }
 }
