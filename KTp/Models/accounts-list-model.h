@@ -55,7 +55,6 @@ public:
     AccountItem* itemForIndex(const QModelIndex &index);
 
 Q_SIGNALS:
-    void protocolSelected(QString, QString);
     void setTitleForCustomPages(QString, QList<QString>);
 
 public Q_SLOTS:
