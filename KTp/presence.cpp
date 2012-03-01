@@ -98,7 +98,7 @@ QString Presence::displayString() const
         case Tp::ConnectionPresenceTypeAway:
             return i18nc("IM presence: a person is away", "Away");
         case Tp::ConnectionPresenceTypeExtendedAway:
-            return i18nc("IM presence: a person is not available", "Not available");
+            return i18nc("IM presence: a person is not available", "Not Available");
         case Tp::ConnectionPresenceTypeHidden:
             return i18nc("IM presence: a person is invisible", "Invisible");
         case Tp::ConnectionPresenceTypeOffline:
