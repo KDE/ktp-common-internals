@@ -82,7 +82,7 @@ private:
      *
      * @param QObject
      */
-    TextParser(QObject *parent);
+    TextParser(QObject *parent = 0);
 
     /**
      * @var TextParser
