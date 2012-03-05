@@ -76,6 +76,9 @@ AccountsModelItem::AccountsModelItem(const Tp::AccountPtr &account)
             SIGNAL(profileChanged(Tp::ProfilePtr)),
             SLOT(onChanged()));
     connect(mPriv->mAccount.data(),
+            SIGNAL(displayNameChanged(QString)),
+            SLOT(onChanged()));
+    connect(mPriv->mAccount.data(),
             SIGNAL(iconNameChanged(QString)),
             SLOT(onChanged()));
     connect(mPriv->mAccount.data(),
