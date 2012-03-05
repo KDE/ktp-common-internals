@@ -29,6 +29,7 @@
 #include "contact-model-item.h"
 
 #include <KIcon>
+#include <KTp/presence.h>
 
 struct AccountsModelItem::Private
 {
@@ -74,6 +75,9 @@ AccountsModelItem::AccountsModelItem(const Tp::AccountPtr &account)
             SLOT(onChanged()));
     connect(mPriv->mAccount.data(),
             SIGNAL(profileChanged(Tp::ProfilePtr)),
+            SLOT(onChanged()));
+    connect(mPriv->mAccount.data(),
+            SIGNAL(displayNameChanged(QString)),
             SLOT(onChanged()));
     connect(mPriv->mAccount.data(),
             SIGNAL(iconNameChanged(QString)),
@@ -164,21 +168,27 @@ QVariant AccountsModelItem::data(int role) const
     case AccountsModel::ChangingPresenceRole:
         return mPriv->mAccount->isChangingPresence();
     case AccountsModel::AutomaticPresenceRole:
-        return mPriv->mAccount->automaticPresence().status();
+        return QVariant::fromValue(KTp::Presence(mPriv->mAccount->automaticPresence()));
     case AccountsModel::AutomaticPresenceTypeRole:
         return mPriv->mAccount->automaticPresence().type();
+    case AccountsModel::AutomaticPresenceStatusRole:
+        return mPriv->mAccount->automaticPresence().status();
     case AccountsModel::AutomaticPresenceStatusMessageRole:
         return mPriv->mAccount->automaticPresence().statusMessage();
     case AccountsModel::CurrentPresenceRole:
-        return mPriv->mAccount->currentPresence().status();
+        return QVariant::fromValue(KTp::Presence(mPriv->mAccount->currentPresence()));
     case AccountsModel::CurrentPresenceTypeRole:
         return mPriv->mAccount->currentPresence().type();
+    case AccountsModel::CurrentPresenceStatusRole:
+        return mPriv->mAccount->currentPresence().status();
     case AccountsModel::CurrentPresenceStatusMessageRole:
         return mPriv->mAccount->currentPresence().statusMessage();
     case AccountsModel::RequestedPresenceRole:
-        return mPriv->mAccount->requestedPresence().status();
+        return QVariant::fromValue(KTp::Presence(mPriv->mAccount->requestedPresence()));
     case AccountsModel::RequestedPresenceTypeRole:
         return mPriv->mAccount->requestedPresence().type();
+    case AccountsModel::RequestedPresenceStatusRole:
+        return mPriv->mAccount->requestedPresence().status();
     case AccountsModel::RequestedPresenceStatusMessageRole:
         return mPriv->mAccount->requestedPresence().statusMessage();
     case AccountsModel::ConnectionStatusRole:
