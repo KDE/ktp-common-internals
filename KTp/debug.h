@@ -19,6 +19,8 @@
 #ifndef KTP_DEBUG_H
 #define KTP_DEBUG_H
 
+#include "ktp-export.h"
+
 namespace KTp {
 namespace Debug {
 
@@ -29,7 +31,7 @@ namespace Debug {
      * @param debug If true enable Telepathy-Qt debug
      * @param warning If true enable Telepathy-Qt warnings
      */
-    void installCallback(bool debug, bool warning = true);
+    KTP_EXPORT void installCallback(bool debug, bool warning = true);
 
 } // namespace Debug
 } // namespace KTp
