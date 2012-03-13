@@ -3,6 +3,7 @@ include_directories (${CMAKE_CURRENT_BINARY_DIR}
 
 set (ktp_common_internals_private_SRCS
      circular-countdown.cpp
+     debug.cpp
      error-dictionary.cpp
      global-presence.cpp
      presence.cpp
@@ -14,6 +15,7 @@ set (ktp_common_internals_private_SRCS
 
 set (ktp_common_internals_private_HDRS
      circular-countdown.h
+     debug.h
      error-dictionary.h
      global-presence.h
      presence.h
