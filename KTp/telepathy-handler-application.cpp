@@ -18,6 +18,7 @@
 */
 
 #include "telepathy-handler-application.h"
+#include "debug.h"
 
 #include <QTimer>
 #include <KCmdLineArgs>
@@ -31,20 +32,6 @@ extern bool kde_kdebug_enable_dbus_interface;
 
 namespace KTp
 {
-
-namespace {
-int s_tpqt4DebugArea;
-
-static void tpDebugCallback(const QString &libraryName,
-                            const QString &libraryVersion,
-                            QtMsgType type,
-                            const QString &msg)
-{
-    Q_UNUSED(libraryName)
-    Q_UNUSED(libraryVersion)
-    kDebugStream(type, s_tpqt4DebugArea, __FILE__, __LINE__, 0) << qPrintable(msg);
-}
-}
 
 class TelepathyHandlerApplication::Private
 {
@@ -111,8 +98,6 @@ KComponentData TelepathyHandlerApplication::Private::initHack()
     Private::s_persist = args->isSet("persist");
     Private::s_debug = args->isSet("debug");
 
-    s_tpqt4DebugArea = KDebug::registerArea("Telepathy-Qt4");
-
     return cData;
 }
 
@@ -130,12 +115,8 @@ void TelepathyHandlerApplication::Private::init(int initialTimeout, int timeout)
     // Register TpQt4 types
     Tp::registerTypes();
 
-    // Redirect Tp debug and warnings to KDebug output
-    Tp::setDebugCallback(&tpDebugCallback);
-
-    // Enable telepathy-Qt4 debug
-    Tp::enableDebug(s_debug);
-    Tp::enableWarnings(true);
+    // Install TpQt4 debug callback
+    KTp::Debug::installCallback(s_debug);
 
     // Enable KDebug DBus interface
     // FIXME This must be enabled here because there is a bug in plasma
