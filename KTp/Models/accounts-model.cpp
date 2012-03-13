@@ -108,6 +108,7 @@ AccountsModel::AccountsModel(QObject *parent)
     roles[UpgradeCallCapabilityRole] = "upgradeCall";
     roles[FileTransferCapabilityRole] = "fileTransfer";
     roles[DesktopSharingCapabilityRole] = "desktopSharing";
+    roles[SSHContactCapabilityRole] = "sshContact";
     setRoleNames(roles);
 }
 

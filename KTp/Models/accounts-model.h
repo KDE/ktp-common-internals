@@ -91,6 +91,7 @@ public:
         UpgradeCallCapabilityRole,
         FileTransferCapabilityRole,
         DesktopSharingCapabilityRole,
+        SSHContactCapabilityRole,
 
         TotalUsersCountRole,
         OnlineUsersCountRole,

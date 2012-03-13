@@ -53,6 +53,7 @@ private:
     bool videoCallCapability() const;
     bool fileTransferCapability() const;
     bool desktopSharingCapability() const;
+    bool sshContactCapability() const;
 
     struct Private;
     friend struct Private;

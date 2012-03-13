@@ -179,6 +179,10 @@ bool AccountsFilterModel::Private::filterAcceptsContact(const QModelIndex &index
                 && !index.data(AccountsModel::DesktopSharingCapabilityRole).toBool()) {
             return false;
         }
+        if ((capabilityFilterFlags & FilterBySSHContactCapability)
+                && !index.data(AccountsModel::SSHContactCapabilityRole).toBool()) {
+            return false;
+        }
     }
 
 

@@ -142,6 +142,8 @@ QVariant ContactModelItem::data(int role) const
         return fileTransferCapability();
     case AccountsModel::DesktopSharingCapabilityRole:
         return desktopSharingCapability();
+    case AccountsModel::SSHContactCapabilityRole:
+        return sshContactCapability();
     default:
         break;
     }
@@ -215,6 +217,13 @@ bool ContactModelItem::desktopSharingCapability() const
     bool contactCanHandleRfb = mPriv->mContact->capabilities().streamTubes(QLatin1String("rfb"));
     bool selfCanHandleRfb = s_krfbAvailableChecker->isAvailable();
     return contactCanHandleRfb && selfCanHandleRfb;
+}
+
+bool ContactModelItem::sshContactCapability() const
+{
+    bool contactCanHandleSSHContact = mPriv->mContact->capabilities().streamTubes(QLatin1String("x-ssh-contact"));
+    bool selfCanHandleSSHContact = true; // FIXME Check if ssh-contact client is installed
+    return contactCanHandleSSHContact && selfCanHandleSSHContact;
 }
 
 #include "contact-model-item.moc"

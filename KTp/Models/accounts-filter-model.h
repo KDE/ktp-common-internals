@@ -169,6 +169,7 @@ public:
         FilterByVideoCallCapability            = 0x0008,
         FilterByFileTransferCapability         = 0x0010,
         FilterByDesktopSharingCapability       = 0x0020,
+        FilterBySSHContactCapability           = 0x0040,
 
         CustomFilterCapability                 = 0x10000 // a placemark for custom capabilities in inherited classes
     };
