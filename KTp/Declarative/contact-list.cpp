@@ -30,9 +30,8 @@
 #include <TelepathyQt/AccountManager>
 #include <TelepathyQt/PendingReady>
 
-#include "flat-model-proxy.h"
-
 #include <KTp/Models/accounts-model.h>
+#include <KTp/Models/flat-model-proxy.h>
 
 
 
@@ -79,6 +78,11 @@ TelepathyContactList::TelepathyContactList(QObject* parent, const QVariantList& 
     connect(m_accountManager->becomeReady(),
             SIGNAL(finished(Tp::PendingOperation*)),
             SLOT(onAccountManagerReady(Tp::PendingOperation*)));
+    
+    m_model = new AccountsModel(this);
+    m_proxyModel = new FlatModelProxy(m_model);
+
+
 }
 
 TelepathyContactList::~TelepathyContactList()
@@ -108,8 +112,7 @@ void TelepathyContactList::init()
         // make C++ Plasma::Applet available to QML for resize signal
         m_declarative->engine()->rootContext()->setContextProperty("TelepathyContactList", this);
 
-        FlatModelProxy *proxyModel = new FlatModelProxy(m_model);
-        m_declarative->engine()->rootContext()->setContextProperty("contactListModel", proxyModel);
+        m_declarative->engine()->rootContext()->setContextProperty("contactListModel", m_proxyModel);
 
         // setup qml object so that we can talk to the declarative part
         m_qmlObject = dynamic_cast<QObject*>(m_declarative->rootObject());
@@ -129,7 +132,6 @@ K_EXPORT_PLASMA_APPLET(telepathy-contact-list, TelepathyContactList)
 
 void TelepathyContactList::onAccountManagerReady(Tp::PendingOperation *op)
 {
-    m_model = new AccountsModel(this);
     m_model->setAccountManager(m_accountManager);
     init();
 }

@@ -26,6 +26,7 @@
 #include <TelepathyQt/Types>
 
 class AccountsModel;
+class FlatModelProxy;
 
 namespace Tp {
 class PendingOperation;
@@ -53,7 +54,9 @@ private:
     Plasma::DeclarativeWidget *m_declarative;
     QObject *m_qmlObject;
     Tp::AccountManagerPtr m_accountManager;
+    
     AccountsModel *m_model;
+    FlatModelProxy *m_proxyModel;
 };
 
 #endif  // TELEPATHY_CONTACT_LIST_H
