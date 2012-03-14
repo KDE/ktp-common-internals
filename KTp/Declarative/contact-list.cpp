@@ -81,8 +81,6 @@ TelepathyContactList::TelepathyContactList(QObject* parent, const QVariantList& 
     
     m_model = new AccountsModel(this);
     m_proxyModel = new FlatModelProxy(m_model);
-
-
 }
 
 TelepathyContactList::~TelepathyContactList()
@@ -111,7 +109,6 @@ void TelepathyContactList::init()
 
         // make C++ Plasma::Applet available to QML for resize signal
         m_declarative->engine()->rootContext()->setContextProperty("TelepathyContactList", this);
-
         m_declarative->engine()->rootContext()->setContextProperty("contactListModel", m_proxyModel);
 
         // setup qml object so that we can talk to the declarative part
@@ -133,5 +130,4 @@ K_EXPORT_PLASMA_APPLET(telepathy-contact-list, TelepathyContactList)
 void TelepathyContactList::onAccountManagerReady(Tp::PendingOperation *op)
 {
     m_model->setAccountManager(m_accountManager);
-    init();
 }
