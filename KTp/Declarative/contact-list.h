@@ -1,62 +1,46 @@
-/***************************************************************************
- *   Copyright (C) 2011 by Francesco Nwokeka <francesco.nwokeka@gmail.com> *
- *                                                                         *
- *   This program is free software; you can redistribute it and/or modify  *
- *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
- *   (at your option) any later version.                                   *
- *                                                                         *
- *   This program is distributed in the hope that it will be useful,       *
- *   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
- *   GNU General Public License for more details.                          *
- *                                                                         *
- *   You should have received a copy of the GNU General Public License     *
- *   along with this program; if not, write to the                         *
- *   Free Software Foundation, Inc.,                                       *
- *   51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA            *
- ***************************************************************************/
+/*
+    Copyright (C) 2011  David Edmundson <kde@davidedmundson.co.uk>
 
-#ifndef TELEPATHY_CONTACT_LIST_H
-#define TELEPATHY_CONTACT_LIST_H
+    This library is free software; you can redistribute it and/or
+    modify it under the terms of the GNU Lesser General Public
+    License as published by the Free Software Foundation; either
+    version 2.1 of the License, or (at your option) any later version.
 
-#include <Plasma/Applet>
-#include <Plasma/DeclarativeWidget>
+    This library is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+    Lesser General Public License for more details.
+
+    You should have received a copy of the GNU Lesser General Public
+    License along with this library; if not, write to the Free Software
+    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+*/
+
+#ifndef CONTACT_LIST_H
+#define CONTACT_LIST_H
+
+#include <KTp/Models/accounts-model.h>
+#include <KTp/Models/flat-model-proxy.h>
 
 #include <TelepathyQt/Types>
 
-class AccountsModel;
-class FlatModelProxy;
-
-namespace Tp {
-class PendingOperation;
-}
-
-class TelepathyContactList : public Plasma::Applet
-{
+/** Exposes general contact list stuff to QML*/
+class ContactList : public QObject
+{   
     Q_OBJECT
 public:
-    TelepathyContactList(QObject *parent, const QVariantList &args);
-    virtual ~TelepathyContactList();
-
-    Q_PROPERTY(int width READ appletWidth);
-    Q_PROPERTY(int height READ appletHeight);
-
-    int appletHeight() const;     /** returns plasma applet's height */
-    int appletWidth() const;      /** returns plasma applet's width */
-    void init();
-
+    Q_PROPERTY(QObject* model READ flatModel)
+    
+    ContactList(QObject *parent=0);
+    FlatModelProxy* flatModel() const;
+    
 private slots:
     void onAccountManagerReady(Tp::PendingOperation *op);
-//     QString extractAvatarPathFromNepomuk(const QString &nepomukUri);
-
-private:
-    Plasma::DeclarativeWidget *m_declarative;
-    QObject *m_qmlObject;
-    Tp::AccountManagerPtr m_accountManager;
     
-    AccountsModel *m_model;
-    FlatModelProxy *m_proxyModel;
+private:
+    AccountsModel* m_accountsModel;
+    FlatModelProxy* m_flatModel; 
+    Tp::AccountManagerPtr m_accountManager;
 };
 
-#endif  // TELEPATHY_CONTACT_LIST_H
+#endif

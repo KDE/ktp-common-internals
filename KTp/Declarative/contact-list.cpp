@@ -1,28 +1,22 @@
-/***************************************************************************
- *   Copyright (C) 2011 by Francesco Nwokeka <francesco.nwokeka@gmail.com> *
- *                                                                         *
- *   This program is free software; you can redistribute it and/or modify  *
- *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
- *   (at your option) any later version.                                   *
- *                                                                         *
- *   This program is distributed in the hope that it will be useful,       *
- *   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
- *   GNU General Public License for more details.                          *
- *                                                                         *
- *   You should have received a copy of the GNU General Public License     *
- *   along with this program; if not, write to the                         *
- *   Free Software Foundation, Inc.,                                       *
- *   51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA            *
- ***************************************************************************/
+/*
+    Copyright (C) 2011  David Edmundson <kde@davidedmundson.co.uk>
 
-#include "telepathyContactList.h"
+    This library is free software; you can redistribute it and/or
+    modify it under the terms of the GNU Lesser General Public
+    License as published by the Free Software Foundation; either
+    version 2.1 of the License, or (at your option) any later version.
 
-#include <KStandardDirs>
+    This library is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+    Lesser General Public License for more details.
 
-#include <QtDeclarative/QDeclarativeEngine>
-#include <QtDeclarative/QDeclarativeContext>
+    You should have received a copy of the GNU Lesser General Public
+    License along with this library; if not, write to the Free Software
+    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+*/
+
+#include "contact-list.h"
 
 #include <TelepathyQt/AccountFactory>
 #include <TelepathyQt/ContactFactory>
@@ -30,20 +24,11 @@
 #include <TelepathyQt/AccountManager>
 #include <TelepathyQt/PendingReady>
 
-#include <KTp/Models/accounts-model.h>
-#include <KTp/Models/flat-model-proxy.h>
-
-
-
-TelepathyContactList::TelepathyContactList(QObject* parent, const QVariantList& args)
-    : Applet(parent, args)
-    , m_declarative(new Plasma::DeclarativeWidget(this))
-    , m_qmlObject(0)
+ContactList::ContactList(QObject *parent)
+    : QObject(parent),
+      m_accountsModel(new AccountsModel(this)),
+      m_flatModel(new FlatModelProxy(m_accountsModel))
 {
-    // set plasmoid size
-    setMinimumSize(250, 400);
-    setAspectRatioMode(Plasma::IgnoreAspectRatio);
-
     Tp::registerTypes();
 
         // Start setting up the Telepathy AccountManager.
@@ -78,56 +63,16 @@ TelepathyContactList::TelepathyContactList(QObject* parent, const QVariantList& 
     connect(m_accountManager->becomeReady(),
             SIGNAL(finished(Tp::PendingOperation*)),
             SLOT(onAccountManagerReady(Tp::PendingOperation*)));
-    
-    m_model = new AccountsModel(this);
-    m_proxyModel = new FlatModelProxy(m_model);
-}
-
-TelepathyContactList::~TelepathyContactList()
-{
-    delete m_declarative;
-}
-
-int TelepathyContactList::appletHeight() const
-{
-    return geometry().height();
-}
-
-int TelepathyContactList::appletWidth() const
-{
-    return geometry().width();
 }
 
 
-void TelepathyContactList::init()
+void ContactList::onAccountManagerReady(Tp::PendingOperation *op)
 {
-    // load QML part of the plasmoid
-    if (m_declarative) {
-        QString qmlFile = KGlobal::dirs()->findResource("data", "plasma/plasmoids/org.kde.telepathy-contact-list/contents/ui/main.qml");
-        qDebug() << "LOADING: " << qmlFile;
-        m_declarative->setQmlPath(qmlFile);
-
-        // make C++ Plasma::Applet available to QML for resize signal
-        m_declarative->engine()->rootContext()->setContextProperty("TelepathyContactList", this);
-        m_declarative->engine()->rootContext()->setContextProperty("contactListModel", m_proxyModel);
-
-        // setup qml object so that we can talk to the declarative part
-        m_qmlObject = dynamic_cast<QObject*>(m_declarative->rootObject());
-
-        // connect the qml object to recieve signals from C++ end
-        // these two signals are for the plasmoid resize. QML can't determine the Plasma::DeclarativeWidget's boundaries
-        connect(this, SIGNAL(widthChanged()), m_qmlObject, SLOT(onWidthChanged()));
-        connect(this, SIGNAL(heightChanged()), m_qmlObject, SLOT(onHeightChanged()));
-
-        //FIXME this code is messy, steal from qmlsplashscreen
-    }
+    Q_UNUSED(op);
+    m_accountsModel->setAccountManager(m_accountManager);
 }
 
-
-// This is the command that links your applet to the .desktop file
-K_EXPORT_PLASMA_APPLET(telepathy-contact-list, TelepathyContactList)
-
-void TelepathyContactList::onAccountManagerReady(Tp::PendingOperation *op)
+FlatModelProxy * ContactList::flatModel() const
 {
-    m_model->setAccountManager(m_accountManager);
+    return m_flatModel;
 }
