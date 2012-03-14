@@ -23,7 +23,7 @@
 #include <Plasma/Applet>
 #include <Plasma/DeclarativeWidget>
 
-#include <TelepathyQt4/Types>
+#include <TelepathyQt/Types>
 
 class AccountsModel;
 

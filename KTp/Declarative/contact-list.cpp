@@ -24,15 +24,15 @@
 #include <QtDeclarative/QDeclarativeEngine>
 #include <QtDeclarative/QDeclarativeContext>
 
-#include <TelepathyQt4/AccountFactory>
-#include <TelepathyQt4/ContactFactory>
-#include <TelepathyQt4/ConnectionFactory>
-#include <TelepathyQt4/AccountManager>
-#include <TelepathyQt4/PendingReady>
+#include <TelepathyQt/AccountFactory>
+#include <TelepathyQt/ContactFactory>
+#include <TelepathyQt/ConnectionFactory>
+#include <TelepathyQt/AccountManager>
+#include <TelepathyQt/PendingReady>
 
 #include "flat-model-proxy.h"
 
-#include <KTelepathy/Models/accounts-model.h>
+#include <KTp/Models/accounts-model.h>
 
 
 
@@ -44,7 +44,7 @@ TelepathyContactList::TelepathyContactList(QObject* parent, const QVariantList& 
     // set plasmoid size
     setMinimumSize(250, 400);
     setAspectRatioMode(Plasma::IgnoreAspectRatio);
-    
+
     Tp::registerTypes();
 
         // Start setting up the Telepathy AccountManager.
@@ -65,9 +65,9 @@ TelepathyContactList::TelepathyContactList(QObject* parent, const QVariantList& 
                                                                       << Tp::Contact::FeatureAvatarData
                                                                       << Tp::Contact::FeatureSimplePresence
                                                                       << Tp::Contact::FeatureCapabilities);
-    
-    
-    
+
+
+
     Tp::ChannelFactoryPtr channelFactory = Tp::ChannelFactory::create(QDBusConnection::sessionBus());
 
      m_accountManager = Tp::AccountManager::create(QDBusConnection::sessionBus(),
@@ -79,10 +79,6 @@ TelepathyContactList::TelepathyContactList(QObject* parent, const QVariantList& 
     connect(m_accountManager->becomeReady(),
             SIGNAL(finished(Tp::PendingOperation*)),
             SLOT(onAccountManagerReady(Tp::PendingOperation*)));
-
-    m_model = new AccountsModel(m_accountManager, this);
-
-    
 }
 
 TelepathyContactList::~TelepathyContactList()
@@ -133,5 +129,7 @@ K_EXPORT_PLASMA_APPLET(telepathy-contact-list, TelepathyContactList)
 
 void TelepathyContactList::onAccountManagerReady(Tp::PendingOperation *op)
 {
-    m_model->init();
+    m_model = new AccountsModel(this);
+    m_model->setAccountManager(m_accountManager);
+    init();
 }
