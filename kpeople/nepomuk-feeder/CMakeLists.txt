@@ -75,6 +75,7 @@ target_link_libraries (nepomuktelepathyservice-static
                        ${SOPRANO_LIBRARIES}
                        ${NEPOMUK_LIBRARIES}
                        ${NEPOMUK_QUERY_LIBRARIES}
+                       nepomukdatamanagement
 )
 
 set_property(TARGET nepomuktelepathyservice-static PROPERTY COMPILE_FLAGS -fPIC)
@@ -93,7 +94,6 @@ kde4_add_plugin(nepomuktelepathyservice
 
 target_link_libraries (nepomuktelepathyservice
                        nepomuktelepathyservice-static
-                       nepomukdatamanagement
 )
 
 # Install the service.

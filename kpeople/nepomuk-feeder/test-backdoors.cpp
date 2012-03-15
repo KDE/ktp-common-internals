@@ -20,8 +20,8 @@
  */
 
 #include "test-backdoors.h"
-/*
-Nepomuk::PersonContact
+
+QUrl
 TestBackdoors::nepomukStorageMePersonContact(NepomukStorage *storage)
 {
     Q_ASSERT(storage);
@@ -45,4 +45,4 @@ TestBackdoors::nepomukStorageContacts(NepomukStorage *storage)
 
     return &storage->m_contacts;
 }
-*/
+

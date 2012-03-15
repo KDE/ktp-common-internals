@@ -23,9 +23,11 @@
 
 #include "test-backdoors.h"
 
+#include "personcontact.h"
 #include "contactgroup.h"
 #include "imcapability.h"
 #include "dataobject.h"
+#include "imaccount.h"
 
 #include <KDebug>
 
@@ -73,6 +75,14 @@ void StorageTest::init()
     initImpl();
 }
 
+namespace {
+    Nepomuk::PersonContact nepomukStorageMePersonContact(NepomukStorage* storage) {
+        const QUrl uri = TestBackdoors::nepomukStorageMePersonContact(storage);
+        return Nepomuk::PersonContact(uri);
+    }
+}
+//vHanda: Is this really required?
+
 void StorageTest::testConstructorDestructor()
 {
     // First test constructing the NepomukStorage on a Nepomuk database with no relevant
@@ -81,7 +91,7 @@ void StorageTest::testConstructorDestructor()
     QTest::kWaitForSignal(m_storage, SIGNAL(initialised(bool)), 0);
 
     // Check that the Nepomuk mePersonContact has been created.
-    QVERIFY(TestBackdoors::nepomukStorageMePersonContact(m_storage).exists());
+    QVERIFY(nepomukStorageMePersonContact(m_storage).exists());
 
     // Check that the PersonContact and IMAccount lists are empty
     QVERIFY(TestBackdoors::nepomukStorageAccounts(m_storage)->isEmpty());
@@ -99,7 +109,7 @@ void StorageTest::testConstructorDestructor()
     QTest::kWaitForSignal(m_storage, SIGNAL(initialised(bool)), 0);
 
     // Check that the Nepomuk mePersonContact has been created.
-    QVERIFY(TestBackdoors::nepomukStorageMePersonContact(m_storage).exists());
+    QVERIFY(nepomukStorageMePersonContact(m_storage).exists());
 
     // Check that the PersonContact and IMAccount lists are empty
     QVERIFY(TestBackdoors::nepomukStorageAccounts(m_storage)->isEmpty());
@@ -113,12 +123,13 @@ void StorageTest::testConstructorDestructor()
     QCOMPARE(mLoop->exec(), 0);
 }
 
+
 void StorageTest::testCreateAccount()
 {
     m_storage = new NepomukStorage(this);
     QTest::kWaitForSignal(m_storage, SIGNAL(initialised(bool)), 0);
     Nepomuk::PersonContact mePersonContact = TestBackdoors::nepomukStorageMePersonContact(m_storage);
-    QHash<QString, Nepomuk::IMAccount> *accounts = TestBackdoors::nepomukStorageAccounts(m_storage);
+    QHash<QString, AccountResources> *accounts = TestBackdoors::nepomukStorageAccounts(m_storage);
 
     QVERIFY(m_storage);
 
@@ -139,7 +150,7 @@ void StorageTest::testCreateAccount()
     QCOMPARE(TestBackdoors::nepomukStorageContacts(m_storage)->size(), 0);
 
     // Check its properties are correct
-    Nepomuk::IMAccount imAcc1 = accounts->value(QLatin1String("/foo/bar/baz"));
+    Nepomuk::IMAccount imAcc1 = accounts->value(QLatin1String("/foo/bar/baz")).account();
     QVERIFY(imAcc1.exists());
     QCOMPARE(imAcc1.imIDs().size(), 1);
     QCOMPARE(imAcc1.imIDs().first(), QLatin1String("foo@bar.baz"));
@@ -174,7 +185,7 @@ void StorageTest::testCreateAccount()
     QCOMPARE(TestBackdoors::nepomukStorageContacts(m_storage)->size(), 0);
 
     // Check its properties are correct
-    Nepomuk::IMAccount imAcc3 = accounts->value(QLatin1String("/foo/bar/baz/bong"));
+    Nepomuk::IMAccount imAcc3 = accounts->value(QLatin1String("/foo/bar/baz/bong")).account();
     QVERIFY(imAcc3.exists());
     QCOMPARE(imAcc3.imIDs().size(), 1);
     QCOMPARE(imAcc3.imIDs().first(), QLatin1String("foo.bar@baz.bong"));
@@ -195,7 +206,7 @@ void StorageTest::testCreateAccount()
     QCOMPARE(TestBackdoors::nepomukStorageContacts(m_storage)->size(), 0);
 
     // Check its properties are correct
-    Nepomuk::IMAccount imAcc4 = accounts->value(QLatin1String("/foo/bar/baz"));
+    Nepomuk::IMAccount imAcc4 = accounts->value(QLatin1String("/foo/bar/baz")).account();
     QVERIFY(imAcc4.exists());
     QCOMPARE(imAcc4.imIDs().size(), 1);
     QCOMPARE(imAcc4.imIDs().first(), QLatin1String("foo@bar.baz"));
@@ -227,7 +238,7 @@ void StorageTest::testDestroyAccount()
     QTest::kWaitForSignal(m_storage, SIGNAL(initialised(bool)), 0);
     QVERIFY(m_storage);
 
-    QHash<QString, Nepomuk::IMAccount> *accounts = TestBackdoors::nepomukStorageAccounts(m_storage);
+    QHash<QString, AccountResources> *accounts = TestBackdoors::nepomukStorageAccounts(m_storage);
 
     // Create an account on the storage.
     m_storage->createAccount(QLatin1String("/foo/bar/baz"),
@@ -239,7 +250,7 @@ void StorageTest::testDestroyAccount()
     QCOMPARE(TestBackdoors::nepomukStorageContacts(m_storage)->size(), 0);
 
     // And in Nepomuk...
-    Nepomuk::IMAccount imAcc1 = accounts->value(QLatin1String("/foo/bar/baz"));
+    Nepomuk::IMAccount imAcc1 = accounts->value(QLatin1String("/foo/bar/baz")).account();
     QVERIFY(imAcc1.exists());
 
     // Now destroy the account.
@@ -267,7 +278,7 @@ void StorageTest::testSetAccountNickname()
     QTest::kWaitForSignal(m_storage, SIGNAL(initialised(bool)), 0);
     QVERIFY(m_storage);
 
-    QHash<QString, Nepomuk::IMAccount> *accounts = TestBackdoors::nepomukStorageAccounts(m_storage);
+    QHash<QString, AccountResources> *accounts = TestBackdoors::nepomukStorageAccounts(m_storage);
 
     // Create an account on the storage.
     m_storage->createAccount(QLatin1String("/foo/bar/baz"),
@@ -279,7 +290,7 @@ void StorageTest::testSetAccountNickname()
     QCOMPARE(TestBackdoors::nepomukStorageContacts(m_storage)->size(), 0);
 
     // And in Nepomuk...
-    Nepomuk::IMAccount imAcc1 = accounts->value(QLatin1String("/foo/bar/baz"));
+    Nepomuk::IMAccount imAcc1 = accounts->value(QLatin1String("/foo/bar/baz")).account();
     QVERIFY(imAcc1.exists());
 
     // Check the nickname before we set it for the first time.
@@ -312,7 +323,7 @@ void StorageTest::testSetAccountCurrentPresence()
     QTest::kWaitForSignal(m_storage, SIGNAL(initialised(bool)), 0);
     QVERIFY(m_storage);
 
-    QHash<QString, Nepomuk::IMAccount> *accounts = TestBackdoors::nepomukStorageAccounts(m_storage);
+    QHash<QString, AccountResources> *accounts = TestBackdoors::nepomukStorageAccounts(m_storage);
 
     // Create an account on the storage.
     m_storage->createAccount(QLatin1String("/foo/bar/baz"),
@@ -324,7 +335,7 @@ void StorageTest::testSetAccountCurrentPresence()
     QCOMPARE(TestBackdoors::nepomukStorageContacts(m_storage)->size(), 0);
 
     // And in Nepomuk...
-    Nepomuk::IMAccount imAcc1 = accounts->value(QLatin1String("/foo/bar/baz"));
+    Nepomuk::IMAccount imAcc1 = accounts->value(QLatin1String("/foo/bar/baz")).account();
     QVERIFY(imAcc1.exists());
 
     // Check the presence properties before we set them.
@@ -367,7 +378,7 @@ void StorageTest::testCreateContact()
     QTest::kWaitForSignal(m_storage, SIGNAL(initialised(bool)), 0);
     QVERIFY(m_storage);
 
-    QHash<QString, Nepomuk::IMAccount> *accounts = TestBackdoors::nepomukStorageAccounts(m_storage);
+    QHash<QString, AccountResources> *accounts = TestBackdoors::nepomukStorageAccounts(m_storage);
     QHash<ContactIdentifier, ContactResources> *contacts = TestBackdoors::nepomukStorageContacts(m_storage);
 
     // Create an account on the storage.
@@ -380,7 +391,7 @@ void StorageTest::testCreateContact()
     QCOMPARE(TestBackdoors::nepomukStorageContacts(m_storage)->size(), 0);
 
     // And in Nepomuk...
-    Nepomuk::IMAccount imAcc1 = accounts->value(QLatin1String("/foo/bar/baz"));
+    Nepomuk::IMAccount imAcc1 = accounts->value(QLatin1String("/foo/bar/baz")).account();
     QVERIFY(imAcc1.exists());
     QCOMPARE(imAcc1.isAccessedByOf().size(), 0);
 
@@ -539,7 +550,7 @@ void StorageTest::testDestroyContact()
     QTest::kWaitForSignal(m_storage, SIGNAL(initialised(bool)), 0);
     QVERIFY(m_storage);
 
-    QHash<QString, Nepomuk::IMAccount> *accounts = TestBackdoors::nepomukStorageAccounts(m_storage);
+    QHash<QString, AccountResources> *accounts = TestBackdoors::nepomukStorageAccounts(m_storage);
     QHash<ContactIdentifier, ContactResources> *contacts = TestBackdoors::nepomukStorageContacts(m_storage);
 
     // Create an account on the storage.
@@ -552,7 +563,7 @@ void StorageTest::testDestroyContact()
     QCOMPARE(TestBackdoors::nepomukStorageContacts(m_storage)->size(), 0);
 
     // And in Nepomuk...
-    Nepomuk::IMAccount imAcc1 = accounts->value(QLatin1String("/foo/bar/baz"));
+    Nepomuk::IMAccount imAcc1 = accounts->value(QLatin1String("/foo/bar/baz")).account();
     QVERIFY(imAcc1.exists());
     QCOMPARE(imAcc1.isAccessedByOf().size(), 0);
 
@@ -605,7 +616,7 @@ void StorageTest::testSetContactAlias()
     QTest::kWaitForSignal(m_storage, SIGNAL(initialised(bool)), 0);
     QVERIFY(m_storage);
 
-    QHash<QString, Nepomuk::IMAccount> *accounts = TestBackdoors::nepomukStorageAccounts(m_storage);
+    QHash<QString, AccountResources> *accounts = TestBackdoors::nepomukStorageAccounts(m_storage);
     QHash<ContactIdentifier, ContactResources> *contacts = TestBackdoors::nepomukStorageContacts(m_storage);
 
     // Create an account on the storage.
@@ -618,7 +629,7 @@ void StorageTest::testSetContactAlias()
     QCOMPARE(TestBackdoors::nepomukStorageContacts(m_storage)->size(), 0);
 
     // And in Nepomuk...
-    Nepomuk::IMAccount imAcc1 = accounts->value(QLatin1String("/foo/bar/baz"));
+    Nepomuk::IMAccount imAcc1 = accounts->value(QLatin1String("/foo/bar/baz")).account();
     QVERIFY(imAcc1.exists());
     QCOMPARE(imAcc1.isAccessedByOf().size(), 0);
 
@@ -675,7 +686,7 @@ void StorageTest::testSetContactPresence()
     QTest::kWaitForSignal(m_storage, SIGNAL(initialised(bool)), 0);
     QVERIFY(m_storage);
 
-    QHash<QString, Nepomuk::IMAccount> *accounts = TestBackdoors::nepomukStorageAccounts(m_storage);
+    QHash<QString, AccountResources> *accounts = TestBackdoors::nepomukStorageAccounts(m_storage);
     QHash<ContactIdentifier, ContactResources> *contacts = TestBackdoors::nepomukStorageContacts(m_storage);
 
     // Create an account on the storage.
@@ -688,7 +699,7 @@ void StorageTest::testSetContactPresence()
     QCOMPARE(TestBackdoors::nepomukStorageContacts(m_storage)->size(), 0);
 
     // And in Nepomuk...
-    Nepomuk::IMAccount imAcc1 = accounts->value(QLatin1String("/foo/bar/baz"));
+    Nepomuk::IMAccount imAcc1 = accounts->value(QLatin1String("/foo/bar/baz")).account();
     QVERIFY(imAcc1.exists());
     QCOMPARE(imAcc1.isAccessedByOf().size(), 0);
 
@@ -770,7 +781,7 @@ void StorageTest::testSetContactGroups()
     QTest::kWaitForSignal(m_storage, SIGNAL(initialised(bool)), 0);
     QVERIFY(m_storage);
 
-    QHash<QString, Nepomuk::IMAccount> *accounts = TestBackdoors::nepomukStorageAccounts(m_storage);
+    QHash<QString, AccountResources> *accounts = TestBackdoors::nepomukStorageAccounts(m_storage);
     QHash<ContactIdentifier, ContactResources> *contacts = TestBackdoors::nepomukStorageContacts(m_storage);
 
     // Create an account on the storage.
@@ -783,7 +794,7 @@ void StorageTest::testSetContactGroups()
     QCOMPARE(TestBackdoors::nepomukStorageContacts(m_storage)->size(), 0);
 
     // And in Nepomuk...
-    Nepomuk::IMAccount imAcc1 = accounts->value(QLatin1String("/foo/bar/baz"));
+    Nepomuk::IMAccount imAcc1 = accounts->value(QLatin1String("/foo/bar/baz")).account();
     QVERIFY(imAcc1.exists());
     QCOMPARE(imAcc1.isAccessedByOf().size(), 0);
 
@@ -881,7 +892,7 @@ void StorageTest::testSetContactBlockedStatus()
     QTest::kWaitForSignal(m_storage, SIGNAL(initialised(bool)), 0);
     QVERIFY(m_storage);
 
-    QHash<QString, Nepomuk::IMAccount> *accounts = TestBackdoors::nepomukStorageAccounts(m_storage);
+    QHash<QString, AccountResources> *accounts = TestBackdoors::nepomukStorageAccounts(m_storage);
     QHash<ContactIdentifier, ContactResources> *contacts = TestBackdoors::nepomukStorageContacts(m_storage);
 
     // Create an account on the storage.
@@ -894,7 +905,7 @@ void StorageTest::testSetContactBlockedStatus()
     QCOMPARE(TestBackdoors::nepomukStorageContacts(m_storage)->size(), 0);
 
     // And in Nepomuk...
-    Nepomuk::IMAccount imAcc1 = accounts->value(QLatin1String("/foo/bar/baz"));
+    Nepomuk::IMAccount imAcc1 = accounts->value(QLatin1String("/foo/bar/baz")).account();
     QVERIFY(imAcc1.exists());
     QCOMPARE(imAcc1.isAccessedByOf().size(), 0);
 
@@ -949,7 +960,7 @@ void StorageTest::testSetContactPublishState()
     QTest::kWaitForSignal(m_storage, SIGNAL(initialised(bool)), 0);
     QVERIFY(m_storage);
 
-    QHash<QString, Nepomuk::IMAccount> *accounts = TestBackdoors::nepomukStorageAccounts(m_storage);
+    QHash<QString, AccountResources> *accounts = TestBackdoors::nepomukStorageAccounts(m_storage);
     QHash<ContactIdentifier, ContactResources> *contacts = TestBackdoors::nepomukStorageContacts(m_storage);
 
     // Create an account on the storage.
@@ -962,7 +973,7 @@ void StorageTest::testSetContactPublishState()
     QCOMPARE(TestBackdoors::nepomukStorageContacts(m_storage)->size(), 0);
 
     // And in Nepomuk...
-    Nepomuk::IMAccount imAcc1 = accounts->value(QLatin1String("/foo/bar/baz"));
+    Nepomuk::IMAccount imAcc1 = accounts->value(QLatin1String("/foo/bar/baz")).account();
     QVERIFY(imAcc1.exists());
     QCOMPARE(imAcc1.isAccessedByOf().size(), 0);
 
@@ -1031,7 +1042,7 @@ void StorageTest::testSetContactSubscriptionState()
     QTest::kWaitForSignal(m_storage, SIGNAL(initialised(bool)), 0);
     QVERIFY(m_storage);
 
-    QHash<QString, Nepomuk::IMAccount> *accounts = TestBackdoors::nepomukStorageAccounts(m_storage);
+    QHash<QString, AccountResources> *accounts = TestBackdoors::nepomukStorageAccounts(m_storage);
     QHash<ContactIdentifier, ContactResources> *contacts = TestBackdoors::nepomukStorageContacts(m_storage);
 
     // Create an account on the storage.
@@ -1044,7 +1055,7 @@ void StorageTest::testSetContactSubscriptionState()
     QCOMPARE(TestBackdoors::nepomukStorageContacts(m_storage)->size(), 0);
 
     // And in Nepomuk...
-    Nepomuk::IMAccount imAcc1 = accounts->value(QLatin1String("/foo/bar/baz"));
+    Nepomuk::IMAccount imAcc1 = accounts->value(QLatin1String("/foo/bar/baz")).account();
     QVERIFY(imAcc1.exists());
     QCOMPARE(imAcc1.isAccessedByOf().size(), 0);
 
@@ -1113,7 +1124,7 @@ void StorageTest::testSetContactCapabilities()
     QTest::kWaitForSignal(m_storage, SIGNAL(initialised(bool)), 0);
     QVERIFY(m_storage);
 
-    QHash<QString, Nepomuk::IMAccount> *accounts = TestBackdoors::nepomukStorageAccounts(m_storage);
+    QHash<QString, AccountResources> *accounts = TestBackdoors::nepomukStorageAccounts(m_storage);
     QHash<ContactIdentifier, ContactResources> *contacts = TestBackdoors::nepomukStorageContacts(m_storage);
 
     // Create an account on the storage.
@@ -1126,7 +1137,7 @@ void StorageTest::testSetContactCapabilities()
     QCOMPARE(TestBackdoors::nepomukStorageContacts(m_storage)->size(), 0);
 
     // And in Nepomuk...
-    Nepomuk::IMAccount imAcc1 = accounts->value(QLatin1String("/foo/bar/baz"));
+    Nepomuk::IMAccount imAcc1 = accounts->value(QLatin1String("/foo/bar/baz")).account();
     QVERIFY(imAcc1.exists());
     QCOMPARE(imAcc1.isAccessedByOf().size(), 0);
 
@@ -1222,7 +1233,7 @@ void StorageTest::testSetAvatar()
     QTest::kWaitForSignal(m_storage, SIGNAL(initialised(bool)), 0);
     QVERIFY(m_storage);
 
-    QHash<QString, Nepomuk::IMAccount> *accounts = TestBackdoors::nepomukStorageAccounts(m_storage);
+    QHash<QString, AccountResources> *accounts = TestBackdoors::nepomukStorageAccounts(m_storage);
     QHash<ContactIdentifier, ContactResources> *contacts = TestBackdoors::nepomukStorageContacts(m_storage);
 
     // Create an account on the storage.
@@ -1235,7 +1246,7 @@ void StorageTest::testSetAvatar()
     QCOMPARE(TestBackdoors::nepomukStorageContacts(m_storage)->size(), 0);
 
     // And in Nepomuk...
-    Nepomuk::IMAccount imAcc1 = accounts->value(QLatin1String("/foo/bar/baz"));
+    Nepomuk::IMAccount imAcc1 = accounts->value(QLatin1String("/foo/bar/baz")).account();
     QVERIFY(imAcc1.exists());
     QCOMPARE(imAcc1.isAccessedByOf().size(), 0);
 
@@ -1269,7 +1280,7 @@ void StorageTest::testSetAvatar()
                                 avatar1);
     QCOMPARE(pC2.photos().size(), 1);
     QVERIFY(pC2.photos().contains(Nepomuk::DataObject(Nepomuk::Resource(avatar1.fileName))));
-    QCOMPARE(imAcc2.avatar(), Nepomuk::Resource(avatar1.fileName));
+    QVERIFY(imAcc2.avatar() == Nepomuk::Resource(avatar1.fileName));
 
     // Change the avatar
     Tp::AvatarData avatar2(QLatin1String("file:/home/foo/avatar2.png"), QString());
@@ -1278,7 +1289,7 @@ void StorageTest::testSetAvatar()
                                 avatar2);
     QCOMPARE(pC2.photos().size(), 1);
     QVERIFY(pC2.photos().contains(Nepomuk::DataObject(Nepomuk::Resource(avatar2.fileName))));
-    QCOMPARE(imAcc2.avatar(), Nepomuk::Resource(avatar2.fileName));
+    QVERIFY(imAcc2.avatar() == Nepomuk::Resource(avatar2.fileName));
 
     // Remove the avatar
     Tp::AvatarData avatar3(QLatin1String(""), QString());
@@ -1311,7 +1322,7 @@ void StorageTest::testSetAvatar()
     QVERIFY(pC2.photos().contains(Nepomuk::DataObject(Nepomuk::Resource(QLatin1String("file:/home/foo/photo1.png")))));
     QVERIFY(pC2.photos().contains(Nepomuk::DataObject(Nepomuk::Resource(QLatin1String("file:/home/foo/photo2.png")))));
     QVERIFY(pC2.photos().contains(Nepomuk::DataObject(Nepomuk::Resource(QLatin1String("file:/home/foo/photo3.png")))));
-    QCOMPARE(imAcc2.avatar(), Nepomuk::Resource(avatar4.fileName));
+    QVERIFY(imAcc2.avatar() == Nepomuk::Resource(avatar4.fileName));
 
     // Remove the avatar
     Tp::AvatarData avatar5(QLatin1String(""), QString());
@@ -1333,7 +1344,7 @@ void StorageTest::testSetAvatar()
     QVERIFY(pC2.photos().contains(Nepomuk::DataObject(Nepomuk::Resource(QLatin1String("file:/home/foo/photo1.png")))));
     QVERIFY(pC2.photos().contains(Nepomuk::DataObject(Nepomuk::Resource(QLatin1String("file:/home/foo/photo2.png")))));
     QVERIFY(pC2.photos().contains(Nepomuk::DataObject(Nepomuk::Resource(QLatin1String("file:/home/foo/photo3.png")))));
-    QCOMPARE(imAcc2.avatar(), Nepomuk::Resource(avatar6.fileName));
+    QVERIFY(imAcc2.avatar() == Nepomuk::Resource(avatar6.fileName));
 
     // FIXME: We shouldn't remove from the photos if the avatar was already in the photos when
     // we added it, when removing the avatar. This should be fixed automatically when the port
