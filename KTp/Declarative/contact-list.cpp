@@ -27,11 +27,17 @@
 ContactList::ContactList(QObject *parent)
     : QObject(parent),
       m_accountsModel(new AccountsModel(this)),
-      m_flatModel(new FlatModelProxy(m_accountsModel))
+      m_filterModel(new AccountsFilterModel(this)),
+      m_flatModel(0)
 {
+    m_filterModel->setSourceModel(m_accountsModel);
+    //flat model takes the source as a constructor parameter, the other's don't.
+    //due to a bug somewhere creating the flat model proxy with the filter model as a source before the filter model has a source means the rolenames do not get propgated up
+    m_flatModel = new FlatModelProxy(m_filterModel);
+
     Tp::registerTypes();
 
-        // Start setting up the Telepathy AccountManager.
+    // Start setting up the Telepathy AccountManager.
     Tp::AccountFactoryPtr  accountFactory = Tp::AccountFactory::create(QDBusConnection::sessionBus(),
                                                                        Tp::Features() << Tp::Account::FeatureCore
                                                                        << Tp::Account::FeatureAvatar
@@ -54,11 +60,13 @@ ContactList::ContactList(QObject *parent)
 
     Tp::ChannelFactoryPtr channelFactory = Tp::ChannelFactory::create(QDBusConnection::sessionBus());
 
-     m_accountManager = Tp::AccountManager::create(QDBusConnection::sessionBus(),
-                                                   accountFactory,
-                                                   connectionFactory,
-                                                   channelFactory,
-                                                   contactFactory);
+    m_accountManager = Tp::AccountManager::create(QDBusConnection::sessionBus(),
+                                                  accountFactory,
+                                                  connectionFactory,
+                                                  channelFactory,
+                                                  contactFactory);
+
+    m_filterModel->setDynamicSortFilter(true);
 
     connect(m_accountManager->becomeReady(),
             SIGNAL(finished(Tp::PendingOperation*)),
@@ -76,3 +84,13 @@ FlatModelProxy * ContactList::flatModel() const
 {
     return m_flatModel;
 }
+
+AccountsFilterModel * ContactList::filterModel() const
+{
+    return m_filterModel;
+}
+
+void ContactList::startChat(ContactModelItem *contact)
+{
+}
+

@@ -21,6 +21,8 @@
 
 #include <KTp/Models/accounts-model.h>
 #include <KTp/Models/flat-model-proxy.h>
+#include <KTp/Models/accounts-filter-model.h>
+
 
 #include <TelepathyQt/Types>
 
@@ -30,15 +32,23 @@ class ContactList : public QObject
     Q_OBJECT
 public:
     Q_PROPERTY(QObject* model READ flatModel)
+    Q_PROPERTY(QObject* filter READ filterModel)
+
     
     ContactList(QObject *parent=0);
     FlatModelProxy* flatModel() const;
+    AccountsFilterModel* filterModel() const;
+
     
+public slots:
+    void startChat(ContactModelItem *contact);
+
 private slots:
     void onAccountManagerReady(Tp::PendingOperation *op);
     
 private:
     AccountsModel* m_accountsModel;
+    AccountsFilterModel* m_filterModel;
     FlatModelProxy* m_flatModel; 
     Tp::AccountManagerPtr m_accountManager;
 };
