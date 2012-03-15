@@ -140,6 +140,9 @@ public Q_SLOTS:
     virtual void setContactCapabilities(const QString &path, const QString &id, const Tp::ContactCapabilities &capabilities);
     virtual void setContactAvatar(const QString &path, const QString &id, const Tp::AvatarData &avatar);
 
+signals:
+    void graphSaved();
+
 private Q_SLOTS:
     void onNepomukError(const QString &uri, int errorCode);
     void init();

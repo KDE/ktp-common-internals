@@ -4,6 +4,8 @@
  * Copyright (C) 2011 Collabora Ltd. <info@collabora.co.uk>
  *   @author George Goldberg <george.goldberg@collabora.co.uk>
  *
+ * Copyright (C) 2012 Vishesh Handa <me@vhanda.in>
+ *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
@@ -123,7 +125,6 @@ void StorageTest::testConstructorDestructor()
     QCOMPARE(mLoop->exec(), 0);
 }
 
-
 void StorageTest::testCreateAccount()
 {
     m_storage = new NepomukStorage(this);
@@ -144,6 +145,7 @@ void StorageTest::testCreateAccount()
     m_storage->createAccount(QLatin1String("/foo/bar/baz"),
                              QLatin1String("foo@bar.baz"),
                              QLatin1String("test"));
+    QTest::kWaitForSignal(m_storage, SIGNAL(graphSaved()), 1000);
 
     // Check the Account is created
     QCOMPARE(TestBackdoors::nepomukStorageAccounts(m_storage)->size(), 1);
@@ -179,6 +181,7 @@ void StorageTest::testCreateAccount()
     m_storage->createAccount(QLatin1String("/foo/bar/baz/bong"),
                              QLatin1String("foo.bar@baz.bong"),
                              QLatin1String("test"));
+    QTest::kWaitForSignal(m_storage, SIGNAL(graphSaved()), 1000);
 
     // Check the account is found.
     QCOMPARE(TestBackdoors::nepomukStorageAccounts(m_storage)->size(), 2);
@@ -200,6 +203,7 @@ void StorageTest::testCreateAccount()
     m_storage->createAccount(QLatin1String("/foo/bar/baz"),
                              QLatin1String("foo@bar.baz"),
                              QLatin1String("test"));
+    QTest::kWaitForSignal(m_storage, SIGNAL(graphSaved()), 1000);
 
     // Check the Account is created
     QCOMPARE(TestBackdoors::nepomukStorageAccounts(m_storage)->size(), 2);
@@ -244,6 +248,7 @@ void StorageTest::testDestroyAccount()
     m_storage->createAccount(QLatin1String("/foo/bar/baz"),
                              QLatin1String("foo@bar.baz"),
                              QLatin1String("test"));
+    QTest::kWaitForSignal(m_storage, SIGNAL(graphSaved()), 1000);
 
     // Check the Account is created
     QCOMPARE(TestBackdoors::nepomukStorageAccounts(m_storage)->size(), 1);
@@ -255,6 +260,7 @@ void StorageTest::testDestroyAccount()
 
     // Now destroy the account.
     m_storage->destroyAccount(QLatin1String("/foo/bar/baz"));
+    QTest::kWaitForSignal(m_storage, SIGNAL(graphSaved()), 1000);
 
     // The account remains in the list despite being destroyed.
     QCOMPARE(TestBackdoors::nepomukStorageAccounts(m_storage)->size(), 1);
@@ -284,6 +290,7 @@ void StorageTest::testSetAccountNickname()
     m_storage->createAccount(QLatin1String("/foo/bar/baz"),
                              QLatin1String("foo@bar.baz"),
                              QLatin1String("test"));
+    QTest::kWaitForSignal(m_storage, SIGNAL(graphSaved()), 1000);
 
     // Check the Account is created
     QCOMPARE(TestBackdoors::nepomukStorageAccounts(m_storage)->size(), 1);
@@ -299,6 +306,7 @@ void StorageTest::testSetAccountNickname()
     // Set the nickname.
     m_storage->setAccountNickname(QLatin1String("/foo/bar/baz"),
                                   QLatin1String("Test Nickname"));
+    QTest::kWaitForSignal(m_storage, SIGNAL(graphSaved()), 1000);
 
     // Check Nepomuk resource contains the appropriate data.
     QCOMPARE(imAcc1.imNicknames().size(), 1);
@@ -307,6 +315,7 @@ void StorageTest::testSetAccountNickname()
     // Change the Nickname.
     m_storage->setAccountNickname(QLatin1String("/foo/bar/baz"),
                                   QLatin1String("Test Nickname Changed"));
+    QTest::kWaitForSignal(m_storage, SIGNAL(graphSaved()), 1000);
 
     // Check the Nepomuk resource contains the appropriate data.
     QCOMPARE(imAcc1.imNicknames().size(), 1);
@@ -329,6 +338,7 @@ void StorageTest::testSetAccountCurrentPresence()
     m_storage->createAccount(QLatin1String("/foo/bar/baz"),
                              QLatin1String("foo@bar.baz"),
                              QLatin1String("test"));
+    QTest::kWaitForSignal(m_storage, SIGNAL(graphSaved()), 1000);
 
     // Check the Account is created
     QCOMPARE(TestBackdoors::nepomukStorageAccounts(m_storage)->size(), 1);
@@ -349,6 +359,7 @@ void StorageTest::testSetAccountCurrentPresence()
     p1.statusMessage = "Hello";
     p1.type = 4;
     m_storage->setAccountCurrentPresence(QLatin1String("/foo/bar/baz"), p1);
+    QTest::kWaitForSignal(m_storage, SIGNAL(graphSaved()), 1000);
 
     // Check the nepomuk resources are correct.
     QCOMPARE(imAcc1.imStatus(), QLatin1String("away"));
@@ -361,6 +372,7 @@ void StorageTest::testSetAccountCurrentPresence()
     p2.statusMessage = "Bye";
     p2.type = 1;
     m_storage->setAccountCurrentPresence(QLatin1String("/foo/bar/baz"), p2);
+    QTest::kWaitForSignal(m_storage, SIGNAL(graphSaved()), 1000);
 
     // Check the nepomuk resources are correct.
     QCOMPARE(imAcc1.imStatus(), QLatin1String("available"));
@@ -385,6 +397,7 @@ void StorageTest::testCreateContact()
     m_storage->createAccount(QLatin1String("/foo/bar/baz"),
                              QLatin1String("foo@bar.baz"),
                              QLatin1String("test"));
+    QTest::kWaitForSignal(m_storage, SIGNAL(graphSaved()), 1000);
 
     // Check the Account is created
     QCOMPARE(TestBackdoors::nepomukStorageAccounts(m_storage)->size(), 1);
@@ -401,6 +414,7 @@ void StorageTest::testCreateContact()
     // Test 1: Create a contact which doesn't already exist.
     m_storage->createContact(QLatin1String("/foo/bar/baz"),
                              QLatin1String("test@remote-contact.com"));
+    QTest::kWaitForSignal(m_storage, SIGNAL(graphSaved()), 1000);
 
     // Check the Contact is created.
     QCOMPARE(TestBackdoors::nepomukStorageAccounts(m_storage)->size(), 1);
@@ -472,6 +486,7 @@ void StorageTest::testCreateContact()
     // Tell the storage about the contact
     m_storage->createContact(QLatin1String("/foo/bar/baz"),
                              QLatin1String("test2@remote-contact.com"));
+    QTest::kWaitForSignal(m_storage, SIGNAL(graphSaved()), 1000);
 
     // Check that the contact was added to the storage.
     QCOMPARE(TestBackdoors::nepomukStorageAccounts(m_storage)->size(), 1);
@@ -503,6 +518,7 @@ void StorageTest::testCreateContact()
     // Test 3: Create a contact twice.
     m_storage->createContact(QLatin1String("/foo/bar/baz"),
                              QLatin1String("test@remote-contact.com"));
+    QTest::kWaitForSignal(m_storage, SIGNAL(graphSaved()), 1000);
 
     // Check the Contact is created.
     QCOMPARE(TestBackdoors::nepomukStorageAccounts(m_storage)->size(), 1);
@@ -557,6 +573,7 @@ void StorageTest::testDestroyContact()
     m_storage->createAccount(QLatin1String("/foo/bar/baz"),
                              QLatin1String("foo@bar.baz"),
                              QLatin1String("test"));
+    QTest::kWaitForSignal(m_storage, SIGNAL(graphSaved()), 1000);
 
     // Check the Account is created
     QCOMPARE(TestBackdoors::nepomukStorageAccounts(m_storage)->size(), 1);
@@ -570,6 +587,7 @@ void StorageTest::testDestroyContact()
     // Create a contact
     m_storage->createContact(QLatin1String("/foo/bar/baz"),
                              QLatin1String("test@remote-contact.com"));
+    QTest::kWaitForSignal(m_storage, SIGNAL(graphSaved()), 1000);
 
     // Check the Contact is created.
     QCOMPARE(TestBackdoors::nepomukStorageAccounts(m_storage)->size(), 1);
@@ -589,6 +607,7 @@ void StorageTest::testDestroyContact()
     // Now destroy the contact
     m_storage->destroyContact(QLatin1String("/foo/bar/baz"),
                               QLatin1String("test@remote-contact.com"));
+    QTest::kWaitForSignal(m_storage, SIGNAL(graphSaved()), 1000);
 
     // The contact should still be in the list
     QCOMPARE(TestBackdoors::nepomukStorageAccounts(m_storage)->size(), 1);
@@ -623,6 +642,7 @@ void StorageTest::testSetContactAlias()
     m_storage->createAccount(QLatin1String("/foo/bar/baz"),
                              QLatin1String("foo@bar.baz"),
                              QLatin1String("test"));
+    QTest::kWaitForSignal(m_storage, SIGNAL(graphSaved()), 1000);
 
     // Check the Account is created
     QCOMPARE(TestBackdoors::nepomukStorageAccounts(m_storage)->size(), 1);
@@ -636,6 +656,7 @@ void StorageTest::testSetContactAlias()
     // Create a contact
     m_storage->createContact(QLatin1String("/foo/bar/baz"),
                              QLatin1String("test@remote-contact.com"));
+    QTest::kWaitForSignal(m_storage, SIGNAL(graphSaved()), 1000);
 
     // Check the Contact is created.
     QCOMPARE(TestBackdoors::nepomukStorageAccounts(m_storage)->size(), 1);
@@ -659,6 +680,7 @@ void StorageTest::testSetContactAlias()
     m_storage->setContactAlias(QLatin1String("/foo/bar/baz"),
                                QLatin1String("test@remote-contact.com"),
                                QLatin1String("Test Alias 1"));
+    QTest::kWaitForSignal(m_storage, SIGNAL(graphSaved()), 1000);
 
     // Check the alias now.
     QCOMPARE(imAcc2.imNicknames().size(), 1);
@@ -668,6 +690,7 @@ void StorageTest::testSetContactAlias()
     m_storage->setContactAlias(QLatin1String("/foo/bar/baz"),
                                QLatin1String("test@remote-contact.com"),
                                QLatin1String("Test Alias 2"));
+    QTest::kWaitForSignal(m_storage, SIGNAL(graphSaved()), 1000);
 
     // Check the alias now.
     QCOMPARE(imAcc2.imNicknames().size(), 1);
@@ -693,6 +716,7 @@ void StorageTest::testSetContactPresence()
     m_storage->createAccount(QLatin1String("/foo/bar/baz"),
                              QLatin1String("foo@bar.baz"),
                              QLatin1String("test"));
+    QTest::kWaitForSignal(m_storage, SIGNAL(graphSaved()), 1000);
 
     // Check the Account is created
     QCOMPARE(TestBackdoors::nepomukStorageAccounts(m_storage)->size(), 1);
@@ -706,6 +730,7 @@ void StorageTest::testSetContactPresence()
     // Create a contact
     m_storage->createContact(QLatin1String("/foo/bar/baz"),
                              QLatin1String("test@remote-contact.com"));
+    QTest::kWaitForSignal(m_storage, SIGNAL(graphSaved()), 1000);
 
     // Check the Contact is created.
     QCOMPARE(TestBackdoors::nepomukStorageAccounts(m_storage)->size(), 1);
@@ -735,6 +760,7 @@ void StorageTest::testSetContactPresence()
     m_storage->setContactPresence(QLatin1String("/foo/bar/baz"),
                                   QLatin1String("test@remote-contact.com"),
                                   p1);
+    QTest::kWaitForSignal(m_storage, SIGNAL(graphSaved()), 1000);
 
     // Check the presence now.
     QCOMPARE(imAcc2.imStatus(), QLatin1String("available"));
@@ -749,6 +775,7 @@ void StorageTest::testSetContactPresence()
     m_storage->setContactPresence(QLatin1String("/foo/bar/baz"),
                                   QLatin1String("test@remote-contact.com"),
                                   p2);
+    QTest::kWaitForSignal(m_storage, SIGNAL(graphSaved()), 1000);
 
     // Check the presence now.
     QCOMPARE(imAcc2.imStatus(), QLatin1String("away"));
@@ -762,6 +789,7 @@ void StorageTest::testSetContactPresence()
     m_storage->setContactPresence(QLatin1String("/foo/bar/baz"),
                                   QLatin1String("test@remote-contact.com"),
                                   p3);
+    QTest::kWaitForSignal(m_storage, SIGNAL(graphSaved()), 1000);
 
     // Check the presence now.
     QCOMPARE(imAcc2.imStatus(), QLatin1String("offline"));
@@ -788,6 +816,7 @@ void StorageTest::testSetContactGroups()
     m_storage->createAccount(QLatin1String("/foo/bar/baz"),
                              QLatin1String("foo@bar.baz"),
                              QLatin1String("test"));
+    QTest::kWaitForSignal(m_storage, SIGNAL(graphSaved()), 1000);
 
     // Check the Account is created
     QCOMPARE(TestBackdoors::nepomukStorageAccounts(m_storage)->size(), 1);
@@ -801,6 +830,7 @@ void StorageTest::testSetContactGroups()
     // Create a contact
     m_storage->createContact(QLatin1String("/foo/bar/baz"),
                              QLatin1String("test@remote-contact.com"));
+    QTest::kWaitForSignal(m_storage, SIGNAL(graphSaved()), 1000);
 
     // Check the Contact is created.
     QCOMPARE(TestBackdoors::nepomukStorageAccounts(m_storage)->size(), 1);
@@ -824,6 +854,7 @@ void StorageTest::testSetContactGroups()
     // Add to a group that doesn't already exist
     m_storage->setContactGroups(QLatin1String("/foo/bar/baz"), QLatin1String("test@remote-contact.com"),
                                 QStringList() << QLatin1String("testgroup1"));
+    QTest::kWaitForSignal(m_storage, SIGNAL(graphSaved()), 1000);
 
     // Add to a group we're already in
     QCOMPARE(Nepomuk::ContactGroup::allContactGroups().size(), 1);
@@ -842,6 +873,7 @@ void StorageTest::testSetContactGroups()
     // Add the contact to that group.
     m_storage->setContactGroups(QLatin1String("/foo/bar/baz"), QLatin1String("test@remote-contact.com"),
                                 QStringList() << QLatin1String("testgroup1") << QLatin1String("testgroup2"));
+    QTest::kWaitForSignal(m_storage, SIGNAL(graphSaved()), 1000);
 
     // Check it worked OK
     QCOMPARE(Nepomuk::ContactGroup::allContactGroups().size(), 2);
@@ -851,6 +883,7 @@ void StorageTest::testSetContactGroups()
     // Remove from a group
     m_storage->setContactGroups(QLatin1String("/foo/bar/baz"), QLatin1String("test@remote-contact.com"),
                                 QStringList() << QLatin1String("testgroup1"));
+    QTest::kWaitForSignal(m_storage, SIGNAL(graphSaved()), 1000);
 
     // Check it worked OK
     QCOMPARE(Nepomuk::ContactGroup::allContactGroups().size(), 2);
@@ -861,6 +894,7 @@ void StorageTest::testSetContactGroups()
     m_storage->setContactGroups(QLatin1String("/foo/bar/baz"), QLatin1String("test@remote-contact.com"),
                                 QStringList() << QLatin1String("testgroup1") << QLatin1String("testgroup2")
                                               << QLatin1String("testgroup3"));
+    QTest::kWaitForSignal(m_storage, SIGNAL(graphSaved()), 1000);
 
     // Check it worked OK
     QCOMPARE(Nepomuk::ContactGroup::allContactGroups().size(), 3);
@@ -870,6 +904,7 @@ void StorageTest::testSetContactGroups()
     m_storage->setContactGroups(QLatin1String("/foo/bar/baz"), QLatin1String("test@remote-contact.com"),
                                 QStringList() << QLatin1String("testgroup2")
                                               << QLatin1String("testgroup3"));
+    QTest::kWaitForSignal(m_storage, SIGNAL(graphSaved()), 1000);
 
     // Check it worked OK
     QCOMPARE(Nepomuk::ContactGroup::allContactGroups().size(), 3);
@@ -899,6 +934,7 @@ void StorageTest::testSetContactBlockedStatus()
     m_storage->createAccount(QLatin1String("/foo/bar/baz"),
                              QLatin1String("foo@bar.baz"),
                              QLatin1String("test"));
+    QTest::kWaitForSignal(m_storage, SIGNAL(graphSaved()), 1000);
 
     // Check the Account is created
     QCOMPARE(TestBackdoors::nepomukStorageAccounts(m_storage)->size(), 1);
@@ -912,6 +948,7 @@ void StorageTest::testSetContactBlockedStatus()
     // Create a contact
     m_storage->createContact(QLatin1String("/foo/bar/baz"),
                              QLatin1String("test@remote-contact.com"));
+    QTest::kWaitForSignal(m_storage, SIGNAL(graphSaved()), 1000);
 
     // Check the Contact is created.
     QCOMPARE(TestBackdoors::nepomukStorageAccounts(m_storage)->size(), 1);
@@ -935,6 +972,7 @@ void StorageTest::testSetContactBlockedStatus()
     m_storage->setContactBlockStatus(QLatin1String("/foo/bar/baz"),
                                      QLatin1String("test@remote-contact.com"),
                                      true);
+    QTest::kWaitForSignal(m_storage, SIGNAL(graphSaved()), 1000);
 
     // Check the Nepomuk resources
     QCOMPARE(imAcc2.isBlocked(), true);
@@ -943,6 +981,7 @@ void StorageTest::testSetContactBlockedStatus()
     m_storage->setContactBlockStatus(QLatin1String("/foo/bar/baz"),
                                      QLatin1String("test@remote-contact.com"),
                                      false);
+    QTest::kWaitForSignal(m_storage, SIGNAL(graphSaved()), 1000);
 
     // Check the Nepomuk resources
     QCOMPARE(imAcc2.isBlocked(), false);
@@ -967,6 +1006,7 @@ void StorageTest::testSetContactPublishState()
     m_storage->createAccount(QLatin1String("/foo/bar/baz"),
                              QLatin1String("foo@bar.baz"),
                              QLatin1String("test"));
+    QTest::kWaitForSignal(m_storage, SIGNAL(graphSaved()), 1000);
 
     // Check the Account is created
     QCOMPARE(TestBackdoors::nepomukStorageAccounts(m_storage)->size(), 1);
@@ -980,6 +1020,7 @@ void StorageTest::testSetContactPublishState()
     // Create a contact
     m_storage->createContact(QLatin1String("/foo/bar/baz"),
                              QLatin1String("test@remote-contact.com"));
+    QTest::kWaitForSignal(m_storage, SIGNAL(graphSaved()), 1000);
 
     // Check the Contact is created.
     QCOMPARE(TestBackdoors::nepomukStorageAccounts(m_storage)->size(), 1);
@@ -1004,6 +1045,7 @@ void StorageTest::testSetContactPublishState()
     m_storage->setContactPublishState(QLatin1String("/foo/bar/baz"),
                                       QLatin1String("test@remote-contact.com"),
                                       Tp::Contact::PresenceStateYes);
+    QTest::kWaitForSignal(m_storage, SIGNAL(graphSaved()), 1000);
 
     // Check
     QCOMPARE(imAcc2.publishesPresenceTos().size(), 1);
@@ -1014,6 +1056,7 @@ void StorageTest::testSetContactPublishState()
     m_storage->setContactPublishState(QLatin1String("/foo/bar/baz"),
                                       QLatin1String("test@remote-contact.com"),
                                       Tp::Contact::PresenceStateAsk);
+    QTest::kWaitForSignal(m_storage, SIGNAL(graphSaved()), 1000);
 
     // Check
     QCOMPARE(imAcc2.publishesPresenceTos().size(), 0);
@@ -1024,6 +1067,7 @@ void StorageTest::testSetContactPublishState()
     m_storage->setContactPublishState(QLatin1String("/foo/bar/baz"),
                                       QLatin1String("test@remote-contact.com"),
                                       Tp::Contact::PresenceStateNo);
+    QTest::kWaitForSignal(m_storage, SIGNAL(graphSaved()), 1000);
 
     // Check
     QCOMPARE(imAcc2.publishesPresenceTos().size(), 0);
@@ -1049,6 +1093,7 @@ void StorageTest::testSetContactSubscriptionState()
     m_storage->createAccount(QLatin1String("/foo/bar/baz"),
                              QLatin1String("foo@bar.baz"),
                              QLatin1String("test"));
+    QTest::kWaitForSignal(m_storage, SIGNAL(graphSaved()), 1000);
 
     // Check the Account is created
     QCOMPARE(TestBackdoors::nepomukStorageAccounts(m_storage)->size(), 1);
@@ -1062,6 +1107,7 @@ void StorageTest::testSetContactSubscriptionState()
     // Create a contact
     m_storage->createContact(QLatin1String("/foo/bar/baz"),
                              QLatin1String("test@remote-contact.com"));
+    QTest::kWaitForSignal(m_storage, SIGNAL(graphSaved()), 1000);
 
     // Check the Contact is created.
     QCOMPARE(TestBackdoors::nepomukStorageAccounts(m_storage)->size(), 1);
@@ -1086,6 +1132,7 @@ void StorageTest::testSetContactSubscriptionState()
     m_storage->setContactSubscriptionState(QLatin1String("/foo/bar/baz"),
                                            QLatin1String("test@remote-contact.com"),
                                            Tp::Contact::PresenceStateYes);
+    QTest::kWaitForSignal(m_storage, SIGNAL(graphSaved()), 1000);
 
     // Check
     QCOMPARE(imAcc1.publishesPresenceTos().size(), 1);
@@ -1096,6 +1143,7 @@ void StorageTest::testSetContactSubscriptionState()
     m_storage->setContactSubscriptionState(QLatin1String("/foo/bar/baz"),
                                            QLatin1String("test@remote-contact.com"),
                                            Tp::Contact::PresenceStateAsk);
+    QTest::kWaitForSignal(m_storage, SIGNAL(graphSaved()), 1000);
 
     // Check
     QCOMPARE(imAcc1.publishesPresenceTos().size(), 0);
@@ -1106,6 +1154,7 @@ void StorageTest::testSetContactSubscriptionState()
     m_storage->setContactSubscriptionState(QLatin1String("/foo/bar/baz"),
                                            QLatin1String("test@remote-contact.com"),
                                            Tp::Contact::PresenceStateNo);
+    QTest::kWaitForSignal(m_storage, SIGNAL(graphSaved()), 1000);
 
     // Check
     QCOMPARE(imAcc1.publishesPresenceTos().size(), 0);
@@ -1131,6 +1180,7 @@ void StorageTest::testSetContactCapabilities()
     m_storage->createAccount(QLatin1String("/foo/bar/baz"),
                              QLatin1String("foo@bar.baz"),
                              QLatin1String("test"));
+    QTest::kWaitForSignal(m_storage, SIGNAL(graphSaved()), 1000);
 
     // Check the Account is created
     QCOMPARE(TestBackdoors::nepomukStorageAccounts(m_storage)->size(), 1);
@@ -1144,6 +1194,7 @@ void StorageTest::testSetContactCapabilities()
     // Create a contact
     m_storage->createContact(QLatin1String("/foo/bar/baz"),
                              QLatin1String("test@remote-contact.com"));
+    QTest::kWaitForSignal(m_storage, SIGNAL(graphSaved()), 1000);
 
     // Check the Contact is created.
     QCOMPARE(TestBackdoors::nepomukStorageAccounts(m_storage)->size(), 1);
@@ -1170,6 +1221,7 @@ void StorageTest::testSetContactCapabilities()
     m_storage->setContactCapabilities(QLatin1String("/foo/bar/baz"),
                                       QLatin1String("test@remote-contact.com"),
                                       FakeContactCapabilities(r1, true));
+    QTest::kWaitForSignal(m_storage, SIGNAL(graphSaved()), 1000);
 
     QCOMPARE(imAcc2.iMCapabilitys().size(), 1);
     QVERIFY(imAcc2.iMCapabilitys().contains(Nepomuk::Vocabulary::NCO::imCapabilityText()));
@@ -1181,6 +1233,7 @@ void StorageTest::testSetContactCapabilities()
     m_storage->setContactCapabilities(QLatin1String("/foo/bar/baz"),
                                       QLatin1String("test@remote-contact.com"),
                                       FakeContactCapabilities(r2, true));
+    QTest::kWaitForSignal(m_storage, SIGNAL(graphSaved()), 1000);
 
     QCOMPARE(imAcc2.iMCapabilitys().size(), 1);
     QVERIFY(imAcc2.iMCapabilitys().contains(Nepomuk::Vocabulary::NCO::imCapabilityAudio()));
@@ -1192,6 +1245,7 @@ void StorageTest::testSetContactCapabilities()
     m_storage->setContactCapabilities(QLatin1String("/foo/bar/baz"),
                                       QLatin1String("test@remote-contact.com"),
                                       FakeContactCapabilities(r3, true));
+    QTest::kWaitForSignal(m_storage, SIGNAL(graphSaved()), 1000);
 
     QCOMPARE(imAcc2.iMCapabilitys().size(), 1);
     QVERIFY(imAcc2.iMCapabilitys().contains(Nepomuk::Vocabulary::NCO::imCapabilityVideo()));
@@ -1205,6 +1259,7 @@ void StorageTest::testSetContactCapabilities()
     m_storage->setContactCapabilities(QLatin1String("/foo/bar/baz"),
                                       QLatin1String("test@remote-contact.com"),
                                       FakeContactCapabilities(r4, true));
+    QTest::kWaitForSignal(m_storage, SIGNAL(graphSaved()), 1000);
 
     QCOMPARE(imAcc2.iMCapabilitys().size(), 3);
     QVERIFY(imAcc2.iMCapabilitys().contains(Nepomuk::Vocabulary::NCO::imCapabilityText()));
@@ -1217,6 +1272,7 @@ void StorageTest::testSetContactCapabilities()
     m_storage->setContactCapabilities(QLatin1String("/foo/bar/baz"),
                                       QLatin1String("test@remote-contact.com"),
                                       FakeContactCapabilities(r5, true));
+    QTest::kWaitForSignal(m_storage, SIGNAL(graphSaved()), 1000);
 
     QCOMPARE(imAcc2.iMCapabilitys().size(), 0);
 
@@ -1240,6 +1296,7 @@ void StorageTest::testSetAvatar()
     m_storage->createAccount(QLatin1String("/foo/bar/baz"),
                              QLatin1String("foo@bar.baz"),
                              QLatin1String("test"));
+    QTest::kWaitForSignal(m_storage, SIGNAL(graphSaved()), 1000);
 
     // Check the Account is created
     QCOMPARE(TestBackdoors::nepomukStorageAccounts(m_storage)->size(), 1);
@@ -1253,6 +1310,7 @@ void StorageTest::testSetAvatar()
     // Create a contact
     m_storage->createContact(QLatin1String("/foo/bar/baz"),
                              QLatin1String("test@remote-contact.com"));
+    QTest::kWaitForSignal(m_storage, SIGNAL(graphSaved()), 1000);
 
     // Check the Contact is created.
     QCOMPARE(TestBackdoors::nepomukStorageAccounts(m_storage)->size(), 1);
@@ -1278,6 +1336,8 @@ void StorageTest::testSetAvatar()
     m_storage->setContactAvatar(QLatin1String("/foo/bar/baz"),
                                 QLatin1String("test@remote-contact.com"),
                                 avatar1);
+    QTest::kWaitForSignal(m_storage, SIGNAL(graphSaved()), 1000);
+
     QCOMPARE(pC2.photos().size(), 1);
     QVERIFY(pC2.photos().contains(Nepomuk::DataObject(Nepomuk::Resource(avatar1.fileName))));
     QVERIFY(imAcc2.avatar() == Nepomuk::Resource(avatar1.fileName));
@@ -1287,6 +1347,8 @@ void StorageTest::testSetAvatar()
     m_storage->setContactAvatar(QLatin1String("/foo/bar/baz"),
                                 QLatin1String("test@remote-contact.com"),
                                 avatar2);
+    QTest::kWaitForSignal(m_storage, SIGNAL(graphSaved()), 1000);
+
     QCOMPARE(pC2.photos().size(), 1);
     QVERIFY(pC2.photos().contains(Nepomuk::DataObject(Nepomuk::Resource(avatar2.fileName))));
     QVERIFY(imAcc2.avatar() == Nepomuk::Resource(avatar2.fileName));
@@ -1296,6 +1358,8 @@ void StorageTest::testSetAvatar()
     m_storage->setContactAvatar(QLatin1String("/foo/bar/baz"),
                                 QLatin1String("test@remote-contact.com"),
                                 avatar3);
+    QTest::kWaitForSignal(m_storage, SIGNAL(graphSaved()), 1000);
+
     QCOMPARE(pC2.photos().size(), 0);
     QVERIFY(!imAcc2.avatar().isValid());
 
@@ -1317,6 +1381,8 @@ void StorageTest::testSetAvatar()
     m_storage->setContactAvatar(QLatin1String("/foo/bar/baz"),
                                 QLatin1String("test@remote-contact.com"),
                                 avatar4);
+    QTest::kWaitForSignal(m_storage, SIGNAL(graphSaved()), 1000);
+
     QCOMPARE(pC2.photos().size(), 4);
     QVERIFY(pC2.photos().contains(Nepomuk::DataObject(Nepomuk::Resource(avatar4.fileName))));
     QVERIFY(pC2.photos().contains(Nepomuk::DataObject(Nepomuk::Resource(QLatin1String("file:/home/foo/photo1.png")))));
@@ -1329,6 +1395,8 @@ void StorageTest::testSetAvatar()
     m_storage->setContactAvatar(QLatin1String("/foo/bar/baz"),
                                 QLatin1String("test@remote-contact.com"),
                                 avatar5);
+    QTest::kWaitForSignal(m_storage, SIGNAL(graphSaved()), 1000);
+
     QCOMPARE(pC2.photos().size(), 3);
     QVERIFY(pC2.photos().contains(Nepomuk::DataObject(Nepomuk::Resource(QLatin1String("file:/home/foo/photo1.png")))));
     QVERIFY(pC2.photos().contains(Nepomuk::DataObject(Nepomuk::Resource(QLatin1String("file:/home/foo/photo2.png")))));
@@ -1340,6 +1408,8 @@ void StorageTest::testSetAvatar()
     m_storage->setContactAvatar(QLatin1String("/foo/bar/baz"),
                                 QLatin1String("test@remote-contact.com"),
                                 avatar6);
+    QTest::kWaitForSignal(m_storage, SIGNAL(graphSaved()), 1000);
+
     QCOMPARE(pC2.photos().size(), 3);
     QVERIFY(pC2.photos().contains(Nepomuk::DataObject(Nepomuk::Resource(QLatin1String("file:/home/foo/photo1.png")))));
     QVERIFY(pC2.photos().contains(Nepomuk::DataObject(Nepomuk::Resource(QLatin1String("file:/home/foo/photo2.png")))));

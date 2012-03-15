@@ -1167,6 +1167,8 @@ void NepomukStorage::onContactGraphJob(KJob* job)
         m_accounts[path] = AccountResources(accountUri, res.protocol());
     }
     m_unresolvedAccounts = unresolvedAccounts;
+
+    emit graphSaved();
 }
 
 void NepomukStorage::onRemovePropertiesJob(KJob* job)
