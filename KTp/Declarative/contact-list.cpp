@@ -24,6 +24,13 @@
 #include <TelepathyQt/AccountManager>
 #include <TelepathyQt/PendingReady>
 
+#include <KDebug>
+
+#include <KTp/Models/contact-model-item.h>
+#include <KTp/Models/accounts-model-item.h>
+
+#define PREFERRED_TEXTCHAT_HANDLER "org.freedesktop.Telepathy.Client.KDE.TextUi"
+
 ContactList::ContactList(QObject *parent)
     : QObject(parent),
       m_accountsModel(new AccountsModel(this)),
@@ -90,7 +97,20 @@ AccountsFilterModel * ContactList::filterModel() const
     return m_filterModel;
 }
 
-void ContactList::startChat(ContactModelItem *contact)
+void ContactList::startChat(ContactModelItem *contactItem)
 {
+    
+    Tp::ContactPtr contact = contactItem->contact();
+
+    kDebug() << "Requesting chat for contact" << contact->alias();
+    Tp::AccountPtr account = m_accountsModel->accountForContactItem(contactItem);
+
+    Tp::ChannelRequestHints hints;
+    hints.setHint("org.freedesktop.Telepathy.ChannelRequest","DelegateToPreferredHandler", QVariant(true));
+
+    Tp::PendingChannelRequest *channelRequest = account->ensureTextChat(contact,
+                                                                        QDateTime::currentDateTime(),
+                                                                        PREFERRED_TEXTCHAT_HANDLER,
+                                                                        hints);
 }
 
