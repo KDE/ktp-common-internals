@@ -30,8 +30,8 @@
 
 #include <QtCore/QTimer>
 
-#include <TelepathyQt4/PendingAccount>
-#include <TelepathyQt4/PendingReady>
+#include <TelepathyQt/PendingAccount>
+#include <TelepathyQt/PendingReady>
 
 
 ConstructorDestructorFakeStorage::ConstructorDestructorFakeStorage(ControllerTest *test)

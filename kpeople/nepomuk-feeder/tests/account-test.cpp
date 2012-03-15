@@ -30,9 +30,9 @@
 
 #include <QtTest/QSignalSpy>
 
-#include <TelepathyQt4/PendingAccount>
-#include <TelepathyQt4/PendingOperation>
-#include <TelepathyQt4/PendingReady>
+#include <TelepathyQt/PendingAccount>
+#include <TelepathyQt/PendingOperation>
+#include <TelepathyQt/PendingReady>
 
 AccountTest::AccountTest(QObject *parent)
 : Test(parent),

@@ -23,22 +23,22 @@
 
 #include "test-backdoors.h"
 
-#include "ontologies/contactgroup.h"
-#include "ontologies/imcapability.h"
-#include "ontologies/nco.h"
-#include "ontologies/pimo.h"
-#include "ontologies/dataobject.h"
+#include "contactgroup.h"
+#include "imcapability.h"
+#include "dataobject.h"
 
 #include <KDebug>
 
 #include <Nepomuk/Resource>
 #include <Nepomuk/ResourceManager>
+#include <Nepomuk/Vocabulary/NCO>
+#include <Nepomuk/Vocabulary/PIMO>
 #include <Nepomuk/Thing>
 
 #include <qtest_kde.h>
 
-#include <TelepathyQt4/AvatarData>
-#include <TelepathyQt4/ContactCapabilities>
+#include <TelepathyQt/AvatarData>
+#include <TelepathyQt/ContactCapabilities>
 
 class FakeContactCapabilities : public Tp::ContactCapabilities {
 

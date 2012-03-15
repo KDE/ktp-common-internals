@@ -18,6 +18,15 @@ add_dependencies(lcov-check lcov-reset)
 # Setup test environment first
 ktelepathy_setup_test_environment()
 
+nepomuk_add_ontology_classes (common_SRCS
+                              ONTOLOGIES
+                              ${SHAREDDESKTOPONTOLOGIES_ROOT_DIR}/nie/nie.trig
+                              ${SHAREDDESKTOPONTOLOGIES_ROOT_DIR}/nie/nco.trig
+                          #   ${SHAREDDESKTOPONTOLOGIES_ROOT_DIR}/nie/nfo.trig
+                          #   ${SHAREDDESKTOPONTOLOGIES_ROOT_DIR}/nie/nmo.trig
+                              ${CMAKE_SOURCE_DIR}/telepathy.trig
+)
+
 # Create our static base test library
 #kde4_add_library(tid-base-tests STATIC tid-base-test.cpp)
 #target_link_libraries(tid-base-tests
@@ -36,7 +45,7 @@ add_ktelepathy_dbus_test(ControllerTest ${CMAKE_CURRENT_BINARY_DIR}/controller-t
 
 ################################
 # Storage test
-kde4_add_executable(storage-test storage-test.cpp)
+kde4_add_executable(storage-test storage-test.cpp ${common_SRCS})
 target_link_libraries(storage-test
                       ${KTELEPATHYTESTLIB_LIBRARIES}
                       ${QT_QTTEST_LIBRARY}

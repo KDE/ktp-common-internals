@@ -26,7 +26,7 @@
 
 #include <KTelepathy/TestLib/Test>
 
-#include <TelepathyQt4/AccountManager>
+#include <TelepathyQt/AccountManager>
 
 class Controller;
 
