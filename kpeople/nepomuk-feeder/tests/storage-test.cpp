@@ -445,7 +445,7 @@ void StorageTest::testCreateContact()
     QCOMPARE(Nepomuk::ResourceManager::instance()->allResourcesOfType(Nepomuk::Vocabulary::PIMO::Person()).size(), 2);
 
     foreach (Nepomuk::Resource r, Nepomuk::ResourceManager::instance()->allResourcesOfType(Nepomuk::Vocabulary::PIMO::Person())) {
-        if (r != Nepomuk::Resource("nepomuk:/myself")) {
+        if (r != Nepomuk::Resource("nepomuk:/me")) {
             Nepomuk::Thing t(r);
             QVERIFY(t.groundingOccurrences().contains(pC2));
         }

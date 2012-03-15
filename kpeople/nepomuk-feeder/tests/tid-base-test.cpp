@@ -117,7 +117,7 @@ void TidBaseTest::setupAccountMonitor()
     // At this very point, we should have a "me" PIMO person up and running
     // FIXME: Port to new OSCAF standard for accessing "me" as soon as it
     // becomes available.
-    Nepomuk::Thing me(QUrl::fromEncoded("nepomuk:/myself"));
+    Nepomuk::Thing me(QUrl::fromEncoded("nepomuk:/me"));
 
     QVERIFY(me.exists());
     // Loop through all the grounding instances of this person
