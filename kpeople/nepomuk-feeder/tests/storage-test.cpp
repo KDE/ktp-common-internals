@@ -39,6 +39,9 @@
 #include <Nepomuk/Vocabulary/PIMO>
 #include <Nepomuk/Thing>
 
+#include <Soprano/QueryResultIterator>
+#include <Soprano/Model>
+
 #include <qtest_kde.h>
 
 #include <TelepathyQt/AvatarData>
@@ -1437,6 +1440,20 @@ void StorageTest::cleanup()
         mLoop->exec();
         m_storage = 0;
     }
+
+    kDebug() << "Reseting the repository";
+    QTime timer;
+    timer.start();
+
+    QString query = "select distinct ?r where { ?r ?p ?o. FILTER(regex(str(?r), '^nepomuk:/(res)|(ctx)')) . }";
+    Soprano::Model * model = Nepomuk::ResourceManager::instance()->mainModel();
+
+    Soprano::QueryResultIterator it = model->executeQuery( query, Soprano::Query::QueryLanguageSparql );
+    while( it.next() ) {
+        model->removeAllStatements( it[0], Soprano::Node(), Soprano::Node() );
+    }
+
+    kDebug() << "Time Taken: " << timer.elapsed()/1000.0 << " seconds";
 }
 
 void StorageTest::cleanupTestCase()
