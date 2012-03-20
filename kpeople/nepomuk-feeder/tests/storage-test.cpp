@@ -32,6 +32,7 @@
 #include "imaccount.h"
 
 #include <KDebug>
+#include <KTemporaryFile>
 
 #include <Nepomuk/Resource>
 #include <Nepomuk/ResourceManager>
@@ -929,6 +930,8 @@ void StorageTest::testSetContactBlockedStatus()
     m_storage = new NepomukStorage(this);
     QTest::kWaitForSignal(m_storage, SIGNAL(initialised(bool)), 0);
     QVERIFY(m_storage);
+    QCOMPARE(TestBackdoors::nepomukStorageAccounts(m_storage)->size(), 0);
+    QCOMPARE(TestBackdoors::nepomukStorageContacts(m_storage)->size(), 0);
 
     QHash<QString, AccountResources> *accounts = TestBackdoors::nepomukStorageAccounts(m_storage);
     QHash<ContactIdentifier, ContactResources> *contacts = TestBackdoors::nepomukStorageContacts(m_storage);
@@ -1334,8 +1337,15 @@ void StorageTest::testSetAvatar()
     QCOMPARE(pC2.photos().size(), 0);
     QVERIFY(!imAcc2.avatar().isValid());
 
+    // Create files for avatars and files
+    KTemporaryFile avatarFile1;
+    KTemporaryFile avatarFile2;
+
+    avatarFile1.open();
+    avatarFile2.open();
+
     // Set an avatar
-    Tp::AvatarData avatar1(QLatin1String("file:/home/foo/avatar1.png"), QString());
+    Tp::AvatarData avatar1(avatarFile1.fileName(), QString());
     m_storage->setContactAvatar(QLatin1String("/foo/bar/baz"),
                                 QLatin1String("test@remote-contact.com"),
                                 avatar1);
@@ -1346,7 +1356,7 @@ void StorageTest::testSetAvatar()
     QVERIFY(imAcc2.avatar() == Nepomuk::Resource(avatar1.fileName));
 
     // Change the avatar
-    Tp::AvatarData avatar2(QLatin1String("file:/home/foo/avatar2.png"), QString());
+    Tp::AvatarData avatar2(avatarFile2.fileName(), QString());
     m_storage->setContactAvatar(QLatin1String("/foo/bar/baz"),
                                 QLatin1String("test@remote-contact.com"),
                                 avatar2);
@@ -1367,20 +1377,31 @@ void StorageTest::testSetAvatar()
     QVERIFY(!imAcc2.avatar().isValid());
 
     // Add a couple of other photos to the PersonContact
-    Nepomuk::DataObject photo1(Nepomuk::Resource(QLatin1String("file:/home/foo/photo1.png")));
-    Nepomuk::DataObject photo2(Nepomuk::Resource(QLatin1String("file:/home/foo/photo2.png")));
-    Nepomuk::DataObject photo3(Nepomuk::Resource(QLatin1String("file:/home/foo/photo3.png")));
+    KTemporaryFile photoFile1;
+    KTemporaryFile photoFile2;
+    KTemporaryFile photoFile3;
+
+    photoFile1.open();
+    photoFile2.open();
+    photoFile3.open();
+
+    Nepomuk::DataObject photo1(photoFile1.fileName());
+    Nepomuk::DataObject photo2(photoFile2.fileName());
+    Nepomuk::DataObject photo3(photoFile3.fileName());
     QList<Nepomuk::DataObject> photos;
     photos << photo1 << photo2 << photo3;
     pC2.setPhotos(photos);
 
     QCOMPARE(pC2.photos().size(), 3);
-    QVERIFY(pC2.photos().contains(Nepomuk::DataObject(Nepomuk::Resource(QLatin1String("file:/home/foo/photo1.png")))));
-    QVERIFY(pC2.photos().contains(Nepomuk::DataObject(Nepomuk::Resource(QLatin1String("file:/home/foo/photo2.png")))));
-    QVERIFY(pC2.photos().contains(Nepomuk::DataObject(Nepomuk::Resource(QLatin1String("file:/home/foo/photo3.png")))));
+    QVERIFY(pC2.photos().contains(photo1));
+    QVERIFY(pC2.photos().contains(photo2));
+    QVERIFY(pC2.photos().contains(photo3));
 
     // Add an avatar which is NOT already a photo
-    Tp::AvatarData avatar4(QLatin1String("file:/home/foo/avatar4.png"), QString());
+    KTemporaryFile photoFile4;
+    photoFile4.open();
+
+    Tp::AvatarData avatar4(photoFile4.fileName(), QString());
     m_storage->setContactAvatar(QLatin1String("/foo/bar/baz"),
                                 QLatin1String("test@remote-contact.com"),
                                 avatar4);
@@ -1388,9 +1409,9 @@ void StorageTest::testSetAvatar()
 
     QCOMPARE(pC2.photos().size(), 4);
     QVERIFY(pC2.photos().contains(Nepomuk::DataObject(Nepomuk::Resource(avatar4.fileName))));
-    QVERIFY(pC2.photos().contains(Nepomuk::DataObject(Nepomuk::Resource(QLatin1String("file:/home/foo/photo1.png")))));
-    QVERIFY(pC2.photos().contains(Nepomuk::DataObject(Nepomuk::Resource(QLatin1String("file:/home/foo/photo2.png")))));
-    QVERIFY(pC2.photos().contains(Nepomuk::DataObject(Nepomuk::Resource(QLatin1String("file:/home/foo/photo3.png")))));
+    QVERIFY(pC2.photos().contains(photo1));
+    QVERIFY(pC2.photos().contains(photo2));
+    QVERIFY(pC2.photos().contains(photo3));
     QVERIFY(imAcc2.avatar() == Nepomuk::Resource(avatar4.fileName));
 
     // Remove the avatar
@@ -1401,22 +1422,25 @@ void StorageTest::testSetAvatar()
     QTest::kWaitForSignal(m_storage, SIGNAL(graphSaved()), 1000);
 
     QCOMPARE(pC2.photos().size(), 3);
-    QVERIFY(pC2.photos().contains(Nepomuk::DataObject(Nepomuk::Resource(QLatin1String("file:/home/foo/photo1.png")))));
-    QVERIFY(pC2.photos().contains(Nepomuk::DataObject(Nepomuk::Resource(QLatin1String("file:/home/foo/photo2.png")))));
-    QVERIFY(pC2.photos().contains(Nepomuk::DataObject(Nepomuk::Resource(QLatin1String("file:/home/foo/photo3.png")))));
+    QVERIFY(pC2.photos().contains(photo1));
+    QVERIFY(pC2.photos().contains(photo2));
+    QVERIFY(pC2.photos().contains(photo3));
     QVERIFY(!imAcc2.avatar().isValid());
 
     // Add an avatar which is already in the photos
-    Tp::AvatarData avatar6(QLatin1String("file:/home/foo/photo1.png"), QString());
+    KTemporaryFile avatarFile6;
+    avatarFile6.open();
+
+    Tp::AvatarData avatar6(avatarFile6.fileName(), QString());
     m_storage->setContactAvatar(QLatin1String("/foo/bar/baz"),
                                 QLatin1String("test@remote-contact.com"),
                                 avatar6);
     QTest::kWaitForSignal(m_storage, SIGNAL(graphSaved()), 1000);
 
     QCOMPARE(pC2.photos().size(), 3);
-    QVERIFY(pC2.photos().contains(Nepomuk::DataObject(Nepomuk::Resource(QLatin1String("file:/home/foo/photo1.png")))));
-    QVERIFY(pC2.photos().contains(Nepomuk::DataObject(Nepomuk::Resource(QLatin1String("file:/home/foo/photo2.png")))));
-    QVERIFY(pC2.photos().contains(Nepomuk::DataObject(Nepomuk::Resource(QLatin1String("file:/home/foo/photo3.png")))));
+    QVERIFY(pC2.photos().contains(photo1));
+    QVERIFY(pC2.photos().contains(photo2));
+    QVERIFY(pC2.photos().contains(photo3));
     QVERIFY(imAcc2.avatar() == Nepomuk::Resource(avatar6.fileName));
 
     // FIXME: We shouldn't remove from the photos if the avatar was already in the photos when
