@@ -679,11 +679,11 @@ void NepomukStorage::setAccountNickname(const QString &path, const QString &nick
 
     QUrl accountUri = account.account();
 
-    Nepomuk::SimpleResource &accountRes = m_graph[accountUri];
-    accountRes.setUri( accountUri );
-    accountRes.setProperty( NCO::imNickname(), nickname );
-
-    fireGraphTimer();
+    // imNickName does not have a max cardinality of 1
+    // so we cannot use to storeResources, as it will just add another value
+    KJob* job = Nepomuk::setProperty( QList<QUrl>() << accountUri, NCO::imNickname(),
+                                      QVariantList() << nickname );
+    connect( job, SIGNAL(finished(KJob*)), this, SLOT(onSaveJobResult(KJob*)) );
 }
 
 void NepomukStorage::setAccountCurrentPresence(const QString &path, const Tp::SimplePresence &presence)
@@ -827,12 +827,11 @@ void NepomukStorage::setContactAlias(const QString &path, const QString &id, con
 
     QUrl imAccountUri = contact.imAccount();
 
-    Nepomuk::SimpleResource &res = m_graph[imAccountUri];
-    res.setUri( imAccountUri );
-    res.setProperty( NCO::imNickname(), alias );
-    res.setProperty( NAO::prefLabel(), alias );
-
-    fireGraphTimer();
+    // imNickName does not have a max cardinality of 1
+    // so we cannot use to storeResources, as it will just add another value
+    KJob* job = Nepomuk::setProperty( QList<QUrl>() << imAccountUri, NCO::imNickname(),
+                                      QVariantList() << alias );
+    connect( job, SIGNAL(finished(KJob*)), this, SLOT(onSaveJobResult(KJob*)) );
 }
 
 void NepomukStorage::setContactPresence(const QString &path,
