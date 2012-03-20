@@ -4,7 +4,7 @@
  * Copyright (C) 2009-2011 Collabora Ltd. <info@collabora.co.uk>
  *   @author George Goldberg <george.goldberg@collabora.co.uk>
  *
- * Copyright (C) 2011-2012 Vishesh Handa <handa.vish@gmail.com>
+ * Copyright (C) 2011-2012 Vishesh Handa <me@vhanda.in>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -1015,7 +1015,7 @@ void NepomukStorage::setContactSubscriptionState(const QString &path,
     if( usPublish ) {
         Nepomuk::SimpleResource &localAccountRes = m_graph[localAccountUri];
         localAccountRes.setUri( localAccountUri );
-        localAccountRes.setProperty( NCO::requestedPresenceSubscriptionTo(), imAccountUri );
+        localAccountRes.setProperty( NCO::publishesPresenceTo(), imAccountUri );
 
         fireGraphTimer();
     }
@@ -1036,9 +1036,9 @@ void NepomukStorage::setContactSubscriptionState(const QString &path,
     }
     else {
         // Remove us from their publish list
-        KJob* job = Nepomuk::removeProperty( QList<QUrl>() << imAccountUri,
-                                             NCO::requestedPresenceSubscriptionTo(),
-                                             QVariantList() << localAccountUri );
+        KJob* job = Nepomuk::removeProperties( QList<QUrl>() << imAccountUri,
+                                               QList<QUrl>() << NCO::requestedPresenceSubscriptionTo()
+                                                             << NCO::publishesPresenceTo() );
         connect( job, SIGNAL(finished(KJob*)), this, SLOT(onRemovePropertiesJob(KJob*)) );
     }
 }
