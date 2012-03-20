@@ -1063,13 +1063,9 @@ void NepomukStorage::setContactCapabilities(const QString &path,
     if (capabilities.streamedMediaVideoCalls())
         capList << NCO::imCapabilityVideo();
 
-    hasInvalidResources();
-    Nepomuk::SimpleResource &imAccount = m_graph[imAccountUri];
-    imAccount.setUri( imAccountUri );
-    imAccount.setProperty( NCO::hasIMCapability(), capList );
-
-    hasInvalidResources();
-    fireGraphTimer();
+    // Cannot use storeResources as nco:hasIMCapability doesn't have a cardinality of 1
+    KJob* job = Nepomuk::setProperty(QList<QUrl>() << imAccountUri, NCO::hasIMCapability(), capList );
+    connect(job, SIGNAL(finished(KJob*)), this, SLOT(onSaveJobResult(KJob*)));
 }
 
 void NepomukStorage::setContactAvatar(const QString &path,
