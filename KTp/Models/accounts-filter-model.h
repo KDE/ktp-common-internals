@@ -42,7 +42,7 @@ class KTP_EXPORT AccountsFilterModel : public QSortFilterProxyModel
             CapabilityFilterFlag
             SubscriptionStateFilterFlag)
 
-    Q_FLAGS(PresenceFilterFlags
+    Q_FLAGS(PresenceTypeFilterFlags
             CapabilityFilterFlags
             SubscriptionStateFilterFlags)
 
