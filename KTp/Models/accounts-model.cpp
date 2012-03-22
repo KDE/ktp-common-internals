@@ -94,6 +94,7 @@ AccountsModel::AccountsModel(QObject *parent)
     roles[AliasRole] = "aliasName";
     roles[AvatarRole] = "avatar";
     roles[PresenceRole] = "presence";
+    roles[PresenceIconRole] = "presenceIcon";
     roles[PresenceStatusRole] = "presenceStatus";
     roles[PresenceTypeRole] = "presenceType";
     roles[PresenceMessageRole] = "presenceMessage";

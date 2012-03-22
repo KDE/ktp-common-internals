@@ -110,6 +110,8 @@ QVariant ContactModelItem::data(int role) const
         return mPriv->mContact->alias();
     case AccountsModel::PresenceRole:
         return QVariant::fromValue(KTp::Presence(mPriv->mContact->presence()));
+    case AccountsModel::PresenceIconRole:
+        return QIcon(KTp::Presence(mPriv->mContact->presence()).icon());
     case AccountsModel::PresenceStatusRole:
         return mPriv->mContact->presence().status();
     case AccountsModel::PresenceTypeRole:
