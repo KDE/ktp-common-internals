@@ -4,10 +4,16 @@ include_directories (${CMAKE_CURRENT_BINARY_DIR}
 
 set (ktp_widgets_private_SRCS
     contact-grid-widget.cpp
+    add-contact-dialog.cpp
 )
 
 set (ktp_widgets_private_HDRS
      contact-grid-widget.h
+     add-contact-dialog.h
+)
+
+kde4_add_ui_files (ktp_widgets_private_SRCS 
+                   add-contact-dialog.ui
 )
 
 kde4_add_library (ktpwidgetsprivate SHARED
