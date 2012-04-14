@@ -199,17 +199,6 @@ void AccountsListModel::removeAccount(const QModelIndex &index)
     accountItem->remove();
 }
 
-AccountItem* AccountsListModel::itemForIndex(const QModelIndex &index)
-{
-    if (!index.isValid()) {
-        kWarning() << "Invalid index" << index;
-        return 0;
-    }
-
-    AccountItem *accountItem = m_accounts.at(index.row());
-    return accountItem;
-}
-
 void AccountsListModel::onAccountItemRemoved()
 {
     AccountItem *item = qobject_cast<AccountItem*>(sender());
