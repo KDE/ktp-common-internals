@@ -16,41 +16,20 @@
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-
-#ifndef MESSAGE_PROCESSOR_H
-#define MESSAGE_PROCESSOR_H
+#ifndef ABSTRACTPLUGIN_H
+#define ABSTRACTPLUGIN_H
 
 #include "message.h"
-#include "abstract-message-filter.h"
 
-#include <QList>
-
-#include <ktpchat_export.h>
-
-
-//each thing that displays message will have an instance of this
-class KDE_TELEPATHY_CHAT_EXPORT MessageProcessor : public QObject
+class AbstractMessageFilter : public QObject
 {
-
+Q_OBJECT
 public:
-    static MessageProcessor* instance();
+    explicit AbstractMessageFilter(QObject* parent = 0);
+    virtual ~AbstractMessageFilter();
 
-    ~MessageProcessor();
-
-    //text-ui will call this somewhere in handleIncommingMessage just before displaying it
-    Message processIncomingMessage(const Tp::ReceivedMessage &message);
-    Message processOutgoingMessage(const Tp::Message &message);
-
-
-
-protected:
-    explicit MessageProcessor();
-
-
-private:
-    static MessageProcessor* s_instance;
-    QList<AbstractMessageFilter*> m_filters;
-
+    virtual void filterMessage(Message &message) = 0;
 };
 
-#endif // MESSAGE_PROCESSOR_H
+#endif // ABSTRACTPLUGIN_H
+
