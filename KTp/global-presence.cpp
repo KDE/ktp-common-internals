@@ -81,6 +81,11 @@ bool GlobalPresence::isChangingPresence() const
 
 void GlobalPresence::setPresence(const Tp::Presence &presence)
 {
+    if (m_enabledAccounts.isNull()) {
+        kWarning() << "Requested presence change on empty accounts set";
+        return;
+    }
+
     Q_FOREACH(const Tp::AccountPtr &account, m_enabledAccounts->accounts()) {
         account->setRequestedPresence(presence);
     }
