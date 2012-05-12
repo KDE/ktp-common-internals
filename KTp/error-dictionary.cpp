@@ -84,7 +84,7 @@ QString ErrorDictionary::displayVerboseErrorMessage(const QString& dbusErrorName
     } else if (dbusErrorName == QLatin1String(TP_QT_ERROR_DISCONNECTED)) {
         return i18nc("Verbose user visible error string", "You have been disconnected");
     } else if (dbusErrorName == QLatin1String(TP_QT_ERROR_DOES_NOT_EXIST)) {
-        return i18nc("Verbose user visible error string", "You apparently do not exist ");
+        return i18nc("Verbose user visible error string", "You apparently do not exist");
     } else if (dbusErrorName == QLatin1String(TP_QT_ERROR_EMERGENCY_CALLS_NOT_SUPPORTED)) {
         return i18nc("Verbose user visible error string", "Sorry, emergency calls are not supported");
     } else if (dbusErrorName == QLatin1String(TP_QT_ERROR_ENCRYPTION_ERROR)) {
@@ -132,7 +132,7 @@ QString ErrorDictionary::displayVerboseErrorMessage(const QString& dbusErrorName
     } else if (dbusErrorName == QLatin1String(TP_QT_ERROR_WOULD_BREAK_ANONYMITY)) {
         return i18nc("Verbose user visible error string", "This operation can not be finished as it would break your anonymity request");
     } else if (dbusErrorName == QLatin1String("org.freedesktop.DBus.Error.NoReply")) {
-        return i18nc("Verbose user visible error string", "Some of the IM components are not working correctly (and your system does not tell us which one)");
+        return i18nc("Verbose user visible error string", "Some of the IM components are not working correctly");
     } else {
         return i18nc("User visible error string", "An unknown error was encountered (%1), please report this", dbusErrorName);
     }
