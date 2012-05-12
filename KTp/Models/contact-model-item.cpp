@@ -195,23 +195,35 @@ Tp::ContactPtr ContactModelItem::contact() const
 //return true if both you and the contact can handle audio calls.
 bool ContactModelItem::audioCallCapability() const
 {
-    bool contactCanStreamAudio = mPriv->mContact->capabilities().streamedMediaAudioCalls();
-    bool selfCanStreamAudio = mPriv->mContact->manager()->connection()->selfContact()->capabilities().streamedMediaAudioCalls();
-    return contactCanStreamAudio && selfCanStreamAudio;
+    if (mPriv->mContact->manager()->connection()) {
+        bool contactCanStreamAudio = mPriv->mContact->capabilities().streamedMediaAudioCalls();
+        bool selfCanStreamAudio = mPriv->mContact->manager()->connection()->selfContact()->capabilities().streamedMediaAudioCalls();
+        return contactCanStreamAudio && selfCanStreamAudio;
+    }
+
+    return false;
 }
 
 bool ContactModelItem::videoCallCapability() const
 {
-    bool contactCanStreamVideo = mPriv->mContact->capabilities().streamedMediaVideoCalls();
-    bool selfCanStreamVideo = mPriv->mContact->manager()->connection()->selfContact()->capabilities().streamedMediaVideoCalls();
-    return contactCanStreamVideo && selfCanStreamVideo;
+    if (mPriv->mContact->manager()->connection()) {
+        bool contactCanStreamVideo = mPriv->mContact->capabilities().streamedMediaVideoCalls();
+        bool selfCanStreamVideo = mPriv->mContact->manager()->connection()->selfContact()->capabilities().streamedMediaVideoCalls();
+        return contactCanStreamVideo && selfCanStreamVideo;
+    }
+
+    return false;
 }
 
 bool ContactModelItem::fileTransferCapability() const
 {
-    bool contactCanHandleFiles = mPriv->mContact->capabilities().fileTransfers();
-    bool selfCanHandleFiles = mPriv->mContact->manager()->connection()->selfContact()->capabilities().fileTransfers();
-    return contactCanHandleFiles && selfCanHandleFiles;
+    if (mPriv->mContact->manager()->connection()) {
+        bool contactCanHandleFiles = mPriv->mContact->capabilities().fileTransfers();
+        bool selfCanHandleFiles = mPriv->mContact->manager()->connection()->selfContact()->capabilities().fileTransfers();
+        return contactCanHandleFiles && selfCanHandleFiles;
+    }
+
+    return false;
 }
 
 bool ContactModelItem::desktopSharingCapability() const
