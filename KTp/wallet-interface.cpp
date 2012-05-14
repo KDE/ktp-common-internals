@@ -21,42 +21,54 @@
 #include "wallet-interface.h"
 
 #include <KDebug>
+#include <KGlobal>
+
+
+class KTp::WalletInterfacePrivate
+{
+public:
+    QScopedPointer<KWallet::Wallet> wallet;
+    static const QLatin1String folderName;
+    static const QLatin1String mapsPrefix;
+};
 
 using KTp::WalletInterface;
+using KTp::WalletInterfacePrivate;
 
-const QLatin1String WalletInterface::s_folderName = QLatin1String("telepathy-kde");
-const QLatin1String WalletInterface::s_mapsPrefix = QLatin1String("maps/");
+const QLatin1String WalletInterfacePrivate::folderName = QLatin1String("telepathy-kde");
+const QLatin1String WalletInterfacePrivate::mapsPrefix = QLatin1String("maps/");
 
+K_GLOBAL_STATIC(KTp::WalletInterfacePrivate, instance)
 
-WalletInterface::WalletInterface(WId winId):
-    m_wallet(KWallet::Wallet::openWallet(KWallet::Wallet::NetworkWallet(), winId))
+WalletInterface::WalletInterface(WId winId)
 {
+    instance->wallet.reset(KWallet::Wallet::openWallet(KWallet::Wallet::NetworkWallet(), winId));
 }
 
 WalletInterface::~WalletInterface()
 {
 }
 
-bool WalletInterface::hasPassword(const Tp::AccountPtr &account) const
+bool WalletInterface::hasPassword(const Tp::AccountPtr &account)
 {
-    if (m_wallet.isNull() || !m_wallet->hasFolder(s_folderName)) {
+    if (instance->wallet.isNull() || !instance->wallet->hasFolder(instance->folderName)) {
         return false;
     }
 
-    m_wallet->setFolder(s_folderName);
-    return m_wallet->hasEntry(account->uniqueIdentifier());
+    instance->wallet->setFolder(instance->folderName);
+    return instance->wallet->hasEntry(account->uniqueIdentifier());
 }
 
-QString WalletInterface::password(const Tp::AccountPtr &account) const
+QString WalletInterface::password(const Tp::AccountPtr &account)
 {
-    if (m_wallet.isNull() || !m_wallet->hasFolder(s_folderName)) {
+    if (instance->wallet.isNull() || !instance->wallet->hasFolder(instance->folderName)) {
         return QString();
     }
 
-    m_wallet->setFolder(s_folderName);
+    instance->wallet->setFolder(instance->folderName);
     QString password;
-    if (m_wallet->hasEntry(account->uniqueIdentifier())) {
-        int rc = m_wallet->readPassword(account->uniqueIdentifier(), password);
+    if (instance->wallet->hasEntry(account->uniqueIdentifier())) {
+        int rc = instance->wallet->readPassword(account->uniqueIdentifier(), password);
         if (rc != 0) {
             password.clear();
             kWarning() << "failed to read password from KWallet";
@@ -67,41 +79,41 @@ QString WalletInterface::password(const Tp::AccountPtr &account) const
 
 void WalletInterface::setPassword(const Tp::AccountPtr &account, const QString &password)
 {
-    if (m_wallet.isNull()) {
+    if (instance->wallet.isNull()) {
         return;
     }
 
-    if (!m_wallet->hasFolder(s_folderName)) {
-        m_wallet->createFolder(s_folderName);
+    if (!instance->wallet->hasFolder(instance->folderName)) {
+        instance->wallet->createFolder(instance->folderName);
     }
 
-    m_wallet->setFolder(s_folderName);
-    m_wallet->writePassword(account->uniqueIdentifier(), password);
+    instance->wallet->setFolder(instance->folderName);
+    instance->wallet->writePassword(account->uniqueIdentifier(), password);
     //sync normally happens on close, but in this case we need it to happen /now/ as it needs to be synced before the auth-client starts
-    m_wallet->sync();
+    instance->wallet->sync();
 }
 
 void WalletInterface::removePassword(const Tp::AccountPtr &account)
 {
-    if (m_wallet.isNull() || !m_wallet->hasFolder(s_folderName)) {
+    if (instance->wallet.isNull() || !instance->wallet->hasFolder(instance->folderName)) {
         return;
     }
 
-    m_wallet->setFolder(s_folderName);
-    m_wallet->removeEntry(account->uniqueIdentifier());
-    m_wallet->sync();
+    instance->wallet->setFolder(instance->folderName);
+    instance->wallet->removeEntry(account->uniqueIdentifier());
+    instance->wallet->sync();
 }
 
-bool WalletInterface::hasEntry(const Tp::AccountPtr &account, const QString &key) const
+bool WalletInterface::hasEntry(const Tp::AccountPtr &account, const QString &key)
 {
-    if (m_wallet.isNull() || !m_wallet->hasFolder(s_folderName)) {
+    if (instance->wallet.isNull() || !instance->wallet->hasFolder(instance->folderName)) {
         return false;
     }
 
-    m_wallet->setFolder(s_folderName);
+    instance->wallet->setFolder(instance->folderName);
     QMap< QString, QString > map;
-    if (m_wallet->hasEntry(s_mapsPrefix + account->uniqueIdentifier())) {
-        int rc = m_wallet->readMap(s_mapsPrefix + account->uniqueIdentifier(), map);
+    if (instance->wallet->hasEntry(instance->mapsPrefix + account->uniqueIdentifier())) {
+        int rc = instance->wallet->readMap(instance->mapsPrefix + account->uniqueIdentifier(), map);
         if (rc != 0) {
             kWarning() << "failed to read map from KWallet (probably it is not a map)";
             return false;
@@ -110,17 +122,17 @@ bool WalletInterface::hasEntry(const Tp::AccountPtr &account, const QString &key
     return map.contains(key);
 }
 
-QString WalletInterface::entry(const Tp::AccountPtr &account, const QString &key) const
+QString WalletInterface::entry(const Tp::AccountPtr &account, const QString &key)
 {
-    if (m_wallet.isNull() || !m_wallet->hasFolder(s_folderName)) {
+    if (instance->wallet.isNull() || !instance->wallet->hasFolder(instance->folderName)) {
         return QString();
     }
 
-    m_wallet->setFolder(s_folderName);
+    instance->wallet->setFolder(instance->folderName);
     QString value;
     QMap< QString, QString > map;
-    if (m_wallet->hasEntry(s_mapsPrefix + account->uniqueIdentifier())) {
-        int rc = m_wallet->readMap(s_mapsPrefix + account->uniqueIdentifier(), map);
+    if (instance->wallet->hasEntry(instance->mapsPrefix + account->uniqueIdentifier())) {
+        int rc = instance->wallet->readMap(instance->mapsPrefix + account->uniqueIdentifier(), map);
         if (rc != 0) {
             kWarning() << "failed to read map from KWallet (probably it is not a map)";
             return QString();
@@ -131,18 +143,18 @@ QString WalletInterface::entry(const Tp::AccountPtr &account, const QString &key
 
 void WalletInterface::setEntry(const Tp::AccountPtr &account, const QString &key, const QString &value)
 {
-    if (m_wallet.isNull()) {
+    if (instance->wallet.isNull()) {
         return;
     }
 
-    if (! m_wallet->hasFolder(s_folderName)) {
-        m_wallet->createFolder(s_folderName);
+    if (! instance->wallet->hasFolder(instance->folderName)) {
+        instance->wallet->createFolder(instance->folderName);
     }
 
-    m_wallet->setFolder(s_folderName);
+    instance->wallet->setFolder(instance->folderName);
     QMap< QString, QString > map;
-    if (m_wallet->hasEntry(s_mapsPrefix + account->uniqueIdentifier())) {
-        int rc = m_wallet->readMap(s_mapsPrefix + account->uniqueIdentifier(), map);
+    if (instance->wallet->hasEntry(instance->mapsPrefix + account->uniqueIdentifier())) {
+        int rc = instance->wallet->readMap(instance->mapsPrefix + account->uniqueIdentifier(), map);
         if (rc != 0) {
             kWarning() << "failed to read map from KWallet (probably it is not a map)";
             return;
@@ -150,21 +162,21 @@ void WalletInterface::setEntry(const Tp::AccountPtr &account, const QString &key
     }
     map[key] = value;
 
-    m_wallet->writeMap(s_mapsPrefix + account->uniqueIdentifier(), map);
+    instance->wallet->writeMap(instance->mapsPrefix + account->uniqueIdentifier(), map);
     //sync normally happens on close, but in this case we need it to happen /now/ as it needs to be synced before the auth-client starts
-    m_wallet->sync();
+    instance->wallet->sync();
 }
 
 void WalletInterface::removeEntry(const Tp::AccountPtr &account, const QString &key)
 {
-    if (m_wallet.isNull() || !m_wallet->hasFolder(s_folderName)) {
+    if (instance->wallet.isNull() || !instance->wallet->hasFolder(instance->folderName)) {
         return;
     }
 
-    m_wallet->setFolder(s_folderName);
+    instance->wallet->setFolder(instance->folderName);
     QMap< QString, QString > map;
-    if (m_wallet->hasEntry(s_mapsPrefix + account->uniqueIdentifier())) {
-        int rc = m_wallet->readMap(s_mapsPrefix + account->uniqueIdentifier(), map);
+    if (instance->wallet->hasEntry(instance->mapsPrefix + account->uniqueIdentifier())) {
+        int rc = instance->wallet->readMap(instance->mapsPrefix + account->uniqueIdentifier(), map);
         if (rc != 0) {
             kWarning() << "failed to read map from KWallet (probably it is not a map)";
             return;
@@ -173,22 +185,22 @@ void WalletInterface::removeEntry(const Tp::AccountPtr &account, const QString &
     map.remove(key);
 
     if (!map.empty()) {
-        m_wallet->writeMap(s_mapsPrefix + account->uniqueIdentifier(), map);
+        instance->wallet->writeMap(instance->mapsPrefix + account->uniqueIdentifier(), map);
     } else {
-        m_wallet->removeEntry(s_mapsPrefix + account->uniqueIdentifier());
+        instance->wallet->removeEntry(instance->mapsPrefix + account->uniqueIdentifier());
     }
     //sync normally happens on close, but in this case we need it to happen /now/ as it needs to be synced before the auth-client starts
-    m_wallet->sync();
+    instance->wallet->sync();
 }
 
 void WalletInterface::removeAllEntries(const Tp::AccountPtr& account)
 {
-    if (m_wallet.isNull() || !m_wallet->hasFolder(s_folderName)) {
+    if (instance->wallet.isNull() || !instance->wallet->hasFolder(instance->folderName)) {
         return;
     }
 
-    m_wallet->setFolder(s_folderName);
-    m_wallet->removeEntry(s_mapsPrefix + account->uniqueIdentifier());
+    instance->wallet->setFolder(instance->folderName);
+    instance->wallet->removeEntry(instance->mapsPrefix + account->uniqueIdentifier());
 }
 
 void WalletInterface::removeAccount(const Tp::AccountPtr& account)
@@ -197,7 +209,7 @@ void WalletInterface::removeAccount(const Tp::AccountPtr& account)
     removeAllEntries(account);
 }
 
-bool WalletInterface::isOpen() const
+bool WalletInterface::isOpen()
 {
-    return (!m_wallet.isNull() && m_wallet->isOpen());
+    return (!instance->wallet.isNull() && instance->wallet->isOpen());
 }
