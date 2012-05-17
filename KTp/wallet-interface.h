@@ -75,7 +75,7 @@ public:
     static bool isOpen();
 
 private:
-    WalletInterface(WId winId=0);
+    WalletInterface();
     virtual ~WalletInterface();
 };
 

@@ -27,6 +27,7 @@
 class KTp::WalletInterfacePrivate
 {
 public:
+    WalletInterfacePrivate();
     QScopedPointer<KWallet::Wallet> wallet;
     static const QLatin1String folderName;
     static const QLatin1String mapsPrefix;
@@ -40,12 +41,8 @@ const QLatin1String WalletInterfacePrivate::mapsPrefix = QLatin1String("maps/");
 
 K_GLOBAL_STATIC(KTp::WalletInterfacePrivate, instance)
 
-WalletInterface::WalletInterface(WId winId)
-{
-    instance->wallet.reset(KWallet::Wallet::openWallet(KWallet::Wallet::NetworkWallet(), winId));
-}
-
-WalletInterface::~WalletInterface()
+WalletInterfacePrivate::WalletInterfacePrivate() :
+    wallet(KWallet::Wallet::openWallet(KWallet::Wallet::NetworkWallet(), 0))
 {
 }
 
