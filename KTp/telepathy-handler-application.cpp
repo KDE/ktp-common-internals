@@ -20,6 +20,8 @@
 #include "telepathy-handler-application.h"
 #include "debug.h"
 
+#include <cstdlib>
+
 #include <QTimer>
 #include <KCmdLineArgs>
 #include <KDebug>
@@ -89,6 +91,23 @@ void TelepathyHandlerApplication::Private::_k_onTimeout()
 // this gets called before even entering QApplication::QApplication()
 KComponentData TelepathyHandlerApplication::Private::initHack()
 {
+    // This is a very very very ugly hack that attempts to solve the following problem:
+    // D-Bus service activated applications inherit the environment of dbus-daemon.
+    // Normally, in KDE, startkde sets these environment variables. However, the session's
+    // dbus-daemon is started before this happens, which means that dbus-daemon does NOT
+    // have these variables in its environment and therefore all service-activated UIs
+    // think that they are not running in KDE. This causes Qt not to load the KDE platform
+    // plugin, which leaves the UI in a sorry state, using a completely wrong theme,
+    // wrong colors, etc...
+    // See also:
+    // - https://bugs.kde.org/show_bug.cgi?id=269861
+    // - https://bugs.kde.org/show_bug.cgi?id=267770
+    // - https://git.reviewboard.kde.org/r/102194/
+    // Here we are just going to assume that kde-telepathy is always used in KDE and
+    // not anywhere else. This is probably the best that we can do.
+    setenv("KDE_FULL_SESSION", "true", 0);
+    setenv("KDE_SESSION_VERSION", "4", 0);
+
     KComponentData cData(KCmdLineArgs::aboutData());
     KCmdLineOptions handler_options;
     handler_options.add("persist", ki18n("Persistent mode (do not exit on timeout)"));

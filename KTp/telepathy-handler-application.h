@@ -36,6 +36,7 @@ namespace KTp
  * - Adds the --debug option to enable telepathy-qt4 debug
  * - Enables telepathy-qt4 warnings
  * - Use Tp-Qt4 callback for redirecting debug output into KDebug
+ * - Sets the KDE_FULL_SESSION environment variable to workaround dbus activation issues.
  */
 class KTP_EXPORT TelepathyHandlerApplication : public KApplication
 {
