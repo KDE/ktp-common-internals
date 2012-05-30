@@ -25,6 +25,8 @@
 #include <TelepathyQt/Account>
 #include <TelepathyQt/ContactManager>
 
+#include <KLocalizedString>
+
 #include "groups-model.h"
 #include "accounts-model.h"
 #include "proxy-tree-node.h"
@@ -68,6 +70,12 @@ GroupsModelItem::~GroupsModelItem()
 QVariant GroupsModelItem::data(int role) const
 {
     switch (role) {
+    case Qt::DisplayRole:
+        if (mPriv->mGroupName.isEmpty()) {
+            return i18n("Ungrouped");
+        } else {
+            return mPriv->mGroupName;
+        }
     case AccountsModel::ItemRole:
         return QVariant::fromValue((GroupsModelItem*)this);
     case AccountsModel::IdRole:

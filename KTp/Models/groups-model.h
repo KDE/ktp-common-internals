@@ -48,7 +48,7 @@ class KTP_EXPORT GroupsModel : public QAbstractItemModel
 public:
     enum Role {
         // general roles
-        GroupNameRole = Qt::DisplayRole
+        GroupNameRole = Qt::UserRole + 1000
     };
 
     explicit GroupsModel(AccountsModel* am, QObject* parent = 0);

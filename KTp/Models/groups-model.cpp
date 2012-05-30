@@ -43,16 +43,13 @@ struct GroupsModel::Private
         : mAM(am)
     {
         KGlobal::locale()->insertCatalog(QLatin1String("ktp-common-internals"));
-        m_ungroupedString = i18n("Ungrouped");
+
     }
 
     TreeNode *node(const QModelIndex &index) const;
 
     AccountsModel *mAM;
     TreeNode *mTree;
-
-    ///translated string for 'Ungrouped'
-    QString m_ungroupedString;
 };
 
 TreeNode *GroupsModel::Private::node(const QModelIndex &index) const
@@ -313,7 +310,7 @@ void GroupsModel::addContactToGroups(ContactModelItem* contactItem, QStringList 
     bool checkUngrouped = false;
     //if the contact has no groups, create an 'Ungrouped' group for it
     if (groups.isEmpty()) {
-        groups.append(mPriv->m_ungroupedString);
+        groups.append(QString());
     } else {
         checkUngrouped = true;
     }
@@ -336,11 +333,11 @@ void GroupsModel::addContactToGroups(ContactModelItem* contactItem, QStringList 
                 }
             }
             if (checkUngrouped) {
-                if (savedGroupItem->groupName() == mPriv->m_ungroupedString) {
+                if (savedGroupItem->groupName().isEmpty()) {
                     for (int i = 0; i < savedGroupItem->size(); i++) {
                         ProxyTreeNode *tmpNode = qobject_cast<ProxyTreeNode*>(savedGroupItem->childAt(i));
                         if (tmpNode->data(AccountsModel::ItemRole).value<ContactModelItem*>()->contact()->id() == contactItem->contact()->id()) {
-                            removeContactFromGroup(tmpNode, mPriv->m_ungroupedString);
+                            removeContactFromGroup(tmpNode, QString());
                             if (groupExists) {
                                 break;
                             }
