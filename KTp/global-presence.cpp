@@ -128,8 +128,9 @@ void GlobalPresence::onRequestedPresenceChanged()
         }
     }
 
-    if (highestRequestedPresence.type() != m_requestedPresence.type() &&
-            highestRequestedPresence.status() != m_requestedPresence.status()) {
+    if (highestRequestedPresence.type() != m_requestedPresence.type() ||
+            highestRequestedPresence.status() != m_requestedPresence.status() ||
+            highestRequestedPresence.statusMessage() != m_requestedPresence.statusMessage()) {
         m_requestedPresence = Presence(highestRequestedPresence);
         Q_EMIT requestedPresenceChanged(m_requestedPresence);
     }
