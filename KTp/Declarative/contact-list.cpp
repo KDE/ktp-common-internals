@@ -29,7 +29,7 @@
 #include <KTp/Models/contact-model-item.h>
 #include <KTp/Models/accounts-model-item.h>
 
-#define PREFERRED_TEXTCHAT_HANDLER "org.freedesktop.Telepathy.Client.KDE.TextUi"
+#define PREFERRED_TEXTCHAT_HANDLER "org.freedesktop.Telepathy.Client.KTp.TextUi"
 
 ContactList::ContactList(QObject *parent)
     : QObject(parent),
