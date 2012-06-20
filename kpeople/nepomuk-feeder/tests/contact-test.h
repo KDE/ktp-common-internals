@@ -48,7 +48,7 @@ private Q_SLOTS:
 
 private:
     QList< Tp::ContactPtr > m_contacts;
-    Nepomuk::IMAccount m_accountResource;
+    Nepomuk2::IMAccount m_accountResource;
 };
 
 #endif // CONTACT_TEST_H

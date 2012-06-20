@@ -28,12 +28,12 @@
 #include <KDebug>
 #include <KPluginFactory>
 
-#include <Nepomuk/ResourceManager>
+#include <Nepomuk2/ResourceManager>
 
 #include <TelepathyQt/Types>
 
 TelepathyService::TelepathyService(QObject *parent, const QVariantList &)
-    : Nepomuk::Service(parent, true)
+    : Nepomuk2::Service(parent, true)
 {
     // Initialise Telepathy.
     Tp::registerTypes();

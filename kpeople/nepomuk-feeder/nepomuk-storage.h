@@ -33,10 +33,10 @@
 #include <TelepathyQt/Contact>
 #include <TelepathyQt/Types>
 
-#include <nepomuk/simpleresourcegraph.h>
+#include <nepomuk2/simpleresourcegraph.h>
 #include <KJob>
 
-namespace Nepomuk {
+namespace Nepomuk2 {
     class ResourceManager;
     namespace Query {
         class Result;
@@ -148,12 +148,12 @@ private Q_SLOTS:
     void init();
     void onSaveJobResult(KJob *job);
 
-    void onAccountsQueryNewEntries(const QList<Nepomuk::Query::Result> &entries);
+    void onAccountsQueryNewEntries(const QList<Nepomuk2::Query::Result> &entries);
     void onAccountsQueryEntriesRemoved(const QList<QUrl> &entries);
     void onAccountsQueryError(const QString &errorMessage);
     void onAccountsQueryFinishedListing();
 
-    void onContactsQueryNewEntries(const QList<Nepomuk::Query::Result> &entries);
+    void onContactsQueryNewEntries(const QList<Nepomuk2::Query::Result> &entries);
     void onContactsQueryEntriesRemoved(const QList<QUrl> &entries);
     void onContactsQueryError(const QString &errorMessage);
     void onContactsQueryFinishedListing();
@@ -166,7 +166,7 @@ private:
 
     friend class TestBackdoors;
 
-    Nepomuk::ResourceManager *m_resourceManager;
+    Nepomuk2::ResourceManager *m_resourceManager;
     QUrl m_mePersonContact;
 
     QHash<QString, AccountResources> m_accounts;
@@ -175,7 +175,7 @@ private:
     QList<ContactIdentifier> m_unresolvedContacts;
     QList<QString> m_unresolvedAccounts;
 
-    Nepomuk::SimpleResourceGraph m_graph;
+    Nepomuk2::SimpleResourceGraph m_graph;
     QTimer m_graphTimer;
 
     ContactResources findContact(const QString& path, const QString& id);

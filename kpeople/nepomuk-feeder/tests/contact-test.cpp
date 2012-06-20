@@ -27,7 +27,7 @@
 #include <Soprano/Node>
 #include "ontologies/telepathy.h"
 #include "ontologies/nco.h"
-#include <Nepomuk/ResourceManager>
+#include <Nepomuk2/ResourceManager>
 #include <Soprano/QueryResultIterator>
 #include <Soprano/Model>
 #include "ontologies/imaccount.h"
@@ -101,16 +101,16 @@ void ContactTest::testAccountCreation()
     // Let's wait for the nepomuk resource to become available
     QString query = QString("select distinct ?a where { %1 %2 ?a . ?a a %3 }")
                             .arg(Soprano::Node::resourceToN3(mePersonContact().resourceUri()))
-                            .arg(Soprano::Node::resourceToN3(Nepomuk::Vocabulary::NCO::hasIMAccount()))
-                            .arg(Soprano::Node::resourceToN3(Nepomuk::Vocabulary::NCO::IMAccount()));
+                            .arg(Soprano::Node::resourceToN3(Nepomuk2::Vocabulary::NCO::hasIMAccount()))
+                            .arg(Soprano::Node::resourceToN3(Nepomuk2::Vocabulary::NCO::IMAccount()));
 
-    Soprano::Model *model = Nepomuk::ResourceManager::instance()->mainModel();
+    Soprano::Model *model = Nepomuk2::ResourceManager::instance()->mainModel();
 
     Soprano::QueryResultIterator it = model->executeQuery(query, Soprano::Query::QueryLanguageSparql);
 
     // Check that we got some results
     QVERIFY(it.next());
-    m_accountResource = Nepomuk::IMAccount(it.binding("a").uri());
+    m_accountResource = Nepomuk2::IMAccount(it.binding("a").uri());
     // Check for the validity of the resource
     QVERIFY(m_accountResource.isValid());
     // Check that we got _one_ result
@@ -198,13 +198,13 @@ void ContactTest::testContactCreation()
 
     // Query Nepomuk for all IM accounts that isBuddyOf the accountResource
     QString query = QString("select distinct ?a where { ?a %1 %2 . ?a a %3 . ?r %4 ?a . ?r a %5}")
-                            .arg(Soprano::Node::resourceToN3(Nepomuk::Vocabulary::Telepathy::isBuddyOf()))
+                            .arg(Soprano::Node::resourceToN3(Nepomuk2::Vocabulary::Telepathy::isBuddyOf()))
                             .arg(Soprano::Node::resourceToN3(m_accountResource.uri()))
-                            .arg(Soprano::Node::resourceToN3(Nepomuk::Vocabulary::NCO::IMAccount()))
-                            .arg(Soprano::Node::resourceToN3(Nepomuk::Vocabulary::NCO::hasIMAccount()))
-                            .arg(Soprano::Node::resourceToN3(Nepomuk::Vocabulary::NCO::PersonContact()));
+                            .arg(Soprano::Node::resourceToN3(Nepomuk2::Vocabulary::NCO::IMAccount()))
+                            .arg(Soprano::Node::resourceToN3(Nepomuk2::Vocabulary::NCO::hasIMAccount()))
+                            .arg(Soprano::Node::resourceToN3(Nepomuk2::Vocabulary::NCO::PersonContact()));
 
-    Soprano::Model *model = Nepomuk::ResourceManager::instance()->mainModel();
+    Soprano::Model *model = Nepomuk2::ResourceManager::instance()->mainModel();
 
     Soprano::QueryResultIterator it = model->executeQuery(query, Soprano::Query::QueryLanguageSparql);
 
@@ -220,7 +220,7 @@ void ContactTest::testContactCreation()
     for (int i = 0; i < allKnownIds.size(); ++i) {
         // Check that we got some results
         QVERIFY(it.next());
-        Nepomuk::IMAccount foundImAccount(it.binding("a").uri());
+        Nepomuk2::IMAccount foundImAccount(it.binding("a").uri());
 
         // Check that the IM account only has one ID.
         QStringList accountIDs = foundImAccount.imIDs();
@@ -312,13 +312,13 @@ void ContactTest::testContactRequestAndAuthorize()
 
     // Query Nepomuk for all IM accounts that isBuddyOf the accountResource
     QString query = QString("select distinct ?a where { ?a %1 %2 . ?a a %3 . ?r %4 ?a . ?r a %5}")
-                            .arg(Soprano::Node::resourceToN3(Nepomuk::Vocabulary::Telepathy::isBuddyOf()))
+                            .arg(Soprano::Node::resourceToN3(Nepomuk2::Vocabulary::Telepathy::isBuddyOf()))
                             .arg(Soprano::Node::resourceToN3(m_accountResource.uri()))
-                            .arg(Soprano::Node::resourceToN3(Nepomuk::Vocabulary::NCO::IMAccount()))
-                            .arg(Soprano::Node::resourceToN3(Nepomuk::Vocabulary::NCO::hasIMAccount()))
-                            .arg(Soprano::Node::resourceToN3(Nepomuk::Vocabulary::NCO::PersonContact()));
+                            .arg(Soprano::Node::resourceToN3(Nepomuk2::Vocabulary::NCO::IMAccount()))
+                            .arg(Soprano::Node::resourceToN3(Nepomuk2::Vocabulary::NCO::hasIMAccount()))
+                            .arg(Soprano::Node::resourceToN3(Nepomuk2::Vocabulary::NCO::PersonContact()));
 
-    Soprano::Model *model = Nepomuk::ResourceManager::instance()->mainModel();
+    Soprano::Model *model = Nepomuk2::ResourceManager::instance()->mainModel();
 
     Soprano::QueryResultIterator it = model->executeQuery(query, Soprano::Query::QueryLanguageSparql);
 
@@ -327,7 +327,7 @@ void ContactTest::testContactRequestAndAuthorize()
     for (int i = 0; i < allKnownIds.size(); ++i) {
         // Check that we got some results
         QVERIFY(it.next());
-        Nepomuk::IMAccount foundImAccount(it.binding("a").uri());
+        Nepomuk2::IMAccount foundImAccount(it.binding("a").uri());
 
         // Check that the IM account only has one ID.
         QStringList accountIDs = foundImAccount.imIDs();
@@ -405,13 +405,13 @@ void ContactTest::testContactRemove()
 
     // Query Nepomuk for all IM accounts that isBuddyOf the accountResource
     QString query = QString("select distinct ?a where { ?a %1 %2 . ?a a %3 . ?r %4 ?a . ?r a %5}")
-                            .arg(Soprano::Node::resourceToN3(Nepomuk::Vocabulary::Telepathy::isBuddyOf()))
+                            .arg(Soprano::Node::resourceToN3(Nepomuk2::Vocabulary::Telepathy::isBuddyOf()))
                             .arg(Soprano::Node::resourceToN3(m_accountResource.uri()))
-                            .arg(Soprano::Node::resourceToN3(Nepomuk::Vocabulary::NCO::IMAccount()))
-                            .arg(Soprano::Node::resourceToN3(Nepomuk::Vocabulary::NCO::hasIMAccount()))
-                            .arg(Soprano::Node::resourceToN3(Nepomuk::Vocabulary::NCO::PersonContact()));
+                            .arg(Soprano::Node::resourceToN3(Nepomuk2::Vocabulary::NCO::IMAccount()))
+                            .arg(Soprano::Node::resourceToN3(Nepomuk2::Vocabulary::NCO::hasIMAccount()))
+                            .arg(Soprano::Node::resourceToN3(Nepomuk2::Vocabulary::NCO::PersonContact()));
 
-    Soprano::Model *model = Nepomuk::ResourceManager::instance()->mainModel();
+    Soprano::Model *model = Nepomuk2::ResourceManager::instance()->mainModel();
 
     Soprano::QueryResultIterator it = model->executeQuery(query, Soprano::Query::QueryLanguageSparql);
 
@@ -420,7 +420,7 @@ void ContactTest::testContactRemove()
     for (int i = 0; i < allKnownIds.size(); ++i) {
         // Check that we got some results
         QVERIFY(it.next());
-        Nepomuk::IMAccount foundImAccount(it.binding("a").uri());
+        Nepomuk2::IMAccount foundImAccount(it.binding("a").uri());
 
         // Check that the IM account only has one ID.
         QStringList accountIDs = foundImAccount.imIDs();

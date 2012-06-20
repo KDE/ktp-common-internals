@@ -34,11 +34,11 @@
 #include <KDebug>
 #include <KTemporaryFile>
 
-#include <Nepomuk/Resource>
-#include <Nepomuk/ResourceManager>
-#include <Nepomuk/Vocabulary/NCO>
-#include <Nepomuk/Vocabulary/PIMO>
-#include <Nepomuk/Thing>
+#include <Nepomuk2/Resource>
+#include <Nepomuk2/ResourceManager>
+#include <Nepomuk2/Vocabulary/NCO>
+#include <Nepomuk2/Vocabulary/PIMO>
+#include <Nepomuk2/Thing>
 
 #include <Soprano/QueryResultIterator>
 #include <Soprano/Model>
@@ -82,9 +82,9 @@ void StorageTest::init()
 }
 
 namespace {
-    Nepomuk::PersonContact nepomukStorageMePersonContact(NepomukStorage* storage) {
+    Nepomuk2::PersonContact nepomukStorageMePersonContact(NepomukStorage* storage) {
         const QUrl uri = TestBackdoors::nepomukStorageMePersonContact(storage);
-        return Nepomuk::PersonContact(uri);
+        return Nepomuk2::PersonContact(uri);
     }
 }
 //vHanda: Is this really required?
@@ -133,7 +133,7 @@ void StorageTest::testCreateAccount()
 {
     m_storage = new NepomukStorage(this);
     QTest::kWaitForSignal(m_storage, SIGNAL(initialised(bool)), 0);
-    Nepomuk::PersonContact mePersonContact = TestBackdoors::nepomukStorageMePersonContact(m_storage);
+    Nepomuk2::PersonContact mePersonContact = TestBackdoors::nepomukStorageMePersonContact(m_storage);
     QHash<QString, AccountResources> *accounts = TestBackdoors::nepomukStorageAccounts(m_storage);
 
     QVERIFY(m_storage);
@@ -156,7 +156,7 @@ void StorageTest::testCreateAccount()
     QCOMPARE(TestBackdoors::nepomukStorageContacts(m_storage)->size(), 0);
 
     // Check its properties are correct
-    Nepomuk::IMAccount imAcc1 = accounts->value(QLatin1String("/foo/bar/baz")).account();
+    Nepomuk2::IMAccount imAcc1 = accounts->value(QLatin1String("/foo/bar/baz")).account();
     QVERIFY(imAcc1.exists());
     QCOMPARE(imAcc1.imIDs().size(), 1);
     QCOMPARE(imAcc1.imIDs().first(), QLatin1String("foo@bar.baz"));
@@ -168,7 +168,7 @@ void StorageTest::testCreateAccount()
 
     // Test creating an account which *is* already in Nepomuk.
     // Add the account to Nepomuk.
-    Nepomuk::IMAccount imAcc2;
+    Nepomuk2::IMAccount imAcc2;
     imAcc2.setAccountIdentifier(QLatin1String("/foo/bar/baz/bong"));
     imAcc2.setImIDs(QStringList() << QLatin1String("foo.bar@baz.bong"));
     imAcc2.setImAccountType(QLatin1String("test"));
@@ -192,7 +192,7 @@ void StorageTest::testCreateAccount()
     QCOMPARE(TestBackdoors::nepomukStorageContacts(m_storage)->size(), 0);
 
     // Check its properties are correct
-    Nepomuk::IMAccount imAcc3 = accounts->value(QLatin1String("/foo/bar/baz/bong")).account();
+    Nepomuk2::IMAccount imAcc3 = accounts->value(QLatin1String("/foo/bar/baz/bong")).account();
     QVERIFY(imAcc3.exists());
     QCOMPARE(imAcc3.imIDs().size(), 1);
     QCOMPARE(imAcc3.imIDs().first(), QLatin1String("foo.bar@baz.bong"));
@@ -214,7 +214,7 @@ void StorageTest::testCreateAccount()
     QCOMPARE(TestBackdoors::nepomukStorageContacts(m_storage)->size(), 0);
 
     // Check its properties are correct
-    Nepomuk::IMAccount imAcc4 = accounts->value(QLatin1String("/foo/bar/baz")).account();
+    Nepomuk2::IMAccount imAcc4 = accounts->value(QLatin1String("/foo/bar/baz")).account();
     QVERIFY(imAcc4.exists());
     QCOMPARE(imAcc4.imIDs().size(), 1);
     QCOMPARE(imAcc4.imIDs().first(), QLatin1String("foo@bar.baz"));
@@ -259,7 +259,7 @@ void StorageTest::testDestroyAccount()
     QCOMPARE(TestBackdoors::nepomukStorageContacts(m_storage)->size(), 0);
 
     // And in Nepomuk...
-    Nepomuk::IMAccount imAcc1 = accounts->value(QLatin1String("/foo/bar/baz")).account();
+    Nepomuk2::IMAccount imAcc1 = accounts->value(QLatin1String("/foo/bar/baz")).account();
     QVERIFY(imAcc1.exists());
 
     // Now destroy the account.
@@ -301,7 +301,7 @@ void StorageTest::testSetAccountNickname()
     QCOMPARE(TestBackdoors::nepomukStorageContacts(m_storage)->size(), 0);
 
     // And in Nepomuk...
-    Nepomuk::IMAccount imAcc1 = accounts->value(QLatin1String("/foo/bar/baz")).account();
+    Nepomuk2::IMAccount imAcc1 = accounts->value(QLatin1String("/foo/bar/baz")).account();
     QVERIFY(imAcc1.exists());
 
     // Check the nickname before we set it for the first time.
@@ -349,7 +349,7 @@ void StorageTest::testSetAccountCurrentPresence()
     QCOMPARE(TestBackdoors::nepomukStorageContacts(m_storage)->size(), 0);
 
     // And in Nepomuk...
-    Nepomuk::IMAccount imAcc1 = accounts->value(QLatin1String("/foo/bar/baz")).account();
+    Nepomuk2::IMAccount imAcc1 = accounts->value(QLatin1String("/foo/bar/baz")).account();
     QVERIFY(imAcc1.exists());
 
     // Check the presence properties before we set them.
@@ -408,12 +408,12 @@ void StorageTest::testCreateContact()
     QCOMPARE(TestBackdoors::nepomukStorageContacts(m_storage)->size(), 0);
 
     // And in Nepomuk...
-    Nepomuk::IMAccount imAcc1 = accounts->value(QLatin1String("/foo/bar/baz")).account();
+    Nepomuk2::IMAccount imAcc1 = accounts->value(QLatin1String("/foo/bar/baz")).account();
     QVERIFY(imAcc1.exists());
     QCOMPARE(imAcc1.isAccessedByOf().size(), 0);
 
     // Check there is only 1 PIMO Person in Nepomuk.
-    QCOMPARE(Nepomuk::ResourceManager::instance()->allResourcesOfType(Nepomuk::Vocabulary::PIMO::Person()).size(), 1);
+    QCOMPARE(Nepomuk2::ResourceManager::instance()->allResourcesOfType(Nepomuk2::Vocabulary::PIMO::Person()).size(), 1);
 
     // Test 1: Create a contact which doesn't already exist.
     m_storage->createContact(QLatin1String("/foo/bar/baz"),
@@ -430,8 +430,8 @@ void StorageTest::testCreateContact()
 
     // Check the Nepomuk resources are created correctly.
     ContactResources cRes2 = contacts->value(cId2);
-    Nepomuk::IMAccount imAcc2 = cRes2.imAccount();
-    Nepomuk::PersonContact pC2 = cRes2.personContact();
+    Nepomuk2::IMAccount imAcc2 = cRes2.imAccount();
+    Nepomuk2::PersonContact pC2 = cRes2.personContact();
     QVERIFY(imAcc2.exists());
     QVERIFY(pC2.exists());
     QCOMPARE(imAcc2.imStatus(), QLatin1String("unknown"));
@@ -446,19 +446,19 @@ void StorageTest::testCreateContact()
     QCOMPARE(pC2.iMAccounts().first(), imAcc2);
 
     // Check the PIMO Person.
-    QCOMPARE(Nepomuk::ResourceManager::instance()->allResourcesOfType(Nepomuk::Vocabulary::PIMO::Person()).size(), 2);
+    QCOMPARE(Nepomuk2::ResourceManager::instance()->allResourcesOfType(Nepomuk2::Vocabulary::PIMO::Person()).size(), 2);
 
-    foreach (Nepomuk::Resource r, Nepomuk::ResourceManager::instance()->allResourcesOfType(Nepomuk::Vocabulary::PIMO::Person())) {
-        if (r != Nepomuk::Resource("nepomuk:/me")) {
-            Nepomuk::Thing t(r);
+    foreach (Nepomuk2::Resource r, Nepomuk2::ResourceManager::instance()->allResourcesOfType(Nepomuk2::Vocabulary::PIMO::Person())) {
+        if (r != Nepomuk2::Resource("nepomuk:/me")) {
+            Nepomuk2::Thing t(r);
             QVERIFY(t.groundingOccurrences().contains(pC2));
         }
     }
 
     // Test 2: Create a contact which already exists in Nepomuk.
     // Pre-populate Nepomuk with a valid contact
-    Nepomuk::IMAccount imAcc3;
-    Nepomuk::PersonContact pC3;
+    Nepomuk2::IMAccount imAcc3;
+    Nepomuk2::PersonContact pC3;
     imAcc3.setImStatus("away");
     imAcc3.setImIDs(QStringList() << "test2@remote-contact.com");
     imAcc3.setStatusType(Tp::ConnectionPresenceTypeAway);
@@ -502,8 +502,8 @@ void StorageTest::testCreateContact()
 
     // Check the Nepomuk resources still have the right values.
     ContactResources cRes4 = contacts->value(cId4);
-    Nepomuk::IMAccount imAcc4 = cRes4.imAccount();
-    Nepomuk::PersonContact pC4 = cRes4.personContact();
+    Nepomuk2::IMAccount imAcc4 = cRes4.imAccount();
+    Nepomuk2::PersonContact pC4 = cRes4.personContact();
     QCOMPARE(imAcc4, imAcc3);
     QCOMPARE(pC4, pC3);
     QVERIFY(imAcc3.exists());
@@ -534,8 +534,8 @@ void StorageTest::testCreateContact()
 
     // Check the Nepomuk resources are created correctly.
     ContactResources cRes5 = contacts->value(cId5);
-    Nepomuk::IMAccount imAcc5 = cRes5.imAccount();
-    Nepomuk::PersonContact pC5 = cRes5.personContact();
+    Nepomuk2::IMAccount imAcc5 = cRes5.imAccount();
+    Nepomuk2::PersonContact pC5 = cRes5.personContact();
     QCOMPARE(imAcc5, imAcc2);
     QCOMPARE(pC5, pC2);
     QVERIFY(imAcc2.exists());
@@ -584,7 +584,7 @@ void StorageTest::testDestroyContact()
     QCOMPARE(TestBackdoors::nepomukStorageContacts(m_storage)->size(), 0);
 
     // And in Nepomuk...
-    Nepomuk::IMAccount imAcc1 = accounts->value(QLatin1String("/foo/bar/baz")).account();
+    Nepomuk2::IMAccount imAcc1 = accounts->value(QLatin1String("/foo/bar/baz")).account();
     QVERIFY(imAcc1.exists());
     QCOMPARE(imAcc1.isAccessedByOf().size(), 0);
 
@@ -603,8 +603,8 @@ void StorageTest::testDestroyContact()
 
     // Check the Nepomuk resources are created correctly.
     ContactResources cRes2 = contacts->value(cId2);
-    Nepomuk::IMAccount imAcc2 = cRes2.imAccount();
-    Nepomuk::PersonContact pC2 = cRes2.personContact();
+    Nepomuk2::IMAccount imAcc2 = cRes2.imAccount();
+    Nepomuk2::PersonContact pC2 = cRes2.personContact();
     QVERIFY(imAcc2.exists());
     QVERIFY(pC2.exists());
 
@@ -653,7 +653,7 @@ void StorageTest::testSetContactAlias()
     QCOMPARE(TestBackdoors::nepomukStorageContacts(m_storage)->size(), 0);
 
     // And in Nepomuk...
-    Nepomuk::IMAccount imAcc1 = accounts->value(QLatin1String("/foo/bar/baz")).account();
+    Nepomuk2::IMAccount imAcc1 = accounts->value(QLatin1String("/foo/bar/baz")).account();
     QVERIFY(imAcc1.exists());
     QCOMPARE(imAcc1.isAccessedByOf().size(), 0);
 
@@ -672,8 +672,8 @@ void StorageTest::testSetContactAlias()
 
     // Check the Nepomuk resources are created correctly.
     ContactResources cRes2 = contacts->value(cId2);
-    Nepomuk::IMAccount imAcc2 = cRes2.imAccount();
-    Nepomuk::PersonContact pC2 = cRes2.personContact();
+    Nepomuk2::IMAccount imAcc2 = cRes2.imAccount();
+    Nepomuk2::PersonContact pC2 = cRes2.personContact();
     QVERIFY(imAcc2.exists());
     QVERIFY(pC2.exists());
 
@@ -727,7 +727,7 @@ void StorageTest::testSetContactPresence()
     QCOMPARE(TestBackdoors::nepomukStorageContacts(m_storage)->size(), 0);
 
     // And in Nepomuk...
-    Nepomuk::IMAccount imAcc1 = accounts->value(QLatin1String("/foo/bar/baz")).account();
+    Nepomuk2::IMAccount imAcc1 = accounts->value(QLatin1String("/foo/bar/baz")).account();
     QVERIFY(imAcc1.exists());
     QCOMPARE(imAcc1.isAccessedByOf().size(), 0);
 
@@ -746,8 +746,8 @@ void StorageTest::testSetContactPresence()
 
     // Check the Nepomuk resources are created correctly.
     ContactResources cRes2 = contacts->value(cId2);
-    Nepomuk::IMAccount imAcc2 = cRes2.imAccount();
-    Nepomuk::PersonContact pC2 = cRes2.personContact();
+    Nepomuk2::IMAccount imAcc2 = cRes2.imAccount();
+    Nepomuk2::PersonContact pC2 = cRes2.personContact();
     QVERIFY(imAcc2.exists());
     QVERIFY(pC2.exists());
 
@@ -827,7 +827,7 @@ void StorageTest::testSetContactGroups()
     QCOMPARE(TestBackdoors::nepomukStorageContacts(m_storage)->size(), 0);
 
     // And in Nepomuk...
-    Nepomuk::IMAccount imAcc1 = accounts->value(QLatin1String("/foo/bar/baz")).account();
+    Nepomuk2::IMAccount imAcc1 = accounts->value(QLatin1String("/foo/bar/baz")).account();
     QVERIFY(imAcc1.exists());
     QCOMPARE(imAcc1.isAccessedByOf().size(), 0);
 
@@ -846,14 +846,14 @@ void StorageTest::testSetContactGroups()
 
     // Check the Nepomuk resources are created correctly.
     ContactResources cRes2 = contacts->value(cId2);
-    Nepomuk::IMAccount imAcc2 = cRes2.imAccount();
-    Nepomuk::PersonContact pC2 = cRes2.personContact();
+    Nepomuk2::IMAccount imAcc2 = cRes2.imAccount();
+    Nepomuk2::PersonContact pC2 = cRes2.personContact();
     QVERIFY(imAcc2.exists());
     QVERIFY(pC2.exists());
 
     // Check that the groups property is initially empty.
     QCOMPARE(pC2.belongsToGroups().size(), 0);
-    QCOMPARE(Nepomuk::ContactGroup::allContactGroups().size(), 0);
+    QCOMPARE(Nepomuk2::ContactGroup::allContactGroups().size(), 0);
 
     // Add to a group that doesn't already exist
     m_storage->setContactGroups(QLatin1String("/foo/bar/baz"), QLatin1String("test@remote-contact.com"),
@@ -861,18 +861,18 @@ void StorageTest::testSetContactGroups()
     QTest::kWaitForSignal(m_storage, SIGNAL(graphSaved()), 1000);
 
     // Add to a group we're already in
-    QCOMPARE(Nepomuk::ContactGroup::allContactGroups().size(), 1);
+    QCOMPARE(Nepomuk2::ContactGroup::allContactGroups().size(), 1);
     QCOMPARE(pC2.belongsToGroups().size(), 1);
     QCOMPARE(pC2.belongsToGroups().first().contactGroupName(), QLatin1String("testgroup1"));
 
     // Create a group in Nepomuk so we can try adding ourselves to an already existing group and
     // check it succeeds.
-    Nepomuk::ContactGroup g2;
+    Nepomuk2::ContactGroup g2;
     QVERIFY(!g2.exists());
     g2.setContactGroupName(QLatin1String("testgroup2"));
     QCOMPARE(g2.contactGroupName(), QLatin1String("testgroup2"));
     QVERIFY(g2.exists());
-    QCOMPARE(Nepomuk::ContactGroup::allContactGroups().size(), 2);
+    QCOMPARE(Nepomuk2::ContactGroup::allContactGroups().size(), 2);
 
     // Add the contact to that group.
     m_storage->setContactGroups(QLatin1String("/foo/bar/baz"), QLatin1String("test@remote-contact.com"),
@@ -880,7 +880,7 @@ void StorageTest::testSetContactGroups()
     QTest::kWaitForSignal(m_storage, SIGNAL(graphSaved()), 1000);
 
     // Check it worked OK
-    QCOMPARE(Nepomuk::ContactGroup::allContactGroups().size(), 2);
+    QCOMPARE(Nepomuk2::ContactGroup::allContactGroups().size(), 2);
     QCOMPARE(pC2.belongsToGroups().size(), 2);
     QVERIFY(!(pC2.belongsToGroups().at(0) == g2) ^ !(pC2.belongsToGroups().at(1) == g2));
 
@@ -890,7 +890,7 @@ void StorageTest::testSetContactGroups()
     QTest::kWaitForSignal(m_storage, SIGNAL(graphSaved()), 1000);
 
     // Check it worked OK
-    QCOMPARE(Nepomuk::ContactGroup::allContactGroups().size(), 2);
+    QCOMPARE(Nepomuk2::ContactGroup::allContactGroups().size(), 2);
     QCOMPARE(pC2.belongsToGroups().size(), 1);
     QCOMPARE(pC2.belongsToGroups().first().contactGroupName(), QLatin1String("testgroup1"));
 
@@ -901,7 +901,7 @@ void StorageTest::testSetContactGroups()
     QTest::kWaitForSignal(m_storage, SIGNAL(graphSaved()), 1000);
 
     // Check it worked OK
-    QCOMPARE(Nepomuk::ContactGroup::allContactGroups().size(), 3);
+    QCOMPARE(Nepomuk2::ContactGroup::allContactGroups().size(), 3);
     QCOMPARE(pC2.belongsToGroups().size(), 3);
 
     // Remove ourselves from two groups
@@ -911,7 +911,7 @@ void StorageTest::testSetContactGroups()
     QTest::kWaitForSignal(m_storage, SIGNAL(graphSaved()), 1000);
 
     // Check it worked OK
-    QCOMPARE(Nepomuk::ContactGroup::allContactGroups().size(), 3);
+    QCOMPARE(Nepomuk2::ContactGroup::allContactGroups().size(), 3);
     QCOMPARE(pC2.belongsToGroups().size(), 2);
 
     // Cleanup
@@ -919,7 +919,7 @@ void StorageTest::testSetContactGroups()
     imAcc2.remove();
     pC2.remove();
 
-    foreach (Nepomuk::ContactGroup g, Nepomuk::ContactGroup::allContactGroups()) {
+    foreach (Nepomuk2::ContactGroup g, Nepomuk2::ContactGroup::allContactGroups()) {
         g.remove();
     }
 }
@@ -943,11 +943,19 @@ void StorageTest::testSetContactBlockedStatus()
     QTest::kWaitForSignal(m_storage, SIGNAL(graphSaved()), 1000);
 
     // Check the Account is created
+    QHash< ContactIdentifier, ContactResources >* hash = TestBackdoors::nepomukStorageContacts(m_storage);
+    QHashIterator<ContactIdentifier, ContactResources> it( *hash );
+    while( it.hasNext() ) {
+        it.next();
+        kDebug() << it.key().contactId() << it.value().imAccount();
+    }
+
+
     QCOMPARE(TestBackdoors::nepomukStorageAccounts(m_storage)->size(), 1);
     QCOMPARE(TestBackdoors::nepomukStorageContacts(m_storage)->size(), 0);
 
     // And in Nepomuk...
-    Nepomuk::IMAccount imAcc1 = accounts->value(QLatin1String("/foo/bar/baz")).account();
+    Nepomuk2::IMAccount imAcc1 = accounts->value(QLatin1String("/foo/bar/baz")).account();
     QVERIFY(imAcc1.exists());
     QCOMPARE(imAcc1.isAccessedByOf().size(), 0);
 
@@ -966,8 +974,8 @@ void StorageTest::testSetContactBlockedStatus()
 
     // Check the Nepomuk resources are created correctly.
     ContactResources cRes2 = contacts->value(cId2);
-    Nepomuk::IMAccount imAcc2 = cRes2.imAccount();
-    Nepomuk::PersonContact pC2 = cRes2.personContact();
+    Nepomuk2::IMAccount imAcc2 = cRes2.imAccount();
+    Nepomuk2::PersonContact pC2 = cRes2.personContact();
     QVERIFY(imAcc2.exists());
     QVERIFY(pC2.exists());
 
@@ -1019,7 +1027,7 @@ void StorageTest::testSetContactPublishState()
     QCOMPARE(TestBackdoors::nepomukStorageContacts(m_storage)->size(), 0);
 
     // And in Nepomuk...
-    Nepomuk::IMAccount imAcc1 = accounts->value(QLatin1String("/foo/bar/baz")).account();
+    Nepomuk2::IMAccount imAcc1 = accounts->value(QLatin1String("/foo/bar/baz")).account();
     QVERIFY(imAcc1.exists());
     QCOMPARE(imAcc1.isAccessedByOf().size(), 0);
 
@@ -1038,8 +1046,8 @@ void StorageTest::testSetContactPublishState()
 
     // Check the Nepomuk resources are created correctly.
     ContactResources cRes2 = contacts->value(cId2);
-    Nepomuk::IMAccount imAcc2 = cRes2.imAccount();
-    Nepomuk::PersonContact pC2 = cRes2.personContact();
+    Nepomuk2::IMAccount imAcc2 = cRes2.imAccount();
+    Nepomuk2::PersonContact pC2 = cRes2.personContact();
     QVERIFY(imAcc2.exists());
     QVERIFY(pC2.exists());
 
@@ -1106,7 +1114,7 @@ void StorageTest::testSetContactSubscriptionState()
     QCOMPARE(TestBackdoors::nepomukStorageContacts(m_storage)->size(), 0);
 
     // And in Nepomuk...
-    Nepomuk::IMAccount imAcc1 = accounts->value(QLatin1String("/foo/bar/baz")).account();
+    Nepomuk2::IMAccount imAcc1 = accounts->value(QLatin1String("/foo/bar/baz")).account();
     QVERIFY(imAcc1.exists());
     QCOMPARE(imAcc1.isAccessedByOf().size(), 0);
 
@@ -1125,8 +1133,8 @@ void StorageTest::testSetContactSubscriptionState()
 
     // Check the Nepomuk resources are created correctly.
     ContactResources cRes2 = contacts->value(cId2);
-    Nepomuk::IMAccount imAcc2 = cRes2.imAccount();
-    Nepomuk::PersonContact pC2 = cRes2.personContact();
+    Nepomuk2::IMAccount imAcc2 = cRes2.imAccount();
+    Nepomuk2::PersonContact pC2 = cRes2.personContact();
     QVERIFY(imAcc2.exists());
     QVERIFY(pC2.exists());
 
@@ -1193,7 +1201,7 @@ void StorageTest::testSetContactCapabilities()
     QCOMPARE(TestBackdoors::nepomukStorageContacts(m_storage)->size(), 0);
 
     // And in Nepomuk...
-    Nepomuk::IMAccount imAcc1 = accounts->value(QLatin1String("/foo/bar/baz")).account();
+    Nepomuk2::IMAccount imAcc1 = accounts->value(QLatin1String("/foo/bar/baz")).account();
     QVERIFY(imAcc1.exists());
     QCOMPARE(imAcc1.isAccessedByOf().size(), 0);
 
@@ -1212,8 +1220,8 @@ void StorageTest::testSetContactCapabilities()
 
     // Check the Nepomuk resources are created correctly.
     ContactResources cRes2 = contacts->value(cId2);
-    Nepomuk::IMAccount imAcc2 = cRes2.imAccount();
-    Nepomuk::PersonContact pC2 = cRes2.personContact();
+    Nepomuk2::IMAccount imAcc2 = cRes2.imAccount();
+    Nepomuk2::PersonContact pC2 = cRes2.personContact();
     QVERIFY(imAcc2.exists());
     QVERIFY(pC2.exists());
 
@@ -1230,7 +1238,7 @@ void StorageTest::testSetContactCapabilities()
     QTest::kWaitForSignal(m_storage, SIGNAL(graphSaved()), 1000);
 
     QCOMPARE(imAcc2.iMCapabilitys().size(), 1);
-    QVERIFY(imAcc2.iMCapabilitys().contains(Nepomuk::Vocabulary::NCO::imCapabilityText()));
+    QVERIFY(imAcc2.iMCapabilitys().contains(Nepomuk2::Vocabulary::NCO::imCapabilityText()));
 
     // Add audio capability
     Tp::RequestableChannelClassSpecList r2;
@@ -1242,7 +1250,7 @@ void StorageTest::testSetContactCapabilities()
     QTest::kWaitForSignal(m_storage, SIGNAL(graphSaved()), 1000);
 
     QCOMPARE(imAcc2.iMCapabilitys().size(), 1);
-    QVERIFY(imAcc2.iMCapabilitys().contains(Nepomuk::Vocabulary::NCO::imCapabilityAudio()));
+    QVERIFY(imAcc2.iMCapabilitys().contains(Nepomuk2::Vocabulary::NCO::imCapabilityAudio()));
 
     // Add video capability
     Tp::RequestableChannelClassSpecList r3;
@@ -1254,7 +1262,7 @@ void StorageTest::testSetContactCapabilities()
     QTest::kWaitForSignal(m_storage, SIGNAL(graphSaved()), 1000);
 
     QCOMPARE(imAcc2.iMCapabilitys().size(), 1);
-    QVERIFY(imAcc2.iMCapabilitys().contains(Nepomuk::Vocabulary::NCO::imCapabilityVideo()));
+    QVERIFY(imAcc2.iMCapabilitys().contains(Nepomuk2::Vocabulary::NCO::imCapabilityVideo()));
 
     // Add three capabilities
     Tp::RequestableChannelClassSpecList r4;
@@ -1268,9 +1276,9 @@ void StorageTest::testSetContactCapabilities()
     QTest::kWaitForSignal(m_storage, SIGNAL(graphSaved()), 1000);
 
     QCOMPARE(imAcc2.iMCapabilitys().size(), 3);
-    QVERIFY(imAcc2.iMCapabilitys().contains(Nepomuk::Vocabulary::NCO::imCapabilityText()));
-    QVERIFY(imAcc2.iMCapabilitys().contains(Nepomuk::Vocabulary::NCO::imCapabilityAudio()));
-    QVERIFY(imAcc2.iMCapabilitys().contains(Nepomuk::Vocabulary::NCO::imCapabilityVideo()));
+    QVERIFY(imAcc2.iMCapabilitys().contains(Nepomuk2::Vocabulary::NCO::imCapabilityText()));
+    QVERIFY(imAcc2.iMCapabilitys().contains(Nepomuk2::Vocabulary::NCO::imCapabilityAudio()));
+    QVERIFY(imAcc2.iMCapabilitys().contains(Nepomuk2::Vocabulary::NCO::imCapabilityVideo()));
 
     // Set no capabilities
     Tp::RequestableChannelClassSpecList r5;
@@ -1309,7 +1317,7 @@ void StorageTest::testSetAvatar()
     QCOMPARE(TestBackdoors::nepomukStorageContacts(m_storage)->size(), 0);
 
     // And in Nepomuk...
-    Nepomuk::IMAccount imAcc1 = accounts->value(QLatin1String("/foo/bar/baz")).account();
+    Nepomuk2::IMAccount imAcc1 = accounts->value(QLatin1String("/foo/bar/baz")).account();
     QVERIFY(imAcc1.exists());
     QCOMPARE(imAcc1.isAccessedByOf().size(), 0);
 
@@ -1328,8 +1336,8 @@ void StorageTest::testSetAvatar()
 
     // Check the Nepomuk resources are created correctly.
     ContactResources cRes2 = contacts->value(cId2);
-    Nepomuk::IMAccount imAcc2 = cRes2.imAccount();
-    Nepomuk::PersonContact pC2 = cRes2.personContact();
+    Nepomuk2::IMAccount imAcc2 = cRes2.imAccount();
+    Nepomuk2::PersonContact pC2 = cRes2.personContact();
     QVERIFY(imAcc2.exists());
     QVERIFY(pC2.exists());
 
@@ -1352,8 +1360,8 @@ void StorageTest::testSetAvatar()
     QTest::kWaitForSignal(m_storage, SIGNAL(graphSaved()), 1000);
 
     QCOMPARE(pC2.photos().size(), 1);
-    QVERIFY(pC2.photos().contains(Nepomuk::DataObject(Nepomuk::Resource(avatar1.fileName))));
-    QVERIFY(imAcc2.avatar() == Nepomuk::Resource(avatar1.fileName));
+    QVERIFY(pC2.photos().contains(Nepomuk2::DataObject(Nepomuk2::Resource(avatar1.fileName))));
+    QVERIFY(imAcc2.avatar() == Nepomuk2::Resource(avatar1.fileName));
 
     // Change the avatar
     Tp::AvatarData avatar2(avatarFile2.fileName(), QString());
@@ -1362,9 +1370,9 @@ void StorageTest::testSetAvatar()
                                 avatar2);
     QTest::kWaitForSignal(m_storage, SIGNAL(graphSaved()), 1000);
 
-    QCOMPARE(pC2.photos().size(), 1);
-    QVERIFY(pC2.photos().contains(Nepomuk::DataObject(Nepomuk::Resource(avatar2.fileName))));
-    QVERIFY(imAcc2.avatar() == Nepomuk::Resource(avatar2.fileName));
+    QCOMPARE(pC2.photos().size(), 2);
+    QVERIFY(pC2.photos().contains(Nepomuk2::DataObject(Nepomuk2::Resource(avatar2.fileName))));
+    QVERIFY(imAcc2.avatar() == Nepomuk2::Resource(avatar2.fileName));
 
     // Remove the avatar
     Tp::AvatarData avatar3(QLatin1String(""), QString());
@@ -1373,7 +1381,7 @@ void StorageTest::testSetAvatar()
                                 avatar3);
     QTest::kWaitForSignal(m_storage, SIGNAL(graphSaved()), 1000);
 
-    QCOMPARE(pC2.photos().size(), 0);
+    QCOMPARE(pC2.photos().size(), 2);
     QVERIFY(!imAcc2.avatar().isValid());
 
     // Add a couple of other photos to the PersonContact
@@ -1385,10 +1393,10 @@ void StorageTest::testSetAvatar()
     photoFile2.open();
     photoFile3.open();
 
-    Nepomuk::DataObject photo1(photoFile1.fileName());
-    Nepomuk::DataObject photo2(photoFile2.fileName());
-    Nepomuk::DataObject photo3(photoFile3.fileName());
-    QList<Nepomuk::DataObject> photos;
+    Nepomuk2::DataObject photo1(photoFile1.fileName());
+    Nepomuk2::DataObject photo2(photoFile2.fileName());
+    Nepomuk2::DataObject photo3(photoFile3.fileName());
+    QList<Nepomuk2::DataObject> photos;
     photos << photo1 << photo2 << photo3;
     pC2.setPhotos(photos);
 
@@ -1408,11 +1416,11 @@ void StorageTest::testSetAvatar()
     QTest::kWaitForSignal(m_storage, SIGNAL(graphSaved()), 1000);
 
     QCOMPARE(pC2.photos().size(), 4);
-    QVERIFY(pC2.photos().contains(Nepomuk::DataObject(Nepomuk::Resource(avatar4.fileName))));
+    QVERIFY(pC2.photos().contains(Nepomuk2::DataObject(Nepomuk2::Resource(avatar4.fileName))));
     QVERIFY(pC2.photos().contains(photo1));
     QVERIFY(pC2.photos().contains(photo2));
     QVERIFY(pC2.photos().contains(photo3));
-    QVERIFY(imAcc2.avatar() == Nepomuk::Resource(avatar4.fileName));
+    QVERIFY(imAcc2.avatar() == Nepomuk2::Resource(avatar4.fileName));
 
     // Remove the avatar
     Tp::AvatarData avatar5(QLatin1String(""), QString());
@@ -1441,7 +1449,7 @@ void StorageTest::testSetAvatar()
     QVERIFY(pC2.photos().contains(photo1));
     QVERIFY(pC2.photos().contains(photo2));
     QVERIFY(pC2.photos().contains(photo3));
-    QVERIFY(imAcc2.avatar() == Nepomuk::Resource(avatar6.fileName));
+    QVERIFY(imAcc2.avatar() == Nepomuk2::Resource(avatar6.fileName));
 
     // FIXME: We shouldn't remove from the photos if the avatar was already in the photos when
     // we added it, when removing the avatar. This should be fixed automatically when the port
@@ -1470,7 +1478,7 @@ void StorageTest::cleanup()
     timer.start();
 
     QString query = "select distinct ?r where { ?r ?p ?o. FILTER(regex(str(?r), '^nepomuk:/(res)|(ctx)')) . }";
-    Soprano::Model * model = Nepomuk::ResourceManager::instance()->mainModel();
+    Soprano::Model * model = Nepomuk2::ResourceManager::instance()->mainModel();
 
     Soprano::QueryResultIterator it = model->executeQuery( query, Soprano::Query::QueryLanguageSparql );
     while( it.next() ) {

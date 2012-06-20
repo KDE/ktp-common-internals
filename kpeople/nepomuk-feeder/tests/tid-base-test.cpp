@@ -25,8 +25,8 @@
 #include <Soprano/StorageModel>
 #include <Soprano/PluginManager>
 
-#include <Nepomuk/ResourceManager>
-#include <Nepomuk/Thing>
+#include <Nepomuk2/ResourceManager>
+#include <Nepomuk2/Thing>
 
 #include "ontologies/nco.h"
 
@@ -46,7 +46,7 @@ class TidBaseTest::Private
         virtual ~Private() {}
 
         TelepathyAccountMonitor *monitor;
-        Nepomuk::Resource mePersonContact;
+        Nepomuk2::Resource mePersonContact;
         Tp::AccountPtr account;
         Tp::ConnectionPtr connection;
 };
@@ -117,13 +117,13 @@ void TidBaseTest::setupAccountMonitor()
     // At this very point, we should have a "me" PIMO person up and running
     // FIXME: Port to new OSCAF standard for accessing "me" as soon as it
     // becomes available.
-    Nepomuk::Thing me(QUrl::fromEncoded("nepomuk:/me"));
+    Nepomuk2::Thing me(QUrl::fromEncoded("nepomuk:/me"));
 
     QVERIFY(me.exists());
     // Loop through all the grounding instances of this person
-    Q_FOREACH (Nepomuk::Resource resource, me.groundingOccurrences()) {
+    Q_FOREACH (Nepomuk2::Resource resource, me.groundingOccurrences()) {
         // See if this grounding instance is of type nco:contact.
-        if (resource.hasType(Nepomuk::Vocabulary::NCO::PersonContact())) {
+        if (resource.hasType(Nepomuk2::Vocabulary::NCO::PersonContact())) {
             // FIXME: We are going to assume the first NCO::PersonContact is the
             // right one. Can we improve this?
             d->mePersonContact = resource;
@@ -139,7 +139,7 @@ TelepathyAccountMonitor* TidBaseTest::accountMonitor()
     return d->monitor;
 }
 
-Nepomuk::Resource TidBaseTest::mePersonContact()
+Nepomuk2::Resource TidBaseTest::mePersonContact()
 {
     return d->mePersonContact;
 }

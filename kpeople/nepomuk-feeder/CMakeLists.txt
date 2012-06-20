@@ -8,7 +8,8 @@ set (CMAKE_MODULE_PATH
 
 set(KDE_MIN_VERSION "4.8.0")
 find_package (KDE4 ${KDE_MIN_VERSION} REQUIRED)
-find_package (Nepomuk REQUIRED)
+find_package (Soprano REQUIRED)
+find_package (NepomukCore REQUIRED)
 find_package (TelepathyQt4 0.8.9 REQUIRED)
 set(SDO_MIN_VERSION "0.6.50")
 find_package(SharedDesktopOntologies ${SDO_MIN_VERSION} REQUIRED)
@@ -58,7 +59,7 @@ set (nepomuktelepathyservice_static_SRCS
 soprano_add_ontology (nepomuktelepathyservice_static_SRCS
                       ${CMAKE_SOURCE_DIR}/telepathy.trig
                       "Telepathy"
-                      "Nepomuk::Vocabulary"
+                      "Nepomuk2::Vocabulary"
                       "trig"
 )
 
@@ -73,9 +74,7 @@ target_link_libraries (nepomuktelepathyservice-static
                        ${KDE4_KDECORE_LIBS}
                        ${TELEPATHY_QT4_LIBRARIES}
                        ${SOPRANO_LIBRARIES}
-                       ${NEPOMUK_LIBRARIES}
-                       ${NEPOMUK_QUERY_LIBRARIES}
-                       nepomukdatamanagement
+                       ${NEPOMUK_CORE_LIBRARY}
 )
 
 set_property(TARGET nepomuktelepathyservice-static PROPERTY COMPILE_FLAGS -fPIC)
@@ -115,8 +114,8 @@ endmacro(INSTALL_ONTOLOGY)
 
 install_ontology (telepathy telepathy)
 
-find_package (KTelepathyTestLib)
+#find_package (KTelepathyTestLib)
 
-if (KTelepathyTestLib_DIR)
-    add_subdirectory(tests)
-endif (KTelepathyTestLib_DIR)
+#if (KTelepathyTestLib_DIR)
+#    add_subdirectory(tests)
+#endif (KTelepathyTestLib_DIR)
