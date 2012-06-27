@@ -192,6 +192,10 @@ public:
     AccountsFilterModel(QObject *parent = 0);
     virtual ~AccountsFilterModel();
 
+    virtual QVariant data(const QModelIndex &index, int role) const;
+    virtual void setSourceModel(QAbstractItemModel *sourceModel);
+    void invalidateFilter();
+
     SortMode sortMode() const;
     void resetSortMode();
     Q_SLOT void setSortMode(SortMode sortMode);
@@ -257,12 +261,14 @@ public:
     Q_SLOT void setGroupsFilterMatchFlags(Qt::MatchFlags groupsFilterMatchFlags);
     Q_SIGNAL void groupsFilterMatchFlagsChanged(Qt::MatchFlags groupsFilterMatchFlags);
 
+    Q_SLOT void countContacts(const QModelIndex &index) const;
+
 protected:
     bool filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent) const;
-    bool lessThan ( const QModelIndex &left, const QModelIndex &right ) const;
-QModelIndexList match(const QModelIndex &start, int role,
-                                          const QVariant &value, int hits,
-                                          Qt::MatchFlags flags) const;
+    bool lessThan (const QModelIndex &left, const QModelIndex &right) const;
+    QModelIndexList match(const QModelIndex &start, int role,
+                          const QVariant &value, int hits,
+                          Qt::MatchFlags flags) const;
 
 private:
     class Private;

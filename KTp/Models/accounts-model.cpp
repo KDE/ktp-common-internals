@@ -152,10 +152,7 @@ void AccountsModel::onItemChanged(TreeNode *node)
 {
     if (node->parent()) {
         //if it is a group item
-        if (node->parent() == mPriv->mTree) {
-            qobject_cast<AccountsModelItem*>(node)->countOnlineContacts();
-        } else {
-            qobject_cast<AccountsModelItem*>(node->parent())->countOnlineContacts();
+        if (node->parent() != mPriv->mTree) {
             Q_EMIT dataChanged(index(node->parent()), index(node->parent()));
         }
     }
@@ -173,6 +170,7 @@ void AccountsModel::onItemsAdded(TreeNode *parent, const QList<TreeNode *> &node
     }
     endInsertRows();
     Q_EMIT accountCountChanged();
+    Q_EMIT dataChanged(index(parent), index(parent));
 }
 
 void AccountsModel::onItemsRemoved(TreeNode *parent, int first, int last)

@@ -170,14 +170,7 @@ void GroupsModel::onItemChanged(TreeNode* node)
 {
     if (node->parent()) {
         //if it is a group item
-        if (node->parent() == mPriv->mTree) {
-            GroupsModelItem *groupItem = qobject_cast<GroupsModelItem*>(node);
-            Q_ASSERT(groupItem);
-            groupItem->countOnlineContacts();
-        } else {
-            GroupsModelItem *groupItem = qobject_cast<GroupsModelItem*>(node->parent());
-            Q_ASSERT(groupItem);
-            groupItem->countOnlineContacts();
+        if (node->parent() != mPriv->mTree) {
             Q_EMIT dataChanged(index(node->parent()), index(node->parent()));
         }
     }

@@ -35,8 +35,7 @@
 struct GroupsModelItem::Private
 {
     Private(const QString &groupName)
-        : mGroupName(groupName),
-          mOnlineUsersCount(0)
+        : mGroupName(groupName)
     {
     }
 
@@ -44,7 +43,6 @@ struct GroupsModelItem::Private
     QString groupName();
 
     QString mGroupName;
-    int mOnlineUsersCount;
 };
 
 void GroupsModelItem::Private::setGroupName(const QString& value)
@@ -82,10 +80,6 @@ QVariant GroupsModelItem::data(int role) const
         /* drop through*/
     case GroupsModel::GroupNameRole:
         return mPriv->mGroupName;
-    case AccountsModel::TotalUsersCountRole:
-        return size();
-    case AccountsModel::OnlineUsersCountRole:
-        return mPriv->mOnlineUsersCount;
     default:
         return QVariant();
     }
@@ -126,19 +120,4 @@ void GroupsModelItem::removeProxyContact(ProxyTreeNode *proxyNode)
 
     //the group counters needs to be updated
     Q_EMIT changed(this);
-}
-
-void GroupsModelItem::countOnlineContacts()
-{
-    int tmpCounter = 0;
-    for (int i = 0; i < size(); ++i) {
-        ProxyTreeNode* proxyNode = qobject_cast<ProxyTreeNode*>(childAt(i));
-        Q_ASSERT(proxyNode);
-        if (proxyNode->data(AccountsModel::PresenceTypeRole).toUInt() != Tp::ConnectionPresenceTypeOffline
-            && proxyNode->data(AccountsModel::PresenceTypeRole).toUInt() != Tp::ConnectionPresenceTypeUnknown) {
-            tmpCounter++;
-        }
-    }
-
-    mPriv->mOnlineUsersCount = tmpCounter;
 }

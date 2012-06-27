@@ -4,6 +4,7 @@
  * Copyright (C) 2011 David Edmundson <kde@davidedmundson.co.uk>
  * Copyright (C) 2011 Martin Klapetek <martin dot klapetek at gmail dot com>
  * Copyright (C) 2012 Daniele E. Domenichelli <daniele.domenichelli@gmail.com>
+ * Copyright (C) 2012 Dominik Cermak <d.cermak@arcor.de>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -27,6 +28,7 @@
 #include "groups-model-item.h"
 #include "contact-model-item.h"
 #include "accounts-model-item.h"
+#include "proxy-tree-node.h"
 
 #include <presence.h>
 
@@ -70,19 +72,24 @@ public:
     bool filterAcceptsAccount(const QModelIndex &index) const;
     bool filterAcceptsContact(const QModelIndex &index) const;
     bool filterAcceptsGroup(const QModelIndex &index) const;
+
+    QHash<QString, int> m_onlineContactsCounts;
+    QHash<QString, int> m_totalContactsCounts;
 };
 
 bool AccountsFilterModel::Private::filterAcceptsAccount(const QModelIndex &index) const
 {
-    //hide disabled accounts
+    // Hide disabled accounts
     if (!index.data(AccountsModel::EnabledRole).toBool()) {
         return false;
     }
-    //hide
+
+    // Hide disconnected accounts
     if (index.data(AccountsModel::ConnectionStatusRole).toUInt()
         != Tp::ConnectionStatusConnected) {
         return false;
     }
+
     return true;
 }
 
@@ -303,8 +310,28 @@ bool AccountsFilterModel::Private::filterAcceptsContact(const QModelIndex &index
 
 bool AccountsFilterModel::Private::filterAcceptsGroup(const QModelIndex &index) const
 {
+    QVariant item = index.data(AccountsModel::ItemRole);
+    GroupsModelItem *gmItem = item.value<GroupsModelItem*>();
+
     if (presenceTypeFilterFlags != DoNotFilterByPresence) {
-        if (index.data(AccountsModel::OnlineUsersCountRole).toInt() == 0) {
+        // If there is no cached value, create one
+        if (!m_onlineContactsCounts.contains(gmItem->groupName())) {
+            q->countContacts(index);
+        }
+
+        // Don't accept groups with no online contacts
+        if (m_onlineContactsCounts.value(gmItem->groupName()) == 0) {
+            return false;
+        }
+    }
+    else {
+        // If there is no cached value, create one
+        if (!m_totalContactsCounts.contains(gmItem->groupName())) {
+            q->countContacts(index);
+        }
+
+        // Don't accept groups with no total contacts
+        if (m_totalContactsCounts.value(gmItem->groupName()) == 0) {
             return false;
         }
     }
@@ -320,6 +347,86 @@ AccountsFilterModel::AccountsFilterModel(QObject *parent)
 AccountsFilterModel::~AccountsFilterModel()
 {
     delete d;
+}
+
+QVariant AccountsFilterModel::data(const QModelIndex &index, int role) const
+{
+    if (!index.isValid()) {
+        return QVariant();
+    }
+
+    QModelIndex sourceIndex = mapToSource(index);
+    if (!sourceIndex.isValid()) {
+        return QVariant();
+    }
+
+    // Special handling for the counts
+    if (role == AccountsModel::OnlineUsersCountRole) {
+        QVariant item = sourceIndex.data(AccountsModel::ItemRole);
+        if (item.canConvert<GroupsModelItem*>()) {
+            GroupsModelItem *gmItem = item.value<GroupsModelItem*>();
+            // If there is no cached value, create one
+            if (!d->m_onlineContactsCounts.contains(gmItem->groupName())) {
+                countContacts(sourceIndex);
+            }
+            return d->m_onlineContactsCounts.value(gmItem->groupName());
+        } else if (item.canConvert<AccountsModelItem*>()) {
+            AccountsModelItem *amItem = item.value<AccountsModelItem*>();
+            // If there is no cached value, create one
+            if (!d->m_onlineContactsCounts.contains(amItem->data(AccountsModel::IdRole).toString())) {
+                countContacts(sourceIndex);
+            }
+            return d->m_onlineContactsCounts.value(amItem->data(AccountsModel::IdRole).toString());
+        }
+    } else if (role == AccountsModel::TotalUsersCountRole) {
+        QVariant item = sourceIndex.data(AccountsModel::ItemRole);
+        if (item.canConvert<GroupsModelItem*>()) {
+            GroupsModelItem *gmItem = item.value<GroupsModelItem*>();
+            // If there is no cached value, create one
+            if (!d->m_totalContactsCounts.contains(gmItem->groupName())) {
+                countContacts(sourceIndex);
+            }
+            return d->m_totalContactsCounts.value(gmItem->groupName());
+        } else if (item.canConvert<AccountsModelItem*>()) {
+            AccountsModelItem *amItem = item.value<AccountsModelItem*>();
+            // If there is no cached value, create one
+            if (!d->m_totalContactsCounts.contains(amItem->data(AccountsModel::IdRole).toString())) {
+                countContacts(sourceIndex);
+            }
+            return d->m_totalContactsCounts.value(amItem->data(AccountsModel::IdRole).toString());
+        }
+    }
+
+    // In all other cases just delegate it to the source model
+    return sourceModel()->data(mapToSource(index), role);
+}
+
+void AccountsFilterModel::setSourceModel(QAbstractItemModel *sourceModel)
+{
+    // Disconnect the previous source model
+    disconnect(this->sourceModel(),
+               SIGNAL(dataChanged(QModelIndex,QModelIndex)),
+               this,
+               SLOT(countContacts(QModelIndex)));
+
+    // Clear all cached values as they aren't valid anymore because the source model changed.
+    d->m_onlineContactsCounts.clear();
+    d->m_totalContactsCounts.clear();
+    QSortFilterProxyModel::setSourceModel(sourceModel);
+
+    // Connect the new source model
+    connect(this->sourceModel(),
+            SIGNAL(dataChanged(QModelIndex,QModelIndex)),
+            this,
+            SLOT(countContacts(QModelIndex)));
+}
+
+void AccountsFilterModel::invalidateFilter()
+{
+    // Clear all cached values as they aren't valid anymore because the filter changed.
+    d->m_onlineContactsCounts.clear();
+    d->m_totalContactsCounts.clear();
+    QSortFilterProxyModel::invalidateFilter();
 }
 
 AccountsFilterModel::SortMode AccountsFilterModel::sortMode() const
@@ -612,6 +719,86 @@ void AccountsFilterModel::setGroupsFilterMatchFlags(Qt::MatchFlags groupsFilterM
         d->groupsFilterMatchFlags = groupsFilterMatchFlags;
         invalidateFilter();
         Q_EMIT groupsFilterMatchFlagsChanged(groupsFilterMatchFlags);
+    }
+}
+
+void AccountsFilterModel::countContacts(const QModelIndex &index) const
+{
+    QVariant item = index.data(AccountsModel::ItemRole);
+    if (item.canConvert<GroupsModelItem*>()) {
+        GroupsModelItem *gmItem = item.value<GroupsModelItem*>();
+
+        // Count the online contacts
+        int tmpCounter = 0;
+
+        for (int i = 0; i < gmItem->size(); ++i) {
+            ProxyTreeNode* proxyNode = qobject_cast<ProxyTreeNode*>(gmItem->childAt(i));
+            Q_ASSERT(proxyNode);
+
+            // We want all online contacts that are accepted by the filter
+            if (filterAcceptsRow(gmItem->indexOf(gmItem->childAt(i)), index)
+                && proxyNode->data(AccountsModel::PresenceTypeRole).toUInt() != Tp::ConnectionPresenceTypeOffline
+                && proxyNode->data(AccountsModel::PresenceTypeRole).toUInt() != Tp::ConnectionPresenceTypeUnknown) {
+                tmpCounter++;
+            }
+        }
+
+        d->m_onlineContactsCounts.insert(gmItem->groupName(), tmpCounter);
+
+        // Now count the total contacts accepted by the filter (but ignore presence filter).
+        // Save the presenceTypeFilterFlags to reapply them later, because we need to disable
+        // presence filtering to get the right numbers
+        PresenceTypeFilterFlags saved = presenceTypeFilterFlags();
+        d->presenceTypeFilterFlags = AccountsFilterModel::DoNotFilterByPresence;
+
+        tmpCounter = 0;
+        for (int i = 0; i < gmItem->size(); ++i) {
+            if (filterAcceptsRow(gmItem->indexOf(gmItem->childAt(i)), index)) {
+                tmpCounter++;
+            }
+        }
+
+        // Restore the saved presenceTypeFilterFlags
+        d->presenceTypeFilterFlags = saved;
+
+        d->m_totalContactsCounts.insert(gmItem->groupName(), tmpCounter);
+    } else if (item.canConvert<AccountsModelItem*>()) {
+        AccountsModelItem *amItem = item.value<AccountsModelItem*>();
+
+        // Count the online contacts
+        int tmpCounter = 0;
+
+        for (int i = 0; i < amItem->size(); ++i) {
+            ContactModelItem* contactNode = qobject_cast<ContactModelItem*>(amItem->childAt(i));
+            Q_ASSERT(contactNode);
+
+            // We want all online contacts that are accepted by the filter
+            if (filterAcceptsRow(amItem->indexOf(amItem->childAt(i)), index)
+                && contactNode->data(AccountsModel::PresenceTypeRole).toUInt() != Tp::ConnectionPresenceTypeOffline
+                && contactNode->data(AccountsModel::PresenceTypeRole).toUInt() != Tp::ConnectionPresenceTypeUnknown) {
+                tmpCounter++;
+            }
+        }
+
+        d->m_onlineContactsCounts.insert(amItem->data(AccountsModel::IdRole).toString(), tmpCounter);
+
+        // Now count the total contacts accepted by the filter (but ignore presence filter).
+        // Save the presenceTypeFilterFlags to reapply them later, because we need to disable
+        // presence filtering to get the right numbers
+        PresenceTypeFilterFlags saved = presenceTypeFilterFlags();
+        d->presenceTypeFilterFlags = AccountsFilterModel::DoNotFilterByPresence;
+
+        tmpCounter = 0;
+        for (int i = 0; i < amItem->size(); ++i) {
+            if (filterAcceptsRow(amItem->indexOf(amItem->childAt(i)), index)) {
+                tmpCounter++;
+            }
+        }
+
+        // Restore the saved presenceTypeFilterFlags
+        d->presenceTypeFilterFlags = saved;
+
+        d->m_totalContactsCounts.insert(amItem->data(AccountsModel::IdRole).toString(), tmpCounter);
     }
 }
 

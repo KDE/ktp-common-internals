@@ -54,8 +54,6 @@ public:
     void addProxyContact(ProxyTreeNode* proxyNode);
     void removeProxyContact(ProxyTreeNode* proxyNode);
 
-    void countOnlineContacts();
-
 private Q_SLOTS:
 
 
