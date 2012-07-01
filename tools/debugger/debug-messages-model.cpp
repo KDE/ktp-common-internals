@@ -39,6 +39,13 @@ DebugMessagesModel::DebugMessagesModel(const QString & service, QObject *parent)
 
 DebugMessagesModel::~DebugMessagesModel()
 {
+    if (m_debugReceiver && m_ready) {
+        //disable monitoring and do it synchronously before all the objects are destroyed
+        Tp::PendingOperation *op = m_debugReceiver->setMonitoringEnabled(false);
+        QEventLoop loop;
+        connect(op, SIGNAL(finished(Tp::PendingOperation*)), &loop, SLOT(quit()));
+        loop.exec();
+    }
 }
 
 void DebugMessagesModel::onServiceRegistered(const QString & service)
