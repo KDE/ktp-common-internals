@@ -195,8 +195,11 @@ QVariant DebugMessagesModel::data(const QModelIndex & index, int role) const
 
 int DebugMessagesModel::rowCount(const QModelIndex & parent) const
 {
-    Q_UNUSED(parent);
-    return m_messages.size();
+    if (!parent.isValid()) {
+        return m_messages.size();
+    } else {
+        return 0;
+    }
 }
 
 #include "moc_debug-messages-model.cpp"
