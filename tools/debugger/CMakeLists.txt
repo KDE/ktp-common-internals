@@ -1,4 +1,4 @@
-project(telepathy-kde-debugger)
+project(ktp-debugger)
 
 find_package(TelepathyQt4 REQUIRED)
 find_package(KDE4 REQUIRED)
@@ -9,12 +9,12 @@ include_directories(
     ${KDE4_INCLUDES}
 )
 
-set(tp-kde-debugger_SRCS
+set(ktp-debugger_SRCS
     main-window.cpp
     debug-messages-model.cpp
     main.cpp
 )
 
-kde4_add_ui_files(tp-kde-debugger_SRCS main-window.ui)
-kde4_add_executable(telepathy-kde-debugger ${tp-kde-debugger_SRCS})
-target_link_libraries(telepathy-kde-debugger ${TELEPATHY_QT4_LIBRARIES} ${KDE4_KDEUI_LIBS})
+kde4_add_ui_files(ktp-debugger_SRCS main-window.ui)
+kde4_add_executable(ktp-debugger ${ktp-debugger_SRCS})
+target_link_libraries(ktp-debugger ${TELEPATHY_QT4_LIBRARIES} ${KDE4_KDEUI_LIBS})

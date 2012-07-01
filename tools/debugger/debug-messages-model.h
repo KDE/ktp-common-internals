@@ -44,6 +44,7 @@ private Q_SLOTS:
     void onServiceRegistered(const QString & service);
     void onServiceUnregistered(const QString & service);
     void onDebugReceiverReady(Tp::PendingOperation *op);
+    void onDebugReceiverMonitoringEnabled(Tp::PendingOperation *op);
     void onFetchMessagesFinished(Tp::PendingOperation *op);
     void onNewDebugMessage(const Tp::DebugMessage & msg);
 

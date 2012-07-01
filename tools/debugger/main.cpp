@@ -25,10 +25,9 @@
 
 int main(int argc, char **argv)
 {
-    KAboutData aboutData("telepathy-kde-debugger",
-            "telepathy-debugger",
+    KAboutData aboutData("ktp-debugger", 0,
             ki18n("KDE Telepathy Debug Tool"),
-            "0.2.60",
+            "0.4.60",
             ki18n("Tool for inspecting logs of the various underlying telepathy components"),
             KAboutData::License_LGPL,
             ki18n("Copyright (C) 2011 Collabora Ltd."));

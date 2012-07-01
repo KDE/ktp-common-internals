@@ -49,7 +49,7 @@ void DebugMessagesModel::onServiceRegistered(const QString & service)
 
     m_debugReceiver = Tp::DebugReceiver::create(service);
 
-    Tp::PendingReady *op = m_debugReceiver->becomeReady(Tp::DebugReceiver::FeatureMonitor);
+    Tp::PendingReady *op = m_debugReceiver->becomeReady();
     connect(op, SIGNAL(finished(Tp::PendingOperation*)),
             SLOT(onDebugReceiverReady(Tp::PendingOperation*)));
 }
@@ -71,6 +71,20 @@ void DebugMessagesModel::onDebugReceiverReady(Tp::PendingOperation *op)
         connect(m_debugReceiver.data(), SIGNAL(newDebugMessage(Tp::DebugMessage)),
                 SLOT(onNewDebugMessage(Tp::DebugMessage)));
 
+        connect(m_debugReceiver->setMonitoringEnabled(true),
+                SIGNAL(finished(Tp::PendingOperation*)),
+                SLOT(onDebugReceiverMonitoringEnabled(Tp::PendingOperation*)));
+    }
+}
+
+void DebugMessagesModel::onDebugReceiverMonitoringEnabled(Tp::PendingOperation* op)
+{
+    if (op->isError()) {
+        kError() << "Failed to enable monitoring on the Debug object of" << m_serviceName
+                 << "Error was:" << op->errorName() << "-" << op->errorMessage();
+        m_tmpCache.clear();
+        m_debugReceiver.reset();
+    } else {
         connect(m_debugReceiver->fetchMessages(), SIGNAL(finished(Tp::PendingOperation*)),
             SLOT(onFetchMessagesFinished(Tp::PendingOperation*)));
     }
