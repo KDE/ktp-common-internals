@@ -28,11 +28,9 @@ DebugMessagesModel::DebugMessagesModel(const QString & service, QObject *parent)
       m_ready(false)
 {
     m_serviceWatcher = new QDBusServiceWatcher(service, QDBusConnection::sessionBus(),
-                                               QDBusServiceWatcher::WatchForOwnerChange, this);
+                                               QDBusServiceWatcher::WatchForRegistration, this);
     connect(m_serviceWatcher, SIGNAL(serviceRegistered(QString)),
             SLOT(onServiceRegistered(QString)));
-    connect(m_serviceWatcher, SIGNAL(serviceUnregistered(QString)),
-            SLOT(onServiceUnregistered(QString)));
 
     if (QDBusConnection::sessionBus().interface()->isServiceRegistered(service)) {
         onServiceRegistered(service);
@@ -54,9 +52,11 @@ void DebugMessagesModel::onServiceRegistered(const QString & service)
             SLOT(onDebugReceiverReady(Tp::PendingOperation*)));
 }
 
-void DebugMessagesModel::onServiceUnregistered(const QString & service)
+void DebugMessagesModel::onDebugReceiverInvalidated(Tp::DBusProxy *proxy,
+        const QString &errorName, const QString &errorMessage)
 {
-    kDebug() << "Service" << service << "unregistered";
+    Q_UNUSED(proxy);
+    kDebug() << "DebugReceiver invalidated" << errorName << errorMessage;
     m_ready = false;
     m_debugReceiver.reset();
 }
@@ -110,6 +110,9 @@ void DebugMessagesModel::onFetchMessagesFinished(Tp::PendingOperation* op)
         //TODO limit m_messages size
 
         m_ready = true;
+        connect(m_debugReceiver.data(),
+                SIGNAL(invalidated(Tp::DBusProxy*,QString,QString)),
+                SLOT(onDebugReceiverInvalidated(Tp::DBusProxy*,QString,QString)));
     }
 }
 

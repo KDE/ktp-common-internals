@@ -42,7 +42,8 @@ public:
 
 private Q_SLOTS:
     void onServiceRegistered(const QString & service);
-    void onServiceUnregistered(const QString & service);
+    void onDebugReceiverInvalidated(Tp::DBusProxy *proxy,
+            const QString &errorName, const QString &errorMessage);
     void onDebugReceiverReady(Tp::PendingOperation *op);
     void onDebugReceiverMonitoringEnabled(Tp::PendingOperation *op);
     void onFetchMessagesFinished(Tp::PendingOperation *op);
