@@ -28,7 +28,6 @@
 #include <QSortFilterProxyModel>
 #include <QDebug>
 
-
 #include <TelepathyQt/Account>
 #include <TelepathyQt/Connection>
 #include <TelepathyQt/ContactManager>
@@ -48,7 +47,7 @@ SubscribableAccountsModel::SubscribableAccountsModel(QObject *parent)
 {
 }
 
-bool KTp::SubscribableAccountsModel::filterAcceptsRow(int source_row, const QModelIndex &source_parent) const
+bool SubscribableAccountsModel::filterAcceptsRow(int source_row, const QModelIndex &source_parent) const
 {
     AccountsModelItem* item = sourceModel()->index(source_row, 0, source_parent).data(AccountsModel::ItemRole).value<AccountsModelItem*>();
 
@@ -68,9 +67,8 @@ bool KTp::SubscribableAccountsModel::filterAcceptsRow(int source_row, const QMod
     return true;
 }
 
-} //namespace
 
-KTp::AddContactDialog::AddContactDialog(AccountsModel *accountModel, QWidget *parent) :
+AddContactDialog::AddContactDialog(AccountsModel *accountModel, QWidget *parent) :
     KDialog(parent),
     ui(new Ui::AddContactDialog)
 {
@@ -89,12 +87,12 @@ KTp::AddContactDialog::AddContactDialog(AccountsModel *accountModel, QWidget *pa
     ui->screenNameLineEdit->setFocus();
 }
 
-KTp::AddContactDialog::~AddContactDialog()
+AddContactDialog::~AddContactDialog()
 {
     delete ui;
 }
 
-Tp::AccountPtr KTp::AddContactDialog::account() const
+Tp::AccountPtr AddContactDialog::account() const
 {
     QVariant itemData = ui->accountCombo->itemData(ui->accountCombo->currentIndex(),AccountsModel::ItemRole);
     AccountsModelItem* item = itemData.value<AccountsModelItem*>();
@@ -105,9 +103,11 @@ Tp::AccountPtr KTp::AddContactDialog::account() const
     }
 }
 
-const QString KTp::AddContactDialog::screenName() const
+const QString AddContactDialog::screenName() const
 {
     return ui->screenNameLineEdit->text();
 }
+
+} //namespace KTp
 
 #include "add-contact-dialog.moc"
