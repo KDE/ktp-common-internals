@@ -115,15 +115,13 @@ void AddContactDialog::accept()
     }
 
     if (account.isNull()) {
-        KMessageBox::error(this,
-                i18n("Seems like you forgot to select an account. Also do not forget to connect it first."),
-                i18n("No Account Selected"));
+        KMessageBox::sorry(this, i18n("Seems like you forgot to select an account. "
+                                      "Also, do not forget to connect it first."));
     } else if (account->connection().isNull()) {
-        KMessageBox::error(this,
-                i18n("The requested account has disconnected and so the contact could not be added. Sorry."),
-                i18n("Connection Error"));
+        KMessageBox::sorry(this, i18n("The requested account has disconnected "
+                                      "and so the contact could not be added."));
     } else if (d->ui->screenNameLineEdit->text().isEmpty()) {
-        KMessageBox::error(this, i18n("You did not specify the name of the contact to add"));
+        KMessageBox::sorry(this, i18n("You did not specify the name of the contact to add."));
     } else {
         QStringList identifiers = QStringList() << d->ui->screenNameLineEdit->text();
         kDebug() << "Requesting contacts for identifiers:" << identifiers;
@@ -149,7 +147,7 @@ void AddContactDialog::_k_onContactsForIdentifiersFinished(Tp::PendingOperation 
     if (op->isError()) {
         kWarning() << "Failed to retrieve a contact for the given identifier"
                    << op->errorName() << op->errorMessage();
-        KMessageBox::error(this, i18n("Failed to construct a contact with the given name"));
+        KMessageBox::sorry(this, i18n("Failed to construct a contact with the given name."));
         setInProgress(false);
     } else {
         kDebug() << "Requesting presence subscription";
@@ -166,7 +164,8 @@ void AddContactDialog::_k_onRequestPresenceSubscriptionFinished(Tp::PendingOpera
     if (op->isError()) {
         kWarning() << "Failed to request presence subscription"
                    << op->errorName() << op->errorMessage();
-        KMessageBox::error(this, i18n("Failed to request presence subscription from the requested contact"));
+        KMessageBox::sorry(this, i18n("Failed to request presence subscription "
+                                      "from the requested contact."));
         setInProgress(false);
     } else {
         QDialog::accept();
