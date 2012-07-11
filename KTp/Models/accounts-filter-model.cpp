@@ -90,6 +90,38 @@ bool AccountsFilterModel::Private::filterAcceptsAccount(const QModelIndex &index
         return false;
     }
 
+    // Check capability
+    if (capabilityFilterFlags != DoNotFilterByCapability) {
+        if ((capabilityFilterFlags & FilterByTextChatCapability)
+                && !index.data(AccountsModel::TextChatCapabilityRole).toBool()) {
+            return false;
+        }
+        if ((capabilityFilterFlags & FilterByMediaCallCapability)
+                && !index.data(AccountsModel::MediaCallCapabilityRole).toBool()) {
+            return false;
+        }
+        if ((capabilityFilterFlags & FilterByAudioCallCapability)
+                && !index.data(AccountsModel::AudioCallCapabilityRole).toBool()) {
+            return false;
+        }
+        if ((capabilityFilterFlags & FilterByVideoCallCapability)
+                && !index.data(AccountsModel::VideoCallCapabilityRole).toBool()) {
+            return false;
+        }
+        if ((capabilityFilterFlags & FilterByFileTransferCapability)
+                && !index.data(AccountsModel::FileTransferCapabilityRole).toBool()) {
+            return false;
+        }
+        if ((capabilityFilterFlags & FilterByDesktopSharingCapability)
+                && !index.data(AccountsModel::DesktopSharingCapabilityRole).toBool()) {
+            return false;
+        }
+        if ((capabilityFilterFlags & FilterBySSHContactCapability)
+                && !index.data(AccountsModel::SSHContactCapabilityRole).toBool()) {
+            return false;
+        }
+    }
+
     return true;
 }
 

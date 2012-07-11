@@ -193,6 +193,22 @@ QVariant AccountsModelItem::data(int role) const
         return mPriv->mAccount->connectionStatus();
     case AccountsModel::ConnectionStatusReasonRole:
         return mPriv->mAccount->connectionStatusReason();
+    case AccountsModel::TextChatCapabilityRole:
+        return mPriv->mAccount->capabilities().textChats();
+    case AccountsModel::MediaCallCapabilityRole:
+        return mPriv->mAccount->capabilities().audioCalls()
+                || mPriv->mAccount->capabilities().videoCalls();
+    case AccountsModel::AudioCallCapabilityRole:
+        return mPriv->mAccount->capabilities().audioCalls();
+    case AccountsModel::VideoCallCapabilityRole:
+        return mPriv->mAccount->capabilities().videoCalls();
+    case AccountsModel::UpgradeCallCapabilityRole:
+        return mPriv->mAccount->capabilities().upgradingCalls();
+    case AccountsModel::FileTransferCapabilityRole:
+        return mPriv->mAccount->capabilities().fileTransfers();
+    case AccountsModel::DesktopSharingCapabilityRole:
+    case AccountsModel::SSHContactCapabilityRole:
+        return mPriv->mAccount->capabilities().streamTubes();
     default:
         return QVariant();
     }
