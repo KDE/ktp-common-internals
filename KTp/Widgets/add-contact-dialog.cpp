@@ -122,6 +122,8 @@ void AddContactDialog::accept()
         KMessageBox::error(this,
                 i18n("The requested account has disconnected and so the contact could not be added. Sorry."),
                 i18n("Connection Error"));
+    } else if (d->ui->screenNameLineEdit->text().isEmpty()) {
+        KMessageBox::error(this, i18n("You did not specify the name of the contact to add"));
     } else {
         QStringList identifiers = QStringList() << d->ui->screenNameLineEdit->text();
         Tp::PendingContacts *pendingContacts = account->connection()->contactManager()->contactsForIdentifiers(identifiers);
