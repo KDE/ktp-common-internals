@@ -93,6 +93,7 @@ public:
         FileTransferCapabilityRole,
         DesktopSharingCapabilityRole,
         SSHContactCapabilityRole,
+        ClientTypesRole,
 
         TotalUsersCountRole,
         OnlineUsersCountRole,

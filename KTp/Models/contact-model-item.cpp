@@ -91,6 +91,9 @@ ContactModelItem::ContactModelItem(const Tp::ContactPtr &contact)
     connect(contact.data(),
             SIGNAL(blockStatusChanged(bool)),
             SLOT(onChanged()));
+    connect(contact.data(),
+            SIGNAL(clientTypesChanged(QStringList)),
+            SLOT(onChanged()));
 }
 
 ContactModelItem::~ContactModelItem()
@@ -146,6 +149,8 @@ QVariant ContactModelItem::data(int role) const
         return desktopSharingCapability();
     case AccountsModel::SSHContactCapabilityRole:
         return sshContactCapability();
+    case AccountsModel::ClientTypesRole:
+        return mPriv->mContact->clientTypes();
     default:
         break;
     }
