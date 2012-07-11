@@ -116,10 +116,9 @@ void AddContactDialog::accept()
     }
 
     if (account.isNull()) {
-        KMessageBox::sorry(this, i18n("Seems like you forgot to select an account. "
-                                      "Also, do not forget to connect it first."));
+        KMessageBox::sorry(this, i18n("No account selected."));
     } else if (account->connection().isNull()) {
-        KMessageBox::sorry(this, i18n("The requested account has disconnected "
+        KMessageBox::sorry(this, i18n("The requested account has been disconnected "
                                       "and so the contact could not be added."));
     } else if (d->ui->screenNameLineEdit->text().isEmpty()) {
         KMessageBox::sorry(this, i18n("You did not specify the name of the contact to add."));
@@ -148,7 +147,7 @@ void AddContactDialog::_k_onContactsForIdentifiersFinished(Tp::PendingOperation 
     if (op->isError()) {
         kWarning() << "Failed to retrieve a contact for the given identifier"
                    << op->errorName() << op->errorMessage();
-        KMessageBox::sorry(this, i18n("Failed to construct a contact with the given name."));
+        KMessageBox::sorry(this, i18n("Failed to create new contact."));
         setInProgress(false);
     } else {
         kDebug() << "Requesting presence subscription";
