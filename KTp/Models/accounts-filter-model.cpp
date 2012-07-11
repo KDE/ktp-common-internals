@@ -137,7 +137,7 @@ bool AccountsFilterModel::Private::filterAcceptsContact(const QModelIndex &index
     }
 
     // Check presence type
-    if (presenceTypeFilterFlags != DoNotFilterByCapability) {
+    if (presenceTypeFilterFlags != DoNotFilterByPresence) {
         switch (static_cast<Tp::ConnectionPresenceType>(index.data(AccountsModel::PresenceTypeRole).toUInt())) {
         case Tp::ConnectionPresenceTypeUnset:
             if (presenceTypeFilterFlags & HidePresenceTypeUnset) {
