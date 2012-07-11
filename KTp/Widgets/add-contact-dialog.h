@@ -27,10 +27,9 @@
 
 #include <KTp/ktp-export.h>
 
-namespace Ui {
-    class AddContactDialog;
+namespace Tp {
+    class PendingOperation;
 }
-
 class AccountsModel;
 
 namespace KTp
@@ -45,8 +44,20 @@ public:
     Tp::AccountPtr account() const;
     const QString screenName() const;
 
+    virtual void accept();
+
+protected:
+    virtual void closeEvent(QCloseEvent *e);
+
+private Q_SLOTS:
+    KTP_NO_EXPORT void _k_onContactsForIdentifiersFinished(Tp::PendingOperation *op);
+    KTP_NO_EXPORT void _k_onRequestPresenceSubscriptionFinished(Tp::PendingOperation *op);
+
 private:
-    Ui::AddContactDialog *ui;
+    KTP_NO_EXPORT void setInProgress(bool inProgress);
+
+    struct Private;
+    Private * const d;
 };
 }
 
