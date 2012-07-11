@@ -2,6 +2,7 @@
  * Add contact dialog
  *
  * Copyright (C) 2011 David Edmundson <kde@davidedmundson.co.uk>
+ * Copyright (C) 2012 George Kiagiadakis <kiagiadakis.george@gmail.com>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -26,17 +27,21 @@
 
 #include <QObject>
 #include <QSortFilterProxyModel>
-#include <QDebug>
+#include <QCloseEvent>
 
+#include <KMessageBox>
+#include <KPushButton>
+#include <KDebug>
 
 #include <TelepathyQt/Account>
 #include <TelepathyQt/Connection>
 #include <TelepathyQt/ContactManager>
+#include <TelepathyQt/PendingContacts>
 
 namespace KTp {
 
 /** A filter which only lists connections which accept adding contacts*/
-class SubscribableAccountsModel : public QSortFilterProxyModel
+class KTP_NO_EXPORT SubscribableAccountsModel : public QSortFilterProxyModel
 {
 public:
     SubscribableAccountsModel(QObject *parent);
@@ -48,7 +53,7 @@ SubscribableAccountsModel::SubscribableAccountsModel(QObject *parent)
 {
 }
 
-bool KTp::SubscribableAccountsModel::filterAcceptsRow(int source_row, const QModelIndex &source_parent) const
+bool SubscribableAccountsModel::filterAcceptsRow(int source_row, const QModelIndex &source_parent) const
 {
     AccountsModelItem* item = sourceModel()->index(source_row, 0, source_parent).data(AccountsModel::ItemRole).value<AccountsModelItem*>();
 
@@ -68,46 +73,113 @@ bool KTp::SubscribableAccountsModel::filterAcceptsRow(int source_row, const QMod
     return true;
 }
 
-} //namespace
 
-KTp::AddContactDialog::AddContactDialog(AccountsModel *accountModel, QWidget *parent) :
+struct KTP_NO_EXPORT AddContactDialog::Private
+{
+    Private() :
+        ui(new Ui::AddContactDialog),
+        acceptInProgress(false)
+    {}
+
+    Ui::AddContactDialog *ui;
+    bool acceptInProgress;
+};
+
+AddContactDialog::AddContactDialog(AccountsModel *accountModel, QWidget *parent) :
     KDialog(parent),
-    ui(new Ui::AddContactDialog)
+    d(new Private)
 {
     QWidget *widget = new QWidget(this);
-    ui->setupUi(widget);
+    d->ui->setupUi(widget);
     setMainWidget(widget);
 
     SubscribableAccountsModel *filteredModel = new SubscribableAccountsModel(this);
     filteredModel->setSourceModel(accountModel);
-    for (int i = 0; i < filteredModel->rowCount(); ++i) {
-        ui->accountCombo->addItem(KIcon(filteredModel->data(filteredModel->index(i, 0), AccountsModel::IconRole).toString()),
-                                  filteredModel->data(filteredModel->index(i, 0)).toString(),
-                                  filteredModel->data(filteredModel->index(i, 0), AccountsModel::ItemRole));
-    }
+    d->ui->accountCombo->setModel(filteredModel);
 
-    ui->screenNameLineEdit->setFocus();
+    d->ui->screenNameLineEdit->setFocus();
 }
 
-KTp::AddContactDialog::~AddContactDialog()
+AddContactDialog::~AddContactDialog()
 {
-    delete ui;
+    delete d->ui;
+    delete d;
 }
 
-Tp::AccountPtr KTp::AddContactDialog::account() const
+void AddContactDialog::accept()
 {
-    QVariant itemData = ui->accountCombo->itemData(ui->accountCombo->currentIndex(),AccountsModel::ItemRole);
+    Tp::AccountPtr account;
+    QVariant itemData = d->ui->accountCombo->itemData(d->ui->accountCombo->currentIndex(), AccountsModel::ItemRole);
     AccountsModelItem* item = itemData.value<AccountsModelItem*>();
     if (item) {
-        return item->account();
+        account = item->account();
+    }
+
+    if (account.isNull()) {
+        KMessageBox::sorry(this, i18n("No account selected."));
+    } else if (account->connection().isNull()) {
+        KMessageBox::sorry(this, i18n("The requested account has been disconnected "
+                                      "and so the contact could not be added."));
+    } else if (d->ui->screenNameLineEdit->text().isEmpty()) {
+        KMessageBox::sorry(this, i18n("You did not specify the name of the contact to add."));
     } else {
-        return Tp::AccountPtr();
+        QStringList identifiers = QStringList() << d->ui->screenNameLineEdit->text();
+        kDebug() << "Requesting contacts for identifiers:" << identifiers;
+
+        Tp::PendingContacts *pendingContacts = account->connection()->contactManager()->contactsForIdentifiers(identifiers);
+        connect(pendingContacts, SIGNAL(finished(Tp::PendingOperation*)),
+                this, SLOT(_k_onContactsForIdentifiersFinished(Tp::PendingOperation*)));
+
+        setInProgress(true);
     }
 }
 
-const QString KTp::AddContactDialog::screenName() const
+void AddContactDialog::closeEvent(QCloseEvent *e)
 {
-    return ui->screenNameLineEdit->text();
+    // ignore close event if we are in the middle of an operation
+    if (!d->acceptInProgress) {
+        KDialog::closeEvent(e);
+    }
 }
+
+void AddContactDialog::_k_onContactsForIdentifiersFinished(Tp::PendingOperation *op)
+{
+    if (op->isError()) {
+        kWarning() << "Failed to retrieve a contact for the given identifier"
+                   << op->errorName() << op->errorMessage();
+        KMessageBox::sorry(this, i18n("Failed to create new contact."));
+        setInProgress(false);
+    } else {
+        kDebug() << "Requesting presence subscription";
+
+        Tp::PendingContacts *pc = qobject_cast<Tp::PendingContacts*>(op);
+        connect(pc->manager()->requestPresenceSubscription(pc->contacts()),
+                SIGNAL(finished(Tp::PendingOperation*)),
+                SLOT(_k_onRequestPresenceSubscriptionFinished(Tp::PendingOperation*)));
+    }
+}
+
+void AddContactDialog::_k_onRequestPresenceSubscriptionFinished(Tp::PendingOperation *op)
+{
+    if (op->isError()) {
+        kWarning() << "Failed to request presence subscription"
+                   << op->errorName() << op->errorMessage();
+        KMessageBox::sorry(this, i18n("Failed to request presence subscription "
+                                      "from the requested contact."));
+        setInProgress(false);
+    } else {
+        QDialog::accept();
+    }
+}
+
+void AddContactDialog::setInProgress(bool inProgress)
+{
+    d->acceptInProgress = inProgress;
+    mainWidget()->setEnabled(!inProgress);
+    button(KDialog::Ok)->setEnabled(!inProgress);
+    button(KDialog::Cancel)->setEnabled(!inProgress);
+}
+
+} //namespace KTp
 
 #include "add-contact-dialog.moc"

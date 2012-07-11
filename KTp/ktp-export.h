@@ -39,5 +39,7 @@
 # endif
 #endif
 
+#define KTP_NO_EXPORT Q_DECL_HIDDEN
+
 #endif /*KTP_EXPORT_H*/
 
