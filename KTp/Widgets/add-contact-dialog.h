@@ -41,8 +41,6 @@ class KTP_EXPORT AddContactDialog : public KDialog
 public:
     explicit AddContactDialog(AccountsModel* accountModel, QWidget *parent = 0);
     virtual ~AddContactDialog();
-    Tp::AccountPtr account() const;
-    const QString screenName() const;
 
     virtual void accept();
 

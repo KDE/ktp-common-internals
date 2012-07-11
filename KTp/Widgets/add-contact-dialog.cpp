@@ -110,36 +110,26 @@ AddContactDialog::~AddContactDialog()
     delete d;
 }
 
-Tp::AccountPtr AddContactDialog::account() const
-{
-    QVariant itemData = d->ui->accountCombo->itemData(d->ui->accountCombo->currentIndex(),AccountsModel::ItemRole);
-    AccountsModelItem* item = itemData.value<AccountsModelItem*>();
-    if (item) {
-        return item->account();
-    } else {
-        return Tp::AccountPtr();
-    }
-}
-
-const QString AddContactDialog::screenName() const
-{
-    return d->ui->screenNameLineEdit->text();
-}
-
 void AddContactDialog::accept()
 {
-    Tp::AccountPtr acc = account();
-    if (acc.isNull()) {
+    Tp::AccountPtr account;
+    QVariant itemData = d->ui->accountCombo->itemData(d->ui->accountCombo->currentIndex(), AccountsModel::ItemRole);
+    AccountsModelItem* item = itemData.value<AccountsModelItem*>();
+    if (item) {
+        account = item->account();
+    }
+
+    if (account.isNull()) {
         KMessageBox::error(this,
                 i18n("Seems like you forgot to select an account. Also do not forget to connect it first."),
                 i18n("No Account Selected"));
-    } else if (acc->connection().isNull()) {
+    } else if (account->connection().isNull()) {
         KMessageBox::error(this,
                 i18n("The requested account has disconnected and so the contact could not be added. Sorry."),
                 i18n("Connection Error"));
     } else {
         QStringList identifiers = QStringList() << d->ui->screenNameLineEdit->text();
-        Tp::PendingContacts *pendingContacts = acc->connection()->contactManager()->contactsForIdentifiers(identifiers);
+        Tp::PendingContacts *pendingContacts = account->connection()->contactManager()->contactsForIdentifiers(identifiers);
         connect(pendingContacts, SIGNAL(finished(Tp::PendingOperation*)),
                 this, SLOT(_k_onContactsForIdentifiersFinished(Tp::PendingOperation*)));
         setInProgress(true);
