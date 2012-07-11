@@ -19,7 +19,11 @@
 
 #include <TelepathyQt/PendingReady>
 #include <TelepathyQt/Constants>
+
 #include <KDebug>
+#include <KIcon>
+#include <KColorScheme>
+
 #include <ctime>
 
 DebugMessagesModel::DebugMessagesModel(const QString & service, QObject *parent)
@@ -60,7 +64,7 @@ void DebugMessagesModel::onServiceRegistered(const QString & service)
 }
 
 void DebugMessagesModel::onDebugReceiverInvalidated(Tp::DBusProxy *proxy,
-        const QString &errorName, const QString &errorMessage)
+                                                    const QString &errorName, const QString &errorMessage)
 {
     Q_UNUSED(proxy);
     kDebug() << "DebugReceiver invalidated" << errorName << errorMessage;
@@ -93,7 +97,7 @@ void DebugMessagesModel::onDebugReceiverMonitoringEnabled(Tp::PendingOperation* 
         m_debugReceiver.reset();
     } else {
         connect(m_debugReceiver->fetchMessages(), SIGNAL(finished(Tp::PendingOperation*)),
-            SLOT(onFetchMessagesFinished(Tp::PendingOperation*)));
+                SLOT(onFetchMessagesFinished(Tp::PendingOperation*)));
     }
 }
 
@@ -164,30 +168,48 @@ QVariant DebugMessagesModel::data(const QModelIndex & index, int role) const
         return QVariant();
     }
 
+    KColorScheme scheme(QPalette::Active, KColorScheme::Window);
+
+
     switch(role) {
     case Qt::DisplayRole:
         return QString(formatTimestamp(m_messages[index.row()].timestamp) %
-            QLatin1Literal(" - [") % m_messages[index.row()].domain % QLatin1Literal("] ") %
-            m_messages[index.row()].message);
-    case Qt::BackgroundColorRole:
-    {
+                       QLatin1Literal(" - [") % m_messages[index.row()].domain % QLatin1Literal("] ") %
+                       m_messages[index.row()].message);
+    case Qt::DecorationRole:
         switch(m_messages[index.row()].level) {
         case Tp::DebugLevelError:
-            return Qt::darkRed;
+            return KIcon(QLatin1String("dialog-error"));
         case Tp::DebugLevelCritical:
-            return Qt::red;
+            return KIcon(QLatin1String("dialog-error"));
         case Tp::DebugLevelWarning:
-            return Qt::yellow;
+            return KIcon(QLatin1String("dialog-warning"));
         case Tp::DebugLevelMessage:
-            return Qt::white;
+            return KIcon(QLatin1String("dialog-info"));
         case Tp::DebugLevelInfo:
-            return Qt::green;
+            return KIcon(QLatin1String("dialog-info"));
         case Tp::DebugLevelDebug:
-            return Qt::cyan;
+            return KIcon(QLatin1String("tools-report-bug"));
         default:
             return QVariant();
         }
-    }
+    case Qt::ForegroundRole:
+        switch(m_messages[index.row()].level) {
+        case Tp::DebugLevelError:
+            /** Fall Through*/
+        case Tp::DebugLevelCritical:
+            /** Fall Through*/
+        case Tp::DebugLevelWarning:
+            return scheme.foreground(KColorScheme::NegativeText);
+        case Tp::DebugLevelMessage:
+            /** Fall Through*/
+        case Tp::DebugLevelInfo:
+            /** Fall Through*/
+        case Tp::DebugLevelDebug:
+            /** Fall Through*/
+        default:
+            return QVariant();
+        }
     case MessageRole:
         return m_messages[index.row()].message;
     case TimestampRole:
