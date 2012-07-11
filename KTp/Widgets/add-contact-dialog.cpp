@@ -126,9 +126,12 @@ void AddContactDialog::accept()
         KMessageBox::error(this, i18n("You did not specify the name of the contact to add"));
     } else {
         QStringList identifiers = QStringList() << d->ui->screenNameLineEdit->text();
+        kDebug() << "Requesting contacts for identifiers:" << identifiers;
+
         Tp::PendingContacts *pendingContacts = account->connection()->contactManager()->contactsForIdentifiers(identifiers);
         connect(pendingContacts, SIGNAL(finished(Tp::PendingOperation*)),
                 this, SLOT(_k_onContactsForIdentifiersFinished(Tp::PendingOperation*)));
+
         setInProgress(true);
     }
 }
@@ -144,11 +147,13 @@ void AddContactDialog::closeEvent(QCloseEvent *e)
 void AddContactDialog::_k_onContactsForIdentifiersFinished(Tp::PendingOperation *op)
 {
     if (op->isError()) {
-        kDebug() << "Failed to retrieve a contact for the given identifier"
-                 << op->errorName() << op->errorMessage();
+        kWarning() << "Failed to retrieve a contact for the given identifier"
+                   << op->errorName() << op->errorMessage();
         KMessageBox::error(this, i18n("Failed to construct a contact with the given name"));
         setInProgress(false);
     } else {
+        kDebug() << "Requesting presence subscription";
+
         Tp::PendingContacts *pc = qobject_cast<Tp::PendingContacts*>(op);
         connect(pc->manager()->requestPresenceSubscription(pc->contacts()),
                 SIGNAL(finished(Tp::PendingOperation*)),
@@ -159,8 +164,8 @@ void AddContactDialog::_k_onContactsForIdentifiersFinished(Tp::PendingOperation 
 void AddContactDialog::_k_onRequestPresenceSubscriptionFinished(Tp::PendingOperation *op)
 {
     if (op->isError()) {
-        kDebug() << "Failed to request presence subscription"
-                 << op->errorName() << op->errorMessage();
+        kWarning() << "Failed to request presence subscription"
+                   << op->errorName() << op->errorMessage();
         KMessageBox::error(this, i18n("Failed to request presence subscription from the requested contact"));
         setInProgress(false);
     } else {
