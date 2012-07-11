@@ -2,6 +2,7 @@
  * Add contact dialog
  *
  * Copyright (C) 2011 David Edmundson <kde@davidedmundson.co.uk>
+ * Copyright (C) 2012 George Kiagiadakis <kiagiadakis.george@gmail.com>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
