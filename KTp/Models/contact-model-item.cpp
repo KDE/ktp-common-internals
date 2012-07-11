@@ -136,13 +136,13 @@ QVariant ContactModelItem::data(int role) const
     case AccountsModel::TextChatCapabilityRole:
         return mPriv->mContact->capabilities().textChats();
     case AccountsModel::MediaCallCapabilityRole:
-        return mPriv->mContact->capabilities().streamedMediaCalls();
+        return audioCallCapability() || videoCallCapability();
     case AccountsModel::AudioCallCapabilityRole:
         return audioCallCapability();
     case AccountsModel::VideoCallCapabilityRole:
         return videoCallCapability();
     case AccountsModel::UpgradeCallCapabilityRole:
-        return mPriv->mContact->capabilities().upgradingStreamedMediaCalls();
+        return mPriv->mContact->capabilities().upgradingCalls();
     case AccountsModel::FileTransferCapabilityRole:
         return fileTransferCapability();
     case AccountsModel::DesktopSharingCapabilityRole:
@@ -201,8 +201,8 @@ Tp::ContactPtr ContactModelItem::contact() const
 bool ContactModelItem::audioCallCapability() const
 {
     if (mPriv->mContact->manager()->connection()) {
-        bool contactCanStreamAudio = mPriv->mContact->capabilities().streamedMediaAudioCalls();
-        bool selfCanStreamAudio = mPriv->mContact->manager()->connection()->selfContact()->capabilities().streamedMediaAudioCalls();
+        bool contactCanStreamAudio = mPriv->mContact->capabilities().audioCalls();
+        bool selfCanStreamAudio = mPriv->mContact->manager()->connection()->selfContact()->capabilities().audioCalls();
         return contactCanStreamAudio && selfCanStreamAudio;
     }
 
@@ -212,8 +212,8 @@ bool ContactModelItem::audioCallCapability() const
 bool ContactModelItem::videoCallCapability() const
 {
     if (mPriv->mContact->manager()->connection()) {
-        bool contactCanStreamVideo = mPriv->mContact->capabilities().streamedMediaVideoCalls();
-        bool selfCanStreamVideo = mPriv->mContact->manager()->connection()->selfContact()->capabilities().streamedMediaVideoCalls();
+        bool contactCanStreamVideo = mPriv->mContact->capabilities().videoCalls();
+        bool selfCanStreamVideo = mPriv->mContact->manager()->connection()->selfContact()->capabilities().videoCalls();
         return contactCanStreamVideo && selfCanStreamVideo;
     }
 
