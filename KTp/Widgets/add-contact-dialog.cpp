@@ -89,6 +89,9 @@ AddContactDialog::AddContactDialog(AccountsModel *accountModel, QWidget *parent)
     KDialog(parent),
     d(new Private)
 {
+    setWindowTitle(i18n("Add new contact"));
+    setWindowIcon(QIcon::fromTheme(QLatin1String("list-add-user")));
+
     QWidget *widget = new QWidget(this);
     d->ui->setupUi(widget);
     setMainWidget(widget);
