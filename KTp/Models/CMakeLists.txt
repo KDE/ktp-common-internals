@@ -7,6 +7,7 @@ set (ktp_models_private_SRCS
     accounts-filter-model.cpp
     accounts-model-item.cpp
     accounts-model.cpp
+    capabilities-hack-private.cpp
     contact-model-item.cpp
     groups-model-item.cpp
     groups-model.cpp

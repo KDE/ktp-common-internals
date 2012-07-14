@@ -22,6 +22,7 @@
 
 #include "contact-model-item.h"
 #include "accounts-model.h"
+#include "capabilities-hack-private.h"
 #include "../service-availability-checker.h"
 #include "presence.h"
 
@@ -136,13 +137,13 @@ QVariant ContactModelItem::data(int role) const
     case AccountsModel::TextChatCapabilityRole:
         return mPriv->mContact->capabilities().textChats();
     case AccountsModel::MediaCallCapabilityRole:
-        return mPriv->mContact->capabilities().streamedMediaCalls();
+        return audioCallCapability() || videoCallCapability();
     case AccountsModel::AudioCallCapabilityRole:
         return audioCallCapability();
     case AccountsModel::VideoCallCapabilityRole:
         return videoCallCapability();
     case AccountsModel::UpgradeCallCapabilityRole:
-        return mPriv->mContact->capabilities().upgradingStreamedMediaCalls();
+        return mPriv->mContact->capabilities().upgradingCalls();
     case AccountsModel::FileTransferCapabilityRole:
         return fileTransferCapability();
     case AccountsModel::DesktopSharingCapabilityRole:
@@ -200,9 +201,12 @@ Tp::ContactPtr ContactModelItem::contact() const
 //return true if both you and the contact can handle audio calls.
 bool ContactModelItem::audioCallCapability() const
 {
-    if (mPriv->mContact->manager()->connection()) {
-        bool contactCanStreamAudio = mPriv->mContact->capabilities().streamedMediaAudioCalls();
-        bool selfCanStreamAudio = mPriv->mContact->manager()->connection()->selfContact()->capabilities().streamedMediaAudioCalls();
+    Tp::ConnectionPtr connection = mPriv->mContact->manager()->connection();
+    if (connection) {
+        bool contactCanStreamAudio = CapabilitiesHackPrivate::audioCalls(
+                mPriv->mContact->capabilities(), connection->cmName());
+        bool selfCanStreamAudio = CapabilitiesHackPrivate::audioCalls(
+                connection->selfContact()->capabilities(), connection->cmName());
         return contactCanStreamAudio && selfCanStreamAudio;
     }
 
@@ -211,9 +215,12 @@ bool ContactModelItem::audioCallCapability() const
 
 bool ContactModelItem::videoCallCapability() const
 {
-    if (mPriv->mContact->manager()->connection()) {
-        bool contactCanStreamVideo = mPriv->mContact->capabilities().streamedMediaVideoCalls();
-        bool selfCanStreamVideo = mPriv->mContact->manager()->connection()->selfContact()->capabilities().streamedMediaVideoCalls();
+    Tp::ConnectionPtr connection = mPriv->mContact->manager()->connection();
+    if (connection) {
+        bool contactCanStreamVideo = CapabilitiesHackPrivate::videoCalls(
+                mPriv->mContact->capabilities(), connection->cmName());
+        bool selfCanStreamVideo = CapabilitiesHackPrivate::videoCalls(
+                connection->selfContact()->capabilities(), connection->cmName());
         return contactCanStreamVideo && selfCanStreamVideo;
     }
 

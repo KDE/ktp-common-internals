@@ -27,6 +27,7 @@
 
 #include "accounts-model.h"
 #include "contact-model-item.h"
+#include "capabilities-hack-private.h"
 
 #include <KIcon>
 #include <KTp/presence.h>
@@ -193,6 +194,26 @@ QVariant AccountsModelItem::data(int role) const
         return mPriv->mAccount->connectionStatus();
     case AccountsModel::ConnectionStatusReasonRole:
         return mPriv->mAccount->connectionStatusReason();
+    case AccountsModel::TextChatCapabilityRole:
+        return mPriv->mAccount->capabilities().textChats();
+    case AccountsModel::MediaCallCapabilityRole:
+        return CapabilitiesHackPrivate::audioCalls(mPriv->mAccount->capabilities(),
+                                                   mPriv->mAccount->cmName())
+            || CapabilitiesHackPrivate::videoCalls(mPriv->mAccount->capabilities(),
+                                                   mPriv->mAccount->cmName());
+    case AccountsModel::AudioCallCapabilityRole:
+        return CapabilitiesHackPrivate::audioCalls(mPriv->mAccount->capabilities(),
+                                                   mPriv->mAccount->cmName());
+    case AccountsModel::VideoCallCapabilityRole:
+        return CapabilitiesHackPrivate::videoCalls(mPriv->mAccount->capabilities(),
+                                                   mPriv->mAccount->cmName());
+    case AccountsModel::UpgradeCallCapabilityRole:
+        return mPriv->mAccount->capabilities().upgradingCalls();
+    case AccountsModel::FileTransferCapabilityRole:
+        return mPriv->mAccount->capabilities().fileTransfers();
+    case AccountsModel::DesktopSharingCapabilityRole:
+    case AccountsModel::SSHContactCapabilityRole:
+        return mPriv->mAccount->capabilities().streamTubes();
     default:
         return QVariant();
     }
