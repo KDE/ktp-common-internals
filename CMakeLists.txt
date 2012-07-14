@@ -30,4 +30,5 @@ include_directories (${KDE4_INCLUDES}
 )
 
 add_subdirectory(KTp)
+add_subdirectory(tools)
 add_subdirectory(data)
