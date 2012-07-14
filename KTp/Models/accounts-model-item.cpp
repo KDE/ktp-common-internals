@@ -27,6 +27,7 @@
 
 #include "accounts-model.h"
 #include "contact-model-item.h"
+#include "capabilities-hack-private.h"
 
 #include <KIcon>
 #include <KTp/presence.h>
@@ -196,12 +197,16 @@ QVariant AccountsModelItem::data(int role) const
     case AccountsModel::TextChatCapabilityRole:
         return mPriv->mAccount->capabilities().textChats();
     case AccountsModel::MediaCallCapabilityRole:
-        return mPriv->mAccount->capabilities().audioCalls()
-                || mPriv->mAccount->capabilities().videoCalls();
+        return CapabilitiesHackPrivate::audioCalls(mPriv->mAccount->capabilities(),
+                                                   mPriv->mAccount->cmName())
+            || CapabilitiesHackPrivate::videoCalls(mPriv->mAccount->capabilities(),
+                                                   mPriv->mAccount->cmName());
     case AccountsModel::AudioCallCapabilityRole:
-        return mPriv->mAccount->capabilities().audioCalls();
+        return CapabilitiesHackPrivate::audioCalls(mPriv->mAccount->capabilities(),
+                                                   mPriv->mAccount->cmName());
     case AccountsModel::VideoCallCapabilityRole:
-        return mPriv->mAccount->capabilities().videoCalls();
+        return CapabilitiesHackPrivate::videoCalls(mPriv->mAccount->capabilities(),
+                                                   mPriv->mAccount->cmName());
     case AccountsModel::UpgradeCallCapabilityRole:
         return mPriv->mAccount->capabilities().upgradingCalls();
     case AccountsModel::FileTransferCapabilityRole:
