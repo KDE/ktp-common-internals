@@ -556,6 +556,7 @@ Comment[sr@latin]=Kontakt vam je poslao zvrc/gurkanje.
 Comment[sv]=En kontakt har ringt eller knuffat dig
 Comment[uk]=Контакт хоче привернути вашу увагу
 Comment[x-test]=xxA contact has sent you a buzz/nudgexx
+Comment[zh_TW]=聯絡人送出來電震動或呼叫
 Sound=KDE-Im-Nudge.ogg
 Action=Popup|Sound|Taskbar
 
@@ -869,6 +870,7 @@ Name[sv]=Chattstil installerad med lyckat resultat
 Name[uk]=Стиль спілкування успішно встановлено
 Name[x-test]=xxChatstyle Installed Successfullyxx
 Name[zh_CN]=安装聊天样式成功
+Name[zh_TW]=聊天室樣式安裝成功
 Action=Popup
 Flags=Persistent
 
@@ -896,6 +898,7 @@ Name[sv]=Installation av chattstil misslyckades
 Name[uk]=Спроба встановлення стилю спілкування зазнала невдачі
 Name[x-test]=xxChatstyle Installation Failedxx
 Name[zh_CN]=安装聊天样式失败
+Name[zh_TW]=聊天室樣式安裝失敗
 Action=Popup
 Flags=Persistent
 
@@ -951,6 +954,7 @@ Name[sv]=Smilisar installerad med lyckat resultat
 Name[uk]=Набір піктограм успішно встановлено
 Name[x-test]=xxEmoticonset Installed Successfullyxx
 Name[zh_CN]=安装表情集成功
+Name[zh_TW]=表情符號集安裝成功
 Action=Popup
 Flags=Persistent
 
