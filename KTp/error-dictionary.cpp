@@ -72,7 +72,7 @@ QString ErrorDictionary::displayVerboseErrorMessage(const QString& dbusErrorName
     } else if (dbusErrorName == QLatin1String(TP_QT_ERROR_CHANNEL_KICKED)) {
         return i18nc("Verbose user visible error string", "You have been kicked from the channel");
     } else if (dbusErrorName == QLatin1String(TP_QT_ERROR_CONFUSED)) {
-        return i18nc("Verbose user visible error string", "Congratulate yourself - you just reached an impossible situation");
+        return i18nc("Verbose user visible error string", "An unexpected error has occured");
     } else if (dbusErrorName == QLatin1String(TP_QT_ERROR_CONNECTION_FAILED)) {
         return i18nc("Verbose user visible error string", "Could not establish connection");
     } else if (dbusErrorName == QLatin1String(TP_QT_ERROR_CONNECTION_LOST)) {
@@ -84,9 +84,9 @@ QString ErrorDictionary::displayVerboseErrorMessage(const QString& dbusErrorName
     } else if (dbusErrorName == QLatin1String(TP_QT_ERROR_DISCONNECTED)) {
         return i18nc("Verbose user visible error string", "You have been disconnected");
     } else if (dbusErrorName == QLatin1String(TP_QT_ERROR_DOES_NOT_EXIST)) {
-        return i18nc("Verbose user visible error string", "You apparently do not exist");
+        return i18nc("Verbose user visible error string", "Selected user does not exist");
     } else if (dbusErrorName == QLatin1String(TP_QT_ERROR_EMERGENCY_CALLS_NOT_SUPPORTED)) {
-        return i18nc("Verbose user visible error string", "Sorry, emergency calls are not supported");
+        return i18nc("Verbose user visible error string", "Emergency calls are not supported");
     } else if (dbusErrorName == QLatin1String(TP_QT_ERROR_ENCRYPTION_ERROR)) {
         return i18nc("Verbose user visible error string", "An encryption error has occurred");
     } else if (dbusErrorName == QLatin1String(TP_QT_ERROR_ENCRYPTION_NOT_AVAILABLE)) {
@@ -110,7 +110,7 @@ QString ErrorDictionary::displayVerboseErrorMessage(const QString& dbusErrorName
     } else if (dbusErrorName == QLatin1String(TP_QT_ERROR_NOT_YOURS)) {
         return i18nc("Verbose user visible error string", "The requested channel is already being handled by some other process");
     } else if (dbusErrorName == QLatin1String(TP_QT_ERROR_OFFLINE)) {
-        return i18nc("Verbose user visible error string", "This operation is unavailable as the contact is offline");
+        return i18nc("Verbose user visible error string", "This operation is unavailable for offline contacts");
     } else if (dbusErrorName == QLatin1String(TP_QT_ERROR_PERMISSION_DENIED)) {
         return i18nc("Verbose user visible error string", "You are not permitted to perform this operation");
     } else if (dbusErrorName == QLatin1String(TP_QT_ERROR_PICKED_UP_ELSEWHERE)) {
@@ -126,11 +126,11 @@ QString ErrorDictionary::displayVerboseErrorMessage(const QString& dbusErrorName
     } else if (dbusErrorName == QLatin1String(TP_QT_ERROR_SERVICE_CONFUSED)) {
         return i18nc("Verbose user visible error string", "An internal error has occurred (known as the 'Confused service error')");
     } else if (dbusErrorName == QLatin1String(TP_QT_ERROR_SOFTWARE_UPGRADE_REQUIRED)) {
-        return i18nc("Verbose user visible error string", "You are using too old software. Please try updating all Telepathy packages to a newer version");
+        return i18nc("Verbose user visible error string", "The installed libraries are too old. Please try updating all Telepathy packages to a newer version");
     } else if (dbusErrorName == QLatin1String(TP_QT_ERROR_TERMINATED)) {
         return i18nc("Verbose user visible error string", "The channel was terminated for no apparent reason");
     } else if (dbusErrorName == QLatin1String(TP_QT_ERROR_WOULD_BREAK_ANONYMITY)) {
-        return i18nc("Verbose user visible error string", "This operation can not be finished as it would break your anonymity request");
+        return i18nc("Verbose user visible error string", "This operation can not be finished as it would break your requested anonymity");
     } else if (dbusErrorName == QLatin1String("org.freedesktop.DBus.Error.NoReply")) {
         return i18nc("Verbose user visible error string", "Some of the IM components are not working correctly");
     } else {
@@ -191,7 +191,7 @@ QString ErrorDictionary::displayShortErrorMessage(const QString& dbusErrorName)
     } else if (dbusErrorName == QLatin1String(TP_QT_ERROR_DISCONNECTED)) {
         return i18nc("Short user visible error string", "Disconnected");
     } else if (dbusErrorName == QLatin1String(TP_QT_ERROR_DOES_NOT_EXIST)) {
-        return i18nc("Short user visible error string", "You apparently do not exist");
+        return i18nc("Short user visible error string", "User does not exist");
     } else if (dbusErrorName == QLatin1String(TP_QT_ERROR_EMERGENCY_CALLS_NOT_SUPPORTED)) {
         return i18nc("Short user visible error string", "Emergency calls unsupported");
     } else if (dbusErrorName == QLatin1String(TP_QT_ERROR_ENCRYPTION_ERROR)) {
@@ -201,7 +201,7 @@ QString ErrorDictionary::displayShortErrorMessage(const QString& dbusErrorName)
     } else if (dbusErrorName == QLatin1String(TP_QT_ERROR_INVALID_ARGUMENT)) {
         return i18nc("Short user visible error string", "Invalid argument");
     } else if (dbusErrorName == QLatin1String(TP_QT_ERROR_INVALID_HANDLE)) {
-        return i18nc("Short user visible error string", "Unknown handle");
+        return i18nc("Short user visible error string", "Invalid handle");
     } else if (dbusErrorName == QLatin1String(TP_QT_ERROR_NETWORK_ERROR)) {
         return i18nc("Short user visible error string", "Network error");
     } else if (dbusErrorName == QLatin1String(TP_QT_ERROR_NO_ANSWER)) {
@@ -209,7 +209,7 @@ QString ErrorDictionary::displayShortErrorMessage(const QString& dbusErrorName)
     } else if (dbusErrorName == QLatin1String(TP_QT_ERROR_NOT_AVAILABLE)) {
         return i18nc("Short user visible error string", "Capability not available");
     } else if (dbusErrorName == QLatin1String(TP_QT_ERROR_NOT_CAPABLE)) {
-        return i18nc("Short user visible error string", "Contact incapable");
+        return i18nc("Short user visible error string", "Contact has no support");
     } else if (dbusErrorName == QLatin1String(TP_QT_ERROR_NOT_IMPLEMENTED)) {
         return i18nc("Short user visible error string", "Operation not implemented");
     } else if (dbusErrorName == QLatin1String(TP_QT_ERROR_NOT_YET)) {
