@@ -72,7 +72,7 @@ QString ErrorDictionary::displayVerboseErrorMessage(const QString& dbusErrorName
     } else if (dbusErrorName == QLatin1String(TP_QT_ERROR_CHANNEL_KICKED)) {
         return i18nc("Verbose user visible error string", "You have been kicked from the channel");
     } else if (dbusErrorName == QLatin1String(TP_QT_ERROR_CONFUSED)) {
-        return i18nc("Verbose user visible error string", "An unexpected error has occured");
+        return i18nc("Verbose user visible error string", "An unexpected error has occurred");
     } else if (dbusErrorName == QLatin1String(TP_QT_ERROR_CONNECTION_FAILED)) {
         return i18nc("Verbose user visible error string", "Could not establish connection");
     } else if (dbusErrorName == QLatin1String(TP_QT_ERROR_CONNECTION_LOST)) {
