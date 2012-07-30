@@ -18,8 +18,8 @@
  */
 
 
-#ifndef CONTACT_GRID_DELEGATE
-#define CONTACT_GRID_DELEGATE
+#ifndef CONTACT_GRID_WIDGET_H
+#define CONTACT_GRID_WIDGET_H
 
 #include <QtGui/QWidget>
 #include <QAbstractItemDelegate>
@@ -79,4 +79,4 @@ private:
 
 } // namespace KTp
 
-#endif // CONTACT_GRID_DELEGATE
+#endif // CONTACT_GRID_WIDGET_H
