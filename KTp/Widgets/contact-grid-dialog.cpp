@@ -39,7 +39,7 @@
 
 
 
-ContactGridDialog::ContactGridDialog(QWidget *parent) :
+KTp::ContactGridDialog::ContactGridDialog(QWidget *parent) :
     KDialog(parent),
     m_accountsModel(0),
     m_contact(0)
@@ -91,23 +91,23 @@ ContactGridDialog::ContactGridDialog(QWidget *parent) :
     connect(this, SIGNAL(rejected()), SLOT(close()));
 }
 
-Tp::AccountPtr ContactGridDialog::account()
+Tp::AccountPtr KTp::ContactGridDialog::account()
 {
     return m_account;
 }
 
-Tp::ContactPtr ContactGridDialog::contact()
+Tp::ContactPtr KTp::ContactGridDialog::contact()
 {
     return m_contact;
 }
 
-void ContactGridDialog::onAccountManagerReady()
+void KTp::ContactGridDialog::onAccountManagerReady()
 {
     kDebug() << "Account manager is ready";
     m_accountsModel->setAccountManager(m_accountManager);
 }
 
-void ContactGridDialog::onOkClicked()
+void KTp::ContactGridDialog::onOkClicked()
 {
     // don't do anytghing if no contact has been selected
     if (!m_contactGridWidget->hasSelection()) {
@@ -128,7 +128,7 @@ void ContactGridDialog::onOkClicked()
     }
 }
 
-void ContactGridDialog::onChanged()
+void KTp::ContactGridDialog::onChanged()
 {
     button(KDialog::Ok)->setEnabled(m_contactGridWidget->hasSelection());
 }

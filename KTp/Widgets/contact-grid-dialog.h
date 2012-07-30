@@ -33,12 +33,12 @@ namespace Tp {
 class PendingOperation;
 }
 
-namespace KTp {
-class ContactGridWidget;
-}
-
 class AccountsModel;
 class QTcpSocket;
+
+
+namespace KTp {
+class ContactGridWidget;
 
 class ContactGridDialog : public KDialog
 {
@@ -64,5 +64,7 @@ private:
     Tp::ContactPtr m_contact;
 
 };
+
+} // namespace KTp
 
 #endif // CONTACT_GRID_DIALOG_H
