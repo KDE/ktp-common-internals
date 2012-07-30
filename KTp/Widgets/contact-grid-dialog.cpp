@@ -39,10 +39,68 @@
 
 
 
+class KTp::ContactGridDialog::Private
+{
+public:
+    Private(KTp::ContactGridDialog *parent) :
+        q(parent),
+        accountsModel(0),
+        contact(0)
+    {
+    }
+
+    KTp::ContactGridDialog * const q;
+
+    Tp::AccountManagerPtr accountManager;
+    AccountsModel *accountsModel;
+    KTp::ContactGridWidget *contactGridWidget;
+    Tp::AccountPtr account;
+    Tp::ContactPtr contact;
+
+public Q_SLOTS:
+    void _k_onAccountManagerReady();
+    void _k_onOkClicked();
+    void _k_onChanged();
+};
+
+
+void KTp::ContactGridDialog::Private::_k_onAccountManagerReady()
+{
+    kDebug() << "Account manager is ready";
+    accountsModel->setAccountManager(accountManager);
+}
+
+void KTp::ContactGridDialog::Private::_k_onOkClicked()
+{
+    // don't do anytghing if no contact has been selected
+    if (!contactGridWidget->hasSelection()) {
+        // show message box?
+        return;
+    }
+
+    contact = contactGridWidget->selectedContact();
+    account = contactGridWidget->selectedAccount();
+
+    if (account.isNull()) {
+        kWarning() << "Account is NULL";
+    } else if (contact.isNull()) {
+        kWarning() << "Contact is NULL";
+    } else {
+        kDebug() << "Account is: " << account->displayName();
+        kDebug() << "Contact is: " << contact->alias();
+    }
+}
+
+void KTp::ContactGridDialog::Private::_k_onChanged()
+{
+    q->button(KDialog::Ok)->setEnabled(contactGridWidget->hasSelection());
+}
+
+
+
 KTp::ContactGridDialog::ContactGridDialog(QWidget *parent) :
     KDialog(parent),
-    m_accountsModel(0),
-    m_contact(0)
+    d(new Private(this))
 {
     resize(500,450);
 
@@ -65,70 +123,40 @@ KTp::ContactGridDialog::ContactGridDialog(QWidget *parent) :
 
     Tp::ChannelFactoryPtr channelFactory = Tp::ChannelFactory::create(QDBusConnection::sessionBus());
 
-    m_accountManager = Tp::AccountManager::create(QDBusConnection::sessionBus(),
-                                                  accountFactory,
-                                                  connectionFactory,
-                                                  channelFactory,
-                                                  contactFactory);
+    d->accountManager = Tp::AccountManager::create(QDBusConnection::sessionBus(),
+                                                   accountFactory,
+                                                   connectionFactory,
+                                                   channelFactory,
+                                                   contactFactory);
 
-    m_accountsModel = new AccountsModel(this);
-    connect(m_accountManager->becomeReady(), SIGNAL(finished(Tp::PendingOperation*)), SLOT(onAccountManagerReady()));
+    d->accountsModel = new AccountsModel(this);
+    connect(d->accountManager->becomeReady(), SIGNAL(finished(Tp::PendingOperation*)), SLOT(_k_onAccountManagerReady()));
 
 
-    m_contactGridWidget = new KTp::ContactGridWidget(m_accountsModel, this);
-    m_contactGridWidget->contactFilterLineEdit()->setClickMessage(i18n("Search in Contacts..."));
-    m_contactGridWidget->filter()->setPresenceTypeFilterFlags(AccountsFilterModel::ShowOnlyConnected);
-//    m_contactGridWidget->filter()->setCapabilityFilterFlags(AccountsFilterModel::FilterBySSHContactCapability);
-    setMainWidget(m_contactGridWidget);
+    d->contactGridWidget = new KTp::ContactGridWidget(d->accountsModel, this);
+    d->contactGridWidget->contactFilterLineEdit()->setClickMessage(i18n("Search in Contacts..."));
+    d->contactGridWidget->filter()->setPresenceTypeFilterFlags(AccountsFilterModel::ShowOnlyConnected);
+//    d->contactGridWidget->filter()->setCapabilityFilterFlags(AccountsFilterModel::FilterBySSHContactCapability);
+    setMainWidget(d->contactGridWidget);
 
-    connect(m_contactGridWidget,
+    connect(d->contactGridWidget,
             SIGNAL(selectionChanged(Tp::AccountPtr,Tp::ContactPtr)),
-            SLOT(onChanged()));
+            SLOT(_k_onChanged()));
 
     button(KDialog::Ok)->setDisabled(true);
 
-    connect(this, SIGNAL(okClicked()), SLOT(onOkClicked()));
+    connect(this, SIGNAL(okClicked()), SLOT(_k_onOkClicked()));
     connect(this, SIGNAL(rejected()), SLOT(close()));
 }
 
 Tp::AccountPtr KTp::ContactGridDialog::account()
 {
-    return m_account;
+    return d->account;
 }
 
 Tp::ContactPtr KTp::ContactGridDialog::contact()
 {
-    return m_contact;
+    return d->contact;
 }
 
-void KTp::ContactGridDialog::onAccountManagerReady()
-{
-    kDebug() << "Account manager is ready";
-    m_accountsModel->setAccountManager(m_accountManager);
-}
-
-void KTp::ContactGridDialog::onOkClicked()
-{
-    // don't do anytghing if no contact has been selected
-    if (!m_contactGridWidget->hasSelection()) {
-        // show message box?
-        return;
-    }
-
-    m_contact = m_contactGridWidget->selectedContact();
-    m_account = m_contactGridWidget->selectedAccount();
-
-    if (m_account.isNull()) {
-        kWarning() << "Account is NULL";
-    } else if (m_contact.isNull()) {
-        kWarning() << "Contact is NULL";
-    } else {
-        kDebug() << "Account is: " << m_account->displayName();
-        kDebug() << "Contact is: " << m_contact->alias();
-    }
-}
-
-void KTp::ContactGridDialog::onChanged()
-{
-    button(KDialog::Ok)->setEnabled(m_contactGridWidget->hasSelection());
-}
+#include "contact-grid-dialog.moc"

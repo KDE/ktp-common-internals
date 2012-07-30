@@ -51,18 +51,13 @@ public:
     Tp::AccountPtr account();
     Tp::ContactPtr contact();
 
-private Q_SLOTS:
-    void onAccountManagerReady();
-    void onOkClicked();
-    void onChanged();
-
 private:
-    Tp::AccountManagerPtr m_accountManager;
-    AccountsModel *m_accountsModel;
-    KTp::ContactGridWidget *m_contactGridWidget;
-    Tp::AccountPtr m_account;
-    Tp::ContactPtr m_contact;
+    class Private;
+    Private * const d;
 
+    Q_PRIVATE_SLOT(d, void _k_onAccountManagerReady());
+    Q_PRIVATE_SLOT(d, void _k_onOkClicked());
+    Q_PRIVATE_SLOT(d, void _k_onChanged());
 };
 
 } // namespace KTp
