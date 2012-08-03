@@ -12,7 +12,7 @@ set (ktp_widgets_private_HDRS
      add-contact-dialog.h
 )
 
-kde4_add_ui_files (ktp_widgets_private_SRCS 
+kde4_add_ui_files (ktp_widgets_private_SRCS
                    add-contact-dialog.ui
 )
 
