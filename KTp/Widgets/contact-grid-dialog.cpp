@@ -45,6 +45,7 @@ public:
     Private(KTp::ContactGridDialog *parent) :
         q(parent),
         accountsModel(0),
+        account(0),
         contact(0)
     {
     }
