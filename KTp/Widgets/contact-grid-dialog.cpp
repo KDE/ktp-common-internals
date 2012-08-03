@@ -136,7 +136,7 @@ KTp::ContactGridDialog::ContactGridDialog(QWidget *parent) :
     d->contactGridWidget = new KTp::ContactGridWidget(d->accountsModel, this);
     d->contactGridWidget->contactFilterLineEdit()->setClickMessage(i18n("Search in Contacts..."));
     d->contactGridWidget->filter()->setPresenceTypeFilterFlags(AccountsFilterModel::ShowOnlyConnected);
-//    d->contactGridWidget->filter()->setCapabilityFilterFlags(AccountsFilterModel::FilterBySSHContactCapability);
+
     setMainWidget(d->contactGridWidget);
 
     connect(d->contactGridWidget,
@@ -163,5 +163,11 @@ Tp::ContactPtr KTp::ContactGridDialog::contact()
 {
     return d->contact;
 }
+
+AccountsFilterModel* KTp::ContactGridDialog::filter() const
+{
+    return d->contactGridWidget->filter();
+}
+
 
 #include "contact-grid-dialog.moc"

@@ -36,7 +36,7 @@ class PendingOperation;
 class AccountsModel;
 class QTcpSocket;
 
-
+class AccountsFilterModel;
 namespace KTp {
 class ContactGridWidget;
 
@@ -48,6 +48,8 @@ class ContactGridDialog : public KDialog
 public:
     ContactGridDialog(QWidget *parent);
     virtual ~ContactGridDialog();
+
+    virtual AccountsFilterModel* filter() const;
 
     virtual Tp::AccountPtr account();
     virtual Tp::ContactPtr contact();
