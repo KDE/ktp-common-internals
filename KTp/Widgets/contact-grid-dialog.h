@@ -47,6 +47,7 @@ class ContactGridDialog : public KDialog
 
 public:
     ContactGridDialog(QWidget *parent);
+    virtual ~ContactGridDialog();
 
     Tp::AccountPtr account();
     Tp::ContactPtr contact();

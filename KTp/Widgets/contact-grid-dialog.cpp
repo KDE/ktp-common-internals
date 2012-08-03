@@ -149,6 +149,11 @@ KTp::ContactGridDialog::ContactGridDialog(QWidget *parent) :
     connect(this, SIGNAL(rejected()), SLOT(close()));
 }
 
+KTp::ContactGridDialog::~ContactGridDialog()
+{
+    delete d;
+}
+
 Tp::AccountPtr KTp::ContactGridDialog::account()
 {
     return d->account;
