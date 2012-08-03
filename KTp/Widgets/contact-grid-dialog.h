@@ -28,6 +28,7 @@
 #include <TelepathyQt/AccountManager>
 #include <TelepathyQt/Account>
 #include <TelepathyQt/Contact>
+#include <KTp/ktp-export.h>
 
 namespace Tp {
 class PendingOperation;
@@ -40,7 +41,7 @@ class AccountsFilterModel;
 namespace KTp {
 class ContactGridWidget;
 
-class ContactGridDialog : public KDialog
+class KTP_EXPORT ContactGridDialog : public KDialog
 {
     Q_OBJECT
     Q_DISABLE_COPY(ContactGridDialog)
