@@ -10,6 +10,7 @@ set (ktp_common_internals_private_SRCS
      service-availability-checker.cpp
      telepathy-handler-application.cpp
      text-parser.cpp
+     pending-wallet.cpp
      wallet-interface.cpp
 )
 
@@ -22,8 +23,8 @@ set (ktp_common_internals_private_HDRS
      service-availability-checker.h
      telepathy-handler-application.h
      text-parser.h
+     pending-wallet.h
      wallet-interface.h
-
      ktp-export.h
 )
 

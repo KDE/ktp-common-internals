@@ -22,6 +22,7 @@
 #define WALLETINTERFACE_H
 
 #include <TelepathyQt/Account>
+#include <TelepathyQt/PendingOperation>
 
 #include <KWallet/Wallet>
 
@@ -33,50 +34,61 @@ namespace KTp
 {
 
 class WalletInterfacePrivate;
+class PendingWallet;
 
+
+/** Class wraps interface around KWallet. A singleton is used to make sure that the wallet is only even opened once if multiple instances of
+    this class are used throughout the application*/
 
 class KTP_EXPORT WalletInterface
 {
     friend class WalletInterfacePrivate;
 public:
-//    static WalletInterface* instance();
+
+    /** Tries to open the wallet. Op contains a pointer to the wallet operation interface*/
+    static KTp::PendingWallet *openWallet();
 
     /** Returns true if a password is stored for the given account */
-    static bool hasPassword(const Tp::AccountPtr &account);
+    bool hasPassword(const Tp::AccountPtr &account);
 
     /** Returns the stored password for the given account */
-    static QString password(const Tp::AccountPtr &account);
+    QString password(const Tp::AccountPtr &account);
 
     /** Set the password for the given account to a new password */
-    static void setPassword(const Tp::AccountPtr &account, const QString &password);
+    void setPassword(const Tp::AccountPtr &account, const QString &password);
 
     /** Remove the password for the given account from kwallet */
-    static void removePassword(const Tp::AccountPtr &account);
+    void removePassword(const Tp::AccountPtr &account);
 
     /** Returns true if a given entry is stored for the given account */
-    static bool hasEntry(const Tp::AccountPtr &account, const QString &key);
+    bool hasEntry(const Tp::AccountPtr &account, const QString &key);
 
     /** Returns the stored entry for the given account */
-    static QString entry(const Tp::AccountPtr &account, const QString &key);
+    QString entry(const Tp::AccountPtr &account, const QString &key);
 
     /** Set an entry for the given account to a new value */
-    static void setEntry(const Tp::AccountPtr &account, const QString &key, const QString &value);
+    void setEntry(const Tp::AccountPtr &account, const QString &key, const QString &value);
 
     /** Remove the entry for the given account from kwallet */
-    static void removeEntry(const Tp::AccountPtr &account, const QString &key);
+    void removeEntry(const Tp::AccountPtr &account, const QString &key);
 
     /** Remove all the entries for the given account from kwallet */
-    static void removeAllEntries(const Tp::AccountPtr &account);
+    void removeAllEntries(const Tp::AccountPtr &account);
 
     /** Remove entries and password for the account from kwallet */
-    static void removeAccount(const Tp::AccountPtr &account);
+    void removeAccount(const Tp::AccountPtr &account);
 
     /** Determine if the wallet is open, and is a valid wallet handle */
-    static bool isOpen();
+    bool isOpen();
+
+    /** Raw access to the underlying wallet. Should not be used.*/
+    KWallet::Wallet* wallet() const;
 
 private:
+    Q_DISABLE_COPY(WalletInterface)
     WalletInterface();
     virtual ~WalletInterface();
+    WalletInterfacePrivate *d;
 };
 
 } // namespace KTp
