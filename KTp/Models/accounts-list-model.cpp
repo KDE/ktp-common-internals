@@ -186,19 +186,6 @@ void AccountsListModel::addAccount(const Tp::AccountPtr &account)
     }
 }
 
-void AccountsListModel::removeAccount(const QModelIndex &index)
-{
-    if (!index.isValid()) {
-        kDebug() << "Can't remove Account: Invalid index";
-        return;
-    }
-    AccountItem *accountItem = m_accounts.at(index.row());
-
-    Q_ASSERT(accountItem);
-
-    accountItem->remove();
-}
-
 void AccountsListModel::onAccountItemRemoved()
 {
     AccountItem *item = qobject_cast<AccountItem*>(sender());

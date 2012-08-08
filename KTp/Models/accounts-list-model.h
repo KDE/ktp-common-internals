@@ -51,7 +51,6 @@ public:
     virtual bool setData(const QModelIndex &index, const QVariant &value, int role);
     virtual QModelIndex index(int row, int column, const QModelIndex &parent = QModelIndex()) const;
     void addAccount(const Tp::AccountPtr &account);
-    void removeAccount(const QModelIndex &index);
 
 Q_SIGNALS:
     void setTitleForCustomPages(QString, QList<QString>);
