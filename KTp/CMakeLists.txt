@@ -12,6 +12,7 @@ set (ktp_common_internals_private_SRCS
      text-parser.cpp
      pending-wallet.cpp
      wallet-interface.cpp
+     wallet-utils.cpp
 )
 
 set (ktp_common_internals_private_HDRS
@@ -25,6 +26,7 @@ set (ktp_common_internals_private_HDRS
      text-parser.h
      pending-wallet.h
      wallet-interface.h
+     wallet-utils.h
      ktp-export.h
 )
 
