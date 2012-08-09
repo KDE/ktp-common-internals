@@ -423,7 +423,7 @@ void NepomukStorage::onAccountsQueryNewEntries(const QList<Nepomuk2::Query::Resu
     kDebug();
     // Iterate over all the IMAccounts found.
     foreach (const Nepomuk2::Query::Result &result, entries) {
-        QUrl foundImAccount(result.resource().resourceUri());
+        QUrl foundImAccount(result.resource().uri());
         kDebug() << this << ": Found IM Account: " << foundImAccount;
 
         // If no Telepathy identifier, then the account is ignored.
@@ -526,7 +526,7 @@ void NepomukStorage::onContactsQueryNewEntries(const QList< Nepomuk2::Query::Res
     // Iterate over all the IMAccounts found.
     foreach (const Nepomuk2::Query::Result &result, entries) {
 
-        QUrl foundImAccount(result.resource().resourceUri());
+        QUrl foundImAccount(result.resource().uri());
         QUrl foundPersonContact(result.additionalBinding("personContact").toUrl());
         QUrl foundPerson(result.additionalBinding("person").toUrl());
         QUrl foundImAccountAccessedBy(result.additionalBinding("accessedBy").toUrl());

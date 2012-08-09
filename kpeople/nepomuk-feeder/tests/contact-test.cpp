@@ -100,7 +100,7 @@ void ContactTest::testAccountCreation()
 
     // Let's wait for the nepomuk resource to become available
     QString query = QString("select distinct ?a where { %1 %2 ?a . ?a a %3 }")
-                            .arg(Soprano::Node::resourceToN3(mePersonContact().resourceUri()))
+                            .arg(Soprano::Node::resourceToN3(mePersonContact().uri()))
                             .arg(Soprano::Node::resourceToN3(Nepomuk2::Vocabulary::NCO::hasIMAccount()))
                             .arg(Soprano::Node::resourceToN3(Nepomuk2::Vocabulary::NCO::IMAccount()));
 
