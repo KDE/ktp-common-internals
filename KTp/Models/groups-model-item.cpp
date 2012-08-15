@@ -77,7 +77,7 @@ QVariant GroupsModelItem::data(int role) const
     case AccountsModel::ItemRole:
         return QVariant::fromValue((GroupsModelItem*)this);
     case AccountsModel::IdRole:
-        /* drop through*/
+        return mPriv->mGroupName.isEmpty() ? QLatin1String("default_group_name") : mPriv->groupName();
     case GroupsModel::GroupNameRole:
         return mPriv->mGroupName;
     default:
