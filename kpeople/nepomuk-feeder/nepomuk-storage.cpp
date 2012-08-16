@@ -33,7 +33,6 @@
 #include <Nepomuk2/ResourceManager>
 #include <nepomuk2/simpleresource.h>
 #include <nepomuk2/simpleresourcegraph.h>
-#include <Nepomuk2/Thing>
 #include <Nepomuk2/Variant>
 
 #include <Nepomuk2/Vocabulary/NCO>
