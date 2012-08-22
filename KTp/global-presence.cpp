@@ -41,7 +41,7 @@ GlobalPresence::GlobalPresence(QObject *parent)
 void GlobalPresence::setAccountManager(const Tp::AccountManagerPtr &accountManager)
 {
     if (! accountManager->isReady()) {
-        kWarning("GlobalPresence used with unready account manager");
+        kWarning() << "GlobalPresence used with unready account manager";
     }
 
     m_enabledAccounts = accountManager->enabledAccounts();
