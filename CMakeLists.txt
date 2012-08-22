@@ -5,7 +5,7 @@ set (CMAKE_MODULE_PATH
      ${CMAKE_MODULE_PATH}
 )
 
-set (KTP_VERSION "0.4")
+set (KTP_VERSION "0.5")
 # Bump for every 0.x release, or whenever BC changes
 set (KTP_SONUMBER 3)
 
