@@ -635,14 +635,22 @@ void NepomukStorage::createContact(const QString &path, const QString &id)
 
     newPersonContact.addProperty(Nepomuk2::Vocabulary::NCO::hasIMAccount(), newImAccount);
 
-    m_graph << newPersonContact << newImAccount;
-    m_contacts.insert( identifier, ContactResources(newPersonContact.uri(),
-                                                    newImAccount.uri()) );
+    Nepomuk2::SimpleResourceGraph graph;
+    graph << newPersonContact << newImAccount;
 
-    // Insert into a list so that their real uri can be set later on
-    m_unresolvedContacts.append( identifier );
-    fireGraphTimer();
+    Nepomuk2::StoreResourcesJob* job = graph.save();
+    job->exec();
+    if( job->error() ) {
+        kError() << job->errorString();
+        Q_ASSERT( job->error() );
+        return;
+    }
+
+    const QUrl personContactUri = job->mappings().value( newPersonContact.uri() );
+    const QUrl imAccountUri = job->mappings().value( newImAccount.uri() );
+    m_contacts.insert( identifier, ContactResources(personContactUri, imAccountUri) );
 }
+
 
 void NepomukStorage::destroyContact(const QString &path, const QString &id)
 {
@@ -958,27 +966,6 @@ void NepomukStorage::onContactGraphJob(KJob* job)
         kWarning() << job->errorString();
         return;
     }
-    Nepomuk2::StoreResourcesJob* sjob = dynamic_cast<Nepomuk2::StoreResourcesJob*>(job);
-    QHash<QUrl, QUrl> mappings = sjob->mappings();
-
-    //
-    // Resolve all the contacts
-    //
-    QList<ContactIdentifier> unresolvedContacts;
-    foreach( const ContactIdentifier& identifier, m_unresolvedContacts ) {
-        const ContactResources& res = m_contacts[identifier];
-        QUrl contactUri = mappings.value( res.personContact() );
-        QUrl accountUri = mappings.value( res.imAccount() );
-
-        if( contactUri.isEmpty() || accountUri.isEmpty() ) {
-            unresolvedContacts << identifier;
-            continue;
-        }
-
-        m_contacts[identifier] = ContactResources(contactUri, accountUri);
-    }
-
-    m_unresolvedContacts = unresolvedContacts;
 
     emit graphSaved();
 }

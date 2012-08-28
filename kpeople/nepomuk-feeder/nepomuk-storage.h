@@ -160,8 +160,6 @@ private:
     QHash<QString, AccountResources> m_accounts;
     QHash<ContactIdentifier, ContactResources> m_contacts;
 
-    QList<ContactIdentifier> m_unresolvedContacts;
-
     Nepomuk2::SimpleResourceGraph m_graph;
     QTimer m_graphTimer;
 
