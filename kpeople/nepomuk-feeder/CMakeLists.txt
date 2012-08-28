@@ -53,6 +53,7 @@ set (nepomuktelepathyservice_static_SRCS
      contact.cpp
      abstract-storage.cpp
      nepomuk-storage.cpp
+     nepomukfeeder.cpp
      test-backdoors.cpp
 )
 

@@ -143,13 +143,9 @@ signals:
 
 private Q_SLOTS:
     void init();
-    void onSaveJobResult(KJob *job);
 
     void onAccountsQueryFinishedListing();
-
     void onContactTimer();
-    void onContactGraphJob(KJob *job);
-    void onRemovePropertiesJob(KJob *job);
 private:
     Q_DISABLE_COPY(NepomukStorage);
 
@@ -167,7 +163,6 @@ private:
     AccountResources findAccount(const QString& path);
 
     void fireGraphTimer();
-    bool hasInvalidResources() const;
 };
 
 
