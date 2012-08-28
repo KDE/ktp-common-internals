@@ -638,9 +638,6 @@ void NepomukStorage::createContact(const QString &path, const QString &id)
     Nepomuk2::SimpleResource newPersonContact;
     newPersonContact.addType(Nepomuk2::Vocabulary::NCO::PersonContact());
 
-    Nepomuk2::SimpleResource newPimoPerson;
-    newPimoPerson.addType(Nepomuk2::Vocabulary::PIMO::Person());
-
     Nepomuk2::SimpleResource newImAccount;
     //TODO: Somehow add this imAccount as a sub resource the account, maybe.
     newImAccount.addType(Nepomuk2::Vocabulary::NCO::IMAccount());
@@ -651,9 +648,8 @@ void NepomukStorage::createContact(const QString &path, const QString &id)
     newImAccount.addProperty(Nepomuk2::Vocabulary::NCO::isAccessedBy(), accountUri);
 
     newPersonContact.addProperty(Nepomuk2::Vocabulary::NCO::hasIMAccount(), newImAccount);
-    newPimoPerson.addProperty(Nepomuk2::Vocabulary::PIMO::groundingOccurrence(), newPersonContact);
 
-    m_graph << newPersonContact << newImAccount << newPimoPerson;
+    m_graph << newPersonContact << newImAccount;
     m_contacts.insert( identifier, ContactResources(newPersonContact.uri(),
                                                     newImAccount.uri()) );
 
