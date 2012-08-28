@@ -268,18 +268,6 @@ bool ContactResources::isEmpty() const
 NepomukStorage::NepomukStorage(QObject *parent)
 : AbstractStorage(parent)
 {
-    kDebug();
-
-    // *********************************************************************************************
-    // Nepomuk error handling
-
-    // Create an instance of the Nepomuk Resource Manager, and connect to it's error signal.
-    m_resourceManager = Nepomuk2::ResourceManager::instance();
-
-    connect(m_resourceManager,
-            SIGNAL(error(QString,int)),
-            SLOT(onNepomukError(QString,int)));
-
     QTimer::singleShot(0, this, SLOT(init()));
 
     m_graphTimer.setSingleShot( true );
@@ -288,13 +276,6 @@ NepomukStorage::NepomukStorage(QObject *parent)
 
 NepomukStorage::~NepomukStorage()
 {
-    // Don't delete the Nepomuk Resource manager. Nepomuk should take care of this itself.
-    kDebug();
-}
-
-void NepomukStorage::onNepomukError(const QString &uri, int errorCode)
-{
-    kWarning() << "A Nepomuk Error occurred:" << uri << errorCode;
 }
 
 void NepomukStorage::onSaveJobResult(KJob *job)

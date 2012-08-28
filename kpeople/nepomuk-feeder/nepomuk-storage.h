@@ -142,7 +142,6 @@ signals:
     void graphSaved();
 
 private Q_SLOTS:
-    void onNepomukError(const QString &uri, int errorCode);
     void init();
     void onSaveJobResult(KJob *job);
 
@@ -156,7 +155,6 @@ private:
 
     friend class TestBackdoors;
 
-    Nepomuk2::ResourceManager *m_resourceManager;
     QUrl m_mePersonContact;
 
     QHash<QString, AccountResources> m_accounts;
