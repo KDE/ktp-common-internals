@@ -464,7 +464,6 @@ void NepomukStorage::createAccount(const QString &path, const QString &id, const
 
     kDebug() << "Could not find corresponding IMAccount in Nepomuk. Creating a new one.";
 
-    // Add/Update relevant resources
     Nepomuk2::SimpleResource imAccount;
     imAccount.addType(Nepomuk2::Vocabulary::NCO::IMAccount());
     imAccount.addProperty(Nepomuk2::Vocabulary::Telepathy::accountIdentifier(), path);
@@ -474,12 +473,18 @@ void NepomukStorage::createAccount(const QString &path, const QString &id, const
     Nepomuk2::SimpleResource mePersonContact(m_mePersonContact);
     mePersonContact.addProperty(Nepomuk2::Vocabulary::NCO::hasIMAccount(), imAccount);
 
-    m_graph << imAccount << mePersonContact;
-    m_accounts.insert(path, AccountResources(imAccount.uri(), protocol));
+    Nepomuk2::SimpleResourceGraph graph;
+    graph << imAccount << mePersonContact;
 
-    m_unresolvedAccounts << path;
+    Nepomuk2::StoreResourcesJob* job = graph.save();
+    job->exec();
+    if( job->error() ) {
+        kError() << job->error();
+        Q_ASSERT( job->error() );
+    }
 
-    fireGraphTimer();
+    const QUrl imAccountUri = job->mappings().value( imAccount.uri() );
+    m_accounts.insert(path, AccountResources(imAccountUri, protocol));
 }
 
 void NepomukStorage::destroyAccount(const QString &path)
@@ -974,23 +979,6 @@ void NepomukStorage::onContactGraphJob(KJob* job)
     }
 
     m_unresolvedContacts = unresolvedContacts;
-
-    //
-    // Resolve all the accounts
-    //
-    QList<QString> unresolvedAccounts;
-    foreach( const QString& path, m_unresolvedAccounts ) {
-        const AccountResources& res = m_accounts[path];
-        const QUrl accountUri = mappings.value( res.account() );
-
-        if( accountUri.isEmpty() ) {
-            unresolvedAccounts << path;
-            continue;
-        }
-
-        m_accounts[path] = AccountResources(accountUri, res.protocol());
-    }
-    m_unresolvedAccounts = unresolvedAccounts;
 
     emit graphSaved();
 }
