@@ -90,14 +90,12 @@ int qHash(ContactIdentifier c);
 
 class ContactResources {
 public:
-    ContactResources(const QUrl &person,
-                     const QUrl &personContact,
+    ContactResources(const QUrl &personContact,
                      const QUrl &imAccount);
     ContactResources(const ContactResources &other);
     ContactResources();
     ~ContactResources();
 
-    const QUrl &person() const;
     const QUrl &personContact() const;
     const QUrl &imAccount() const;
 
@@ -149,11 +147,6 @@ private Q_SLOTS:
     void onSaveJobResult(KJob *job);
 
     void onAccountsQueryFinishedListing();
-
-    void onContactsQueryNewEntries(const QList<Nepomuk2::Query::Result> &entries);
-    void onContactsQueryEntriesRemoved(const QList<QUrl> &entries);
-    void onContactsQueryError(const QString &errorMessage);
-    void onContactsQueryFinishedListing();
 
     void onContactTimer();
     void onContactGraphJob(KJob *job);
