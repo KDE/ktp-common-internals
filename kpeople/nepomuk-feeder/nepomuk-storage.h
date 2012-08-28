@@ -148,9 +148,6 @@ private Q_SLOTS:
     void init();
     void onSaveJobResult(KJob *job);
 
-    void onAccountsQueryNewEntries(const QList<Nepomuk2::Query::Result> &entries);
-    void onAccountsQueryEntriesRemoved(const QList<QUrl> &entries);
-    void onAccountsQueryError(const QString &errorMessage);
     void onAccountsQueryFinishedListing();
 
     void onContactsQueryNewEntries(const QList<Nepomuk2::Query::Result> &entries);

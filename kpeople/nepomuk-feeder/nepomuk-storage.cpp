@@ -378,85 +378,35 @@ void NepomukStorage::init()
 
     // Query Nepomuk for all of the ME PersonContact's IMAccounts.
     {
-        using namespace Nepomuk2::Query;
+        QString query = QString::fromLatin1("select distinct ?r ?protocol ?accountIdentifier where {"
+                                            " ?r a nco:IMAccount . ?r nco:imAccountType ?protocol ."
+                                            " ?r %1 ?accountIdentifier . "
+                                            " %2 nco:hasIMAccount ?r . }")
+                        .arg( Soprano::Node::resourceToN3(Telepathy::accountIdentifier()),
+                              Soprano::Node::resourceToN3( m_mePersonContact ) );
 
-        // Construct the query
-        ComparisonTerm accountTerm(Nepomuk2::Vocabulary::NCO::hasIMAccount(),
-                                   ResourceTerm(m_mePersonContact));
-        accountTerm.setInverted(true);
+        Soprano::QueryResultIterator it = model->executeQuery( query, Soprano::Query::QueryLanguageSparql );
+        while( it.next() ) {
+            QUrl imAccount(it["r"].uri());
 
-        ComparisonTerm hasTelepathyIdTerm(Nepomuk2::Vocabulary::Telepathy::accountIdentifier(),
-                                          LiteralTerm());
-        hasTelepathyIdTerm.setVariableName("accountIdentifier");
-        ComparisonTerm hasProtocolTerm(Nepomuk2::Vocabulary::NCO::imAccountType(),
-                                       LiteralTerm());
-        hasProtocolTerm.setVariableName("protocol");
+            // If no Telepathy identifier, then the account is ignored.
+            QString identifier = it["accountIdentifier"].literal().toString();
+            // FIXME: This doesn't seem possible
+            if (identifier.isEmpty()) {
+                kDebug() << "Account does not have a Telepathy Account Identifier. Oops. Ignoring.";
+                continue;
+            }
 
-        Query query(AndTerm(accountTerm,
-                            ResourceTypeTerm(Nepomuk2::Vocabulary::NCO::IMAccount()),
-                            hasTelepathyIdTerm, hasProtocolTerm));
 
-        // Connect to the result signals and launch the query.
-        QueryServiceClient *client = new QueryServiceClient(this);
-        connect(client,
-                SIGNAL(newEntries(QList<Nepomuk2::Query::Result>)),
-                SLOT(onAccountsQueryNewEntries(QList<Nepomuk2::Query::Result>)));
-        connect(client,
-                SIGNAL(entriesRemoved(QList<QUrl>)),
-                SLOT(onAccountsQueryEntriesRemoved(QList<QUrl>)));
-        connect(client,
-                SIGNAL(error(QString)),
-                SLOT(onAccountsQueryError(QString)));
-        connect(client,
-                SIGNAL(finishedListing()),
-                SLOT(onAccountsQueryFinishedListing()));
-        connect(client, SIGNAL(finishedListing()),
-                client, SLOT(deleteLater()));
-        kDebug() << "Me Query : " << query.toSparqlQuery();
-        client->query(query);
-    }
-}
-
-void NepomukStorage::onAccountsQueryNewEntries(const QList<Nepomuk2::Query::Result> &entries)
-{
-    kDebug();
-    // Iterate over all the IMAccounts found.
-    foreach (const Nepomuk2::Query::Result &result, entries) {
-        QUrl foundImAccount(result.resource().uri());
-        kDebug() << this << ": Found IM Account: " << foundImAccount;
-
-        // If no Telepathy identifier, then the account is ignored.
-        QString foundImAccountIdentifier(result.additionalBinding("accountIdentifier").toString());
-        if (foundImAccountIdentifier.isEmpty()) {
-            kDebug() << "Account does not have a Telepathy Account Identifier. Oops. Ignoring.";
-            continue;
+            // If it does have a telepathy identifier, then it is added to the cache.
+            AccountResources acRes( imAccount, it["protocol"].literal().toString() );
+            m_accounts.insert( identifier, imAccount );
         }
 
-        kDebug() << "Found a Telepathy account in Nepomuk, ID:" << foundImAccountIdentifier;
-
-        // If it does have a telepathy identifier, then it is added to the cache.
-        m_accounts.insert(foundImAccountIdentifier,
-                          AccountResources(foundImAccount,
-                                           result.additionalBinding("protocol").toString()));
-    }
-
-}
-
-void NepomukStorage::onAccountsQueryEntriesRemoved(const QList<QUrl> &entries)
-{
-    kDebug();
-    // Remove the account from the cache
-    foreach (const QUrl &url, entries) {
-        m_accounts.remove(m_accounts.key(url));
+        QTimer::singleShot( 0, this, SLOT(onAccountsQueryFinishedListing()) );
     }
 }
 
-void NepomukStorage::onAccountsQueryError(const QString &errorMessage)
-{
-    kWarning() << "A Nepomuk Error occurred:" << errorMessage;
-
-    emit initialised(false);
-}
 
 void NepomukStorage::onAccountsQueryFinishedListing()
 {
