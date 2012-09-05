@@ -1230,3 +1230,9 @@ Name[zh_CN]=安装表情集失败
 Name[zh_TW]=安裝表情符號集失敗
 Action=Popup
 Flags=Persistent
+
+[Event/contactInfo]
+Name=Contact status changed
+Comment=A contact has changed their status
+Contexts=contact
+Action=None
