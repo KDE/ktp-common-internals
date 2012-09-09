@@ -5,6 +5,7 @@ set (ktp_common_internals_private_SRCS
      circular-countdown.cpp
      debug.cpp
      error-dictionary.cpp
+     global-contact-manager.cpp
      global-presence.cpp
      presence.cpp
      service-availability-checker.cpp
@@ -19,6 +20,7 @@ set (ktp_common_internals_private_HDRS
      circular-countdown.h
      debug.h
      error-dictionary.h
+     global-contact-manager.h
      global-presence.h
      presence.h
      service-availability-checker.h
