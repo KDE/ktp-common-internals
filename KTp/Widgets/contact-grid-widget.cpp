@@ -30,7 +30,7 @@
 #include <QtGui/QVBoxLayout>
 #include <QtGui/QListView>
 
-#include <KTp/Models/accounts-model.h>
+#include <KTp/Models/contacts-model.h>
 #include <KTp/Models/accounts-filter-model.h>
 #include <KTp/Models/contact-model-item.h>
 #include <KTp/Models/flat-model-proxy.h>
@@ -145,7 +145,7 @@ public:
     QVBoxLayout *layout;
     QListView *contactGridView;
     KLineEdit *contactFilterLineEdit;
-    AccountsModel *accountsModel;
+    ContactsModel *accountsModel;
     AccountsFilterModel *filterModel;
     FlatModelProxy *flatProxyModel;
 };
@@ -165,7 +165,7 @@ void KTp::ContactGridWidget::Private::_k_onSelectionChanged(QItemSelection newSe
 
 // -----------------------------------------------------------------------------
 
-KTp::ContactGridWidget::ContactGridWidget(AccountsModel* model, QWidget *parent)
+KTp::ContactGridWidget::ContactGridWidget(ContactsModel* model, QWidget *parent)
     : QWidget(parent),
       d(new Private(this))
 {
@@ -246,12 +246,12 @@ bool KTp::ContactGridWidget::hasSelection() const
 
 Tp::AccountPtr KTp::ContactGridWidget::selectedAccount() const
 {
-    return d->accountsModel->accountForContactItem(d->contactGridView->currentIndex().data(AccountsModel::ItemRole).value<ContactModelItem*>());
+    return d->accountsModel->accountForContactItem(d->contactGridView->currentIndex().data(ContactsModel::ItemRole).value<ContactModelItem*>());
 }
 
 Tp::ContactPtr KTp::ContactGridWidget::selectedContact() const
 {
-    return d->contactGridView->currentIndex().data(AccountsModel::ItemRole).value<ContactModelItem*>()->contact();
+    return d->contactGridView->currentIndex().data(ContactsModel::ItemRole).value<ContactModelItem*>()->contact();
 }
 
 AccountsFilterModel* KTp::ContactGridWidget::filter() const

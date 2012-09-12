@@ -24,7 +24,6 @@
 
 #include "tree-node.h"
 #include "contact-model-item.h"
-#include "accounts-model.h"
 
 struct ProxyTreeNode::Private
 {

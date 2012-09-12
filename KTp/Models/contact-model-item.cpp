@@ -21,7 +21,7 @@
  */
 
 #include "contact-model-item.h"
-#include "accounts-model.h"
+#include "contacts-model.h"
 #include "capabilities-hack-private.h"
 #include "../service-availability-checker.h"
 #include "presence.h"
@@ -105,53 +105,55 @@ ContactModelItem::~ContactModelItem()
 QVariant ContactModelItem::data(int role) const
 {
     switch (role) {
-    case AccountsModel::ItemRole:
+    case ContactsModel::ItemRole:
         return QVariant::fromValue((ContactModelItem*)this);
-    case AccountsModel::IdRole:
+    case ContactsModel::IdRole:
         return mPriv->mContact->id();
     case Qt::DisplayRole:
-    case AccountsModel::AliasRole:
+    case ContactsModel::AliasRole:
         return mPriv->mContact->alias();
-    case AccountsModel::PresenceRole:
+    case ContactsModel::PresenceRole:
         return QVariant::fromValue(KTp::Presence(mPriv->mContact->presence()));
-    case AccountsModel::PresenceIconRole:
+    case ContactsModel::PresenceIconRole:
         return QIcon(KTp::Presence(mPriv->mContact->presence()).icon());
-    case AccountsModel::PresenceStatusRole:
+    case ContactsModel::PresenceStatusRole:
         return mPriv->mContact->presence().status();
-    case AccountsModel::PresenceTypeRole:
+    case ContactsModel::PresenceTypeRole:
         return mPriv->mContact->presence().type();
-    case AccountsModel::PresenceMessageRole:
+    case ContactsModel::PresenceMessageRole:
         return mPriv->mContact->presence().statusMessage();
-    case AccountsModel::SubscriptionStateRole:
+    case ContactsModel::SubscriptionStateRole:
         return mPriv->mContact->subscriptionState();
-    case AccountsModel::PublishStateRole:
+    case ContactsModel::PublishStateRole:
         return mPriv->mContact->publishState();
-    case AccountsModel::BlockedRole:
+    case ContactsModel::BlockedRole:
         return mPriv->mContact->isBlocked();
-    case AccountsModel::GroupsRole:
+    case ContactsModel::GroupsRole:
         return mPriv->mContact->groups();
-    case AccountsModel::AvatarRole:
+    case ContactsModel::AvatarRole:
         return mPriv->mContact->avatarData().fileName;
     case Qt::DecorationRole:
         return QImage(mPriv->mContact->avatarData().fileName);
-    case AccountsModel::TextChatCapabilityRole:
+    case ContactsModel::TextChatCapabilityRole:
         return mPriv->mContact->capabilities().textChats();
-    case AccountsModel::MediaCallCapabilityRole:
+    case ContactsModel::MediaCallCapabilityRole:
         return audioCallCapability() || videoCallCapability();
-    case AccountsModel::AudioCallCapabilityRole:
+    case ContactsModel::AudioCallCapabilityRole:
         return audioCallCapability();
-    case AccountsModel::VideoCallCapabilityRole:
+    case ContactsModel::VideoCallCapabilityRole:
         return videoCallCapability();
-    case AccountsModel::UpgradeCallCapabilityRole:
+    case ContactsModel::UpgradeCallCapabilityRole:
         return mPriv->mContact->capabilities().upgradingCalls();
-    case AccountsModel::FileTransferCapabilityRole:
+    case ContactsModel::FileTransferCapabilityRole:
         return fileTransferCapability();
-    case AccountsModel::DesktopSharingCapabilityRole:
+    case ContactsModel::DesktopSharingCapabilityRole:
         return desktopSharingCapability();
-    case AccountsModel::SSHContactCapabilityRole:
+    case ContactsModel::SSHContactCapabilityRole:
         return sshContactCapability();
-    case AccountsModel::ClientTypesRole:
+    case ContactsModel::ClientTypesRole:
         return clientTypes();
+    case ContactsModel::ClientTypesRole:
+        return mPriv->mContact->clientTypes();
     default:
         break;
     }
@@ -162,7 +164,7 @@ QVariant ContactModelItem::data(int role) const
 bool ContactModelItem::setData(int role, const QVariant &value)
 {
     switch (role) {
-    case AccountsModel::PublishStateRole: {
+    case ContactsModel::PublishStateRole: {
         Tp::Contact::PresenceState state;
         state = (Tp::Contact::PresenceState) value.toInt();
         switch (state) {

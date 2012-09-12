@@ -6,9 +6,9 @@ include_directories (${CMAKE_CURRENT_BINARY_DIR}
 set (ktp_models_private_SRCS
     accounts-filter-model.cpp
     accounts-model-item.cpp
-    accounts-model.cpp
     capabilities-hack-private.cpp
     contact-model-item.cpp
+    contacts-model.cpp
     groups-model-item.cpp
     groups-model.cpp
     proxy-tree-node.cpp
@@ -20,8 +20,8 @@ set (ktp_models_private_SRCS
 set (ktp_models_private_HDRS
     accounts-filter-model.h
     accounts-model-item.h
-    accounts-model.h
     contact-model-item.h
+    contacts-model.h
     groups-model-item.h
     groups-model.h
     proxy-tree-node.h

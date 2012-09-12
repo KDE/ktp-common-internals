@@ -28,7 +28,7 @@
 #include <KLocalizedString>
 
 #include "groups-model.h"
-#include "accounts-model.h"
+#include "contacts-model.h"
 #include "proxy-tree-node.h"
 #include "contact-model-item.h"
 
@@ -74,9 +74,9 @@ QVariant GroupsModelItem::data(int role) const
         } else {
             return mPriv->mGroupName;
         }
-    case AccountsModel::ItemRole:
+    case ContactsModel::ItemRole:
         return QVariant::fromValue((GroupsModelItem*)this);
-    case AccountsModel::IdRole:
+    case ContactsModel::IdRole:
         return mPriv->mGroupName.isEmpty() ? QLatin1String("default_group_name") : mPriv->groupName();
     case GroupsModel::GroupNameRole:
         return mPriv->mGroupName;

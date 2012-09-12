@@ -32,7 +32,7 @@
 #include <TelepathyQt/PendingReady>
 
 #include <KTp/debug.h>
-#include <KTp/Models/accounts-model.h>
+#include <KTp/Models/contacts-model.h>
 #include <KTp/Models/accounts-filter-model.h>
 #include <KTp/Widgets/contact-grid-widget.h>
 #include <telepathy-qt4/TelepathyQt/PendingChannelRequest>
@@ -53,7 +53,7 @@ public:
     KTp::ContactGridDialog * const q;
 
     Tp::AccountManagerPtr accountManager;
-    AccountsModel *accountsModel;
+    ContactsModel *accountsModel;
     KTp::ContactGridWidget *contactGridWidget;
     Tp::AccountPtr account;
     Tp::ContactPtr contact;
@@ -131,7 +131,7 @@ KTp::ContactGridDialog::ContactGridDialog(QWidget *parent) :
                                                    channelFactory,
                                                    contactFactory);
 
-    d->accountsModel = new AccountsModel(this);
+    d->accountsModel = new ContactsModel(this);
     connect(d->accountManager->becomeReady(), SIGNAL(finished(Tp::PendingOperation*)), SLOT(_k_onAccountManagerReady()));
 
 

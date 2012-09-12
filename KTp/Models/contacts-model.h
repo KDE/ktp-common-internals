@@ -35,10 +35,10 @@
 class ContactModelItem;
 class TreeNode;
 
-class KTP_EXPORT AccountsModel : public QAbstractItemModel
+class KTP_EXPORT ContactsModel : public QAbstractItemModel
 {
     Q_OBJECT
-    Q_DISABLE_COPY(AccountsModel)
+    Q_DISABLE_COPY(ContactsModel)
     Q_PROPERTY(int accountCount READ accountCount NOTIFY accountCountChanged)
     Q_ENUMS(Role)
 
@@ -101,8 +101,8 @@ public:
         CustomRole // a placemark for custom roles in inherited models
     };
 
-    explicit AccountsModel(QObject *parent = 0);
-    virtual ~AccountsModel();
+    explicit ContactsModel(QObject *parent = 0);
+    virtual ~ContactsModel();
 
     void setAccountManager(const Tp::AccountManagerPtr &am);
 
