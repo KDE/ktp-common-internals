@@ -103,8 +103,30 @@ void WalletInterface::setPassword(const Tp::AccountPtr &account, const QString &
 
     d->wallet->setFolder(d->folderName);
     d->wallet->writePassword(account->uniqueIdentifier(), password);
+
+    setLastLoginFailed(account, false);
+
     //sync normally happens on close, but in this case we need it to happen /now/ as it needs to be synced before the auth-client starts
     d->wallet->sync();
+}
+
+void WalletInterface::setLastLoginFailed(const Tp::AccountPtr &account, bool failed)
+{
+    if (failed) {
+        setEntry(account, QLatin1String("lastLoginFailed"), QLatin1String("true"));
+    } else {
+        if (hasEntry(account, QLatin1String("lastLoginFailed"))) {
+            removeEntry(account, QLatin1String("lastLoginFailed"));
+        }
+    }
+}
+
+bool WalletInterface::lastLoginFailed(const Tp::AccountPtr &account)
+{
+    if (d->wallet.isNull()) {
+        return false;
+    }
+    return hasEntry(account, QLatin1String("lastLoginFailed"));
 }
 
 void WalletInterface::removePassword(const Tp::AccountPtr &account)

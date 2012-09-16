@@ -57,6 +57,12 @@ public:
     /** Set the password for the given account to a new password */
     void setPassword(const Tp::AccountPtr &account, const QString &password);
 
+    /** Sets whether using the password failed */
+    void setLastLoginFailed(const Tp::AccountPtr &account, bool failed);
+
+    /** Returns whether using the password failed */
+    bool lastLoginFailed(const Tp::AccountPtr &account);
+
     /** Remove the password for the given account from kwallet */
     void removePassword(const Tp::AccountPtr &account);
 
