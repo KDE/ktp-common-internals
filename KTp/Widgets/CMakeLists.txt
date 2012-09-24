@@ -7,6 +7,7 @@ set (ktp_widgets_private_SRCS
     contact-grid-dialog.cpp
     add-contact-dialog.cpp
     join-chat-room-dialog.cpp
+    notificationconfigdialog.cpp
 )
 
 set (ktp_widgets_private_HDRS
@@ -14,6 +15,7 @@ set (ktp_widgets_private_HDRS
      contact-grid-dialog.h
      add-contact-dialog.h
      join-chat-room-dialog.h
+     notificationconfigdialog.h
 )
 
 kde4_add_ui_files (ktp_widgets_private_SRCS
@@ -35,6 +37,7 @@ target_link_libraries (ktpwidgetsprivate
                        ${KDE4_KDECORE_LIBS}
                        ${TELEPATHY_QT4_LIBRARIES}
                        ${KDE4_KDEUI_LIBS}
+                       ${KDE4_KNOTIFYCONFIG_LIBRARY}
                        ktpcommoninternalsprivate
                        ktpmodelsprivate
 )
