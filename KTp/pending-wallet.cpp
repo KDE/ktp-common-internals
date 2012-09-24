@@ -32,7 +32,9 @@ KTp::PendingWallet::PendingWallet(KTp::WalletInterface* walletInterface)
       d( new KTp::PendingWalletPrivate())
 {
     d->walletInterface = walletInterface;
-    if (walletInterface->isOpen()) {
+
+    //if wallet is not enabled, or wallet is already opened, setFinished() immediately
+    if (!walletInterface->wallet() || walletInterface->isOpen()) {
         setFinished();
     } else {
         connect(walletInterface->wallet(), SIGNAL(walletOpened(bool)), SLOT(setFinished()));
