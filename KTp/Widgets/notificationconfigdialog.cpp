@@ -23,12 +23,15 @@
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <QLabel>
+#include <QDBusInterface>
 
 #include <TelepathyQt/Contact>
 
 #include <KNotifyConfigWidget>
 #include <KComboBox>
 #include <KAboutData>
+#include <KConfig>
+#include <KSharedConfig>
 
 KTp::NotificationConfigDialog::NotificationConfigDialog(const Tp::ContactPtr &contact, QWidget *parent)
     : KDialog(parent)
@@ -36,9 +39,11 @@ KTp::NotificationConfigDialog::NotificationConfigDialog(const Tp::ContactPtr &co
 {
     Q_ASSERT(contact);
     m_contact = contact;
+    m_currentSelection = 0;
     setCaption(i18n("Configure notifications for %1", m_contact.data()->alias()));
     setAttribute(Qt::WA_DeleteOnClose);
-    setButtons(KDialog::Apply | KDialog::Cancel);
+    setButtons(KDialog::Apply | KDialog::Cancel | KDialog::Default );
+    enableApply(false);
 
     QWidget *centralWidget = new QWidget(this);
     QVBoxLayout *vboxLayout = new QVBoxLayout(centralWidget);
@@ -64,6 +69,10 @@ KTp::NotificationConfigDialog::NotificationConfigDialog(const Tp::ContactPtr &co
             SLOT(saveConfig()));
     connect(comboBox, SIGNAL(currentIndexChanged(int)),
             SLOT(updateNotifyWidget(int)));
+    connect(this, SIGNAL(defaultClicked()),
+            SLOT(defaults()));
+    connect(m_notifyWidget, SIGNAL(changed(bool)),
+            SLOT(enableApply(bool)));
 }
 
 KTp::NotificationConfigDialog::~NotificationConfigDialog()
@@ -86,10 +95,49 @@ void KTp::NotificationConfigDialog::updateNotifyWidget(int selection)
         m_notifyWidget->setApplication(QLatin1String("ktelepathy"));
         setCaption(i18n("Configure notifications for all users"));
     }
+
+    m_currentSelection = selection;
 }
 
 void KTp::NotificationConfigDialog::show()
 {
     m_notifyWidget->show();
     setVisible(true);
+}
+
+void KTp::NotificationConfigDialog::defaults()
+{
+    KSharedConfigPtr config = KSharedConfig::openConfig(QLatin1String("ktelepathy.notifyrc"));
+    KConfigGroup *configGroup;
+
+    if (m_currentSelection == 0) {
+        Q_FOREACH(const QString &group, config->groupList()) {
+            if (group.endsWith(m_contact.data()->id())) {
+                configGroup = new KConfigGroup(config, group);
+                configGroup->deleteGroup();
+                delete configGroup;
+            }
+        }
+    } else if (m_currentSelection == 1) {
+        Q_FOREACH(const QString &group, config->groupList()) {
+            if (group.startsWith(QLatin1String("Event"))) {
+                configGroup = new KConfigGroup(config, group);
+                configGroup->deleteGroup();
+                delete configGroup;
+            }
+        }
+    }
+    config->sync();
+    //ask the notify daemon to reload the config
+    if (QDBusConnection::sessionBus().interface()->isServiceRegistered(QLatin1String("org.kde.knotify")))
+    {
+        QDBusInterface( QLatin1String("org.kde.knotify"), QLatin1String("/Notify"),
+                        QLatin1String("org.kde.KNotify")).call( QLatin1String("reconfigure" ));
+    }
+    updateNotifyWidget(m_currentSelection);
+}
+
+void KTp::NotificationConfigDialog::enableApply(bool state)
+{
+        enableButtonApply(state);
 }

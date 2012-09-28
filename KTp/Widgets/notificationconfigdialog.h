@@ -40,9 +40,12 @@ public:
 private:
     KNotifyConfigWidget *m_notifyWidget;
     Tp::ContactPtr m_contact;
+    int m_currentSelection;
 private Q_SLOTS:
     void saveConfig();
     void updateNotifyWidget(int);
+    void defaults();
+    void enableApply(bool);
 };
 
 }
