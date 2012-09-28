@@ -43,7 +43,7 @@ KTp::NotificationConfigDialog::NotificationConfigDialog(const Tp::ContactPtr &co
     setCaption(i18n("Configure notifications for %1", m_contact.data()->alias()));
     setAttribute(Qt::WA_DeleteOnClose);
     setButtons(KDialog::Apply | KDialog::Cancel | KDialog::Default );
-    enableApply(false);
+    enableButtonApply(false);
 
     QWidget *centralWidget = new QWidget(this);
     QVBoxLayout *vboxLayout = new QVBoxLayout(centralWidget);
@@ -72,7 +72,7 @@ KTp::NotificationConfigDialog::NotificationConfigDialog(const Tp::ContactPtr &co
     connect(this, SIGNAL(defaultClicked()),
             SLOT(defaults()));
     connect(m_notifyWidget, SIGNAL(changed(bool)),
-            SLOT(enableApply(bool)));
+            SLOT(enableButtonApply(bool)));
 }
 
 KTp::NotificationConfigDialog::~NotificationConfigDialog()
@@ -84,7 +84,7 @@ void KTp::NotificationConfigDialog::saveConfig()
     m_notifyWidget->save();
 }
 
-void KTp::NotificationConfigDialog::updateNotifyWidget(int selection)
+void KTp::NotificationConfigDialog::updateNotifyWidget(const int selection)
 {
     if (selection == 0) {
         m_notifyWidget->setApplication(QLatin1String("ktelepathy"),
@@ -97,12 +97,6 @@ void KTp::NotificationConfigDialog::updateNotifyWidget(int selection)
     }
 
     m_currentSelection = selection;
-}
-
-void KTp::NotificationConfigDialog::show()
-{
-    m_notifyWidget->show();
-    setVisible(true);
 }
 
 void KTp::NotificationConfigDialog::defaults()
@@ -135,9 +129,4 @@ void KTp::NotificationConfigDialog::defaults()
                         QLatin1String("org.kde.KNotify")).call( QLatin1String("reconfigure" ));
     }
     updateNotifyWidget(m_currentSelection);
-}
-
-void KTp::NotificationConfigDialog::enableApply(bool state)
-{
-        enableButtonApply(state);
 }

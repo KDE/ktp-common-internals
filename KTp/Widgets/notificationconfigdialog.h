@@ -36,16 +36,14 @@ class KTP_EXPORT NotificationConfigDialog : public KDialog
 public:
     explicit NotificationConfigDialog(const Tp::ContactPtr &contact, QWidget *parent=0);
     ~NotificationConfigDialog();
-    void show();
 private:
     KNotifyConfigWidget *m_notifyWidget;
     Tp::ContactPtr m_contact;
     int m_currentSelection;
 private Q_SLOTS:
     void saveConfig();
-    void updateNotifyWidget(int);
+    void updateNotifyWidget(const int selection);
     void defaults();
-    void enableApply(bool);
 };
 
 }
