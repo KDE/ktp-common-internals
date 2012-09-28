@@ -1,3 +1,23 @@
+/*
+ * This file is part of telepathy-common-internals
+ *
+ * Copyright (C) 2012 David Edmundson <kde@davidedmundson.co.uk>
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+ */
+
 #include "global-contact-manager.h"
 
 #include <TelepathyQt/AccountManager>
@@ -8,10 +28,12 @@
 
 using namespace KTp;
 
+namespace KTp {
 class GlobalContactManagerPrivate {
 public:
     Tp::AccountManagerPtr accountManager;
 };
+}
 
 AccountContact::AccountContact(const Tp::AccountPtr &account, const Tp::ContactPtr &contact)
 {
@@ -30,27 +52,12 @@ Tp::ContactPtr AccountContact::contact() const
 }
 
 
-GlobalContactManager::GlobalContactManager(QObject *parent) :
+GlobalContactManager::GlobalContactManager(const Tp::AccountManagerPtr &accountManager, QObject *parent) :
     QObject(parent),
     d(new GlobalContactManagerPrivate())
 {
-}
-
-GlobalContactManager::~GlobalContactManager()
-{
-    delete d;
-}
-
-
-void GlobalContactManager::setAccountManager(const Tp::AccountManagerPtr &accountManager)
-{
     if (! d->accountManager.isNull()) {
         kWarning() << "account manager already set";
-        return;
-    }
-
-    if (!accountManager->isReady()) {
-        kWarning() << "account manager not ready";
         return;
     }
 
@@ -60,6 +67,11 @@ void GlobalContactManager::setAccountManager(const Tp::AccountManagerPtr &accoun
         onNewAccount(account);
     }
     connect(accountManager.data(), SIGNAL(newAccount(Tp::AccountPtr)), SLOT(onNewAccount(Tp::AccountPtr)));
+}
+
+GlobalContactManager::~GlobalContactManager()
+{
+    delete d;
 }
 
 AccountContactList GlobalContactManager::allKnownContacts()
