@@ -39,7 +39,7 @@ public:
         ConnectionStateIconRole,
         ConnectionErrorMessageDisplayRole,
         ConnectionProtocolNameRole,
-        AccountItemRole
+        AccountRole
     };
 
     explicit AccountsListModel(QObject *parent = 0);
@@ -66,6 +66,7 @@ private:
     QList<AccountItem*> m_accounts;
 };
 
+Q_DECLARE_METATYPE(Tp::AccountPtr)
 
 #endif // header guard
 

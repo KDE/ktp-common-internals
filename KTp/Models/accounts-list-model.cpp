@@ -104,8 +104,8 @@ QVariant AccountsListModel::data(const QModelIndex &index, int role) const
         data = QVariant(m_accounts.at(index.row())->connectionProtocolName());
         break;
 
-    case AccountsListModel::AccountItemRole:
-        data = QVariant::fromValue<AccountItem*>(m_accounts.at(index.row()));
+    case AccountsListModel::AccountRole:
+        data = QVariant::fromValue<Tp::AccountPtr>(account);
         break;
 
     default:
@@ -122,7 +122,7 @@ bool AccountsListModel::setData(const QModelIndex &index, const QVariant &value,
     }
     if (role == Qt::CheckStateRole) {
         //this is index from QSortFilterProxyModel
-        index.data(AccountItemRole).value<AccountItem*>()->account()->setEnabled(value.toInt() == Qt::Checked);
+        index.data(AccountRole).value<Tp::AccountPtr>()->setEnabled(value.toInt() == Qt::Checked);
         return true;
     }
 
