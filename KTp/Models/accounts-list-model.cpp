@@ -221,10 +221,4 @@ void AccountsListModel::onAccountItemUpdated()
     Q_EMIT dataChanged(index, index);
 }
 
-void AccountsListModel::onTitleForCustomPages(QString mandatoryPage, QList<QString> optionalPage)
-{
-    Q_EMIT setTitleForCustomPages(mandatoryPage, optionalPage);
-}
-
-
 #include "accounts-list-model.moc"
