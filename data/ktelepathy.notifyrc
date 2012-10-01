@@ -1233,6 +1233,18 @@ Flags=Persistent
 
 [Event/contactInfo]
 Name=Contact status changed
+Name[nl]=Status van contactpersoon is gewijzigd
+Name[pt]=O estado do contacto mudou
+Name[pt_BR]=O status do contato foi alterado
+Name[sv]=Kontaktens status ändrades
+Name[uk]=Змінено стан контакту
+Name[x-test]=xxContact status changedxx
 Comment=A contact has changed their status
+Comment[nl]=Een contactpersoon heeft zijn/haar status gewijzigd
+Comment[pt]=Um contacto mudou o seu estado
+Comment[pt_BR]=O contato alterou o seu status
+Comment[sv]=En kontakt har ändrat sin status
+Comment[uk]=Контактом змінено стан
+Comment[x-test]=xxA contact has changed their statusxx
 Contexts=contact
 Action=None
