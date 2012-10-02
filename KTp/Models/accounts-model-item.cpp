@@ -143,6 +143,10 @@ QVariant AccountsModelItem::data(int role) const
         return QVariant::fromValue((AccountsModelItem*)this);
     case ContactsModel::IdRole:
         return mPriv->mAccount->uniqueIdentifier();
+    case ContactsModel::TypeRole:
+        return ContactsModel::ContactRowType;
+    case ContactsModel::AccountRole:
+        return QVariant::fromValue(mPriv->mAccount);
     case ContactsModel::AvatarRole:
         return QVariant::fromValue(mPriv->mAccount->avatar());
     case ContactsModel::ValidRole:

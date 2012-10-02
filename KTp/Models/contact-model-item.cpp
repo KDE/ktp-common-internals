@@ -109,6 +109,12 @@ QVariant ContactModelItem::data(int role) const
         return QVariant::fromValue((ContactModelItem*)this);
     case ContactsModel::IdRole:
         return mPriv->mContact->id();
+    case ContactsModel::TypeRole:
+        return ContactsModel::ContactRowType;
+    case ContactsModel::ContactRole:
+        return QVariant::fromValue(mPriv->mContact);
+    case ContactsModel::AccountRole:
+        return parent()->data(ContactsModel::AccountRole);
     case Qt::DisplayRole:
     case ContactsModel::AliasRole:
         return mPriv->mContact->alias();

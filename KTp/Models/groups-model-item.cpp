@@ -74,6 +74,8 @@ QVariant GroupsModelItem::data(int role) const
         } else {
             return mPriv->mGroupName;
         }
+    case ContactsModel::TypeRole:
+        return ContactsModel::GroupRowType;
     case ContactsModel::ItemRole:
         return QVariant::fromValue((GroupsModelItem*)this);
     case ContactsModel::IdRole:

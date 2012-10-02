@@ -41,13 +41,26 @@ class KTP_EXPORT ContactsModel : public QAbstractItemModel
     Q_DISABLE_COPY(ContactsModel)
     Q_PROPERTY(int accountCount READ accountCount NOTIFY accountCountChanged)
     Q_ENUMS(Role)
+    Q_ENUMS(RowType)
 
 public:
+
+    enum RowType {
+        ContactRowType,
+        AccountRowType,
+        GroupRowType,
+        UserRowType
+    };
+
     enum Role {
         // general roles
         ItemRole = Qt::UserRole,
         AvatarRole,
         IdRole,
+        TypeRole,
+
+        AccountRole,
+        ContactRole,
 
         // account roles
         ValidRole,
@@ -138,5 +151,8 @@ private:
     friend struct Private;
     Private *mPriv;
 };
+
+Q_DECLARE_METATYPE(Tp::ContactPtr);
+Q_DECLARE_METATYPE(Tp::AccountPtr);
 
 #endif // TELEPATHY_ACCOUNTS_MODEL_H
