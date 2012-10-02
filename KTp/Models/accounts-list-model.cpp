@@ -20,8 +20,6 @@
 
 #include "accounts-list-model.h"
 
-#include "account-item.h"
-
 #include <KDebug>
 #include <KIcon>
 #include <KLocalizedString>

@@ -25,10 +25,11 @@
 
 #include <TelepathyQt/Account>
 
-class AccountItem;
+#include <KTp/ktp-export.h>
+
 class KIcon;
 
-class AccountsListModel : public QAbstractListModel
+class KTP_EXPORT AccountsListModel : public QAbstractListModel
 {
     Q_OBJECT
     Q_DISABLE_COPY(AccountsListModel);

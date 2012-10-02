@@ -4,6 +4,7 @@ include_directories (${CMAKE_CURRENT_BINARY_DIR}
 )
 
 set (ktp_models_private_SRCS
+    accounts-list-model.cpp
     accounts-filter-model.cpp
     accounts-model-item.cpp
     capabilities-hack-private.cpp
@@ -18,6 +19,7 @@ set (ktp_models_private_SRCS
 )
 
 set (ktp_models_private_HDRS
+    accounts-list-model.h
     accounts-filter-model.h
     accounts-model-item.h
     contact-model-item.h
