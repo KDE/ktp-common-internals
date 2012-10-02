@@ -125,9 +125,6 @@ void ContactsModel::setAccountManager(const Tp::AccountManagerPtr &am)
         kDebug() << "account manager already set, ignoring";
     }
 
-    if (!am->isReady()) {
-        kDebug() << "Ready Account Manager expected";
-    }
     mPriv->mAM = am;
     Q_FOREACH (Tp::AccountPtr account, mPriv->mAM->allAccounts()) {
        onNewAccount(account);

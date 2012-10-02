@@ -246,12 +246,12 @@ bool KTp::ContactGridWidget::hasSelection() const
 
 Tp::AccountPtr KTp::ContactGridWidget::selectedAccount() const
 {
-    return d->accountsModel->accountForContactItem(d->contactGridView->currentIndex().data(ContactsModel::ItemRole).value<ContactModelItem*>());
+    return d->contactGridView->currentIndex().data(ContactsModel::AccountRole).value<Tp::AccountPtr>();
 }
 
 Tp::ContactPtr KTp::ContactGridWidget::selectedContact() const
 {
-    return d->contactGridView->currentIndex().data(ContactsModel::ItemRole).value<ContactModelItem*>()->contact();
+    return d->contactGridView->currentIndex().data(ContactsModel::ContactRole).value<Tp::ContactPtr>();
 }
 
 AccountsFilterModel* KTp::ContactGridWidget::filter() const
