@@ -24,6 +24,10 @@
 
 #include <KDebug>
 #include <KIcon>
+#include <KLocalizedString>
+#include <KPixmapSequence>
+
+#include <KTp/error-dictionary.h>
 
 #include <TelepathyQt/Account>
 
@@ -65,7 +69,7 @@ QVariant AccountsListModel::data(const QModelIndex &index, int role) const
     }
 
     QVariant data;
-    Tp::AccountPtr account = m_accounts.at(index.row())->account();
+    Tp::AccountPtr account = m_accounts.at(index.row());
 
     switch (role) {
     case Qt::DisplayRole:
@@ -73,7 +77,7 @@ QVariant AccountsListModel::data(const QModelIndex &index, int role) const
         break;
 
     case Qt::DecorationRole:
-        data = QVariant(m_accounts.at(index.row())->icon());
+        data = QVariant(KIcon(account->iconName()));
         break;
 
     case Qt::CheckStateRole:
@@ -85,23 +89,23 @@ QVariant AccountsListModel::data(const QModelIndex &index, int role) const
         break;
 
     case AccountsListModel::ConnectionStateRole:
-        data = QVariant(m_accounts.at(index.row())->connectionStatus());
+        data = QVariant(account->connectionStatus());
         break;
 
     case AccountsListModel::ConnectionStateDisplayRole:
-        data = QVariant(m_accounts.at(index.row())->connectionStateString());
+        data = QVariant(connectionStateString(account));
         break;
 
     case AccountsListModel::ConnectionStateIconRole:
-        data = QVariant(m_accounts.at(index.row())->connectionStateIcon());
+        data = QVariant(connectionStateIcon(account));
         break;
 
     case AccountsListModel::ConnectionErrorMessageDisplayRole:
-        data = QVariant(m_accounts.at(index.row())->connectionStatusReason());
+        data = QVariant(connectionStatusReason(account));
         break;
 
     case AccountsListModel::ConnectionProtocolNameRole:
-        data = QVariant(m_accounts.at(index.row())->connectionProtocolName());
+        data = QVariant(account->protocolName());
         break;
 
     case AccountsListModel::AccountRole:
@@ -159,8 +163,8 @@ void AccountsListModel::addAccount(const Tp::AccountPtr &account)
     bool found = false;
 
     if (!found) {
-        Q_FOREACH (const AccountItem *ai, m_accounts) {
-            if (ai->account() == account) {
+        Q_FOREACH (const Tp::AccountPtr &ai, m_accounts) {
+            if (ai == account) {
                 found = true;
                 break;
             }
@@ -175,20 +179,33 @@ void AccountsListModel::addAccount(const Tp::AccountPtr &account)
         kDebug() << "Account not already in model. Create new AccountItem from account:"
                  << account.data();
 
-        AccountItem *item = new AccountItem(account, this);
-
         beginInsertRows(QModelIndex(), m_accounts.size(), m_accounts.size());
-        m_accounts.append(item);
+        m_accounts.append(account);
         endInsertRows();
 
-        connect(item, SIGNAL(removed()), SLOT(onAccountItemRemoved()));
-        connect(item, SIGNAL(updated()), SLOT(onAccountItemUpdated()));
+        connect(account.data(), SIGNAL(removed()), SLOT(onAccountItemRemoved()));
+
+        connect(account.data(),
+                SIGNAL(stateChanged(bool)),
+                SLOT(onAccountItemUpdated()));
+        connect(account.data(),
+                SIGNAL(displayNameChanged(QString)),
+                SLOT(onAccountItemUpdated()));
+        connect(account.data(),
+                SIGNAL(connectionStatusChanged(Tp::ConnectionStatus)),
+                SLOT(onAccountItemUpdated()));
+        connect(account.data(),
+                SIGNAL(iconNameChanged(QString)),
+                SLOT(onAccountItemUpdated()));
+        connect(account.data(),
+                SIGNAL(stateChanged(bool)),
+                SLOT(onAccountItemUpdated()));
     }
 }
 
 void AccountsListModel::onAccountItemRemoved()
 {
-    AccountItem *item = qobject_cast<AccountItem*>(sender());
+    Tp::AccountPtr item = Tp::AccountPtr(qobject_cast<Tp::Account*>(sender()));
 
     Q_ASSERT(item);
     if (!item) {
@@ -204,12 +221,11 @@ void AccountsListModel::onAccountItemRemoved()
 
     // FIXME: Workaround until the KWidgetItemDelegate gets fixed (probably KDE 4.7)
     //reset();
-    delete item;
 }
 
 void AccountsListModel::onAccountItemUpdated()
 {
-    AccountItem *item = qobject_cast<AccountItem*>(sender());
+    Tp::AccountPtr item = Tp::AccountPtr(qobject_cast<Tp::Account*>(sender()));
 
     Q_ASSERT(item);
     if (!item) {
@@ -219,6 +235,56 @@ void AccountsListModel::onAccountItemUpdated()
 
     QModelIndex index = createIndex(m_accounts.lastIndexOf(item), 0);
     Q_EMIT dataChanged(index, index);
+}
+
+const QString AccountsListModel::connectionStateString(const Tp::AccountPtr &account) const
+{
+    if (account->isEnabled()) {
+        switch (account->connectionStatus()) {
+        case Tp::ConnectionStatusConnected:
+            return i18n("Online");
+        case Tp::ConnectionStatusConnecting:
+            return i18nc("This is a connection state", "Connecting");
+        case Tp::ConnectionStatusDisconnected:
+            return i18nc("This is a connection state", "Disconnected");
+        default:
+            return i18nc("This is an unknown connection state", "Unknown");
+        }
+    } else {
+        return i18nc("This is a disabled account", "Disabled");
+    }
+}
+
+const KIcon AccountsListModel::connectionStateIcon(const Tp::AccountPtr &account) const
+{
+    if (account->isEnabled()) {
+        switch (account->connectionStatus()) {
+        case Tp::ConnectionStatusConnected:
+            return KIcon(QLatin1String("user-online"));
+        case Tp::ConnectionStatusConnecting:
+            //imho this is not really worth animating, but feel free to play around..
+            return KIcon(KPixmapSequence(QLatin1String("process-working"), 22).frameAt(0));
+        case Tp::ConnectionStatusDisconnected:
+            return KIcon(QLatin1String("user-offline"));
+        default:
+            return KIcon(QLatin1String("user-offline"));
+        }
+    } else {
+        return KIcon();
+    }
+}
+
+const QString AccountsListModel::connectionStatusReason(const Tp::AccountPtr &account) const
+{
+    if (!account->isEnabled()) {
+        return i18n("Click checkbox to enable");
+    }
+    else if (account->connectionStatusReason() == Tp::ConnectionStatusReasonRequested) {
+        return QString();
+    }
+    else {
+        return KTp::ErrorDictionary::displayShortErrorMessage(account->connectionError());
+    }
 }
 
 #include "accounts-list-model.moc"

@@ -26,6 +26,7 @@
 #include <TelepathyQt/Account>
 
 class AccountItem;
+class KIcon;
 
 class AccountsListModel : public QAbstractListModel
 {
@@ -57,7 +58,11 @@ private Q_SLOTS:
     void onAccountItemUpdated();
 
 private:
-    QList<AccountItem*> m_accounts;
+    QList<Tp::AccountPtr> m_accounts;
+
+    const QString connectionStateString(const Tp::AccountPtr &account) const;
+    const KIcon connectionStateIcon(const Tp::AccountPtr &account) const;
+    const QString connectionStatusReason(const Tp::AccountPtr &account) const;
 };
 
 Q_DECLARE_METATYPE(Tp::AccountPtr)
