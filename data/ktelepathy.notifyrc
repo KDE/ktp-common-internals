@@ -1233,6 +1233,7 @@ Flags=Persistent
 
 [Event/contactInfo]
 Name=Contact status changed
+Name[de]=Status eines Kontakts geändert
 Name[it]=Stato di un contatto cambiato
 Name[nl]=Status van contactpersoon is gewijzigd
 Name[pt]=O estado do contacto mudou
@@ -1241,6 +1242,7 @@ Name[sv]=Kontaktens status ändrades
 Name[uk]=Змінено стан контакту
 Name[x-test]=xxContact status changedxx
 Comment=A contact has changed their status
+Comment[de]=Der Status eines Kontakt hat sich geändert
 Comment[it]=Un contatto ha cambiato il suo stato
 Comment[nl]=Een contactpersoon heeft zijn/haar status gewijzigd
 Comment[pt]=Um contacto mudou o seu estado
