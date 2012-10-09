@@ -1233,6 +1233,7 @@ Flags=Persistent
 
 [Event/contactInfo]
 Name=Contact status changed
+Name[da]=Kontaktstatus ændret
 Name[de]=Status eines Kontakts geändert
 Name[el]=Η κατάσταση της επαφής άλλαξε
 Name[hu]=Partnerállapot megváltozott
@@ -1249,6 +1250,7 @@ Name[uk]=Змінено стан контакту
 Name[x-test]=xxContact status changedxx
 Name[zh_CN]=联系人状态已更改
 Comment=A contact has changed their status
+Comment[da]=En kontakt har ændret sin status
 Comment[de]=Der Status eines Kontakt hat sich geändert
 Comment[el]=Μια επαφή έχει αλλάξει την κατάστασή της
 Comment[hu]=Egy partner megváltoztatta az állapotát
