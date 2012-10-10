@@ -842,22 +842,16 @@ void NepomukStorage::setContactAvatar(const QString &path,
     if( contact.isEmpty() )
         return;
 
-    QUrl avatarUri;
-    if( !avatar.fileName.isEmpty() ) {
-        Nepomuk2::Resource res( avatar.fileName );
-        // Save the resource
-        res.setProperty( NAO::numericRating(), 0 );
-        res.removeProperty( NAO::numericRating() );
-
-        avatarUri = res.uri();
-    }
+    QUrl avatarUrl = avatar.fileName;
+    if( avatarUrl.isEmpty() )
+        return;
 
     //FIXME: Do not remove the old avatar from the photos list?
     Nepomuk2::SimpleResource& personContact = m_graph[contact.personContact()];
-    personContact.setProperty( NCO::photo(), avatarUri );
+    personContact.setProperty( NCO::photo(), avatarUrl );
 
     Nepomuk2::SimpleResource& imAccount = m_graph[contact.imAccount()];
-    imAccount.setProperty( Telepathy::avatar(), avatarUri );
+    imAccount.setProperty( Telepathy::avatar(), avatarUrl );
 
     fireGraphTimer();
     //TODO: Find a way to index the file as well.
@@ -877,7 +871,6 @@ void NepomukStorage::onContactGraphJob(KJob* job)
         kError() << job->errorString();
     }
 }
-
 
 
 int qHash(ContactIdentifier c)
