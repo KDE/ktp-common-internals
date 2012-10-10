@@ -27,36 +27,27 @@
 #include <KDebug>
 #include <KJob>
 
-#include <nepomuk2/datamanagement.h>
-#include <nepomuk2/storeresourcesjob.h>
 #include <Nepomuk2/Resource>
 #include <Nepomuk2/ResourceManager>
-#include <nepomuk2/simpleresource.h>
-#include <nepomuk2/simpleresourcegraph.h>
+#include <Nepomuk2/DataManagement>
+#include <Nepomuk2/StoreResourcesJob>
+#include <Nepomuk2/SimpleResource>
+#include <Nepomuk2/SimpleResourceGraph>
 #include <Nepomuk2/Variant>
 
 #include <Nepomuk2/Vocabulary/NCO>
 #include <Nepomuk2/Vocabulary/PIMO>
 #include <Soprano/Vocabulary/RDF>
+#include <Soprano/Vocabulary/NAO>
 
-#include <Nepomuk2/Query/Query>
-#include <Nepomuk2/Query/AndTerm>
-#include <Nepomuk2/Query/ComparisonTerm>
-#include <Nepomuk2/Query/LiteralTerm>
-#include <Nepomuk2/Query/NegationTerm>
-#include <Nepomuk2/Query/ResourceTerm>
-#include <Nepomuk2/Query/ResourceTypeTerm>
-#include <Nepomuk2/Query/QueryServiceClient>
-#include <Nepomuk2/Query/Result>
+#include <Soprano/Model>
+#include <Soprano/QueryResultIterator>
 
 #include <QtCore/QSharedData>
 #include <QtCore/QTimer>
 
 #include <TelepathyQt/Constants>
 #include <TelepathyQt/AvatarData>
-#include <Soprano/Vocabulary/NAO>
-#include <Soprano/Model>
-#include <Soprano/QueryResultIterator>
 
 using namespace Nepomuk2::Vocabulary;
 using namespace Soprano::Vocabulary;
@@ -281,26 +272,11 @@ NepomukStorage::~NepomukStorage()
 void NepomukStorage::init()
 {
     // *********************************************************************************************
-    // Get the ME PIMO:Person and NCO:PersonContact (creating them if necessary)
+    // Get the ME nco:PersonContact (creating them if necessary)
 
-    // Here we get the "me" person contact.
-    // FIXME: Port to new OSCAF standard for accessing "me" as soon as it
-    // becomes available.
-    QUrl meUri("nepomuk:/me");
-
+    QLatin1String query("select ?o where { <nepomuk:/me> pimo:groundingOccurrence ?o."
+                        "?o a nco:PersonContect .}");
     Soprano::Model* model = Nepomuk2::ResourceManager::instance()->mainModel();
-    bool exists = model->containsAnyStatement( meUri, RDF::type(), PIMO::Person() );
-    if( !exists ) {
-        // It should have been created by the Storage Service
-        // TODO: Create it
-        kWarning() << "nepomuk:/me doesn't exist!! Aborting";
-        return;
-    }
-
-    QString query = QString::fromLatin1("select ?o where { <nepomuk:/me> %1 ?o. ?o a %2 .}")
-                    .arg( Soprano::Node::resourceToN3( PIMO::groundingOccurrence() ),
-                          Soprano::Node::resourceToN3( NCO::PersonContact() ) );
-
     Soprano::QueryResultIterator it = model->executeQuery( query, Soprano::Query::QueryLanguageSparql );
 
     QList<QUrl> groundingOccurrences;
@@ -312,7 +288,7 @@ void NepomukStorage::init()
         Nepomuk2::SimpleResource personContact;
         personContact.addType( NCO::PersonContact() );
 
-        Nepomuk2::SimpleResource me( meUri );
+        Nepomuk2::SimpleResource me( QUrl("nepomuk:/me") );
         me.addProperty( PIMO::groundingOccurrence(), personContact );
 
         Nepomuk2::SimpleResourceGraph graph;
@@ -455,13 +431,13 @@ void NepomukStorage::createAccount(const QString &path, const QString &id, const
     kDebug() << "Could not find corresponding IMAccount in Nepomuk. Creating a new one.";
 
     Nepomuk2::SimpleResource imAccount;
-    imAccount.addType(Nepomuk2::Vocabulary::NCO::IMAccount());
-    imAccount.addProperty(Nepomuk2::Vocabulary::Telepathy::accountIdentifier(), path);
-    imAccount.addProperty(Nepomuk2::Vocabulary::NCO::imAccountType(), protocol);
-    imAccount.addProperty(Nepomuk2::Vocabulary::NCO::imID(), id);
+    imAccount.addType( NCO::IMAccount() );
+    imAccount.addProperty( Telepathy::accountIdentifier(), path );
+    imAccount.addProperty( NCO::imAccountType(), protocol );
+    imAccount.addProperty( NCO::imID(), id );
 
     Nepomuk2::SimpleResource mePersonContact(m_mePersonContact);
-    mePersonContact.addProperty(Nepomuk2::Vocabulary::NCO::hasIMAccount(), imAccount);
+    mePersonContact.addProperty( NCO::hasIMAccount(), imAccount );
 
     Nepomuk2::SimpleResourceGraph graph;
     graph << imAccount << mePersonContact;
@@ -606,18 +582,18 @@ void NepomukStorage::createContact(const QString &path, const QString &id)
     QUrl accountUri = accountRes.account();
 
     Nepomuk2::SimpleResource newPersonContact;
-    newPersonContact.addType(Nepomuk2::Vocabulary::NCO::PersonContact());
+    newPersonContact.addType(NCO::PersonContact());
 
     Nepomuk2::SimpleResource newImAccount;
     //TODO: Somehow add this imAccount as a sub resource the account, maybe.
-    newImAccount.addType(Nepomuk2::Vocabulary::NCO::IMAccount());
-    newImAccount.setProperty(Nepomuk2::Vocabulary::NCO::imStatus(), QString::fromLatin1("unknown"));
-    newImAccount.setProperty(Nepomuk2::Vocabulary::NCO::imID(), id);
-    newImAccount.setProperty(Nepomuk2::Vocabulary::Telepathy::statusType(), Tp::ConnectionPresenceTypeUnknown);
-    newImAccount.setProperty(Nepomuk2::Vocabulary::NCO::imAccountType(), accountRes.protocol());
-    newImAccount.addProperty(Nepomuk2::Vocabulary::NCO::isAccessedBy(), accountUri);
+    newImAccount.addType( NCO::IMAccount() );
+    newImAccount.setProperty( NCO::imStatus(), QString::fromLatin1("unknown") );
+    newImAccount.setProperty( NCO::imID(), id );
+    newImAccount.setProperty( Telepathy::statusType(), Tp::ConnectionPresenceTypeUnknown );
+    newImAccount.setProperty( NCO::imAccountType(), accountRes.protocol() );
+    newImAccount.addProperty( NCO::isAccessedBy(), accountUri );
 
-    newPersonContact.addProperty(Nepomuk2::Vocabulary::NCO::hasIMAccount(), newImAccount);
+    newPersonContact.addProperty( NCO::hasIMAccount(), newImAccount );
 
     Nepomuk2::SimpleResourceGraph graph;
     graph << newPersonContact << newImAccount;
