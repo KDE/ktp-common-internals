@@ -22,7 +22,6 @@
  */
 
 #include "nepomuk-storage.h"
-#include "nepomukfeeder.h"
 #include "telepathy.h"
 
 #include <KDebug>
@@ -886,11 +885,17 @@ void NepomukStorage::setContactAvatar(const QString &path,
 
 void NepomukStorage::onContactTimer()
 {
-    NepomukFeeder feeder;
-    feeder.setGraph( m_graph );
-    feeder.push();
+    KJob *job = Nepomuk2::storeResources( m_graph, Nepomuk2::IdentifyNew, Nepomuk2::OverwriteAllProperties );
+    connect( job, SIGNAL(finished(KJob*)), this, SLOT(onContactGraphJob(KJob*)) );
 
     m_graph.clear();
+}
+
+void NepomukStorage::onContactGraphJob(KJob* job)
+{
+    if( job->error() ) {
+        kError() << job->errorString();
+    }
 }
 
 

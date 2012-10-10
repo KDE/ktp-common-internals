@@ -146,6 +146,8 @@ private Q_SLOTS:
 
     void onAccountsQueryFinishedListing();
     void onContactTimer();
+    void onContactGraphJob(KJob* job);
+
 private:
     Q_DISABLE_COPY(NepomukStorage);
 
