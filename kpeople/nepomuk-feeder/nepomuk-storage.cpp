@@ -704,6 +704,7 @@ void NepomukStorage::setContactPublishState(const QString &path,
                                      const QString &id,
                                      const Tp::Contact::PresenceState &state)
 {
+    /*
     ContactResources contact = findContact(path, id);
     if( contact.isEmpty() )
         return;
@@ -753,12 +754,14 @@ void NepomukStorage::setContactPublishState(const QString &path,
     }
 
     fireGraphTimer();
+    */
 }
 
 void NepomukStorage::setContactSubscriptionState(const QString &path,
                                           const QString &id,
                                           const Tp::Contact::PresenceState &state)
 {
+    /*
     ContactResources contact = findContact(path, id);
     if( contact.isEmpty() )
         return;
@@ -808,6 +811,7 @@ void NepomukStorage::setContactSubscriptionState(const QString &path,
     }
 
     fireGraphTimer();
+    */
 }
 
 void NepomukStorage::setContactCapabilities(const QString &path,
