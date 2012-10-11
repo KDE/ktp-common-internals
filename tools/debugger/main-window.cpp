@@ -16,7 +16,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "main-window.h"
-#include "debug-messages-model.h"
+#include "debug-message-view.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : KXmlGuiWindow(parent)
@@ -25,12 +25,9 @@ MainWindow::MainWindow(QWidget *parent)
     m_ui.setupUi(centralWidget());
     setupGUI();
 
-    m_ui.mcLogsView->setModel(new DebugMessagesModel(
-            QLatin1String("org.freedesktop.Telepathy.MissionControl5"), this));
-    m_ui.gabbleLogsView->setModel(new DebugMessagesModel(
-            QLatin1String("org.freedesktop.Telepathy.ConnectionManager.gabble"), this));
-    m_ui.hazeLogsView->setModel(new DebugMessagesModel(
-            QLatin1String("org.freedesktop.Telepathy.ConnectionManager.haze"), this));
+    m_ui.mcLogsView->setService(QLatin1String("org.freedesktop.Telepathy.MissionControl5"));
+    m_ui.gabbleLogsView->setService(QLatin1String("org.freedesktop.Telepathy.ConnectionManager.gabble"));
+    m_ui.hazeLogsView->setService(QLatin1String("org.freedesktop.Telepathy.ConnectionManager.haze"));
 }
 
 MainWindow::~MainWindow()

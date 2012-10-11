@@ -15,10 +15,12 @@
     You should have received a copy of the GNU Lesser General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include "debug-messages-model.h"
+#include "debug-message-view.h"
 
 #include <TelepathyQt/PendingReady>
 #include <TelepathyQt/Constants>
+#include <TelepathyQt/DebugReceiver>
+#include <TelepathyQt/PendingDebugMessageList>
 
 #include <KDebug>
 #include <KIcon>
@@ -26,22 +28,15 @@
 
 #include <ctime>
 
-DebugMessagesModel::DebugMessagesModel(const QString & service, QObject *parent)
-    : QAbstractListModel(parent),
-      m_serviceName(service),
+DebugMessageView::DebugMessageView(QWidget *parent)
+    : QTextEdit(parent),
       m_ready(false)
 {
-    m_serviceWatcher = new QDBusServiceWatcher(service, QDBusConnection::sessionBus(),
-                                               QDBusServiceWatcher::WatchForRegistration, this);
-    connect(m_serviceWatcher, SIGNAL(serviceRegistered(QString)),
-            SLOT(onServiceRegistered(QString)));
-
-    if (QDBusConnection::sessionBus().interface()->isServiceRegistered(service)) {
-        onServiceRegistered(service);
-    }
+    setReadOnly(true);
 }
 
-DebugMessagesModel::~DebugMessagesModel()
+
+DebugMessageView::~DebugMessageView()
 {
     if (m_debugReceiver && m_ready) {
         //disable monitoring and do it synchronously before all the objects are destroyed
@@ -52,7 +47,21 @@ DebugMessagesModel::~DebugMessagesModel()
     }
 }
 
-void DebugMessagesModel::onServiceRegistered(const QString & service)
+void DebugMessageView::setService(const QString &service)
+{
+    m_serviceName = service;
+    m_serviceWatcher = new QDBusServiceWatcher(service, QDBusConnection::sessionBus(),
+                                               QDBusServiceWatcher::WatchForRegistration, this);
+    connect(m_serviceWatcher, SIGNAL(serviceRegistered(QString)),
+            SLOT(onServiceRegistered(QString)));
+
+    if (QDBusConnection::sessionBus().interface()->isServiceRegistered(service)) {
+        onServiceRegistered(service);
+    }
+}
+
+
+void DebugMessageView::onServiceRegistered(const QString & service)
 {
     kDebug() << "Service" << service << "registered. Introspecting Debug interface...";
 
@@ -63,7 +72,7 @@ void DebugMessagesModel::onServiceRegistered(const QString & service)
             SLOT(onDebugReceiverReady(Tp::PendingOperation*)));
 }
 
-void DebugMessagesModel::onDebugReceiverInvalidated(Tp::DBusProxy *proxy,
+void DebugMessageView::onDebugReceiverInvalidated(Tp::DBusProxy *proxy,
                                                     const QString &errorName, const QString &errorMessage)
 {
     Q_UNUSED(proxy);
@@ -72,7 +81,7 @@ void DebugMessagesModel::onDebugReceiverInvalidated(Tp::DBusProxy *proxy,
     m_debugReceiver.reset();
 }
 
-void DebugMessagesModel::onDebugReceiverReady(Tp::PendingOperation *op)
+void DebugMessageView::onDebugReceiverReady(Tp::PendingOperation *op)
 {
     if (op->isError()) {
         kDebug() << "Failed to introspect Debug interface for" << m_serviceName
@@ -88,7 +97,7 @@ void DebugMessagesModel::onDebugReceiverReady(Tp::PendingOperation *op)
     }
 }
 
-void DebugMessagesModel::onDebugReceiverMonitoringEnabled(Tp::PendingOperation* op)
+void DebugMessageView::onDebugReceiverMonitoringEnabled(Tp::PendingOperation* op)
 {
     if (op->isError()) {
         kError() << "Failed to enable monitoring on the Debug object of" << m_serviceName
@@ -101,7 +110,7 @@ void DebugMessagesModel::onDebugReceiverMonitoringEnabled(Tp::PendingOperation* 
     }
 }
 
-void DebugMessagesModel::onFetchMessagesFinished(Tp::PendingOperation* op)
+void DebugMessageView::onFetchMessagesFinished(Tp::PendingOperation* op)
 {
     if (op->isError()) {
         kError() << "Failed to fetch messages from" << m_serviceName
@@ -114,9 +123,9 @@ void DebugMessagesModel::onFetchMessagesFinished(Tp::PendingOperation* op)
         messages.append(m_tmpCache); //append any messages that were received from onNewDebugMessage()
         m_tmpCache.clear();
 
-        beginInsertRows(QModelIndex(), m_messages.size(), m_messages.size() + messages.size());
-        m_messages.append(messages);
-        endInsertRows();
+        Q_FOREACH(const Tp::DebugMessage &msg, messages) {
+            appendMessage(msg);
+        }
 
         //TODO limit m_messages size
 
@@ -127,22 +136,19 @@ void DebugMessagesModel::onFetchMessagesFinished(Tp::PendingOperation* op)
     }
 }
 
-void DebugMessagesModel::onNewDebugMessage(const Tp::DebugMessage & msg)
+void DebugMessageView::onNewDebugMessage(const Tp::DebugMessage & msg)
 {
     if (m_ready) {
-        beginInsertRows(QModelIndex(), m_messages.size(), m_messages.size());
-        m_messages.append(msg);
-        endInsertRows();
-
-        //TODO limit m_messages size
+        appendMessage(msg);
     } else {
         //cache until we are ready
         m_tmpCache.append(msg);
     }
 }
 
+
 //taken from empathy
-static QString formatTimestamp(double timestamp)
+static inline QString formatTimestamp(double timestamp)
 {
     struct tm *tstruct;
     char time_str[32];
@@ -162,76 +168,11 @@ static QString formatTimestamp(double timestamp)
     return str;
 }
 
-QVariant DebugMessagesModel::data(const QModelIndex & index, int role) const
+void DebugMessageView::appendMessage(const Tp::DebugMessage &msg)
 {
-    if (!index.isValid()) {
-        return QVariant();
-    }
-
-    KColorScheme scheme(QPalette::Active, KColorScheme::Window);
-
-
-    switch(role) {
-    case Qt::DisplayRole:
-        return QString(formatTimestamp(m_messages[index.row()].timestamp) %
-                       QLatin1Literal(" - [") % m_messages[index.row()].domain % QLatin1Literal("] ") %
-                       m_messages[index.row()].message);
-    case Qt::DecorationRole:
-        switch(m_messages[index.row()].level) {
-        case Tp::DebugLevelError:
-            return KIcon(QLatin1String("dialog-error"));
-        case Tp::DebugLevelCritical:
-            return KIcon(QLatin1String("dialog-error"));
-        case Tp::DebugLevelWarning:
-            return KIcon(QLatin1String("dialog-warning"));
-        case Tp::DebugLevelMessage:
-            return KIcon(QLatin1String("dialog-info"));
-        case Tp::DebugLevelInfo:
-            return KIcon(QLatin1String("dialog-info"));
-        case Tp::DebugLevelDebug:
-            return KIcon(QLatin1String("tools-report-bug"));
-        default:
-            return QVariant();
-        }
-    case Qt::ForegroundRole:
-        switch(m_messages[index.row()].level) {
-        case Tp::DebugLevelError:
-            /** Fall Through*/
-        case Tp::DebugLevelCritical:
-            /** Fall Through*/
-        case Tp::DebugLevelWarning:
-            return scheme.foreground(KColorScheme::NegativeText);
-        case Tp::DebugLevelMessage:
-            /** Fall Through*/
-        case Tp::DebugLevelInfo:
-            /** Fall Through*/
-        case Tp::DebugLevelDebug:
-            /** Fall Through*/
-        default:
-            return QVariant();
-        }
-    case MessageRole:
-        return m_messages[index.row()].message;
-    case TimestampRole:
-        return m_messages[index.row()].timestamp;
-    case LevelRole:
-        return m_messages[index.row()].level;
-    case DomainRole:
-        return m_messages[index.row()].domain;
-    case ServiceRole:
-        return m_serviceName;
-    default:
-        return QVariant();
-    }
+    QString message = QString(formatTimestamp(msg.timestamp) %
+                              QLatin1Literal(" - [") % msg.domain % QLatin1Literal("] ") %
+                              msg.message);
+    append(message);
 }
 
-int DebugMessagesModel::rowCount(const QModelIndex & parent) const
-{
-    if (!parent.isValid()) {
-        return m_messages.size();
-    } else {
-        return 0;
-    }
-}
-
-#include "moc_debug-messages-model.cpp"

@@ -18,27 +18,18 @@
 #ifndef DEBUG_MESSAGES_MODEL_H
 #define DEBUG_MESSAGES_MODEL_H
 
-#include <QtCore/QAbstractListModel>
-#include <TelepathyQt/DebugReceiver>
-#include <TelepathyQt/PendingDebugMessageList>
+#include <QTextEdit>
+#include <TelepathyQt/Types>
+#include <TelepathyQt/PendingOperation>
 
-class DebugMessagesModel : public QAbstractListModel
+
+class DebugMessageView : public QTextEdit
 {
     Q_OBJECT
 public:
-    explicit DebugMessagesModel(const QString & service, QObject *parent = 0);
-    virtual ~DebugMessagesModel();
-
-    enum Role {
-        TimestampRole = Qt::UserRole,
-        LevelRole,
-        DomainRole,
-        MessageRole,
-        ServiceRole
-    };
-
-    virtual QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const;
-    virtual int rowCount(const QModelIndex& parent = QModelIndex()) const;
+    explicit DebugMessageView(QWidget *parent = 0);
+    void setService(const QString & service);
+    virtual ~DebugMessageView();
 
 private Q_SLOTS:
     void onServiceRegistered(const QString & service);
@@ -47,12 +38,13 @@ private Q_SLOTS:
     void onDebugReceiverReady(Tp::PendingOperation *op);
     void onDebugReceiverMonitoringEnabled(Tp::PendingOperation *op);
     void onFetchMessagesFinished(Tp::PendingOperation *op);
-    void onNewDebugMessage(const Tp::DebugMessage & msg);
+    void onNewDebugMessage(const Tp::DebugMessage &msg);
 
 private:
+    void appendMessage(const Tp::DebugMessage &msg);
+
     QString m_serviceName;
     Tp::DebugReceiverPtr m_debugReceiver;
-    Tp::DebugMessageList m_messages;
     Tp::DebugMessageList m_tmpCache;
     QDBusServiceWatcher *m_serviceWatcher;
     bool m_ready;
