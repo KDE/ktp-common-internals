@@ -54,6 +54,7 @@ private:
     bool fileTransferCapability() const;
     bool desktopSharingCapability() const;
     bool sshContactCapability() const;
+    QStringList clientTypes() const;
 
     struct Private;
     friend struct Private;

@@ -151,7 +151,7 @@ QVariant ContactModelItem::data(int role) const
     case AccountsModel::SSHContactCapabilityRole:
         return sshContactCapability();
     case AccountsModel::ClientTypesRole:
-        return mPriv->mContact->clientTypes();
+        return clientTypes();
     default:
         break;
     }
@@ -250,6 +250,17 @@ bool ContactModelItem::sshContactCapability() const
     bool contactCanHandleSSHContact = mPriv->mContact->capabilities().streamTubes(QLatin1String("x-ssh-contact"));
     bool selfCanHandleSSHContact = true; // FIXME Check if ssh-contact client is installed
     return contactCanHandleSSHContact && selfCanHandleSSHContact;
+}
+
+QStringList ContactModelItem::clientTypes() const
+{
+    /* Temporary workaround for upstream bug https://bugs.freedesktop.org/show_bug.cgi?id=55883)
+     * Close https://bugs.kde.org/show_bug.cgi?id=308217 when fixed upstream */
+    if (mPriv->mContact->presence().type() == Tp::ConnectionPresenceTypeOffline) {
+	return QStringList();
+    }
+
+    return mPriv->mContact->clientTypes();
 }
 
 #include "contact-model-item.moc"
