@@ -28,10 +28,19 @@
 #include <KTp/error-dictionary.h>
 
 #include <TelepathyQt/Account>
+#include <TelepathyQt/AccountManager>
+
+class AccountsListModel::Private {
+public:
+    QList<Tp::AccountPtr> accounts;
+    Tp::AccountManagerPtr accountManager;
+
+};
 
 
 AccountsListModel::AccountsListModel(QObject *parent)
- : QAbstractListModel(parent)
+ : QAbstractListModel(parent),
+   d(new AccountsListModel::Private)
 {
 }
 
@@ -39,11 +48,17 @@ AccountsListModel::~AccountsListModel()
 {
 }
 
+void AccountsListModel::setAccountManager(const Tp::AccountManagerPtr &accountManager)
+{
+    d->accountManager = accountManager;
+    connect(d->accountManager.data(), SIGNAL(newAccount(Tp::AccountPtr)), SLOT(onAccountAdded(Tp::AccountPtr)));
+}
+
 int AccountsListModel::rowCount(const QModelIndex & parent) const
 {
     // If the index is the root item, then return the row count.
     if (parent == QModelIndex()) {
-       return m_accounts.size();
+       return d->accounts.size();
     }
 
     // Otherwise, return 0 (as this is a list model, so all items
@@ -67,7 +82,7 @@ QVariant AccountsListModel::data(const QModelIndex &index, int role) const
     }
 
     QVariant data;
-    Tp::AccountPtr account = m_accounts.at(index.row());
+    Tp::AccountPtr account = d->accounts.at(index.row());
 
     switch (role) {
     case Qt::DisplayRole:
@@ -153,7 +168,7 @@ Qt::ItemFlags AccountsListModel::flags(const QModelIndex &index) const
     return QAbstractItemModel::flags(index) | Qt::ItemIsUserCheckable;
 }
 
-void AccountsListModel::addAccount(const Tp::AccountPtr &account)
+void AccountsListModel::onAccountAdded(const Tp::AccountPtr &account)
 {
     kDebug() << "Creating a new AccountItem from account:" << account.data();
 
@@ -161,7 +176,7 @@ void AccountsListModel::addAccount(const Tp::AccountPtr &account)
     bool found = false;
 
     if (!found) {
-        Q_FOREACH (const Tp::AccountPtr &ai, m_accounts) {
+        Q_FOREACH (const Tp::AccountPtr &ai, d->accounts) {
             if (ai == account) {
                 found = true;
                 break;
@@ -177,11 +192,9 @@ void AccountsListModel::addAccount(const Tp::AccountPtr &account)
         kDebug() << "Account not already in model. Create new AccountItem from account:"
                  << account.data();
 
-        beginInsertRows(QModelIndex(), m_accounts.size(), m_accounts.size());
-        m_accounts.append(account);
+        beginInsertRows(QModelIndex(), d->accounts.size(), d->accounts.size());
+        d->accounts.append(account);
         endInsertRows();
-
-        connect(account.data(), SIGNAL(removed()), SLOT(onAccountItemRemoved()));
 
         connect(account.data(),
                 SIGNAL(stateChanged(bool)),
@@ -213,12 +226,9 @@ void AccountsListModel::onAccountItemRemoved()
 
     // We can be pretty sure that there is only one reference to a specific AccountItem in the list
     // If we screw up here, the styling delegate will screw up even more
-    beginRemoveRows(QModelIndex(), m_accounts.indexOf(item), m_accounts.indexOf(item));
-    m_accounts.removeAll(item);
+    beginRemoveRows(QModelIndex(), d->accounts.indexOf(item), d->accounts.indexOf(item));
+    d->accounts.removeAll(item);
     endRemoveRows();
-
-    // FIXME: Workaround until the KWidgetItemDelegate gets fixed (probably KDE 4.7)
-    //reset();
 }
 
 void AccountsListModel::onAccountItemUpdated()
@@ -231,7 +241,7 @@ void AccountsListModel::onAccountItemUpdated()
         return;
     }
 
-    QModelIndex index = createIndex(m_accounts.lastIndexOf(item), 0);
+    QModelIndex index = createIndex(d->accounts.lastIndexOf(item), 0);
     Q_EMIT dataChanged(index, index);
 }
 

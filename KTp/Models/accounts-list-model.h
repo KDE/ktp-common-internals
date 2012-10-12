@@ -46,20 +46,24 @@ public:
 
     explicit AccountsListModel(QObject *parent = 0);
     virtual ~AccountsListModel();
+
+    void setAccountManager(const Tp::AccountManagerPtr &accountManager);
+
     virtual int rowCount(const QModelIndex & parent = QModelIndex()) const;
     virtual int columnCount(const QModelIndex &parent = QModelIndex()) const;
     virtual QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
     virtual Qt::ItemFlags flags(const QModelIndex &index) const;
     virtual bool setData(const QModelIndex &index, const QVariant &value, int role);
     virtual QModelIndex index(int row, int column, const QModelIndex &parent = QModelIndex()) const;
-    void addAccount(const Tp::AccountPtr &account);
 
 private Q_SLOTS:
+    void onAccountAdded(const Tp::AccountPtr &account);
     void onAccountItemRemoved();
     void onAccountItemUpdated();
 
 private:
-    QList<Tp::AccountPtr> m_accounts;
+    class Private;
+    Private * const d;
 
     const QString connectionStateString(const Tp::AccountPtr &account) const;
     const KIcon connectionStateIcon(const Tp::AccountPtr &account) const;
