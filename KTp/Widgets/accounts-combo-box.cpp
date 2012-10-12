@@ -39,9 +39,9 @@ KTp::AccountsComboBox::AccountsComboBox(QWidget *parent) :
     setModel(d->model);
 }
 
-void KTp::AccountsComboBox::setAccountManager(const Tp::AccountManager &accountManager)
+void KTp::AccountsComboBox::setAccountManager(const Tp::AccountManagerPtr &accountManager)
 {
-    //    d->model->settAccountManager(accountManager);
+    d->model->setAccountManager(accountManager);
 }
 
 Tp::AccountPtr KTp::AccountsComboBox::currentAccount()
