@@ -29,6 +29,8 @@ class KTp::WalletInterfacePrivate
 {
 public:
     WalletInterfacePrivate();
+    void ensureWalletIsReady();
+
     QScopedPointer<KWallet::Wallet> wallet;
     static const QLatin1String folderName;
     static const QLatin1String mapsPrefix;
@@ -40,6 +42,15 @@ using KTp::WalletInterfacePrivate;
 const QLatin1String WalletInterfacePrivate::folderName = QLatin1String("telepathy-kde");
 const QLatin1String WalletInterfacePrivate::mapsPrefix = QLatin1String("maps/");
 
+void WalletInterfacePrivate::ensureWalletIsReady()
+{
+    // If wallet was force-closed since last WalletInterface::openWallet(),
+    // try to reopen it.
+    if (wallet && !wallet->isOpen()) {
+	wallet.reset(KWallet::Wallet::openWallet(KWallet::Wallet::NetworkWallet(), 0, KWallet::Wallet::Asynchronous));
+    }
+}
+
 
 WalletInterfacePrivate::WalletInterfacePrivate() :
     wallet(KWallet::Wallet::openWallet(KWallet::Wallet::NetworkWallet(), 0, KWallet::Wallet::Asynchronous))
@@ -49,6 +60,8 @@ WalletInterfacePrivate::WalletInterfacePrivate() :
 KTp::PendingWallet* WalletInterface::openWallet()
 {
     K_GLOBAL_STATIC(KTp::WalletInterface, s_instance);
+
+    s_instance->d->ensureWalletIsReady();
     return new PendingWallet(s_instance);
 }
 
