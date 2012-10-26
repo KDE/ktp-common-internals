@@ -157,8 +157,6 @@ QVariant ContactModelItem::data(int role) const
     case ContactsModel::SSHContactCapabilityRole:
         return sshContactCapability();
     case ContactsModel::ClientTypesRole:
-        return clientTypes();
-    case ContactsModel::ClientTypesRole:
         return mPriv->mContact->clientTypes();
     default:
         break;
