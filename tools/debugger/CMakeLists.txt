@@ -8,7 +8,7 @@ include_directories(
 
 set(ktp-debugger_SRCS
     main-window.cpp
-    debug-messages-model.cpp
+    debug-message-view.cpp
     main.cpp
 )
 
