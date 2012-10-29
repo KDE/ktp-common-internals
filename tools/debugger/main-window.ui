@@ -40,9 +40,29 @@
       <attribute name="title">
        <string>Haze</string>
       </attribute>
-      <layout class="QVBoxLayout" name="verticalLayout">
+      <layout class="QHBoxLayout" name="horizontalLayout_4">
        <item>
         <widget class="DebugMessageView" name="hazeLogsView"/>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="salutTab">
+      <attribute name="title">
+       <string>Salut</string>
+      </attribute>
+      <layout class="QHBoxLayout" name="horizontalLayout_5">
+       <item>
+        <widget class="DebugMessageView" name="salutLogsView"/>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="rakiaTab">
+      <attribute name="title">
+       <string>Rakia</string>
+      </attribute>
+      <layout class="QHBoxLayout" name="horizontalLayout_6">
+       <item>
+        <widget class="DebugMessageView" name="rakiaLogsView"/>
        </item>
       </layout>
      </widget>
