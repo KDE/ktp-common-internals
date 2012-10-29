@@ -56,6 +56,16 @@
        </item>
       </layout>
      </widget>
+     <widget class="QWidget" name="rakiaTab">
+      <attribute name="title">
+       <string>Rakia</string>
+      </attribute>
+      <layout class="QHBoxLayout" name="horizontalLayout_6">
+       <item>
+        <widget class="DebugMessageView" name="rakiaLogsView"/>
+       </item>
+      </layout>
+     </widget>
     </widget>
    </item>
   </layout>

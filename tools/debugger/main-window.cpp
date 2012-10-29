@@ -29,6 +29,7 @@ MainWindow::MainWindow(QWidget *parent)
     m_ui.gabbleLogsView->setService(QLatin1String("org.freedesktop.Telepathy.ConnectionManager.gabble"));
     m_ui.hazeLogsView->setService(QLatin1String("org.freedesktop.Telepathy.ConnectionManager.haze"));
     m_ui.salutLogsView->setService(QLatin1String("org.freedesktop.Telepathy.ConnectionManager.salut"));
+    m_ui.rakiaLogsView->setService(QLatin1String("org.freedesktop.Telepathy.ConnectionManager.rakia"));
 }
 
 MainWindow::~MainWindow()
