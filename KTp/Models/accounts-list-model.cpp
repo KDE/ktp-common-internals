@@ -51,6 +51,9 @@ AccountsListModel::~AccountsListModel()
 void AccountsListModel::setAccountManager(const Tp::AccountManagerPtr &accountManager)
 {
     d->accountManager = accountManager;
+    Q_FOREACH(const Tp::AccountPtr &account, d->accountManager->allAccounts()) {
+        onAccountAdded(account);
+    }
     connect(d->accountManager.data(), SIGNAL(newAccount(Tp::AccountPtr)), SLOT(onAccountAdded(Tp::AccountPtr)));
 }
 
