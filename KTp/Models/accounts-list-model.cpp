@@ -284,13 +284,9 @@ const KIcon AccountsListModel::connectionStateIcon(const Tp::AccountPtr &account
 
 const QString AccountsListModel::connectionStatusReason(const Tp::AccountPtr &account) const
 {
-    if (!account->isEnabled()) {
-        return i18n("Click checkbox to enable");
-    }
-    else if (account->connectionStatusReason() == Tp::ConnectionStatusReasonRequested) {
+    if (account->connectionStatusReason() == Tp::ConnectionStatusReasonRequested) {
         return QString();
-    }
-    else {
+    } else {
         return KTp::ErrorDictionary::displayShortErrorMessage(account->connectionError());
     }
 }
