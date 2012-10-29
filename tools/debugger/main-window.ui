@@ -46,6 +46,16 @@
        </item>
       </layout>
      </widget>
+     <widget class="QWidget" name="salutTab">
+      <attribute name="title">
+       <string>Salut</string>
+      </attribute>
+      <layout class="QHBoxLayout" name="horizontalLayout_5">
+       <item>
+        <widget class="DebugMessageView" name="salutLogsView"/>
+       </item>
+      </layout>
+     </widget>
     </widget>
    </item>
   </layout>
