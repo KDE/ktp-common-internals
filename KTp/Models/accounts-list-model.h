@@ -59,8 +59,8 @@ public:
 
 private Q_SLOTS:
     void onAccountAdded(const Tp::AccountPtr &account);
-    void onAccountItemRemoved();
-    void onAccountItemUpdated();
+    void onAccountRemoved();
+    void onAccountUpdated();
 
 private:
     class Private;

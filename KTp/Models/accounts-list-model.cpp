@@ -175,7 +175,7 @@ Qt::ItemFlags AccountsListModel::flags(const QModelIndex &index) const
 
 void AccountsListModel::onAccountAdded(const Tp::AccountPtr &account)
 {
-    kDebug() << "Creating a new AccountItem from account:" << account.data();
+    kDebug() << "Creating a new Account from account:" << account.data();
 
     // Check if the account is already in the model.
     bool found = false;
@@ -194,7 +194,7 @@ void AccountsListModel::onAccountAdded(const Tp::AccountPtr &account)
                    << account.data()
                    << "to model, but it is already present. Doing nothing.";
     } else {
-        kDebug() << "Account not already in model. Create new AccountItem from account:"
+        kDebug() << "Account not already in model. Create new Account from account:"
                  << account.data();
 
         beginInsertRows(QModelIndex(), d->accounts.size(), d->accounts.size());
@@ -203,46 +203,46 @@ void AccountsListModel::onAccountAdded(const Tp::AccountPtr &account)
 
         connect(account.data(),
                 SIGNAL(stateChanged(bool)),
-                SLOT(onAccountItemUpdated()));
+                SLOT(onAccountUpdated()));
         connect(account.data(),
                 SIGNAL(displayNameChanged(QString)),
-                SLOT(onAccountItemUpdated()));
+                SLOT(onAccountUpdated()));
         connect(account.data(),
                 SIGNAL(connectionStatusChanged(Tp::ConnectionStatus)),
-                SLOT(onAccountItemUpdated()));
+                SLOT(onAccountUpdated()));
         connect(account.data(),
                 SIGNAL(iconNameChanged(QString)),
-                SLOT(onAccountItemUpdated()));
+                SLOT(onAccountUpdated()));
         connect(account.data(),
                 SIGNAL(stateChanged(bool)),
-                SLOT(onAccountItemUpdated()));
+                SLOT(onAccountUpdated()));
     }
 }
 
-void AccountsListModel::onAccountItemRemoved()
+void AccountsListModel::onAccountRemoved()
 {
     Tp::AccountPtr item = Tp::AccountPtr(qobject_cast<Tp::Account*>(sender()));
 
     Q_ASSERT(item);
     if (!item) {
-        kWarning() << "Not an AccountItem pointer:" << sender();
+        kWarning() << "Not an Account pointer:" << sender();
         return;
     }
 
-    // We can be pretty sure that there is only one reference to a specific AccountItem in the list
+    // We can be pretty sure that there is only one reference to a specific Account in the list
     // If we screw up here, the styling delegate will screw up even more
     beginRemoveRows(QModelIndex(), d->accounts.indexOf(item), d->accounts.indexOf(item));
     d->accounts.removeAll(item);
     endRemoveRows();
 }
 
-void AccountsListModel::onAccountItemUpdated()
+void AccountsListModel::onAccountUpdated()
 {
     Tp::AccountPtr item = Tp::AccountPtr(qobject_cast<Tp::Account*>(sender()));
 
     Q_ASSERT(item);
     if (!item) {
-        kWarning() << "Not an AccountItem pointer:" << sender();
+        kWarning() << "Not an Account pointer:" << sender();
         return;
     }
 
