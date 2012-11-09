@@ -7,6 +7,8 @@ set (ktp_common_internals_private_SRCS
      error-dictionary.cpp
      global-contact-manager.cpp
      global-presence.cpp
+     logs-importer.cpp
+     logs-importer-private.cpp
      presence.cpp
      service-availability-checker.cpp
      telepathy-handler-application.cpp
@@ -22,6 +24,7 @@ set (ktp_common_internals_private_HDRS
      error-dictionary.h
      global-contact-manager.h
      global-presence.h
+     logs-importer.h
      presence.h
      service-availability-checker.h
      telepathy-handler-application.h
