@@ -22,7 +22,6 @@
 #include "join-chat-room-dialog.h"
 #include "ui_join-chat-room-dialog.h"
 
-#include <KTp/Models/accounts-model.h>
 #include <KTp/Models/rooms-model.h>
 
 #include <KConfig>
