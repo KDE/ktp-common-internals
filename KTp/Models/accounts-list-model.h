@@ -1,7 +1,8 @@
 /*
- * This file is part of telepathy-accounts-kcm
+ * This file is part of ktp-common-internals
  *
  * Copyright (C) 2009 Collabora Ltd. <info@collabora.com>
+ * Copyright (C) 2012 David Edmundson <kde@davidedmundson.co.uk>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -18,8 +19,8 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef TELEPATHY_ACCOUNTS_KCM_ACCOUNTS_LIST_MODEL_H
-#define TELEPATHY_ACCOUNTS_KCM_ACCOUNTS_LIST_MODEL_H
+#ifndef TELEPATHY_ACCOUNTS_LIST_MODEL_H
+#define TELEPATHY_ACCOUNTS_LIST_MODEL_H
 
 #include <QtCore/QAbstractListModel>
 

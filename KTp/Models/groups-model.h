@@ -51,7 +51,7 @@ public:
         GroupNameRole = Qt::UserRole + 1000
     };
 
-    explicit GroupsModel(ContactsModel* am, QObject* parent = 0);
+    explicit GroupsModel(ContactsModel *am, QObject* parent = 0);
     virtual ~GroupsModel();
 
     virtual int rowCount(const QModelIndex &parent = QModelIndex()) const;

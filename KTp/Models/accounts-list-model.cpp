@@ -1,7 +1,8 @@
 /*
- * This file is part of telepathy-accounts-kcm
+ * This file is part of ktp-common-internals
  *
  * Copyright (C) 2009 Collabora Ltd. <info@collabora.com>
+ * Copyright (C) 2012 David Edmundson <kde@davidedmundson.co.uk>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -26,6 +27,7 @@
 #include <KPixmapSequence>
 
 #include <KTp/error-dictionary.h>
+#include <KTp/presence.h>
 
 #include <TelepathyQt/Account>
 #include <TelepathyQt/AccountManager>
@@ -253,7 +255,7 @@ const QString AccountsListModel::connectionStateString(const Tp::AccountPtr &acc
     if (account->isEnabled()) {
         switch (account->connectionStatus()) {
         case Tp::ConnectionStatusConnected:
-            return i18n("Online");
+            return KTp::Presence(account->currentPresence()).displayString();
         case Tp::ConnectionStatusConnecting:
             return i18nc("This is a connection state", "Connecting");
         case Tp::ConnectionStatusDisconnected:
@@ -271,7 +273,7 @@ const KIcon AccountsListModel::connectionStateIcon(const Tp::AccountPtr &account
     if (account->isEnabled()) {
         switch (account->connectionStatus()) {
         case Tp::ConnectionStatusConnected:
-            return KIcon(QLatin1String("user-online"));
+            return KTp::Presence(account->currentPresence()).icon();
         case Tp::ConnectionStatusConnecting:
             //imho this is not really worth animating, but feel free to play around..
             return KIcon(KPixmapSequence(QLatin1String("process-working"), 22).frameAt(0));
