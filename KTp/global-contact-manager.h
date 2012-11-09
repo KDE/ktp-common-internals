@@ -54,8 +54,8 @@ public:
     AccountContactList allKnownContacts();
 
 Q_SIGNALS:
-    void allKnownContactsChanged(const AccountContactList &contactsAdded, const AccountContactList &contactsRemoved);
-    void presencePublicationRequested(const AccountContactList &contacts);
+    void allKnownContactsChanged(const KTp::AccountContactList &contactsAdded, const KTp::AccountContactList &contactsRemoved);
+    void presencePublicationRequested(const KTp::AccountContactList &contacts);
 
 private Q_SLOTS:
     void onNewAccount(const Tp::AccountPtr &account);

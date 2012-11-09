@@ -27,7 +27,7 @@
 #include <KTp/ktp-export.h>
 
 class KLineEdit;
-class AccountsModel;
+class ContactsModel;
 class AccountsFilterModel;
 namespace KTp
 {
@@ -47,7 +47,7 @@ class KTP_EXPORT ContactGridWidget : public QWidget
                WRITE setIconSize
                NOTIFY iconSizeChanged)
 public:
-    explicit ContactGridWidget(AccountsModel *model, QWidget *parent = 0);
+    explicit ContactGridWidget(ContactsModel *model, QWidget *parent = 0);
     virtual ~ContactGridWidget();
 
     virtual QString displayNameFilter() const;

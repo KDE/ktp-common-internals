@@ -20,8 +20,8 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef TELEPATHY_ACCOUNTS_MODEL_H
-#define TELEPATHY_ACCOUNTS_MODEL_H
+#ifndef TELEPATHY_CONTACTS_MODEL_H
+#define TELEPATHY_CONTACTS_MODEL_H
 
 #include <QAbstractListModel>
 
@@ -35,19 +35,32 @@
 class ContactModelItem;
 class TreeNode;
 
-class KTP_EXPORT AccountsModel : public QAbstractItemModel
+class KTP_EXPORT ContactsModel : public QAbstractItemModel
 {
     Q_OBJECT
-    Q_DISABLE_COPY(AccountsModel)
+    Q_DISABLE_COPY(ContactsModel)
     Q_PROPERTY(int accountCount READ accountCount NOTIFY accountCountChanged)
     Q_ENUMS(Role)
+    Q_ENUMS(RowType)
 
 public:
+
+    enum RowType {
+        ContactRowType,
+        AccountRowType,
+        GroupRowType,
+        UserRowType
+    };
+
     enum Role {
         // general roles
         ItemRole = Qt::UserRole,
         AvatarRole,
         IdRole,
+        TypeRole,
+
+        AccountRole,
+        ContactRole,
 
         // account roles
         ValidRole,
@@ -101,8 +114,8 @@ public:
         CustomRole // a placemark for custom roles in inherited models
     };
 
-    explicit AccountsModel(QObject *parent = 0);
-    virtual ~AccountsModel();
+    explicit ContactsModel(QObject *parent = 0);
+    virtual ~ContactsModel();
 
     void setAccountManager(const Tp::AccountManagerPtr &am);
 
@@ -138,5 +151,8 @@ private:
     friend struct Private;
     Private *mPriv;
 };
+
+Q_DECLARE_METATYPE(Tp::ContactPtr);
+Q_DECLARE_METATYPE(Tp::AccountPtr);
 
 #endif // TELEPATHY_ACCOUNTS_MODEL_H

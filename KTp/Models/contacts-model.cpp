@@ -20,7 +20,7 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#include "accounts-model.h"
+#include "contacts-model.h"
 
 #include <TelepathyQt/ContactManager>
 #include <TelepathyQt/PendingReady>
@@ -30,7 +30,7 @@
 
 #include <KDebug>
 
-struct AccountsModel::Private
+struct ContactsModel::Private
 {
     Private()
     {
@@ -42,15 +42,15 @@ struct AccountsModel::Private
     TreeNode *mTree;
 };
 
-TreeNode *AccountsModel::Private::node(const QModelIndex &index) const
+TreeNode *ContactsModel::Private::node(const QModelIndex &index) const
 {
     TreeNode *node = reinterpret_cast<TreeNode *>(index.internalPointer());
     return node ? node : mTree;
 }
 
-AccountsModel::AccountsModel(QObject *parent)
+ContactsModel::ContactsModel(QObject *parent)
     : QAbstractItemModel(parent),
-      mPriv(new AccountsModel::Private())
+      mPriv(new ContactsModel::Private())
 {
     mPriv->mTree = new TreeNode;
     connect(mPriv->mTree,
@@ -113,21 +113,18 @@ AccountsModel::AccountsModel(QObject *parent)
     setRoleNames(roles);
 }
 
-AccountsModel::~AccountsModel()
+ContactsModel::~ContactsModel()
 {
     mPriv->mTree->deleteLater();
     delete mPriv;
 }
 
-void AccountsModel::setAccountManager(const Tp::AccountManagerPtr &am)
+void ContactsModel::setAccountManager(const Tp::AccountManagerPtr &am)
 {
     if (! mPriv->mAM.isNull()) {
         kDebug() << "account manager already set, ignoring";
     }
 
-    if (!am->isReady()) {
-        kDebug() << "Ready Account Manager expected";
-    }
     mPriv->mAM = am;
     Q_FOREACH (Tp::AccountPtr account, mPriv->mAM->allAccounts()) {
        onNewAccount(account);
@@ -138,7 +135,7 @@ void AccountsModel::setAccountManager(const Tp::AccountManagerPtr &am)
             SLOT(onNewAccount(Tp::AccountPtr)));
 }
 
-void AccountsModel::onNewAccount(const Tp::AccountPtr &account)
+void ContactsModel::onNewAccount(const Tp::AccountPtr &account)
 {
     AccountsModelItem *accountNode = new AccountsModelItem(account);
 
@@ -148,7 +145,7 @@ void AccountsModel::onNewAccount(const Tp::AccountPtr &account)
     onItemsAdded(mPriv->mTree, QList<TreeNode *>() << accountNode);
 }
 
-void AccountsModel::onItemChanged(TreeNode *node)
+void ContactsModel::onItemChanged(TreeNode *node)
 {
     if (node->parent()) {
         //if it is a group item
@@ -160,7 +157,7 @@ void AccountsModel::onItemChanged(TreeNode *node)
     Q_EMIT dataChanged(accountIndex, accountIndex);
 }
 
-void AccountsModel::onItemsAdded(TreeNode *parent, const QList<TreeNode *> &nodes)
+void ContactsModel::onItemsAdded(TreeNode *parent, const QList<TreeNode *> &nodes)
 {
     QModelIndex parentIndex = index(parent);
     int currentSize = rowCount(parentIndex);
@@ -173,7 +170,7 @@ void AccountsModel::onItemsAdded(TreeNode *parent, const QList<TreeNode *> &node
     Q_EMIT dataChanged(index(parent), index(parent));
 }
 
-void AccountsModel::onItemsRemoved(TreeNode *parent, int first, int last)
+void ContactsModel::onItemsRemoved(TreeNode *parent, int first, int last)
 {
     QModelIndex parentIndex = index(parent);
     QList<TreeNode *> removedItems;
@@ -186,12 +183,12 @@ void AccountsModel::onItemsRemoved(TreeNode *parent, int first, int last)
     Q_EMIT accountCountChanged();
 }
 
-int AccountsModel::accountCount() const
+int ContactsModel::accountCount() const
 {
     return mPriv->mTree->size();
 }
 
-QObject *AccountsModel::accountItemForId(const QString &id) const
+QObject *ContactsModel::accountItemForId(const QString &id) const
 {
     for (int i = 0; i < mPriv->mTree->size(); ++i) {
         AccountsModelItem *item = qobject_cast<AccountsModelItem*>(mPriv->mTree->childAt(i));
@@ -207,7 +204,7 @@ QObject *AccountsModel::accountItemForId(const QString &id) const
     return 0;
 }
 
-QObject *AccountsModel::contactItemForId(const QString &accountId, const QString &contactId) const
+QObject *ContactsModel::contactItemForId(const QString &accountId, const QString &contactId) const
 {
     AccountsModelItem *accountItem = qobject_cast<AccountsModelItem*>(accountItemForId(accountId));
     if (!accountItem) {
@@ -228,18 +225,18 @@ QObject *AccountsModel::contactItemForId(const QString &accountId, const QString
     return 0;
 }
 
-int AccountsModel::columnCount(const QModelIndex &parent) const
+int ContactsModel::columnCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent);
     return 1;
 }
 
-int AccountsModel::rowCount(const QModelIndex &parent) const
+int ContactsModel::rowCount(const QModelIndex &parent) const
 {
     return mPriv->node(parent)->size();
 }
 
-QVariant AccountsModel::data(const QModelIndex &index, int role) const
+QVariant ContactsModel::data(const QModelIndex &index, int role) const
 {
     if (!index.isValid()) {
         return QVariant();
@@ -249,7 +246,7 @@ QVariant AccountsModel::data(const QModelIndex &index, int role) const
 }
 
 
-Tp::AccountPtr AccountsModel::accountForContactItem(ContactModelItem *contactItem) const
+Tp::AccountPtr ContactsModel::accountForContactItem(ContactModelItem *contactItem) const
 {
     AccountsModelItem *accountItem = qobject_cast<AccountsModelItem*>(contactItem->parent());
     if (accountItem) {
@@ -259,7 +256,7 @@ Tp::AccountPtr AccountsModel::accountForContactItem(ContactModelItem *contactIte
     }
 }
 
-Tp::AccountPtr AccountsModel::accountPtrForPath(const QString& accountPath) const
+Tp::AccountPtr ContactsModel::accountPtrForPath(const QString& accountPath) const
 {
     if (mPriv->mAM.isNull()) {
         return Tp::AccountPtr();
@@ -267,7 +264,7 @@ Tp::AccountPtr AccountsModel::accountPtrForPath(const QString& accountPath) cons
     return mPriv->mAM->accountForPath(accountPath);
 }
 
-Qt::ItemFlags AccountsModel::flags(const QModelIndex &index) const
+Qt::ItemFlags ContactsModel::flags(const QModelIndex &index) const
 {
     if (index.isValid()) {
         return Qt::ItemIsEnabled | Qt::ItemIsSelectable;
@@ -276,7 +273,7 @@ Qt::ItemFlags AccountsModel::flags(const QModelIndex &index) const
     return QAbstractItemModel::flags(index) | Qt::ItemIsEditable;
 }
 
-bool AccountsModel::setData(const QModelIndex &index, const QVariant &value, int role)
+bool ContactsModel::setData(const QModelIndex &index, const QVariant &value, int role)
 {
     if (index.isValid()) {
         mPriv->node(index)->setData(role, value);
@@ -285,7 +282,7 @@ bool AccountsModel::setData(const QModelIndex &index, const QVariant &value, int
     return false;
 }
 
-QModelIndex AccountsModel::index(int row, int column, const QModelIndex &parent) const
+QModelIndex ContactsModel::index(int row, int column, const QModelIndex &parent) const
 {
     TreeNode *parentNode = mPriv->node(parent);
     Q_ASSERT(parentNode);
@@ -296,7 +293,7 @@ QModelIndex AccountsModel::index(int row, int column, const QModelIndex &parent)
     return QModelIndex();
 }
 
-QModelIndex AccountsModel::index(TreeNode *node) const
+QModelIndex ContactsModel::index(TreeNode *node) const
 {
     if (node->parent()) {
         return createIndex(node->parent()->indexOf(node), 0, node);
@@ -305,7 +302,7 @@ QModelIndex AccountsModel::index(TreeNode *node) const
     }
 }
 
-QModelIndex AccountsModel::parent(const QModelIndex &index) const
+QModelIndex ContactsModel::parent(const QModelIndex &index) const
 {
     if (!index.isValid()) {
         return QModelIndex();
@@ -313,11 +310,11 @@ QModelIndex AccountsModel::parent(const QModelIndex &index) const
 
     TreeNode *currentNode = mPriv->node(index);
     if (currentNode->parent()) {
-        return AccountsModel::index(currentNode->parent());
+        return ContactsModel::index(currentNode->parent());
     } else {
         // no parent: return root node
         return QModelIndex();
     }
 }
 
-#include "accounts-model.moc"
+#include "contacts-model.moc"

@@ -25,7 +25,7 @@
 #include <TelepathyQt/Account>
 #include <TelepathyQt/ContactManager>
 
-#include "accounts-model.h"
+#include "contacts-model.h"
 #include "contact-model-item.h"
 #include "capabilities-hack-private.h"
 
@@ -139,80 +139,84 @@ AccountsModelItem::~AccountsModelItem()
 QVariant AccountsModelItem::data(int role) const
 {
     switch (role) {
-    case AccountsModel::ItemRole:
+    case ContactsModel::ItemRole:
         return QVariant::fromValue((AccountsModelItem*)this);
-    case AccountsModel::IdRole:
+    case ContactsModel::IdRole:
         return mPriv->mAccount->uniqueIdentifier();
-    case AccountsModel::AvatarRole:
+    case ContactsModel::TypeRole:
+        return ContactsModel::AccountRowType;
+    case ContactsModel::AccountRole:
+        return QVariant::fromValue(mPriv->mAccount);
+    case ContactsModel::AvatarRole:
         return QVariant::fromValue(mPriv->mAccount->avatar());
-    case AccountsModel::ValidRole:
+    case ContactsModel::ValidRole:
         return mPriv->mAccount->isValid();
-    case AccountsModel::EnabledRole:
+    case ContactsModel::EnabledRole:
         return mPriv->mAccount->isEnabled();
-    case AccountsModel::ConnectionManagerNameRole:
+    case ContactsModel::ConnectionManagerNameRole:
         return mPriv->mAccount->cmName();
-    case AccountsModel::ProtocolNameRole:
+    case ContactsModel::ProtocolNameRole:
         return mPriv->mAccount->protocolName();
-    case AccountsModel::DisplayNameRole:
+    case ContactsModel::DisplayNameRole:
     case Qt::DisplayRole:
         return mPriv->mAccount->displayName();
     case Qt::DecorationRole:
         return KIcon(mPriv->mAccount->iconName());
-    case AccountsModel::IconRole:
+    case ContactsModel::IconRole:
         return mPriv->mAccount->iconName();
-    case AccountsModel::NicknameRole:
+    case ContactsModel::NicknameRole:
         return mPriv->mAccount->nickname();
-    case AccountsModel::ConnectsAutomaticallyRole:
+    case ContactsModel::ConnectsAutomaticallyRole:
         return mPriv->mAccount->connectsAutomatically();
-    case AccountsModel::ChangingPresenceRole:
+    case ContactsModel::ChangingPresenceRole:
         return mPriv->mAccount->isChangingPresence();
-    case AccountsModel::AutomaticPresenceRole:
+    case ContactsModel::AutomaticPresenceRole:
         return QVariant::fromValue(KTp::Presence(mPriv->mAccount->automaticPresence()));
-    case AccountsModel::AutomaticPresenceTypeRole:
+    case ContactsModel::AutomaticPresenceTypeRole:
         return mPriv->mAccount->automaticPresence().type();
-    case AccountsModel::AutomaticPresenceStatusRole:
+    case ContactsModel::AutomaticPresenceStatusRole:
         return mPriv->mAccount->automaticPresence().status();
-    case AccountsModel::AutomaticPresenceStatusMessageRole:
+    case ContactsModel::AutomaticPresenceStatusMessageRole:
         return mPriv->mAccount->automaticPresence().statusMessage();
-    case AccountsModel::CurrentPresenceRole:
+    case ContactsModel::CurrentPresenceRole:
         return QVariant::fromValue(KTp::Presence(mPriv->mAccount->currentPresence()));
-    case AccountsModel::CurrentPresenceTypeRole:
+    case ContactsModel::CurrentPresenceTypeRole:
         return mPriv->mAccount->currentPresence().type();
-    case AccountsModel::CurrentPresenceStatusRole:
+    case ContactsModel::CurrentPresenceStatusRole:
         return mPriv->mAccount->currentPresence().status();
-    case AccountsModel::CurrentPresenceStatusMessageRole:
+    case ContactsModel::CurrentPresenceStatusMessageRole:
         return mPriv->mAccount->currentPresence().statusMessage();
-    case AccountsModel::RequestedPresenceRole:
+    case ContactsModel::RequestedPresenceRole:
         return QVariant::fromValue(KTp::Presence(mPriv->mAccount->requestedPresence()));
-    case AccountsModel::RequestedPresenceTypeRole:
+    case ContactsModel::RequestedPresenceTypeRole:
         return mPriv->mAccount->requestedPresence().type();
-    case AccountsModel::RequestedPresenceStatusRole:
+    case ContactsModel::RequestedPresenceStatusRole:
         return mPriv->mAccount->requestedPresence().status();
-    case AccountsModel::RequestedPresenceStatusMessageRole:
+    case ContactsModel::RequestedPresenceStatusMessageRole:
         return mPriv->mAccount->requestedPresence().statusMessage();
-    case AccountsModel::ConnectionStatusRole:
+    case ContactsModel::ConnectionStatusRole:
         return mPriv->mAccount->connectionStatus();
-    case AccountsModel::ConnectionStatusReasonRole:
+    case ContactsModel::ConnectionStatusReasonRole:
         return mPriv->mAccount->connectionStatusReason();
-    case AccountsModel::TextChatCapabilityRole:
+    case ContactsModel::TextChatCapabilityRole:
         return mPriv->mAccount->capabilities().textChats();
-    case AccountsModel::MediaCallCapabilityRole:
+    case ContactsModel::MediaCallCapabilityRole:
         return CapabilitiesHackPrivate::audioCalls(mPriv->mAccount->capabilities(),
                                                    mPriv->mAccount->cmName())
             || CapabilitiesHackPrivate::videoCalls(mPriv->mAccount->capabilities(),
                                                    mPriv->mAccount->cmName());
-    case AccountsModel::AudioCallCapabilityRole:
+    case ContactsModel::AudioCallCapabilityRole:
         return CapabilitiesHackPrivate::audioCalls(mPriv->mAccount->capabilities(),
                                                    mPriv->mAccount->cmName());
-    case AccountsModel::VideoCallCapabilityRole:
+    case ContactsModel::VideoCallCapabilityRole:
         return CapabilitiesHackPrivate::videoCalls(mPriv->mAccount->capabilities(),
                                                    mPriv->mAccount->cmName());
-    case AccountsModel::UpgradeCallCapabilityRole:
+    case ContactsModel::UpgradeCallCapabilityRole:
         return mPriv->mAccount->capabilities().upgradingCalls();
-    case AccountsModel::FileTransferCapabilityRole:
+    case ContactsModel::FileTransferCapabilityRole:
         return mPriv->mAccount->capabilities().fileTransfers();
-    case AccountsModel::DesktopSharingCapabilityRole:
-    case AccountsModel::SSHContactCapabilityRole:
+    case ContactsModel::DesktopSharingCapabilityRole:
+    case ContactsModel::SSHContactCapabilityRole:
         return mPriv->mAccount->capabilities().streamTubes();
     default:
         return QVariant();
@@ -222,19 +226,19 @@ QVariant AccountsModelItem::data(int role) const
 bool AccountsModelItem::setData(int role, const QVariant &value)
 {
     switch (role) {
-    case AccountsModel::EnabledRole:
+    case ContactsModel::EnabledRole:
         setEnabled(value.toBool());
         return true;
-    case AccountsModel::RequestedPresenceRole:
+    case ContactsModel::RequestedPresenceRole:
         mPriv->setStatus(value.toString());
         return true;
-    case AccountsModel::RequestedPresenceStatusMessageRole:
+    case ContactsModel::RequestedPresenceStatusMessageRole:
         mPriv->setStatusMessage(value.toString());
         return true;
-    case AccountsModel::NicknameRole:
+    case ContactsModel::NicknameRole:
         setNickname(value.toString());
         return true;
-    case AccountsModel::AvatarRole:
+    case ContactsModel::AvatarRole:
         mPriv->mAccount->setAvatar(value.value<Tp::Avatar>());
         return true;
     default:

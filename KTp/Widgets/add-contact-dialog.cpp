@@ -22,7 +22,7 @@
 #include "add-contact-dialog.h"
 #include "ui_add-contact-dialog.h"
 
-#include <KTp/Models/accounts-model.h>
+#include <KTp/Models/contacts-model.h>
 #include <KTp/Models/accounts-model-item.h>
 
 #include <QObject>
@@ -55,7 +55,7 @@ SubscribableAccountsModel::SubscribableAccountsModel(QObject *parent)
 
 bool SubscribableAccountsModel::filterAcceptsRow(int source_row, const QModelIndex &source_parent) const
 {
-    AccountsModelItem* item = sourceModel()->index(source_row, 0, source_parent).data(AccountsModel::ItemRole).value<AccountsModelItem*>();
+    AccountsModelItem* item = sourceModel()->index(source_row, 0, source_parent).data(ContactsModel::ItemRole).value<AccountsModelItem*>();
 
     if (item) {
         Tp::AccountPtr account = item->account();
@@ -85,7 +85,7 @@ struct KTP_NO_EXPORT AddContactDialog::Private
     bool acceptInProgress;
 };
 
-AddContactDialog::AddContactDialog(AccountsModel *accountModel, QWidget *parent) :
+AddContactDialog::AddContactDialog(ContactsModel *accountModel, QWidget *parent) :
     KDialog(parent),
     d(new Private)
 {
@@ -112,7 +112,7 @@ AddContactDialog::~AddContactDialog()
 void AddContactDialog::accept()
 {
     Tp::AccountPtr account;
-    QVariant itemData = d->ui->accountCombo->itemData(d->ui->accountCombo->currentIndex(), AccountsModel::ItemRole);
+    QVariant itemData = d->ui->accountCombo->itemData(d->ui->accountCombo->currentIndex(), ContactsModel::ItemRole);
     AccountsModelItem* item = itemData.value<AccountsModelItem*>();
     if (item) {
         account = item->account();

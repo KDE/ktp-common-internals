@@ -34,7 +34,7 @@ namespace Tp {
 class PendingOperation;
 }
 
-class AccountsModel;
+class ContactsModel;
 class QTcpSocket;
 
 class AccountsFilterModel;

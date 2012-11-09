@@ -29,7 +29,7 @@
 #include "accounts-model-item.h"
 #include "groups-model-item.h"
 #include "proxy-tree-node.h"
-#include "accounts-model.h"
+#include "contacts-model.h"
 #include "contact-model-item.h"
 
 #include <KDebug>
@@ -39,7 +39,7 @@
 
 struct GroupsModel::Private
 {
-    Private(AccountsModel *am)
+    Private(ContactsModel *am)
         : mAM(am)
     {
         KGlobal::locale()->insertCatalog(QLatin1String("ktp-common-internals"));
@@ -48,7 +48,7 @@ struct GroupsModel::Private
 
     TreeNode *node(const QModelIndex &index) const;
 
-    AccountsModel *mAM;
+    ContactsModel *mAM;
     TreeNode *mTree;
 };
 
@@ -58,7 +58,7 @@ TreeNode *GroupsModel::Private::node(const QModelIndex &index) const
     return node ? node : mTree;
 }
 
-GroupsModel::GroupsModel(AccountsModel *am, QObject *parent)
+GroupsModel::GroupsModel(ContactsModel *am, QObject *parent)
     : QAbstractItemModel(parent),
       mPriv(new GroupsModel::Private(am))
 {
@@ -230,13 +230,13 @@ void GroupsModel::onSourceAccountAdded(const QModelIndex &parent, int start, int
     }
 
     for (int i=start; i <= end; i++) {
-        AccountsModelItem *accountItem =mPriv->mAM->index(i).data(AccountsModel::ItemRole).value<AccountsModelItem*>();
+        AccountsModelItem *accountItem =mPriv->mAM->index(i).data(ContactsModel::ItemRole).value<AccountsModelItem*>();
         if (accountItem) {
             for (int i = 0; i < accountItem->size(); i++) {
                 ContactModelItem *contactItem= qobject_cast<ContactModelItem*>(accountItem->childAt(i));
                 if (contactItem) {
                     qDebug() << "contact item found";
-                    QStringList groups = contactItem->data(AccountsModel::GroupsRole).toStringList();
+                    QStringList groups = contactItem->data(ContactsModel::GroupsRole).toStringList();
                     addContactToGroups(contactItem, groups);
                 }
             }
@@ -265,7 +265,7 @@ void GroupsModel::onContactRemovedFromGroup(const QString& group)
 
 void GroupsModel::removeContactFromGroup(ProxyTreeNode* proxyNode, const QString& group)
 {
-    QStringList contactGroups = proxyNode->data(AccountsModel::ItemRole).value<ContactModelItem*>()->contact()->groups();
+    QStringList contactGroups = proxyNode->data(ContactsModel::ItemRole).value<ContactModelItem*>()->contact()->groups();
 
     contactGroups.removeOne(group);
 
@@ -277,11 +277,11 @@ void GroupsModel::removeContactFromGroup(ProxyTreeNode* proxyNode, const QString
 
         //if the the contact has no groups left, then put it in Ungrouped group
         if (contactGroups.isEmpty()) {
-            addContactToGroups(proxyNode->data(AccountsModel::ItemRole).value<ContactModelItem*>(), contactGroups);
+            addContactToGroups(proxyNode->data(ContactsModel::ItemRole).value<ContactModelItem*>(), contactGroups);
         }
 
         qobject_cast<GroupsModelItem*>(proxyNode->parent())->removeProxyContact(proxyNode);
-        ContactModelItem *contactItem = proxyNode->data(AccountsModel::ItemRole).value<ContactModelItem*>();
+        ContactModelItem *contactItem = proxyNode->data(ContactsModel::ItemRole).value<ContactModelItem*>();
         Q_ASSERT(contactItem);
         contactItem->contact().data()->manager().data()->removeContactsFromGroup(group, QList<Tp::ContactPtr>() << contactItem->contact());
     }
@@ -289,7 +289,7 @@ void GroupsModel::removeContactFromGroup(ProxyTreeNode* proxyNode, const QString
 
 void GroupsModel::addContactToGroups(ProxyTreeNode* proxyNode, const QString& group)
 {
-    addContactToGroups(proxyNode->data(AccountsModel::ItemRole).value<ContactModelItem*>(), group);
+    addContactToGroups(proxyNode->data(ContactsModel::ItemRole).value<ContactModelItem*>(), group);
 }
 
 void GroupsModel::addContactToGroups(ContactModelItem* contactItem, const QString& group)
@@ -329,7 +329,7 @@ void GroupsModel::addContactToGroups(ContactModelItem* contactItem, QStringList 
                 if (savedGroupItem->groupName().isEmpty()) {
                     for (int i = 0; i < savedGroupItem->size(); i++) {
                         ProxyTreeNode *tmpNode = qobject_cast<ProxyTreeNode*>(savedGroupItem->childAt(i));
-                        if (tmpNode->data(AccountsModel::ItemRole).value<ContactModelItem*>()->contact()->id() == contactItem->contact()->id()) {
+                        if (tmpNode->data(ContactsModel::ItemRole).value<ContactModelItem*>()->contact()->id() == contactItem->contact()->id()) {
                             removeContactFromGroup(tmpNode, QString());
                             if (groupExists) {
                                 break;

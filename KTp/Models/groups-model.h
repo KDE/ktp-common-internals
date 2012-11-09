@@ -34,7 +34,7 @@
 
 class ContactModelItem;
 class GroupsModelItem;
-class AccountsModel;
+class ContactsModel;
 class ProxyTreeNode;
 class TreeNode;
 
@@ -51,7 +51,7 @@ public:
         GroupNameRole = Qt::UserRole + 1000
     };
 
-    explicit GroupsModel(AccountsModel* am, QObject* parent = 0);
+    explicit GroupsModel(ContactsModel *am, QObject* parent = 0);
     virtual ~GroupsModel();
 
     virtual int rowCount(const QModelIndex &parent = QModelIndex()) const;
