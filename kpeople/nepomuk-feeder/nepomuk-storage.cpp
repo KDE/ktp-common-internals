@@ -275,7 +275,7 @@ void NepomukStorage::init()
     // Get the ME nco:PersonContact (creating them if necessary)
 
     QLatin1String query("select ?o where { <nepomuk:/me> pimo:groundingOccurrence ?o."
-                        "?o a nco:PersonContect .}");
+                        "?o a nco:PersonContact .}");
     Soprano::Model* model = Nepomuk2::ResourceManager::instance()->mainModel();
     Soprano::QueryResultIterator it = model->executeQuery( query, Soprano::Query::QueryLanguageSparql );
 
