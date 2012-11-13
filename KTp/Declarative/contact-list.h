@@ -19,7 +19,7 @@
 #ifndef CONTACT_LIST_H
 #define CONTACT_LIST_H
 
-#include <KTp/Models/accounts-model.h>
+#include <KTp/Models/contacts-model.h>
 #include <KTp/Models/flat-model-proxy.h>
 #include <KTp/Models/accounts-filter-model.h>
 
@@ -47,7 +47,7 @@ private slots:
     void onAccountManagerReady(Tp::PendingOperation *op);
     
 private:
-    AccountsModel* m_accountsModel;
+    ContactsModel* m_contactsModel;
     AccountsFilterModel* m_filterModel;
     FlatModelProxy* m_flatModel; 
     Tp::AccountManagerPtr m_accountManager;

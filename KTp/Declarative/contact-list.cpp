@@ -33,11 +33,11 @@
 
 ContactList::ContactList(QObject *parent)
     : QObject(parent),
-      m_accountsModel(new AccountsModel(this)),
+      m_contactsModel(new ContactsModel(this)),
       m_filterModel(new AccountsFilterModel(this)),
       m_flatModel(0)
 {
-    m_filterModel->setSourceModel(m_accountsModel);
+    m_filterModel->setSourceModel(m_contactsModel);
     //flat model takes the source as a constructor parameter, the other's don't.
     //due to a bug somewhere creating the flat model proxy with the filter model as a source before the filter model has a source means the rolenames do not get propgated up
     m_flatModel = new FlatModelProxy(m_filterModel);
@@ -84,7 +84,7 @@ ContactList::ContactList(QObject *parent)
 void ContactList::onAccountManagerReady(Tp::PendingOperation *op)
 {
     Q_UNUSED(op);
-    m_accountsModel->setAccountManager(m_accountManager);
+    m_contactsModel->setAccountManager(m_accountManager);
 }
 
 FlatModelProxy * ContactList::flatModel() const
@@ -103,7 +103,7 @@ void ContactList::startChat(ContactModelItem *contactItem)
     Tp::ContactPtr contact = contactItem->contact();
 
     kDebug() << "Requesting chat for contact" << contact->alias();
-    Tp::AccountPtr account = m_accountsModel->accountForContactItem(contactItem);
+    Tp::AccountPtr account = m_contactsModel->accountForContactItem(contactItem);
 
     Tp::ChannelRequestHints hints;
     hints.setHint("org.freedesktop.Telepathy.ChannelRequest","DelegateToPreferredHandler", QVariant(true));
