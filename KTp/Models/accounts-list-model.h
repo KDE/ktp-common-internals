@@ -48,7 +48,7 @@ public:
     explicit AccountsListModel(QObject *parent = 0);
     virtual ~AccountsListModel();
 
-    void setAccountManager(const Tp::AccountManagerPtr &accountManager);
+    void setAccountSet(const Tp::AccountSetPtr &accountSet);
 
     virtual int rowCount(const QModelIndex & parent = QModelIndex()) const;
     virtual int columnCount(const QModelIndex &parent = QModelIndex()) const;
@@ -59,7 +59,7 @@ public:
 
 private Q_SLOTS:
     void onAccountAdded(const Tp::AccountPtr &account);
-    void onAccountRemoved();
+    void onAccountRemoved(const Tp::AccountPtr &account);
     void onAccountUpdated();
 
 private:

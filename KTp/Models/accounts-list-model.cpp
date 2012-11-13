@@ -30,12 +30,12 @@
 #include <KTp/presence.h>
 
 #include <TelepathyQt/Account>
-#include <TelepathyQt/AccountManager>
+#include <TelepathyQt/AccountSet>
 
 class AccountsListModel::Private {
 public:
     QList<Tp::AccountPtr> accounts;
-    Tp::AccountManagerPtr accountManager;
+    Tp::AccountSetPtr accountSet;
 
 };
 
@@ -50,13 +50,19 @@ AccountsListModel::~AccountsListModel()
 {
 }
 
-void AccountsListModel::setAccountManager(const Tp::AccountManagerPtr &accountManager)
+void AccountsListModel::setAccountSet(const Tp::AccountSetPtr &accountSet)
 {
-    d->accountManager = accountManager;
-    Q_FOREACH(const Tp::AccountPtr &account, d->accountManager->allAccounts()) {
+    beginResetModel();
+    d->accounts.clear();
+    endResetModel();
+
+    d->accountSet = accountSet;
+    Q_FOREACH(const Tp::AccountPtr &account, d->accountSet->accounts()) {
         onAccountAdded(account);
     }
-    connect(d->accountManager.data(), SIGNAL(newAccount(Tp::AccountPtr)), SLOT(onAccountAdded(Tp::AccountPtr)));
+    connect(d->accountSet.data(), SIGNAL(accountAdded(Tp::AccountPtr)), SLOT(onAccountAdded(Tp::AccountPtr)));
+    connect(d->accountSet.data(), SIGNAL(accountRemoved(Tp::AccountPtr)), SLOT(onAccountRemoved(Tp::AccountPtr)));
+
 }
 
 int AccountsListModel::rowCount(const QModelIndex & parent) const
@@ -219,20 +225,10 @@ void AccountsListModel::onAccountAdded(const Tp::AccountPtr &account)
     }
 }
 
-void AccountsListModel::onAccountRemoved()
+void AccountsListModel::onAccountRemoved(const Tp::AccountPtr &account)
 {
-    Tp::AccountPtr item = Tp::AccountPtr(qobject_cast<Tp::Account*>(sender()));
-
-    Q_ASSERT(item);
-    if (!item) {
-        kWarning() << "Not an Account pointer:" << sender();
-        return;
-    }
-
-    // We can be pretty sure that there is only one reference to a specific Account in the list
-    // If we screw up here, the styling delegate will screw up even more
-    beginRemoveRows(QModelIndex(), d->accounts.indexOf(item), d->accounts.indexOf(item));
-    d->accounts.removeAll(item);
+    beginRemoveRows(QModelIndex(), d->accounts.indexOf(account), d->accounts.indexOf(account));
+    d->accounts.removeAll(account);
     endRemoveRows();
 }
 

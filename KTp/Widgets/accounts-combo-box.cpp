@@ -19,7 +19,7 @@
 
 #include "accounts-combo-box.h"
 
-#include <TelepathyQt/AccountManager>
+#include <TelepathyQt/AccountSet>
 #include <TelepathyQt/Account>
 
 #include <KTp/Models/accounts-list-model.h>
@@ -39,9 +39,9 @@ KTp::AccountsComboBox::AccountsComboBox(QWidget *parent) :
     setModel(d->model);
 }
 
-void KTp::AccountsComboBox::setAccountManager(const Tp::AccountManagerPtr &accountManager)
+void KTp::AccountsComboBox::setAccountSet(const Tp::AccountSetPtr &accountSet)
 {
-    d->model->setAccountManager(accountManager);
+    d->model->setAccountSet(accountSet);
 }
 
 Tp::AccountPtr KTp::AccountsComboBox::currentAccount()

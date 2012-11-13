@@ -33,7 +33,7 @@ public:
     explicit AccountsComboBox(QWidget *parent = 0);
 
 public:
-    void setAccountManager(const Tp::AccountManagerPtr &accountManager);
+    void setAccountSet(const Tp::AccountSetPtr &accountSet);
     Tp::AccountPtr currentAccount();
 
 private:
