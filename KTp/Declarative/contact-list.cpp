@@ -99,7 +99,7 @@ AccountsFilterModel * ContactList::filterModel() const
 
 void ContactList::startChat(ContactModelItem *contactItem)
 {
-    
+
     Tp::ContactPtr contact = contactItem->contact();
 
     kDebug() << "Requesting chat for contact" << contact->alias();

@@ -28,28 +28,28 @@
 
 /** Exposes general contact list stuff to QML*/
 class ContactList : public QObject
-{   
+{
     Q_OBJECT
 public:
     Q_PROPERTY(QObject* model READ flatModel)
     Q_PROPERTY(QObject* filter READ filterModel)
 
-    
+
     ContactList(QObject *parent=0);
     FlatModelProxy* flatModel() const;
     AccountsFilterModel* filterModel() const;
 
-    
+
 public slots:
     void startChat(ContactModelItem *contact);
 
 private slots:
     void onAccountManagerReady(Tp::PendingOperation *op);
-    
+
 private:
     ContactsModel* m_contactsModel;
     AccountsFilterModel* m_filterModel;
-    FlatModelProxy* m_flatModel; 
+    FlatModelProxy* m_flatModel;
     Tp::AccountManagerPtr m_accountManager;
 };
 
