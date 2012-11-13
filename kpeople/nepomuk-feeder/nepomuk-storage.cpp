@@ -359,7 +359,7 @@ void NepomukStorage::onAccountsQueryFinishedListing()
         const AccountResources& accRes = iter.value();
 
         QString query = QString::fromLatin1("select distinct ?r ?id ?contact where { ?r a nco:IMAccount . "
-                                            " ?r nco:imID ?id ; nco:accessedBy %1 . "
+                                            " ?r nco:imID ?id ; nco:isAccessedBy %1 . "
                                             " ?contact nco:hasIMAccount ?r . }")
                         .arg( Soprano::Node::resourceToN3(accRes.account()) );
 
