@@ -2,6 +2,7 @@ include_directories (${CMAKE_CURRENT_BINARY_DIR}
                      ${CMAKE_CURRENT_SOURCE_DIR})
 
 set (ktp_common_internals_private_SRCS
+     actions.cpp
      circular-countdown.cpp
      debug.cpp
      error-dictionary.cpp
@@ -19,6 +20,7 @@ set (ktp_common_internals_private_SRCS
 )
 
 set (ktp_common_internals_private_HDRS
+     actions.h
      circular-countdown.h
      debug.h
      error-dictionary.h
