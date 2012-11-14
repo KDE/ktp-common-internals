@@ -25,21 +25,25 @@
 #include <KTp/Models/rooms-model.h>
 
 #include <KConfig>
+#include <KDebug>
 #include <KInputDialog>
 #include <KMessageBox>
 #include <KNotification>
 #include <KPushButton>
 #include <KCompletionBox>
 
+#include <TelepathyQt/AccountSet>
+#include <TelepathyQt/AccountCapabilityFilter>
 #include <TelepathyQt/AccountManager>
+#include <TelepathyQt/AccountPropertyFilter>
+#include <TelepathyQt/AndFilter>
 #include <TelepathyQt/ChannelTypeRoomListInterface>
 #include <TelepathyQt/PendingChannel>
 #include <TelepathyQt/PendingReady>
+#include <TelepathyQt/RequestableChannelClassSpec>
 #include <TelepathyQt/RoomListChannel>
 
 #include <QSortFilterProxyModel>
-
-#include <KDebug>
 
 KTp::JoinChatRoomDialog::JoinChatRoomDialog(Tp::AccountManagerPtr accountManager, QWidget* parent)
     : KDialog(parent, Qt::Dialog)
@@ -50,7 +54,6 @@ KTp::JoinChatRoomDialog::JoinChatRoomDialog(Tp::AccountManagerPtr accountManager
     , m_recentComp(new KCompletion)
 {
     QWidget *joinChatRoomDialog = new QWidget(this);
-    m_accounts = accountManager->allAccounts();
     ui->setupUi(joinChatRoomDialog);
     setMainWidget(joinChatRoomDialog);
     setWindowIcon(KIcon(QLatin1String("telepathy-kde")));
@@ -77,15 +80,17 @@ KTp::JoinChatRoomDialog::JoinChatRoomDialog(Tp::AccountManagerPtr accountManager
     ui->removeRecentPushButton->setIcon(KIcon(QLatin1String("list-remove")));
     ui->clearRecentPushButton->setIcon(KIcon(QLatin1String("edit-clear-list")));
 
-    // populate combobox with accounts that support chat rooms
-    for (int i = 0; i < m_accounts.count(); ++i) {
-        Tp::AccountPtr acc = m_accounts.at(i);
+    Tp::AccountPropertyFilterPtr isOnlineFilter = Tp::AccountPropertyFilter::create();
+    isOnlineFilter->addProperty(QLatin1String("online"), true);
 
-        if (acc->capabilities().textChatrooms() && acc->isOnline()) {
-            // add unique data to identify the correct account later on
-            ui->comboBox->addItem(KIcon(acc->iconName()), acc->displayName(), acc->uniqueIdentifier());
-        }
-    }
+    Tp::AccountCapabilityFilterPtr capabilityFilter = Tp::AccountCapabilityFilter::create(
+                Tp::RequestableChannelClassSpecList() << Tp::RequestableChannelClassSpec::conferenceTextChatroom());
+
+    Tp::AccountFilterPtr filter = Tp::AndFilter<Tp::Account>::create((QList<Tp::AccountFilterConstPtr>() <<
+                                             isOnlineFilter <<
+                                             capabilityFilter));
+
+    ui->comboBox->setAccountSet(accountManager->filterAccounts(filter));
 
     // apply the filter after populating
     onAccountSelectionChanged(ui->comboBox->currentIndex());
@@ -145,24 +150,19 @@ KTp::JoinChatRoomDialog::~JoinChatRoomDialog()
 
 Tp::AccountPtr KTp::JoinChatRoomDialog::selectedAccount() const
 {
-    Tp::AccountPtr account;
-    bool found = false;
-
-    for (int i = 0; i < m_accounts.count() && !found; ++i) {
-        if (m_accounts.at(i)->uniqueIdentifier() == ui->comboBox->itemData(ui->comboBox->currentIndex()).toString()) {
-            account = m_accounts.at(i);
-            found = true;
-        }
-    }
-
-    // account should never be empty
-    return account;
+    return ui->comboBox->currentAccount();
 }
 
 void KTp::JoinChatRoomDialog::onAccountSelectionChanged(int newIndex)
 {
     // Show only favorites associated with the selected account
-    QString accountIdentifier = ui->comboBox->itemData(newIndex).toString();
+    Q_UNUSED(newIndex)
+
+    if (!ui->comboBox->currentAccount()) {
+        return;
+    }
+
+    QString accountIdentifier = ui->comboBox->currentAccount()->uniqueIdentifier();
     m_favoritesProxyModel->setFilterFixedString(accountIdentifier);
 
     // Provide only rooms recently used with the selected account for completion
@@ -185,9 +185,13 @@ void KTp::JoinChatRoomDialog::onAccountSelectionChanged(int newIndex)
 
 void KTp::JoinChatRoomDialog::addFavorite()
 {
+    if (!ui->comboBox->currentAccount()) {
+        return;
+    }
+
     bool ok = false;
     QString favoriteHandle = ui->lineEdit->text();
-    QString favoriteAccount = ui->comboBox->itemData(ui->comboBox->currentIndex()).toString();
+    QString favoriteAccount = ui->comboBox->currentAccount()->uniqueIdentifier();
 
     if (m_favoritesModel->containsRoom(favoriteHandle, favoriteAccount)) {
         KMessageBox::sorry(this, i18n("This room is already in your favorites."));
@@ -306,7 +310,7 @@ void KTp::JoinChatRoomDialog::clearRecentRooms()
 
 void KTp::JoinChatRoomDialog::getRoomList()
 {
-    Tp::AccountPtr account = selectedAccount();
+    Tp::AccountPtr account = ui->comboBox->currentAccount();
 
     // Clear the list from previous items
     m_model->clearRoomInfoList();

@@ -26,7 +26,6 @@
 #include <KTp/Models/accounts-model-item.h>
 
 #include <QObject>
-#include <QSortFilterProxyModel>
 #include <QCloseEvent>
 
 #include <KMessageBox>
@@ -37,29 +36,26 @@
 #include <TelepathyQt/Connection>
 #include <TelepathyQt/ContactManager>
 #include <TelepathyQt/PendingContacts>
+#include <TelepathyQt/Filter>
+#include <TelepathyQt/AccountSet>
 
 namespace KTp {
 
-/** A filter which only lists connections which accept adding contacts*/
-class KTP_NO_EXPORT SubscribableAccountsModel : public QSortFilterProxyModel
+class KTP_NO_EXPORT SubscribableAccountFilter : public Tp::AccountFilter
 {
 public:
-    SubscribableAccountsModel(QObject *parent);
-    virtual bool filterAcceptsRow(int source_row, const QModelIndex &source_parent) const;
-};
+    SubscribableAccountFilter()
+    {
+    }
 
-SubscribableAccountsModel::SubscribableAccountsModel(QObject *parent)
- : QSortFilterProxyModel(parent)
-{
-}
+    bool isValid() const
+    {
+        //return whether the filter is valid which is always true as this filter is hardcoded
+        return true;
+    }
 
-bool SubscribableAccountsModel::filterAcceptsRow(int source_row, const QModelIndex &source_parent) const
-{
-    AccountsModelItem* item = sourceModel()->index(source_row, 0, source_parent).data(ContactsModel::ItemRole).value<AccountsModelItem*>();
-
-    if (item) {
-        Tp::AccountPtr account = item->account();
-
+    bool matches(const Tp::AccountPtr &account) const
+    {
         //if there's no connection we can't add contacts as we have no contactmanager
         if (! account->connection()) {
             return false;
@@ -69,9 +65,9 @@ bool SubscribableAccountsModel::filterAcceptsRow(int source_row, const QModelInd
         if (! account->connection()->contactManager()->canRequestPresenceSubscription()){
             return false;
         }
+        return true;
     }
-    return true;
-}
+};
 
 
 struct KTP_NO_EXPORT AddContactDialog::Private
@@ -85,7 +81,7 @@ struct KTP_NO_EXPORT AddContactDialog::Private
     bool acceptInProgress;
 };
 
-AddContactDialog::AddContactDialog(ContactsModel *accountModel, QWidget *parent) :
+AddContactDialog::AddContactDialog(const Tp::AccountManagerPtr &accountManager, QWidget *parent) :
     KDialog(parent),
     d(new Private)
 {
@@ -96,9 +92,10 @@ AddContactDialog::AddContactDialog(ContactsModel *accountModel, QWidget *parent)
     d->ui->setupUi(widget);
     setMainWidget(widget);
 
-    SubscribableAccountsModel *filteredModel = new SubscribableAccountsModel(this);
-    filteredModel->setSourceModel(accountModel);
-    d->ui->accountCombo->setModel(filteredModel);
+    Tp::AccountFilterPtr filter = Tp::AccountFilterPtr(new KTp::SubscribableAccountFilter());
+    Tp::AccountSetPtr accountSet = accountManager->filterAccounts(filter);
+
+    d->ui->accountCombo->setAccountSet(accountSet);
 
     d->ui->screenNameLineEdit->setFocus();
 }
@@ -111,12 +108,7 @@ AddContactDialog::~AddContactDialog()
 
 void AddContactDialog::accept()
 {
-    Tp::AccountPtr account;
-    QVariant itemData = d->ui->accountCombo->itemData(d->ui->accountCombo->currentIndex(), ContactsModel::ItemRole);
-    AccountsModelItem* item = itemData.value<AccountsModelItem*>();
-    if (item) {
-        account = item->account();
-    }
+    Tp::AccountPtr account = d->ui->accountCombo->currentAccount();
 
     if (account.isNull()) {
         KMessageBox::sorry(this, i18n("No account selected."));
