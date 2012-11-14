@@ -104,14 +104,6 @@ QVariant AccountsListModel::data(const QModelIndex &index, int role) const
         data = QVariant(KIcon(account->iconName()));
         break;
 
-    case Qt::CheckStateRole:
-        if (account->isEnabled()) {
-            data = QVariant(Qt::Checked);
-        } else {
-            data = QVariant(Qt::Unchecked);
-        }
-        break;
-
     case AccountsListModel::ConnectionStateRole:
         data = QVariant(account->connectionStatus());
         break;
@@ -132,6 +124,14 @@ QVariant AccountsListModel::data(const QModelIndex &index, int role) const
         data = QVariant(account->protocolName());
         break;
 
+    case AccountsListModel::EnabledRole:
+        if (account->isEnabled()) {
+            data = QVariant(Qt::Checked);
+        } else {
+            data = QVariant(Qt::Unchecked);
+        }
+        break;
+
     case AccountsListModel::AccountRole:
         data = QVariant::fromValue<Tp::AccountPtr>(account);
         break;
@@ -148,7 +148,7 @@ bool AccountsListModel::setData(const QModelIndex &index, const QVariant &value,
     if (!index.isValid()) {
         return false;
     }
-    if (role == Qt::CheckStateRole) {
+    if (role == AccountsListModel::EnabledRole) {
         //this is index from QSortFilterProxyModel
         index.data(AccountRole).value<Tp::AccountPtr>()->setEnabled(value.toInt() == Qt::Checked);
         return true;
@@ -168,15 +168,6 @@ QModelIndex AccountsListModel::index(int row, int column, const QModelIndex& par
     }
 
     return QModelIndex();
-}
-
-
-Qt::ItemFlags AccountsListModel::flags(const QModelIndex &index) const
-{
-    if (!index.isValid()) {
-        return QAbstractItemModel::flags(index);
-    }
-    return QAbstractItemModel::flags(index) | Qt::ItemIsUserCheckable;
 }
 
 void AccountsListModel::onAccountAdded(const Tp::AccountPtr &account)
