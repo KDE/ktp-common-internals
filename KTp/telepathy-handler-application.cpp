@@ -200,6 +200,7 @@ int TelepathyHandlerApplication::newJob()
             d->firstJobStarted = true;
         }
     }
+    kDebug() << "New job started." << d->jobCount << "jobs currently running";
     return ret;
 }
 
@@ -214,6 +215,7 @@ void TelepathyHandlerApplication::jobFinished()
             d->timer->start(d->timeout);
         }
     }
+    kDebug() << "Job finished." << d->jobCount << "jobs currently running";
 }
 
 } // namespace KTp
