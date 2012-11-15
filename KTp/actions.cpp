@@ -35,75 +35,75 @@
 using namespace KTp;
 
 Tp::PendingChannelRequest* Actions::startChat(const Tp::AccountPtr& account,
-					       const Tp::ContactPtr& contact,
-					       bool delegateToPreferredHandler)
+                                              const Tp::ContactPtr& contact,
+                                              bool delegateToPreferredHandler)
 {
     kDebug() << "Requesting text channel for" << contact->id();
 
     Tp::ChannelRequestHints hints;
     if (delegateToPreferredHandler) {
       hints.setHint(QLatin1String("org.freedesktop.Telepathy.ChannelRequest"),
-		    QLatin1String("DelegateToPreferredHandler"),
-		    QVariant(true));
+                    QLatin1String("DelegateToPreferredHandler"),
+                    QVariant(true));
     }
 
     return account->ensureTextChat(contact,
-				   QDateTime::currentDateTime(),
-				   PREFERRED_TEXT_CHAT_HANDLER,
-				   hints);
+                                   QDateTime::currentDateTime(),
+                                   PREFERRED_TEXT_CHAT_HANDLER,
+                                   hints);
 }
 
 Tp::PendingChannelRequest* Actions::startAudioCall(const Tp::AccountPtr& account,
-						    const Tp::ContactPtr& contact)
+                                                   const Tp::ContactPtr& contact)
 {
     kDebug() << "Requesting audio channel for" << contact->id();
 
     return account->ensureAudioCall(contact,
-				    QLatin1String("audio"),
-				    QDateTime::currentDateTime(),
-				    PREFERRED_AUDIO_VIDEO_HANDLER);
+                                    QLatin1String("audio"),
+                                    QDateTime::currentDateTime(),
+                                    PREFERRED_AUDIO_VIDEO_HANDLER);
 }
 
 Tp::PendingChannelRequest* Actions::startAudioVideoCall(const Tp::AccountPtr& account,
-							 const Tp::ContactPtr& contact)
+                                                        const Tp::ContactPtr& contact)
 {
     kDebug() << "Requesting audio-video channel for" << contact->id();
 
     return account->ensureAudioVideoCall(contact,
-					 QLatin1String("audio"),
-					 QLatin1String("video"),
-					 QDateTime::currentDateTime(),
-					 PREFERRED_AUDIO_VIDEO_HANDLER);
+                                         QLatin1String("audio"),
+                                         QLatin1String("video"),
+                                         QDateTime::currentDateTime(),
+                                         PREFERRED_AUDIO_VIDEO_HANDLER);
 }
 
 Tp::PendingChannelRequest* Actions::startDesktopSharing(const Tp::AccountPtr& account,
-							 const Tp::ContactPtr& contact)
+                                                        const Tp::ContactPtr& contact)
 {
     kDebug() << "Requesting stream tube for" << contact->id();
 
     return account->createStreamTube(contact,
-				     QLatin1String("rfb"),
-				     QDateTime::currentDateTime(),
-				     PREFERRED_RFB_HANDLER);
+                                     QLatin1String("rfb"),
+                                     QDateTime::currentDateTime(),
+                                     PREFERRED_RFB_HANDLER);
 }
 
 Tp::PendingChannelRequest* Actions::startFileTransfer(const Tp::AccountPtr& account,
-						       const Tp::ContactPtr& contact,
-						       const QString& filePath)
+                                                      const Tp::ContactPtr& contact,
+                                                      const QString& filePath)
 {
     kDebug() << "Requesting file transfer of" << filePath << "to" << contact->id();
 
     Tp::FileTransferChannelCreationProperties fileTransferProperties(
-		  filePath, KMimeType::findByFileContent(filePath)->name());
+                  filePath, KMimeType::findByFileContent(filePath)->name());
 
     return account->createFileTransfer(contact,
-					fileTransferProperties,
-					QDateTime::currentDateTime(),
-					PREFERRED_FILE_TRANSFER_HANDLER);
+                                       fileTransferProperties,
+                                       QDateTime::currentDateTime(),
+                                       PREFERRED_FILE_TRANSFER_HANDLER);
 }
 
 void Actions::openLogViewer(const Tp::AccountPtr& account,
-			     const Tp::ContactPtr& contact)
+                            const Tp::ContactPtr& contact)
 {
     kDebug() << "Opening logviewer for" << contact->id();
 

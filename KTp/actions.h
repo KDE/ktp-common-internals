@@ -31,25 +31,25 @@ namespace KTp {
 
 namespace Actions {
 
-  KTP_EXPORT Tp::PendingChannelRequest* startChat(const Tp::AccountPtr &account,
-						  const Tp::ContactPtr &contact,
-						  bool delegateToPreferredHandler = true);
+    KTP_EXPORT Tp::PendingChannelRequest* startChat(const Tp::AccountPtr &account,
+                                                    const Tp::ContactPtr &contact,
+                                                    bool delegateToPreferredHandler = true);
 
-  KTP_EXPORT Tp::PendingChannelRequest* startAudioCall(const Tp::AccountPtr &account,
-						       const Tp::ContactPtr &contact);
+    KTP_EXPORT Tp::PendingChannelRequest* startAudioCall(const Tp::AccountPtr &account,
+                                                         const Tp::ContactPtr &contact);
 
-  KTP_EXPORT Tp::PendingChannelRequest* startAudioVideoCall(const Tp::AccountPtr &account,
-							    const Tp::ContactPtr &contact);
+    KTP_EXPORT Tp::PendingChannelRequest* startAudioVideoCall(const Tp::AccountPtr &account,
+                                                              const Tp::ContactPtr &contact);
 
-  KTP_EXPORT Tp::PendingChannelRequest* startDesktopSharing(const Tp::AccountPtr &account,
-							    const Tp::ContactPtr &contact);
+    KTP_EXPORT Tp::PendingChannelRequest* startDesktopSharing(const Tp::AccountPtr &account,
+                                                              const Tp::ContactPtr &contact);
 
-  KTP_EXPORT Tp::PendingChannelRequest* startFileTransfer(const Tp::AccountPtr &account,
-							  const Tp::ContactPtr &contact,
-							  const QString &filePath);
+    KTP_EXPORT Tp::PendingChannelRequest* startFileTransfer(const Tp::AccountPtr &account,
+                                                            const Tp::ContactPtr &contact,
+                                                            const QString &filePath);
 
-  KTP_EXPORT void openLogViewer(const Tp::AccountPtr &account,
-				const Tp::ContactPtr &contact);
+    KTP_EXPORT void openLogViewer(const Tp::AccountPtr &account,
+                                  const Tp::ContactPtr &contact);
 
 
 } /* namespace Actions */
