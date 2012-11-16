@@ -832,6 +832,8 @@ void NepomukStorage::setContactCapabilities(const QString &path,
         imAccount.addProperty( NCO::hasIMCapability(), NCO::imCapabilityAudio() );
     if (capabilities.streamedMediaVideoCalls())
         imAccount.addProperty( NCO::hasIMCapability(), NCO::imCapabilityVideo() );
+
+    fireGraphTimer();
 }
 
 void NepomukStorage::setContactAvatar(const QString &path,
