@@ -27,12 +27,20 @@
 
 namespace KTp
 {
+/**
+ * @short A method of turning error codes into human readable strings
+ *
+ */
 namespace ErrorDictionary
 {
-    ///Returns a verbose error message usable for displaying to the user
+    /**Returns a verbose error message suitable for displaying to the user
+        @param dbusErrorName The Telepathy error as specified in http://telepathy.freedesktop.org/spec/errors.html
+     */
     KTP_EXPORT QString displayVerboseErrorMessage(const QString& dbusErrorName);
 
-    ///Returns a short error message usable for little space
+    /**Returns a short error message suitable when there is little space
+        @param dbusErrorName The Telepathy error as specified in http://telepathy.freedesktop.org/spec/errors.html
+     */
     KTP_EXPORT QString displayShortErrorMessage(const QString& dbusErrorName);
 }
 }
