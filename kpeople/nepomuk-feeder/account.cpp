@@ -197,8 +197,8 @@ void Account::onNewContact(const Tp::ContactPtr &contact)
                 SIGNAL(subscriptionStateChanged(QString,Tp::Contact::PresenceState)),
                 SLOT(onContactSubscriptionStateChanged(QString,Tp::Contact::PresenceState)));
         connect(c,
-                SIGNAL(capabilitiesChanged(QString,Tp::ContactCapabilities)),
-                SLOT(onContactCapabilitiesChanged(QString,Tp::ContactCapabilities)));
+                SIGNAL(capabilitiesChanged(QString,Tp::ConnectionPtr,Tp::ContactCapabilities)),
+                SLOT(onContactCapabilitiesChanged(QString,Tp::ConnectionPtr,Tp::ContactCapabilities)));
         connect(c,
                 SIGNAL(avatarChanged(QString,Tp::AvatarData)),
                 SLOT(onContactAvatarChanged(QString,Tp::AvatarData)));
@@ -250,9 +250,9 @@ void Account::onContactSubscriptionStateChanged(const QString &id, const Tp::Con
     emit contactSubscriptionStateChanged(m_account->objectPath(), id, state);
 }
 
-void Account::onContactCapabilitiesChanged(const QString &id, const Tp::ContactCapabilities &capabilities)
+void Account::onContactCapabilitiesChanged(const QString &id, const Tp::ConnectionPtr &connection, const Tp::ContactCapabilities &capabilities)
 {
-    emit contactCapabilitiesChanged(m_account->objectPath(), id, capabilities);
+    emit contactCapabilitiesChanged(m_account->objectPath(), id, connection, capabilities);
 }
 
 void Account::onContactAvatarChanged(const QString &id, const Tp::AvatarData &avatar)

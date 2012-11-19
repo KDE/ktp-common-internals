@@ -135,7 +135,7 @@ public Q_SLOTS:
     virtual void setContactBlockStatus(const QString &path, const QString &id, bool blocked);
     virtual void setContactPublishState(const QString &path, const QString &id, const Tp::Contact::PresenceState &state);
     virtual void setContactSubscriptionState(const QString &path, const QString &id, const Tp::Contact::PresenceState &state);
-    virtual void setContactCapabilities(const QString &path, const QString &id, const Tp::ContactCapabilities &capabilities);
+    virtual void setContactCapabilities(const QString &path, const QString &id, const Tp::ConnectionPtr &connection, const Tp::ContactCapabilities &capabilities);
     virtual void setContactAvatar(const QString &path, const QString &id, const Tp::AvatarData &avatar);
 
 signals:

@@ -187,7 +187,7 @@ public Q_SLOTS:
      * \param id the id (e.g. me@example.com) that in conjunction with the \p path uniquely identifies the contact.
      * \param capabilities the complete list of capabilities of the contact.
      */
-    virtual void setContactCapabilities(const QString &path, const QString &id, const Tp::ContactCapabilities &capabilities) = 0;
+    virtual void setContactCapabilities(const QString &path, const QString &id, const Tp::ConnectionPtr &connection, const Tp::ContactCapabilities &capabilities) = 0;
 
     /**
      * Invoked to update the avatar of the Telepathy Contact.

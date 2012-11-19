@@ -23,6 +23,7 @@
 
 #include "nepomuk-storage.h"
 #include "telepathy.h"
+#include "capabilities-hack-private.h"
 
 #include <KDebug>
 #include <KJob>
@@ -48,6 +49,7 @@
 
 #include <TelepathyQt/Constants>
 #include <TelepathyQt/AvatarData>
+#include <TelepathyQt/Connection>
 
 using namespace Nepomuk2::Vocabulary;
 using namespace Soprano::Vocabulary;
@@ -815,23 +817,44 @@ void NepomukStorage::setContactSubscriptionState(const QString &path,
 }
 
 void NepomukStorage::setContactCapabilities(const QString &path,
-                                           const QString &id,
-                                           const Tp::ContactCapabilities &capabilities)
+                                            const QString &id,
+                                            const Tp::ConnectionPtr &connection,
+                                            const Tp::ContactCapabilities &capabilities)
 {
     ContactResources contact = findContact(path, id);
     if( contact.isEmpty() )
         return;
 
+    bool audioCallsCap = false;
+    bool videoCallsCap = false;
+
+    if (connection) {
+        bool contactCanStreamAudio = CapabilitiesHackPrivate::audioCalls(
+            capabilities, connection->cmName());
+        bool selfCanStreamAudio = CapabilitiesHackPrivate::audioCalls(
+            connection->selfContact()->capabilities(), connection->cmName());
+        audioCallsCap = contactCanStreamAudio && selfCanStreamAudio;
+
+        bool contactCanStreamVideo = CapabilitiesHackPrivate::videoCalls(
+            capabilities, connection->cmName());
+        bool selfCanStreamVideo = CapabilitiesHackPrivate::videoCalls(
+            connection->selfContact()->capabilities(), connection->cmName());
+        videoCallsCap = contactCanStreamVideo && selfCanStreamVideo;
+    }
+
     Nepomuk2::SimpleResource &imAccount = m_graph[contact.imAccount()];
 
     // For each supported (by the ontology) capability, check it and save the correct value
     // FIXME: Add other caps to the ontologies so that we can add them here.
-    if (capabilities.textChats())
+    if (capabilities.textChats()) {
         imAccount.addProperty( NCO::hasIMCapability(), NCO::imCapabilityText() );
-    if (capabilities.streamedMediaAudioCalls())
+    }
+    if (audioCallsCap) {
         imAccount.addProperty( NCO::hasIMCapability(), NCO::imCapabilityAudio() );
-    if (capabilities.streamedMediaVideoCalls())
+    }
+    if (videoCallsCap) {
         imAccount.addProperty( NCO::hasIMCapability(), NCO::imCapabilityVideo() );
+    }
 
     fireGraphTimer();
 }

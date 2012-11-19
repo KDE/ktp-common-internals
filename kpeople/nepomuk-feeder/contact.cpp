@@ -151,7 +151,7 @@ void Contact::onSubscriptionStateChanged(Tp::Contact::PresenceState state)
 
 void Contact::onCapabilitiesChanged(const Tp::ContactCapabilities &capabilities)
 {
-    emit capabilitiesChanged(m_contact->id(), capabilities);
+    emit capabilitiesChanged(m_contact->id(), m_contact->manager()->connection(), capabilities);
 }
 
 void Contact::onAvatarDataChanged(const Tp::AvatarData &avatar)

@@ -51,7 +51,7 @@ Q_SIGNALS:
     void blockStatusChanged(const QString &id, bool blocked);
     void publishStateChanged(const QString &id, const Tp::Contact::PresenceState &state);
     void subscriptionStateChanged(const QString &id, const Tp::Contact::PresenceState &state);
-    void capabilitiesChanged(const QString &id, const Tp::ContactCapabilities &capabilities);
+    void capabilitiesChanged(const QString &id, const Tp::ConnectionPtr &connection, const Tp::ContactCapabilities &capabilities);
     void avatarChanged(const QString &id, const Tp::AvatarData &avatar);
 
 private Q_SLOTS:

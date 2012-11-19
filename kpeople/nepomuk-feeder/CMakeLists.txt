@@ -48,6 +48,7 @@ set (CMAKE_CXX_FLAGS
 # First target - nepomuktelepathyservice static library
 
 set (nepomuktelepathyservice_static_SRCS
+     capabilities-hack-private.cpp
      controller.cpp
      account.cpp
      contact.cpp
