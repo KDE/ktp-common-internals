@@ -208,6 +208,9 @@ void AccountsListModel::onAccountAdded(const Tp::AccountPtr &account)
                 SIGNAL(connectionStatusChanged(Tp::ConnectionStatus)),
                 SLOT(onAccountUpdated()));
         connect(account.data(),
+                SIGNAL(currentPresenceChanged(Tp::Presence)),
+                SLOT(onAccountUpdated()));
+        connect(account.data(),
                 SIGNAL(iconNameChanged(QString)),
                 SLOT(onAccountUpdated()));
         connect(account.data(),
