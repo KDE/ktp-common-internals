@@ -73,6 +73,12 @@ void Contact::init()
     connect(m_contact.data(),
             SIGNAL(avatarDataChanged(Tp::AvatarData)),
             SLOT(onAvatarDataChanged(Tp::AvatarData)));
+
+    if (!m_contact->manager().isNull()) {
+        connect(m_contact->manager()->connection().data(),
+                SIGNAL(statusChanged(Tp::ConnectionStatus)),
+                SLOT(onConectionStatusChanged(Tp::ConnectionStatus)));
+    }
     // FIXME: Connect to any other signals of sync-worthy properties here.
 
     // Emit a signal to notify the controller that a new contact has been created.
@@ -159,6 +165,12 @@ void Contact::onAvatarDataChanged(const Tp::AvatarData &avatar)
     emit avatarChanged(m_contact->id(), avatar);
 }
 
+void Contact::onConectionStatusChanged(Tp::ConnectionStatus status)
+{
+    if (status == Tp::ConnectionStatusDisconnected) {
+        emit presenceChanged(m_contact->id(), Tp::Presence::offline().barePresence());
+    }
+}
 
 #include "contact.moc"
 

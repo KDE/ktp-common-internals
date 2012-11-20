@@ -64,6 +64,7 @@ private Q_SLOTS:
     void onSubscriptionStateChanged(Tp::Contact::PresenceState state);
     void onCapabilitiesChanged(const Tp::ContactCapabilities &capabilities);
     void onAvatarDataChanged(const Tp::AvatarData &avatar);
+    void onConectionStatusChanged(Tp::ConnectionStatus status);
 
 private:
     Q_DISABLE_COPY(Contact);
