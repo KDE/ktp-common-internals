@@ -23,13 +23,13 @@
 #include <TelepathyQt/ConnectionFactory>
 #include <TelepathyQt/AccountManager>
 #include <TelepathyQt/PendingReady>
+#include <TelepathyQt/PendingChannelRequest>
 
 #include <KDebug>
 
 #include <KTp/Models/contact-model-item.h>
 #include <KTp/Models/accounts-model-item.h>
-
-#define PREFERRED_TEXTCHAT_HANDLER "org.freedesktop.Telepathy.Client.KTp.TextUi"
+#include <KTp/actions.h>
 
 ContactList::ContactList(QObject *parent)
     : QObject(parent),
@@ -97,20 +97,20 @@ AccountsFilterModel * ContactList::filterModel() const
     return m_filterModel;
 }
 
-void ContactList::startChat(ContactModelItem *contactItem)
+void ContactList::startChat(const Tp::AccountPtr &account, const Tp::ContactPtr &contact)
 {
-
-    Tp::ContactPtr contact = contactItem->contact();
-
     kDebug() << "Requesting chat for contact" << contact->alias();
-    Tp::AccountPtr account = m_contactsModel->accountForContactItem(contactItem);
+    kDebug() << "account is" << account->normalizedName();
 
-    Tp::ChannelRequestHints hints;
-    hints.setHint("org.freedesktop.Telepathy.ChannelRequest","DelegateToPreferredHandler", QVariant(true));
+    Tp::PendingOperation *op = KTp::Actions::startChat(account, contact, true);
+    connect(op, SIGNAL(finished(Tp::PendingOperation*)), SLOT(onGenericOperationFinished(Tp::PendingOperation*)));
+}
 
-    Tp::PendingChannelRequest *channelRequest = account->ensureTextChat(contact,
-                                                                        QDateTime::currentDateTime(),
-                                                                        PREFERRED_TEXTCHAT_HANDLER,
-                                                                        hints);
+void ContactList::onGenericOperationFinished(Tp::PendingOperation *op)
+{
+    if (op->isError()) {
+        kDebug() << op->errorName();
+        kDebug() << op->errorMessage();
+    }
 }
 

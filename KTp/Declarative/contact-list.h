@@ -41,10 +41,11 @@ public:
 
 
 public slots:
-    void startChat(ContactModelItem *contact);
+    void startChat(const Tp::AccountPtr &account, const Tp::ContactPtr &contact);
 
 private slots:
     void onAccountManagerReady(Tp::PendingOperation *op);
+    void onGenericOperationFinished(Tp::PendingOperation *op);
 
 private:
     ContactsModel* m_contactsModel;
