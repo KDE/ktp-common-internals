@@ -26,7 +26,6 @@
 
 #include <KDebug>
 
-using namespace KTp;
 
 namespace KTp {
 class GlobalContactManagerPrivate {
@@ -35,32 +34,12 @@ public:
 };
 }
 
-AccountContact::AccountContact(const Tp::AccountPtr &account, const Tp::ContactPtr &contact)
-{
-    m_account = account;
-    m_contact = contact;
-}
-
-Tp::AccountPtr AccountContact::account() const
-{
-    return m_account;
-}
-
-Tp::ContactPtr AccountContact::contact() const
-{
-    return m_contact;
-}
-
+using namespace KTp;
 
 GlobalContactManager::GlobalContactManager(const Tp::AccountManagerPtr &accountManager, QObject *parent) :
     QObject(parent),
     d(new GlobalContactManagerPrivate())
 {
-    if (! d->accountManager.isNull()) {
-        kWarning() << "account manager already set";
-        return;
-    }
-
     d->accountManager = accountManager;
 
     Q_FOREACH(const Tp::AccountPtr &account, accountManager->allAccounts()) {
@@ -74,19 +53,16 @@ GlobalContactManager::~GlobalContactManager()
     delete d;
 }
 
-AccountContactList GlobalContactManager::allKnownContacts()
+Tp::Contacts GlobalContactManager::allKnownContacts() const
 {
-    AccountContactList allContacts;
-
+    Tp::Contacts allContacts;
     if (d->accountManager.isNull()) {
         return allContacts;
     }
 
     Q_FOREACH(const Tp::AccountPtr &account, d->accountManager->allAccounts()) {
         if (!account->connection().isNull() && account->connection()->contactManager()->state() == Tp::ContactListStateSuccess) {
-            Q_FOREACH(const Tp::ContactPtr &contact, account->connection()->contactManager()->allKnownContacts()) {
-                allContacts.append(AccountContact(account, contact));
-            }
+            allContacts.unite(account->connection()->contactManager()->allKnownContacts());
         }
     }
     return allContacts;
@@ -122,39 +98,19 @@ void GlobalContactManager::onContactManagerStateChanged(const Tp::ContactManager
         return;
     }
 
-    onAllKnownContactsChanged(contactManager, contactManager->allKnownContacts(), Tp::Contacts(), Tp::Channel::GroupMemberChangeDetails());
-    connect(contactManager.data(), SIGNAL(allKnownContactsChanged(Tp::Contacts,Tp::Contacts,Tp::Channel::GroupMemberChangeDetails)), SLOT(onAllKnownContactsChanged(Tp::Contacts,Tp::Contacts,Tp::Channel::GroupMemberChangeDetails)));
+    //contact manager connected, inform everyone of potential new contacts
+    Q_EMIT allKnownContactsChanged(contactManager->allKnownContacts(), Tp::Contacts());
+
+    connect(contactManager.data(), SIGNAL(allKnownContactsChanged(Tp::Contacts,Tp::Contacts,Tp::Channel::GroupMemberChangeDetails)), SIGNAL(allKnownContactsChanged(Tp::Contacts,Tp::Contacts)));
 }
 
-void GlobalContactManager::onAllKnownContactsChanged(const Tp::Contacts &contactsAdded, const Tp::Contacts &contactsRemoved, const Tp::Channel::GroupMemberChangeDetails &details)
+Tp::AccountPtr GlobalContactManager::accountForContact(const Tp::ContactPtr &contact) const
 {
-    Tp::ContactManager* contactManager = qobject_cast<Tp::ContactManager*>(sender());
-    Q_ASSERT(contactManager);
-    onAllKnownContactsChanged(Tp::ContactManagerPtr(contactManager), contactsAdded, contactsRemoved, details);
+    return accountForConnection(contact->manager()->connection());
 }
 
-void GlobalContactManager::onAllKnownContactsChanged(const Tp::ContactManagerPtr &contactManager, const Tp::Contacts &contactsAdded, const Tp::Contacts &contactsRemoved, const Tp::Channel::GroupMemberChangeDetails &details)
+Tp::AccountPtr GlobalContactManager::accountForConnection(const Tp::ConnectionPtr &connection) const
 {
-    Q_UNUSED(details);
-    const Tp::AccountPtr account = accountForContactManager(contactManager);
-
-    AccountContactList contactsToAdd;
-    AccountContactList contactsToRemove;
-
-    Q_FOREACH (const Tp::ContactPtr &contact, contactsAdded) {
-        contactsToAdd << AccountContact(account, contact);
-    }
-    Q_FOREACH (const Tp::ContactPtr &contact, contactsRemoved) {
-        contactsToRemove << AccountContact(account, contact);
-    }
-
-    Q_EMIT allKnownContactsChanged(contactsToAdd, contactsToRemove);
-}
-
-Tp::AccountPtr GlobalContactManager::accountForContactManager(const Tp::ContactManagerPtr &contactManager) const
-{
-    Tp::ConnectionPtr connection = contactManager->connection();
-
     //loop through all accounts looking for a matching connection.
     //arguably inneficient, but no. of accounts is normally very low, and it's not called very often.
     Q_FOREACH(const Tp::AccountPtr &account, d->accountManager->allAccounts()) {

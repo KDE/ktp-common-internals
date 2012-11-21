@@ -30,18 +30,6 @@
 
 namespace KTp {
 
-class KTP_EXPORT AccountContact {
-public:
-    AccountContact(const Tp::AccountPtr &account, const Tp::ContactPtr &contact);
-    Tp::AccountPtr account() const;
-    Tp::ContactPtr contact() const;
-private:
-    Tp::AccountPtr m_account;
-    Tp::ContactPtr m_contact;
-};
-
-typedef QList<AccountContact> AccountContactList;
-
 class GlobalContactManagerPrivate;
 
 class KTP_EXPORT GlobalContactManager : public QObject
@@ -51,23 +39,21 @@ public:
     explicit GlobalContactManager(const Tp::AccountManagerPtr &accountManager, QObject *parent = 0);
     virtual ~GlobalContactManager();
 
-    AccountContactList allKnownContacts();
+    Tp::Contacts allKnownContacts() const;
+    Tp::AccountPtr accountForConnection(const Tp::ConnectionPtr &connection) const;
+    Tp::AccountPtr accountForContact(const Tp::ContactPtr &contact) const;
 
 Q_SIGNALS:
-    void allKnownContactsChanged(const KTp::AccountContactList &contactsAdded, const KTp::AccountContactList &contactsRemoved);
-    void presencePublicationRequested(const KTp::AccountContactList &contacts);
+    void allKnownContactsChanged(const Tp::Contacts &contactsAdded, const Tp::Contacts &contactsRemoved);
+    void presencePublicationRequested(const Tp::Contacts);
 
 private Q_SLOTS:
     void onNewAccount(const Tp::AccountPtr &account);
     void onConnectionChanged(const Tp::ConnectionPtr &connection);
     void onContactManagerStateChanged(Tp::ContactListState state);
-    void onAllKnownContactsChanged (const Tp::Contacts &contactsAdded, const Tp::Contacts &contactsRemoved, const Tp::Channel::GroupMemberChangeDetails &details);
 
 private:
     void onContactManagerStateChanged(const Tp::ContactManagerPtr &contactManager, Tp::ContactListState state);
-    void onAllKnownContactsChanged (const Tp::ContactManagerPtr &contactManager, const Tp::Contacts &contactsAdded, const Tp::Contacts &contactsRemoved, const Tp::Channel::GroupMemberChangeDetails &details);
-
-    Tp::AccountPtr accountForContactManager(const Tp::ContactManagerPtr &contactManager) const;
 
     GlobalContactManagerPrivate *d;
 };
