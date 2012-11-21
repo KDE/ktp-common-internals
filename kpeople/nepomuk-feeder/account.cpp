@@ -56,11 +56,12 @@ void Account::init()
             SIGNAL(connectionChanged(Tp::ConnectionPtr)),
             SLOT(onConnectionChanged(Tp::ConnectionPtr)));
 
+    QString protocolName = m_account->serviceName().isEmpty() ? m_account->protocolName() : m_account->serviceName();
     // Emit a signal to notify the storage that a new account has been constructed
     // FIXME: Some IM Accounts don't have an ID as such, e.g. Link-Local-XMPP.
     emit created(m_account->objectPath(),
                  m_account->parameters().value(QLatin1String("account")).toString(),
-                 m_account->protocolName());
+                 protocolName);
 
     // Simulate all the accounts properties being changed.
     onCurrentPresenceChanged(m_account->currentPresence());
