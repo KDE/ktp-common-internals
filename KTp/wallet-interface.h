@@ -94,7 +94,7 @@ private:
     Q_DISABLE_COPY(WalletInterface)
     WalletInterface();
     virtual ~WalletInterface();
-    WalletInterfacePrivate *d;
+    WalletInterfacePrivate * const d;
 };
 
 } // namespace KTp
