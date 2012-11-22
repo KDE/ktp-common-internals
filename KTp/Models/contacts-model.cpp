@@ -68,6 +68,8 @@ ContactsModel::ContactsModel(QObject *parent)
     QHash<int, QByteArray> roles;
     roles[ItemRole] = "item";
     roles[IdRole] = "id";
+    roles[AccountRole] = "account";
+    roles[ContactRole] = "contact";
     roles[ValidRole] = "valid";
     roles[EnabledRole] = "enabled";
     roles[ConnectionManagerNameRole] = "connectionManager";
