@@ -918,10 +918,22 @@ bool AccountsFilterModel::lessThan(const QModelIndex &left, const QModelIndex &r
     switch (sortRole()) {
     case ContactsModel::PresenceTypeRole:
     {
-        Tp::ConnectionPresenceType leftPresence = (Tp::ConnectionPresenceType)sourceModel()->data(left, ContactsModel::PresenceTypeRole).toUInt();
-        Tp::ConnectionPresenceType rightPresence = (Tp::ConnectionPresenceType)sourceModel()->data(right, ContactsModel::PresenceTypeRole).toUInt();
+        Tp::ConnectionPresenceType leftPresence = (Tp::ConnectionPresenceType)left.data(ContactsModel::PresenceTypeRole).toUInt();
+        Tp::ConnectionPresenceType rightPresence = (Tp::ConnectionPresenceType)right.data(ContactsModel::PresenceTypeRole).toUInt();
 
         if (leftPresence == rightPresence) {
+            //presences are the same, compare client types
+
+            bool leftPhone = left.data(ContactsModel::ClientTypesRole).toStringList().contains(QLatin1String("phone"));
+            bool rightPhone = right.data(ContactsModel::ClientTypesRole).toStringList().contains(QLatin1String("phone"));
+
+            if (leftPhone && ! rightPhone) {
+                return false;
+            }
+            else if (rightPhone && !leftPhone) {
+                return true;
+            }
+
             return QString::localeAwareCompare(leftDisplayedName, rightDisplayedName) < 0;
         } else {
             if (leftPresence == Tp::ConnectionPresenceTypeAvailable) {
