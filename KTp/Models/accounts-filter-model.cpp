@@ -47,7 +47,8 @@ public:
           displayNameFilterMatchFlags(Qt::MatchContains),
           nicknameFilterMatchFlags(Qt::MatchContains),
           aliasFilterMatchFlags(Qt::MatchContains),
-          groupsFilterMatchFlags(Qt::MatchContains)
+          groupsFilterMatchFlags(Qt::MatchContains),
+          idFilterMatchFlags(Qt::MatchContains)
     {
     }
 
@@ -64,10 +65,12 @@ public:
     QString nicknameFilterString;
     QString aliasFilterString;
     QString groupsFilterString;
+    QString idFilterString;
     Qt::MatchFlags displayNameFilterMatchFlags;
     Qt::MatchFlags nicknameFilterMatchFlags;
     Qt::MatchFlags aliasFilterMatchFlags;
     Qt::MatchFlags groupsFilterMatchFlags;
+    Qt::MatchFlags idFilterMatchFlags;
 
     bool filterAcceptsAccount(const QModelIndex &index) const;
     bool filterAcceptsContact(const QModelIndex &index) const;
@@ -306,6 +309,13 @@ bool AccountsFilterModel::Private::filterAcceptsContact(const QModelIndex &index
         if (!q->match(index, ContactsModel::GroupsRole, globalFilterString, 1, globalFilterMatchFlags).isEmpty()) {
             return true;
         }
+
+        // Check id
+        if (!q->match(index, ContactsModel::IdRole, globalFilterString, 1, globalFilterMatchFlags).isEmpty()) {
+            return true;
+        }
+
+        return false;
     } else {
         // Check on single filters
         // Check display name
@@ -332,6 +342,13 @@ bool AccountsFilterModel::Private::filterAcceptsContact(const QModelIndex &index
         // TODO Check if exact match on a single group works
         if (!groupsFilterString.isEmpty()) {
             if (q->match(index, ContactsModel::GroupsRole, groupsFilterString, 1, groupsFilterMatchFlags).isEmpty()) {
+                return false;
+            }
+        }
+
+        // Check id
+        if (!idFilterString.isEmpty()) {
+            if (q->match(index, ContactsModel::IdRole, idFilterString, 1, idFilterMatchFlags).isEmpty()) {
                 return false;
             }
         }
@@ -751,6 +768,44 @@ void AccountsFilterModel::setGroupsFilterMatchFlags(Qt::MatchFlags groupsFilterM
         d->groupsFilterMatchFlags = groupsFilterMatchFlags;
         invalidateFilter();
         Q_EMIT groupsFilterMatchFlagsChanged(groupsFilterMatchFlags);
+    }
+}
+
+QString AccountsFilterModel::idFilterString() const
+{
+    return d->idFilterString;
+}
+
+void AccountsFilterModel::clearIdFilterString()
+{
+    setIdFilterString(QString());
+}
+
+void AccountsFilterModel::setIdFilterString(const QString &idFilterString)
+{
+    if (d->idFilterString != idFilterString) {
+        d->idFilterString = idFilterString;
+        invalidateFilter();
+        Q_EMIT idFilterStringChanged(idFilterString);
+    }
+}
+
+Qt::MatchFlags AccountsFilterModel::idFilterMatchFlags() const
+{
+    return d->idFilterMatchFlags;
+}
+
+void AccountsFilterModel::resetIdFilterMatchFlags()
+{
+    setIdFilterMatchFlags(Qt::MatchStartsWith | Qt::MatchWrap);
+}
+
+void AccountsFilterModel::setIdFilterMatchFlags(Qt::MatchFlags idFilterMatchFlags)
+{
+    if (d->idFilterMatchFlags != idFilterMatchFlags) {
+        d->idFilterMatchFlags = idFilterMatchFlags;
+        invalidateFilter();
+        Q_EMIT idFilterMatchFlagsChanged(idFilterMatchFlags);
     }
 }
 

@@ -102,6 +102,11 @@ class KTP_EXPORT AccountsFilterModel : public QSortFilterProxyModel
                RESET clearGroupsFilterString
                WRITE setGroupsFilterString
                NOTIFY groupsFilterStringChanged)
+    Q_PROPERTY(QString idFilterString
+               READ idFilterString
+               RESET clearIdFilterString
+               WRITE setIdFilterString
+               NOTIFY idFilterStringChanged)
     Q_PROPERTY(Qt::MatchFlags displayNameFilterMatchFlags
                READ displayNameFilterMatchFlags
                RESET resetDisplayNameFilterMatchFlags
@@ -122,6 +127,11 @@ class KTP_EXPORT AccountsFilterModel : public QSortFilterProxyModel
                RESET resetGroupsFilterMatchFlags
                WRITE setGroupsFilterMatchFlags
                NOTIFY groupsFilterMatchFlagsChanged)
+    Q_PROPERTY(Qt::MatchFlags idFilterMatchFlags
+               READ idFilterMatchFlags
+               RESET resetIdFilterMatchFlags
+               WRITE setIdFilterMatchFlags
+               NOTIFY idFilterMatchFlagsChanged)
 
 public:
     enum SortMode {
@@ -260,6 +270,15 @@ public:
     Q_SLOT void resetGroupsFilterMatchFlags();
     Q_SLOT void setGroupsFilterMatchFlags(Qt::MatchFlags groupsFilterMatchFlags);
     Q_SIGNAL void groupsFilterMatchFlagsChanged(Qt::MatchFlags groupsFilterMatchFlags);
+
+    QString idFilterString() const;
+    Q_SLOT void clearIdFilterString();
+    Q_SLOT void setIdFilterString(const QString &idFilterString);
+    Q_SIGNAL void idFilterStringChanged(const QString &idFilterString);
+    Qt::MatchFlags idFilterMatchFlags() const;
+    Q_SLOT void resetIdFilterMatchFlags();
+    Q_SLOT void setIdFilterMatchFlags(Qt::MatchFlags idFilterMatchFlags);
+    Q_SIGNAL void idFilterMatchFlagsChanged(Qt::MatchFlags idFilterMatchFlags);
 
     Q_SLOT void countContacts(const QModelIndex &index) const;
 
