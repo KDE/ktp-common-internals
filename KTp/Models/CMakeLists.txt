@@ -7,7 +7,8 @@ set (ktp_models_private_SRCS
     accounts-list-model.cpp
     accounts-filter-model.cpp
     accounts-model-item.cpp
-    capabilities-hack-private.cpp
+    ../capabilities-hack-private.cpp #HACK, COPY INTO BOTH LIBRARIES UNTIL ContactModels IS REPLACED
+    ../service-availability-checker.cpp #
     contact-model-item.cpp
     contacts-model.cpp
     groups-model-item.cpp
