@@ -3,6 +3,7 @@ include_directories (${CMAKE_CURRENT_BINARY_DIR}
 
 set (ktp_common_internals_private_SRCS
      actions.cpp
+     capabilities-hack-private.cpp
      circular-countdown.cpp
      debug.cpp
      error-dictionary.cpp
