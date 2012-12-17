@@ -222,7 +222,7 @@ void KTp::JoinChatRoomDialog::addFavorite()
 void KTp::JoinChatRoomDialog::removeFavorite()
 {
     QString favoriteHandle = ui->listView->currentIndex().data(FavoriteRoomsModel::HandleNameRole).toString();
-    QString favoriteAccount = ui->comboBox->itemData(ui->comboBox->currentIndex()).toString();
+    QString favoriteAccount = ui->comboBox->currentAccount()->uniqueIdentifier();
     QVariantMap room = ui->listView->currentIndex().data(FavoriteRoomsModel::FavoriteRoomRole).value<QVariantMap>();
 
     QString key = favoriteHandle + favoriteAccount;
@@ -240,7 +240,7 @@ void KTp::JoinChatRoomDialog::removeFavorite()
 
 void KTp::JoinChatRoomDialog::addRecentRoom()
 {
-    QString accountIdentifier = ui->comboBox->itemData(ui->comboBox->currentIndex()).toString();
+    QString accountIdentifier = ui->comboBox->currentAccount()->uniqueIdentifier();
     QString handle = ui->lineEdit->text();
 
     if (!handle.isEmpty()) {
@@ -274,7 +274,7 @@ void KTp::JoinChatRoomDialog::addRecentRoom()
 
 void KTp::JoinChatRoomDialog::removeRecentRoom()
 {
-    QString accountIdentifier = ui->comboBox->itemData(ui->comboBox->currentIndex()).toString();
+    QString accountIdentifier = ui->comboBox->currentAccount()->uniqueIdentifier();
     QString handle = ui->recentListWidget->currentItem()->text();
 
     // Remove the entry
@@ -295,7 +295,7 @@ void KTp::JoinChatRoomDialog::removeRecentRoom()
 
 void KTp::JoinChatRoomDialog::clearRecentRooms()
 {
-    QString accountIdentifier = ui->comboBox->itemData(ui->comboBox->currentIndex()).toString();
+    QString accountIdentifier = ui->comboBox->currentAccount()->uniqueIdentifier();
 
     // Remove all entries for the current account
     m_recentRooms.remove(accountIdentifier);
