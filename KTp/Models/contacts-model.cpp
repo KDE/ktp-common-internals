@@ -83,10 +83,10 @@ ContactsModel::ContactsModel(QObject *parent)
     roles[AutomaticPresenceTypeRole] = "automaticPresenceType";
     roles[AutomaticPresenceStatusRole] = "automaticPresenceStatus";
     roles[AutomaticPresenceStatusMessageRole] = "automaticPresenceStatusMessage";
-    roles[CurrentPresenceRole] = "presence";
-    roles[CurrentPresenceTypeRole] = "presenceType";
-    roles[CurrentPresenceStatusRole] = "presenceStatus";
-    roles[CurrentPresenceStatusMessageRole] = "presenceStatusMessage";
+    roles[CurrentPresenceRole] = "currentPresence";
+    roles[CurrentPresenceTypeRole] = "currentPresenceType";
+    roles[CurrentPresenceStatusRole] = "currentPresenceStatus";
+    roles[CurrentPresenceStatusMessageRole] = "currentPresenceStatusMessage";
     roles[RequestedPresenceRole] = "requestedPresence";
     roles[RequestedPresenceTypeRole] = "requestedPresenceType";
     roles[RequestedPresenceStatusRole] = "requestedPresenceStatus";
