@@ -16,24 +16,40 @@
 * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#ifndef KTP_CONTACT_FACTORY_H
-#define KTP_CONTACT_FACTORY_H
+#ifndef KTP_CONTACTS_LIST_MODEL_H
+#define KTP_CONTACTS_LIST_MODEL_H
 
-#include <TelepathyQt/ContactFactory>
+#include <QAbstractListModel>
 #include <TelepathyQt/Types>
 
-#include <KTp/ktp-export.h>
+#include <KTp/global-contact-manager.h>
 
-namespace KTp {
-class KTP_EXPORT ContactFactory : public Tp::ContactFactory
+namespace KTp
 {
+
+class ContactsListModel : public QAbstractListModel
+{
+    Q_OBJECT
 public:
-    static Tp::ContactFactoryPtr create(const Tp::Features &features=Tp::Features());
-protected:
-    ContactFactory(const Tp::Features &features);
-    virtual Tp::ContactPtr construct(Tp::ContactManager *manager, const Tp::ReferencedHandles &handle, const Tp::Features &features, const QVariantMap &attributes) const;
+    explicit ContactsListModel(QObject *parent = 0);
+    virtual ~ContactsListModel();
+
+    void setAccountManager(const Tp::AccountManagerPtr &accountManager);
+
+    int rowCount(const QModelIndex &parent) const;
+    QVariant data(const QModelIndex &index, int role) const;
+
+private Q_SLOTS:
+    void onContactsChanged(const Tp::Contacts &added, const Tp::Contacts &removed);
+    void onChanged();
+    void onConnectionDropped();
+
+private:
+    //FIXME d_ptr
+    class Private;
+    Private *d;
+
 };
+
 }
-
-
-#endif // CONTACTFACTORY_H
+#endif // CONTACTSLISTMODEL_H

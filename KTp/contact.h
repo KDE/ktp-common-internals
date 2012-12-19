@@ -22,12 +22,11 @@
 #include <QVariant>
 #include <TelepathyQt/Contact>
 #include <KTp/presence.h>
+#include <KTp/ktp-export.h>
 
-//K_GLOBAL_STATIC_WITH_ARGS(KTp::ServiceAvailabilityChecker, s_krfbAvailableChecker,
-//                          (QLatin1String("org.freedesktop.Telepathy.Client.krfb_rfb_handler")));
 
 namespace KTp{
-class Contact : public Tp::Contact
+class KTP_EXPORT Contact : public Tp::Contact
 {
     Q_OBJECT
 public:
