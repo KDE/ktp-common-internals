@@ -6,30 +6,32 @@ include_directories (${CMAKE_CURRENT_BINARY_DIR}
 set (ktp_models_private_SRCS
     accounts-list-model.cpp
     accounts-filter-model.cpp
-    accounts-model-item.cpp
+    accounts-model-item.cpp #Deprecated
     ../capabilities-hack-private.cpp #HACK, COPY INTO BOTH LIBRARIES UNTIL ContactModels IS REPLACED
     ../service-availability-checker.cpp #
-    contact-model-item.cpp
-    contacts-model.cpp
-    groups-model-item.cpp
-    groups-model.cpp
-    proxy-tree-node.cpp
-    tree-node.cpp
-    flat-model-proxy.cpp
+    contacts-list-model.cpp
+    contact-model-item.cpp #Deprecated
+    contacts-model.cpp #Deprecated
+    groups-model-item.cpp #Deprecated
+    groups-model.cpp #Deprecated
+    proxy-tree-node.cpp #Deprecated
+    tree-node.cpp #Deprecated
+    flat-model-proxy.cpp #Deprecated
     rooms-model.cpp
 )
 
 set (ktp_models_private_HDRS
     accounts-list-model.h
     accounts-filter-model.h
-    accounts-model-item.h
-    contact-model-item.h
-    contacts-model.h
-    groups-model-item.h
-    groups-model.h
-    proxy-tree-node.h
-    tree-node.h
-    flat-model-proxy.h
+    accounts-model-item.h #Deprecated
+    contact-model-item.h #Deprecated
+    contacts-model.h #Deprecated
+    contacts-list-model.h
+    groups-model-item.h #Deprecated
+    groups-model.h #Deprecated
+    proxy-tree-node.h #Deprecated
+    tree-node.h #Deprecated
+    flat-model-proxy.h #Deprecated
     rooms-model.h
 )
 
