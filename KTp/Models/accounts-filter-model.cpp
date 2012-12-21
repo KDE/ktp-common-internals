@@ -893,14 +893,14 @@ bool AccountsFilterModel::filterAcceptsRow(int sourceRow, const QModelIndex &sou
 {
     QModelIndex index = sourceModel()->index(sourceRow, 0, sourceParent);
 
-    int type = index.data(ContactsModel::ItemRole).userType();
-    if (type == qMetaTypeId<ContactModelItem*>()) {
+    int type = index.data(ContactsModel::TypeRole).toInt();
+    if (type == ContactsModel::ContactRowType) {
         return d->filterAcceptsContact(index);
     }
-    else if (type == qMetaTypeId<AccountsModelItem*>()) {
+    else if (type == ContactsModel::AccountRowType) {
         return d->filterAcceptsAccount(index);
     }
-    else if (type == qMetaTypeId<GroupsModelItem*>()) {
+    else if (type == ContactsModel::GroupRowType) {
         return d->filterAcceptsGroup(index);
     }
     else {
