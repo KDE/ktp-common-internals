@@ -74,7 +74,7 @@ QVariant KTp::ContactsListModel::data(const QModelIndex &index, int role) const
         case ContactsModel::TypeRole:
             return ContactsModel::ContactRowType;
         case ContactsModel::ContactRole:
-            return QVariant::fromValue(contact);
+            return QVariant::fromValue(d->contacts[row]); //Tp::ContactPtr and NOT KTp::ContactPtr
         case ContactsModel::AccountRole:
             return QVariant::fromValue(d->contactManager->accountForContact(contact));
         case Qt::DisplayRole:
