@@ -54,6 +54,6 @@ typedef Tp::SharedPtr<KTp::Contact> ContactPtr;
 
 }//namespace
 
-Q_DECLARE_METATYPE(KTp::ContactPtr)
+// Q_DECLARE_METATYPE(KTp::ContactPtr)
 
 #endif // CONTACT_H
