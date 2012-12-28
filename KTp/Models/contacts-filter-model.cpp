@@ -21,7 +21,7 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#include "accounts-filter-model.h"
+#include "contacts-filter-model.h"
 
 #include "contacts-model.h"
 #include "groups-model.h"
@@ -35,10 +35,10 @@
 #include <KDebug>
 
 
-class AccountsFilterModel::Private
+class ContactsFilterModel::Private
 {
 public:
-    Private(AccountsFilterModel *parent)
+    Private(ContactsFilterModel *parent)
         : q(parent),
           presenceTypeFilterFlags(DoNotFilterByCapability),
           capabilityFilterFlags(DoNotFilterByCapability),
@@ -52,7 +52,7 @@ public:
     {
     }
 
-    AccountsFilterModel *q;
+    ContactsFilterModel *q;
 
     PresenceTypeFilterFlags presenceTypeFilterFlags;
     CapabilityFilterFlags capabilityFilterFlags;
@@ -80,7 +80,7 @@ public:
     QHash<QString, int> m_totalContactsCounts;
 };
 
-bool AccountsFilterModel::Private::filterAcceptsAccount(const QModelIndex &index) const
+bool ContactsFilterModel::Private::filterAcceptsAccount(const QModelIndex &index) const
 {
     // Hide disabled accounts
     if (!index.data(ContactsModel::EnabledRole).toBool()) {
@@ -128,7 +128,7 @@ bool AccountsFilterModel::Private::filterAcceptsAccount(const QModelIndex &index
     return true;
 }
 
-bool AccountsFilterModel::Private::filterAcceptsContact(const QModelIndex &index) const
+bool ContactsFilterModel::Private::filterAcceptsContact(const QModelIndex &index) const
 {
     // Presence type, capability and subscription state are always checked
     // Then if global filter is set we can return true if a result is found for
@@ -357,7 +357,7 @@ bool AccountsFilterModel::Private::filterAcceptsContact(const QModelIndex &index
     return true;
 }
 
-bool AccountsFilterModel::Private::filterAcceptsGroup(const QModelIndex &index) const
+bool ContactsFilterModel::Private::filterAcceptsGroup(const QModelIndex &index) const
 {
     QString groupName = index.data(ContactsModel::IdRole).toString();
 
@@ -386,18 +386,18 @@ bool AccountsFilterModel::Private::filterAcceptsGroup(const QModelIndex &index) 
     return true;
 }
 
-AccountsFilterModel::AccountsFilterModel(QObject *parent)
+ContactsFilterModel::ContactsFilterModel(QObject *parent)
     : QSortFilterProxyModel(parent),
       d(new Private(this))
 {
 }
 
-AccountsFilterModel::~AccountsFilterModel()
+ContactsFilterModel::~ContactsFilterModel()
 {
     delete d;
 }
 
-QVariant AccountsFilterModel::data(const QModelIndex &index, int role) const
+QVariant ContactsFilterModel::data(const QModelIndex &index, int role) const
 {
     if (!index.isValid()) {
         return QVariant();
@@ -449,7 +449,7 @@ QVariant AccountsFilterModel::data(const QModelIndex &index, int role) const
     return sourceModel()->data(mapToSource(index), role);
 }
 
-void AccountsFilterModel::setSourceModel(QAbstractItemModel *sourceModel)
+void ContactsFilterModel::setSourceModel(QAbstractItemModel *sourceModel)
 {
     // Disconnect the previous source model
     disconnect(this->sourceModel(),
@@ -469,7 +469,7 @@ void AccountsFilterModel::setSourceModel(QAbstractItemModel *sourceModel)
             SLOT(countContacts(QModelIndex)));
 }
 
-void AccountsFilterModel::invalidateFilter()
+void ContactsFilterModel::invalidateFilter()
 {
     // Clear all cached values as they aren't valid anymore because the filter changed.
     d->m_onlineContactsCounts.clear();
@@ -477,7 +477,7 @@ void AccountsFilterModel::invalidateFilter()
     QSortFilterProxyModel::invalidateFilter();
 }
 
-AccountsFilterModel::SortMode AccountsFilterModel::sortMode() const
+ContactsFilterModel::SortMode ContactsFilterModel::sortMode() const
 {
     switch (sortRole()) {
     case Qt::DisplayRole:
@@ -495,12 +495,12 @@ AccountsFilterModel::SortMode AccountsFilterModel::sortMode() const
     }
 }
 
-void AccountsFilterModel::resetSortMode()
+void ContactsFilterModel::resetSortMode()
 {
     setSortMode(DoNotSort);
 }
 
-void AccountsFilterModel::setSortMode(SortMode sortMode)
+void ContactsFilterModel::setSortMode(SortMode sortMode)
 {
     switch (sortMode) {
     case DoNotSort:
@@ -523,17 +523,17 @@ void AccountsFilterModel::setSortMode(SortMode sortMode)
     Q_EMIT sortModeChanged(sortMode);
 }
 
-AccountsFilterModel::PresenceTypeFilterFlags AccountsFilterModel::presenceTypeFilterFlags() const
+ContactsFilterModel::PresenceTypeFilterFlags ContactsFilterModel::presenceTypeFilterFlags() const
 {
     return d->presenceTypeFilterFlags;
 }
 
-void AccountsFilterModel::clearPresenceTypeFilterFlags()
+void ContactsFilterModel::clearPresenceTypeFilterFlags()
 {
     setPresenceTypeFilterFlags(DoNotFilterByPresence);
 }
 
-void AccountsFilterModel::setPresenceTypeFilterFlags(AccountsFilterModel::PresenceTypeFilterFlags presenceTypeFilterFlags)
+void ContactsFilterModel::setPresenceTypeFilterFlags(ContactsFilterModel::PresenceTypeFilterFlags presenceTypeFilterFlags)
 {
     if (d->presenceTypeFilterFlags != presenceTypeFilterFlags) {
         d->presenceTypeFilterFlags = presenceTypeFilterFlags;
@@ -542,17 +542,17 @@ void AccountsFilterModel::setPresenceTypeFilterFlags(AccountsFilterModel::Presen
     }
 }
 
-AccountsFilterModel::CapabilityFilterFlags AccountsFilterModel::capabilityFilterFlags() const
+ContactsFilterModel::CapabilityFilterFlags ContactsFilterModel::capabilityFilterFlags() const
 {
     return d->capabilityFilterFlags;
 }
 
-void AccountsFilterModel::clearCapabilityFilterFlags()
+void ContactsFilterModel::clearCapabilityFilterFlags()
 {
     setCapabilityFilterFlags(DoNotFilterByCapability);
 }
 
-void AccountsFilterModel::setCapabilityFilterFlags(AccountsFilterModel::CapabilityFilterFlags capabilityFilterFlags)
+void ContactsFilterModel::setCapabilityFilterFlags(ContactsFilterModel::CapabilityFilterFlags capabilityFilterFlags)
 {
     if (d->capabilityFilterFlags != capabilityFilterFlags) {
         d->capabilityFilterFlags = capabilityFilterFlags;
@@ -561,17 +561,17 @@ void AccountsFilterModel::setCapabilityFilterFlags(AccountsFilterModel::Capabili
     }
 }
 
-AccountsFilterModel::SubscriptionStateFilterFlags AccountsFilterModel::subscriptionStateFilterFlags() const
+ContactsFilterModel::SubscriptionStateFilterFlags ContactsFilterModel::subscriptionStateFilterFlags() const
 {
     return d->subscriptionStateFilterFlags;
 }
 
-void AccountsFilterModel::clearSubscriptionStateFilterFlags()
+void ContactsFilterModel::clearSubscriptionStateFilterFlags()
 {
     setSubscriptionStateFilterFlags(DoNotFilterBySubscription);
 }
 
-void AccountsFilterModel::setSubscriptionStateFilterFlags(AccountsFilterModel::SubscriptionStateFilterFlags subscriptionStateFilterFlags)
+void ContactsFilterModel::setSubscriptionStateFilterFlags(ContactsFilterModel::SubscriptionStateFilterFlags subscriptionStateFilterFlags)
 {
     if (d->subscriptionStateFilterFlags != subscriptionStateFilterFlags) {
         d->subscriptionStateFilterFlags = subscriptionStateFilterFlags;
@@ -580,17 +580,17 @@ void AccountsFilterModel::setSubscriptionStateFilterFlags(AccountsFilterModel::S
     }
 }
 
-QString AccountsFilterModel::globalFilterString() const
+QString ContactsFilterModel::globalFilterString() const
 {
     return d->globalFilterString;
 }
 
-void AccountsFilterModel::clearGlobalFilterString()
+void ContactsFilterModel::clearGlobalFilterString()
 {
     setGlobalFilterString(QString());
 }
 
-void AccountsFilterModel::setGlobalFilterString(const QString &globalFilterString)
+void ContactsFilterModel::setGlobalFilterString(const QString &globalFilterString)
 {
     if (d->globalFilterString != globalFilterString) {
         d->globalFilterString = globalFilterString;
@@ -599,17 +599,17 @@ void AccountsFilterModel::setGlobalFilterString(const QString &globalFilterStrin
     }
 }
 
-Qt::MatchFlags AccountsFilterModel::globalFilterMatchFlags() const
+Qt::MatchFlags ContactsFilterModel::globalFilterMatchFlags() const
 {
     return d->globalFilterMatchFlags;
 }
 
-void AccountsFilterModel::resetGlobalFilterMatchFlags()
+void ContactsFilterModel::resetGlobalFilterMatchFlags()
 {
     setGlobalFilterMatchFlags(Qt::MatchStartsWith | Qt::MatchWrap);
 }
 
-void AccountsFilterModel::setGlobalFilterMatchFlags(Qt::MatchFlags globalFilterMatchFlags)
+void ContactsFilterModel::setGlobalFilterMatchFlags(Qt::MatchFlags globalFilterMatchFlags)
 {
     if (d->globalFilterMatchFlags != globalFilterMatchFlags) {
         d->globalFilterMatchFlags = globalFilterMatchFlags;
@@ -618,17 +618,17 @@ void AccountsFilterModel::setGlobalFilterMatchFlags(Qt::MatchFlags globalFilterM
     }
 }
 
-QString AccountsFilterModel::displayNameFilterString() const
+QString ContactsFilterModel::displayNameFilterString() const
 {
     return d->displayNameFilterString;
 }
 
-void AccountsFilterModel::clearDisplayNameFilterString()
+void ContactsFilterModel::clearDisplayNameFilterString()
 {
     setDisplayNameFilterString(QString());
 }
 
-void AccountsFilterModel::setDisplayNameFilterString(const QString &displayNameFilterString)
+void ContactsFilterModel::setDisplayNameFilterString(const QString &displayNameFilterString)
 {
     if (d->displayNameFilterString != displayNameFilterString) {
         d->displayNameFilterString = displayNameFilterString;
@@ -637,17 +637,17 @@ void AccountsFilterModel::setDisplayNameFilterString(const QString &displayNameF
     }
 }
 
-Qt::MatchFlags AccountsFilterModel::displayNameFilterMatchFlags() const
+Qt::MatchFlags ContactsFilterModel::displayNameFilterMatchFlags() const
 {
     return d->displayNameFilterMatchFlags;
 }
 
-void AccountsFilterModel::resetDisplayNameFilterMatchFlags()
+void ContactsFilterModel::resetDisplayNameFilterMatchFlags()
 {
     setDisplayNameFilterMatchFlags(Qt::MatchStartsWith | Qt::MatchWrap);
 }
 
-void AccountsFilterModel::setDisplayNameFilterMatchFlags(Qt::MatchFlags displayNameFilterMatchFlags)
+void ContactsFilterModel::setDisplayNameFilterMatchFlags(Qt::MatchFlags displayNameFilterMatchFlags)
 {
     if (d->displayNameFilterMatchFlags != displayNameFilterMatchFlags) {
         d->displayNameFilterMatchFlags = displayNameFilterMatchFlags;
@@ -656,17 +656,17 @@ void AccountsFilterModel::setDisplayNameFilterMatchFlags(Qt::MatchFlags displayN
     }
 }
 
-QString AccountsFilterModel::nicknameFilterString() const
+QString ContactsFilterModel::nicknameFilterString() const
 {
     return d->nicknameFilterString;
 }
 
-void AccountsFilterModel::clearNicknameFilterString()
+void ContactsFilterModel::clearNicknameFilterString()
 {
     setNicknameFilterString(QString());
 }
 
-void AccountsFilterModel::setNicknameFilterString(const QString &nicknameFilterString)
+void ContactsFilterModel::setNicknameFilterString(const QString &nicknameFilterString)
 {
     if (d->nicknameFilterString != nicknameFilterString) {
         d->nicknameFilterString = nicknameFilterString;
@@ -675,17 +675,17 @@ void AccountsFilterModel::setNicknameFilterString(const QString &nicknameFilterS
     }
 }
 
-Qt::MatchFlags AccountsFilterModel::nicknameFilterMatchFlags() const
+Qt::MatchFlags ContactsFilterModel::nicknameFilterMatchFlags() const
 {
     return d->nicknameFilterMatchFlags;
 }
 
-void AccountsFilterModel::resetNicknameFilterMatchFlags()
+void ContactsFilterModel::resetNicknameFilterMatchFlags()
 {
     setNicknameFilterMatchFlags(Qt::MatchStartsWith | Qt::MatchWrap);
 }
 
-void AccountsFilterModel::setNicknameFilterMatchFlags(Qt::MatchFlags nicknameFilterMatchFlags)
+void ContactsFilterModel::setNicknameFilterMatchFlags(Qt::MatchFlags nicknameFilterMatchFlags)
 {
     if (d->nicknameFilterMatchFlags != nicknameFilterMatchFlags) {
         d->nicknameFilterMatchFlags = nicknameFilterMatchFlags;
@@ -694,17 +694,17 @@ void AccountsFilterModel::setNicknameFilterMatchFlags(Qt::MatchFlags nicknameFil
     }
 }
 
-QString AccountsFilterModel::aliasFilterString() const
+QString ContactsFilterModel::aliasFilterString() const
 {
     return d->aliasFilterString;
 }
 
-void AccountsFilterModel::clearAliasFilterString()
+void ContactsFilterModel::clearAliasFilterString()
 {
     setAliasFilterString(QString());
 }
 
-void AccountsFilterModel::setAliasFilterString(const QString &aliasFilterString)
+void ContactsFilterModel::setAliasFilterString(const QString &aliasFilterString)
 {
     if (d->aliasFilterString != aliasFilterString) {
         d->aliasFilterString = aliasFilterString;
@@ -713,17 +713,17 @@ void AccountsFilterModel::setAliasFilterString(const QString &aliasFilterString)
     }
 }
 
-Qt::MatchFlags AccountsFilterModel::aliasFilterMatchFlags() const
+Qt::MatchFlags ContactsFilterModel::aliasFilterMatchFlags() const
 {
     return d->aliasFilterMatchFlags;
 }
 
-void AccountsFilterModel::resetAliasFilterMatchFlags()
+void ContactsFilterModel::resetAliasFilterMatchFlags()
 {
     setAliasFilterMatchFlags(Qt::MatchStartsWith | Qt::MatchWrap);
 }
 
-void AccountsFilterModel::setAliasFilterMatchFlags(Qt::MatchFlags aliasFilterMatchFlags)
+void ContactsFilterModel::setAliasFilterMatchFlags(Qt::MatchFlags aliasFilterMatchFlags)
 {
     if (d->aliasFilterMatchFlags != aliasFilterMatchFlags) {
         d->aliasFilterMatchFlags = aliasFilterMatchFlags;
@@ -732,17 +732,17 @@ void AccountsFilterModel::setAliasFilterMatchFlags(Qt::MatchFlags aliasFilterMat
     }
 }
 
-QString AccountsFilterModel::groupsFilterString() const
+QString ContactsFilterModel::groupsFilterString() const
 {
     return d->groupsFilterString;
 }
 
-void AccountsFilterModel::clearGroupsFilterString()
+void ContactsFilterModel::clearGroupsFilterString()
 {
     setGroupsFilterString(QString());
 }
 
-void AccountsFilterModel::setGroupsFilterString(const QString &groupsFilterString)
+void ContactsFilterModel::setGroupsFilterString(const QString &groupsFilterString)
 {
     if (d->groupsFilterString != groupsFilterString) {
         d->groupsFilterString = groupsFilterString;
@@ -751,17 +751,17 @@ void AccountsFilterModel::setGroupsFilterString(const QString &groupsFilterStrin
     }
 }
 
-Qt::MatchFlags AccountsFilterModel::groupsFilterMatchFlags() const
+Qt::MatchFlags ContactsFilterModel::groupsFilterMatchFlags() const
 {
     return d->groupsFilterMatchFlags;
 }
 
-void AccountsFilterModel::resetGroupsFilterMatchFlags()
+void ContactsFilterModel::resetGroupsFilterMatchFlags()
 {
     setGroupsFilterMatchFlags(Qt::MatchStartsWith | Qt::MatchWrap);
 }
 
-void AccountsFilterModel::setGroupsFilterMatchFlags(Qt::MatchFlags groupsFilterMatchFlags)
+void ContactsFilterModel::setGroupsFilterMatchFlags(Qt::MatchFlags groupsFilterMatchFlags)
 {
     if (d->groupsFilterMatchFlags != groupsFilterMatchFlags) {
         d->groupsFilterMatchFlags = groupsFilterMatchFlags;
@@ -770,17 +770,17 @@ void AccountsFilterModel::setGroupsFilterMatchFlags(Qt::MatchFlags groupsFilterM
     }
 }
 
-QString AccountsFilterModel::idFilterString() const
+QString ContactsFilterModel::idFilterString() const
 {
     return d->idFilterString;
 }
 
-void AccountsFilterModel::clearIdFilterString()
+void ContactsFilterModel::clearIdFilterString()
 {
     setIdFilterString(QString());
 }
 
-void AccountsFilterModel::setIdFilterString(const QString &idFilterString)
+void ContactsFilterModel::setIdFilterString(const QString &idFilterString)
 {
     if (d->idFilterString != idFilterString) {
         d->idFilterString = idFilterString;
@@ -789,17 +789,17 @@ void AccountsFilterModel::setIdFilterString(const QString &idFilterString)
     }
 }
 
-Qt::MatchFlags AccountsFilterModel::idFilterMatchFlags() const
+Qt::MatchFlags ContactsFilterModel::idFilterMatchFlags() const
 {
     return d->idFilterMatchFlags;
 }
 
-void AccountsFilterModel::resetIdFilterMatchFlags()
+void ContactsFilterModel::resetIdFilterMatchFlags()
 {
     setIdFilterMatchFlags(Qt::MatchStartsWith | Qt::MatchWrap);
 }
 
-void AccountsFilterModel::setIdFilterMatchFlags(Qt::MatchFlags idFilterMatchFlags)
+void ContactsFilterModel::setIdFilterMatchFlags(Qt::MatchFlags idFilterMatchFlags)
 {
     if (d->idFilterMatchFlags != idFilterMatchFlags) {
         d->idFilterMatchFlags = idFilterMatchFlags;
@@ -808,7 +808,7 @@ void AccountsFilterModel::setIdFilterMatchFlags(Qt::MatchFlags idFilterMatchFlag
     }
 }
 
-void AccountsFilterModel::countContacts(const QModelIndex &index) const
+void ContactsFilterModel::countContacts(const QModelIndex &index) const
 {
     QVariant item = index.data(ContactsModel::ItemRole);
     if (item.canConvert<GroupsModelItem*>()) {
@@ -835,7 +835,7 @@ void AccountsFilterModel::countContacts(const QModelIndex &index) const
         // Save the presenceTypeFilterFlags to reapply them later, because we need to disable
         // presence filtering to get the right numbers
         PresenceTypeFilterFlags saved = presenceTypeFilterFlags();
-        d->presenceTypeFilterFlags = AccountsFilterModel::DoNotFilterByPresence;
+        d->presenceTypeFilterFlags = ContactsFilterModel::DoNotFilterByPresence;
 
         tmpCounter = 0;
         for (int i = 0; i < gmItem->size(); ++i) {
@@ -872,7 +872,7 @@ void AccountsFilterModel::countContacts(const QModelIndex &index) const
         // Save the presenceTypeFilterFlags to reapply them later, because we need to disable
         // presence filtering to get the right numbers
         PresenceTypeFilterFlags saved = presenceTypeFilterFlags();
-        d->presenceTypeFilterFlags = AccountsFilterModel::DoNotFilterByPresence;
+        d->presenceTypeFilterFlags = ContactsFilterModel::DoNotFilterByPresence;
 
         tmpCounter = 0;
         for (int i = 0; i < amItem->size(); ++i) {
@@ -888,7 +888,7 @@ void AccountsFilterModel::countContacts(const QModelIndex &index) const
     }
 }
 
-bool AccountsFilterModel::filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent) const
+bool ContactsFilterModel::filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent) const
 {
     QModelIndex index = sourceModel()->index(sourceRow, 0, sourceParent);
 
@@ -908,7 +908,7 @@ bool AccountsFilterModel::filterAcceptsRow(int sourceRow, const QModelIndex &sou
     }
 }
 
-bool AccountsFilterModel::lessThan(const QModelIndex &left, const QModelIndex &right) const
+bool ContactsFilterModel::lessThan(const QModelIndex &left, const QModelIndex &right) const
 {
 
     QString leftDisplayedName = sourceModel()->data(left).toString();
@@ -967,7 +967,7 @@ bool AccountsFilterModel::lessThan(const QModelIndex &left, const QModelIndex &r
 }
 
 
-QModelIndexList AccountsFilterModel::match(const QModelIndex &start, int role,
+QModelIndexList ContactsFilterModel::match(const QModelIndex &start, int role,
                                           const QVariant &value, int hits,
                                           Qt::MatchFlags flags) const
 {
@@ -1026,4 +1026,4 @@ QModelIndexList AccountsFilterModel::match(const QModelIndex &start, int role,
 }
 
 
-#include "accounts-filter-model.moc"
+#include "contacts-filter-model.moc"
