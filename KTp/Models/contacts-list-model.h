@@ -46,7 +46,6 @@ private Q_SLOTS:
     void onConnectionDropped();
 
 private:
-    //FIXME d_ptr
     class Private;
     Private *d;
 
