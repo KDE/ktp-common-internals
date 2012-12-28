@@ -4,8 +4,10 @@ include_directories (${CMAKE_CURRENT_BINARY_DIR}
 )
 
 set (ktp_models_private_SRCS
+    abstract-grouping-proxy-model.cpp
     accounts-list-model.cpp
     accounts-filter-model.cpp
+    accounts-tree-proxy-model.cpp
     accounts-model-item.cpp #Deprecated
     ../capabilities-hack-private.cpp #HACK, COPY INTO BOTH LIBRARIES UNTIL ContactModels IS REPLACED
     ../service-availability-checker.cpp #
@@ -14,6 +16,7 @@ set (ktp_models_private_SRCS
     contacts-model.cpp #Deprecated
     groups-model-item.cpp #Deprecated
     groups-model.cpp #Deprecated
+    #groups-tree-proxy-model.cpp
     proxy-tree-node.cpp #Deprecated
     tree-node.cpp #Deprecated
     flat-model-proxy.cpp #Deprecated
@@ -21,8 +24,10 @@ set (ktp_models_private_SRCS
 )
 
 set (ktp_models_private_HDRS
+    abstract-grouping-proxy-model.h
     accounts-list-model.h
     accounts-filter-model.h
+    accounts-tree-proxy-model.h
     accounts-model-item.h #Deprecated
     contact-model-item.h #Deprecated
     contacts-model.h #Deprecated

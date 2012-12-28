@@ -21,6 +21,7 @@
 #include "abstract-grouping-proxy-model.h"
 
 #include <QSet>
+#include <QTimer>
 
 #include <KDebug>
 
@@ -96,14 +97,16 @@ AbstractGroupingProxyModel::AbstractGroupingProxyModel(QAbstractItemModel *sourc
     QStandardItemModel(source),
     m_source(source)
 {
-    if (source->rowCount() > 0) {
-        onRowsInserted(QModelIndex(), 0, source->rowCount());
-    }
 
+    QTimer::singleShot(0, this, SLOT(onModelReset()));
     connect(m_source, SIGNAL(modelReset()), SLOT(onModelReset()));
     connect(m_source, SIGNAL(rowsInserted(QModelIndex, int,int)), SLOT(onRowsInserted(QModelIndex,int,int)));
     connect(m_source, SIGNAL(rowsAboutToBeRemoved(QModelIndex,int,int)), SLOT(onRowsRemoved(QModelIndex,int,int)));
     connect(m_source, SIGNAL(dataChanged(QModelIndex,QModelIndex)), SLOT(onDataChanged(QModelIndex,QModelIndex)));
+}
+
+AbstractGroupingProxyModel::~AbstractGroupingProxyModel()
+{
 }
 
 /* Called when source items inserts a row
@@ -119,7 +122,7 @@ void AbstractGroupingProxyModel::onRowsInserted(const QModelIndex &sourceParent,
     if (!sourceParent.parent().isValid()) {
         for (int i = start; i<=end; i++) {
             QModelIndex index = m_source->index(i, 0, sourceParent);
-            foreach(const QString &group, groupsForIndex(index)) {
+            Q_FOREACH(const QString &group, groupsForIndex(index)) {
                 addProxyNode(index, itemForGroup(group));
             }
         }
@@ -197,13 +200,13 @@ void AbstractGroupingProxyModel::onDataChanged(const QModelIndex &sourceTopLeft,
                 }
 
                 //do the actual removing
-                foreach (ProxyNode *proxy, removedItems) {
+                Q_FOREACH(ProxyNode *proxy, removedItems) {
                     proxy->parent()->removeRow(proxy->row());
                     m_proxyMap.remove(index, proxy);
                 }
 
                 //remaining items in itemGroups are now the new groups
-                foreach(const QString &group, itemGroups) {
+                Q_FOREACH(const QString &group, itemGroups) {
                     ProxyNode *proxyNode = new ProxyNode(index);
                     m_proxyMap.insertMulti(index, proxyNode);
                     itemForGroup(group)->appendRow(proxyNode);
@@ -233,6 +236,10 @@ void AbstractGroupingProxyModel::onModelReset()
     m_proxyMap.clear();
     m_groupMap.clear();
     kDebug() << "reset";
+    
+    if (m_source->rowCount() > 0) {
+        onRowsInserted(QModelIndex(), 0, m_source->rowCount());
+    }
 }
 
 QStandardItem *AbstractGroupingProxyModel::itemForGroup(const QString &group)
