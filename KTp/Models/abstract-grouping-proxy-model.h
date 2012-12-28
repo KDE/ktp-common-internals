@@ -24,14 +24,17 @@
 
 #include <QStandardItemModel>
 
+#include <KTp/ktp-export.h>
+
 class ProxyNode;
 class GroupNode;
 
-class AbstractGroupingProxyModel : public QStandardItemModel
+class KTP_EXPORT AbstractGroupingProxyModel : public QStandardItemModel
 {
     Q_OBJECT
 public:
     explicit AbstractGroupingProxyModel(QAbstractItemModel *source);
+    virtual ~AbstractGroupingProxyModel();
 
 //protected:
     /** Return a list of all groups this items belongs to. Subclasses must override this*/
@@ -39,7 +42,7 @@ public:
     /** Equivalent of QAbstractItemModel::data() called for a specific group header*/
     virtual QVariant dataForGroup(const QString &group, int role) const = 0;
 
-private slots:
+private Q_SLOTS:
     void onRowsInserted(const QModelIndex &sourceParent, int start, int end);
     void onRowsRemoved(const QModelIndex &sourceParent, int start, int end);
     void onDataChanged(const QModelIndex &sourceTopLeft, const QModelIndex &sourceBottomRight);
