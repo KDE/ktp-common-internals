@@ -359,29 +359,28 @@ bool AccountsFilterModel::Private::filterAcceptsContact(const QModelIndex &index
 
 bool AccountsFilterModel::Private::filterAcceptsGroup(const QModelIndex &index) const
 {
-    QVariant item = index.data(ContactsModel::ItemRole);
-    GroupsModelItem *gmItem = item.value<GroupsModelItem*>();
+    QString groupName = index.data(ContactsModel::IdRole).toString();
 
     if (presenceTypeFilterFlags != DoNotFilterByPresence) {
         // If there is no cached value, create one
-        if (!m_onlineContactsCounts.contains(gmItem->groupName())) {
+        if (!m_onlineContactsCounts.contains(groupName)) {
             q->countContacts(index);
         }
 
         // Don't accept groups with no online contacts
-        if (m_onlineContactsCounts.value(gmItem->groupName()) == 0) {
-            return false;
+        if (m_onlineContactsCounts.value(groupName) == 0) {
+//             return false;
         }
     }
     else {
         // If there is no cached value, create one
-        if (!m_totalContactsCounts.contains(gmItem->groupName())) {
+        if (!m_totalContactsCounts.contains(groupName)) {
             q->countContacts(index);
         }
 
         // Don't accept groups with no total contacts
-        if (m_totalContactsCounts.value(gmItem->groupName()) == 0) {
-            return false;
+        if (m_totalContactsCounts.value(groupName) == 0) {
+//             return false;
         }
     }
     return true;
