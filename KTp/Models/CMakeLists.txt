@@ -16,7 +16,7 @@ set (ktp_models_private_SRCS
     contacts-model.cpp #Deprecated
     groups-model-item.cpp #Deprecated
     groups-model.cpp #Deprecated
-    #groups-tree-proxy-model.cpp
+    groups-tree-proxy-model.cpp
     proxy-tree-node.cpp #Deprecated
     tree-node.cpp #Deprecated
     flat-model-proxy.cpp #Deprecated
@@ -34,6 +34,7 @@ set (ktp_models_private_HDRS
     contacts-list-model.h
     groups-model-item.h #Deprecated
     groups-model.h #Deprecated
+    groups-tree-proxy-model.h
     proxy-tree-node.h #Deprecated
     tree-node.h #Deprecated
     flat-model-proxy.h #Deprecated
