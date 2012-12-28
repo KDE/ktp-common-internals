@@ -174,7 +174,7 @@ void KTp::ContactsListModel::onContactsChanged(const Tp::Contacts &added, const 
         if (row >= 0) { //if contact found in list
             beginRemoveRows(QModelIndex(), row, row);
             d->contacts.removeOne(contact);
-            endInsertRows();
+            endRemoveRows();
         }
     }
 }
