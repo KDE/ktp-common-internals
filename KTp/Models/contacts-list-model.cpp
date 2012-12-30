@@ -158,6 +158,12 @@ void KTp::ContactsListModel::onContactsChanged(const Tp::Contacts &added, const 
             connect(contact.data(),
                     SIGNAL(clientTypesChanged(QStringList)),
                     SLOT(onChanged()));
+            connect(contact.data(),
+                    SIGNAL(addedToGroup(QString)),
+                    SLOT(onChanged()));
+            connect(contact.data(),
+                    SIGNAL(removedFromGroup(QString)),
+                    SLOT(onChanged()));
 
             connect(contact.data(), SIGNAL(invalidated()), SLOT(onConnectionDropped()));
     }
