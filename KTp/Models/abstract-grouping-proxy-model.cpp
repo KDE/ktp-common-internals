@@ -236,7 +236,7 @@ void AbstractGroupingProxyModel::onModelReset()
     m_proxyMap.clear();
     m_groupMap.clear();
     kDebug() << "reset";
-    
+
     if (m_source->rowCount() > 0) {
         onRowsInserted(QModelIndex(), 0, m_source->rowCount());
     }
