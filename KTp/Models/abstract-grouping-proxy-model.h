@@ -52,6 +52,8 @@ private:
     /** Create a new proxyNode appended to the given parent in this model*/
     void addProxyNode(const QModelIndex &sourceIndex, QStandardItem *parent);
 
+    void removeProxyNodes(const QModelIndex &sourceIndex, const QList<ProxyNode *> &removedItems);
+
 
     /** Returns the standard Item belonging to a particular group name. Creating one if needed*/
     QStandardItem *itemForGroup(const QString &group);
