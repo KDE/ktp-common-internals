@@ -35,10 +35,8 @@ QSet<QString> AccountsTreeProxyModel::groupsForIndex(const QModelIndex &sourceIn
 {
     const Tp::AccountPtr account = sourceIndex.data(ContactsModel::AccountRole).value<Tp::AccountPtr>();
     if (account) {
-        qDebug() << "account";
         return QSet<QString>() << account->objectPath();
     } else {
-        qDebug() << "no account";
         return QSet<QString>() << QLatin1String("Unknown");
     }
 }
@@ -77,5 +75,6 @@ QVariant AccountsTreeProxyModel::dataForGroup(const QString &group, int role) co
         }
         return Tp::ConnectionStatusConnected;
     }
+
     return QVariant();
 }
