@@ -145,6 +145,22 @@ void AbstractGroupingProxyModel::addProxyNode(const QModelIndex &sourceIndex, QS
     parent->appendRow(proxyNode);
 }
 
+void AbstractGroupingProxyModel::removeProxyNodes(const QModelIndex &sourceIndex, const QList<ProxyNode *> &removedItems)
+{
+    Q_FOREACH(ProxyNode *proxy, removedItems) {
+        QStandardItem *parentItem = proxy->parent();
+        parentItem->removeRow(proxy->row());
+        m_proxyMap.remove(sourceIndex, proxy);
+
+        //if the parent item to this proxy node is now empty, and is a top level item
+        if (parentItem->rowCount() == 0 && parentItem->parent() == 0) {
+            GroupNode* groupNode = dynamic_cast<GroupNode*>(parentItem);
+            takeRow(groupNode->row());
+            m_groupMap.remove(groupNode->group());
+        }
+    }
+}
+
 /*
  * Called when a row is remove from the source model model
  * Find all existing proxy models and delete thems
@@ -153,14 +169,16 @@ void AbstractGroupingProxyModel::onRowsRemoved(const QModelIndex &sourceParent, 
 {
     for (int i = start; i<=end; i++) {
         QPersistentModelIndex index = m_source->index(i, 0, sourceParent);
+        QList<ProxyNode *> itemsToRemove;
 
         QHash<QPersistentModelIndex, ProxyNode*>::const_iterator it = m_proxyMap.find(index);
         while (it != m_proxyMap.end()  && it.key() == index) {
             kDebug() << "removing row" << index.data();
-            it.value()->parent()->removeRow(it.value()->row());
+            itemsToRemove.append(it.value());
             ++it;
         }
-        m_proxyMap.remove(index);
+        m_groupCache.remove(index);
+        removeProxyNodes(index, itemsToRemove);
     }
 }
 
@@ -199,11 +217,7 @@ void AbstractGroupingProxyModel::onDataChanged(const QModelIndex &sourceTopLeft,
                     ++it;
                 }
 
-                //do the actual removing
-                Q_FOREACH(ProxyNode *proxy, removedItems) {
-                    proxy->parent()->removeRow(proxy->row());
-                    m_proxyMap.remove(index, proxy);
-                }
+                removeProxyNodes(index, removedItems);
 
                 //remaining items in itemGroups are now the new groups
                 Q_FOREACH(const QString &group, itemGroups) {
