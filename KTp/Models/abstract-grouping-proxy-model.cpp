@@ -36,7 +36,7 @@ public:
 
     //item -> groups
     QMultiHash<QPersistentModelIndex, ProxyNode*> proxyMap;
-    QHash<QString, QStandardItem*> groupMap;
+    QHash<QString, GroupNode*> groupMap;
 };
 
 class ProxyNode : public QStandardItem
@@ -55,8 +55,11 @@ public:
     GroupNode(const QString &groupId);
     QString group() const;
     virtual QVariant data(int role) const;
+    bool forced() const;
+    void setForced(bool forced);
 private:
     const QString m_groupId;
+    bool m_forced;
 };
 
 
@@ -90,7 +93,8 @@ QString ProxyNode::group() const
 
 GroupNode::GroupNode(const QString &groupId):
     QStandardItem(),
-    m_groupId(groupId)
+    m_groupId(groupId),
+    m_forced(false)
 {
 }
 
@@ -105,6 +109,15 @@ QVariant GroupNode::data(int role) const
     return proxyModel->dataForGroup(m_groupId, role);
 }
 
+void GroupNode::setForced(bool forced) {
+    m_forced = forced;
+}
+
+bool GroupNode::forced() const
+{
+    return m_forced;
+}
+
 
 KTp::AbstractGroupingProxyModel::AbstractGroupingProxyModel(QAbstractItemModel *source):
     QStandardItemModel(source),
@@ -112,7 +125,7 @@ KTp::AbstractGroupingProxyModel::AbstractGroupingProxyModel(QAbstractItemModel *
 {
     d->source = source;
 
-    QTimer::singleShot(0, this, SLOT(onModelReset()));
+    QTimer::singleShot(0, this, SLOT(onLoad()));
     connect(d->source, SIGNAL(modelReset()), SLOT(onModelReset()));
     connect(d->source, SIGNAL(rowsInserted(QModelIndex, int,int)), SLOT(onRowsInserted(QModelIndex,int,int)));
     connect(d->source, SIGNAL(rowsAboutToBeRemoved(QModelIndex,int,int)), SLOT(onRowsRemoved(QModelIndex,int,int)));
@@ -123,6 +136,31 @@ KTp::AbstractGroupingProxyModel::~AbstractGroupingProxyModel()
 {
     delete d;
 }
+
+
+void KTp::AbstractGroupingProxyModel::forceGroup(const QString &group)
+{
+    GroupNode* groupNode = itemForGroup(group);
+    groupNode->setForced(true);
+}
+
+void KTp::AbstractGroupingProxyModel::unforceGroup(const QString &group)
+{
+    GroupNode* groupNode = d->groupMap[group];
+    if (!groupNode) {
+        return;
+    }
+
+    //mark that this group can be removed when it's empty
+    groupNode->setForced(false);
+
+    //if group is already empty remove it
+    if (groupNode->rowCount() == 0) {
+        takeRow(groupNode->row());
+        d->groupMap.remove(groupNode->group());
+    }
+}
+
 
 /* Called when source items inserts a row
  *
@@ -168,10 +206,14 @@ void KTp::AbstractGroupingProxyModel::removeProxyNodes(const QModelIndex &source
         d->proxyMap.remove(sourceIndex, proxy);
 
         //if the parent item to this proxy node is now empty, and is a top level item
-        if (parentItem->rowCount() == 0 && parentItem->parent() == 0) {
+        if (parentItem->rowCount() == 0 && parentItem->parent() == 0 ) {
             GroupNode* groupNode = dynamic_cast<GroupNode*>(parentItem);
-            takeRow(groupNode->row());
-            d->groupMap.remove(groupNode->group());
+
+            //do not delete forced groups
+            if (groupNode->forced() == false) {
+                takeRow(groupNode->row());
+                d->groupMap.remove(groupNode->group());
+            }
         }
     }
 }
@@ -254,6 +296,14 @@ void KTp::AbstractGroupingProxyModel::onDataChanged(const QModelIndex &sourceTop
     }
 }
 
+
+void KTp::AbstractGroupingProxyModel::onLoad()
+{
+    if (d->source->rowCount() > 0) {
+        onRowsInserted(QModelIndex(), 0, d->source->rowCount()-1);
+    }
+}
+
 /* Called when source model gets reset
  * Delete all local caches/maps and wipe the current QStandardItemModel
  */
@@ -271,7 +321,7 @@ void KTp::AbstractGroupingProxyModel::onModelReset()
     }
 }
 
-QStandardItem* KTp::AbstractGroupingProxyModel::itemForGroup(const QString &group)
+GroupNode* KTp::AbstractGroupingProxyModel::itemForGroup(const QString &group)
 {
     if (d->groupMap.contains(group)) {
         return d->groupMap[group];
