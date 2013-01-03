@@ -26,6 +26,19 @@
 #include <KDebug>
 
 
+class KTp::AbstractGroupingProxyModel::Private
+{
+public:
+    QAbstractItemModel *source;
+
+    //keep a cache of what groups an item belongs to
+    QHash<QPersistentModelIndex, QSet<QString> > groupCache;
+
+    //item -> groups
+    QMultiHash<QPersistentModelIndex, ProxyNode*> proxyMap;
+    QHash<QString, QStandardItem*> groupMap;
+};
+
 class ProxyNode : public QStandardItem
 {
 public:
@@ -87,26 +100,28 @@ QString GroupNode::group() const {
 
 QVariant GroupNode::data(int role) const
 {
-    AbstractGroupingProxyModel *proxyModel = qobject_cast<AbstractGroupingProxyModel*>(model());
+    KTp::AbstractGroupingProxyModel *proxyModel = qobject_cast<KTp::AbstractGroupingProxyModel*>(model());
     Q_ASSERT(proxyModel);
     return proxyModel->dataForGroup(m_groupId, role);
 }
 
 
-AbstractGroupingProxyModel::AbstractGroupingProxyModel(QAbstractItemModel *source):
+KTp::AbstractGroupingProxyModel::AbstractGroupingProxyModel(QAbstractItemModel *source):
     QStandardItemModel(source),
-    m_source(source)
+    d(new KTp::AbstractGroupingProxyModel::Private())
 {
+    d->source = source;
 
     QTimer::singleShot(0, this, SLOT(onModelReset()));
-    connect(m_source, SIGNAL(modelReset()), SLOT(onModelReset()));
-    connect(m_source, SIGNAL(rowsInserted(QModelIndex, int,int)), SLOT(onRowsInserted(QModelIndex,int,int)));
-    connect(m_source, SIGNAL(rowsAboutToBeRemoved(QModelIndex,int,int)), SLOT(onRowsRemoved(QModelIndex,int,int)));
-    connect(m_source, SIGNAL(dataChanged(QModelIndex,QModelIndex)), SLOT(onDataChanged(QModelIndex,QModelIndex)));
+    connect(d->source, SIGNAL(modelReset()), SLOT(onModelReset()));
+    connect(d->source, SIGNAL(rowsInserted(QModelIndex, int,int)), SLOT(onRowsInserted(QModelIndex,int,int)));
+    connect(d->source, SIGNAL(rowsAboutToBeRemoved(QModelIndex,int,int)), SLOT(onRowsRemoved(QModelIndex,int,int)));
+    connect(d->source, SIGNAL(dataChanged(QModelIndex,QModelIndex)), SLOT(onDataChanged(QModelIndex,QModelIndex)));
 }
 
-AbstractGroupingProxyModel::~AbstractGroupingProxyModel()
+KTp::AbstractGroupingProxyModel::~AbstractGroupingProxyModel()
 {
+    delete d;
 }
 
 /* Called when source items inserts a row
@@ -116,21 +131,21 @@ AbstractGroupingProxyModel::~AbstractGroupingProxyModel()
  * Otherwise add it to the relevant proxy nodes in our model
  */
 
-void AbstractGroupingProxyModel::onRowsInserted(const QModelIndex &sourceParent, int start, int end)
+void KTp::AbstractGroupingProxyModel::onRowsInserted(const QModelIndex &sourceParent, int start, int end)
 {
     //if top level in root model
     if (!sourceParent.parent().isValid()) {
         for (int i = start; i<=end; i++) {
-            QModelIndex index = m_source->index(i, 0, sourceParent);
+            QModelIndex index = d->source->index(i, 0, sourceParent);
             Q_FOREACH(const QString &group, groupsForIndex(index)) {
                 addProxyNode(index, itemForGroup(group));
             }
         }
     } else {
         for (int i = start; i<=end; i++) {
-            QModelIndex index = m_source->index(i, 0, sourceParent);
-            QHash<QPersistentModelIndex, ProxyNode*>::const_iterator it = m_proxyMap.find(index);
-            while (it != m_proxyMap.end()  && it.key() == index) {
+            QModelIndex index = d->source->index(i, 0, sourceParent);
+            QHash<QPersistentModelIndex, ProxyNode*>::const_iterator it = d->proxyMap.find(index);
+            while (it != d->proxyMap.end()  && it.key() == index) {
                 addProxyNode(index, it.value());
                 it++;
             }
@@ -138,25 +153,25 @@ void AbstractGroupingProxyModel::onRowsInserted(const QModelIndex &sourceParent,
     }
 }
 
-void AbstractGroupingProxyModel::addProxyNode(const QModelIndex &sourceIndex, QStandardItem *parent)
+void KTp::AbstractGroupingProxyModel::addProxyNode(const QModelIndex &sourceIndex, QStandardItem *parent)
 {
     ProxyNode *proxyNode = new ProxyNode(sourceIndex);
-    m_proxyMap.insertMulti(sourceIndex, proxyNode);
+    d->proxyMap.insertMulti(sourceIndex, proxyNode);
     parent->appendRow(proxyNode);
 }
 
-void AbstractGroupingProxyModel::removeProxyNodes(const QModelIndex &sourceIndex, const QList<ProxyNode *> &removedItems)
+void KTp::AbstractGroupingProxyModel::removeProxyNodes(const QModelIndex &sourceIndex, const QList<ProxyNode *> &removedItems)
 {
     Q_FOREACH(ProxyNode *proxy, removedItems) {
         QStandardItem *parentItem = proxy->parent();
         parentItem->removeRow(proxy->row());
-        m_proxyMap.remove(sourceIndex, proxy);
+        d->proxyMap.remove(sourceIndex, proxy);
 
         //if the parent item to this proxy node is now empty, and is a top level item
         if (parentItem->rowCount() == 0 && parentItem->parent() == 0) {
             GroupNode* groupNode = dynamic_cast<GroupNode*>(parentItem);
             takeRow(groupNode->row());
-            m_groupMap.remove(groupNode->group());
+            d->groupMap.remove(groupNode->group());
         }
     }
 }
@@ -165,19 +180,19 @@ void AbstractGroupingProxyModel::removeProxyNodes(const QModelIndex &sourceIndex
  * Called when a row is remove from the source model model
  * Find all existing proxy models and delete thems
 */
-void AbstractGroupingProxyModel::onRowsRemoved(const QModelIndex &sourceParent, int start, int end)
+void KTp::AbstractGroupingProxyModel::onRowsRemoved(const QModelIndex &sourceParent, int start, int end)
 {
     for (int i = start; i<=end; i++) {
-        QPersistentModelIndex index = m_source->index(i, 0, sourceParent);
+        QPersistentModelIndex index = d->source->index(i, 0, sourceParent);
         QList<ProxyNode *> itemsToRemove;
 
-        QHash<QPersistentModelIndex, ProxyNode*>::const_iterator it = m_proxyMap.find(index);
-        while (it != m_proxyMap.end()  && it.key() == index) {
+        QHash<QPersistentModelIndex, ProxyNode*>::const_iterator it = d->proxyMap.find(index);
+        while (it != d->proxyMap.end()  && it.key() == index) {
             kDebug() << "removing row" << index.data();
             itemsToRemove.append(it.value());
             ++it;
         }
-        m_groupCache.remove(index);
+        d->groupCache.remove(index);
         removeProxyNodes(index, itemsToRemove);
     }
 }
@@ -188,22 +203,22 @@ void AbstractGroupingProxyModel::onRowsRemoved(const QModelIndex &sourceParent, 
  * Find all proxy nodes, and make dataChanged() get emitted
  */
 
-void AbstractGroupingProxyModel::onDataChanged(const QModelIndex &sourceTopLeft, const QModelIndex &sourceBottomRight)
+void KTp::AbstractGroupingProxyModel::onDataChanged(const QModelIndex &sourceTopLeft, const QModelIndex &sourceBottomRight)
 {
     for (int i=sourceTopLeft.row() ; i<=sourceBottomRight.row() ; i++) {
-        QPersistentModelIndex index = m_source->index(i, 0, sourceTopLeft.parent());
+        QPersistentModelIndex index = d->source->index(i, 0, sourceTopLeft.parent());
 
         //if top level item
         if (!sourceTopLeft.parent().isValid()) {
             //groupsSet has changed...update as appropriate
-            QSet<QString> itemGroups = groupsForIndex(m_source->index(i, 0, sourceTopLeft.parent()));
-            if (m_groupCache[index] != itemGroups) {
-                m_groupCache[index] = itemGroups;
+            QSet<QString> itemGroups = groupsForIndex(d->source->index(i, 0, sourceTopLeft.parent()));
+            if (d->groupCache[index] != itemGroups) {
+                d->groupCache[index] = itemGroups;
 
                 //loop through existing proxy nodes, and check each one is still valid.
-                QHash<QPersistentModelIndex, ProxyNode*>::const_iterator it = m_proxyMap.find(index);
+                QHash<QPersistentModelIndex, ProxyNode*>::const_iterator it = d->proxyMap.find(index);
                 QList<ProxyNode*> removedItems;
-                while (it != m_proxyMap.end()  && it.key() == index) {
+                while (it != d->proxyMap.end()  && it.key() == index) {
                     // if proxy's group is still in the item's groups.
                     if (itemGroups.contains(it.value()->group())) {
                         itemGroups.remove(it.value()->group());
@@ -222,7 +237,7 @@ void AbstractGroupingProxyModel::onDataChanged(const QModelIndex &sourceTopLeft,
                 //remaining items in itemGroups are now the new groups
                 Q_FOREACH(const QString &group, itemGroups) {
                     ProxyNode *proxyNode = new ProxyNode(index);
-                    m_proxyMap.insertMulti(index, proxyNode);
+                    d->proxyMap.insertMulti(index, proxyNode);
                     itemForGroup(group)->appendRow(proxyNode);
 
                     kDebug() << "adding " << index.data().toString() << " to group " << group;
@@ -231,8 +246,8 @@ void AbstractGroupingProxyModel::onDataChanged(const QModelIndex &sourceTopLeft,
         }
 
         //mark all proxy nodes as changed
-        QHash<QPersistentModelIndex, ProxyNode*>::const_iterator it = m_proxyMap.find(index);
-        while (it != m_proxyMap.end() && it.key() == index) {
+        QHash<QPersistentModelIndex, ProxyNode*>::const_iterator it = d->proxyMap.find(index);
+        while (it != d->proxyMap.end() && it.key() == index) {
             it.value()->changed();
             ++it;
         }
@@ -243,27 +258,27 @@ void AbstractGroupingProxyModel::onDataChanged(const QModelIndex &sourceTopLeft,
  * Delete all local caches/maps and wipe the current QStandardItemModel
  */
 
-void AbstractGroupingProxyModel::onModelReset()
+void KTp::AbstractGroupingProxyModel::onModelReset()
 {
     clear();
-    m_groupCache.clear();
-    m_proxyMap.clear();
-    m_groupMap.clear();
+    d->groupCache.clear();
+    d->proxyMap.clear();
+    d->groupMap.clear();
     kDebug() << "reset";
 
-    if (m_source->rowCount() > 0) {
-        onRowsInserted(QModelIndex(), 0, m_source->rowCount()-1);
+    if (d->source->rowCount() > 0) {
+        onRowsInserted(QModelIndex(), 0, d->source->rowCount()-1);
     }
 }
 
-QStandardItem *AbstractGroupingProxyModel::itemForGroup(const QString &group)
+QStandardItem* KTp::AbstractGroupingProxyModel::itemForGroup(const QString &group)
 {
-    if (m_groupMap.contains(group)) {
-        return m_groupMap[group];
+    if (d->groupMap.contains(group)) {
+        return d->groupMap[group];
     } else {
         GroupNode* item = new GroupNode(group);
         appendRow(item);
-        m_groupMap[group] = item;
+        d->groupMap[group] = item;
         return item;
     }
 }

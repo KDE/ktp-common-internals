@@ -25,7 +25,7 @@
 
 #include <KTp/ktp-export.h>
 
-class KTP_EXPORT AccountsTreeProxyModel : public AbstractGroupingProxyModel
+class KTP_EXPORT AccountsTreeProxyModel : public KTp::AbstractGroupingProxyModel
 {
     Q_OBJECT
 public:
