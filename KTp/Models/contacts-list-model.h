@@ -46,6 +46,7 @@ private Q_SLOTS:
     void onConnectionDropped();
 
 private:
+    Q_DISABLE_COPY(ContactsListModel)
     class Private;
     Private *d;
 
