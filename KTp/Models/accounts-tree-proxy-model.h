@@ -16,14 +16,16 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef ACCOUNTSTREEPROXYMODEL_H
-#define ACCOUNTSTREEPROXYMODEL_H
+#ifndef KTP_ACCOUNTS_TREE_PROXY_MODEL_H
+#define KTP_ACCOUNTS_TREE_PROXY_MODEL_H
 
 #include "abstract-grouping-proxy-model.h"
 
-#include <TelepathyQt/AccountManager>
-
 #include <KTp/ktp-export.h>
+
+#include <TelepathyQt/Types>
+
+namespace KTp {
 
 class KTP_EXPORT AccountsTreeProxyModel : public KTp::AbstractGroupingProxyModel
 {
@@ -34,7 +36,11 @@ public:
     virtual QSet<QString> groupsForIndex(const QModelIndex &sourceIndex) const;
     virtual QVariant dataForGroup(const QString &group, int role) const;
 private:
-    Tp::AccountManagerPtr m_accountManager;
+    class Private;
+    Private *d;
+
 };
+
+}
 
 #endif // ACCOUNTSTREEPROXYMODEL_H

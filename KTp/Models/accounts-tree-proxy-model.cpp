@@ -21,17 +21,25 @@
 #include "contacts-model.h"
 
 #include <TelepathyQt/Account>
+#include <TelepathyQt/AccountManager>
 
 #include <KIcon>
 
-AccountsTreeProxyModel::AccountsTreeProxyModel(QAbstractItemModel *sourceModel, const Tp::AccountManagerPtr &accountManager) :
-    AbstractGroupingProxyModel(sourceModel),
-    m_accountManager(accountManager)
-{
 
+class KTp::AccountsTreeProxyModel::Private
+{
+public:
+    Tp::AccountManagerPtr accountManager;
+};
+
+KTp::AccountsTreeProxyModel::AccountsTreeProxyModel(QAbstractItemModel *sourceModel, const Tp::AccountManagerPtr &accountManager) :
+    AbstractGroupingProxyModel(sourceModel),
+    d(new Private())
+{
+    d->accountManager = accountManager;
 }
 
-QSet<QString> AccountsTreeProxyModel::groupsForIndex(const QModelIndex &sourceIndex) const
+QSet<QString> KTp::AccountsTreeProxyModel::groupsForIndex(const QModelIndex &sourceIndex) const
 {
     const Tp::AccountPtr account = sourceIndex.data(ContactsModel::AccountRole).value<Tp::AccountPtr>();
     if (account) {
@@ -42,34 +50,34 @@ QSet<QString> AccountsTreeProxyModel::groupsForIndex(const QModelIndex &sourceIn
 }
 
 
-QVariant AccountsTreeProxyModel::dataForGroup(const QString &group, int role) const
+QVariant KTp::AccountsTreeProxyModel::dataForGroup(const QString &group, int role) const
 {
     Tp::AccountPtr account;
     switch(role) {
     case Qt::DisplayRole:
-        account = m_accountManager->accountForObjectPath(group);
+        account = d->accountManager->accountForObjectPath(group);
         if (account) {
             return account->normalizedName();
         }
         break;
     case ContactsModel::IconRole:
-        account = m_accountManager->accountForObjectPath(group);
+        account = d->accountManager->accountForObjectPath(group);
         if (account) {
             return account->iconName();
         }
         break;
     case ContactsModel::AccountRole:
-        return QVariant::fromValue(m_accountManager->accountForObjectPath(group));
+        return QVariant::fromValue(d->accountManager->accountForObjectPath(group));
     case ContactsModel::TypeRole:
         return ContactsModel::AccountRowType;
     case ContactsModel::EnabledRole:
-        account = m_accountManager->accountForObjectPath(group);
+        account = d->accountManager->accountForObjectPath(group);
         if (account) {
             return account->isEnabled();
         }
         return true;
     case ContactsModel::ConnectionStatusRole:
-        account = m_accountManager->accountForObjectPath(group);
+        account = d->accountManager->accountForObjectPath(group);
         if (account) {
             return account->connectionStatus();
         }
