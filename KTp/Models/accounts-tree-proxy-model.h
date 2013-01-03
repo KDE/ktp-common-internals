@@ -35,6 +35,11 @@ public:
 
     virtual QSet<QString> groupsForIndex(const QModelIndex &sourceIndex) const;
     virtual QVariant dataForGroup(const QString &group, int role) const;
+
+private Q_SLOTS:
+    void onAccountAdded(const Tp::AccountPtr &account);
+    void onAccountRemoved(const Tp::AccountPtr &account);
+
 private:
     class Private;
     Private *d;

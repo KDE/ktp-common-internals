@@ -22,6 +22,7 @@
 
 #include <TelepathyQt/Account>
 #include <TelepathyQt/AccountManager>
+#include <TelepathyQt/AccountSet>
 
 #include <KIcon>
 
@@ -30,6 +31,7 @@ class KTp::AccountsTreeProxyModel::Private
 {
 public:
     Tp::AccountManagerPtr accountManager;
+    Tp::AccountSetPtr accountSet;
 };
 
 KTp::AccountsTreeProxyModel::AccountsTreeProxyModel(QAbstractItemModel *sourceModel, const Tp::AccountManagerPtr &accountManager) :
@@ -37,6 +39,14 @@ KTp::AccountsTreeProxyModel::AccountsTreeProxyModel(QAbstractItemModel *sourceMo
     d(new Private())
 {
     d->accountManager = accountManager;
+
+    d->accountSet = accountManager->enabledAccounts();
+    connect(d->accountSet.data(), SIGNAL(accountAdded(Tp::AccountPtr)), SLOT(onAccountAdded(Tp::AccountPtr)));
+    connect(d->accountSet.data(), SIGNAL(accountRemoved(Tp::AccountPtr)), SLOT(onAccountRemoved(Tp::AccountPtr)));
+    Q_FOREACH(const Tp::AccountPtr &account, d->accountSet->accounts()) {
+        onAccountAdded(account);
+    }
+
 }
 
 QSet<QString> KTp::AccountsTreeProxyModel::groupsForIndex(const QModelIndex &sourceIndex) const
@@ -85,4 +95,14 @@ QVariant KTp::AccountsTreeProxyModel::dataForGroup(const QString &group, int rol
     }
 
     return QVariant();
+}
+
+void KTp::AccountsTreeProxyModel::onAccountAdded(const Tp::AccountPtr &account)
+{
+    forceGroup(account->objectPath());
+}
+
+void KTp::AccountsTreeProxyModel::onAccountRemoved(const Tp::AccountPtr &account)
+{
+    unforceGroup(account->objectPath());
 }

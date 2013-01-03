@@ -39,6 +39,10 @@ public:
     explicit AbstractGroupingProxyModel(QAbstractItemModel *source);
     virtual ~AbstractGroupingProxyModel();
 
+    void forceGroup(const QString &group);
+    void unforceGroup(const QString &group);
+
+
 //protected:
     /** Return a list of all groups this items belongs to. Subclasses must override this*/
     virtual QSet<QString> groupsForIndex(const QModelIndex &sourceIndex) const = 0;
@@ -50,6 +54,7 @@ private Q_SLOTS:
     void onRowsRemoved(const QModelIndex &sourceParent, int start, int end);
     void onDataChanged(const QModelIndex &sourceTopLeft, const QModelIndex &sourceBottomRight);
     void onModelReset();
+    void onLoad();
 
 private:
     Q_DISABLE_COPY(AbstractGroupingProxyModel)
@@ -64,7 +69,7 @@ private:
 
 
     /** Returns the standard Item belonging to a particular group name. Creating one if needed*/
-    QStandardItem *itemForGroup(const QString &group);
+    GroupNode *itemForGroup(const QString &group);
 };
 
 }
