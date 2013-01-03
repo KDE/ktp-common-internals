@@ -22,12 +22,25 @@
 
 #include <KLocalizedString>
 
-GroupsTreeProxyModel::GroupsTreeProxyModel(QAbstractItemModel *sourceModel) :
-    AbstractGroupingProxyModel(sourceModel)
+class KTp::GroupsTreeProxyModel::Private
+{
+public:
+    //nothing here yet, added anyway in case we need private members without breaking the ABI
+};
+
+
+KTp::GroupsTreeProxyModel::GroupsTreeProxyModel(QAbstractItemModel *sourceModel) :
+    AbstractGroupingProxyModel(sourceModel),
+    d(new KTp::GroupsTreeProxyModel::Private())
 {
 }
 
-QSet<QString> GroupsTreeProxyModel::groupsForIndex(const QModelIndex &sourceIndex) const
+KTp::GroupsTreeProxyModel::~GroupsTreeProxyModel()
+{
+    delete d;
+}
+
+QSet<QString> KTp::GroupsTreeProxyModel::groupsForIndex(const QModelIndex &sourceIndex) const
 {
     QStringList groups = sourceIndex.data(ContactsModel::GroupsRole).value<QStringList>();
     if (groups.isEmpty()) {
@@ -38,7 +51,7 @@ QSet<QString> GroupsTreeProxyModel::groupsForIndex(const QModelIndex &sourceInde
 }
 
 
-QVariant GroupsTreeProxyModel::dataForGroup(const QString &group, int role) const
+QVariant KTp::GroupsTreeProxyModel::dataForGroup(const QString &group, int role) const
 {
     switch (role) {
     case ContactsModel::TypeRole:
