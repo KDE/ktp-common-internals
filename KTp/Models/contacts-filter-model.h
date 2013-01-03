@@ -277,8 +277,6 @@ public:
     Q_SLOT void setIdFilterMatchFlags(Qt::MatchFlags idFilterMatchFlags);
     Q_SIGNAL void idFilterMatchFlagsChanged(Qt::MatchFlags idFilterMatchFlags);
 
-    Q_SLOT void countContacts(const QModelIndex &index) const;
-
 protected:
     bool filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent) const;
     bool lessThan (const QModelIndex &left, const QModelIndex &right) const;
@@ -289,6 +287,9 @@ protected:
 private:
     class Private;
     Private * const d;
+
+    Q_PRIVATE_SLOT(d, void sourceModelChanged(const QModelIndex &index))
+    Q_PRIVATE_SLOT(d, void countContacts(const QModelIndex &index))
 };
 
 #endif // ACCOUNTFILTERMODEL_H
