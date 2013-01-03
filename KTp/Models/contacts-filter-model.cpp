@@ -439,7 +439,7 @@ void ContactsFilterModel::Private::countContacts(const QModelIndex &sourceParent
 
 void ContactsFilterModel::Private::sourceModelChanged(const QModelIndex &sourceIndex)
 {
-    const QModelIndex groupSourceIndex;
+    QModelIndex groupSourceIndex;
     if (sourceIndex.data(ContactsModel::TypeRole).toUInt() == ContactsModel::ContactRowType) {
         groupSourceIndex = sourceIndex.parent();
     } else {
