@@ -16,8 +16,8 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef GROUPSTREEPROXYMODEL_H
-#define GROUPSTREEPROXYMODEL_H
+#ifndef KTP_GROUPS_TREE_PROXY_MODEL_H
+#define KTP_GROUPS_TREE_PROXY_MODEL_H
 
 #include "abstract-grouping-proxy-model.h"
 
@@ -25,14 +25,22 @@
 
 #include <KTp/ktp-export.h>
 
+namespace KTp
+{
+
 class KTP_EXPORT GroupsTreeProxyModel : public KTp::AbstractGroupingProxyModel
 {
     Q_OBJECT
 public:
     GroupsTreeProxyModel(QAbstractItemModel *sourceModel);
+    virtual ~GroupsTreeProxyModel();
    
     virtual QSet<QString> groupsForIndex(const QModelIndex &sourceIndex) const;
     virtual QVariant dataForGroup(const QString &group, int role) const;
+private:
+    class Private;
+    Private *d;
 };
+}
 
 #endif // ACCOUNTSTREEPROXYMODEL_H
