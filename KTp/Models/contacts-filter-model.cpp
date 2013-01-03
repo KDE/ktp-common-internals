@@ -24,11 +24,6 @@
 #include "contacts-filter-model.h"
 
 #include "contacts-model.h"
-#include "groups-model.h"
-#include "groups-model-item.h"
-#include "contact-model-item.h"
-#include "accounts-model-item.h"
-#include "proxy-tree-node.h"
 
 #include <presence.h>
 
