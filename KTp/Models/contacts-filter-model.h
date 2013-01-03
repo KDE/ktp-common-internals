@@ -26,9 +26,6 @@
 
 #include <KTp/ktp-export.h>
 
-class AccountsModelItem;
-class ContactModelItem;
-
 /**
   * \brief Class used to sort and filter the contacts.
   */
