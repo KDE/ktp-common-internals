@@ -31,8 +31,8 @@ class ContactList : public QObject
 {
     Q_OBJECT
 public:
-    Q_PROPERTY(QObject* model READ flatModel)
-    Q_PROPERTY(QObject* filter READ filterModel)
+    Q_PROPERTY(QObject* model READ flatModel CONSTANT)
+    Q_PROPERTY(QObject* filter READ filterModel CONSTANT)
 
 
     ContactList(QObject *parent=0);
