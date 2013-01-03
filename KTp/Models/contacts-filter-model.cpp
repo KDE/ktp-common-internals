@@ -524,14 +524,16 @@ QVariant ContactsFilterModel::data(const QModelIndex &index, int role) const
 void ContactsFilterModel::setSourceModel(QAbstractItemModel *sourceModel)
 {
     // Disconnect the previous source model
-    disconnect(this->sourceModel(), SIGNAL(dataChanged(QModelIndex,QModelIndex)),
-               this, SLOT(sourceModelChanged(QModelIndex)));
-    disconnect(this->sourceModel(), SIGNAL(rowsInserted(QModelIndex,int,int)),
-               this, SLOT(sourceModelChanged(QModelIndex)));
-    disconnect(this->sourceModel(), SIGNAL(rowsRemoved(QModelIndex,int,int)),
-               this, SLOT(sourceModelChanged(QModelIndex)));
-    disconnect(this->sourceModel(), SIGNAL(rowsMoved(QModelIndex,int,int,QModelIndex,int)),
-               this, SLOT(sourceModelChanged(QModelIndex)));
+    if (this->sourceModel()) {
+        disconnect(this->sourceModel(), SIGNAL(dataChanged(QModelIndex,QModelIndex)),
+                this, SLOT(sourceModelChanged(QModelIndex)));
+        disconnect(this->sourceModel(), SIGNAL(rowsInserted(QModelIndex,int,int)),
+                this, SLOT(sourceModelChanged(QModelIndex)));
+        disconnect(this->sourceModel(), SIGNAL(rowsRemoved(QModelIndex,int,int)),
+                this, SLOT(sourceModelChanged(QModelIndex)));
+        disconnect(this->sourceModel(), SIGNAL(rowsMoved(QModelIndex,int,int,QModelIndex,int)),
+                this, SLOT(sourceModelChanged(QModelIndex)));
+    }
 
     // Clear all cached values as they aren't valid anymore because the source model changed.
     d->m_onlineContactsCounts.clear();
