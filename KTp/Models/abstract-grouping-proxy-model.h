@@ -19,8 +19,8 @@
  */
 
 
-#ifndef ABSTRACTGROUPINGPROXYMODEL_H
-#define ABSTRACTGROUPINGPROXYMODEL_H
+#ifndef KTP_ABSTRACT_GROUPING_PROXY_MODEL_H
+#define KTP_ABSTRACT_GROUPING_PROXY_MODEL_H
 
 #include <QStandardItemModel>
 
@@ -28,6 +28,9 @@
 
 class ProxyNode;
 class GroupNode;
+
+namespace KTp
+{
 
 class KTP_EXPORT AbstractGroupingProxyModel : public QStandardItemModel
 {
@@ -49,6 +52,11 @@ private Q_SLOTS:
     void onModelReset();
 
 private:
+    Q_DISABLE_COPY(AbstractGroupingProxyModel)
+    class Private;
+    Private *d;
+
+
     /** Create a new proxyNode appended to the given parent in this model*/
     void addProxyNode(const QModelIndex &sourceIndex, QStandardItem *parent);
 
@@ -57,15 +65,8 @@ private:
 
     /** Returns the standard Item belonging to a particular group name. Creating one if needed*/
     QStandardItem *itemForGroup(const QString &group);
-
-    QAbstractItemModel *m_source;
-
-    //keep a cache of what groups an item belongs to
-    QHash<QPersistentModelIndex, QSet<QString> > m_groupCache;
-
-    //item -> groups
-    QMultiHash<QPersistentModelIndex, ProxyNode*> m_proxyMap;
-    QHash<QString, QStandardItem*> m_groupMap;
 };
 
-#endif // GROUPPROXYMODEL_H
+}
+
+#endif
