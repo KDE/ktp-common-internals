@@ -186,6 +186,8 @@ void GroupsModel::onItemsAdded(TreeNode *parent, const QList<TreeNode *> &nodes)
         parent->addChild(node);
     }
     endInsertRows();
+
+    onItemChanged(parent);
 }
 
 void GroupsModel::onItemsRemoved(TreeNode *parent, int first, int last)
