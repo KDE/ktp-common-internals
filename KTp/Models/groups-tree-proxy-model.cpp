@@ -19,6 +19,7 @@
 #include "groups-tree-proxy-model.h"
 
 #include "contacts-model.h"
+#include "groups-model.h"
 
 #include <KLocalizedString>
 
@@ -59,6 +60,12 @@ QVariant KTp::GroupsTreeProxyModel::dataForGroup(const QString &group, int role)
     case Qt::DisplayRole:
         if (group == QLatin1String("_unsorted")) {
             return i18n("Unsorted");
+        } else {
+            return group;
+        }
+    case GroupsModel::GroupNameRole:
+        if (group == QLatin1String("_unsorted")) {
+            return QString();
         } else {
             return group;
         }
