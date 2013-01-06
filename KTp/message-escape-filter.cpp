@@ -16,16 +16,16 @@
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#include "filters.h"
+#include "message-filters-private.h"
 
 #include <QtGui/QTextDocument> //needed for Qt::escape
 
-EscapeFilter::EscapeFilter(QObject *parent)
-    : AbstractMessageFilter(parent)
+MessageEscapeFilter::MessageEscapeFilter(QObject *parent)
+    : KTp::AbstractMessageFilter(parent)
 {
 }
 
-void EscapeFilter::filterMessage(Message& message)
+void MessageEscapeFilter::filterMessage(KTp::Message& message)
 {
     QString escapedMessage = Qt::escape(message.mainMessagePart());
 

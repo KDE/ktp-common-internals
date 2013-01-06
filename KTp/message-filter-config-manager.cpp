@@ -16,7 +16,7 @@
  *    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 */
 
-#include "plugin-config-manager.h"
+#include "message-filter-config-manager.h"
 #include "version.h"
 
 #include <QMutex>
@@ -28,67 +28,87 @@
 
 typedef QSet<KPluginInfo> PluginSet;
 
-class PluginConfigManager::Private {
-public:
+using namespace KTp;
+
+class MessageFilterConfigManager::Private
+{
+  public:
+    Private(MessageFilterConfigManager *parent):
+        q(parent)
+    { }
+
     PluginSet all;
     PluginSet enabled;
+
+    KService::List offers() const;
+    void generateCache();
+
+  private:
+    MessageFilterConfigManager *q;
 };
 
-PluginConfigManager *PluginConfigManager::self()
+KService::List MessageFilterConfigManager::Private::offers() const
 {
-    static PluginConfigManager *pcm_instance;
-    static QMutex mutex;
-    mutex.lock();
-    if (!pcm_instance) {
-        pcm_instance = new PluginConfigManager;
-    }
-    mutex.unlock();
-
-    return pcm_instance;
-}
-
-PluginConfigManager::PluginConfigManager() :
-    d(new Private)
-{
-    generateCache();
-}
-
-KService::List offers() {
     return KServiceTypeTrader::self()->query(QLatin1String("KTpTextUi/MessageFilter"),
-                                             QLatin1String("[X-KTp-PluginInfo-Version] == " KTP_TEXT_UI_PLUGIN_FRAMEWORK_VERSION));
+                                             QLatin1String("[X-KTp-PluginInfo-Version] == " KTP_MESSAGE_FILTER_FRAMEWORK_VERSION));
 }
 
-void PluginConfigManager::generateCache()
+
+void MessageFilterConfigManager::Private::generateCache()
 {
-    KPluginInfo::List all = KPluginInfo::fromServices(offers(), configGroup());
-    for (KPluginInfo::List::Iterator i = all.begin(); i != all.end(); i++) {
+    KPluginInfo::List pluginInfos = KPluginInfo::fromServices(offers(), q->configGroup());
+    for (KPluginInfo::List::Iterator i = pluginInfos.begin(); i != pluginInfos.end(); i++) {
         KPluginInfo &plugin = *i;
 
-        d->all.insert(plugin);
+        all.insert(plugin);
 
         plugin.load();
         if (plugin.isPluginEnabled()) {
-            d->enabled.insert(plugin);
+            enabled.insert(plugin);
         }
     }
 }
 
-KPluginInfo::List PluginConfigManager::allPlugins() const
+MessageFilterConfigManager *MessageFilterConfigManager::self()
+{
+    static MessageFilterConfigManager *mfcm_instance;
+    static QMutex mutex;
+    mutex.lock();
+    if (!mfcm_instance) {
+        mfcm_instance = new MessageFilterConfigManager;
+    }
+    mutex.unlock();
+
+    return mfcm_instance;
+}
+
+MessageFilterConfigManager::MessageFilterConfigManager() :
+    d(new Private(this))
+{
+    d->generateCache();
+}
+
+MessageFilterConfigManager::~MessageFilterConfigManager()
+{
+    delete d;
+}
+
+KPluginInfo::List MessageFilterConfigManager::allPlugins() const
 {
     return d->all.toList();
 }
 
-KPluginInfo::List PluginConfigManager::enabledPlugins() const
+KPluginInfo::List MessageFilterConfigManager::enabledPlugins() const
 {
     return d->enabled.toList();
 }
 
-KConfigGroup PluginConfigManager::configGroup() const
+KConfigGroup MessageFilterConfigManager::configGroup() const
 {
     return sharedConfig()->group("Plugins");
 }
 
-KSharedConfig::Ptr PluginConfigManager::sharedConfig() const
+KSharedConfig::Ptr MessageFilterConfigManager::sharedConfig() const
 {
     return KSharedConfig::openConfig(QLatin1String("ktelepathyrc"));
 }

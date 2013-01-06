@@ -24,9 +24,9 @@
 #include <QList>
 #include <KPluginInfo>
 
-#include "message.h"
+#include <KTp/message.h>
+#include <KTp/ktp-export.h>
 
-#include <ktpchat_export.h>
 
 namespace Tp
 {
@@ -34,14 +34,18 @@ class ReceivedMessage;
 class Message;
 }
 
+
+namespace KTp
+{
+
 class AbstractMessageFilter;
 
 //each thing that displays message will have an instance of this
-class KDE_TELEPATHY_CHAT_EXPORT MessageProcessor : public QObject
+class KTP_EXPORT MessageProcessor : public QObject
 {
-Q_OBJECT
+    Q_OBJECT
 
-public:
+  public:
     static MessageProcessor* instance();
     ~MessageProcessor();
 
@@ -49,17 +53,18 @@ public:
     QString header();
 
     //text-ui will call this somewhere in handleIncommingMessage just before displaying it
-    Message processIncomingMessage(Message message);
-    Message processOutgoingMessage(Message message);
+    KTp::Message processIncomingMessage(KTp::Message message);
+    KTp::Message processOutgoingMessage(KTp::Message message);
 
-protected:
+  protected:
     explicit MessageProcessor();
 
-private:
-    // TODO Move in a private class
-    void loadFilters();
-    static MessageProcessor* s_instance;
-    QList<AbstractMessageFilter*> m_filters;
+  private:
+    class Private;
+    Private * const d;
+
 };
+
+}
 
 #endif // MESSAGE_PROCESSOR_H

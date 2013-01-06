@@ -18,6 +18,8 @@
 
 #include "abstract-message-filter.h"
 
+namespace KTp {
+
 AbstractMessageFilter::AbstractMessageFilter(QObject* parent)
     : QObject(parent)
 {
@@ -27,17 +29,17 @@ AbstractMessageFilter::~AbstractMessageFilter()
 {
 }
 
-void AbstractMessageFilter::filterIncomingMessage(Message &message)
+void AbstractMessageFilter::filterIncomingMessage(KTp::Message &message)
 {
     filterMessage(message);
 }
 
-void AbstractMessageFilter::filterOutgoingMessage(Message &message)
+void AbstractMessageFilter::filterOutgoingMessage(KTp::Message &message)
 {
     filterMessage(message);
 }
 
-void AbstractMessageFilter::filterMessage(Message &message)
+void AbstractMessageFilter::filterMessage(KTp::Message &message)
 {
     Q_UNUSED(message)
 }
@@ -50,4 +52,6 @@ QStringList AbstractMessageFilter::requiredScripts()
 QStringList AbstractMessageFilter::requiredStylesheets()
 {
     return QStringList();
+}
+
 }

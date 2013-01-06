@@ -2,6 +2,7 @@ include_directories (${CMAKE_CURRENT_BINARY_DIR}
                      ${CMAKE_CURRENT_SOURCE_DIR})
 
 set (ktp_common_internals_private_SRCS
+     abstract-message-filter.cpp
      actions.cpp
      circular-countdown.cpp
      debug.cpp
@@ -10,6 +11,11 @@ set (ktp_common_internals_private_SRCS
      global-presence.cpp
      logs-importer.cpp
      logs-importer-private.cpp
+     message.cpp
+     message-escape-filter.cpp
+     message-filter-config-manager.cpp
+     message-processor.cpp
+     message-url-filter.cpp
      presence.cpp
      service-availability-checker.cpp
      telepathy-handler-application.cpp
@@ -20,6 +26,7 @@ set (ktp_common_internals_private_SRCS
 )
 
 set (ktp_common_internals_private_HDRS
+     abstract-message-filter.h
      actions.h
      circular-countdown.h
      debug.h
@@ -27,6 +34,9 @@ set (ktp_common_internals_private_HDRS
      global-contact-manager.h
      global-presence.h
      logs-importer.h
+     message-filter-config-manager.h
+     message.h
+     message-processor.h
      presence.h
      service-availability-checker.h
      telepathy-handler-application.h
@@ -50,6 +60,7 @@ set_target_properties(ktpcommoninternalsprivate PROPERTIES
 target_link_libraries (ktpcommoninternalsprivate
                        ${KDE4_KDECORE_LIBS}
                        ${TELEPATHY_QT4_LIBRARIES}
+                       ${TELEPATHY_LOGGER_QT4_LIBRARIES}
                        ${KDE4_KDEUI_LIBS}
 )
 

@@ -18,8 +18,8 @@
 
 
 #include "message-processor.h"
-#include "filters.h"
-#include "plugin-config-manager.h"
+#include "message-filters-private.h"
+#include "message-filter-config-manager.h"
 
 #include <QMutex>
 #include <QStringBuilder>
@@ -30,41 +30,82 @@
 #include <KPluginFactory>
 #include <KDE/KStandardDirs>
 
-MessageProcessor* MessageProcessor::s_instance = 0;
+using namespace KTp;
 
-MessageProcessor* MessageProcessor::instance()
+class MessageProcessor::Private
 {
-    kDebug();
+  public:
+    Private(MessageProcessor *parent):
+        q(parent)
+    { }
 
-    static QMutex mutex;
-    mutex.lock();
-    if (!s_instance) {
-        s_instance = new MessageProcessor;
+    void loadFilters();
+
+    QList<KTp::AbstractMessageFilter*> filters;
+
+  private:
+    MessageProcessor *q;
+};
+
+void MessageProcessor::Private::loadFilters()
+{
+    kDebug() << "Starting loading filters...";
+
+    Q_FOREACH (const KPluginInfo &plugin, MessageFilterConfigManager::self()->enabledPlugins()) {
+        KService::Ptr service = plugin.service();
+
+        KPluginFactory *factory = KPluginLoader(service->library()).factory();
+        if(factory) {
+            kDebug() << "loaded factory :" << factory;
+            AbstractMessageFilter *filter = factory->create<AbstractMessageFilter>(q);
+
+            if(filter) {
+                kDebug() << "loaded message filter : " << filter;
+                filters.append(filter);
+            }
+        } else {
+            kError() << "error loading plugin :" << service->library();
+        }
     }
-    mutex.unlock();
-
-    return s_instance;
 }
 
 
-MessageProcessor::MessageProcessor()
+KTp::MessageProcessor* MessageProcessor::instance()
 {
-    m_filters.append(new EscapeFilter(this));
-    m_filters.append(new UrlFilter(this));
+    kDebug();
 
-    loadFilters();
+    static KTp::MessageProcessor *mp_instance;
+    static QMutex mutex;
+    mutex.lock();
+    if (!mp_instance) {
+        mp_instance= new MessageProcessor;
+    }
+    mutex.unlock();
+
+    return mp_instance;
+}
+
+
+MessageProcessor::MessageProcessor():
+    d(new MessageProcessor::Private(this))
+{
+    d->filters.append(new MessageEscapeFilter(this));
+    d->filters.append(new MessageUrlFilter(this));
+
+    d->loadFilters();
 }
 
 
 MessageProcessor::~MessageProcessor()
 {
+    delete d;
 }
 
 QString MessageProcessor::header()
 {
     QStringList scripts;
     QStringList stylesheets;
-    Q_FOREACH (AbstractMessageFilter *filter, MessageProcessor::m_filters) {
+    Q_FOREACH (AbstractMessageFilter *filter, d->filters) {
         Q_FOREACH (const QString &script, filter->requiredScripts()) {
             // Avoid duplicates
             if (!scripts.contains(script)) {
@@ -96,40 +137,19 @@ QString MessageProcessor::header()
     return out;
 }
 
-Message MessageProcessor::processIncomingMessage(Message receivedMessage)
+KTp::Message MessageProcessor::processIncomingMessage(KTp::Message receivedMessage)
 {
-    Q_FOREACH (AbstractMessageFilter *filter, MessageProcessor::m_filters) {
+    Q_FOREACH (AbstractMessageFilter *filter, d->filters) {
         kDebug() << "running filter :" << filter->metaObject()->className();
         filter->filterIncomingMessage(receivedMessage);
     }
     return receivedMessage;
 }
 
-Message MessageProcessor::processOutgoingMessage(Message sentMessage)
+KTp::Message MessageProcessor::processOutgoingMessage(KTp::Message sentMessage)
 {
-    Q_FOREACH  (AbstractMessageFilter *filter, MessageProcessor::m_filters) {
+    Q_FOREACH  (AbstractMessageFilter *filter, d->filters) {
         filter->filterOutgoingMessage(sentMessage);
     }
     return sentMessage;
-}
-
-void MessageProcessor::loadFilters() {
-    kDebug() << "Starting loading filters...";
-
-    Q_FOREACH (const KPluginInfo &plugin, PluginConfigManager::self()->enabledPlugins()) {
-        KService::Ptr service = plugin.service();
-
-        KPluginFactory *factory = KPluginLoader(service->library()).factory();
-        if(factory) {
-            kDebug() << "loaded factory :" << factory;
-            AbstractMessageFilter *filter = factory->create<AbstractMessageFilter>(this);
-
-            if(filter) {
-                kDebug() << "loaded message filter : " << filter;
-                m_filters.append(filter);
-            }
-        } else {
-            kError() << "error loading plugin :" << service->library();
-        }
-    }
 }

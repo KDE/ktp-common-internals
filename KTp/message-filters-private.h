@@ -16,25 +16,25 @@
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#ifndef FILTERS_H
-#define FILTERS_H
+#ifndef MESSAGE_FILTERS_PRIVATE_H
+#define MESSAGE_FILTERS_PRIVATE_H
 
 #include "abstract-message-filter.h"
 
 #include <QObject>
 
-class UrlFilter : public AbstractMessageFilter
+class MessageUrlFilter : public KTp::AbstractMessageFilter
 {
-public:
-    explicit UrlFilter(QObject *parent = 0);
-    void filterMessage(Message &message);
+  public:
+    explicit MessageUrlFilter(QObject *parent = 0);
+    void filterMessage(KTp::Message &message);
 };
 
-class EscapeFilter : public AbstractMessageFilter
+class MessageEscapeFilter : public KTp::AbstractMessageFilter
 {
-public:
-    explicit EscapeFilter(QObject *parent = 0);
-    virtual void filterMessage(Message& message);
+  public:
+    explicit MessageEscapeFilter(QObject *parent = 0);
+    virtual void filterMessage(KTp::Message& message);
 };
 
 #endif

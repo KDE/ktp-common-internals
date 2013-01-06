@@ -18,7 +18,7 @@
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#include "filters.h"
+#include "message-filters-private.h"
 
 #include <QImageReader>
 
@@ -27,12 +27,13 @@
 #include <KDebug>
 #include <KTp/text-parser.h>
 
-UrlFilter::UrlFilter(QObject *parent)
-    : AbstractMessageFilter(parent)
+MessageUrlFilter::MessageUrlFilter(QObject *parent)
+    : KTp::AbstractMessageFilter(parent)
 {
 }
 
-void UrlFilter::filterMessage(Message &info) {
+void MessageUrlFilter::filterMessage(KTp::Message &info)
+{
     QString message = info.mainMessagePart();
     //FIXME: make "Urls" into a constant
     QVariantList urls = info.property("Urls").toList();

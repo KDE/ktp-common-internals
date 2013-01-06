@@ -16,16 +16,20 @@
  *    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 */
 
-#ifndef PLUGIN_CONFIG_MANAGER_H
-#define PLUGIN_CONFIG_MANAGER_H
+#ifndef MESSAGE_FILTER_CONFIG_MANAGER_H
+#define MESSAGE_FILTER_CONFIG_MANAGER_H
 
 #include <KPluginInfo>
-#include <ktpchat_export.h>
 
-class KDE_TELEPATHY_CHAT_EXPORT PluginConfigManager
+#include <KTp/ktp-export.h>
+
+namespace KTp
 {
-public:
-    static PluginConfigManager* self();
+
+class KTP_EXPORT MessageFilterConfigManager
+{
+  public:
+    static MessageFilterConfigManager* self();
 
     KPluginInfo::List allPlugins() const;
     KPluginInfo::List enabledPlugins() const;
@@ -33,14 +37,15 @@ public:
     KConfigGroup       configGroup() const;
     KSharedConfig::Ptr sharedConfig() const;
 
-protected:
-    PluginConfigManager();
+  protected:
+    MessageFilterConfigManager();
+    ~MessageFilterConfigManager();
 
-private:
+  private:
     class Private;
     Private *d;
-
-    void generateCache();
 };
 
-#endif // PLUGIN_CONFIG_MANAGER_H
+}
+
+#endif // MESSAGE_FILTER_CONFIG_MANAGER_H

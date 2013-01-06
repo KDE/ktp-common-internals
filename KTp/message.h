@@ -25,7 +25,11 @@
 #include <TelepathyLoggerQt4/Types>
 #include <TelepathyLoggerQt4/TextEvent>
 
-#include <ktpchat_export.h>
+#include <KTp/ktp-export.h>
+
+
+namespace KTp
+{
 
 /*!
  * \par
@@ -42,11 +46,14 @@
  *
  * \author Lasath Fernando <kde@lasath.org>
  */
-class KDE_TELEPATHY_CHAT_EXPORT Message {
+class KTP_EXPORT Message
+{
 
-public:
-    Message(const Tp::Message& original);
+  public:
+    Message(const Tp::Message &original);
     Message(const Tpl::TextEventPtr &original);
+    Message(const KTp::Message &other);
+    virtual ~Message();
 
     /*! \brief The body of the message
      * \return the contents of the body of the message, as HTML
@@ -57,7 +64,7 @@ public:
      *
      * \param message the string to replace the body with. Must be correct HTML
      */
-    void setMainMessagePart(const QString& message);
+    void setMainMessagePart(const QString &message);
 
     /*! \brief Add new visual content to the end of the message
      *
@@ -126,15 +133,12 @@ public:
     /*! \return the number of appended parts */
     int partsSize() const;
 
-private:
-    QDateTime   m_sentTime;
-    QString     m_token;
-    Tp::ChannelTextMessageType m_messageType;
-    QVariantMap m_properties;
-    QString     m_mainPart;
-    QStringList m_parts;
-    QStringList m_scripts;
+  private:
+    class Private;
+    Private * const d;
 };
+
+}
 
 
 #endif // MESSAGE_H

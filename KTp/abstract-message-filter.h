@@ -19,26 +19,30 @@
 #ifndef ABSTRACTPLUGIN_H
 #define ABSTRACTPLUGIN_H
 
-#include "message.h"
-#include "ktpchat_export.h"
+#include <KTp/message.h>
+#include <KTp/ktp-export.h>
 
-class KDE_TELEPATHY_CHAT_EXPORT AbstractMessageFilter : public QObject
+namespace KTp
 {
-Q_OBJECT
-public:
+
+class KTP_EXPORT AbstractMessageFilter : public QObject
+{
+    Q_OBJECT
+
+  public:
     AbstractMessageFilter(QObject* parent = 0);
     virtual ~AbstractMessageFilter();
 
     /** Filter messages to show on the UI recieved by another contact*/
-    virtual void filterIncomingMessage(Message &message);
+    virtual void filterIncomingMessage(KTp::Message &message);
 
     /** Filter messages to show in the UI that you have sent
         This does _not_ affect the actual message sent, only the visual representation on your screen.
     */
-    virtual void filterOutgoingMessage(Message &message);
+    virtual void filterOutgoingMessage(KTp::Message &message);
 
     /** Filter messages in either direction. Base implementation calls this for messages sent/recived in either direction.*/
-    virtual void filterMessage(Message &message);
+    virtual void filterMessage(KTp::Message &message);
 
     /** Scripts that must be included in the <head> section of the html required by this message filter.*/
     virtual QStringList requiredScripts();
@@ -46,6 +50,8 @@ public:
     /** Scripts that must be included in the <head> section of the html required by this message filter.*/
     virtual QStringList requiredStylesheets();
 };
+
+}
 
 #endif // ABSTRACTPLUGIN_H
 
