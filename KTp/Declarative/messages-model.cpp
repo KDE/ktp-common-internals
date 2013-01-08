@@ -151,7 +151,7 @@ void MessagesModel::onMessageReceived(const Tp::ReceivedMessage &message)
         if (d->visible) {
             acknowledgeAllMessages();
         } else {
-            enqueSelf();
+            enqueueSelf();
             Q_EMIT unreadCountChanged(unreadCount);
         }
     }
@@ -269,7 +269,7 @@ void MessagesModel::acknowledgeAllMessages()
     Q_EMIT unreadCountChanged(queue.size());
 }
 
-void MessagesModel::selfDequed()
+void MessagesModel::selfDequeued()
 {
     Q_EMIT popoutRequested();
 }

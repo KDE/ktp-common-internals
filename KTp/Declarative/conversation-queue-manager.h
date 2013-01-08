@@ -17,48 +17,48 @@
 */
 
 
-#ifndef CONVERSATION_QUE_MANAGER_H
-#define CONVERSATION_QUE_MANAGER_H
+#ifndef CONVERSATION_QUEUE_MANAGER_H
+#define CONVERSATION_QUEUE_MANAGER_H
 
 #include <QtCore/QObject>
 #include <KAction>
 
-class ConversationQueManager;
-class Queable
+class ConversationQueueManager;
+class Queueable
 {
-friend class ConversationQueManager;
+  friend class ConversationQueueManager;
 
-protected:
-    Queable(ConversationQueManager *queue = 0);
-    virtual ~Queable();
+  protected:
+    Queueable(ConversationQueueManager *queue = 0);
+    virtual ~Queueable();
 
-    void enqueSelf();
+    void enqueueSelf();
     void removeSelfFromQueue();
-    virtual void selfDequed() = 0;
+    virtual void selfDequeued() = 0;
 
-private:
-    ConversationQueManager *m_queManager;
+  private:
+    ConversationQueueManager *m_queueManager;
 };
 
 
-class ConversationQueManager : public QObject
+class ConversationQueueManager : public QObject
 {
-Q_OBJECT
+    Q_OBJECT
 
-public:
-    static ConversationQueManager* instance();
-    void enque(Queable *item);
-    void remove(Queable *item);
+  public:
+    static ConversationQueueManager* instance();
+    void enqueue(Queueable *item);
+    void remove(Queueable *item);
 
-public Q_SLOTS:
-    void dequeNext();
+  public Q_SLOTS:
+    void dequeueNext();
 
-private:
-    explicit ConversationQueManager(QObject *parent = 0);
-    virtual ~ConversationQueManager();
+  private:
+    explicit ConversationQueueManager(QObject *parent = 0);
+    virtual ~ConversationQueueManager();
 
     class ConversationQueManagerPrivate;
     ConversationQueManagerPrivate *d;
 };
 
-#endif // CONVERSATION_QUE_MANAGER_H
+#endif // CONVERSATION_QUEUE_MANAGER_H

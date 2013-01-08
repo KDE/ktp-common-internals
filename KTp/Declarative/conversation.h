@@ -28,7 +28,7 @@
 
 #include <KIcon>
 
-#include "conversation-que-manager.h"
+#include "conversation-queue-manager.h"
 #include "conversation-target.h"
 #include "messages-model.h"
 

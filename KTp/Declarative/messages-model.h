@@ -22,10 +22,10 @@
 
 #include <QAbstractItemModel>
 #include <TelepathyQt/TextChannel>
-#include "conversation-que-manager.h"
+#include "conversation-queue-manager.h"
 
 
-class MessagesModel : public QAbstractListModel, public Queable
+class MessagesModel : public QAbstractListModel, public Queueable
 {
     Q_OBJECT
     Q_ENUMS(MessageType)
