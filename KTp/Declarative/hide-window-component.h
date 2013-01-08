@@ -29,10 +29,10 @@
 class HideWindowComponent : public QObject
 {
     Q_OBJECT
-    public:
-        explicit HideWindowComponent(QObject* parent = 0);
-        
-        Q_SCRIPTABLE void hideWindowFromTaskbar(qulonglong winId);
+  public:
+    explicit HideWindowComponent(QObject* parent = 0);
+
+    Q_SCRIPTABLE void hideWindowFromTaskbar(qulonglong winId);
 };
 
 #endif // HIDEWINDOWCOMPONENT_H

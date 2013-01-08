@@ -25,10 +25,7 @@
 
 #include <TelepathyQt/Contact>
 
-#include "ktpchat_export.h"
-
-
-class KDE_TELEPATHY_CHAT_EXPORT ConversationTarget : public QObject
+class ConversationTarget : public QObject
 {
     Q_OBJECT
 
@@ -38,7 +35,7 @@ class KDE_TELEPATHY_CHAT_EXPORT ConversationTarget : public QObject
     Q_PROPERTY(QString presenceIconName READ presenceIconName NOTIFY presenceIconNameChanged)
     Q_PROPERTY(QString id READ id)
 
-public:
+  public:
     explicit ConversationTarget(const Tp::ContactPtr &contact, QObject *parent = 0);
     virtual ~ConversationTarget();
 
@@ -50,18 +47,17 @@ public:
 
     Tp::ContactPtr contact() const;
 
-Q_SIGNALS:
+  Q_SIGNALS:
     void avatarChanged(QIcon avatar);
     void nickChanged(QString nick);
     void presenceIconChanged(QIcon icon);
     void presenceIconNameChanged(QString icon);
 
-
-private Q_SLOTS:
+  private Q_SLOTS:
     void onAvatarDataChanged(const Tp::AvatarData&);
     void onPresenceChanged(const Tp::Presence&);
 
-private:
+  private:
     void setupContactSignals(Tp::ContactPtr contact);
     void updateAvatar();
 

@@ -24,11 +24,11 @@
 
 #include <TelepathyQt/ReceivedMessage>
 
-#include "lib/message-processor.h"
+#include "message-processor.h"
 
 class MessageItem
 {
-public:
+  public:
     QString user;
     QString text;
     QDateTime time;
@@ -45,7 +45,7 @@ public:
 
 class MessagesModel::MessagesModelPrivate
 {
-public:
+  public:
     Tp::TextChannelPtr textChannel;
     QList<MessageItem> messages;
     bool visible;
@@ -140,7 +140,7 @@ void MessagesModel::onMessageReceived(const Tp::ReceivedMessage &message)
 
         d->messages.append(MessageItem(
                                message.sender()->alias(),
-                               MessageProcessor::instance()->processIncomingMessage(message).finalizedMessage(),
+                               KTp::MessageProcessor::instance()->processIncomingMessage(message).finalizedMessage(),
                                message.received(),
                                message.messageType() == Tp::ChannelTextMessageTypeAction ? MessageTypeAction : MessageTypeIncoming,
                                message.messageToken()
@@ -169,7 +169,7 @@ void MessagesModel::onMessageSent(const Tp::Message &message, Tp::MessageSending
 
     d->messages.append(MessageItem(
                            i18n("Me"),   //FIXME : use actual nickname from Tp::AccountPtr
-                           MessageProcessor::instance()->processOutgoingMessage(message).finalizedMessage(),
+                           KTp::MessageProcessor::instance()->processOutgoingMessage(message).finalizedMessage(),
                            message.sent(),
                            message.messageType() == Tp::ChannelTextMessageTypeAction ? MessageTypeAction : MessageTypeOutgoing,
                            message.messageToken()

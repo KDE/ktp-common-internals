@@ -29,7 +29,7 @@
 
 class Conversation::ConversationPrivate
 {
-public:
+  public:
     MessagesModel *messages;
     ConversationTarget *target;
     bool valid;

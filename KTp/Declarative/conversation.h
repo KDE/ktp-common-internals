@@ -20,8 +20,6 @@
 #ifndef CONVERSATION_H
 #define CONVERSATION_H
 
-#include "ktpchat_export.h"
-
 #include <QObject>
 #include <TelepathyQt/Account>
 #include <TelepathyQt/TextChannel>
@@ -34,15 +32,15 @@
 
 class ConversationTarget;
 class MessagesModel;
-class KDE_TELEPATHY_CHAT_EXPORT Conversation : public QObject
+class Conversation : public QObject
 {
-Q_OBJECT
+    Q_OBJECT
 
-Q_PROPERTY(QObject* target READ target CONSTANT);
-Q_PROPERTY(QObject* messages READ messages CONSTANT);
-Q_PROPERTY(bool valid READ isValid NOTIFY validityChanged);
+    Q_PROPERTY(QObject* target READ target CONSTANT);
+    Q_PROPERTY(QObject* messages READ messages CONSTANT);
+    Q_PROPERTY(bool valid READ isValid NOTIFY validityChanged);
 
-public:
+  public:
     Conversation(const Tp::TextChannelPtr &channel, const Tp::AccountPtr &account, QObject *parent = 0);
     Conversation(QObject *parent = 0);
     virtual ~Conversation();
@@ -52,17 +50,17 @@ public:
 
     bool isValid();
 
-Q_SIGNALS:
+  Q_SIGNALS:
     void validityChanged(bool isValid);
 
-public Q_SLOTS:
+  public Q_SLOTS:
     void delegateToProperClient();
     void requestClose();
 
-private Q_SLOTS:
+  private Q_SLOTS:
     void onChannelInvalidated(Tp::DBusProxy *proxy, const QString &errorName, const QString &errorMessage);
 
-private:
+  private:
     class ConversationPrivate;
     ConversationPrivate *d;
 };

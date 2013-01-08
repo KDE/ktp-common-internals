@@ -23,7 +23,7 @@
 
 class  ConversationTarget::ConversationTargetPrivate
 {
-public:
+  public:
     Tp::ContactPtr contact;
     KIcon avatar;
 };

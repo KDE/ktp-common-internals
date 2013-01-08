@@ -24,15 +24,13 @@
 
 #include <TelepathyQt/AbstractClientApprover>
 
-#include "ktpchat_export.h"
-
-
 class Conversation;
 
-class KDE_TELEPATHY_CHAT_EXPORT ConversationsModel : public QAbstractListModel, public Tp::AbstractClientHandler
+class ConversationsModel : public QAbstractListModel, public Tp::AbstractClientHandler
 {
-Q_OBJECT
-public:
+    Q_OBJECT
+
+  public:
     explicit ConversationsModel(QObject *parent);
     virtual ~ConversationsModel();
 
@@ -52,11 +50,11 @@ public:
                         const HandlerInfo &handlerInfo);
     bool bypassApproval() const;
 
-private:
+  private:
     class ConversationsModelPrivate;
     ConversationsModelPrivate *d;
 
-private Q_SLOTS:
+  private Q_SLOTS:
     void handleValidityChange(bool);
 };
 

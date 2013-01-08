@@ -32,7 +32,7 @@ class MessagesModel : public QAbstractListModel, public Queueable
     Q_PROPERTY(bool visibleToUser READ isVisibleToUser WRITE setVisibleToUser NOTIFY visibleToUserChanged);
     Q_PROPERTY(int unreadCount READ unreadCount NOTIFY unreadCountChanged);
 
-public:
+  public:
     MessagesModel(QObject *parent = 0);
     virtual ~MessagesModel();
 
@@ -64,25 +64,26 @@ public:
 
     //debug function. will do whatever I feel like at the time ;-)
     Q_INVOKABLE void printallmessages();
-Q_SIGNALS:
+
+  Q_SIGNALS:
     void visibleToUserChanged(bool visible);
 
     void unreadCountChanged(int unreadMesssagesCount);
     void popoutRequested();
 
-public Q_SLOTS:
+  public Q_SLOTS:
     void sendNewMessage(const QString& message);
 
-private Q_SLOTS:
+  private Q_SLOTS:
     void onMessageReceived(const Tp::ReceivedMessage &message);
     void onMessageSent(const Tp::Message &message, Tp::MessageSendingFlags flags, const QString &messageToken);
     void onPendingMessageRemoved();
     bool verifyPendingOperation(Tp::PendingOperation *op);
 
-private:
+  private:
     void setupChannelSignals(const Tp::TextChannelPtr &channel);
     void removeChannelSignals(const Tp::TextChannelPtr &channel);
-    virtual void selfDequed();
+    virtual void selfDequeued();
 
     class MessagesModelPrivate;
     MessagesModelPrivate *d;

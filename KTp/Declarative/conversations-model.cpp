@@ -36,7 +36,7 @@ static inline Tp::ChannelClassSpecList channelClassList()
 
 class ConversationsModel::ConversationsModelPrivate
 {
-public:
+  public:
     QList<Conversation*> conversations;
 };
 

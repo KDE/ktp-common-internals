@@ -20,26 +20,24 @@
 #ifndef TELEPATHY_TEXT_OBSERVER_H
 #define TELEPATHY_TEXT_OBSERVER_H
 
-#include "ktpchat_export.h"
-
 #include "conversations-model.h"
 
 #include <TelepathyQt/AbstractClientHandler>
 
 
-class KDE_TELEPATHY_CHAT_EXPORT TelepathyTextObserver : public QObject
+class TelepathyTextObserver : public QObject
 {
-Q_OBJECT
+    Q_OBJECT
 
-Q_PROPERTY(QObject* conversations READ conversationModel CONSTANT)
+    Q_PROPERTY(QObject* conversations READ conversationModel CONSTANT)
 
-public:
+  public:
     TelepathyTextObserver(QObject* parent=0);
     ~TelepathyTextObserver();
 
     QAbstractListModel* conversationModel();
 
-private:
+  private:
     Tp::SharedPtr<ConversationsModel> m_handler;
     Tp::ClientRegistrarPtr m_registrar;
 };

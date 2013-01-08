@@ -30,24 +30,22 @@
 class ContactList : public QObject
 {
     Q_OBJECT
-public:
     Q_PROPERTY(QObject* model READ flatModel CONSTANT)
     Q_PROPERTY(QObject* filter READ filterModel CONSTANT)
 
-
+  public:
     ContactList(QObject *parent=0);
     FlatModelProxy* flatModel() const;
     AccountsFilterModel* filterModel() const;
 
-
-public slots:
+  public Q_SLOTS:
     void startChat(const Tp::AccountPtr &account, const Tp::ContactPtr &contact);
 
-private slots:
+  private Q_SLOTS:
     void onAccountManagerReady(Tp::PendingOperation *op);
     void onGenericOperationFinished(Tp::PendingOperation *op);
 
-private:
+  private:
     ContactsModel* m_contactsModel;
     AccountsFilterModel* m_filterModel;
     FlatModelProxy* m_flatModel;
