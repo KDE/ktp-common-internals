@@ -1,5 +1,6 @@
 /*
     Copyright (C) 2012  Lasath Fernando <kde@lasath.org>
+    Copyright (C) 2013  Daniele E. Domenichelli <daniele.domenichelli@gmail.com>
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Lesser General Public
@@ -16,32 +17,14 @@
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#ifndef MESSAGE_FILTERS_PRIVATE_H
-#define MESSAGE_FILTERS_PRIVATE_H
+#include "message-filters-private.h"
 
-#include "abstract-message-filter.h"
-
-#include <QObject>
-
-class MessageUrlFilter : public KTp::AbstractMessageFilter
+MessageBackslashFilter::MessageBackslashFilter(QObject *parent)
+    : AbstractMessageFilter(parent)
 {
-  public:
-    explicit MessageUrlFilter(QObject *parent = 0);
-    void filterMessage(KTp::Message &message);
-};
+}
 
-class MessageEscapeFilter : public KTp::AbstractMessageFilter
+void MessageBackslashFilter::filterMessage(KTp::Message& message)
 {
-  public:
-    explicit MessageEscapeFilter(QObject *parent = 0);
-    virtual void filterMessage(KTp::Message& message);
-};
-
-class MessageBackslashFilter : public KTp::AbstractMessageFilter
-{
-public:
-    explicit MessageBackslashFilter(QObject *parent = 0);
-    virtual void filterMessage(KTp::Message& message);
-};
-
-#endif
+    message.setMainMessagePart(message.mainMessagePart().replace(QLatin1Char('\\'), QLatin1String("\\\\"))); //replace a single backslash with two backslashes.
+}

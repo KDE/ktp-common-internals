@@ -12,6 +12,7 @@ set (ktp_common_internals_private_SRCS
      logs-importer.cpp
      logs-importer-private.cpp
      message.cpp
+     message-backslash-filter.cpp
      message-escape-filter.cpp
      message-filter-config-manager.cpp
      message-processor.cpp
