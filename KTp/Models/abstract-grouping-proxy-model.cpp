@@ -125,11 +125,9 @@ KTp::AbstractGroupingProxyModel::AbstractGroupingProxyModel(QAbstractItemModel *
 {
     d->source = source;
 
+    //we have to process all existing rows in the model, but must never call a virtual method from a constructor as it will crash.
+    //we use a single shot timer to get round this
     QTimer::singleShot(0, this, SLOT(onLoad()));
-    connect(d->source, SIGNAL(modelReset()), SLOT(onModelReset()));
-    connect(d->source, SIGNAL(rowsInserted(QModelIndex, int,int)), SLOT(onRowsInserted(QModelIndex,int,int)));
-    connect(d->source, SIGNAL(rowsAboutToBeRemoved(QModelIndex,int,int)), SLOT(onRowsRemoved(QModelIndex,int,int)));
-    connect(d->source, SIGNAL(dataChanged(QModelIndex,QModelIndex)), SLOT(onDataChanged(QModelIndex,QModelIndex)));
 }
 
 KTp::AbstractGroupingProxyModel::~AbstractGroupingProxyModel()
@@ -302,6 +300,10 @@ void KTp::AbstractGroupingProxyModel::onLoad()
     if (d->source->rowCount() > 0) {
         onRowsInserted(QModelIndex(), 0, d->source->rowCount()-1);
     }
+    connect(d->source, SIGNAL(modelReset()), SLOT(onModelReset()));
+    connect(d->source, SIGNAL(rowsInserted(QModelIndex, int,int)), SLOT(onRowsInserted(QModelIndex,int,int)));
+    connect(d->source, SIGNAL(rowsAboutToBeRemoved(QModelIndex,int,int)), SLOT(onRowsRemoved(QModelIndex,int,int)));
+    connect(d->source, SIGNAL(dataChanged(QModelIndex,QModelIndex)), SLOT(onDataChanged(QModelIndex,QModelIndex)));
 }
 
 /* Called when source model gets reset
