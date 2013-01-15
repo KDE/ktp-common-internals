@@ -109,6 +109,10 @@ QVariant KTp::ContactsListModel::data(const QModelIndex &index, int role) const
             return contact->clientTypes();
         case ContactsModel::FileTransferCapabilityRole:
             return contact->fileTransferCapability();
+        case ContactsModel::AudioCallCapabilityRole:
+            return contact->audioCallCapability();
+        case ContactsModel::VideoCallCapabilityRole:
+            return contact->videoCallCapability();
         default:
             break;
         }
