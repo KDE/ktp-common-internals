@@ -30,10 +30,9 @@
 #include <QtGui/QVBoxLayout>
 #include <QtGui/QListView>
 
+#include <KTp/Models/contacts-list-model.h>
 #include <KTp/Models/contacts-model.h>
-#include <KTp/Models/accounts-filter-model.h>
-#include <KTp/Models/contact-model-item.h>
-#include <KTp/Models/flat-model-proxy.h>
+#include <KTp/Models/contacts-filter-model.h>
 
 namespace KTp {
 
@@ -129,9 +128,8 @@ public:
           layout(new QVBoxLayout(parent)),
           contactGridView(new QListView(parent)),
           contactFilterLineEdit(new KLineEdit(parent)),
-          accountsModel(0),
-          filterModel(0),
-          flatProxyModel(0)
+          contactsModel(0),
+          filterModel(0)
     {
     }
 
@@ -145,9 +143,8 @@ public:
     QVBoxLayout *layout;
     QListView *contactGridView;
     KLineEdit *contactFilterLineEdit;
-    ContactsModel *accountsModel;
-    AccountsFilterModel *filterModel;
-    FlatModelProxy *flatProxyModel;
+    KTp::ContactsListModel *contactsModel;
+    KTp::ContactsFilterModel *filterModel;
 };
 
 void KTp::ContactGridWidget::Private::_k_onSelectionChanged(QItemSelection newSelection, QItemSelection oldSelection)
@@ -165,15 +162,14 @@ void KTp::ContactGridWidget::Private::_k_onSelectionChanged(QItemSelection newSe
 
 // -----------------------------------------------------------------------------
 
-KTp::ContactGridWidget::ContactGridWidget(ContactsModel* model, QWidget *parent)
+KTp::ContactGridWidget::ContactGridWidget(KTp::ContactsListModel* model, QWidget *parent)
     : QWidget(parent),
       d(new Private(this))
 {
-    d->filterModel = new AccountsFilterModel(this);
-    d->flatProxyModel = new FlatModelProxy(d->filterModel);
+    d->filterModel = new KTp::ContactsFilterModel(this);
 
-    d->accountsModel = model;
-    d->filterModel->setSourceModel(d->accountsModel);
+    d->contactsModel = model;
+    d->filterModel->setSourceModel(d->contactsModel);
 
     d->contactGridView->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     d->contactGridView->setResizeMode(QListView::Adjust);
@@ -189,7 +185,7 @@ KTp::ContactGridWidget::ContactGridWidget(ContactsModel* model, QWidget *parent)
     d->layout->addWidget(d->contactFilterLineEdit);
     setLayout(d->layout);
 
-    d->contactGridView->setModel(d->flatProxyModel);
+    d->contactGridView->setModel(d->filterModel);
     d->contactGridView->setItemDelegate(new ContactGridDelegate(d->contactGridView));
 
     connect(d->contactGridView->selectionModel(),
@@ -254,7 +250,7 @@ Tp::ContactPtr KTp::ContactGridWidget::selectedContact() const
     return d->contactGridView->currentIndex().data(ContactsModel::ContactRole).value<Tp::ContactPtr>();
 }
 
-AccountsFilterModel* KTp::ContactGridWidget::filter() const
+KTp::ContactsFilterModel* KTp::ContactGridWidget::filter() const
 {
     return d->filterModel;
 }

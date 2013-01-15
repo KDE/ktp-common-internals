@@ -32,8 +32,8 @@
 #include <TelepathyQt/PendingReady>
 
 #include <KTp/debug.h>
-#include <KTp/Models/contacts-model.h>
-#include <KTp/Models/accounts-filter-model.h>
+#include <KTp/Models/contacts-list-model.h>
+#include <KTp/Models/contacts-filter-model.h>
 #include <KTp/Widgets/contact-grid-widget.h>
 #include <telepathy-qt4/TelepathyQt/PendingChannelRequest>
 
@@ -44,7 +44,7 @@ class KTp::ContactGridDialog::Private
 public:
     Private(KTp::ContactGridDialog *parent) :
         q(parent),
-        accountsModel(0),
+        contactsModel(0),
         account(0),
         contact(0)
     {
@@ -53,7 +53,7 @@ public:
     KTp::ContactGridDialog * const q;
 
     Tp::AccountManagerPtr accountManager;
-    ContactsModel *accountsModel;
+    KTp::ContactsListModel *contactsModel;
     KTp::ContactGridWidget *contactGridWidget;
     Tp::AccountPtr account;
     Tp::ContactPtr contact;
@@ -68,7 +68,7 @@ public Q_SLOTS:
 void KTp::ContactGridDialog::Private::_k_onAccountManagerReady()
 {
     kDebug() << "Account manager is ready";
-    accountsModel->setAccountManager(accountManager);
+    contactsModel->setAccountManager(accountManager);
 }
 
 void KTp::ContactGridDialog::Private::_k_onOkClicked()
@@ -131,13 +131,13 @@ KTp::ContactGridDialog::ContactGridDialog(QWidget *parent) :
                                                    channelFactory,
                                                    contactFactory);
 
-    d->accountsModel = new ContactsModel(this);
+    d->contactsModel = new KTp::ContactsListModel(this);
     connect(d->accountManager->becomeReady(), SIGNAL(finished(Tp::PendingOperation*)), SLOT(_k_onAccountManagerReady()));
 
 
-    d->contactGridWidget = new KTp::ContactGridWidget(d->accountsModel, this);
+    d->contactGridWidget = new KTp::ContactGridWidget(d->contactsModel, this);
     d->contactGridWidget->contactFilterLineEdit()->setClickMessage(i18n("Search in Contacts..."));
-    d->contactGridWidget->filter()->setPresenceTypeFilterFlags(AccountsFilterModel::ShowOnlyConnected);
+    d->contactGridWidget->filter()->setPresenceTypeFilterFlags(KTp::ContactsFilterModel::ShowOnlyConnected);
 
     setMainWidget(d->contactGridWidget);
 
@@ -166,7 +166,7 @@ Tp::ContactPtr KTp::ContactGridDialog::contact()
     return d->contact;
 }
 
-AccountsFilterModel* KTp::ContactGridDialog::filter() const
+KTp::ContactsFilterModel* KTp::ContactGridDialog::filter() const
 {
     return d->contactGridWidget->filter();
 }

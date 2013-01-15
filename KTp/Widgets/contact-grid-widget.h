@@ -27,10 +27,11 @@
 #include <KTp/ktp-export.h>
 
 class KLineEdit;
-class ContactsModel;
-class AccountsFilterModel;
+
 namespace KTp
 {
+class ContactsFilterModel;
+class ContactsListModel;
 
 class KTP_EXPORT ContactGridWidget : public QWidget
 {
@@ -47,7 +48,7 @@ class KTP_EXPORT ContactGridWidget : public QWidget
                WRITE setIconSize
                NOTIFY iconSizeChanged)
 public:
-    explicit ContactGridWidget(ContactsModel *model, QWidget *parent = 0);
+    explicit ContactGridWidget(ContactsListModel *model, QWidget *parent = 0);
     virtual ~ContactGridWidget();
 
     virtual QString displayNameFilter() const;
@@ -59,7 +60,7 @@ public:
     Q_SLOT virtual void setIconSize(const QSize &iconSize);
     Q_SIGNAL void iconSizeChanged(const QSize &iconSize);
 
-    virtual AccountsFilterModel* filter() const;
+    virtual KTp::ContactsFilterModel* filter() const;
     virtual KLineEdit* contactFilterLineEdit() const;
 
     virtual bool hasSelection() const;
