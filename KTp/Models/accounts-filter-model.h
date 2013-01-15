@@ -24,7 +24,7 @@
 #include "contacts-filter-model.h"
 
 //temporary hack to ensure compatiability for a while
-class AccountsFilterModel : public ContactsFilterModel {
+class AccountsFilterModel : public KTp::ContactsFilterModel {
 public:
     AccountsFilterModel(QObject *parent = 0) :
         ContactsFilterModel(parent){}

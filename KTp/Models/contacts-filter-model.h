@@ -26,6 +26,10 @@
 
 #include <KTp/ktp-export.h>
 
+namespace KTp
+
+{
+
 /**
   * \brief Class used to sort and filter the contacts.
   */
@@ -291,5 +295,7 @@ private:
     Q_PRIVATE_SLOT(d, void sourceModelChanged(const QModelIndex &index))
     Q_PRIVATE_SLOT(d, void countContacts(const QModelIndex &index))
 };
+
+} //namespace
 
 #endif // ACCOUNTFILTERMODEL_H

@@ -30,7 +30,7 @@
 #include <KDebug>
 
 
-class ContactsFilterModel::Private
+class KTp::ContactsFilterModel::Private
 {
 public:
     Private(ContactsFilterModel *parent)
@@ -77,6 +77,8 @@ public:
     QHash<QString, int> m_onlineContactsCounts;
     QHash<QString, int> m_totalContactsCounts;
 };
+
+using namespace KTp;
 
 bool ContactsFilterModel::Private::filterAcceptsAccount(const QModelIndex &index) const
 {
