@@ -50,6 +50,9 @@ class ConversationsModel : public QAbstractListModel, public Tp::AbstractClientH
                         const HandlerInfo &handlerInfo);
     bool bypassApproval() const;
 
+  public Q_SLOTS:
+    void startChat(const Tp::AccountPtr& account, const Tp::ContactPtr& contact);
+
   private:
     class ConversationsModelPrivate;
     ConversationsModelPrivate *d;

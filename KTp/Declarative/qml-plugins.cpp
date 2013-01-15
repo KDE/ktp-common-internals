@@ -1,5 +1,7 @@
 /*
+    Copyright (C) 2011  Lasath Fernando <kde@lasath.org>
     Copyright (C) 2013  Dan Vrátil <dvratil@redhat.com>
+    Copyright (C) 2013  Aleix Pol Gonzalez <aleixpol@kde.org>
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Lesser General Public
@@ -28,6 +30,8 @@
 #include "hide-window-component.h"
 #include "messages-model.h"
 #include "telepathy-text-observer.h"
+#include "pinned-contacts-model.h"
+#include "contact-pin.h"
 
 #include "Models/accounts-filter-model.h"
 
@@ -40,11 +44,15 @@ void QmlPlugins::registerTypes(const char *uri)
     qmlRegisterType<TelepathyTextObserver> (uri, 0, 1, "TelepathyTextObserver");
     qmlRegisterType<Conversation>(uri, 0, 1, "Conversation");
     qmlRegisterType<HideWindowComponent>(uri, 0, 1, "HideWindowComponent");
+    qmlRegisterType<PinnedContactsModel>(uri, 0, 1, "PinnedContactsModel");
+    qmlRegisterType<ContactPin>(uri, 0, 1, "ContactPin");
 
-    //needed for MessageType enum
-    qmlRegisterUncreatableType<MessagesModel>(uri, 0, 1, "MessagesModel",
-        QLatin1String("MessagesModel can not be instanitized directly. Use a TelepathyTextObserver instead"));
+    qmlRegisterType<MessagesModel>();
+    qmlRegisterType<ConversationTarget>();
+    qmlRegisterType<ConversationsModel>();
+    qRegisterMetaType<Tp::AccountManagerPtr>();
+    qRegisterMetaType<Tp::ContactPtr>();
+    qRegisterMetaType<Tp::AccountPtr>();
 }
 
 Q_EXPORT_PLUGIN2(conversation, QmlPlugins);
-

@@ -299,13 +299,7 @@ MessagesModel::~MessagesModel()
     delete d;
 }
 
-void MessagesModel::printallmessages()
+bool MessagesModel::shouldStartOpened() const
 {
-    Q_FOREACH(const MessageItem &msg, d->messages) {
-        kDebug() << msg.text;
-    }
+    return d->textChannel->isRequested();
 }
-
-
-
-#include "moc_messages-model.cpp"

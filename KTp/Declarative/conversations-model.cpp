@@ -140,6 +140,13 @@ bool ConversationsModel::bypassApproval() const
     return true;
 }
 
+void ConversationsModel::startChat(const Tp::AccountPtr& account, const Tp::ContactPtr& contact)
+{
+    Q_ASSERT(account);
+    account->ensureTextChat(contact, QDateTime::currentDateTime(),
+                            QLatin1String("org.freedesktop.Telepathy.Client.KDE.TextUi.ConversationWatcher"));
+}
+
 void ConversationsModel::handleValidityChange(bool valid)
 {
     if(!valid) {

@@ -23,23 +23,27 @@
 #include "conversations-model.h"
 
 #include <TelepathyQt/AbstractClientHandler>
+#include "ktp-metatypes.h"
 
 
 class TelepathyTextObserver : public QObject
 {
     Q_OBJECT
 
-    Q_PROPERTY(QObject* conversations READ conversationModel CONSTANT)
+Q_PROPERTY(ConversationsModel* conversations READ conversationModel CONSTANT)
+Q_PROPERTY(Tp::AccountManagerPtr accountManager READ accountManager CONSTANT)
 
   public:
     TelepathyTextObserver(QObject* parent=0);
     ~TelepathyTextObserver();
 
-    QAbstractListModel* conversationModel();
+    ConversationsModel* conversationModel() const;
+    Tp::AccountManagerPtr accountManager() const;
 
   private:
     Tp::SharedPtr<ConversationsModel> m_handler;
     Tp::ClientRegistrarPtr m_registrar;
+    Tp::AccountManagerPtr m_accountManager;
 };
 
 #endif // CONVERSATION_WATCHER_H

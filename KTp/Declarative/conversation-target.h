@@ -23,7 +23,7 @@
 #include <QObject>
 #include <QIcon>
 
-#include <TelepathyQt/Contact>
+#include "ktp-metatypes.h"
 
 class ConversationTarget : public QObject
 {
@@ -33,10 +33,12 @@ class ConversationTarget : public QObject
     Q_PROPERTY(QString nick READ nick NOTIFY nickChanged);
     Q_PROPERTY(QIcon presenceIcon READ presenceIcon NOTIFY presenceIconChanged);
     Q_PROPERTY(QString presenceIconName READ presenceIconName NOTIFY presenceIconNameChanged)
-    Q_PROPERTY(QString id READ id)
+    Q_PROPERTY(QString id READ id CONSTANT)
+    Q_PROPERTY(Tp::ContactPtr contact READ contact CONSTANT)
+    Q_PROPERTY(Tp::AccountPtr account READ account CONSTANT)
 
   public:
-    explicit ConversationTarget(const Tp::ContactPtr &contact, QObject *parent = 0);
+    explicit ConversationTarget(const Tp::AccountPtr &account, const Tp::ContactPtr &contact, QObject *parent = 0);
     virtual ~ConversationTarget();
 
     QIcon   avatar() const;
@@ -46,6 +48,7 @@ class ConversationTarget : public QObject
     QString presenceIconName() const;
 
     Tp::ContactPtr contact() const;
+    Tp::AccountPtr account() const;
 
   Q_SIGNALS:
     void avatarChanged(QIcon avatar);

@@ -30,6 +30,7 @@
 #include <TelepathyQt/TextChannel>
 #include <TelepathyQt/Types>
 
+#include <KTp/ktp-metatypes.h>
 #include <KTp/ktp-export.h>
 
 class ContactModelItem;
@@ -151,8 +152,5 @@ private:
     friend struct Private;
     Private *mPriv;
 };
-
-Q_DECLARE_METATYPE(Tp::ContactPtr);
-Q_DECLARE_METATYPE(Tp::AccountPtr);
 
 #endif // TELEPATHY_ACCOUNTS_MODEL_H

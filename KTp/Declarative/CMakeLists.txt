@@ -12,6 +12,8 @@ set (ktp_qml_plugin_SRCS
     hide-window-component.cpp
     messages-model.cpp
     telepathy-text-observer.cpp
+    pinned-contacts-model.cpp
+    contact-pin.cpp
 
     qml-plugins.cpp
 )

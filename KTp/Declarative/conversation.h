@@ -36,9 +36,9 @@ class Conversation : public QObject
 {
     Q_OBJECT
 
-    Q_PROPERTY(QObject* target READ target CONSTANT);
-    Q_PROPERTY(QObject* messages READ messages CONSTANT);
-    Q_PROPERTY(bool valid READ isValid NOTIFY validityChanged);
+    Q_PROPERTY(ConversationTarget* target READ target CONSTANT)
+    Q_PROPERTY(MessagesModel* messages READ messages CONSTANT)
+    Q_PROPERTY(bool valid READ isValid NOTIFY validityChanged)
 
   public:
     Conversation(const Tp::TextChannelPtr &channel, const Tp::AccountPtr &account, QObject *parent = 0);

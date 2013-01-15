@@ -64,6 +64,9 @@ TelepathyTextObserver::TelepathyTextObserver(QObject* parent) :
     m_registrar = Tp::ClientRegistrar::create(accountFactory, connectionFactory,
                                             channelFactory, contactFactory);
     m_registrar->registerClient(m_handler, QLatin1String("KDE.TextUi.ConversationWatcher")); //KTp.ChatPlasmoid
+    
+    m_accountManager = Tp::AccountManager::create(accountFactory, connectionFactory, channelFactory, contactFactory);
+    m_accountManager->becomeReady();
 }
 
 TelepathyTextObserver::~TelepathyTextObserver()
@@ -71,8 +74,13 @@ TelepathyTextObserver::~TelepathyTextObserver()
     kDebug() << "deleting text observer";
 }
 
-QAbstractListModel * TelepathyTextObserver::conversationModel()
+ConversationsModel* TelepathyTextObserver::conversationModel() const
 {
     Q_ASSERT(!m_handler.isNull());
     return m_handler.data();
+}
+
+Tp::AccountManagerPtr TelepathyTextObserver::accountManager() const
+{
+    return m_accountManager;
 }

@@ -18,6 +18,7 @@
 
 #include "conversation-target.h"
 #include <TelepathyQt/AvatarData>
+#include <TelepathyQt/Contact>
 #include <KDebug>
 #include <KTp/presence.h>
 
@@ -26,9 +27,10 @@ class  ConversationTarget::ConversationTargetPrivate
   public:
     Tp::ContactPtr contact;
     KIcon avatar;
+    Tp::AccountPtr account;
 };
 
-ConversationTarget::ConversationTarget(const Tp::ContactPtr &contact, QObject *parent) :
+ConversationTarget::ConversationTarget(const Tp::AccountPtr& account, const Tp::ContactPtr& contact, QObject* parent) :
     QObject(parent),
     d(new ConversationTargetPrivate)
 {
@@ -39,6 +41,7 @@ ConversationTarget::ConversationTarget(const Tp::ContactPtr &contact, QObject *p
     }
 
     d->contact = contact;
+    d->account = account;
     updateAvatar();
 }
 
@@ -90,14 +93,14 @@ QString ConversationTarget::presenceIconName() const
     if (d->contact) {
        return KTp::Presence(d->contact->presence()).iconName();
     } else {
-       return QString();                                                                    
-    }                                                                                        
+       return QString();
+    }
 }
 
 void ConversationTarget::onPresenceChanged(const Tp::Presence&)
 {
     Q_EMIT presenceIconChanged(presenceIcon());
-    Q_EMIT presenceIconNameChanged(presenceIconName());                                      
+    Q_EMIT presenceIconNameChanged(presenceIconName());
 }
 
 void ConversationTarget::onAvatarDataChanged(const Tp::AvatarData&)
@@ -123,6 +126,11 @@ void ConversationTarget::updateAvatar()
 Tp::ContactPtr ConversationTarget::contact() const
 {
     return d->contact;
+}
+
+Tp::AccountPtr ConversationTarget::account() const
+{
+    return d->account;
 }
 
 ConversationTarget::~ConversationTarget()

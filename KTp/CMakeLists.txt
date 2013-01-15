@@ -45,6 +45,7 @@ set (ktp_common_internals_private_HDRS
      pending-wallet.h
      wallet-interface.h
      wallet-utils.h
+     ktp-metatypes.h
      ktp-export.h
 )
 

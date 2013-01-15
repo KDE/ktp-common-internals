@@ -29,8 +29,9 @@ class MessagesModel : public QAbstractListModel, public Queueable
 {
     Q_OBJECT
     Q_ENUMS(MessageType)
-    Q_PROPERTY(bool visibleToUser READ isVisibleToUser WRITE setVisibleToUser NOTIFY visibleToUserChanged);
-    Q_PROPERTY(int unreadCount READ unreadCount NOTIFY unreadCountChanged);
+    Q_PROPERTY(bool visibleToUser READ isVisibleToUser WRITE setVisibleToUser NOTIFY visibleToUserChanged)
+    Q_PROPERTY(int unreadCount READ unreadCount NOTIFY unreadCountChanged)
+    Q_PROPERTY(bool shouldStartOpened READ shouldStartOpened CONSTANT)
 
   public:
     MessagesModel(QObject *parent = 0);
@@ -62,8 +63,7 @@ class MessagesModel : public QAbstractListModel, public Queueable
     int  unreadCount() const;
     void acknowledgeAllMessages();
 
-    //debug function. will do whatever I feel like at the time ;-)
-    Q_INVOKABLE void printallmessages();
+    bool shouldStartOpened() const;
 
   Q_SIGNALS:
     void visibleToUserChanged(bool visible);
