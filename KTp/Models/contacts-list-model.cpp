@@ -107,6 +107,8 @@ QVariant KTp::ContactsListModel::data(const QModelIndex &index, int role) const
             return contact->capabilities().textChats();
         case ContactsModel::ClientTypesRole:
             return contact->clientTypes();
+        case ContactsModel::FileTransferCapabilityRole:
+            return contact->fileTransferCapability();
         default:
             break;
         }
