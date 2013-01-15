@@ -44,10 +44,13 @@ void QmlPlugins::registerTypes(const char *uri)
     qmlRegisterType<PinnedContactsModel>(uri, 0, 1, "PinnedContactsModel");
     qmlRegisterType<ContactPin>(uri, 0, 1, "ContactPin");
 
-    qmlRegisterType<MessagesModel>();
+    qmlRegisterUncreatableType<AccountsFilterModel> (uri, 0, 1, "AccountsFilterModel",
+        QLatin1String("Filter cannot be created. Access through ContactList.filter"));
+    qmlRegisterUncreatableType<MessagesModel> (uri, 0, 1, "MessagesModel",
+        QLatin1String("It will be created once the conversation is created"));
+
     qmlRegisterType<ConversationTarget>();
     qmlRegisterType<ConversationsModel>();
-    qmlRegisterType<AccountsFilterModel>();
     qRegisterMetaType<Tp::AccountManagerPtr>();
     qRegisterMetaType<Tp::ContactPtr>();
     qRegisterMetaType<Tp::AccountPtr>();
