@@ -31,7 +31,6 @@
 namespace Tp {
     class PendingOperation;
 }
-class ContactsModel;
 
 namespace KTp
 {
