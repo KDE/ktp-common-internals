@@ -38,9 +38,6 @@
 void QmlPlugins::registerTypes(const char *uri)
 {
     qmlRegisterType<ContactList> (uri, 0, 1, "ContactList");
-    qmlRegisterUncreatableType<AccountsFilterModel> (uri, 0, 1, "AccountsFilterModel",
-        QLatin1String("Filter cannot be created. Access through ContactList.filter"));
-
     qmlRegisterType<TelepathyTextObserver> (uri, 0, 1, "TelepathyTextObserver");
     qmlRegisterType<Conversation>(uri, 0, 1, "Conversation");
     qmlRegisterType<HideWindowComponent>(uri, 0, 1, "HideWindowComponent");
@@ -50,6 +47,7 @@ void QmlPlugins::registerTypes(const char *uri)
     qmlRegisterType<MessagesModel>();
     qmlRegisterType<ConversationTarget>();
     qmlRegisterType<ConversationsModel>();
+    qmlRegisterType<AccountsFilterModel>();
     qRegisterMetaType<Tp::AccountManagerPtr>();
     qRegisterMetaType<Tp::ContactPtr>();
     qRegisterMetaType<Tp::AccountPtr>();
