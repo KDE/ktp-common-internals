@@ -4,7 +4,10 @@ include_directories (${CMAKE_CURRENT_BINARY_DIR}
 set (ktp_common_internals_private_SRCS
      abstract-message-filter.cpp
      actions.cpp
+     capabilities-hack-private.cpp
      circular-countdown.cpp
+     contact.cpp
+     contact-factory.cpp
      debug.cpp
      error-dictionary.cpp
      global-contact-manager.cpp
@@ -30,6 +33,8 @@ set (ktp_common_internals_private_HDRS
      abstract-message-filter.h
      actions.h
      circular-countdown.h
+     contact.h
+     contact-factory.h
      debug.h
      error-dictionary.h
      global-contact-manager.h

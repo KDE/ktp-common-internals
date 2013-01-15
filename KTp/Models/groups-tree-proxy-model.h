@@ -1,6 +1,4 @@
 /*
- * DEPRECATED transitional header file
- *
  * Copyright (C) 2012 David Edmundson <kde@davidedmundson.co.uk>
  *
  * This library is free software; you can redistribute it and/or
@@ -18,17 +16,31 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef ACCOUNTSFILTERMODEL_H
-#define ACCOUNTSFILTERMODEL_H
+#ifndef KTP_GROUPS_TREE_PROXY_MODEL_H
+#define KTP_GROUPS_TREE_PROXY_MODEL_H
 
-#include "contacts-filter-model.h"
+#include "abstract-grouping-proxy-model.h"
 
-//temporary hack to ensure compatiability for a while
-class AccountsFilterModel : public ContactsFilterModel {
+#include <TelepathyQt/AccountManager>
+
+#include <KTp/ktp-export.h>
+
+namespace KTp
+{
+
+class KTP_EXPORT GroupsTreeProxyModel : public KTp::AbstractGroupingProxyModel
+{
+    Q_OBJECT
 public:
-    AccountsFilterModel(QObject *parent = 0) :
-        ContactsFilterModel(parent){}
-    
+    GroupsTreeProxyModel(QAbstractItemModel *sourceModel);
+    virtual ~GroupsTreeProxyModel();
+   
+    virtual QSet<QString> groupsForIndex(const QModelIndex &sourceIndex) const;
+    virtual QVariant dataForGroup(const QString &group, int role) const;
+private:
+    class Private;
+    Private *d;
 };
+}
 
-#endif
+#endif // ACCOUNTSTREEPROXYMODEL_H

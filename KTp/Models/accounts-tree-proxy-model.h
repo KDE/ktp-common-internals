@@ -1,6 +1,4 @@
 /*
- * DEPRECATED transitional header file
- *
  * Copyright (C) 2012 David Edmundson <kde@davidedmundson.co.uk>
  *
  * This library is free software; you can redistribute it and/or
@@ -18,17 +16,36 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef ACCOUNTSFILTERMODEL_H
-#define ACCOUNTSFILTERMODEL_H
+#ifndef KTP_ACCOUNTS_TREE_PROXY_MODEL_H
+#define KTP_ACCOUNTS_TREE_PROXY_MODEL_H
 
-#include "contacts-filter-model.h"
+#include "abstract-grouping-proxy-model.h"
 
-//temporary hack to ensure compatiability for a while
-class AccountsFilterModel : public ContactsFilterModel {
+#include <KTp/ktp-export.h>
+
+#include <TelepathyQt/Types>
+
+namespace KTp {
+
+class KTP_EXPORT AccountsTreeProxyModel : public KTp::AbstractGroupingProxyModel
+{
+    Q_OBJECT
 public:
-    AccountsFilterModel(QObject *parent = 0) :
-        ContactsFilterModel(parent){}
-    
+    AccountsTreeProxyModel(QAbstractItemModel *sourceModel, const Tp::AccountManagerPtr &accountManager);
+
+    virtual QSet<QString> groupsForIndex(const QModelIndex &sourceIndex) const;
+    virtual QVariant dataForGroup(const QString &group, int role) const;
+
+private Q_SLOTS:
+    void onAccountAdded(const Tp::AccountPtr &account);
+    void onAccountRemoved(const Tp::AccountPtr &account);
+
+private:
+    class Private;
+    Private *d;
+
 };
 
-#endif
+}
+
+#endif // ACCOUNTSTREEPROXYMODEL_H

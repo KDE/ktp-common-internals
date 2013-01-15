@@ -21,24 +21,19 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#include "accounts-filter-model.h"
+#include "contacts-filter-model.h"
 
 #include "contacts-model.h"
-#include "groups-model.h"
-#include "groups-model-item.h"
-#include "contact-model-item.h"
-#include "accounts-model-item.h"
-#include "proxy-tree-node.h"
 
 #include <presence.h>
 
 #include <KDebug>
 
 
-class AccountsFilterModel::Private
+class ContactsFilterModel::Private
 {
 public:
-    Private(AccountsFilterModel *parent)
+    Private(ContactsFilterModel *parent)
         : q(parent),
           presenceTypeFilterFlags(DoNotFilterByCapability),
           capabilityFilterFlags(DoNotFilterByCapability),
@@ -52,7 +47,7 @@ public:
     {
     }
 
-    AccountsFilterModel *q;
+    ContactsFilterModel *q;
 
     PresenceTypeFilterFlags presenceTypeFilterFlags;
     CapabilityFilterFlags capabilityFilterFlags;
@@ -74,13 +69,16 @@ public:
 
     bool filterAcceptsAccount(const QModelIndex &index) const;
     bool filterAcceptsContact(const QModelIndex &index) const;
-    bool filterAcceptsGroup(const QModelIndex &index) const;
+    bool filterAcceptsGroup(const QModelIndex &index);
+
+    void countContacts(const QModelIndex &sourceParent);
+    void sourceModelChanged(const QModelIndex &sourceIndex);
 
     QHash<QString, int> m_onlineContactsCounts;
     QHash<QString, int> m_totalContactsCounts;
 };
 
-bool AccountsFilterModel::Private::filterAcceptsAccount(const QModelIndex &index) const
+bool ContactsFilterModel::Private::filterAcceptsAccount(const QModelIndex &index) const
 {
     // Hide disabled accounts
     if (!index.data(ContactsModel::EnabledRole).toBool()) {
@@ -128,7 +126,7 @@ bool AccountsFilterModel::Private::filterAcceptsAccount(const QModelIndex &index
     return true;
 }
 
-bool AccountsFilterModel::Private::filterAcceptsContact(const QModelIndex &index) const
+bool ContactsFilterModel::Private::filterAcceptsContact(const QModelIndex &index) const
 {
     // Presence type, capability and subscription state are always checked
     // Then if global filter is set we can return true if a result is found for
@@ -357,48 +355,116 @@ bool AccountsFilterModel::Private::filterAcceptsContact(const QModelIndex &index
     return true;
 }
 
-bool AccountsFilterModel::Private::filterAcceptsGroup(const QModelIndex &index) const
+bool ContactsFilterModel::Private::filterAcceptsGroup(const QModelIndex &index)
 {
-    QVariant item = index.data(ContactsModel::ItemRole);
-    GroupsModelItem *gmItem = item.value<GroupsModelItem*>();
+    QString groupName = index.data(ContactsModel::IdRole).toString();
 
     if (presenceTypeFilterFlags != DoNotFilterByPresence) {
         // If there is no cached value, create one
-        if (!m_onlineContactsCounts.contains(gmItem->groupName())) {
-            q->countContacts(index);
+        if (!m_onlineContactsCounts.contains(groupName)) {
+            countContacts(index);
         }
 
         // Don't accept groups with no online contacts
-        if (m_onlineContactsCounts.value(gmItem->groupName()) == 0) {
-            return false;
+        if (m_onlineContactsCounts.value(groupName) == 0) {
+//             return false;
         }
     }
     else {
         // If there is no cached value, create one
-        if (!m_totalContactsCounts.contains(gmItem->groupName())) {
-            q->countContacts(index);
+        if (!m_totalContactsCounts.contains(groupName)) {
+            countContacts(index);
         }
 
         // Don't accept groups with no total contacts
-        if (m_totalContactsCounts.value(gmItem->groupName()) == 0) {
-            return false;
+        if (m_totalContactsCounts.value(groupName) == 0) {
+//             return false;
         }
     }
     return true;
 }
 
-AccountsFilterModel::AccountsFilterModel(QObject *parent)
+void ContactsFilterModel::Private::countContacts(const QModelIndex &sourceParent)
+{
+    QString key;
+
+    ContactsModel::RowType rowType = static_cast<ContactsModel::RowType>(sourceParent.data(ContactsModel::TypeRole).toInt());
+    if (rowType == ContactsModel::GroupRowType) {
+        key = sourceParent.data(Qt::DisplayRole).toString();
+    } else if (rowType == ContactsModel::AccountRowType) {
+        Tp::AccountPtr account = sourceParent.data(ContactsModel::AccountRole).value<Tp::AccountPtr>();
+        if (account.isNull()) {
+            return;
+        }
+        key = account->uniqueIdentifier();
+    } else {
+        return;
+    }
+
+    // Count the online contacts
+    int tmpCounter = 0;
+
+    for (int i = 0; i < q->sourceModel()->rowCount(sourceParent); ++i) {
+        QModelIndex child = q->sourceModel()->index(i, 0, sourceParent);
+
+        // We want all online contacts that are accepted by the filter
+        if (q->filterAcceptsRow(child.row(), sourceParent)
+            && child.data(ContactsModel::PresenceTypeRole).toUInt() != Tp::ConnectionPresenceTypeOffline
+            && child.data(ContactsModel::PresenceTypeRole).toUInt() != Tp::ConnectionPresenceTypeUnknown) {
+            tmpCounter++;
+        }
+    }
+
+    m_onlineContactsCounts.insert(key, tmpCounter);
+
+    // Now count the total contacts accepted by the filter (but ignore presence filter).
+    // Save the presenceTypeFilterFlags to reapply them later, because we need to disable
+    // presence filtering to get the right numbers
+    PresenceTypeFilterFlags saved = q->presenceTypeFilterFlags();
+    presenceTypeFilterFlags = ContactsFilterModel::DoNotFilterByPresence;
+
+    tmpCounter = 0;
+    for (int i = 0; i < q->sourceModel()->rowCount(sourceParent); ++i) {
+        QModelIndex child = q->sourceModel()->index(i, 0, sourceParent);
+        if (q->filterAcceptsRow(child.row(), sourceParent)) {
+            tmpCounter++;
+        }
+    }
+
+    // Restore the saved presenceTypeFilterFlags
+    presenceTypeFilterFlags = saved;
+
+    m_totalContactsCounts.insert(key, tmpCounter);
+}
+
+void ContactsFilterModel::Private::sourceModelChanged(const QModelIndex &sourceIndex)
+{
+    QModelIndex groupSourceIndex;
+    if (sourceIndex.data(ContactsModel::TypeRole).toUInt() == ContactsModel::ContactRowType) {
+        groupSourceIndex = sourceIndex.parent();
+    } else {
+        groupSourceIndex = sourceIndex;
+    }
+
+    countContacts(groupSourceIndex);
+
+    const QModelIndex mappedIndex = q->mapFromSource(sourceIndex);
+    Q_EMIT q->dataChanged(mappedIndex, mappedIndex);
+}
+
+
+ContactsFilterModel::ContactsFilterModel(QObject *parent)
     : QSortFilterProxyModel(parent),
       d(new Private(this))
 {
 }
 
-AccountsFilterModel::~AccountsFilterModel()
+ContactsFilterModel::~ContactsFilterModel()
 {
     delete d;
 }
 
-QVariant AccountsFilterModel::data(const QModelIndex &index, int role) const
+QVariant ContactsFilterModel::data(const QModelIndex &index, int role) const
 {
     if (!index.isValid()) {
         return QVariant();
@@ -410,53 +476,64 @@ QVariant AccountsFilterModel::data(const QModelIndex &index, int role) const
     }
 
     // Special handling for the counts
+    ContactsModel::RowType rowType = static_cast<ContactsModel::RowType>(sourceIndex.data(ContactsModel::TypeRole).toInt());
     if (role == ContactsModel::OnlineUsersCountRole) {
-        QVariant item = sourceIndex.data(ContactsModel::ItemRole);
-        if (item.canConvert<GroupsModelItem*>()) {
-            GroupsModelItem *gmItem = item.value<GroupsModelItem*>();
+        if (rowType == ContactsModel::GroupRowType) {
+            const QString groupName = sourceIndex.data(Qt::DisplayRole).toString();
             // If there is no cached value, create one
-            if (!d->m_onlineContactsCounts.contains(gmItem->groupName())) {
-                countContacts(sourceIndex);
+            if (!d->m_onlineContactsCounts.contains(groupName)) {
+                d->countContacts(sourceIndex);
             }
-            return d->m_onlineContactsCounts.value(gmItem->groupName());
-        } else if (item.canConvert<AccountsModelItem*>()) {
-            AccountsModelItem *amItem = item.value<AccountsModelItem*>();
+            return d->m_onlineContactsCounts.value(groupName);
+        } else if (rowType == ContactsModel::AccountRowType) {
+            const Tp::AccountPtr account = sourceIndex.data(ContactsModel::AccountRole).value<Tp::AccountPtr>();
+            if (account.isNull()) {
+                return 0;
+            }
             // If there is no cached value, create one
-            if (!d->m_onlineContactsCounts.contains(amItem->data(ContactsModel::IdRole).toString())) {
-                countContacts(sourceIndex);
+            if (!d->m_onlineContactsCounts.contains(account->uniqueIdentifier())) {
+                d->countContacts(sourceIndex);
             }
-            return d->m_onlineContactsCounts.value(amItem->data(ContactsModel::IdRole).toString());
+            return d->m_onlineContactsCounts.value(account->uniqueIdentifier());
         }
     } else if (role == ContactsModel::TotalUsersCountRole) {
-        QVariant item = sourceIndex.data(ContactsModel::ItemRole);
-        if (item.canConvert<GroupsModelItem*>()) {
-            GroupsModelItem *gmItem = item.value<GroupsModelItem*>();
+        if (rowType == ContactsModel::GroupRowType) {
+            const QString groupName = sourceIndex.data(Qt::DisplayRole).toString();
             // If there is no cached value, create one
-            if (!d->m_totalContactsCounts.contains(gmItem->groupName())) {
-                countContacts(sourceIndex);
+            if (!d->m_totalContactsCounts.contains(groupName)) {
+                d->countContacts(sourceIndex);
             }
-            return d->m_totalContactsCounts.value(gmItem->groupName());
-        } else if (item.canConvert<AccountsModelItem*>()) {
-            AccountsModelItem *amItem = item.value<AccountsModelItem*>();
+            return d->m_totalContactsCounts.value(groupName);
+        } else if (rowType == ContactsModel::AccountRowType) {
+            const Tp::AccountPtr account = sourceIndex.data(ContactsModel::AccountRole).value<Tp::AccountPtr>();
+            if (account.isNull()) {
+                return 0;
+            }
             // If there is no cached value, create one
-            if (!d->m_totalContactsCounts.contains(amItem->data(ContactsModel::IdRole).toString())) {
-                countContacts(sourceIndex);
+            if (!d->m_totalContactsCounts.contains(account->uniqueIdentifier())) {
+                d->countContacts(sourceIndex);
             }
-            return d->m_totalContactsCounts.value(amItem->data(ContactsModel::IdRole).toString());
+            return d->m_totalContactsCounts.value(account->uniqueIdentifier());
         }
     }
 
     // In all other cases just delegate it to the source model
-    return sourceModel()->data(mapToSource(index), role);
+    return sourceModel()->data(sourceIndex, role);
 }
 
-void AccountsFilterModel::setSourceModel(QAbstractItemModel *sourceModel)
+void ContactsFilterModel::setSourceModel(QAbstractItemModel *sourceModel)
 {
     // Disconnect the previous source model
-    disconnect(this->sourceModel(),
-               SIGNAL(dataChanged(QModelIndex,QModelIndex)),
-               this,
-               SLOT(countContacts(QModelIndex)));
+    if (this->sourceModel()) {
+        disconnect(this->sourceModel(), SIGNAL(dataChanged(QModelIndex,QModelIndex)),
+                this, SLOT(sourceModelChanged(QModelIndex)));
+        disconnect(this->sourceModel(), SIGNAL(rowsInserted(QModelIndex,int,int)),
+                this, SLOT(sourceModelChanged(QModelIndex)));
+        disconnect(this->sourceModel(), SIGNAL(rowsRemoved(QModelIndex,int,int)),
+                this, SLOT(sourceModelChanged(QModelIndex)));
+        disconnect(this->sourceModel(), SIGNAL(rowsMoved(QModelIndex,int,int,QModelIndex,int)),
+                this, SLOT(sourceModelChanged(QModelIndex)));
+    }
 
     // Clear all cached values as they aren't valid anymore because the source model changed.
     d->m_onlineContactsCounts.clear();
@@ -464,13 +541,17 @@ void AccountsFilterModel::setSourceModel(QAbstractItemModel *sourceModel)
     QSortFilterProxyModel::setSourceModel(sourceModel);
 
     // Connect the new source model
-    connect(this->sourceModel(),
-            SIGNAL(dataChanged(QModelIndex,QModelIndex)),
-            this,
-            SLOT(countContacts(QModelIndex)));
+    connect(this->sourceModel(), SIGNAL(dataChanged(QModelIndex,QModelIndex)),
+            this, SLOT(sourceModelChanged(QModelIndex)));
+    connect(this->sourceModel(), SIGNAL(rowsInserted(QModelIndex,int,int)),
+            this, SLOT(sourceModelChanged(QModelIndex)));
+    connect(this->sourceModel(), SIGNAL(rowsRemoved(QModelIndex,int,int)),
+            this, SLOT(sourceModelChanged(QModelIndex)));
+    connect(this->sourceModel(), SIGNAL(rowsMoved(QModelIndex,int,int,QModelIndex,int)),
+            this, SLOT(sourceModelChanged(QModelIndex)));
 }
 
-void AccountsFilterModel::invalidateFilter()
+void ContactsFilterModel::invalidateFilter()
 {
     // Clear all cached values as they aren't valid anymore because the filter changed.
     d->m_onlineContactsCounts.clear();
@@ -478,7 +559,7 @@ void AccountsFilterModel::invalidateFilter()
     QSortFilterProxyModel::invalidateFilter();
 }
 
-AccountsFilterModel::SortMode AccountsFilterModel::sortMode() const
+ContactsFilterModel::SortMode ContactsFilterModel::sortMode() const
 {
     switch (sortRole()) {
     case Qt::DisplayRole:
@@ -496,12 +577,12 @@ AccountsFilterModel::SortMode AccountsFilterModel::sortMode() const
     }
 }
 
-void AccountsFilterModel::resetSortMode()
+void ContactsFilterModel::resetSortMode()
 {
     setSortMode(DoNotSort);
 }
 
-void AccountsFilterModel::setSortMode(SortMode sortMode)
+void ContactsFilterModel::setSortMode(SortMode sortMode)
 {
     switch (sortMode) {
     case DoNotSort:
@@ -524,17 +605,17 @@ void AccountsFilterModel::setSortMode(SortMode sortMode)
     Q_EMIT sortModeChanged(sortMode);
 }
 
-AccountsFilterModel::PresenceTypeFilterFlags AccountsFilterModel::presenceTypeFilterFlags() const
+ContactsFilterModel::PresenceTypeFilterFlags ContactsFilterModel::presenceTypeFilterFlags() const
 {
     return d->presenceTypeFilterFlags;
 }
 
-void AccountsFilterModel::clearPresenceTypeFilterFlags()
+void ContactsFilterModel::clearPresenceTypeFilterFlags()
 {
     setPresenceTypeFilterFlags(DoNotFilterByPresence);
 }
 
-void AccountsFilterModel::setPresenceTypeFilterFlags(AccountsFilterModel::PresenceTypeFilterFlags presenceTypeFilterFlags)
+void ContactsFilterModel::setPresenceTypeFilterFlags(ContactsFilterModel::PresenceTypeFilterFlags presenceTypeFilterFlags)
 {
     if (d->presenceTypeFilterFlags != presenceTypeFilterFlags) {
         d->presenceTypeFilterFlags = presenceTypeFilterFlags;
@@ -543,17 +624,17 @@ void AccountsFilterModel::setPresenceTypeFilterFlags(AccountsFilterModel::Presen
     }
 }
 
-AccountsFilterModel::CapabilityFilterFlags AccountsFilterModel::capabilityFilterFlags() const
+ContactsFilterModel::CapabilityFilterFlags ContactsFilterModel::capabilityFilterFlags() const
 {
     return d->capabilityFilterFlags;
 }
 
-void AccountsFilterModel::clearCapabilityFilterFlags()
+void ContactsFilterModel::clearCapabilityFilterFlags()
 {
     setCapabilityFilterFlags(DoNotFilterByCapability);
 }
 
-void AccountsFilterModel::setCapabilityFilterFlags(AccountsFilterModel::CapabilityFilterFlags capabilityFilterFlags)
+void ContactsFilterModel::setCapabilityFilterFlags(ContactsFilterModel::CapabilityFilterFlags capabilityFilterFlags)
 {
     if (d->capabilityFilterFlags != capabilityFilterFlags) {
         d->capabilityFilterFlags = capabilityFilterFlags;
@@ -562,17 +643,17 @@ void AccountsFilterModel::setCapabilityFilterFlags(AccountsFilterModel::Capabili
     }
 }
 
-AccountsFilterModel::SubscriptionStateFilterFlags AccountsFilterModel::subscriptionStateFilterFlags() const
+ContactsFilterModel::SubscriptionStateFilterFlags ContactsFilterModel::subscriptionStateFilterFlags() const
 {
     return d->subscriptionStateFilterFlags;
 }
 
-void AccountsFilterModel::clearSubscriptionStateFilterFlags()
+void ContactsFilterModel::clearSubscriptionStateFilterFlags()
 {
     setSubscriptionStateFilterFlags(DoNotFilterBySubscription);
 }
 
-void AccountsFilterModel::setSubscriptionStateFilterFlags(AccountsFilterModel::SubscriptionStateFilterFlags subscriptionStateFilterFlags)
+void ContactsFilterModel::setSubscriptionStateFilterFlags(ContactsFilterModel::SubscriptionStateFilterFlags subscriptionStateFilterFlags)
 {
     if (d->subscriptionStateFilterFlags != subscriptionStateFilterFlags) {
         d->subscriptionStateFilterFlags = subscriptionStateFilterFlags;
@@ -581,17 +662,17 @@ void AccountsFilterModel::setSubscriptionStateFilterFlags(AccountsFilterModel::S
     }
 }
 
-QString AccountsFilterModel::globalFilterString() const
+QString ContactsFilterModel::globalFilterString() const
 {
     return d->globalFilterString;
 }
 
-void AccountsFilterModel::clearGlobalFilterString()
+void ContactsFilterModel::clearGlobalFilterString()
 {
     setGlobalFilterString(QString());
 }
 
-void AccountsFilterModel::setGlobalFilterString(const QString &globalFilterString)
+void ContactsFilterModel::setGlobalFilterString(const QString &globalFilterString)
 {
     if (d->globalFilterString != globalFilterString) {
         d->globalFilterString = globalFilterString;
@@ -600,17 +681,17 @@ void AccountsFilterModel::setGlobalFilterString(const QString &globalFilterStrin
     }
 }
 
-Qt::MatchFlags AccountsFilterModel::globalFilterMatchFlags() const
+Qt::MatchFlags ContactsFilterModel::globalFilterMatchFlags() const
 {
     return d->globalFilterMatchFlags;
 }
 
-void AccountsFilterModel::resetGlobalFilterMatchFlags()
+void ContactsFilterModel::resetGlobalFilterMatchFlags()
 {
     setGlobalFilterMatchFlags(Qt::MatchStartsWith | Qt::MatchWrap);
 }
 
-void AccountsFilterModel::setGlobalFilterMatchFlags(Qt::MatchFlags globalFilterMatchFlags)
+void ContactsFilterModel::setGlobalFilterMatchFlags(Qt::MatchFlags globalFilterMatchFlags)
 {
     if (d->globalFilterMatchFlags != globalFilterMatchFlags) {
         d->globalFilterMatchFlags = globalFilterMatchFlags;
@@ -619,17 +700,17 @@ void AccountsFilterModel::setGlobalFilterMatchFlags(Qt::MatchFlags globalFilterM
     }
 }
 
-QString AccountsFilterModel::displayNameFilterString() const
+QString ContactsFilterModel::displayNameFilterString() const
 {
     return d->displayNameFilterString;
 }
 
-void AccountsFilterModel::clearDisplayNameFilterString()
+void ContactsFilterModel::clearDisplayNameFilterString()
 {
     setDisplayNameFilterString(QString());
 }
 
-void AccountsFilterModel::setDisplayNameFilterString(const QString &displayNameFilterString)
+void ContactsFilterModel::setDisplayNameFilterString(const QString &displayNameFilterString)
 {
     if (d->displayNameFilterString != displayNameFilterString) {
         d->displayNameFilterString = displayNameFilterString;
@@ -638,17 +719,17 @@ void AccountsFilterModel::setDisplayNameFilterString(const QString &displayNameF
     }
 }
 
-Qt::MatchFlags AccountsFilterModel::displayNameFilterMatchFlags() const
+Qt::MatchFlags ContactsFilterModel::displayNameFilterMatchFlags() const
 {
     return d->displayNameFilterMatchFlags;
 }
 
-void AccountsFilterModel::resetDisplayNameFilterMatchFlags()
+void ContactsFilterModel::resetDisplayNameFilterMatchFlags()
 {
     setDisplayNameFilterMatchFlags(Qt::MatchStartsWith | Qt::MatchWrap);
 }
 
-void AccountsFilterModel::setDisplayNameFilterMatchFlags(Qt::MatchFlags displayNameFilterMatchFlags)
+void ContactsFilterModel::setDisplayNameFilterMatchFlags(Qt::MatchFlags displayNameFilterMatchFlags)
 {
     if (d->displayNameFilterMatchFlags != displayNameFilterMatchFlags) {
         d->displayNameFilterMatchFlags = displayNameFilterMatchFlags;
@@ -657,17 +738,17 @@ void AccountsFilterModel::setDisplayNameFilterMatchFlags(Qt::MatchFlags displayN
     }
 }
 
-QString AccountsFilterModel::nicknameFilterString() const
+QString ContactsFilterModel::nicknameFilterString() const
 {
     return d->nicknameFilterString;
 }
 
-void AccountsFilterModel::clearNicknameFilterString()
+void ContactsFilterModel::clearNicknameFilterString()
 {
     setNicknameFilterString(QString());
 }
 
-void AccountsFilterModel::setNicknameFilterString(const QString &nicknameFilterString)
+void ContactsFilterModel::setNicknameFilterString(const QString &nicknameFilterString)
 {
     if (d->nicknameFilterString != nicknameFilterString) {
         d->nicknameFilterString = nicknameFilterString;
@@ -676,17 +757,17 @@ void AccountsFilterModel::setNicknameFilterString(const QString &nicknameFilterS
     }
 }
 
-Qt::MatchFlags AccountsFilterModel::nicknameFilterMatchFlags() const
+Qt::MatchFlags ContactsFilterModel::nicknameFilterMatchFlags() const
 {
     return d->nicknameFilterMatchFlags;
 }
 
-void AccountsFilterModel::resetNicknameFilterMatchFlags()
+void ContactsFilterModel::resetNicknameFilterMatchFlags()
 {
     setNicknameFilterMatchFlags(Qt::MatchStartsWith | Qt::MatchWrap);
 }
 
-void AccountsFilterModel::setNicknameFilterMatchFlags(Qt::MatchFlags nicknameFilterMatchFlags)
+void ContactsFilterModel::setNicknameFilterMatchFlags(Qt::MatchFlags nicknameFilterMatchFlags)
 {
     if (d->nicknameFilterMatchFlags != nicknameFilterMatchFlags) {
         d->nicknameFilterMatchFlags = nicknameFilterMatchFlags;
@@ -695,17 +776,17 @@ void AccountsFilterModel::setNicknameFilterMatchFlags(Qt::MatchFlags nicknameFil
     }
 }
 
-QString AccountsFilterModel::aliasFilterString() const
+QString ContactsFilterModel::aliasFilterString() const
 {
     return d->aliasFilterString;
 }
 
-void AccountsFilterModel::clearAliasFilterString()
+void ContactsFilterModel::clearAliasFilterString()
 {
     setAliasFilterString(QString());
 }
 
-void AccountsFilterModel::setAliasFilterString(const QString &aliasFilterString)
+void ContactsFilterModel::setAliasFilterString(const QString &aliasFilterString)
 {
     if (d->aliasFilterString != aliasFilterString) {
         d->aliasFilterString = aliasFilterString;
@@ -714,17 +795,17 @@ void AccountsFilterModel::setAliasFilterString(const QString &aliasFilterString)
     }
 }
 
-Qt::MatchFlags AccountsFilterModel::aliasFilterMatchFlags() const
+Qt::MatchFlags ContactsFilterModel::aliasFilterMatchFlags() const
 {
     return d->aliasFilterMatchFlags;
 }
 
-void AccountsFilterModel::resetAliasFilterMatchFlags()
+void ContactsFilterModel::resetAliasFilterMatchFlags()
 {
     setAliasFilterMatchFlags(Qt::MatchStartsWith | Qt::MatchWrap);
 }
 
-void AccountsFilterModel::setAliasFilterMatchFlags(Qt::MatchFlags aliasFilterMatchFlags)
+void ContactsFilterModel::setAliasFilterMatchFlags(Qt::MatchFlags aliasFilterMatchFlags)
 {
     if (d->aliasFilterMatchFlags != aliasFilterMatchFlags) {
         d->aliasFilterMatchFlags = aliasFilterMatchFlags;
@@ -733,17 +814,17 @@ void AccountsFilterModel::setAliasFilterMatchFlags(Qt::MatchFlags aliasFilterMat
     }
 }
 
-QString AccountsFilterModel::groupsFilterString() const
+QString ContactsFilterModel::groupsFilterString() const
 {
     return d->groupsFilterString;
 }
 
-void AccountsFilterModel::clearGroupsFilterString()
+void ContactsFilterModel::clearGroupsFilterString()
 {
     setGroupsFilterString(QString());
 }
 
-void AccountsFilterModel::setGroupsFilterString(const QString &groupsFilterString)
+void ContactsFilterModel::setGroupsFilterString(const QString &groupsFilterString)
 {
     if (d->groupsFilterString != groupsFilterString) {
         d->groupsFilterString = groupsFilterString;
@@ -752,17 +833,17 @@ void AccountsFilterModel::setGroupsFilterString(const QString &groupsFilterStrin
     }
 }
 
-Qt::MatchFlags AccountsFilterModel::groupsFilterMatchFlags() const
+Qt::MatchFlags ContactsFilterModel::groupsFilterMatchFlags() const
 {
     return d->groupsFilterMatchFlags;
 }
 
-void AccountsFilterModel::resetGroupsFilterMatchFlags()
+void ContactsFilterModel::resetGroupsFilterMatchFlags()
 {
     setGroupsFilterMatchFlags(Qt::MatchStartsWith | Qt::MatchWrap);
 }
 
-void AccountsFilterModel::setGroupsFilterMatchFlags(Qt::MatchFlags groupsFilterMatchFlags)
+void ContactsFilterModel::setGroupsFilterMatchFlags(Qt::MatchFlags groupsFilterMatchFlags)
 {
     if (d->groupsFilterMatchFlags != groupsFilterMatchFlags) {
         d->groupsFilterMatchFlags = groupsFilterMatchFlags;
@@ -771,17 +852,17 @@ void AccountsFilterModel::setGroupsFilterMatchFlags(Qt::MatchFlags groupsFilterM
     }
 }
 
-QString AccountsFilterModel::idFilterString() const
+QString ContactsFilterModel::idFilterString() const
 {
     return d->idFilterString;
 }
 
-void AccountsFilterModel::clearIdFilterString()
+void ContactsFilterModel::clearIdFilterString()
 {
     setIdFilterString(QString());
 }
 
-void AccountsFilterModel::setIdFilterString(const QString &idFilterString)
+void ContactsFilterModel::setIdFilterString(const QString &idFilterString)
 {
     if (d->idFilterString != idFilterString) {
         d->idFilterString = idFilterString;
@@ -790,17 +871,17 @@ void AccountsFilterModel::setIdFilterString(const QString &idFilterString)
     }
 }
 
-Qt::MatchFlags AccountsFilterModel::idFilterMatchFlags() const
+Qt::MatchFlags ContactsFilterModel::idFilterMatchFlags() const
 {
     return d->idFilterMatchFlags;
 }
 
-void AccountsFilterModel::resetIdFilterMatchFlags()
+void ContactsFilterModel::resetIdFilterMatchFlags()
 {
     setIdFilterMatchFlags(Qt::MatchStartsWith | Qt::MatchWrap);
 }
 
-void AccountsFilterModel::setIdFilterMatchFlags(Qt::MatchFlags idFilterMatchFlags)
+void ContactsFilterModel::setIdFilterMatchFlags(Qt::MatchFlags idFilterMatchFlags)
 {
     if (d->idFilterMatchFlags != idFilterMatchFlags) {
         d->idFilterMatchFlags = idFilterMatchFlags;
@@ -809,87 +890,7 @@ void AccountsFilterModel::setIdFilterMatchFlags(Qt::MatchFlags idFilterMatchFlag
     }
 }
 
-void AccountsFilterModel::countContacts(const QModelIndex &index) const
-{
-    QVariant item = index.data(ContactsModel::ItemRole);
-    if (item.canConvert<GroupsModelItem*>()) {
-        GroupsModelItem *gmItem = item.value<GroupsModelItem*>();
-
-        // Count the online contacts
-        int tmpCounter = 0;
-
-        for (int i = 0; i < gmItem->size(); ++i) {
-            ProxyTreeNode* proxyNode = qobject_cast<ProxyTreeNode*>(gmItem->childAt(i));
-            Q_ASSERT(proxyNode);
-
-            // We want all online contacts that are accepted by the filter
-            if (filterAcceptsRow(gmItem->indexOf(gmItem->childAt(i)), index)
-                && proxyNode->data(ContactsModel::PresenceTypeRole).toUInt() != Tp::ConnectionPresenceTypeOffline
-                && proxyNode->data(ContactsModel::PresenceTypeRole).toUInt() != Tp::ConnectionPresenceTypeUnknown) {
-                tmpCounter++;
-            }
-        }
-
-        d->m_onlineContactsCounts.insert(gmItem->groupName(), tmpCounter);
-
-        // Now count the total contacts accepted by the filter (but ignore presence filter).
-        // Save the presenceTypeFilterFlags to reapply them later, because we need to disable
-        // presence filtering to get the right numbers
-        PresenceTypeFilterFlags saved = presenceTypeFilterFlags();
-        d->presenceTypeFilterFlags = AccountsFilterModel::DoNotFilterByPresence;
-
-        tmpCounter = 0;
-        for (int i = 0; i < gmItem->size(); ++i) {
-            if (filterAcceptsRow(gmItem->indexOf(gmItem->childAt(i)), index)) {
-                tmpCounter++;
-            }
-        }
-
-        // Restore the saved presenceTypeFilterFlags
-        d->presenceTypeFilterFlags = saved;
-
-        d->m_totalContactsCounts.insert(gmItem->groupName(), tmpCounter);
-    } else if (item.canConvert<AccountsModelItem*>()) {
-        AccountsModelItem *amItem = item.value<AccountsModelItem*>();
-
-        // Count the online contacts
-        int tmpCounter = 0;
-
-        for (int i = 0; i < amItem->size(); ++i) {
-            ContactModelItem* contactNode = qobject_cast<ContactModelItem*>(amItem->childAt(i));
-            Q_ASSERT(contactNode);
-
-            // We want all online contacts that are accepted by the filter
-            if (filterAcceptsRow(amItem->indexOf(amItem->childAt(i)), index)
-                && contactNode->data(ContactsModel::PresenceTypeRole).toUInt() != Tp::ConnectionPresenceTypeOffline
-                && contactNode->data(ContactsModel::PresenceTypeRole).toUInt() != Tp::ConnectionPresenceTypeUnknown) {
-                tmpCounter++;
-            }
-        }
-
-        d->m_onlineContactsCounts.insert(amItem->data(ContactsModel::IdRole).toString(), tmpCounter);
-
-        // Now count the total contacts accepted by the filter (but ignore presence filter).
-        // Save the presenceTypeFilterFlags to reapply them later, because we need to disable
-        // presence filtering to get the right numbers
-        PresenceTypeFilterFlags saved = presenceTypeFilterFlags();
-        d->presenceTypeFilterFlags = AccountsFilterModel::DoNotFilterByPresence;
-
-        tmpCounter = 0;
-        for (int i = 0; i < amItem->size(); ++i) {
-            if (filterAcceptsRow(amItem->indexOf(amItem->childAt(i)), index)) {
-                tmpCounter++;
-            }
-        }
-
-        // Restore the saved presenceTypeFilterFlags
-        d->presenceTypeFilterFlags = saved;
-
-        d->m_totalContactsCounts.insert(amItem->data(ContactsModel::IdRole).toString(), tmpCounter);
-    }
-}
-
-bool AccountsFilterModel::filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent) const
+bool ContactsFilterModel::filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent) const
 {
     QModelIndex index = sourceModel()->index(sourceRow, 0, sourceParent);
 
@@ -909,7 +910,7 @@ bool AccountsFilterModel::filterAcceptsRow(int sourceRow, const QModelIndex &sou
     }
 }
 
-bool AccountsFilterModel::lessThan(const QModelIndex &left, const QModelIndex &right) const
+bool ContactsFilterModel::lessThan(const QModelIndex &left, const QModelIndex &right) const
 {
 
     QString leftDisplayedName = sourceModel()->data(left).toString();
@@ -918,10 +919,22 @@ bool AccountsFilterModel::lessThan(const QModelIndex &left, const QModelIndex &r
     switch (sortRole()) {
     case ContactsModel::PresenceTypeRole:
     {
-        Tp::ConnectionPresenceType leftPresence = (Tp::ConnectionPresenceType)sourceModel()->data(left, ContactsModel::PresenceTypeRole).toUInt();
-        Tp::ConnectionPresenceType rightPresence = (Tp::ConnectionPresenceType)sourceModel()->data(right, ContactsModel::PresenceTypeRole).toUInt();
+        Tp::ConnectionPresenceType leftPresence = (Tp::ConnectionPresenceType)left.data(ContactsModel::PresenceTypeRole).toUInt();
+        Tp::ConnectionPresenceType rightPresence = (Tp::ConnectionPresenceType)right.data(ContactsModel::PresenceTypeRole).toUInt();
 
         if (leftPresence == rightPresence) {
+            //presences are the same, compare client types
+
+            bool leftPhone = left.data(ContactsModel::ClientTypesRole).toStringList().contains(QLatin1String("phone"));
+            bool rightPhone = right.data(ContactsModel::ClientTypesRole).toStringList().contains(QLatin1String("phone"));
+
+            if (leftPhone && ! rightPhone) {
+                return false;
+            }
+            else if (rightPhone && !leftPhone) {
+                return true;
+            }
+
             return QString::localeAwareCompare(leftDisplayedName, rightDisplayedName) < 0;
         } else {
             if (leftPresence == Tp::ConnectionPresenceTypeAvailable) {
@@ -956,7 +969,7 @@ bool AccountsFilterModel::lessThan(const QModelIndex &left, const QModelIndex &r
 }
 
 
-QModelIndexList AccountsFilterModel::match(const QModelIndex &start, int role,
+QModelIndexList ContactsFilterModel::match(const QModelIndex &start, int role,
                                           const QVariant &value, int hits,
                                           Qt::MatchFlags flags) const
 {
@@ -1015,4 +1028,4 @@ QModelIndexList AccountsFilterModel::match(const QModelIndex &start, int role,
 }
 
 
-#include "accounts-filter-model.moc"
+#include "contacts-filter-model.moc"
