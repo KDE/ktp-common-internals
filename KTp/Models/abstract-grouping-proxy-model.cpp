@@ -98,7 +98,8 @@ GroupNode::GroupNode(const QString &groupId):
 {
 }
 
-QString GroupNode::group() const {
+QString GroupNode::group() const
+{
     return m_groupId;
 }
 
@@ -109,7 +110,8 @@ QVariant GroupNode::data(int role) const
     return proxyModel->dataForGroup(m_groupId, role);
 }
 
-void GroupNode::setForced(bool forced) {
+void GroupNode::setForced(bool forced)
+{
     m_forced = forced;
 }
 
@@ -171,14 +173,14 @@ void KTp::AbstractGroupingProxyModel::onRowsInserted(const QModelIndex &sourcePa
 {
     //if top level in root model
     if (!sourceParent.parent().isValid()) {
-        for (int i = start; i<=end; i++) {
+        for (int i = start; i <= end; i++) {
             QModelIndex index = d->source->index(i, 0, sourceParent);
             Q_FOREACH(const QString &group, groupsForIndex(index)) {
                 addProxyNode(index, itemForGroup(group));
             }
         }
     } else {
-        for (int i = start; i<=end; i++) {
+        for (int i = start; i <= end; i++) {
             QModelIndex index = d->source->index(i, 0, sourceParent);
             QHash<QPersistentModelIndex, ProxyNode*>::const_iterator it = d->proxyMap.find(index);
             while (it != d->proxyMap.end()  && it.key() == index) {
@@ -245,7 +247,7 @@ void KTp::AbstractGroupingProxyModel::onRowsRemoved(const QModelIndex &sourcePar
 
 void KTp::AbstractGroupingProxyModel::onDataChanged(const QModelIndex &sourceTopLeft, const QModelIndex &sourceBottomRight)
 {
-    for (int i=sourceTopLeft.row() ; i<=sourceBottomRight.row() ; i++) {
+    for (int i = sourceTopLeft.row(); i <= sourceBottomRight.row(); i++) {
         QPersistentModelIndex index = d->source->index(i, 0, sourceTopLeft.parent());
 
         //if top level item
@@ -258,7 +260,7 @@ void KTp::AbstractGroupingProxyModel::onDataChanged(const QModelIndex &sourceTop
                 //loop through existing proxy nodes, and check each one is still valid.
                 QHash<QPersistentModelIndex, ProxyNode*>::const_iterator it = d->proxyMap.find(index);
                 QList<ProxyNode*> removedItems;
-                while (it != d->proxyMap.end()  && it.key() == index) {
+                while (it != d->proxyMap.end() && it.key() == index) {
                     // if proxy's group is still in the item's groups.
                     if (itemGroups.contains(it.value()->group())) {
                         itemGroups.remove(it.value()->group());

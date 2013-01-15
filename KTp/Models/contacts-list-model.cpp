@@ -123,49 +123,51 @@ void KTp::ContactsListModel::onContactsChanged(const Tp::Contacts &added, const 
         KTp::ContactPtr contact = KTp::ContactPtr::qObjectCast(contact_uncasted);
 
         connect(contact.data(),
-                    SIGNAL(aliasChanged(QString)),
-                    SLOT(onChanged()));
-            connect(contact.data(),
-                    SIGNAL(avatarTokenChanged(QString)),
-                    SLOT(onChanged()));
-            connect(contact.data(),
-                    SIGNAL(avatarDataChanged(Tp::AvatarData)),
-                    SLOT(onChanged()));
-            connect(contact.data(),
-                    SIGNAL(presenceChanged(Tp::Presence)),
-                    SLOT(onChanged()));
-            connect(contact->manager()->connection()->selfContact().data(),
-                    SIGNAL(capabilitiesChanged(Tp::ContactCapabilities)),
-                    SLOT(onChanged()));
-            connect(contact.data(),
-                    SIGNAL(capabilitiesChanged(Tp::ContactCapabilities)),
-                    SLOT(onChanged()));
-            connect(contact.data(),
-                    SIGNAL(locationUpdated(Tp::LocationInfo)),
-                    SLOT(onChanged()));
-            connect(contact.data(),
-                    SIGNAL(infoFieldsChanged(Tp::Contact::InfoFields)),
-                    SLOT(onChanged()));
-            connect(contact.data(),
-                    SIGNAL(subscriptionStateChanged(Tp::Contact::PresenceState)),
-                    SLOT(onChanged()));
-            connect(contact.data(),
-                    SIGNAL(publishStateChanged(Tp::Contact::PresenceState,QString)),
-                    SLOT(onChanged()));
-            connect(contact.data(),
-                    SIGNAL(blockStatusChanged(bool)),
-                    SLOT(onChanged()));
-            connect(contact.data(),
-                    SIGNAL(clientTypesChanged(QStringList)),
-                    SLOT(onChanged()));
-            connect(contact.data(),
-                    SIGNAL(addedToGroup(QString)),
-                    SLOT(onChanged()));
-            connect(contact.data(),
-                    SIGNAL(removedFromGroup(QString)),
-                    SLOT(onChanged()));
+                SIGNAL(aliasChanged(QString)),
+                SLOT(onChanged()));
+        connect(contact.data(),
+                SIGNAL(avatarTokenChanged(QString)),
+                SLOT(onChanged()));
+        connect(contact.data(),
+                SIGNAL(avatarDataChanged(Tp::AvatarData)),
+                SLOT(onChanged()));
+        connect(contact.data(),
+                SIGNAL(presenceChanged(Tp::Presence)),
+                SLOT(onChanged()));
+        connect(contact->manager()->connection()->selfContact().data(),
+                SIGNAL(capabilitiesChanged(Tp::ContactCapabilities)),
+                SLOT(onChanged()));
+        connect(contact.data(),
+                SIGNAL(capabilitiesChanged(Tp::ContactCapabilities)),
+                SLOT(onChanged()));
+        connect(contact.data(),
+                SIGNAL(locationUpdated(Tp::LocationInfo)),
+                SLOT(onChanged()));
+        connect(contact.data(),
+                SIGNAL(infoFieldsChanged(Tp::Contact::InfoFields)),
+                SLOT(onChanged()));
+        connect(contact.data(),
+                SIGNAL(subscriptionStateChanged(Tp::Contact::PresenceState)),
+                SLOT(onChanged()));
+        connect(contact.data(),
+                SIGNAL(publishStateChanged(Tp::Contact::PresenceState,QString)),
+                SLOT(onChanged()));
+        connect(contact.data(),
+                SIGNAL(blockStatusChanged(bool)),
+                SLOT(onChanged()));
+        connect(contact.data(),
+                SIGNAL(clientTypesChanged(QStringList)),
+                SLOT(onChanged()));
+        connect(contact.data(),
+                SIGNAL(addedToGroup(QString)),
+                SLOT(onChanged()));
+        connect(contact.data(),
+                SIGNAL(removedFromGroup(QString)),
+                SLOT(onChanged()));
 
-            connect(contact.data(), SIGNAL(invalidated()), SLOT(onConnectionDropped()));
+        connect(contact.data(),
+                SIGNAL(invalidated()),
+                SLOT(onConnectionDropped()));
     }
 
     if (added.size() > 0) {
