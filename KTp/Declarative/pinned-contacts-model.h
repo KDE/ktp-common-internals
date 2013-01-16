@@ -30,49 +30,49 @@ class PinnedContactsModelPrivate;
 class PinnedContactsModel : public QAbstractListModel
 {
     Q_OBJECT
-    Q_PROPERTY(ConversationsModel* conversations READ conversationsModel WRITE setConversationsModel)
+    Q_PROPERTY(ConversationsModel *conversations READ conversationsModel WRITE setConversationsModel)
     Q_PROPERTY(Tp::AccountManagerPtr accountManager READ accountManager WRITE setAccountManager)
     Q_PROPERTY(QStringList state READ state WRITE setState)
     Q_PROPERTY(int count READ rowCount NOTIFY countChanged);
   public:
-    explicit PinnedContactsModel(QObject* parent = 0);
+    explicit PinnedContactsModel(QObject *parent = 0);
     virtual ~PinnedContactsModel();
 
     enum role {
-        PresenceIconRole = Qt::UserRole+1,
+        PresenceIconRole = Qt::UserRole + 1,
         AvailabilityRole,
         ContactRole,
         AccountRole,
         AlreadyChattingRole
     };
 
-    virtual QVariant data(const QModelIndex& index, int role) const;
-    virtual int rowCount(const QModelIndex& parent=QModelIndex()) const;
-    virtual bool removeRows(int row, int count, const QModelIndex& parent = QModelIndex());
+    virtual QVariant data(const QModelIndex &index, int role) const;
+    virtual int rowCount(const QModelIndex &parent = QModelIndex()) const;
+    virtual bool removeRows(int row, int count, const QModelIndex &parent = QModelIndex());
 
-    Q_SLOT void setPinning(const Tp::AccountPtr& account, const Tp::ContactPtr& contact, bool newState);
+    Q_SLOT void setPinning(const Tp::AccountPtr &account, const Tp::ContactPtr &contact, bool newState);
     QModelIndex indexForContact(Tp::AccountPtr account, Tp::ContactPtr contact) const;
 
     ConversationsModel* conversationsModel() const;
-    void setConversationsModel(ConversationsModel* model);
+    void setConversationsModel(ConversationsModel *model);
 
     Tp::AccountManagerPtr accountManager() const;
-    void setAccountManager(const Tp::AccountManagerPtr& accounts);
+    void setAccountManager(const Tp::AccountManagerPtr &accounts);
 
     QStringList state() const;
-    void setState(const QStringList& s);
+    void setState(const QStringList &s);
 
   private Q_SLOTS:
     void contactDataChanged();
-    void pinPendingContacts(Tp::PendingOperation* job);
-    void initializeState(Tp::PendingOperation* op);
-    void conversationsStateChanged(const QModelIndex& parent, int start, int end);
+    void pinPendingContacts(Tp::PendingOperation *job);
+    void initializeState(Tp::PendingOperation *op);
+    void conversationsStateChanged(const QModelIndex &parent, int start, int end);
 
   Q_SIGNALS:
     void countChanged();
 
   private:
-    void appendContact(const Pin& p);
+    void appendContact(const Pin &p);
     PinnedContactsModelPrivate * const d;
 };
 

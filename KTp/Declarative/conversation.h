@@ -36,8 +36,8 @@ class Conversation : public QObject
 {
     Q_OBJECT
 
-    Q_PROPERTY(ConversationTarget* target READ target CONSTANT)
-    Q_PROPERTY(MessagesModel* messages READ messages CONSTANT)
+    Q_PROPERTY(ConversationTarget *target READ target CONSTANT)
+    Q_PROPERTY(MessagesModel *messages READ messages CONSTANT)
     Q_PROPERTY(bool valid READ isValid NOTIFY validityChanged)
 
   public:

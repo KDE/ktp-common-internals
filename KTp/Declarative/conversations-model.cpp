@@ -50,7 +50,12 @@ ConversationsModel::ConversationsModel(QObject *parent) :
     setRoleNames(roles);
 }
 
-QVariant ConversationsModel::data(const QModelIndex& index, int role) const
+ConversationsModel::~ConversationsModel()
+{
+    delete d;
+}
+
+QVariant ConversationsModel::data(const QModelIndex &index, int role) const
 {
     QVariant result;
     if (index.isValid()) {
@@ -62,7 +67,7 @@ QVariant ConversationsModel::data(const QModelIndex& index, int role) const
     return result;
 }
 
-int ConversationsModel::rowCount(const QModelIndex& parent) const
+int ConversationsModel::rowCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent);
     return d->conversations.count();
@@ -84,7 +89,7 @@ void ConversationsModel::handleChannels(const Tp::MethodInvocationContextPtr<> &
 
     //check that the channel is of type text
     Tp::TextChannelPtr textChannel;
-    Q_FOREACH(const Tp::ChannelPtr & channel, channels) {
+    Q_FOREACH(const Tp::ChannelPtr &channel, channels) {
         textChannel = Tp::TextChannelPtr::dynamicCast(channel);
         if (textChannel) {
             break;
@@ -126,7 +131,7 @@ void ConversationsModel::handleChannels(const Tp::MethodInvocationContextPtr<> &
 
     if (!handled && !shouldDelegate) {
         beginInsertRows(QModelIndex(), rowCount(), rowCount());
-        Conversation* newConvo = new Conversation(textChannel, account, this);
+        Conversation *newConvo = new Conversation(textChannel, account, this);
         d->conversations.append(newConvo);
         connect(newConvo, SIGNAL(validityChanged(bool)), SLOT(handleValidityChange(bool)));
         endInsertRows();
@@ -140,7 +145,7 @@ bool ConversationsModel::bypassApproval() const
     return true;
 }
 
-void ConversationsModel::startChat(const Tp::AccountPtr& account, const Tp::ContactPtr& contact)
+void ConversationsModel::startChat(const Tp::AccountPtr &account, const Tp::ContactPtr &contact)
 {
     Q_ASSERT(account);
     account->ensureTextChat(contact, QDateTime::currentDateTime(),
@@ -149,12 +154,11 @@ void ConversationsModel::startChat(const Tp::AccountPtr& account, const Tp::Cont
 
 void ConversationsModel::handleValidityChange(bool valid)
 {
-    if(!valid) {
-        Conversation* sender = qobject_cast<Conversation*>(QObject::sender());
+    if (!valid) {
+        Conversation *sender = qobject_cast<Conversation*>(QObject::sender());
         int index = d->conversations.indexOf(sender);
-        if(index != -1) {
+        if (index != -1) {
             beginRemoveRows(QModelIndex(), index, index);
-
             d->conversations.removeAt(index);
             sender->deleteLater();
             endRemoveRows();
@@ -162,9 +166,4 @@ void ConversationsModel::handleValidityChange(bool valid)
             kError() << "attempting to delete non-existent conversation";
         }
     }
-}
-
-ConversationsModel::~ConversationsModel()
-{
-    delete d;
 }

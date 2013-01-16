@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2012 Aleix Pol <aleixpol@kde.org>
-    
+
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Lesser General Public
     License as published by the Free Software Foundation; either
@@ -21,10 +21,11 @@
 #include <TelepathyQt/Contact>
 #include "pinned-contacts-model.h"
 
-ContactPin::ContactPin(QObject* parent)
+ContactPin::ContactPin(QObject *parent)
     : QObject(parent)
     , m_model(0)
-{}
+{
+}
 
 Tp::AccountPtr ContactPin::account() const
 {
@@ -44,7 +45,7 @@ PinnedContactsModel* ContactPin::model() const
 bool ContactPin::isPinned() const
 {
     bool ret = false;
-    if(m_model && m_account && m_contact) {
+    if (m_model && m_account && m_contact) {
         QModelIndex idx = m_model->indexForContact(m_account, m_contact);
         ret = idx.isValid();
     }
@@ -59,21 +60,21 @@ void ContactPin::toggle()
 }
 
 
-void ContactPin::setAccount(const Tp::AccountPtr& v)
+void ContactPin::setAccount(const Tp::AccountPtr &account)
 {
-    Q_ASSERT(v);
-    m_account = v;
+    Q_ASSERT(account);
+    m_account = account;
     Q_EMIT pinnedChanged();
 }
 
-void ContactPin::setContact(const Tp::ContactPtr& v)
+void ContactPin::setContact(const Tp::ContactPtr &contact)
 {
-    m_contact = v;
+    m_contact = contact;
     Q_EMIT pinnedChanged();
 }
 
-void ContactPin::setModel(PinnedContactsModel* m)
+void ContactPin::setModel(PinnedContactsModel *model)
 {
-    m_model = m;
+    m_model = model;
     Q_EMIT pinnedChanged();
 }

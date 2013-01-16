@@ -27,7 +27,7 @@
 #include <TelepathyQt/ClientRegistrar>
 
 
-TelepathyTextObserver::TelepathyTextObserver(QObject* parent) :
+TelepathyTextObserver::TelepathyTextObserver(QObject *parent) :
     QObject(parent),
     m_handler(new ConversationsModel(this))
 {
@@ -39,7 +39,7 @@ TelepathyTextObserver::TelepathyTextObserver(QObject* parent) :
     Tp::ConnectionFactoryPtr  connectionFactory = Tp::ConnectionFactory::create(
         QDBusConnection::sessionBus(),
         Tp::Features() << Tp::Connection::FeatureSelfContact
-                    << Tp::Connection::FeatureCore
+                       << Tp::Connection::FeatureCore
     );
 
     Tp::ChannelFactoryPtr channelFactory = Tp::ChannelFactory::create(QDBusConnection::sessionBus());
@@ -64,7 +64,7 @@ TelepathyTextObserver::TelepathyTextObserver(QObject* parent) :
     m_registrar = Tp::ClientRegistrar::create(accountFactory, connectionFactory,
                                             channelFactory, contactFactory);
     m_registrar->registerClient(m_handler, QLatin1String("KDE.TextUi.ConversationWatcher")); //KTp.ChatPlasmoid
-    
+
     m_accountManager = Tp::AccountManager::create(accountFactory, connectionFactory, channelFactory, contactFactory);
     m_accountManager->becomeReady();
 }

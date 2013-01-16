@@ -183,7 +183,7 @@ void MessagesModel::onPendingMessageRemoved()
     Q_EMIT unreadCountChanged(unreadCount());
 }
 
-QVariant MessagesModel::data(const QModelIndex& index, int role) const
+QVariant MessagesModel::data(const QModelIndex &index, int role) const
 {
     QVariant result;
 
@@ -211,7 +211,7 @@ QVariant MessagesModel::data(const QModelIndex& index, int role) const
     return result;
 }
 
-int MessagesModel::rowCount(const QModelIndex& parent) const
+int MessagesModel::rowCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent);
     return d->messages.size();

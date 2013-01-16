@@ -113,4 +113,3 @@ void ContactList::onGenericOperationFinished(Tp::PendingOperation *op)
         kDebug() << op->errorMessage();
     }
 }
-

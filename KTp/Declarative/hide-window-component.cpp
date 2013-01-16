@@ -17,12 +17,13 @@
 */
 
 #include "hide-window-component.h"
-#include <kwindowsystem.h>
-#include <QDebug>
 
-HideWindowComponent::HideWindowComponent(QObject* parent)
+#include <KWindowSystem>
+
+HideWindowComponent::HideWindowComponent(QObject *parent)
     : QObject(parent)
-{}
+{
+}
 
 void HideWindowComponent::hideWindowFromTaskbar(qulonglong winId)
 {

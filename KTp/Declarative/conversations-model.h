@@ -34,8 +34,8 @@ class ConversationsModel : public QAbstractListModel, public Tp::AbstractClientH
     explicit ConversationsModel(QObject *parent);
     virtual ~ConversationsModel();
 
-    virtual QVariant data ( const QModelIndex& index, int role = Qt::DisplayRole ) const;
-    virtual int rowCount ( const QModelIndex& parent = QModelIndex() ) const;
+    virtual QVariant data ( const QModelIndex &index, int role = Qt::DisplayRole ) const;
+    virtual int rowCount ( const QModelIndex &parent = QModelIndex() ) const;
 
     enum role {
         ConversationRole = Qt::UserRole
@@ -51,7 +51,7 @@ class ConversationsModel : public QAbstractListModel, public Tp::AbstractClientH
     bool bypassApproval() const;
 
   public Q_SLOTS:
-    void startChat(const Tp::AccountPtr& account, const Tp::ContactPtr& contact);
+    void startChat(const Tp::AccountPtr &account, const Tp::ContactPtr &contact);
 
   private:
     class ConversationsModelPrivate;

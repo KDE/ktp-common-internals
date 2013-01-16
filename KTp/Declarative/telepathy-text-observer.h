@@ -30,11 +30,11 @@ class TelepathyTextObserver : public QObject
 {
     Q_OBJECT
 
-Q_PROPERTY(ConversationsModel* conversations READ conversationModel CONSTANT)
+Q_PROPERTY(ConversationsModel *conversations READ conversationModel CONSTANT)
 Q_PROPERTY(Tp::AccountManagerPtr accountManager READ accountManager CONSTANT)
 
   public:
-    TelepathyTextObserver(QObject* parent=0);
+    TelepathyTextObserver(QObject *parent = 0);
     ~TelepathyTextObserver();
 
     ConversationsModel* conversationModel() const;

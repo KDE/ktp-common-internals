@@ -29,20 +29,20 @@ class ContactPin : public QObject
     Q_OBJECT
     Q_PROPERTY(Tp::ContactPtr contact READ contact WRITE setContact)
     Q_PROPERTY(Tp::AccountPtr account READ account WRITE setAccount)
-    Q_PROPERTY(PinnedContactsModel* model READ model WRITE setModel)
+    Q_PROPERTY(PinnedContactsModel *model READ model WRITE setModel)
     Q_PROPERTY(bool pinned READ isPinned NOTIFY pinnedChanged)
 
   public:
-    explicit ContactPin(QObject* parent = 0);
+    explicit ContactPin(QObject *parent = 0);
 
     Tp::ContactPtr contact() const;
     Tp::AccountPtr account() const;
     PinnedContactsModel* model() const;
     bool isPinned() const;
 
-    void setContact(const Tp::ContactPtr& v);
-    void setAccount(const Tp::AccountPtr& v);
-    void setModel(PinnedContactsModel* m);
+    void setContact(const Tp::ContactPtr &contact);
+    void setAccount(const Tp::AccountPtr &account);
+    void setModel(PinnedContactsModel *model);
 
     Q_SCRIPTABLE void toggle();
 
@@ -50,7 +50,7 @@ class ContactPin : public QObject
     void pinnedChanged();
 
   private:
-    PinnedContactsModel* m_model;
+    PinnedContactsModel *m_model;
     Tp::ContactPtr m_contact;
     Tp::AccountPtr m_account;
 };

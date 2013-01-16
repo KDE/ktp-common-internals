@@ -30,7 +30,7 @@ class  ConversationTarget::ConversationTargetPrivate
     Tp::AccountPtr account;
 };
 
-ConversationTarget::ConversationTarget(const Tp::AccountPtr& account, const Tp::ContactPtr& contact, QObject* parent) :
+ConversationTarget::ConversationTarget(const Tp::AccountPtr &account, const Tp::ContactPtr &contact, QObject *parent) :
     QObject(parent),
     d(new ConversationTargetPrivate)
 {
@@ -116,7 +116,7 @@ void ConversationTarget::updateAvatar()
         path = d->contact->avatarData().fileName;
     }
 
-    if(path.isEmpty()) {
+    if (path.isEmpty()) {
         path = QLatin1String("im-user");
     }
 

@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2012 Aleix Pol <aleixpol@kde.org>
-    
+
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Lesser General Public
     License as published by the Free Software Foundation; either
@@ -19,6 +19,7 @@
 #include "pinned-contacts-model.h"
 #include "conversations-model.h"
 #include "conversation.h"
+
 #include <TelepathyQt/Types>
 #include <TelepathyQt/Contact>
 #include <TelepathyQt/AvatarData>
@@ -28,12 +29,14 @@
 #include <TelepathyQt/PendingReady>
 #include <TelepathyQt/ContactManager>
 #include <TelepathyQt/PendingContacts>
+
 #include <KIcon>
 #include <KGlobal>
 #include <KComponentData>
 #include <KConfigGroup>
 #include <KStandardDirs>
 #include <KDebug>
+
 #include <KTp/presence.h>
 
 struct Pin {
@@ -45,11 +48,11 @@ class PinnedContactsModelPrivate {
 public:
     QVector<Pin> m_pins;
     Tp::AccountManagerPtr accountManager;
-    ConversationsModel* convesations;
+    ConversationsModel *convesations;
 
     QStringList pinsToString() const {
         QStringList ret;
-        Q_FOREACH(const Pin& p, m_pins) {
+        Q_FOREACH(const Pin &p, m_pins) {
             ret += p.account->uniqueIdentifier();
             ret += p.contact->id();
         }
@@ -57,18 +60,19 @@ public:
     }
 };
 
-static Tp::AccountPtr findAccountByUniqueId(Tp::AccountManagerPtr manager, const QString& id)
+static Tp::AccountPtr findAccountByUniqueId(Tp::AccountManagerPtr manager, const QString &id)
 {
     QList<Tp::AccountPtr> accounts = manager->allAccounts();
     Q_FOREACH(const Tp::AccountPtr account, accounts) {
-        if (account->uniqueIdentifier()==id)
+        if (account->uniqueIdentifier() == id) {
             return account;
+        }
     }
     Q_ASSERT(false && "account not found");
     return Tp::AccountPtr();
 }
 
-PinnedContactsModel::PinnedContactsModel(QObject* parent)
+PinnedContactsModel::PinnedContactsModel(QObject *parent)
     : QAbstractListModel(parent)
     , d(new PinnedContactsModelPrivate)
 {
@@ -94,19 +98,19 @@ QStringList PinnedContactsModel::state() const
     return d->pinsToString();
 }
 
-void PinnedContactsModel::setState(const QStringList& pins)
+void PinnedContactsModel::setState(const QStringList &pins)
 {
-    Q_ASSERT(pins.size()%2==0 && "the state should be a pair number of account id and contact name");
+    Q_ASSERT(pins.size() % 2 == 0 && "the state should be a pair number of account id and contact name");
     if(!d->accountManager->isReady()) {
-        Tp::PendingReady* r = d->accountManager->becomeReady();
+        Tp::PendingReady *r = d->accountManager->becomeReady();
         r->setProperty("newState", pins);
         connect(r, SIGNAL(finished(Tp::PendingOperation*)), SLOT(initializeState(Tp::PendingOperation*)));
     } else {
         kDebug() << "loading pinned...." << pins;
-        for (int i=0; i<pins.count(); i+=2) {
+        for (int i = 0; i < pins.count(); i += 2) {
             Tp::AccountPtr account = findAccountByUniqueId(d->accountManager, pins[i]);
             if (account->connection()) {
-                Tp::PendingContacts* pending = account->connection()->contactManager()->contactsForIdentifiers(QStringList(pins[i+1]));
+                Tp::PendingContacts *pending = account->connection()->contactManager()->contactsForIdentifiers(QStringList(pins[i+1]));
                 pending->setProperty("account", qVariantFromValue<Tp::AccountPtr>(account));
                 connect(pending, SIGNAL(finished(Tp::PendingOperation*)), SLOT(pinPendingContacts(Tp::PendingOperation*)));
             }
@@ -117,7 +121,7 @@ void PinnedContactsModel::setState(const QStringList& pins)
 void PinnedContactsModel::pinPendingContacts(Tp::PendingOperation* j)
 {
     if (j->isValid()) {
-        Tp::PendingContacts* job = qobject_cast<Tp::PendingContacts*>(j);
+        Tp::PendingContacts *job = qobject_cast<Tp::PendingContacts*>(j);
         Tp::AccountPtr account = job->property("account").value<Tp::AccountPtr>();
         Tp::ContactPtr contact = job->contacts().first();
         setPinning(account, contact, true);
@@ -128,19 +132,20 @@ void PinnedContactsModel::pinPendingContacts(Tp::PendingOperation* j)
 QModelIndex PinnedContactsModel::indexForContact(Tp::AccountPtr account, Tp::ContactPtr contact) const
 {
     int i = 0;
-    Q_FOREACH(const Pin& p, d->m_pins) {
-        if (p.account->uniqueIdentifier()==account->uniqueIdentifier() && p.contact->id()==contact->id()) {
+    Q_FOREACH(const Pin &p, d->m_pins) {
+        if (p.account->uniqueIdentifier() == account->uniqueIdentifier() && p.contact->id() == contact->id()) {
             break;
         }
         i++;
     }
-    if (i<d->m_pins.count())
+    if (i < d->m_pins.count()) {
         return index(i);
-    else
+    } else {
         return QModelIndex();
+    }
 }
 
-void PinnedContactsModel::setPinning(const Tp::AccountPtr& account, const Tp::ContactPtr& contact, bool newState)
+void PinnedContactsModel::setPinning(const Tp::AccountPtr &account, const Tp::ContactPtr &contact, bool newState)
 {
     QModelIndex idx = indexForContact(account, contact);
     bool found = idx.isValid();
@@ -154,10 +159,10 @@ void PinnedContactsModel::setPinning(const Tp::AccountPtr& account, const Tp::Co
     }
 }
 
-QVariant PinnedContactsModel::data(const QModelIndex& index, int role) const
+QVariant PinnedContactsModel::data(const QModelIndex &index, int role) const
 {
     if (index.isValid()) {
-        const Pin& p = d->m_pins[index.row()];
+        const Pin &p = d->m_pins[index.row()];
         switch(role) {
             case Qt::DisplayRole:
                 return p.contact->alias();
@@ -174,7 +179,7 @@ QVariant PinnedContactsModel::data(const QModelIndex& index, int role) const
                 return QVariant::fromValue<Tp::AccountPtr>(p.account);
             case AlreadyChattingRole: {
                 bool found = false;
-                for(int i=0; !found && i<d->convesations->rowCount(); i++) {
+                for (int i = 0; !found && i < d->convesations->rowCount(); i++) {
                     QModelIndex idx = d->convesations->index(i, 0);
                     Tp::ContactPtr contact = idx.data(ConversationsModel::ConversationRole).value<Conversation*>()->target()->contact();
                     found |= contact->id() == p.contact->id();
@@ -196,7 +201,7 @@ QVariant PinnedContactsModel::data(const QModelIndex& index, int role) const
     return QVariant();
 }
 
-int PinnedContactsModel::rowCount(const QModelIndex& parent) const
+int PinnedContactsModel::rowCount(const QModelIndex &parent) const
 {
     if (parent.isValid()) {
         return 0;
@@ -204,24 +209,24 @@ int PinnedContactsModel::rowCount(const QModelIndex& parent) const
     return d->m_pins.count();
 }
 
-bool PinnedContactsModel::removeRows(int row, int count, const QModelIndex& parent)
+bool PinnedContactsModel::removeRows(int row, int count, const QModelIndex &parent)
 {
-    if (parent.isValid() || (row+count)>d->m_pins.count()) {
+    if (parent.isValid() || (row + count) > d->m_pins.count()) {
         return false;
     }
-    beginRemoveRows(parent, row, row+count-1);
+    beginRemoveRows(parent, row, row + count - 1);
     d->m_pins.remove(row, count);
     endRemoveRows();
     return true;
 }
 
-void PinnedContactsModel::appendContact(const Pin& p)
+void PinnedContactsModel::appendContact(const Pin &p)
 {
     int s = d->m_pins.size();
     beginInsertRows(QModelIndex(), s, s);
     d->m_pins += p;
     endInsertRows();
-    
+
     connect(p.contact.data(),
             SIGNAL(avatarDataChanged(Tp::AvatarData)),
             SLOT(contactDataChanged()));
@@ -235,10 +240,10 @@ void PinnedContactsModel::appendContact(const Pin& p)
 
 void PinnedContactsModel::contactDataChanged()
 {
-    Tp::Contact* c = qobject_cast<Tp::Contact*>(sender());
-    int i=0;
-    Q_FOREACH(const Pin& p, d->m_pins) {
-        if (p.contact==c) {
+    Tp::Contact *c = qobject_cast<Tp::Contact*>(sender());
+    int i = 0;
+    Q_FOREACH(const Pin &p, d->m_pins) {
+        if (p.contact == c) {
             QModelIndex idx = index(i);
             Q_EMIT dataChanged(idx, idx);
             return;
@@ -247,7 +252,7 @@ void PinnedContactsModel::contactDataChanged()
     }
 }
 
-void PinnedContactsModel::setConversationsModel(ConversationsModel* model)
+void PinnedContactsModel::setConversationsModel(ConversationsModel *model)
 {
     beginResetModel();
     d->convesations = model;
@@ -256,13 +261,13 @@ void PinnedContactsModel::setConversationsModel(ConversationsModel* model)
     endResetModel();
 }
 
-void PinnedContactsModel::conversationsStateChanged(const QModelIndex& parent, int start, int end)
+void PinnedContactsModel::conversationsStateChanged(const QModelIndex &parent, int start, int end)
 {
-    for(int i=start; i<=end; i++) {
+    for (int i = start; i <= end; i++) {
         QModelIndex idx = d->convesations->index(i, 0, parent);
         Tp::ContactPtr contact = idx.data(ConversationsModel::ConversationRole).value<Conversation*>()->target()->contact();
-        Q_FOREACH(const Pin& p, d->m_pins) {
-            if (p.contact->id()==contact->id())
+        Q_FOREACH(const Pin &p, d->m_pins) {
+            if (p.contact->id() == contact->id())
                 QMetaObject::invokeMethod(this, "dataChanged", Qt::QueuedConnection, Q_ARG(QModelIndex, idx), Q_ARG(QModelIndex, idx));
         }
     }
@@ -278,13 +283,13 @@ Tp::AccountManagerPtr PinnedContactsModel::accountManager() const
     return d->accountManager;
 }
 
-void PinnedContactsModel::setAccountManager(const Tp::AccountManagerPtr& accounts)
+void PinnedContactsModel::setAccountManager(const Tp::AccountManagerPtr &accounts)
 {
     accounts->becomeReady();
     d->accountManager = accounts;
 }
 
-void PinnedContactsModel::initializeState(Tp::PendingOperation* op)
+void PinnedContactsModel::initializeState(Tp::PendingOperation *op)
 {
     setState(op->property("newState").toStringList());
 }

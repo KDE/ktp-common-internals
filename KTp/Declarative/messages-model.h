@@ -51,8 +51,8 @@ class MessagesModel : public QAbstractListModel, public Queueable
         MessageTypeNotice
     };
 
-    virtual QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const;
-    virtual int rowCount(const QModelIndex& parent = QModelIndex()) const;
+    virtual QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
+    virtual int rowCount(const QModelIndex &parent = QModelIndex()) const;
 
     Tp::TextChannelPtr textChannel() const;
     void setTextChannel(Tp::TextChannelPtr channel);
@@ -72,7 +72,7 @@ class MessagesModel : public QAbstractListModel, public Queueable
     void popoutRequested();
 
   public Q_SLOTS:
-    void sendNewMessage(const QString& message);
+    void sendNewMessage(const QString &message);
 
   private Q_SLOTS:
     void onMessageReceived(const Tp::ReceivedMessage &message);

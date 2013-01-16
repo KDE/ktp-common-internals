@@ -26,7 +26,6 @@
 
 #include "channel-delegator.h"
 
-
 class Conversation::ConversationPrivate
 {
   public:
@@ -36,8 +35,8 @@ class Conversation::ConversationPrivate
     Tp::AccountPtr account;
 };
 
-Conversation::Conversation(const Tp::TextChannelPtr& channel,
-                           const Tp::AccountPtr& account,
+Conversation::Conversation(const Tp::TextChannelPtr &channel,
+                           const Tp::AccountPtr &account,
                            QObject *parent) :
         QObject(parent),
         d (new ConversationPrivate)
@@ -77,7 +76,7 @@ bool Conversation::isValid()
     return d->valid;
 }
 
-void Conversation::onChannelInvalidated(Tp::DBusProxy* proxy, const QString& errorName, const QString& errorMessage)
+void Conversation::onChannelInvalidated(Tp::DBusProxy *proxy, const QString &errorName, const QString &errorMessage)
 {
     kDebug() << proxy << errorName << ":" << errorMessage;
 
@@ -102,4 +101,3 @@ Conversation::~Conversation()
     kDebug();
     delete d;
 }
-
