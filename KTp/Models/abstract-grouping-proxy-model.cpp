@@ -126,6 +126,7 @@ KTp::AbstractGroupingProxyModel::AbstractGroupingProxyModel(QAbstractItemModel *
     d(new KTp::AbstractGroupingProxyModel::Private())
 {
     d->source = source;
+    setRoleNames(source->roleNames());
 
     //we have to process all existing rows in the model, but must never call a virtual method from a constructor as it will crash.
     //we use a single shot timer to get round this

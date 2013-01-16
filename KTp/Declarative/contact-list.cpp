@@ -19,7 +19,6 @@
 #include "contact-list.h"
 
 #include <TelepathyQt/AccountFactory>
-#include <TelepathyQt/ContactFactory>
 #include <TelepathyQt/ConnectionFactory>
 #include <TelepathyQt/AccountManager>
 #include <TelepathyQt/PendingReady>
@@ -27,20 +26,18 @@
 
 #include <KDebug>
 
-#include <KTp/Models/contact-model-item.h>
-#include <KTp/Models/accounts-model-item.h>
+#include <KTp/contact-factory.h>
+
 #include <KTp/actions.h>
 
 ContactList::ContactList(QObject *parent)
     : QObject(parent),
-      m_contactsModel(new ContactsModel(this)),
-      m_filterModel(new AccountsFilterModel(this)),
-      m_flatModel(0)
+      m_contactsModel(new KTp::ContactsListModel(this)),
+      m_filterModel(new KTp::ContactsFilterModel(this))
 {
     m_filterModel->setSourceModel(m_contactsModel);
     //flat model takes the source as a constructor parameter, the other's don't.
     //due to a bug somewhere creating the flat model proxy with the filter model as a source before the filter model has a source means the rolenames do not get propgated up
-    m_flatModel = new FlatModelProxy(m_filterModel);
 
     Tp::registerTypes();
 
@@ -58,7 +55,7 @@ ContactList::ContactList(QObject *parent)
                                                                                << Tp::Connection::FeatureRoster
                                                                                << Tp::Connection::FeatureSelfContact);
 
-    Tp::ContactFactoryPtr contactFactory = Tp::ContactFactory::create(Tp::Features()  << Tp::Contact::FeatureAlias
+    Tp::ContactFactoryPtr contactFactory = KTp::ContactFactory::create(Tp::Features()  << Tp::Contact::FeatureAlias
                                                                       << Tp::Contact::FeatureAvatarData
                                                                       << Tp::Contact::FeatureSimplePresence
                                                                       << Tp::Contact::FeatureCapabilities);
@@ -87,12 +84,7 @@ void ContactList::onAccountManagerReady(Tp::PendingOperation *op)
     m_contactsModel->setAccountManager(m_accountManager);
 }
 
-FlatModelProxy * ContactList::flatModel() const
-{
-    return m_flatModel;
-}
-
-AccountsFilterModel * ContactList::filterModel() const
+KTp::ContactsFilterModel* ContactList::filterModel() const
 {
     return m_filterModel;
 }

@@ -41,6 +41,54 @@ KTp::ContactsListModel::ContactsListModel(QObject *parent) :
     d(new KTp::ContactsListModel::Private())
 {
     d->contactManager = 0;
+
+    QHash<int, QByteArray> roles;
+    roles[ContactsModel::IdRole] = "id";
+    roles[ContactsModel::AccountRole] = "account";
+    roles[ContactsModel::ContactRole] = "contact";
+    roles[ContactsModel::ValidRole] = "valid";
+    roles[ContactsModel::EnabledRole] = "enabled";
+    roles[ContactsModel::ConnectionManagerNameRole] = "connectionManager";
+    roles[ContactsModel::ProtocolNameRole] = "protocol";
+    roles[ContactsModel::DisplayNameRole] = "displayName";
+    roles[ContactsModel::IconRole] = "icon";
+    roles[ContactsModel::NicknameRole] = "nickname";
+    roles[ContactsModel::ConnectsAutomaticallyRole] = "connectsAutomatically";
+    roles[ContactsModel::ChangingPresenceRole] = "changingPresence";
+    roles[ContactsModel::AutomaticPresenceRole] = "automaticPresence";
+    roles[ContactsModel::AutomaticPresenceTypeRole] = "automaticPresenceType";
+    roles[ContactsModel::AutomaticPresenceStatusRole] = "automaticPresenceStatus";
+    roles[ContactsModel::AutomaticPresenceStatusMessageRole] = "automaticPresenceStatusMessage";
+    roles[ContactsModel::CurrentPresenceRole] = "currentPresence";
+    roles[ContactsModel::CurrentPresenceTypeRole] = "currentPresenceType";
+    roles[ContactsModel::CurrentPresenceStatusRole] = "currentPresenceStatus";
+    roles[ContactsModel::CurrentPresenceStatusMessageRole] = "currentPresenceStatusMessage";
+    roles[ContactsModel::RequestedPresenceRole] = "requestedPresence";
+    roles[ContactsModel::RequestedPresenceTypeRole] = "requestedPresenceType";
+    roles[ContactsModel::RequestedPresenceStatusRole] = "requestedPresenceStatus";
+    roles[ContactsModel::RequestedPresenceStatusMessageRole] = "requestedPresenceStatusMessage";
+    roles[ContactsModel::ConnectionStatusRole] = "connectionStatus";
+    roles[ContactsModel::ConnectionStatusReasonRole] = "connectionStatusReason";
+    roles[ContactsModel::AliasRole] = "aliasName";
+    roles[ContactsModel::AvatarRole] = "avatar";
+    roles[ContactsModel::PresenceRole] = "presence";
+    roles[ContactsModel::PresenceIconRole] = "presenceIcon";
+    roles[ContactsModel::PresenceStatusRole] = "presenceStatus";
+    roles[ContactsModel::PresenceTypeRole] = "presenceType";
+    roles[ContactsModel::PresenceMessageRole] = "presenceMessage";
+    roles[ContactsModel::SubscriptionStateRole] = "subscriptionState";
+    roles[ContactsModel::PublishStateRole] = "publishState";
+    roles[ContactsModel::BlockedRole] = "blocked";
+    roles[ContactsModel::GroupsRole] = "groups";
+    roles[ContactsModel::TextChatCapabilityRole] = "textChat";
+    roles[ContactsModel::MediaCallCapabilityRole] = "mediaCall";
+    roles[ContactsModel::AudioCallCapabilityRole] = "audioCall";
+    roles[ContactsModel::VideoCallCapabilityRole] = "videoCall";
+    roles[ContactsModel::UpgradeCallCapabilityRole] = "upgradeCall";
+    roles[ContactsModel::FileTransferCapabilityRole] = "fileTransfer";
+    roles[ContactsModel::DesktopSharingCapabilityRole] = "desktopSharing";
+    roles[ContactsModel::SSHContactCapabilityRole] = "sshContact";
+    setRoleNames(roles);
 }
 
 KTp::ContactsListModel::~ContactsListModel()
