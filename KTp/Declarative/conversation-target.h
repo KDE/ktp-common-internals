@@ -57,8 +57,8 @@ class ConversationTarget : public QObject
     void presenceIconNameChanged(QString icon);
 
   private Q_SLOTS:
-    void onAvatarDataChanged(const Tp::AvatarData&);
-    void onPresenceChanged(const Tp::Presence&);
+    void onAvatarDataChanged();
+    void onPresenceChanged();
 
   private:
     void setupContactSignals(Tp::ContactPtr contact);

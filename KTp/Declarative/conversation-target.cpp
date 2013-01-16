@@ -48,8 +48,8 @@ ConversationTarget::ConversationTarget(const Tp::AccountPtr &account, const Tp::
 void ConversationTarget::setupContactSignals(Tp::ContactPtr contact)
 {
     connect(contact.constData(), SIGNAL(aliasChanged(QString)), SIGNAL(nickChanged(QString)));
-    connect(contact.constData(), SIGNAL(avatarDataChanged(Tp::AvatarData)), SLOT(onAvatarDataChanged(Tp::AvatarData)));
-    connect(contact.constData(), SIGNAL(presenceChanged(Tp::Presence)), SLOT(onPresenceChanged(Tp::Presence)));
+    connect(contact.constData(), SIGNAL(avatarDataChanged(Tp::AvatarData)), SLOT(onAvatarDataChanged()));
+    connect(contact.constData(), SIGNAL(presenceChanged(Tp::Presence)), SLOT(onPresenceChanged()));
 }
 
 QIcon ConversationTarget::avatar() const
@@ -97,13 +97,13 @@ QString ConversationTarget::presenceIconName() const
     }
 }
 
-void ConversationTarget::onPresenceChanged(const Tp::Presence&)
+void ConversationTarget::onPresenceChanged()
 {
     Q_EMIT presenceIconChanged(presenceIcon());
     Q_EMIT presenceIconNameChanged(presenceIconName());
 }
 
-void ConversationTarget::onAvatarDataChanged(const Tp::AvatarData&)
+void ConversationTarget::onAvatarDataChanged()
 {
     updateAvatar();
     Q_EMIT avatarChanged(avatar());
