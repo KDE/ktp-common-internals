@@ -32,7 +32,7 @@
 #include <TelepathyQt/Account>
 #include <TelepathyQt/AccountSet>
 
-class AccountsListModel::Private {
+class KTp::AccountsListModel::Private {
 public:
     QList<Tp::AccountPtr> accounts;
     Tp::AccountSetPtr accountSet;
@@ -40,17 +40,17 @@ public:
 };
 
 
-AccountsListModel::AccountsListModel(QObject *parent)
+KTp::AccountsListModel::AccountsListModel(QObject *parent)
  : QAbstractListModel(parent),
    d(new AccountsListModel::Private)
 {
 }
 
-AccountsListModel::~AccountsListModel()
+KTp::AccountsListModel::~AccountsListModel()
 {
 }
 
-void AccountsListModel::setAccountSet(const Tp::AccountSetPtr &accountSet)
+void KTp::AccountsListModel::setAccountSet(const Tp::AccountSetPtr &accountSet)
 {
     beginResetModel();
     d->accounts.clear();
@@ -65,7 +65,7 @@ void AccountsListModel::setAccountSet(const Tp::AccountSetPtr &accountSet)
 
 }
 
-int AccountsListModel::rowCount(const QModelIndex & parent) const
+int KTp::AccountsListModel::rowCount(const QModelIndex & parent) const
 {
     // If the index is the root item, then return the row count.
     if (parent == QModelIndex()) {
@@ -77,7 +77,7 @@ int AccountsListModel::rowCount(const QModelIndex & parent) const
     return 0;
 }
 
-int AccountsListModel::columnCount(const QModelIndex& parent) const
+int KTp::AccountsListModel::columnCount(const QModelIndex& parent) const
 {
     Q_UNUSED(parent);
 
@@ -86,7 +86,7 @@ int AccountsListModel::columnCount(const QModelIndex& parent) const
 }
 
 
-QVariant AccountsListModel::data(const QModelIndex &index, int role) const
+QVariant KTp::AccountsListModel::data(const QModelIndex &index, int role) const
 {
     if (!index.isValid()) {
         return QVariant();
@@ -143,7 +143,7 @@ QVariant AccountsListModel::data(const QModelIndex &index, int role) const
     return data;
 }
 
-bool AccountsListModel::setData(const QModelIndex &index, const QVariant &value, int role)
+bool KTp::AccountsListModel::setData(const QModelIndex &index, const QVariant &value, int role)
 {
     if (!index.isValid()) {
         return false;
@@ -157,7 +157,7 @@ bool AccountsListModel::setData(const QModelIndex &index, const QVariant &value,
     return false;
 }
 
-QModelIndex AccountsListModel::index(int row, int column, const QModelIndex& parent) const
+QModelIndex KTp::AccountsListModel::index(int row, int column, const QModelIndex& parent) const
 {
     if (row < 0 || column < 0 || parent != QModelIndex()) {
         return QModelIndex();
@@ -170,7 +170,7 @@ QModelIndex AccountsListModel::index(int row, int column, const QModelIndex& par
     return QModelIndex();
 }
 
-void AccountsListModel::onAccountAdded(const Tp::AccountPtr &account)
+void KTp::AccountsListModel::onAccountAdded(const Tp::AccountPtr &account)
 {
     kDebug() << "Creating a new Account from account:" << account.data();
 
@@ -219,14 +219,14 @@ void AccountsListModel::onAccountAdded(const Tp::AccountPtr &account)
     }
 }
 
-void AccountsListModel::onAccountRemoved(const Tp::AccountPtr &account)
+void KTp::AccountsListModel::onAccountRemoved(const Tp::AccountPtr &account)
 {
     beginRemoveRows(QModelIndex(), d->accounts.indexOf(account), d->accounts.indexOf(account));
     d->accounts.removeAll(account);
     endRemoveRows();
 }
 
-void AccountsListModel::onAccountUpdated()
+void KTp::AccountsListModel::onAccountUpdated()
 {
     Tp::AccountPtr item = Tp::AccountPtr(qobject_cast<Tp::Account*>(sender()));
 
@@ -240,7 +240,7 @@ void AccountsListModel::onAccountUpdated()
     Q_EMIT dataChanged(index, index);
 }
 
-const QString AccountsListModel::connectionStateString(const Tp::AccountPtr &account) const
+const QString KTp::AccountsListModel::connectionStateString(const Tp::AccountPtr &account) const
 {
     if (account->isEnabled()) {
         switch (account->connectionStatus()) {
@@ -258,7 +258,7 @@ const QString AccountsListModel::connectionStateString(const Tp::AccountPtr &acc
     }
 }
 
-const KIcon AccountsListModel::connectionStateIcon(const Tp::AccountPtr &account) const
+const KIcon KTp::AccountsListModel::connectionStateIcon(const Tp::AccountPtr &account) const
 {
     if (account->isEnabled()) {
         switch (account->connectionStatus()) {
@@ -277,7 +277,7 @@ const KIcon AccountsListModel::connectionStateIcon(const Tp::AccountPtr &account
     }
 }
 
-const QString AccountsListModel::connectionStatusReason(const Tp::AccountPtr &account) const
+const QString KTp::AccountsListModel::connectionStatusReason(const Tp::AccountPtr &account) const
 {
     if (account->connectionStatusReason() == Tp::ConnectionStatusReasonRequested) {
         return QString();

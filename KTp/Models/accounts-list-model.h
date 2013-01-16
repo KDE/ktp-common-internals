@@ -19,8 +19,8 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef TELEPATHY_ACCOUNTS_LIST_MODEL_H
-#define TELEPATHY_ACCOUNTS_LIST_MODEL_H
+#ifndef KTP_ACCOUNTS_LIST_MODEL_H
+#define KTP_ACCOUNTS_LIST_MODEL_H
 
 #include <QtCore/QAbstractListModel>
 
@@ -29,6 +29,9 @@
 #include <KTp/ktp-export.h>
 
 class KIcon;
+
+namespace KTp
+{
 
 class KTP_EXPORT AccountsListModel : public QAbstractListModel
 {
@@ -70,6 +73,8 @@ private:
     const KIcon connectionStateIcon(const Tp::AccountPtr &account) const;
     const QString connectionStatusReason(const Tp::AccountPtr &account) const;
 };
+
+}
 
 Q_DECLARE_METATYPE(Tp::AccountPtr)
 
