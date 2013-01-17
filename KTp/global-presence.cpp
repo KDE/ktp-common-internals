@@ -32,10 +32,13 @@ namespace KTp
 
 GlobalPresence::GlobalPresence(QObject *parent)
     : QObject(parent),
-      m_requestedPresence(Presence(Tp::Presence::offline())),
-      m_currentPresence(Presence(Tp::Presence::offline())),
       m_changingPresence(false)
 {
+    Tp::Presence unknown;
+    unknown.setStatus(Tp::ConnectionPresenceTypeUnknown, QLatin1String("unknown"), QString());
+
+    m_requestedPresence = KTp::Presence(unknown);
+    m_currentPresence = KTp::Presence(unknown);
 }
 
 void GlobalPresence::setAccountManager(const Tp::AccountManagerPtr &accountManager)
