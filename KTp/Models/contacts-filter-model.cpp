@@ -82,17 +82,6 @@ using namespace KTp;
 
 bool ContactsFilterModel::Private::filterAcceptsAccount(const QModelIndex &index) const
 {
-    // Hide disabled accounts
-    if (!index.data(ContactsModel::EnabledRole).toBool()) {
-        return false;
-    }
-
-    // Hide disconnected accounts
-    if (index.data(ContactsModel::ConnectionStatusRole).toUInt()
-        != Tp::ConnectionStatusConnected) {
-        return false;
-    }
-
     // Check capability
     if (capabilityFilterFlags != DoNotFilterByCapability) {
         if ((capabilityFilterFlags & FilterByTextChatCapability)
