@@ -38,6 +38,10 @@ Tp::PendingChannelRequest* Actions::startChat(const Tp::AccountPtr& account,
                                               const Tp::ContactPtr& contact,
                                               bool delegateToPreferredHandler)
 {
+    if (account.isNull() || contact.isNull()) {
+        kWarning() << "Parameters invalid";
+    }
+
     kDebug() << "Requesting text channel for" << contact->id();
 
     Tp::ChannelRequestHints hints;
@@ -56,6 +60,10 @@ Tp::PendingChannelRequest* Actions::startChat(const Tp::AccountPtr& account,
 Tp::PendingChannelRequest* Actions::startAudioCall(const Tp::AccountPtr& account,
                                                    const Tp::ContactPtr& contact)
 {
+    if (account.isNull() || contact.isNull()) {
+        kWarning() << "Parameters invalid";
+    }
+
     kDebug() << "Requesting audio channel for" << contact->id();
 
     return account->ensureAudioCall(contact,
@@ -67,6 +75,10 @@ Tp::PendingChannelRequest* Actions::startAudioCall(const Tp::AccountPtr& account
 Tp::PendingChannelRequest* Actions::startAudioVideoCall(const Tp::AccountPtr& account,
                                                         const Tp::ContactPtr& contact)
 {
+    if (account.isNull() || contact.isNull()) {
+        kWarning() << "Parameters invalid";
+    }
+
     kDebug() << "Requesting audio-video channel for" << contact->id();
 
     return account->ensureAudioVideoCall(contact,
@@ -79,6 +91,10 @@ Tp::PendingChannelRequest* Actions::startAudioVideoCall(const Tp::AccountPtr& ac
 Tp::PendingChannelRequest* Actions::startDesktopSharing(const Tp::AccountPtr& account,
                                                         const Tp::ContactPtr& contact)
 {
+    if (account.isNull() || contact.isNull()) {
+        kWarning() << "Parameters invalid";
+    }
+
     kDebug() << "Requesting stream tube for" << contact->id();
 
     return account->createStreamTube(contact,
@@ -91,6 +107,10 @@ Tp::PendingChannelRequest* Actions::startFileTransfer(const Tp::AccountPtr& acco
                                                       const Tp::ContactPtr& contact,
                                                       const QString& filePath)
 {
+    if (account.isNull() || contact.isNull()) {
+        kWarning() << "Parameters invalid";
+    }
+
     kDebug() << "Requesting file transfer of" << filePath << "to" << contact->id();
 
     Tp::FileTransferChannelCreationProperties fileTransferProperties(
@@ -105,6 +125,10 @@ Tp::PendingChannelRequest* Actions::startFileTransfer(const Tp::AccountPtr& acco
 void Actions::openLogViewer(const Tp::AccountPtr& account,
                             const Tp::ContactPtr& contact)
 {
+    if (account.isNull() || contact.isNull()) {
+        kWarning() << "Parameters invalid";
+    }
+
     kDebug() << "Opening logviewer for" << contact->id();
 
     QStringList arguments;
