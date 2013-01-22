@@ -23,9 +23,11 @@
 #include <QComboBox>
 #include <TelepathyQt/Types>
 
+#include <KTp/ktp-export.h>
+
 namespace KTp {
 
-class AccountsComboBox : public QComboBox
+class KTP_EXPORT AccountsComboBox : public QComboBox
 {
     Q_OBJECT
     Q_DISABLE_COPY(AccountsComboBox)
@@ -33,8 +35,27 @@ public:
     explicit AccountsComboBox(QWidget *parent = 0);
 
 public:
+    /** A set of accounts to show.
+     * See AccountsListModel::setAccountSet for details
+     */
     void setAccountSet(const Tp::AccountSetPtr &accountSet);
+
+    /** The currently selected account
+     * @return the select account this pointer will be null if no account is selected
+     */
     Tp::AccountPtr currentAccount();
+
+
+    /** Sets the index to the account with the specified ID, provided it exists in the account set
+     *  This may be used to save/restore the last used account when showing the combo box
+     * @param selectedAccountId the account id as found from Tp::Account::uniqueIdentifier
+     */
+    void setCurrentAccount(const QString &selectedAccountId);
+
+    /** Sets the index to the specified account, provided it exists in the account set
+        @param selectedAccount the account to select
+     */
+    void setCurrentAccount(const Tp::AccountPtr &selectedAccount);
 
 private:
     class Private;

@@ -49,6 +49,20 @@ Tp::AccountPtr KTp::AccountsComboBox::currentAccount()
     return itemData(currentIndex(), AccountsListModel::AccountRole).value<Tp::AccountPtr>();
 }
 
+void KTp::AccountsComboBox::setCurrentAccount(const QString &selectedAccountId)
+{
+    for (int i=0;i<count();i++) {
+        if (itemData(i, AccountsListModel::AccountRole).value<Tp::AccountPtr>()->uniqueIdentifier() == selectedAccountId) {
+            setCurrentIndex(i);
+            break;
+        }
+    }
+}
+
+void KTp::AccountsComboBox::setCurrentAccount(const Tp::AccountPtr &selectedAccount)
+{
+    setCurrentAccount(selectedAccount->uniqueIdentifier());
+}
 
 
 
