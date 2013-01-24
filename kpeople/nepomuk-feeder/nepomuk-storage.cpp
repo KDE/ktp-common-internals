@@ -659,7 +659,6 @@ void NepomukStorage::setContactGroups(const QString &path,
                                       const QString &id,
                                       const QStringList &groups)
 {
-    /*
     //kDebug() << path << id << groups;
     ContactResources contact = findContact(path, id);
     if (contact.isEmpty()) {
