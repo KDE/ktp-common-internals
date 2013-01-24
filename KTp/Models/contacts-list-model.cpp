@@ -115,6 +115,8 @@ QVariant KTp::ContactsListModel::data(const QModelIndex &index, int role) const
 
     if (row >=0 && row < d->contacts.size()) {
         const KTp::ContactPtr contact = KTp::ContactPtr::qObjectCast(d->contacts[row]);
+        Q_ASSERT_X(!contact.isNull(), "KTp::ContactListModel::data()",
+                   "Failed to cast Tp::ContactPtr to KTp::ContactPtr. Are you using KTp::ContactFactory?");
 
         switch (role) {
         case ContactsModel::IdRole:

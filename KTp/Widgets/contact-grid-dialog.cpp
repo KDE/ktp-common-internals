@@ -35,6 +35,7 @@
 #include <KTp/Models/contacts-list-model.h>
 #include <KTp/Models/contacts-filter-model.h>
 #include <KTp/Widgets/contact-grid-widget.h>
+#include <KTp/contact-factory.h>
 #include <telepathy-qt4/TelepathyQt/PendingChannelRequest>
 
 
@@ -118,7 +119,7 @@ KTp::ContactGridDialog::ContactGridDialog(QWidget *parent) :
                                                                                               << Tp::Connection::FeatureRoster
                                                                                               << Tp::Connection::FeatureSelfContact);
 
-    Tp::ContactFactoryPtr contactFactory = Tp::ContactFactory::create(Tp::Features()  << Tp::Contact::FeatureAlias
+    Tp::ContactFactoryPtr contactFactory = KTp::ContactFactory::create(Tp::Features()  << Tp::Contact::FeatureAlias
                                                                                       << Tp::Contact::FeatureAvatarData
                                                                                       << Tp::Contact::FeatureSimplePresence
                                                                                       << Tp::Contact::FeatureCapabilities);
