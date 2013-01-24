@@ -269,6 +269,10 @@ NepomukStorage::NepomukStorage(QObject *parent)
 
 NepomukStorage::~NepomukStorage()
 {
+    kDebug();
+//     if (!m_runningJobs.isEmpty()) {
+//         m_aboutToBeDestroyed = true;
+//     }
 }
 
 void NepomukStorage::init()
@@ -339,7 +343,7 @@ void NepomukStorage::init()
 
             // If it does have a telepathy identifier, then it is added to the cache.
             AccountResources acRes( imAccount, it["protocol"].literal().toString() );
-            m_accounts.insert( identifier, imAccount );
+            m_accounts.insert( identifier, acRes );
         }
 
         QTimer::singleShot( 0, this, SLOT(onAccountsQueryFinishedListing()) );
