@@ -662,23 +662,24 @@ void NepomukStorage::setContactGroups(const QString &path,
     /*
     //kDebug() << path << id << groups;
     ContactResources contact = findContact(path, id);
-    if( contact.isEmpty() )
+    if (contact.isEmpty()) {
         return;
+    }
 
-    if( groups.isEmpty() ) {
-        KJob* job = Nepomuk2::removeProperties( QList<QUrl>() << contact.personContact(),
-                                               QList<QUrl>() << NCO::belongsToGroup() );
-        connect( job, SIGNAL(finished(KJob*)), this, SLOT(onRemovePropertiesJob(KJob*)) );
+    if (groups.isEmpty()) {
+        KJob *job = Nepomuk2::removeProperties(QList<QUrl>() << contact.personContact(),
+                                               QList<QUrl>() << NCO::belongsToGroup());
+        connect(job, SIGNAL(finished(KJob*)), this, SLOT(onRemovePropertiesJob(KJob*)));
         //TODO: Maybe remove empty groups?
         return;
     }
 
     //FIXME: Ideally cache all the group uris
     QVariantList groupUris;
-    foreach( const QString& groupName, groups ) {
+    foreach (const QString &groupName, groups) {
         Nepomuk2::SimpleResource groupRes;
-        groupRes.addType( NCO::ContactGroup() );
-        groupRes.setProperty( NCO::contactGroupName(), groupName );
+        groupRes.addType(NCO::ContactGroup());
+        groupRes.setProperty(NCO::contactGroupName(), groupName);
 
         groupUris << groupRes.uri();
         m_graph << groupRes;
@@ -687,11 +688,10 @@ void NepomukStorage::setContactGroups(const QString &path,
     QUrl contactUri = contact.personContact();
 
     Nepomuk2::SimpleResource &contactRes = m_graph[contactUri];
-    contactRes.setUri( contactUri );
-    contactRes.setProperty( NCO::belongsToGroup(), groupUris );
+    contactRes.setUri(contactUri);
+    contactRes.setProperty(NCO::belongsToGroup(), groupUris);
 
     fireGraphTimer();
-    */
 }
 
 void NepomukStorage::setContactBlockStatus(const QString &path, const QString &id, bool blocked)
