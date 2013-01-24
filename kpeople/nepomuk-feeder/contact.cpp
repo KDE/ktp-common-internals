@@ -45,9 +45,9 @@ void Contact::init()
             SLOT(deleteLater()));
 
     // Connect to signals for all properties we want to keep synced.
-    connect(m_contact.data(),
-            SIGNAL(presenceChanged(Tp::Presence)),
-            SLOT(onPresenceChanged(Tp::Presence)));
+//     connect(m_contact.data(),
+//             SIGNAL(presenceChanged(Tp::Presence)),
+//             SLOT(onPresenceChanged(Tp::Presence)));
     connect(m_contact.data(),
             SIGNAL(aliasChanged(QString)),
             SLOT(onAliasChanged(QString)));
@@ -57,19 +57,19 @@ void Contact::init()
     connect(m_contact.data(),
             SIGNAL(removedFromGroup(QString)),
             SLOT(onRemovedFromGroup(QString)));
-    connect(m_contact.data(),
-            SIGNAL(capabilitiesChanged(Tp::ContactCapabilities)),
-            SLOT(onCapabilitiesChanged(Tp::ContactCapabilities)));
-    connect(m_contact.data(),
-            SIGNAL(subscriptionStateChanged(Tp::Contact::PresenceState)),
-            SLOT(onSubscriptionStateChanged(Tp::Contact::PresenceState)));
-    connect(m_contact.data(),
-            SIGNAL(publishStateChanged(Tp::Contact::PresenceState, QString)),
-            SLOT(onPublishStateChanged(Tp::Contact::PresenceState)));
+//     connect(m_contact.data(),
+//             SIGNAL(capabilitiesChanged(Tp::ContactCapabilities)),
+//             SLOT(onCapabilitiesChanged(Tp::ContactCapabilities)));
+//     connect(m_contact.data(),
+//             SIGNAL(subscriptionStateChanged(Tp::Contact::PresenceState)),
+//             SLOT(onSubscriptionStateChanged(Tp::Contact::PresenceState)));
+//     connect(m_contact.data(),
+//             SIGNAL(publishStateChanged(Tp::Contact::PresenceState, QString)),
+//             SLOT(onPublishStateChanged(Tp::Contact::PresenceState)));
     // FIXME: Add support to the ontology for the message QString.
-    connect(m_contact.data(),
-            SIGNAL(blockStatusChanged(bool)),
-            SLOT(onBlockStatusChanged(bool)));
+//     connect(m_contact.data(),
+//             SIGNAL(blockStatusChanged(bool)),
+//             SLOT(onBlockStatusChanged(bool)));
     connect(m_contact.data(),
             SIGNAL(avatarDataChanged(Tp::AvatarData)),
             SLOT(onAvatarDataChanged(Tp::AvatarData)));
@@ -86,14 +86,14 @@ void Contact::init()
 
     // Synthesize all the properties being changed
     // FIXME: Make sure all needed properties are included
-    onPresenceChanged(m_contact->presence());
+//     onPresenceChanged(m_contact->presence());
     onAliasChanged(m_contact->alias());
     onAddedToGroup(QString());  // Arg is ignored.
     // No need to call onRemovedFromGroup too since does the same as added.
-    onCapabilitiesChanged(m_contact->capabilities());
-    onSubscriptionStateChanged(m_contact->subscriptionState());
-    onPublishStateChanged(m_contact->publishState());
-    onBlockStatusChanged(m_contact->isBlocked());
+//     onCapabilitiesChanged(m_contact->capabilities());
+//     onSubscriptionStateChanged(m_contact->subscriptionState());
+//     onPublishStateChanged(m_contact->publishState());
+//     onBlockStatusChanged(m_contact->isBlocked());
 
     // Become ready asynchronously with the avatar data, since this may take some time and we
     // don't want to delay the rest of the contact's attributes being ready.
