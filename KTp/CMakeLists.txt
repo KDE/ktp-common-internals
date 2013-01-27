@@ -5,6 +5,7 @@ set (ktp_common_internals_private_SRCS
      abstract-message-filter.cpp
      actions.cpp
      capabilities-hack-private.cpp
+     contact-info-dialog.cpp
      circular-countdown.cpp
      contact.cpp
      contact-factory.cpp
@@ -34,6 +35,7 @@ set (ktp_common_internals_private_HDRS
      actions.h
      circular-countdown.h
      contact.h
+     contact-info-dialog.h
      contact-factory.h
      debug.h
      error-dictionary.h
@@ -66,6 +68,7 @@ set_target_properties(ktpcommoninternalsprivate PROPERTIES
 
 target_link_libraries (ktpcommoninternalsprivate
                        ${KDE4_KDECORE_LIBS}
+                       ${KDE4_KIO_LIBS}
                        ${TELEPATHY_QT4_LIBRARIES}
                        ${TELEPATHY_LOGGER_QT4_LIBRARIES}
                        ${KDE4_KDEUI_LIBS}
