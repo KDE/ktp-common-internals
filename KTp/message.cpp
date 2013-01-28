@@ -22,14 +22,18 @@
 #include <KDebug>
 #include <QSharedData>
 
+#include <TelepathyQt/ContactManager>
+#include <TelepathyQt/Connection>
+
+
 using namespace KTp;
 
 class Message::Private : public QSharedData {
 
   public:
-    Private()
-    { };
-
+    Private() :
+        isHistory(false)
+    {};
     QDateTime   sentTime;
     QString     token;
     Tp::ChannelTextMessageType messageType;
@@ -37,6 +41,8 @@ class Message::Private : public QSharedData {
     QString     mainPart;
     QStringList parts;
     QStringList scripts;
+    bool isHistory;
+    MessageDirection direction;
 };
 
 Message::Message(const Tp::Message &original) :
@@ -45,8 +51,21 @@ Message::Message(const Tp::Message &original) :
     d->sentTime = original.sent();
     d->token = original.messageToken();
     d->messageType = original.messageType();
+    d->isHistory = false;
 
     setMainMessagePart(original.text());
+}
+
+Message::Message(const Tp::ReceivedMessage &original)
+{
+    d->sentTime = original.sent();
+    d->token = original.messageToken();
+    d->messageType = original.messageType();
+    d->isHistory = original.isScrollback();
+
+    if (original.sender() && original.sender()->manager()) {
+        d->direction = original.sender()->manager()->connection()->selfContact();
+    }
 }
 
 Message::Message(const Tpl::TextEventPtr &original) :
@@ -55,6 +74,8 @@ Message::Message(const Tpl::TextEventPtr &original) :
     d->sentTime = original->timestamp();
     d->token = original->messageToken();
     d->messageType = original->messageType();
+    d->isHistory = true;
+    original->
 
     setMainMessagePart(original->message());
 }
@@ -145,4 +166,14 @@ Tp::ChannelTextMessageType Message::type() const
 int Message::partsSize() const
 {
     return d->parts.size();
+}
+
+bool Message::isHistory() const
+{
+    return d->isHistory;
+}
+
+MessageDirection Message::direction() const
+{
+    return d->direction();
 }
