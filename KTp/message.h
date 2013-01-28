@@ -27,6 +27,7 @@
 
 #include <KTp/ktp-export.h>
 
+#include <QSharedDataPointer>
 
 namespace KTp
 {
@@ -42,7 +43,7 @@ namespace KTp
  *
  * \note
  * Methods in this class are currently *not* thread safe. They will be in a
- * later version. Setting properties concurrently is undefined. 
+ * later version. Setting properties concurrently is undefined.
  *
  * \author Lasath Fernando <kde@lasath.org>
  */
@@ -72,7 +73,7 @@ class KTP_EXPORT Message
      * Each plugin that adds visual components should call this once thier
      * processing is complete. Once a message part is added, it cannot be
      * changed!
-     * 
+     *
      * \param part the content to be added, in valid HTML
      */
     void appendMessagePart(const QString &part);
@@ -135,7 +136,7 @@ class KTP_EXPORT Message
 
   private:
     class Private;
-    Private * const d;
+    QSharedDataPointer<Private> d;
 };
 
 }

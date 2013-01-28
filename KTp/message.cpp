@@ -18,25 +18,17 @@
 
 
 #include "message.h"
+
 #include <KDebug>
+#include <QSharedData>
 
 using namespace KTp;
 
-class Message::Private {
+class Message::Private : public QSharedData {
 
   public:
     Private()
-    { }
-
-    Private(const Private &other):
-        sentTime(other.sentTime),
-        token(other.token),
-        messageType(other.messageType),
-        properties(other.properties),
-        mainPart(other.mainPart),
-        parts(other.parts),
-        scripts(other.scripts)
-    { }
+    { };
 
     QDateTime   sentTime;
     QString     token;
@@ -48,7 +40,7 @@ class Message::Private {
 };
 
 Message::Message(const Tp::Message &original) :
-    d(new Private())
+    d(new Private)
 {
     d->sentTime = original.sent();
     d->token = original.messageToken();
@@ -58,7 +50,7 @@ Message::Message(const Tp::Message &original) :
 }
 
 Message::Message(const Tpl::TextEventPtr &original) :
-    d(new Private())
+    d(new Private)
 {
     d->sentTime = original->timestamp();
     d->token = original->messageToken();
@@ -68,13 +60,12 @@ Message::Message(const Tpl::TextEventPtr &original) :
 }
 
 Message::Message(const Message& other):
-    d(new Private(*(other.d)))
+    d(other.d)
 {
 }
 
 Message::~Message()
 {
-    delete d;
 }
 
 QString Message::mainMessagePart() const
