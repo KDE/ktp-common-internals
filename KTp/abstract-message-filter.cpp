@@ -29,16 +29,6 @@ AbstractMessageFilter::~AbstractMessageFilter()
 {
 }
 
-void AbstractMessageFilter::filterIncomingMessage(KTp::Message &message)
-{
-    filterMessage(message);
-}
-
-void AbstractMessageFilter::filterOutgoingMessage(KTp::Message &message)
-{
-    filterMessage(message);
-}
-
 void AbstractMessageFilter::filterMessage(KTp::Message &message)
 {
     Q_UNUSED(message)

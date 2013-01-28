@@ -49,10 +49,12 @@ namespace KTp
  */
 class KTP_EXPORT Message
 {
-
   public:
-    Message(const Tp::Message &original);
-    Message(const Tpl::TextEventPtr &original);
+    enum MessageDirection {
+        LocalToRemote,
+        RemoteToLocal
+    };
+
     Message(const KTp::Message &other);
     virtual ~Message();
 
@@ -134,9 +136,21 @@ class KTP_EXPORT Message
     /*! \return the number of appended parts */
     int partsSize() const;
 
-  private:
+    /** Returns if the message is history (either from logger or scrollack*/
+    bool isHistory() const;
+
+    MessageDirection direction() const;
+
+protected:
+    Message(const Tp::Message &original);
+    Message(const Tp::ReceivedMessage &original);
+    Message(const Tpl::TextEventPtr &original);
+
+
+private:
     class Private;
     QSharedDataPointer<Private> d;
+    friend class MessageProcessor;
 };
 
 }
