@@ -33,6 +33,7 @@
 #include <TelepathyQt/ContactManager>
 #include <TelepathyQt/Connection>
 #include <TelepathyQt/Account>
+#include <TelepathyQt/PendingContacts>
 
 #include <KDebug>
 #include <KMessageWidget>
@@ -80,6 +81,7 @@ class ContactInfoDialog::Private
         infoDataChanged(false),
         avatarChanged(false),
         messageWidget(0),
+        columnsLayout(0),
         infoLayout(0),
         stateLayout(0),
         changeAvatarButton(0),
@@ -88,6 +90,7 @@ class ContactInfoDialog::Private
         q(parent)
     {}
 
+    void onContactUpgraded(Tp::PendingOperation *op);
     void onContactInfoReceived(Tp::PendingOperation *op);
     void onChangeAvatarButtonClicked();
     void onClearAvatarButtonClicked();
@@ -107,6 +110,7 @@ class ContactInfoDialog::Private
     QMap<InfoRowIndex,QWidget*> infoValueWidgets;
 
     KMessageWidget *messageWidget;
+    QHBoxLayout *columnsLayout;
     QFormLayout *infoLayout;
     QFormLayout *stateLayout;
     KPushButton *changeAvatarButton;
@@ -116,6 +120,69 @@ class ContactInfoDialog::Private
   private:
     ContactInfoDialog *q;
 };
+
+void ContactInfoDialog::Private::onContactUpgraded(Tp::PendingOperation* op)
+{
+    if (op->isError()) {
+        messageWidget->setMessageType(KMessageWidget::Error);
+        messageWidget->setText(op->errorMessage());
+        messageWidget->setCloseButtonVisible(false);
+        messageWidget->setWordWrap(true);
+        messageWidget->animatedShow();
+        return;
+    }
+
+    Tp::PendingContacts *contacts = qobject_cast<Tp::PendingContacts*>(op);
+    Q_ASSERT(contacts->contacts().count() == 1);
+
+    contact = contacts->contacts().first();
+
+    /* Show avatar immediatelly */
+    if (contacts->features().contains(Tp::Contact::FeatureAvatarData)) {
+        QVBoxLayout *avatarLayout = new QVBoxLayout();
+        avatarLayout->setSpacing(5);
+        avatarLayout->setAlignment(Qt::AlignHCenter);
+        columnsLayout->addLayout(avatarLayout);
+
+        avatarLabel = new QLabel(q);
+        avatarLabel->setMaximumSize(150, 150);
+        avatarLayout->addWidget(avatarLabel, 0, Qt::AlignTop);
+
+        if (editable) {
+            changeAvatarButton = new KPushButton(i18n("Change Avatar"), q);
+            connect(changeAvatarButton, SIGNAL(clicked(bool)),
+                    q, SLOT(onChangeAvatarButtonClicked()));
+            avatarLayout->addWidget(changeAvatarButton);
+
+            clearAvatarButton = new KPushButton(i18n("Clear Avatar"), q);
+            connect(clearAvatarButton, SIGNAL(clicked(bool)),
+                    q, SLOT(onClearAvatarButtonClicked()));
+            avatarLayout->addWidget(clearAvatarButton);
+
+            avatarLayout->addStretch(1);
+        }
+
+        QPixmap avatar(contact->avatarData().fileName);
+        if (avatar.isNull()) {
+            avatar = KIconLoader::global()->loadIcon(QLatin1String("im-user"), KIconLoader::Desktop, 128);
+            if (clearAvatarButton) {
+                clearAvatarButton->setEnabled(false);
+            }
+        }
+        avatarLabel->setPixmap(avatar.scaled(avatarLabel->maximumSize(), Qt::KeepAspectRatio, Qt::SmoothTransformation));
+    }
+
+    /* Request detailed contact info */
+    if (contacts->features().contains(Tp::Contact::FeatureInfo)) {
+        infoLayout = new QFormLayout();
+        infoLayout->setSpacing(10);
+        columnsLayout->addLayout(infoLayout);
+
+        Tp::PendingContactInfo *op = contact->requestInfo();
+        connect(op, SIGNAL(finished(Tp::PendingOperation*)),
+                q, SLOT(onContactInfoReceived(Tp::PendingOperation*)));
+    }
+}
 
 void ContactInfoDialog::Private::onContactInfoReceived(Tp::PendingOperation* op)
 {
@@ -307,56 +374,16 @@ ContactInfoDialog::ContactInfoDialog(const Tp::AccountPtr& account, const Tp::Co
     layout->addWidget(d->messageWidget);
 
     /* 1st column: avatar; 2nd column: details */
-    QHBoxLayout *hBoxLayout = new QHBoxLayout();
-    hBoxLayout->setSpacing(30);
-    layout->addLayout(hBoxLayout);
+    d->columnsLayout = new QHBoxLayout();
+    d->columnsLayout->setSpacing(30);
+    layout->addLayout(d->columnsLayout);
 
-    /* Avatar */
-    if (contact->actualFeatures().contains(Tp::Contact::FeatureAvatarData)) {
-
-        QVBoxLayout *avatarLayout = new QVBoxLayout();
-        avatarLayout->setSpacing(5);
-        avatarLayout->setAlignment(Qt::AlignHCenter);
-        hBoxLayout->addLayout(avatarLayout);
-
-        d->avatarLabel = new QLabel(this);
-        d->avatarLabel->setMaximumSize(150, 150);
-        avatarLayout->addWidget(d->avatarLabel, 0, Qt::AlignTop);
-
-        if (d->editable) {
-            d->changeAvatarButton = new KPushButton(i18n("Change Avatar"), this);
-            connect(d->changeAvatarButton, SIGNAL(clicked(bool)),
-                    this, SLOT(onChangeAvatarButtonClicked()));
-            avatarLayout->addWidget(d->changeAvatarButton);
-
-            d->clearAvatarButton = new KPushButton(i18n("Clear Avatar"), this);
-            connect(d->clearAvatarButton, SIGNAL(clicked(bool)),
-                    this, SLOT(onClearAvatarButtonClicked()));
-            avatarLayout->addWidget(d->clearAvatarButton);
-
-            avatarLayout->addStretch(1);
-        }
-
-        QPixmap avatar(contact->avatarData().fileName);
-        if (avatar.isNull()) {
-            avatar = KIconLoader::global()->loadIcon(QLatin1String("im-user"), KIconLoader::Desktop, 128);
-            if (d->clearAvatarButton) {
-                d->clearAvatarButton->setEnabled(false);
-            }
-        }
-        d->avatarLabel->setPixmap(avatar.scaled(d->avatarLabel->maximumSize(), Qt::KeepAspectRatio, Qt::SmoothTransformation));
-    }
-
-    /* Details */
-    if (contact->actualFeatures().contains(Tp::Contact::FeatureInfo)) {
-        d->infoLayout = new QFormLayout();
-        d->infoLayout->setSpacing(10);
-        hBoxLayout->addLayout(d->infoLayout);
-
-        Tp::PendingContactInfo *op = contact->requestInfo();
-        connect(op, SIGNAL(finished(Tp::PendingOperation*)),
-                this, SLOT(onContactInfoReceived(Tp::PendingOperation*)));
-    }
+    /* Make sure the contact has all neccessary features ready */
+    Tp::PendingContacts *op = contact->manager()->upgradeContacts(
+            QList<Tp::ContactPtr>() << contact,
+            Tp::Features() << Tp::Contact::FeatureAvatarData
+                           << Tp::Contact::FeatureInfo);
+    connect(op, SIGNAL(finished(Tp::PendingOperation*)), SLOT(onContactUpgraded(Tp::PendingOperation*)));
 
     /* State Info - there is no point showing this information when it's about ourselves */
     if (!d->editable) {

@@ -47,11 +47,12 @@ class KTP_EXPORT ContactInfoDialog : public KDialog
     class Private;
     Private * const d;
 
-    Q_PRIVATE_SLOT(d, void onContactInfoReceived(Tp::PendingOperation*));
-    Q_PRIVATE_SLOT(d, void onChangeAvatarButtonClicked());
-    Q_PRIVATE_SLOT(d, void onClearAvatarButtonClicked());
-    Q_PRIVATE_SLOT(d, void onInfoDataChanged());
-;
+    Q_PRIVATE_SLOT(d, void onContactUpgraded(Tp::PendingOperation*))
+    Q_PRIVATE_SLOT(d, void onContactInfoReceived(Tp::PendingOperation*))
+    Q_PRIVATE_SLOT(d, void onChangeAvatarButtonClicked())
+    Q_PRIVATE_SLOT(d, void onClearAvatarButtonClicked())
+    Q_PRIVATE_SLOT(d, void onInfoDataChanged())
+
 };
 
 } // namespace KTp
