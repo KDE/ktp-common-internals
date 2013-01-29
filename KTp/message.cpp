@@ -45,9 +45,10 @@ class Message::Private : public QSharedData {
     MessageDirection direction;
 };
 
-Message::Message(const Tp::Message &original) :
+Message::Message(const Tp::Message &original, const KTp::MessageContext &context) :
     d(new Private)
 {
+    Q_UNUSED(context)
     d->sentTime = original.sent();
     d->token = original.messageToken();
     d->messageType = original.messageType();
@@ -56,26 +57,26 @@ Message::Message(const Tp::Message &original) :
     setMainMessagePart(original.text());
 }
 
-Message::Message(const Tp::ReceivedMessage &original)
+Message::Message(const Tp::ReceivedMessage &original, const KTp::MessageContext &context)
 {
     d->sentTime = original.sent();
     d->token = original.messageToken();
     d->messageType = original.messageType();
     d->isHistory = original.isScrollback();
 
-    if (original.sender() && original.sender()->manager()) {
-        d->direction = original.sender()->manager()->connection()->selfContact();
-    }
+//    if (original.sender() && original.sender()->manager()) {
+//        d->direction = original.sender()->manager()->connection()->selfContact();
+//    }
 }
 
-Message::Message(const Tpl::TextEventPtr &original) :
+Message::Message(const Tpl::TextEventPtr &original, const KTp::MessageContext &context) :
     d(new Private)
 {
     d->sentTime = original->timestamp();
     d->token = original->messageToken();
     d->messageType = original->messageType();
     d->isHistory = true;
-    original->
+//    original->
 
     setMainMessagePart(original->message());
 }
@@ -173,7 +174,7 @@ bool Message::isHistory() const
     return d->isHistory;
 }
 
-MessageDirection Message::direction() const
+KTp::Message::MessageDirection Message::direction() const
 {
-    return d->direction();
+    return d->direction;
 }

@@ -29,9 +29,10 @@ AbstractMessageFilter::~AbstractMessageFilter()
 {
 }
 
-void AbstractMessageFilter::filterMessage(KTp::Message &message)
+void AbstractMessageFilter::filterMessage(KTp::Message &message, const KTp::MessageContext &context)
 {
     Q_UNUSED(message)
+    Q_UNUSED(context)
 }
 
 QStringList AbstractMessageFilter::requiredScripts()
