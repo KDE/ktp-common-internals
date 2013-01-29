@@ -17,8 +17,8 @@
 */
 
 
-#ifndef MESSAGE_H
-#define MESSAGE_H
+#ifndef KTP_MESSAGE_H
+#define KTP_MESSAGE_H
 
 #include <TelepathyQt/Message>
 
@@ -26,6 +26,7 @@
 #include <TelepathyLoggerQt4/TextEvent>
 
 #include <KTp/ktp-export.h>
+#include <KTp/message-context.h>
 
 #include <QSharedDataPointer>
 
@@ -142,9 +143,9 @@ class KTP_EXPORT Message
     MessageDirection direction() const;
 
 protected:
-    Message(const Tp::Message &original);
-    Message(const Tp::ReceivedMessage &original);
-    Message(const Tpl::TextEventPtr &original);
+    Message(const Tp::Message &original, const KTp::MessageContext &context);
+    Message(const Tp::ReceivedMessage &original, const KTp::MessageContext &context);
+    Message(const Tpl::TextEventPtr &original, const KTp::MessageContext &context);
 
 
 private:

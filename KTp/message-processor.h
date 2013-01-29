@@ -26,7 +26,7 @@
 
 #include <KTp/message.h>
 #include <KTp/ktp-export.h>
-
+#include <KTp/abstract-message-filter.h>
 #include <TelepathyLoggerQt4/Types>
 
 namespace Tp
@@ -54,13 +54,14 @@ class KTP_EXPORT MessageProcessor : public QObject
     QString header();
 
     //text-ui will call this somewhere in handleIncommingMessage just before displaying it
-    KTp::Message processIncomingMessage(const Tp::Message &message, const Tp::AccountPtr &account, const Tp::TextChannelPtr &channel);
-    KTp::Message processIncomingMessage(const Tp::ReceivedMessage &message, const Tp::AccountPtr &account, const Tp::TextChannelPtr &channel);
-    KTp::Message processIncomingMessage(const Tpl::TextEventPtr &message, const Tp::AccountPtr &account, const Tp::TextChannelPtr &channel);
+    KTp::Message processMessage(const Tp::Message &message, const Tp::AccountPtr &account, const Tp::TextChannelPtr &channel);
+    KTp::Message processMessage(const Tp::ReceivedMessage &message, const Tp::AccountPtr &account, const Tp::TextChannelPtr &channel);
+    KTp::Message processMessage(const Tpl::TextEventPtr &message, const Tp::AccountPtr &account, const Tp::TextChannelPtr &channel);
 
 //    Tp::PendingSendMessage* sendMessage(const QString textMessage, const Tp::AccountPtr &account, const Tp::TextChannelPtr &channel);
 
   protected:
+    KTp::Message processMessage(KTp::Message message, const KTp::MessageContext &context);
     explicit MessageProcessor();
 
   private:
