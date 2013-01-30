@@ -21,7 +21,10 @@
 #define MESSAGES_MODEL_H
 
 #include <QAbstractItemModel>
-#include <TelepathyQt/TextChannel>
+
+#include <TelepathyQt/Types>
+#include <TelepathyQt/ReceivedMessage>
+
 #include "conversation-queue-manager.h"
 
 
@@ -34,7 +37,7 @@ class MessagesModel : public QAbstractListModel, public Queueable
     Q_PROPERTY(bool shouldStartOpened READ shouldStartOpened CONSTANT)
 
   public:
-    MessagesModel(QObject *parent = 0);
+    MessagesModel(const Tp::AccountPtr &account, QObject *parent = 0);
     virtual ~MessagesModel();
 
     enum Roles {

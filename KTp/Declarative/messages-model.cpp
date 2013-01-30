@@ -23,6 +23,9 @@
 #include <KLocalizedString>
 
 #include <TelepathyQt/ReceivedMessage>
+#include <TelepathyQt/TextChannel>
+#include <TelepathyQt/Account>
+
 
 #include "message-processor.h"
 
@@ -47,11 +50,12 @@ class MessagesModel::MessagesModelPrivate
 {
   public:
     Tp::TextChannelPtr textChannel;
+    Tp::AccountPtr account;
     QList<MessageItem> messages;
     bool visible;
 };
 
-MessagesModel::MessagesModel(QObject *parent):
+MessagesModel::MessagesModel(const Tp::AccountPtr &account, QObject *parent) :
         QAbstractListModel(parent),
         d(new MessagesModelPrivate)
 {
@@ -64,6 +68,7 @@ MessagesModel::MessagesModel(QObject *parent):
     roles[TypeRole] = "type";
     setRoleNames(roles);
 
+    d->account = account;
     d->visible = false;
 }
 
@@ -138,9 +143,12 @@ void MessagesModel::onMessageReceived(const Tp::ReceivedMessage &message)
         int length = rowCount();
         beginInsertRows(QModelIndex(), length, length);
 
+        //TODO simply use ktpMessage as d->messages()
+        KTp::Message ktpMessage = KTp::MessageProcessor::instance()->processMessage(message, d->account, d->textChannel);
+
         d->messages.append(MessageItem(
                                message.sender()->alias(),
-                               KTp::MessageProcessor::instance()->processIncomingMessage(message).finalizedMessage(),
+                               ktpMessage.finalizedMessage(),
                                message.received(),
                                message.messageType() == Tp::ChannelTextMessageTypeAction ? MessageTypeAction : MessageTypeIncoming,
                                message.messageToken()
@@ -167,9 +175,11 @@ void MessagesModel::onMessageSent(const Tp::Message &message, Tp::MessageSending
     beginInsertRows(QModelIndex(), length, length);
     kDebug() << "text =" << message.text();
 
+    KTp::Message ktpMessage = KTp::MessageProcessor::instance()->processMessage(message, d->account, d->textChannel);
+
     d->messages.append(MessageItem(
                            i18n("Me"),   //FIXME : use actual nickname from Tp::AccountPtr
-                           KTp::MessageProcessor::instance()->processOutgoingMessage(message).finalizedMessage(),
+                           ktpMessage.finalizedMessage(),
                            message.sent(),
                            message.messageType() == Tp::ChannelTextMessageTypeAction ? MessageTypeAction : MessageTypeOutgoing,
                            message.messageToken()
