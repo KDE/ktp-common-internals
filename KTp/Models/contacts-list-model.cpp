@@ -110,12 +110,16 @@ QVariant KTp::ContactsListModel::data(const QModelIndex &index, int role) const
             return contact->avatarData().fileName;
         case KTp::ContactGroupsRole:
             return contact->groups();
+        
+        case KTp::ContactPresenceNameRole:
+            return contact->presence().displayString();
         case KTp::ContactPresenceMessageRole:
             return contact->presence().statusMessage();
         case KTp::ContactPresenceTypeRole:
             return contact->presence().type();
         case KTp::ContactPresenceIconRole:
             return contact->presence().iconName();
+        
         case KTp::ContactSubscriptionStateRole:
             return contact->subscriptionState();
           case KTp::ContactPublishStateRole:
