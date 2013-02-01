@@ -38,19 +38,13 @@ class KTP_EXPORT ContactsFilterModel : public QSortFilterProxyModel
     Q_OBJECT
     Q_DISABLE_COPY(ContactsFilterModel)
 
-    Q_ENUMS(SortMode
-            PresenceFilterFlag
+    Q_ENUMS(PresenceFilterFlag
             CapabilityFilterFlag
             SubscriptionStateFilterFlag)
 
     Q_FLAGS(PresenceTypeFilterFlags
             CapabilityFilterFlags
             SubscriptionStateFilterFlags)
-
-    Q_PROPERTY(SortMode sortMode
-               READ sortMode
-               WRITE setSortMode
-               NOTIFY sortModeChanged)
 
     Q_PROPERTY(PresenceTypeFilterFlags presenceTypeFilterFlags
                READ presenceTypeFilterFlags
@@ -135,12 +129,6 @@ class KTP_EXPORT ContactsFilterModel : public QSortFilterProxyModel
                NOTIFY idFilterMatchFlagsChanged)
 
 public:
-    enum SortMode {
-        DoNotSort = 0,
-        SortByPresence,
-        SortByNickname,
-        SortByAlias
-    };
 
     enum PresenceTypeFilterFlag {
         DoNotFilterByPresence                  = 0x0000,
@@ -206,11 +194,6 @@ public:
     virtual QVariant data(const QModelIndex &index, int role) const;
     virtual void setSourceModel(QAbstractItemModel *sourceModel);
     void invalidateFilter();
-
-    SortMode sortMode() const;
-    void resetSortMode();
-    Q_SLOT void setSortMode(SortMode sortMode);
-    Q_SIGNAL void sortModeChanged(SortMode sortMode);
 
     PresenceTypeFilterFlags presenceTypeFilterFlags() const;
     Q_SLOT void clearPresenceTypeFilterFlags();

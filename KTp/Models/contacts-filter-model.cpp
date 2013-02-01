@@ -550,52 +550,6 @@ void ContactsFilterModel::invalidateFilter()
     QSortFilterProxyModel::invalidateFilter();
 }
 
-ContactsFilterModel::SortMode ContactsFilterModel::sortMode() const
-{
-    switch (sortRole()) {
-    case Qt::DisplayRole:
-        return DoNotSort;
-    case ContactsModel::PresenceTypeRole:
-        return SortByPresence;
-    case ContactsModel::NicknameRole:
-        return SortByNickname;
-    case ContactsModel::AliasRole:
-        return SortByAlias;
-    default:
-        //This should never happen
-        Q_ASSERT(false);
-        return DoNotSort;
-    }
-}
-
-void ContactsFilterModel::resetSortMode()
-{
-    setSortMode(DoNotSort);
-}
-
-void ContactsFilterModel::setSortMode(SortMode sortMode)
-{
-    switch (sortMode) {
-    case DoNotSort:
-        setSortRole(Qt::DisplayRole);
-        break;
-    case SortByPresence:
-        setSortRole(ContactsModel::PresenceTypeRole);
-        break;
-    case SortByNickname:
-        setSortRole(ContactsModel::NicknameRole);
-        break;
-    case SortByAlias:
-        setSortRole(ContactsModel::AliasRole);
-        break;
-    default:
-        //This should never happen
-        Q_ASSERT(false);
-        return;
-    }
-    Q_EMIT sortModeChanged(sortMode);
-}
-
 ContactsFilterModel::PresenceTypeFilterFlags ContactsFilterModel::presenceTypeFilterFlags() const
 {
     return d->presenceTypeFilterFlags;
