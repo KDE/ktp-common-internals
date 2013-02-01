@@ -16,7 +16,6 @@ set (ktp_models_private_SRCS
 set (ktp_models_private_HDRS
     abstract-grouping-proxy-model.h
     accounts-list-model.h
-    accounts-filter-model.h
     accounts-tree-proxy-model.h
     contacts-filter-model.h
     contacts-list-model.h
