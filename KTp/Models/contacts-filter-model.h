@@ -163,12 +163,11 @@ public:
     enum CapabilityFilterFlag {
         DoNotFilterByCapability                = 0x0000,
         FilterByTextChatCapability             = 0x0001,
-        FilterByMediaCallCapability            = 0x0002,
-        FilterByAudioCallCapability            = 0x0004,
-        FilterByVideoCallCapability            = 0x0008,
-        FilterByFileTransferCapability         = 0x0010,
-        FilterByDesktopSharingCapability       = 0x0020,
-        FilterBySSHContactCapability           = 0x0040,
+        FilterByAudioCallCapability            = 0x0002,
+        FilterByVideoCallCapability            = 0x0004,
+        FilterByFileTransferCapability         = 0x0008,
+        FilterByDesktopSharingCapability       = 0x0010,
+        FilterBySSHContactCapability           = 0x0020,
 
         CustomFilterCapability                 = 0x10000 // a placemark for custom capabilities in inherited classes
     };
