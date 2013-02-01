@@ -102,8 +102,8 @@ bool ContactsFilterModel::Private::filterAcceptsAccount(const QModelIndex &index
             return false;
         }
         if (capabilityFilterFlags & FilterByTubes) {
-            Q_FOREACH(const QString &tube, index.data(KTp::ContactTubesRole).toList()) {
-                if (d->tubesFilterStrings.contains(tube)) {
+            Q_FOREACH(const QString &tube, index.data(KTp::ContactTubesRole).toStringList()) {
+                if (tubesFilterStrings.contains(tube)) {
                     return true;
                 }
             }
@@ -200,10 +200,10 @@ bool ContactsFilterModel::Private::filterAcceptsContact(const QModelIndex &index
             return false;
         }
         if (capabilityFilterFlags & FilterByTubes) {
-            if (!d->tubesFilterStrings.isEmpty()) {
+            if (!tubesFilterStrings.isEmpty()) {
                 bool tubeFound = false;
-                Q_FOREACH(const QString &tube, index.data(KTp::ContactTubesRole).toList()) {
-                    if (d->tubesFilterStrings.contains(tube)) {
+                Q_FOREACH(const QString &tube, index.data(KTp::ContactTubesRole).toStringList()) {
+                    if (tubesFilterStrings.contains(tube)) {
                         tubeFound = true;
                     }
                 }
