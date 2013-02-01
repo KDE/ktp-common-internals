@@ -102,6 +102,11 @@ class KTP_EXPORT ContactsFilterModel : public QSortFilterProxyModel
                RESET clearIdFilterString
                WRITE setIdFilterString
                NOTIFY idFilterStringChanged)
+    Q_PROPERTY(QStringList tubesFilterStrings
+               READ tubesFilterStrings
+               RESET clearTubesFilterStrings
+               WRITE setTubesFilterStrings
+               NOTIFY tubesFilterStringsChanged)
     Q_PROPERTY(Qt::MatchFlags displayNameFilterMatchFlags
                READ displayNameFilterMatchFlags
                RESET resetDisplayNameFilterMatchFlags
@@ -166,8 +171,7 @@ public:
         FilterByAudioCallCapability            = 0x0002,
         FilterByVideoCallCapability            = 0x0004,
         FilterByFileTransferCapability         = 0x0008,
-        FilterByDesktopSharingCapability       = 0x0010,
-        FilterBySSHContactCapability           = 0x0020,
+        FilterByTubes                          = 0x0010,
 
         CustomFilterCapability                 = 0x10000 // a placemark for custom capabilities in inherited classes
     };
@@ -262,6 +266,11 @@ public:
     Q_SLOT void resetIdFilterMatchFlags();
     Q_SLOT void setIdFilterMatchFlags(Qt::MatchFlags idFilterMatchFlags);
     Q_SIGNAL void idFilterMatchFlagsChanged(Qt::MatchFlags idFilterMatchFlags);
+
+    QStringList tubesFilterStrings() const;
+    Q_SLOT void clearTubesFilterStrings();
+    Q_SLOT void setTubesFilterStrings(const QStringList &tubesFilterStrings);
+    Q_SIGNAL void tubesFilterStringsChanged(const QStringList &tubesFilterStrings);
 
 protected:
     bool filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent) const;

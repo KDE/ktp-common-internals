@@ -61,6 +61,7 @@ public:
     QString aliasFilterString;
     QString groupsFilterString;
     QString idFilterString;
+    QStringList tubesFilterStrings;
     Qt::MatchFlags displayNameFilterMatchFlags;
     Qt::MatchFlags nicknameFilterMatchFlags;
     Qt::MatchFlags aliasFilterMatchFlags;
@@ -100,12 +101,12 @@ bool ContactsFilterModel::Private::filterAcceptsAccount(const QModelIndex &index
                 && !index.data(KTp::ContactCanFileTransferRole).toBool()) {
             return false;
         }
-        if ((capabilityFilterFlags & FilterByDesktopSharingCapability)
-                && !index.data(ContactsModel::DesktopSharingCapabilityRole).toBool()) {
-            return false;
-        }
-        if ((capabilityFilterFlags & FilterBySSHContactCapability)
-                && !index.data(ContactsModel::SSHContactCapabilityRole).toBool()) {
+        if (capabilityFilterFlags & FilterByTubes) {
+            Q_FOREACH(const QString &tube, index.data(KTp::ContactTubesRole).toList()) {
+                if (d->tubesFilterStrings.contains(tube)) {
+                    return true;
+                }
+            }
             return false;
         }
     }
@@ -198,13 +199,18 @@ bool ContactsFilterModel::Private::filterAcceptsContact(const QModelIndex &index
                 && !index.data(KTp::ContactCanFileTransferRole).toBool()) {
             return false;
         }
-        if ((capabilityFilterFlags & FilterByDesktopSharingCapability)
-                && !index.data(ContactsModel::DesktopSharingCapabilityRole).toBool()) {
-            return false;
-        }
-        if ((capabilityFilterFlags & FilterBySSHContactCapability)
-                && !index.data(ContactsModel::SSHContactCapabilityRole).toBool()) {
-            return false;
+        if (capabilityFilterFlags & FilterByTubes) {
+            if (!d->tubesFilterStrings.isEmpty()) {
+                bool tubeFound = false;
+                Q_FOREACH(const QString &tube, index.data(KTp::ContactTubesRole).toList()) {
+                    if (d->tubesFilterStrings.contains(tube)) {
+                        tubeFound = true;
+                    }
+                }
+                if (!tubeFound) {
+                    return false;
+                }
+            }
         }
     }
 
@@ -824,6 +830,25 @@ void ContactsFilterModel::setIdFilterMatchFlags(Qt::MatchFlags idFilterMatchFlag
         d->idFilterMatchFlags = idFilterMatchFlags;
         invalidateFilter();
         Q_EMIT idFilterMatchFlagsChanged(idFilterMatchFlags);
+    }
+}
+
+QStringList ContactsFilterModel::tubesFilterStrings() const
+{
+    return d->tubesFilterStrings;
+}
+
+void ContactsFilterModel::clearTubesFilterStrings()
+{
+    setTubesFilterStrings(QStringList());
+}
+
+void ContactsFilterModel::setTubesFilterStrings(const QStringList &tubesFilterStrings)
+{
+    if (d->tubesFilterStrings != tubesFilterStrings) {
+        d->tubesFilterStrings = tubesFilterStrings;
+        invalidateFilter();
+        Q_EMIT tubesFilterStringsChanged(tubesFilterStrings);
     }
 }
 
