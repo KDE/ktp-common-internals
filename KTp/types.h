@@ -39,7 +39,7 @@ namespace KTp
         UserRowType
     };
 
-    enum ContactModelRole {
+    enum ContactsModelRole {
         // general roles
         RowTypeRole = Qt::UserRole //returns one of KTp::ContactRowType, KTp::PersonRowType, KTp::GroupRowType, KTp::AccountRowType
         IdRole, //returns Contact ID, Account UID, or group ID (group name or "_ungrouped")
