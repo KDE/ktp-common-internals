@@ -95,7 +95,7 @@ QVariant KTp::ContactsListModel::data(const QModelIndex &index, int role) const
 
         switch (role) {
         case KTp::RowTypeRole:
-            return ContactsModel::ContactRowType;
+            return KTp::ContactRowType;
        case KTp::IdRole:
             return contact->id();
 
