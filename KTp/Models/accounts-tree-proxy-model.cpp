@@ -73,7 +73,7 @@ QVariant KTp::AccountsTreeProxyModel::dataForGroup(const QString &group, int rol
     case Qt::DecorationRole:
         account = d->accountManager->accountForObjectPath(group);
         if (account) {
-            return account->iconName();
+            return KIcon(account->iconName());
         }
         break;
     case KTp::AccountRole:
