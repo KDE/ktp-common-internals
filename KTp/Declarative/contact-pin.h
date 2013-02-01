@@ -20,14 +20,14 @@
 #define CONTACTPIN_H
 
 #include <QObject>
-#include "ktp-metatypes.h"
+#include "types.h"
 
 class PinnedContactsModel;
 
 class ContactPin : public QObject
 {
     Q_OBJECT
-    Q_PROPERTY(Tp::ContactPtr contact READ contact WRITE setContact)
+    Q_PROPERTY(KTp::ContactPtr contact READ contact WRITE setContact)
     Q_PROPERTY(Tp::AccountPtr account READ account WRITE setAccount)
     Q_PROPERTY(PinnedContactsModel *model READ model WRITE setModel)
     Q_PROPERTY(bool pinned READ isPinned NOTIFY pinnedChanged)
@@ -35,12 +35,12 @@ class ContactPin : public QObject
   public:
     explicit ContactPin(QObject *parent = 0);
 
-    Tp::ContactPtr contact() const;
+    KTp::ContactPtr contact() const;
     Tp::AccountPtr account() const;
     PinnedContactsModel* model() const;
     bool isPinned() const;
 
-    void setContact(const Tp::ContactPtr &contact);
+    void setContact(const KTp::ContactPtr &contact);
     void setAccount(const Tp::AccountPtr &account);
     void setModel(PinnedContactsModel *model);
 
@@ -51,7 +51,7 @@ class ContactPin : public QObject
 
   private:
     PinnedContactsModel *m_model;
-    Tp::ContactPtr m_contact;
+    KTp::ContactPtr m_contact;
     Tp::AccountPtr m_account;
 };
 

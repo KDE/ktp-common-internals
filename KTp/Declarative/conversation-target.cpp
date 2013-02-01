@@ -25,12 +25,12 @@
 class  ConversationTarget::ConversationTargetPrivate
 {
   public:
-    Tp::ContactPtr contact;
+    KTp::ContactPtr contact;
     KIcon avatar;
     Tp::AccountPtr account;
 };
 
-ConversationTarget::ConversationTarget(const Tp::AccountPtr &account, const Tp::ContactPtr &contact, QObject *parent) :
+ConversationTarget::ConversationTarget(const Tp::AccountPtr &account, const KTp::ContactPtr &contact, QObject *parent) :
     QObject(parent),
     d(new ConversationTargetPrivate)
 {
@@ -45,7 +45,7 @@ ConversationTarget::ConversationTarget(const Tp::AccountPtr &account, const Tp::
     updateAvatar();
 }
 
-void ConversationTarget::setupContactSignals(Tp::ContactPtr contact)
+void ConversationTarget::setupContactSignals(KTp::ContactPtr contact)
 {
     connect(contact.constData(), SIGNAL(aliasChanged(QString)), SIGNAL(nickChanged(QString)));
     connect(contact.constData(), SIGNAL(avatarDataChanged(Tp::AvatarData)), SLOT(onAvatarDataChanged()));
@@ -123,7 +123,7 @@ void ConversationTarget::updateAvatar()
     d->avatar = KIcon(path);
 }
 
-Tp::ContactPtr ConversationTarget::contact() const
+KTp::ContactPtr ConversationTarget::contact() const
 {
     return d->contact;
 }
