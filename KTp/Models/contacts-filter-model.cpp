@@ -272,22 +272,11 @@ bool ContactsFilterModel::Private::filterAcceptsContact(const QModelIndex &index
         }
     }
 
-
     if (!globalFilterString.isEmpty()) {
         // Check global filter (search on all the roles)
 
         // Check display name
         if (!q->match(index, Qt::DisplayRole, globalFilterString, 1, globalFilterMatchFlags).isEmpty()) {
-            return true;
-        }
-
-        // Check nickname
-        if (!q->match(index, ContactsModel::NicknameRole, globalFilterString, 1, globalFilterMatchFlags).isEmpty()) {
-            return true;
-        }
-
-        // check alias
-        if (!q->match(index, ContactsModel::AliasRole, globalFilterString, 1, globalFilterMatchFlags).isEmpty()) {
             return true;
         }
 
@@ -308,20 +297,6 @@ bool ContactsFilterModel::Private::filterAcceptsContact(const QModelIndex &index
         // Check display name
         if (!displayNameFilterString.isEmpty()) {
             if (q->match(index, Qt::DisplayRole, displayNameFilterString, 1, displayNameFilterMatchFlags).isEmpty()) {
-                return false;
-            }
-        }
-
-        // Check nickname
-        if (!nicknameFilterString.isEmpty()) {
-            if (q->match(index, ContactsModel::NicknameRole, nicknameFilterString, 1, nicknameFilterMatchFlags).isEmpty()) {
-                return false;
-            }
-        }
-
-        // check alias
-        if (!aliasFilterString.isEmpty()) {
-            if (q->match(index, ContactsModel::AliasRole, aliasFilterString, 1, aliasFilterMatchFlags).isEmpty()) {
                 return false;
             }
         }
