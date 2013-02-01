@@ -18,8 +18,7 @@
 
 #include "groups-tree-proxy-model.h"
 
-#include "contacts-model.h"
-#include "groups-model.h"
+#include "types.h"
 
 #include <KLocalizedString>
 
@@ -43,7 +42,7 @@ KTp::GroupsTreeProxyModel::~GroupsTreeProxyModel()
 
 QSet<QString> KTp::GroupsTreeProxyModel::groupsForIndex(const QModelIndex &sourceIndex) const
 {
-    QStringList groups = sourceIndex.data(ContactsModel::GroupsRole).value<QStringList>();
+    QStringList groups = sourceIndex.data(KTp::ContactGroupsRole).value<QStringList>();
     if (groups.isEmpty()) {
         groups.append(QLatin1String("_unsorted"));
     }
@@ -55,21 +54,15 @@ QSet<QString> KTp::GroupsTreeProxyModel::groupsForIndex(const QModelIndex &sourc
 QVariant KTp::GroupsTreeProxyModel::dataForGroup(const QString &group, int role) const
 {
     switch (role) {
-    case ContactsModel::TypeRole:
-        return ContactsModel::GroupRowType;
+    case KTp::RowTypeRole:
+        return KTp::GroupRowType;
     case Qt::DisplayRole:
         if (group == QLatin1String("_unsorted")) {
             return i18n("Unsorted");
         } else {
             return group;
         }
-    case GroupsModel::GroupNameRole:
-        if (group == QLatin1String("_unsorted")) {
-            return QString();
-        } else {
-            return group;
-        }
-    case ContactsModel::IdRole:
+    case KTp::IdRole:
         return group;
     }
     return QVariant();
