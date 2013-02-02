@@ -58,8 +58,6 @@ class KTP_EXPORT MessageProcessor : public QObject
     KTp::Message processMessage(const Tp::ReceivedMessage &message, const Tp::AccountPtr &account, const Tp::TextChannelPtr &channel);
     KTp::Message processMessage(const Tpl::TextEventPtr &message, const Tp::AccountPtr &account, const Tp::TextChannelPtr &channel);
 
-//    Tp::PendingSendMessage* sendMessage(const QString textMessage, const Tp::AccountPtr &account, const Tp::TextChannelPtr &channel);
-
   protected:
     KTp::Message processMessage(KTp::Message message, const KTp::MessageContext &context);
     explicit MessageProcessor();

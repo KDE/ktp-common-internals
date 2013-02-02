@@ -30,8 +30,8 @@ namespace KTp
 class KTP_EXPORT MessageContext
 {
 public:
-    MessageContext(const Tp::AccountPtr &_account, const Tp::TextChannelPtr &_channel);
-    
+    MessageContext(const Tp::AccountPtr &account, const Tp::TextChannelPtr &channel);
+
     virtual ~MessageContext();
 
     /** Account in which the message is sent
@@ -42,7 +42,7 @@ public:
      @warning this may be null, and should always be checked before use
     */
     Tp::TextChannelPtr channel() const;
-    
+
 private:
     class Private;
     Private *d;

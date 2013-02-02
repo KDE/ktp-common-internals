@@ -25,6 +25,7 @@
 #include <TelepathyQt/ContactManager>
 #include <TelepathyQt/Connection>
 
+#include <TelepathyLoggerQt4/Entity>
 
 using namespace KTp;
 
@@ -53,20 +54,21 @@ Message::Message(const Tp::Message &original, const KTp::MessageContext &context
     d->token = original.messageToken();
     d->messageType = original.messageType();
     d->isHistory = false;
-
+    d->direction = KTp::Message::LocalToRemote;
     setMainMessagePart(original.text());
 }
 
-Message::Message(const Tp::ReceivedMessage &original, const KTp::MessageContext &context)
+Message::Message(const Tp::ReceivedMessage &original, const KTp::MessageContext &context) :
+    d(new Private)
 {
+    Q_UNUSED(context)
     d->sentTime = original.sent();
     d->token = original.messageToken();
     d->messageType = original.messageType();
     d->isHistory = original.isScrollback();
+    d->direction = KTp::Message::RemoteToLocal;
 
-//    if (original.sender() && original.sender()->manager()) {
-//        d->direction = original.sender()->manager()->connection()->selfContact();
-//    }
+    setMainMessagePart(original.text());
 }
 
 Message::Message(const Tpl::TextEventPtr &original, const KTp::MessageContext &context) :
@@ -76,7 +78,12 @@ Message::Message(const Tpl::TextEventPtr &original, const KTp::MessageContext &c
     d->token = original->messageToken();
     d->messageType = original->messageType();
     d->isHistory = true;
-//    original->
+
+    if (original->sender()->identifier() == context.account()->normalizedName()) {
+        d->direction = KTp::Message::LocalToRemote;
+    } else {
+        d->direction = KTp::Message::RemoteToLocal;
+    }
 
     setMainMessagePart(original->message());
 }
