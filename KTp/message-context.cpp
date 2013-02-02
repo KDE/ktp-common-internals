@@ -16,37 +16,35 @@
 * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#ifndef KTP_MESSAGE_CONTEXT_H
-#define KTP_MESSAGE_CONTEXT_H
+#include "message-context.h"
 
-#include <TelepathyQt/Account>
-#include <TelepathyQt/TextChannel>
-
-#include "ktp-export.h"
-
-namespace KTp
-{
-
-class KTP_EXPORT MessageContext
-{
+namespace KTp {
+class MessageContext::Private {
 public:
-    MessageContext(const Tp::AccountPtr &_account, const Tp::TextChannelPtr &_channel);
-    
-    virtual ~MessageContext();
-
-    /** Account in which the message is sent
-    */
-    Tp::AccountPtr account() const;
-
-    /** Channel in which the message was sent
-     @warning this may be null, and should always be checked before use
-    */
-    Tp::TextChannelPtr channel() const;
-    
-private:
-    class Private;
-    Private *d;
+    Tp::AccountPtr account;
+    Tp::TextChannelPtr channel;
 };
-
 }
-#endif // MESSAGECONTEXT_H
+
+KTp::MessageContext::MessageContext(const Tp::AccountPtr &account, const Tp::TextChannelPtr &channel) :
+    d(new Private)
+{
+    d->account = account;
+    d->channel = channel;
+}
+
+KTp::MessageContext::~MessageContext()
+{
+    delete d;
+}
+
+Tp::AccountPtr KTp::MessageContext::account() const
+{
+    return d->account;
+}
+
+Tp::TextChannelPtr KTp::MessageContext::channel() const
+{
+    return d->channel;
+}
+
