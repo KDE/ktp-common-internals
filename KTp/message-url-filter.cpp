@@ -32,8 +32,9 @@ MessageUrlFilter::MessageUrlFilter(QObject *parent)
 {
 }
 
-void MessageUrlFilter::filterMessage(KTp::Message &info)
+void MessageUrlFilter::filterMessage(KTp::Message &info, const KTp::MessageContext &context)
 {
+    Q_UNUSED(context);
     QString message = info.mainMessagePart();
     //FIXME: make "Urls" into a constant
     QVariantList urls = info.property("Urls").toList();

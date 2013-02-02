@@ -24,7 +24,8 @@ MessageBackslashFilter::MessageBackslashFilter(QObject *parent)
 {
 }
 
-void MessageBackslashFilter::filterMessage(KTp::Message& message)
+void MessageBackslashFilter::filterMessage(KTp::Message &message, const KTp::MessageContext &context)
 {
+    Q_UNUSED(context)
     message.setMainMessagePart(message.mainMessagePart().replace(QLatin1Char('\\'), QLatin1String("\\\\"))); //replace a single backslash with two backslashes.
 }

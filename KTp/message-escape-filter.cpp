@@ -25,8 +25,9 @@ MessageEscapeFilter::MessageEscapeFilter(QObject *parent)
 {
 }
 
-void MessageEscapeFilter::filterMessage(KTp::Message& message)
+void MessageEscapeFilter::filterMessage(KTp::Message &message, const KTp::MessageContext &context)
 {
+    Q_UNUSED(context)
     QString escapedMessage = Qt::escape(message.mainMessagePart());
 
     escapedMessage.replace(QLatin1String("\n "), QLatin1String("<br/>&nbsp;")); //keep leading whitespaces
