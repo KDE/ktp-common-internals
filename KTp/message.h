@@ -17,8 +17,8 @@
 */
 
 
-#ifndef MESSAGE_H
-#define MESSAGE_H
+#ifndef KTP_MESSAGE_H
+#define KTP_MESSAGE_H
 
 #include <TelepathyQt/Message>
 
@@ -26,7 +26,9 @@
 #include <TelepathyLoggerQt4/TextEvent>
 
 #include <KTp/ktp-export.h>
+#include <KTp/message-context.h>
 
+#include <QSharedDataPointer>
 
 namespace KTp
 {
@@ -42,16 +44,18 @@ namespace KTp
  *
  * \note
  * Methods in this class are currently *not* thread safe. They will be in a
- * later version. Setting properties concurrently is undefined. 
+ * later version. Setting properties concurrently is undefined.
  *
  * \author Lasath Fernando <kde@lasath.org>
  */
 class KTP_EXPORT Message
 {
-
   public:
-    Message(const Tp::Message &original);
-    Message(const Tpl::TextEventPtr &original);
+    enum MessageDirection {
+        LocalToRemote,
+        RemoteToLocal
+    };
+
     Message(const KTp::Message &other);
     virtual ~Message();
 
@@ -72,7 +76,7 @@ class KTP_EXPORT Message
      * Each plugin that adds visual components should call this once thier
      * processing is complete. Once a message part is added, it cannot be
      * changed!
-     * 
+     *
      * \param part the content to be added, in valid HTML
      */
     void appendMessagePart(const QString &part);
@@ -133,9 +137,21 @@ class KTP_EXPORT Message
     /*! \return the number of appended parts */
     int partsSize() const;
 
-  private:
+    /** Returns if the message is history (either from logger or scrollack*/
+    bool isHistory() const;
+
+    MessageDirection direction() const;
+
+protected:
+    Message(const Tp::Message &original, const KTp::MessageContext &context);
+    Message(const Tp::ReceivedMessage &original, const KTp::MessageContext &context);
+    Message(const Tpl::TextEventPtr &original, const KTp::MessageContext &context);
+
+
+private:
     class Private;
-    Private * const d;
+    QSharedDataPointer<Private> d;
+    friend class MessageProcessor;
 };
 
 }

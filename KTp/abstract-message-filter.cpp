@@ -29,19 +29,10 @@ AbstractMessageFilter::~AbstractMessageFilter()
 {
 }
 
-void AbstractMessageFilter::filterIncomingMessage(KTp::Message &message)
-{
-    filterMessage(message);
-}
-
-void AbstractMessageFilter::filterOutgoingMessage(KTp::Message &message)
-{
-    filterMessage(message);
-}
-
-void AbstractMessageFilter::filterMessage(KTp::Message &message)
+void AbstractMessageFilter::filterMessage(KTp::Message &message, const KTp::MessageContext &context)
 {
     Q_UNUSED(message)
+    Q_UNUSED(context)
 }
 
 QStringList AbstractMessageFilter::requiredScripts()

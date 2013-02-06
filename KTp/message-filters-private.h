@@ -27,21 +27,21 @@ class MessageUrlFilter : public KTp::AbstractMessageFilter
 {
   public:
     explicit MessageUrlFilter(QObject *parent = 0);
-    void filterMessage(KTp::Message &message);
+    void filterMessage(KTp::Message &message, const KTp::MessageContext &context);
 };
 
 class MessageEscapeFilter : public KTp::AbstractMessageFilter
 {
   public:
     explicit MessageEscapeFilter(QObject *parent = 0);
-    virtual void filterMessage(KTp::Message& message);
+    virtual void filterMessage(KTp::Message& message, const KTp::MessageContext &context);
 };
 
 class MessageBackslashFilter : public KTp::AbstractMessageFilter
 {
 public:
     explicit MessageBackslashFilter(QObject *parent = 0);
-    virtual void filterMessage(KTp::Message& message);
+    virtual void filterMessage(KTp::Message& message, const KTp::MessageContext &context);
 };
 
 #endif

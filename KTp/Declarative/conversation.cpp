@@ -45,7 +45,7 @@ Conversation::Conversation(const Tp::TextChannelPtr &channel,
 
     d->account = account;
 
-    d->messages = new MessagesModel(this);
+    d->messages = new MessagesModel(account, this);
     d->messages->setTextChannel(channel);
 
     d->target = new ConversationTarget(account, channel->targetContact(), this);

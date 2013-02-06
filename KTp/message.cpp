@@ -18,26 +18,23 @@
 
 
 #include "message.h"
+
 #include <KDebug>
+#include <QSharedData>
+
+#include <TelepathyQt/ContactManager>
+#include <TelepathyQt/Connection>
+
+#include <TelepathyLoggerQt4/Entity>
 
 using namespace KTp;
 
-class Message::Private {
+class Message::Private : public QSharedData {
 
   public:
-    Private()
-    { }
-
-    Private(const Private &other):
-        sentTime(other.sentTime),
-        token(other.token),
-        messageType(other.messageType),
-        properties(other.properties),
-        mainPart(other.mainPart),
-        parts(other.parts),
-        scripts(other.scripts)
-    { }
-
+    Private() :
+        isHistory(false)
+    {};
     QDateTime   sentTime;
     QString     token;
     Tp::ChannelTextMessageType messageType;
@@ -45,36 +42,59 @@ class Message::Private {
     QString     mainPart;
     QStringList parts;
     QStringList scripts;
+    bool isHistory;
+    MessageDirection direction;
 };
 
-Message::Message(const Tp::Message &original) :
-    d(new Private())
+Message::Message(const Tp::Message &original, const KTp::MessageContext &context) :
+    d(new Private)
 {
+    Q_UNUSED(context)
     d->sentTime = original.sent();
     d->token = original.messageToken();
     d->messageType = original.messageType();
+    d->isHistory = false;
+    d->direction = KTp::Message::LocalToRemote;
+    setMainMessagePart(original.text());
+}
+
+Message::Message(const Tp::ReceivedMessage &original, const KTp::MessageContext &context) :
+    d(new Private)
+{
+    Q_UNUSED(context)
+    d->sentTime = original.sent();
+    d->token = original.messageToken();
+    d->messageType = original.messageType();
+    d->isHistory = original.isScrollback();
+    d->direction = KTp::Message::RemoteToLocal;
 
     setMainMessagePart(original.text());
 }
 
-Message::Message(const Tpl::TextEventPtr &original) :
-    d(new Private())
+Message::Message(const Tpl::TextEventPtr &original, const KTp::MessageContext &context) :
+    d(new Private)
 {
     d->sentTime = original->timestamp();
     d->token = original->messageToken();
     d->messageType = original->messageType();
+    d->isHistory = true;
+
+    if (original->sender()->identifier() == context.account()->normalizedName()) {
+        d->direction = KTp::Message::LocalToRemote;
+    } else {
+        d->direction = KTp::Message::RemoteToLocal;
+    }
 
     setMainMessagePart(original->message());
 }
 
 Message::Message(const Message& other):
-    d(new Private(*(other.d)))
+    d(other.d)
 {
 }
 
 Message::~Message()
 {
-    delete d;
 }
 
 QString Message::mainMessagePart() const
@@ -154,4 +174,14 @@ Tp::ChannelTextMessageType Message::type() const
 int Message::partsSize() const
 {
     return d->parts.size();
+}
+
+bool Message::isHistory() const
+{
+    return d->isHistory;
+}
+
+KTp::Message::MessageDirection Message::direction() const
+{
+    return d->direction;
 }

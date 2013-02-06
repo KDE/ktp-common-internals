@@ -16,11 +16,15 @@
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#ifndef ABSTRACTPLUGIN_H
-#define ABSTRACTPLUGIN_H
+#ifndef KTP_ABSTRACT_MESSAGE_FILTER_H
+#define KTP_ABSTRACT_MESSAGE_FILTER_H
 
 #include <KTp/message.h>
+#include <KTp/message-context.h>
 #include <KTp/ktp-export.h>
+
+#include <TelepathyQt/Account>
+#include <TelepathyQt/TextChannel>
 
 namespace KTp
 {
@@ -34,20 +38,12 @@ class KTP_EXPORT AbstractMessageFilter : public QObject
     virtual ~AbstractMessageFilter();
 
     /** Filter messages to show on the UI recieved by another contact*/
-    virtual void filterIncomingMessage(KTp::Message &message);
-
-    /** Filter messages to show in the UI that you have sent
-        This does _not_ affect the actual message sent, only the visual representation on your screen.
-    */
-    virtual void filterOutgoingMessage(KTp::Message &message);
-
-    /** Filter messages in either direction. Base implementation calls this for messages sent/recived in either direction.*/
-    virtual void filterMessage(KTp::Message &message);
+    virtual void filterMessage(KTp::Message &message, const KTp::MessageContext &context);
 
     /** Scripts that must be included in the <head> section of the html required by this message filter.*/
     virtual QStringList requiredScripts();
 
-    /** Scripts that must be included in the <head> section of the html required by this message filter.*/
+    /** Stylesheets that must be included in the <head> section of the html required by this message filter.*/
     virtual QStringList requiredStylesheets();
 };
 
