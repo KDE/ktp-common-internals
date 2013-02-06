@@ -45,6 +45,7 @@ set (ktp_common_internals_private_HDRS
      logs-importer.h
      message-filter-config-manager.h
      message.h
+     message-context.h
      message-processor.h
      presence.h
      service-availability-checker.h
