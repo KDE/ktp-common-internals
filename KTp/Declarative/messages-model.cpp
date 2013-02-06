@@ -178,7 +178,7 @@ void MessagesModel::onMessageSent(const Tp::Message &message, Tp::MessageSending
     KTp::Message ktpMessage = KTp::MessageProcessor::instance()->processMessage(message, d->account, d->textChannel);
 
     d->messages.append(MessageItem(
-                           i18n("Me"),   //FIXME : use actual nickname from Tp::AccountPtr
+                           d->account->nickname(),
                            ktpMessage.finalizedMessage(),
                            message.sent(),
                            message.messageType() == Tp::ChannelTextMessageTypeAction ? MessageTypeAction : MessageTypeOutgoing,
