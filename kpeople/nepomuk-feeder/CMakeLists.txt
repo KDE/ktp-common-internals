@@ -51,7 +51,6 @@ set (nepomuktelepathyservice_static_SRCS
      capabilities-hack-private.cpp
      controller.cpp
      account.cpp
-     contact.cpp
      abstract-storage.cpp
      nepomuk-storage.cpp
      test-backdoors.cpp

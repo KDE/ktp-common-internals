@@ -70,30 +70,12 @@ public Q_SLOTS:
     virtual void createAccount(const QString &path, const QString &id, const QString &protocol) = 0;
 
     /**
-     * Invoked when a Telepathy Account is destroyed, e.g. when closing the application. This method
-     * being invoked does not indicate that the Telepathy Account has actually been removed by the
-     * user, simply that the object in the Telepathy Nepomuk Service that wraps the Account has
-     * been destroyed.
-     *
-     * \param path the object path (unique identifier) of the account
-     */
-    virtual void destroyAccount(const QString &path) = 0;
-
-    /**
      * Invoked to update the nickname of the Telepathy Account.
      *
      * \param path the object path (unique identifier) of the account
      * \param nickname the account's nickname
      */
     virtual void setAccountNickname(const QString &path, const QString &nickname) = 0;
-
-    /**
-     * Invoked to update the presence of the Telepathy Account.
-     *
-     * \param path the object path (unique identifier) of the account
-     * \param presence the account's presence
-     */
-    virtual void setAccountCurrentPresence(const QString &path, const Tp::SimplePresence &presence) = 0;
 
     /**
      * Invoked when the contact list of a Telepathy Account becomes available, this method allows
@@ -116,17 +98,6 @@ public Q_SLOTS:
     virtual void createContact(const QString &path, const QString &id) = 0;
 
     /**
-     * Invoked when a Telepathy Contact is destroyed, e.g. when closing the application. This method
-     * being invoked does not indicate that the Telepathy Contact has actually been removed by the
-     * user, simply that the object in the Telepathy Nepomuk Service that wraps the Contact has
-     * been destroyed.
-     *
-     * \param path the object path (unique identifier) of the account
-     * \param id the id (e.g. me@example.com) that in conjunction with the \p path uniquely identifies the contact.
-     */
-    virtual void destroyContact(const QString &path, const QString &id) = 0;
-
-    /**
      * Invoked to update the alias of the Telepathy Contact.
      *
      * \param path the object path (unique identifier) of the account
@@ -134,15 +105,6 @@ public Q_SLOTS:
      * \param alias the contact's alias.
      */
     virtual void setContactAlias(const QString &path, const QString &id, const QString &alias) = 0;
-
-    /**
-     * Invoked to update the presence of the Telepathy Contact.
-     *
-     * \param path the object path (unique identifier) of the account
-     * \param id the id (e.g. me@example.com) that in conjunction with the \p path uniquely identifies the contact.
-     * \param presence the contact's presence
-     */
-    virtual void setContactPresence(const QString &path, const QString &id, const Tp::SimplePresence &presence) = 0;
 
     /**
      * Invoked to update the groups to which the Telepahy Contact belongs.

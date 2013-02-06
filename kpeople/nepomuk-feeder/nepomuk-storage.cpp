@@ -459,18 +459,6 @@ void NepomukStorage::createAccount(const QString &path, const QString &id, const
     m_accounts.insert(path, AccountResources(imAccountUri, protocol));
 }
 
-void NepomukStorage::destroyAccount(const QString &path)
-{
-    // The account object has been destroyed, which means we no longer know the presence of the
-    // account, so it should be set to unknown.
-
-    Tp::SimplePresence presence;
-    presence.status = QLatin1String("unknown");
-    presence.type = Tp::ConnectionPresenceTypeUnknown;
-
-    setAccountCurrentPresence(path, presence);
-}
-
 AccountResources NepomukStorage::findAccount(const QString& path)
 {
     QHash<QString, AccountResources>::const_iterator it = m_accounts.constFind(path);
@@ -490,20 +478,6 @@ void NepomukStorage::setAccountNickname(const QString &path, const QString &nick
 
     Nepomuk2::SimpleResource &accountRes = m_graph[account.account()];
     accountRes.setProperty( NCO::imNickname(), nickname );
-
-    fireGraphTimer();
-}
-
-void NepomukStorage::setAccountCurrentPresence(const QString &path, const Tp::SimplePresence &presence)
-{
-    AccountResources account = findAccount(path);
-    if( account.isEmpty() )
-        return;
-
-    Nepomuk2::SimpleResource &accountRes = m_graph[account.account()];
-    accountRes.setProperty(NCO::imStatus(), presence.status);
-    accountRes.setProperty(NCO::imStatusMessage(), presence.statusMessage);
-    accountRes.setProperty(Telepathy::statusType(), presence.type);
 
     fireGraphTimer();
 }
@@ -617,16 +591,6 @@ void NepomukStorage::createContact(const QString &path, const QString &id)
     m_contacts.insert( identifier, ContactResources(personContactUri, imAccountUri) );
 }
 
-
-void NepomukStorage::destroyContact(const QString &path, const QString &id)
-{
-    Tp::SimplePresence presence;
-    presence.status = QLatin1String("unknown");
-    presence.type = Tp::ConnectionPresenceTypeUnknown;
-
-    setContactPresence(path, id, presence);
-}
-
 void NepomukStorage::setContactAlias(const QString &path, const QString &id, const QString &alias)
 {
     ContactResources contact = findContact(path, id);
@@ -635,22 +599,6 @@ void NepomukStorage::setContactAlias(const QString &path, const QString &id, con
 
     Nepomuk2::SimpleResource &imAccount = m_graph[contact.imAccount()];
     imAccount.setProperty( NCO::imNickname(), alias);
-
-    fireGraphTimer();
-}
-
-void NepomukStorage::setContactPresence(const QString &path,
-                                 const QString &id,
-                                 const Tp::SimplePresence &presence)
-{
-    ContactResources contact = findContact(path, id);
-    if( contact.isEmpty() )
-        return;
-
-    Nepomuk2::SimpleResource &imAccount = m_graph[contact.imAccount()];
-    imAccount.setProperty(NCO::imStatus(), presence.status);
-    imAccount.setProperty(NCO::imStatusMessage(), presence.statusMessage);
-    imAccount.setProperty(Telepathy::statusType(), presence.type);
 
     fireGraphTimer();
 }

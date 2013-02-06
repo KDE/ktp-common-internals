@@ -137,24 +137,16 @@ void Controller::onNewAccount(const Tp::AccountPtr &account)
     // Connect to the signals/slots that signify the account changing in some way.
     connect(acc, SIGNAL(created(QString,QString,QString)),
             m_storage, SLOT(createAccount(QString,QString,QString)));
-    connect(acc, SIGNAL(accountDestroyed(QString)),
-            m_storage, SLOT(destroyAccount(QString)));
     connect(acc, SIGNAL(nicknameChanged(QString,QString)),
             m_storage, SLOT(setAccountNickname(QString,QString)));
-    connect(acc, SIGNAL(currentPresenceChanged(QString,Tp::SimplePresence)),
-            m_storage, SLOT(setAccountCurrentPresence(QString,Tp::SimplePresence)));
     connect(acc, SIGNAL(initialContactsLoaded(QString,QList<QString>)),
             m_storage, SLOT(cleanupAccountContacts(QString,QList<QString>)));
 
     // Connect to all the signals/slots that signify the contacts are changing in some way.
     connect(acc, SIGNAL(contactCreated(QString,QString)),
             m_storage, SLOT(createContact(QString,QString)));
-    connect(acc, SIGNAL(contactDestroyed(QString,QString)),
-            m_storage, SLOT(destroyContact(QString,QString)));
     connect(acc, SIGNAL(contactAliasChanged(QString,QString,QString)),
             m_storage, SLOT(setContactAlias(QString,QString,QString)));
-    connect(acc, SIGNAL(contactPresenceChanged(QString,QString,Tp::SimplePresence)),
-            m_storage, SLOT(setContactPresence(QString,QString,Tp::SimplePresence)));
     connect(acc, SIGNAL(contactGroupsChanged(QString,QString,QStringList)),
             m_storage, SLOT(setContactGroups(QString,QString,QStringList)));
     connect(acc, SIGNAL(contactBlockStatusChanged(QString,QString,bool)),

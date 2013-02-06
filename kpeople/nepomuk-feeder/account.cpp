@@ -21,8 +21,6 @@
 
 #include "account.h"
 
-#include "contact.h"
-
 #include <KDebug>
 
 #include <TelepathyQt/ContactManager>
@@ -45,9 +43,6 @@ void Account::init()
     connect(m_account.data(),
             SIGNAL(nicknameChanged(QString)),
             SLOT(onNicknameChanged(QString)));
-    connect(m_account.data(),
-            SIGNAL(currentPresenceChanged(Tp::Presence)),
-            SLOT(onCurrentPresenceChanged(Tp::Presence)));
     //    connect(m_account.data(),
     //            SIGNAL(avatarChanged(Tp::Avatar)),
     //            SLOT(onAvatarChanged(Tp::Avatar)));
@@ -64,7 +59,6 @@ void Account::init()
                  protocolName);
 
     // Simulate all the accounts properties being changed.
-    onCurrentPresenceChanged(m_account->currentPresence());
     onNicknameChanged(m_account->nickname());
 
     // Now that the storage stuff is done, simulate emission of all the account signals.
@@ -78,11 +72,6 @@ Account::~Account()
 
 void Account::shutdown()
 {
-    // Loop over all our children, and if they're Accounts, shut them down.
-    foreach (Contact *contact, m_contacts.values()) {
-        contact->shutdown();
-    }
-
     kDebug();
 
     // Emit a signal to say we were destroyed.
@@ -92,7 +81,13 @@ void Account::shutdown()
 void Account::onConnectionChanged(const Tp::ConnectionPtr &connection)
 {
     if (! connection.isNull()) {
+
         m_connection = connection;
+
+        // We need to destroy ourselves if the connection goes down.
+        connect(m_connection.data(),
+            SIGNAL(invalidated(Tp::DBusProxy*,QString,QString)),
+            SLOT(deleteLater()));
 
         if (!m_connection->contactManager()) {
             kWarning() << "ContactManager is Null. Abort getting contacts.";
@@ -143,11 +138,6 @@ void Account::onNicknameChanged(const QString& nickname)
     emit nicknameChanged(m_account->objectPath(), nickname);
 }
 
-void Account::onCurrentPresenceChanged(const Tp::Presence &presence)
-{
-    emit currentPresenceChanged(m_account->objectPath(), presence.barePresence());
-}
-
 void Account::onAllKnownContactsChanged(const Tp::Contacts& added, const Tp::Contacts& removed)
 {
     // For each added contact, let's check if we already have a Contact wrapper for it
@@ -166,102 +156,110 @@ void Account::onNewContact(const Tp::ContactPtr &contact)
 {
     // Only create a new contact if one doesn't already exist.
     if (!m_contacts.contains(contact)) {
-        // Create a new Contact wrapper objectPath
-        Contact *c = new Contact(contact, this);
 
-        // Insert it into the Hash.
-        m_contacts.insert(contact, c);
+        m_contacts.append(contact);
+
+        // Become ready asynchronously with the avatar data, since this may take some time and we
+        // don't want to delay the rest of the contact's attributes being ready.
+        // Fire and forget because we can't do anything even if this fails.
+        contact->manager()->upgradeContacts(QList<Tp::ContactPtr>() << contact, 
+                                            Tp::Features() << Tp::Contact::FeatureAvatarData
+                                                           << Tp::Contact::FeatureAvatarToken);
 
         // Connect to all its signals
-        connect(c,
-                SIGNAL(created(QString)),
-                SLOT(onContactCreated(QString)));
-        connect(c,
-                SIGNAL(contactDestroyed(QString,Tp::ContactPtr)),
-                SLOT(onContactDestroyed(QString,Tp::ContactPtr)));
-        connect(c,
-                SIGNAL(aliasChanged(QString,QString)),
-                SLOT(onContactAliasChanged(QString,QString)));
-        connect(c,
-                SIGNAL(presenceChanged(QString,Tp::SimplePresence)),
-                SLOT(onContactPresenceChanged(QString,Tp::SimplePresence)));
-        connect(c,
-                SIGNAL(groupsChanged(QString,QStringList)),
-                SLOT(onContactGroupsChanged(QString,QStringList)));
-        connect(c,
-                SIGNAL(blockStatusChanged(QString,bool)),
-                SLOT(onContactBlockStatusChanged(QString,bool)));
-        connect(c,
-                SIGNAL(publishStateChanged(QString,Tp::Contact::PresenceState)),
-                SLOT(onContactPublishStateChanged(QString,Tp::Contact::PresenceState)));
-        connect(c,
-                SIGNAL(subscriptionStateChanged(QString,Tp::Contact::PresenceState)),
-                SLOT(onContactSubscriptionStateChanged(QString,Tp::Contact::PresenceState)));
-        connect(c,
-                SIGNAL(capabilitiesChanged(QString,Tp::ConnectionPtr,Tp::ContactCapabilities)),
-                SLOT(onContactCapabilitiesChanged(QString,Tp::ConnectionPtr,Tp::ContactCapabilities)));
-        connect(c,
-                SIGNAL(avatarChanged(QString,Tp::AvatarData)),
-                SLOT(onContactAvatarChanged(QString,Tp::AvatarData)));
+        connect(contact.data(),
+                SIGNAL(aliasChanged(QString)),
+                SLOT(onContactAliasChanged(QString)));
+        connect(contact.data(),
+                SIGNAL(addedToGroup(QString)),
+                SLOT(onContactAddedToGroup(QString)));
+        connect(contact.data(),
+                SIGNAL(removedFromGroup(QString)),
+                SLOT(onContactRemovedFromGroup(QString)));
+        connect(contact.data(),
+                SIGNAL(blockStatusChanged(bool)),
+                SLOT(onContactBlockStatusChanged(bool)));
+        connect(contact.data(),
+                SIGNAL(publishStateChanged(Tp::Contact::PresenceState)),
+                SLOT(onContactPublishStateChanged(Tp::Contact::PresenceState)));
+        connect(contact.data(),
+                SIGNAL(subscriptionStateChanged(Tp::Contact::PresenceState)),
+                SLOT(onContactSubscriptionStateChanged(Tp::Contact::PresenceState)));
+        connect(contact.data(),
+                SIGNAL(capabilitiesChanged(Tp::ContactCapabilities)),
+                SLOT(onContactCapabilitiesChanged(Tp::ContactCapabilities)));
+        connect(contact.data(),
+                SIGNAL(avatarDataChanged(Tp::AvatarData)),
+                SLOT(onContactAvatarChanged(Tp::AvatarData)));
 
-        c->init();
+        emit contactCreated(m_account->objectPath(), contact->id());
     }
 }
 
-void Account::onContactCreated(const QString &id)
+void Account::onContactAddedToGroup(const QString& group)
 {
-    emit contactCreated(m_account->objectPath(), id);
+    const Tp::ContactPtr contact(qobject_cast<Tp::Contact*>(sender()));
+    Q_ASSERT(contact);
+
+    emit contactGroupsChanged(m_account->objectPath(), contact->id(), contact->groups());
 }
 
-void Account::onContactDestroyed(const QString &id, const Tp::ContactPtr &contact)
+void Account::onContactRemovedFromGroup(const QString& group)
 {
-    m_contacts.remove(contact);
+    const Tp::ContactPtr contact(qobject_cast<Tp::Contact*>(sender()));
+    Q_ASSERT(contact);
 
-    // Relay this signal to the controller
-    emit contactDestroyed(m_account->objectPath(), id);
+    emit contactGroupsChanged(m_account->objectPath(), contact->id(), contact->groups());
 }
 
-void Account::onContactAliasChanged(const QString &id, const QString &alias)
+void Account::onContactAliasChanged(const QString &alias)
 {
-    emit contactAliasChanged(m_account->objectPath(), id, alias);
+    const Tp::ContactPtr contact(qobject_cast<Tp::Contact*>(sender()));
+    Q_ASSERT(contact);
+
+    emit contactAliasChanged(m_account->objectPath(), contact->id(), alias);
 }
 
-void Account::onContactPresenceChanged(const QString &id, const Tp::SimplePresence &presence)
+void Account::onContactBlockStatusChanged(bool blocked)
 {
-    emit contactPresenceChanged(m_account->objectPath(), id, presence);
+    const Tp::ContactPtr contact(qobject_cast<Tp::Contact*>(sender()));
+    Q_ASSERT(contact);
+
+    emit contactBlockStatusChanged(m_account->objectPath(), contact->id(), blocked);
 }
 
-void Account::onContactGroupsChanged(const QString &id, const QStringList &groups)
+void Account::onContactPublishStateChanged(const Tp::Contact::PresenceState &state)
 {
-    emit contactGroupsChanged(m_account->objectPath(), id, groups);
+    const Tp::ContactPtr contact(qobject_cast<Tp::Contact*>(sender()));
+    Q_ASSERT(contact);
+
+    emit contactPublishStateChanged(m_account->objectPath(), contact->id(), state);
 }
 
-void Account::onContactBlockStatusChanged(const QString &id, bool blocked)
+void Account::onContactSubscriptionStateChanged(const Tp::Contact::PresenceState &state)
 {
-    emit contactBlockStatusChanged(m_account->objectPath(), id, blocked);
+    const Tp::ContactPtr contact(qobject_cast<Tp::Contact*>(sender()));
+    Q_ASSERT(contact);
+
+    emit contactSubscriptionStateChanged(m_account->objectPath(), contact->id(), state);
 }
 
-void Account::onContactPublishStateChanged(const QString &id, const Tp::Contact::PresenceState &state)
+void Account::onContactCapabilitiesChanged(const Tp::ContactCapabilities &capabilities)
 {
-    emit contactPublishStateChanged(m_account->objectPath(), id, state);
+    const Tp::ContactPtr contact(qobject_cast<Tp::Contact*>(sender()));
+    Q_ASSERT(contact);
+
+
+    emit contactCapabilitiesChanged(m_account->objectPath(), contact->id(), m_connection, capabilities);
 }
 
-void Account::onContactSubscriptionStateChanged(const QString &id, const Tp::Contact::PresenceState &state)
+void Account::onContactAvatarChanged(const Tp::AvatarData &avatar)
 {
-    emit contactSubscriptionStateChanged(m_account->objectPath(), id, state);
+    const Tp::ContactPtr contact(qobject_cast<Tp::Contact*>(sender()));
+    Q_ASSERT(contact);
+
+    emit contactAvatarChanged(m_account->objectPath(), contact->id(), avatar);
 }
-
-void Account::onContactCapabilitiesChanged(const QString &id, const Tp::ConnectionPtr &connection, const Tp::ContactCapabilities &capabilities)
-{
-    emit contactCapabilitiesChanged(m_account->objectPath(), id, connection, capabilities);
-}
-
-void Account::onContactAvatarChanged(const QString &id, const Tp::AvatarData &avatar)
-{
-    emit contactAvatarChanged(m_account->objectPath(), id, avatar);
-}
-
-
 
 #include "account.moc"
 

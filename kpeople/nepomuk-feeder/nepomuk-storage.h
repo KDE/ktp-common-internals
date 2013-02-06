@@ -122,15 +122,11 @@ public:
 public Q_SLOTS:
     virtual void cleanupAccounts(const QList<QString> &paths);
     virtual void createAccount(const QString &path, const QString &id, const QString &protocol);
-    virtual void destroyAccount(const QString &path);
     virtual void setAccountNickname(const QString &path, const QString &nickname);
-    virtual void setAccountCurrentPresence(const QString &path, const Tp::SimplePresence &presence);
     virtual void cleanupAccountContacts(const QString &path, const QList<QString> &ids);
 
     virtual void createContact(const QString &path, const QString &id);
-    virtual void destroyContact(const QString &path, const QString &id);
     virtual void setContactAlias(const QString &path, const QString &id, const QString &alias);
-    virtual void setContactPresence(const QString &path, const QString &id, const Tp::SimplePresence &presence);
     virtual void setContactGroups(const QString &path, const QString &id, const QStringList &groups);
     virtual void setContactBlockStatus(const QString &path, const QString &id, bool blocked);
     virtual void setContactPublishState(const QString &path, const QString &id, const Tp::Contact::PresenceState &state);
