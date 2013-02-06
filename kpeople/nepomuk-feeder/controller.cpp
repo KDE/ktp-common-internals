@@ -52,19 +52,19 @@ void Controller::onStorageInitialised(bool success)
     Tp::Features fAccountFactory;
     fAccountFactory << Tp::Account::FeatureCore
                     << Tp::Account::FeatureAvatar
-                    << Tp::Account::FeatureCapabilities
-                    << Tp::Account::FeatureProfile
-                    << Tp::Account::FeatureProtocolInfo;
+                    << Tp::Account::FeatureProfile;
+
     Tp::AccountFactoryConstPtr accountFactory = Tp::AccountFactory::create(
             QDBusConnection::sessionBus(),
             fAccountFactory);
 
     Tp::Features fConnectionFactory;
     fConnectionFactory << Tp::Connection::FeatureCore
+                       // uncomment if the feeder crashes...said Dave. Dave is usually right.
+                       //<< Tp::Connection::FeatureSelfContact
                        << Tp::Connection::FeatureRoster
-                       << Tp::Connection::FeatureRosterGroups
-                       << Tp::Connection::FeatureSelfContact
-                       << Tp::Connection::FeatureSimplePresence;
+                       << Tp::Connection::FeatureRosterGroups;
+
     Tp::ConnectionFactoryConstPtr connectionFactory = Tp::ConnectionFactory::create(
             QDBusConnection::sessionBus(),
             fConnectionFactory);
@@ -73,11 +73,8 @@ void Controller::onStorageInitialised(bool success)
             QDBusConnection::sessionBus());
 
     Tp::Features fContactFactory;
-    fContactFactory << Tp::Contact::FeatureAlias
-                    << Tp::Contact::FeatureCapabilities
-                    << Tp::Contact::FeatureInfo
-                    << Tp::Contact::FeatureLocation
-                    << Tp::Contact::FeatureSimplePresence;
+    fContactFactory << Tp::Contact::FeatureAlias;
+
     Tp::ContactFactoryConstPtr contactFactory = Tp::ContactFactory::create(fContactFactory);
 
     // Create an instance of the AccountManager and start to get it ready.
@@ -149,14 +146,6 @@ void Controller::onNewAccount(const Tp::AccountPtr &account)
             m_storage, SLOT(setContactAlias(QString,QString,QString)));
     connect(acc, SIGNAL(contactGroupsChanged(QString,QString,QStringList)),
             m_storage, SLOT(setContactGroups(QString,QString,QStringList)));
-    connect(acc, SIGNAL(contactBlockStatusChanged(QString,QString,bool)),
-            m_storage, SLOT(setContactBlockStatus(QString,QString,bool)));
-    connect(acc, SIGNAL(contactPublishStateChanged(QString,QString,Tp::Contact::PresenceState)),
-            m_storage, SLOT(setContactPublishState(QString,QString,Tp::Contact::PresenceState)));
-    connect(acc, SIGNAL(contactSubscriptionStateChanged(QString,QString,Tp::Contact::PresenceState)),
-            m_storage, SLOT(setContactSubscriptionState(QString,QString,Tp::Contact::PresenceState)));
-    connect(acc, SIGNAL(contactCapabilitiesChanged(QString,QString,Tp::ConnectionPtr,Tp::ContactCapabilities)),
-            m_storage, SLOT(setContactCapabilities(QString,QString,Tp::ConnectionPtr,Tp::ContactCapabilities)));
     connect(acc, SIGNAL(contactAvatarChanged(QString,QString,Tp::AvatarData)),
             m_storage, SLOT(setContactAvatar(QString,QString,Tp::AvatarData)));
 

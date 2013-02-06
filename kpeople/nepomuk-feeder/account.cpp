@@ -177,18 +177,6 @@ void Account::onNewContact(const Tp::ContactPtr &contact)
                 SIGNAL(removedFromGroup(QString)),
                 SLOT(onContactRemovedFromGroup(QString)));
         connect(contact.data(),
-                SIGNAL(blockStatusChanged(bool)),
-                SLOT(onContactBlockStatusChanged(bool)));
-        connect(contact.data(),
-                SIGNAL(publishStateChanged(Tp::Contact::PresenceState)),
-                SLOT(onContactPublishStateChanged(Tp::Contact::PresenceState)));
-        connect(contact.data(),
-                SIGNAL(subscriptionStateChanged(Tp::Contact::PresenceState)),
-                SLOT(onContactSubscriptionStateChanged(Tp::Contact::PresenceState)));
-        connect(contact.data(),
-                SIGNAL(capabilitiesChanged(Tp::ContactCapabilities)),
-                SLOT(onContactCapabilitiesChanged(Tp::ContactCapabilities)));
-        connect(contact.data(),
                 SIGNAL(avatarDataChanged(Tp::AvatarData)),
                 SLOT(onContactAvatarChanged(Tp::AvatarData)));
 
@@ -218,39 +206,6 @@ void Account::onContactAliasChanged(const QString &alias)
     Q_ASSERT(contact);
 
     emit contactAliasChanged(m_account->objectPath(), contact->id(), alias);
-}
-
-void Account::onContactBlockStatusChanged(bool blocked)
-{
-    const Tp::ContactPtr contact(qobject_cast<Tp::Contact*>(sender()));
-    Q_ASSERT(contact);
-
-    emit contactBlockStatusChanged(m_account->objectPath(), contact->id(), blocked);
-}
-
-void Account::onContactPublishStateChanged(const Tp::Contact::PresenceState &state)
-{
-    const Tp::ContactPtr contact(qobject_cast<Tp::Contact*>(sender()));
-    Q_ASSERT(contact);
-
-    emit contactPublishStateChanged(m_account->objectPath(), contact->id(), state);
-}
-
-void Account::onContactSubscriptionStateChanged(const Tp::Contact::PresenceState &state)
-{
-    const Tp::ContactPtr contact(qobject_cast<Tp::Contact*>(sender()));
-    Q_ASSERT(contact);
-
-    emit contactSubscriptionStateChanged(m_account->objectPath(), contact->id(), state);
-}
-
-void Account::onContactCapabilitiesChanged(const Tp::ContactCapabilities &capabilities)
-{
-    const Tp::ContactPtr contact(qobject_cast<Tp::Contact*>(sender()));
-    Q_ASSERT(contact);
-
-
-    emit contactCapabilitiesChanged(m_account->objectPath(), contact->id(), m_connection, capabilities);
 }
 
 void Account::onContactAvatarChanged(const Tp::AvatarData &avatar)

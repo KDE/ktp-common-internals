@@ -56,10 +56,6 @@ Q_SIGNALS:
     void contactCreated(const QString &path, const QString &id);
     void contactAliasChanged(const QString &path, const QString &id, const QString &alias);
     void contactGroupsChanged(const QString &path, const QString &id, const QStringList &groups);
-    void contactBlockStatusChanged(const QString &path, const QString &id, bool blocked);
-    void contactPublishStateChanged(const QString &path, const QString &id, const Tp::Contact::PresenceState &state);
-    void contactSubscriptionStateChanged(const QString &path, const QString &id, const Tp::Contact::PresenceState &state);
-    void contactCapabilitiesChanged(const QString &path, const QString &id, const Tp::ConnectionPtr &connection, const Tp::ContactCapabilities &capabilities);
     void contactAvatarChanged(const QString &path, const QString &id, const Tp::AvatarData &avatar);
 
 private Q_SLOTS:
@@ -72,10 +68,6 @@ private Q_SLOTS:
     void onContactAddedToGroup(const QString &group);
     void onContactRemovedFromGroup(const QString &group);
     void onContactAliasChanged(const QString &alias);
-    void onContactBlockStatusChanged(bool blocked);
-    void onContactPublishStateChanged(const Tp::Contact::PresenceState &state);
-    void onContactSubscriptionStateChanged(const Tp::Contact::PresenceState &state);
-    void onContactCapabilitiesChanged(const Tp::ContactCapabilities &capabilities);
     void onContactAvatarChanged(const Tp::AvatarData &avatar);
 
 private:

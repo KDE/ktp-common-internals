@@ -116,42 +116,6 @@ public Q_SLOTS:
     virtual void setContactGroups(const QString &path, const QString &id, const QStringList &groups) = 0;
 
     /**
-     * Invoked to update the blocked status of the Telepathy Contact.
-     *
-     * \param path the object path (unique identifier) of the account
-     * \param id the id (e.g. me@example.com) that in conjunction with the \p path uniquely identifies the contact.
-     * \param blocked indicates whether the contact is blocked or not.
-     */
-    virtual void setContactBlockStatus(const QString &path, const QString &id, bool blocked) = 0;
-
-    /**
-     * Invoked to update the presence-publishing state of the Telepathy Contact.
-     *
-     * \param path the object path (unique identifier) of the account
-     * \param id the id (e.g. me@example.com) that in conjunction with the \p path uniquely identifies the contact.
-     * \param state the presence-publishing state of the contact.
-     */
-    virtual void setContactPublishState(const QString &path, const QString &id, const Tp::Contact::PresenceState &state) = 0;
-
-    /**
-     * Invoked to update the presence-subscription state of the Telepathy Contact.
-     *
-     * \param path the object path (unique identifier) of the account
-     * \param id the id (e.g. me@example.com) that in conjunction with the \p path uniquely identifies the contact.
-     * \param state the presence-subscription state of the contact.
-     */
-    virtual void setContactSubscriptionState(const QString &path, const QString &id, const Tp::Contact::PresenceState &state) = 0;
-
-    /**
-     * Invoked to update the capabilities of the Telepathy Contact.
-     *
-     * \param path the object path (unique identifier) of the account
-     * \param id the id (e.g. me@example.com) that in conjunction with the \p path uniquely identifies the contact.
-     * \param capabilities the complete list of capabilities of the contact.
-     */
-    virtual void setContactCapabilities(const QString &path, const QString &id, const Tp::ConnectionPtr &connection, const Tp::ContactCapabilities &capabilities) = 0;
-
-    /**
      * Invoked to update the avatar of the Telepathy Contact.
      *
      * \param path the object path (unique identifier) of the account
