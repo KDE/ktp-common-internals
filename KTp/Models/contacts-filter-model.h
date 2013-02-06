@@ -38,19 +38,13 @@ class KTP_EXPORT ContactsFilterModel : public QSortFilterProxyModel
     Q_OBJECT
     Q_DISABLE_COPY(ContactsFilterModel)
 
-    Q_ENUMS(SortMode
-            PresenceFilterFlag
+    Q_ENUMS(PresenceFilterFlag
             CapabilityFilterFlag
             SubscriptionStateFilterFlag)
 
     Q_FLAGS(PresenceTypeFilterFlags
             CapabilityFilterFlags
             SubscriptionStateFilterFlags)
-
-    Q_PROPERTY(SortMode sortMode
-               READ sortMode
-               WRITE setSortMode
-               NOTIFY sortModeChanged)
 
     Q_PROPERTY(PresenceTypeFilterFlags presenceTypeFilterFlags
                READ presenceTypeFilterFlags
@@ -108,6 +102,11 @@ class KTP_EXPORT ContactsFilterModel : public QSortFilterProxyModel
                RESET clearIdFilterString
                WRITE setIdFilterString
                NOTIFY idFilterStringChanged)
+    Q_PROPERTY(QStringList tubesFilterStrings
+               READ tubesFilterStrings
+               RESET clearTubesFilterStrings
+               WRITE setTubesFilterStrings
+               NOTIFY tubesFilterStringsChanged)
     Q_PROPERTY(Qt::MatchFlags displayNameFilterMatchFlags
                READ displayNameFilterMatchFlags
                RESET resetDisplayNameFilterMatchFlags
@@ -135,12 +134,6 @@ class KTP_EXPORT ContactsFilterModel : public QSortFilterProxyModel
                NOTIFY idFilterMatchFlagsChanged)
 
 public:
-    enum SortMode {
-        DoNotSort = 0,
-        SortByPresence,
-        SortByNickname,
-        SortByAlias
-    };
 
     enum PresenceTypeFilterFlag {
         DoNotFilterByPresence                  = 0x0000,
@@ -175,12 +168,10 @@ public:
     enum CapabilityFilterFlag {
         DoNotFilterByCapability                = 0x0000,
         FilterByTextChatCapability             = 0x0001,
-        FilterByMediaCallCapability            = 0x0002,
-        FilterByAudioCallCapability            = 0x0004,
-        FilterByVideoCallCapability            = 0x0008,
-        FilterByFileTransferCapability         = 0x0010,
-        FilterByDesktopSharingCapability       = 0x0020,
-        FilterBySSHContactCapability           = 0x0040,
+        FilterByAudioCallCapability            = 0x0002,
+        FilterByVideoCallCapability            = 0x0004,
+        FilterByFileTransferCapability         = 0x0008,
+        FilterByTubes                          = 0x0010,
 
         CustomFilterCapability                 = 0x10000 // a placemark for custom capabilities in inherited classes
     };
@@ -206,11 +197,6 @@ public:
     virtual QVariant data(const QModelIndex &index, int role) const;
     virtual void setSourceModel(QAbstractItemModel *sourceModel);
     void invalidateFilter();
-
-    SortMode sortMode() const;
-    void resetSortMode();
-    Q_SLOT void setSortMode(SortMode sortMode);
-    Q_SIGNAL void sortModeChanged(SortMode sortMode);
 
     PresenceTypeFilterFlags presenceTypeFilterFlags() const;
     Q_SLOT void clearPresenceTypeFilterFlags();
@@ -280,6 +266,11 @@ public:
     Q_SLOT void resetIdFilterMatchFlags();
     Q_SLOT void setIdFilterMatchFlags(Qt::MatchFlags idFilterMatchFlags);
     Q_SIGNAL void idFilterMatchFlagsChanged(Qt::MatchFlags idFilterMatchFlags);
+
+    QStringList tubesFilterStrings() const;
+    Q_SLOT void clearTubesFilterStrings();
+    Q_SLOT void setTubesFilterStrings(const QStringList &tubesFilterStrings);
+    Q_SIGNAL void tubesFilterStringsChanged(const QStringList &tubesFilterStrings);
 
 protected:
     bool filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent) const;

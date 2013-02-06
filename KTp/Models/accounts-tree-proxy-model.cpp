@@ -18,7 +18,7 @@
 
 #include "accounts-tree-proxy-model.h"
 
-#include "contacts-model.h"
+#include "types.h"
 
 #include <TelepathyQt/Account>
 #include <TelepathyQt/AccountManager>
@@ -51,7 +51,7 @@ KTp::AccountsTreeProxyModel::AccountsTreeProxyModel(QAbstractItemModel *sourceMo
 
 QSet<QString> KTp::AccountsTreeProxyModel::groupsForIndex(const QModelIndex &sourceIndex) const
 {
-    const Tp::AccountPtr account = sourceIndex.data(ContactsModel::AccountRole).value<Tp::AccountPtr>();
+    const Tp::AccountPtr account = sourceIndex.data(KTp::AccountRole).value<Tp::AccountPtr>();
     if (account) {
         return QSet<QString>() << account->objectPath();
     } else {
@@ -70,28 +70,16 @@ QVariant KTp::AccountsTreeProxyModel::dataForGroup(const QString &group, int rol
             return account->normalizedName();
         }
         break;
-    case ContactsModel::IconRole:
+    case Qt::DecorationRole:
         account = d->accountManager->accountForObjectPath(group);
         if (account) {
-            return account->iconName();
+            return KIcon(account->iconName());
         }
         break;
-    case ContactsModel::AccountRole:
+    case KTp::AccountRole:
         return QVariant::fromValue(d->accountManager->accountForObjectPath(group));
-    case ContactsModel::TypeRole:
-        return ContactsModel::AccountRowType;
-    case ContactsModel::EnabledRole:
-        account = d->accountManager->accountForObjectPath(group);
-        if (account) {
-            return account->isEnabled();
-        }
-        return true;
-    case ContactsModel::ConnectionStatusRole:
-        account = d->accountManager->accountForObjectPath(group);
-        if (account) {
-            return account->connectionStatus();
-        }
-        return Tp::ConnectionStatusConnected;
+    case KTp::RowTypeRole:
+        return KTp::AccountRowType;
     }
 
     return QVariant();

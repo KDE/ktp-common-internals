@@ -22,9 +22,6 @@
 #include "add-contact-dialog.h"
 #include "ui_add-contact-dialog.h"
 
-#include <KTp/Models/contacts-model.h>
-#include <KTp/Models/accounts-model-item.h>
-
 #include <QObject>
 #include <QCloseEvent>
 
@@ -32,6 +29,7 @@
 #include <KPushButton>
 #include <KDebug>
 
+#include <TelepathyQt/AccountManager>
 #include <TelepathyQt/Account>
 #include <TelepathyQt/Connection>
 #include <TelepathyQt/ContactManager>

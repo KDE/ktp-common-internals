@@ -48,7 +48,7 @@ Conversation::Conversation(const Tp::TextChannelPtr &channel,
     d->messages = new MessagesModel(account, this);
     d->messages->setTextChannel(channel);
 
-    d->target = new ConversationTarget(account, channel->targetContact(), this);
+    d->target = new ConversationTarget(account, KTp::ContactPtr::qObjectCast(channel->targetContact()), this);
 
     d->valid = channel->isValid();
     connect(channel.data(), SIGNAL(invalidated(Tp::DBusProxy*,QString,QString)),

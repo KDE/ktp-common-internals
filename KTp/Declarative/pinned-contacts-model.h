@@ -21,7 +21,7 @@
 
 #include <QModelIndex>
 #include <QVector>
-#include "ktp-metatypes.h"
+#include "types.h"
 
 struct Pin;
 class ConversationsModel;
@@ -50,8 +50,8 @@ class PinnedContactsModel : public QAbstractListModel
     virtual int rowCount(const QModelIndex &parent = QModelIndex()) const;
     virtual bool removeRows(int row, int count, const QModelIndex &parent = QModelIndex());
 
-    Q_SLOT void setPinning(const Tp::AccountPtr &account, const Tp::ContactPtr &contact, bool newState);
-    QModelIndex indexForContact(Tp::AccountPtr account, Tp::ContactPtr contact) const;
+    Q_SLOT void setPinning(const Tp::AccountPtr &account, const KTp::ContactPtr &contact, bool newState);
+    QModelIndex indexForContact(Tp::AccountPtr account, KTp::ContactPtr contact) const;
 
     ConversationsModel* conversationsModel() const;
     void setConversationsModel(ConversationsModel *model);

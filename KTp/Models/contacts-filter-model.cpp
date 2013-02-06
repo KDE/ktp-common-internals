@@ -23,7 +23,7 @@
 
 #include "contacts-filter-model.h"
 
-#include "contacts-model.h"
+#include "types.h"
 
 #include <presence.h>
 
@@ -61,6 +61,7 @@ public:
     QString aliasFilterString;
     QString groupsFilterString;
     QString idFilterString;
+    QStringList tubesFilterStrings;
     Qt::MatchFlags displayNameFilterMatchFlags;
     Qt::MatchFlags nicknameFilterMatchFlags;
     Qt::MatchFlags aliasFilterMatchFlags;
@@ -85,31 +86,27 @@ bool ContactsFilterModel::Private::filterAcceptsAccount(const QModelIndex &index
     // Check capability
     if (capabilityFilterFlags != DoNotFilterByCapability) {
         if ((capabilityFilterFlags & FilterByTextChatCapability)
-                && !index.data(ContactsModel::TextChatCapabilityRole).toBool()) {
-            return false;
-        }
-        if ((capabilityFilterFlags & FilterByMediaCallCapability)
-                && !index.data(ContactsModel::MediaCallCapabilityRole).toBool()) {
+                && !index.data(KTp::ContactCanTextChatRole).toBool()) {
             return false;
         }
         if ((capabilityFilterFlags & FilterByAudioCallCapability)
-                && !index.data(ContactsModel::AudioCallCapabilityRole).toBool()) {
+                && !index.data(KTp::ContactCanAudioCallRole).toBool()) {
             return false;
         }
         if ((capabilityFilterFlags & FilterByVideoCallCapability)
-                && !index.data(ContactsModel::VideoCallCapabilityRole).toBool()) {
+                && !index.data(KTp::ContactCanVideoCallRole).toBool()) {
             return false;
         }
         if ((capabilityFilterFlags & FilterByFileTransferCapability)
-                && !index.data(ContactsModel::FileTransferCapabilityRole).toBool()) {
+                && !index.data(KTp::ContactCanFileTransferRole).toBool()) {
             return false;
         }
-        if ((capabilityFilterFlags & FilterByDesktopSharingCapability)
-                && !index.data(ContactsModel::DesktopSharingCapabilityRole).toBool()) {
-            return false;
-        }
-        if ((capabilityFilterFlags & FilterBySSHContactCapability)
-                && !index.data(ContactsModel::SSHContactCapabilityRole).toBool()) {
+        if (capabilityFilterFlags & FilterByTubes) {
+            Q_FOREACH(const QString &tube, index.data(KTp::ContactTubesRole).toStringList()) {
+                if (tubesFilterStrings.contains(tube)) {
+                    return true;
+                }
+            }
             return false;
         }
     }
@@ -130,7 +127,7 @@ bool ContactsFilterModel::Private::filterAcceptsContact(const QModelIndex &index
 
     // Check presence type
     if (presenceTypeFilterFlags != DoNotFilterByPresence) {
-        switch (static_cast<Tp::ConnectionPresenceType>(index.data(ContactsModel::PresenceTypeRole).toUInt())) {
+        switch (static_cast<Tp::ConnectionPresenceType>(index.data(KTp::ContactPresenceTypeRole).toUInt())) {
         case Tp::ConnectionPresenceTypeUnset:
             if (presenceTypeFilterFlags & HidePresenceTypeUnset) {
                 return false;
@@ -187,39 +184,40 @@ bool ContactsFilterModel::Private::filterAcceptsContact(const QModelIndex &index
     // Check capability
     if (capabilityFilterFlags != DoNotFilterByCapability) {
         if ((capabilityFilterFlags & FilterByTextChatCapability)
-                && !index.data(ContactsModel::TextChatCapabilityRole).toBool()) {
-            return false;
-        }
-        if ((capabilityFilterFlags & FilterByMediaCallCapability)
-                && !index.data(ContactsModel::MediaCallCapabilityRole).toBool()) {
+                && !index.data(KTp::ContactCanTextChatRole).toBool()) {
             return false;
         }
         if ((capabilityFilterFlags & FilterByAudioCallCapability)
-                && !index.data(ContactsModel::AudioCallCapabilityRole).toBool()) {
+                && !index.data(KTp::ContactCanAudioCallRole).toBool()) {
             return false;
         }
         if ((capabilityFilterFlags & FilterByVideoCallCapability)
-                && !index.data(ContactsModel::VideoCallCapabilityRole).toBool()) {
+                && !index.data(KTp::ContactCanVideoCallRole).toBool()) {
             return false;
         }
         if ((capabilityFilterFlags & FilterByFileTransferCapability)
-                && !index.data(ContactsModel::FileTransferCapabilityRole).toBool()) {
+                && !index.data(KTp::ContactCanFileTransferRole).toBool()) {
             return false;
         }
-        if ((capabilityFilterFlags & FilterByDesktopSharingCapability)
-                && !index.data(ContactsModel::DesktopSharingCapabilityRole).toBool()) {
-            return false;
-        }
-        if ((capabilityFilterFlags & FilterBySSHContactCapability)
-                && !index.data(ContactsModel::SSHContactCapabilityRole).toBool()) {
-            return false;
+        if (capabilityFilterFlags & FilterByTubes) {
+            if (!tubesFilterStrings.isEmpty()) {
+                bool tubeFound = false;
+                Q_FOREACH(const QString &tube, index.data(KTp::ContactTubesRole).toStringList()) {
+                    if (tubesFilterStrings.contains(tube)) {
+                        tubeFound = true;
+                    }
+                }
+                if (!tubeFound) {
+                    return false;
+                }
+            }
         }
     }
 
 
     // Check subscription state
     if (subscriptionStateFilterFlags != DoNotFilterBySubscription) {
-        switch (index.data(ContactsModel::SubscriptionStateRole).toUInt()) {
+        switch (index.data(KTp::ContactSubscriptionStateRole).toUInt()) {
         case Tp::Contact::PresenceStateNo:
             if (subscriptionStateFilterFlags & HideSubscriptionStateNo) {
                 return false;
@@ -241,7 +239,7 @@ bool ContactsFilterModel::Private::filterAcceptsContact(const QModelIndex &index
             return false;
         }
 
-        switch (index.data(ContactsModel::PublishStateRole).toUInt()) {
+        switch (index.data(KTp::ContactPublishStateRole).toUInt()) {
         case Tp::Contact::PresenceStateNo:
             if (subscriptionStateFilterFlags & HidePublishStateNo) {
                 return false;
@@ -263,7 +261,7 @@ bool ContactsFilterModel::Private::filterAcceptsContact(const QModelIndex &index
             return false;
         }
 
-        if (index.data(ContactsModel::BlockedRole).toBool()) {
+        if (index.data(KTp::ContactIsBlockedRole).toBool()) {
             if (subscriptionStateFilterFlags & HideBlocked) {
                 return false;
             }
@@ -274,7 +272,6 @@ bool ContactsFilterModel::Private::filterAcceptsContact(const QModelIndex &index
         }
     }
 
-
     if (!globalFilterString.isEmpty()) {
         // Check global filter (search on all the roles)
 
@@ -283,24 +280,14 @@ bool ContactsFilterModel::Private::filterAcceptsContact(const QModelIndex &index
             return true;
         }
 
-        // Check nickname
-        if (!q->match(index, ContactsModel::NicknameRole, globalFilterString, 1, globalFilterMatchFlags).isEmpty()) {
-            return true;
-        }
-
-        // check alias
-        if (!q->match(index, ContactsModel::AliasRole, globalFilterString, 1, globalFilterMatchFlags).isEmpty()) {
-            return true;
-        }
-
         // check groups
         // TODO Check if exact match on a single group works
-        if (!q->match(index, ContactsModel::GroupsRole, globalFilterString, 1, globalFilterMatchFlags).isEmpty()) {
+        if (!q->match(index, KTp::ContactGroupsRole, globalFilterString, 1, globalFilterMatchFlags).isEmpty()) {
             return true;
         }
 
         // Check id
-        if (!q->match(index, ContactsModel::IdRole, globalFilterString, 1, globalFilterMatchFlags).isEmpty()) {
+        if (!q->match(index, KTp::IdRole, globalFilterString, 1, globalFilterMatchFlags).isEmpty()) {
             return true;
         }
 
@@ -313,31 +300,17 @@ bool ContactsFilterModel::Private::filterAcceptsContact(const QModelIndex &index
                 return false;
             }
         }
-
-        // Check nickname
-        if (!nicknameFilterString.isEmpty()) {
-            if (q->match(index, ContactsModel::NicknameRole, nicknameFilterString, 1, nicknameFilterMatchFlags).isEmpty()) {
-                return false;
-            }
-        }
-
-        // check alias
-        if (!aliasFilterString.isEmpty()) {
-            if (q->match(index, ContactsModel::AliasRole, aliasFilterString, 1, aliasFilterMatchFlags).isEmpty()) {
-                return false;
-            }
-        }
         // check groups
         // TODO Check if exact match on a single group works
         if (!groupsFilterString.isEmpty()) {
-            if (q->match(index, ContactsModel::GroupsRole, groupsFilterString, 1, groupsFilterMatchFlags).isEmpty()) {
+            if (q->match(index, KTp::ContactGroupsRole, groupsFilterString, 1, groupsFilterMatchFlags).isEmpty()) {
                 return false;
             }
         }
 
         // Check id
         if (!idFilterString.isEmpty()) {
-            if (q->match(index, ContactsModel::IdRole, idFilterString, 1, idFilterMatchFlags).isEmpty()) {
+            if (q->match(index, KTp::IdRole, idFilterString, 1, idFilterMatchFlags).isEmpty()) {
                 return false;
             }
         }
@@ -348,7 +321,7 @@ bool ContactsFilterModel::Private::filterAcceptsContact(const QModelIndex &index
 
 bool ContactsFilterModel::Private::filterAcceptsGroup(const QModelIndex &index)
 {
-    QString groupName = index.data(ContactsModel::IdRole).toString();
+    QString groupName = index.data(KTp::IdRole).toString();
 
     if (presenceTypeFilterFlags != DoNotFilterByPresence) {
         // If there is no cached value, create one
@@ -379,11 +352,11 @@ void ContactsFilterModel::Private::countContacts(const QModelIndex &sourceParent
 {
     QString key;
 
-    ContactsModel::RowType rowType = static_cast<ContactsModel::RowType>(sourceParent.data(ContactsModel::TypeRole).toInt());
-    if (rowType == ContactsModel::GroupRowType) {
+    KTp::RowType rowType = static_cast<KTp::RowType>(sourceParent.data(KTp::RowTypeRole).toInt());
+    if (rowType == KTp::GroupRowType) {
         key = sourceParent.data(Qt::DisplayRole).toString();
-    } else if (rowType == ContactsModel::AccountRowType) {
-        Tp::AccountPtr account = sourceParent.data(ContactsModel::AccountRole).value<Tp::AccountPtr>();
+    } else if (rowType == KTp::AccountRowType) {
+        Tp::AccountPtr account = sourceParent.data(KTp::AccountRole).value<Tp::AccountPtr>();
         if (account.isNull()) {
             return;
         }
@@ -400,8 +373,8 @@ void ContactsFilterModel::Private::countContacts(const QModelIndex &sourceParent
 
         // We want all online contacts that are accepted by the filter
         if (q->filterAcceptsRow(child.row(), sourceParent)
-            && child.data(ContactsModel::PresenceTypeRole).toUInt() != Tp::ConnectionPresenceTypeOffline
-            && child.data(ContactsModel::PresenceTypeRole).toUInt() != Tp::ConnectionPresenceTypeUnknown) {
+            && child.data(KTp::ContactPresenceTypeRole).toUInt() != Tp::ConnectionPresenceTypeOffline
+            && child.data(KTp::ContactPresenceTypeRole).toUInt() != Tp::ConnectionPresenceTypeUnknown) {
             tmpCounter++;
         }
     }
@@ -431,7 +404,7 @@ void ContactsFilterModel::Private::countContacts(const QModelIndex &sourceParent
 void ContactsFilterModel::Private::sourceModelChanged(const QModelIndex &sourceIndex)
 {
     QModelIndex groupSourceIndex;
-    if (sourceIndex.data(ContactsModel::TypeRole).toUInt() == ContactsModel::ContactRowType) {
+    if (sourceIndex.data(KTp::RowTypeRole).toUInt() == KTp::ContactRowType) {
         groupSourceIndex = sourceIndex.parent();
     } else {
         groupSourceIndex = sourceIndex;
@@ -467,17 +440,17 @@ QVariant ContactsFilterModel::data(const QModelIndex &index, int role) const
     }
 
     // Special handling for the counts
-    ContactsModel::RowType rowType = static_cast<ContactsModel::RowType>(sourceIndex.data(ContactsModel::TypeRole).toInt());
-    if (role == ContactsModel::OnlineUsersCountRole) {
-        if (rowType == ContactsModel::GroupRowType) {
+    KTp::RowType rowType = static_cast<KTp::RowType>(sourceIndex.data(KTp::RowTypeRole).toInt());
+    if (role == KTp::HeaderOnlineUsersRole) {
+        if (rowType == KTp::GroupRowType) {
             const QString groupName = sourceIndex.data(Qt::DisplayRole).toString();
             // If there is no cached value, create one
             if (!d->m_onlineContactsCounts.contains(groupName)) {
                 d->countContacts(sourceIndex);
             }
             return d->m_onlineContactsCounts.value(groupName);
-        } else if (rowType == ContactsModel::AccountRowType) {
-            const Tp::AccountPtr account = sourceIndex.data(ContactsModel::AccountRole).value<Tp::AccountPtr>();
+        } else if (rowType == KTp::AccountRowType) {
+            const Tp::AccountPtr account = sourceIndex.data(KTp::AccountRole).value<Tp::AccountPtr>();
             if (account.isNull()) {
                 return 0;
             }
@@ -487,16 +460,16 @@ QVariant ContactsFilterModel::data(const QModelIndex &index, int role) const
             }
             return d->m_onlineContactsCounts.value(account->uniqueIdentifier());
         }
-    } else if (role == ContactsModel::TotalUsersCountRole) {
-        if (rowType == ContactsModel::GroupRowType) {
+    } else if (role == KTp::HeaderTotalUsersRole) {
+        if (rowType == KTp::GroupRowType) {
             const QString groupName = sourceIndex.data(Qt::DisplayRole).toString();
             // If there is no cached value, create one
             if (!d->m_totalContactsCounts.contains(groupName)) {
                 d->countContacts(sourceIndex);
             }
             return d->m_totalContactsCounts.value(groupName);
-        } else if (rowType == ContactsModel::AccountRowType) {
-            const Tp::AccountPtr account = sourceIndex.data(ContactsModel::AccountRole).value<Tp::AccountPtr>();
+        } else if (rowType == KTp::AccountRowType) {
+            const Tp::AccountPtr account = sourceIndex.data(KTp::AccountRole).value<Tp::AccountPtr>();
             if (account.isNull()) {
                 return 0;
             }
@@ -548,52 +521,6 @@ void ContactsFilterModel::invalidateFilter()
     d->m_onlineContactsCounts.clear();
     d->m_totalContactsCounts.clear();
     QSortFilterProxyModel::invalidateFilter();
-}
-
-ContactsFilterModel::SortMode ContactsFilterModel::sortMode() const
-{
-    switch (sortRole()) {
-    case Qt::DisplayRole:
-        return DoNotSort;
-    case ContactsModel::PresenceTypeRole:
-        return SortByPresence;
-    case ContactsModel::NicknameRole:
-        return SortByNickname;
-    case ContactsModel::AliasRole:
-        return SortByAlias;
-    default:
-        //This should never happen
-        Q_ASSERT(false);
-        return DoNotSort;
-    }
-}
-
-void ContactsFilterModel::resetSortMode()
-{
-    setSortMode(DoNotSort);
-}
-
-void ContactsFilterModel::setSortMode(SortMode sortMode)
-{
-    switch (sortMode) {
-    case DoNotSort:
-        setSortRole(Qt::DisplayRole);
-        break;
-    case SortByPresence:
-        setSortRole(ContactsModel::PresenceTypeRole);
-        break;
-    case SortByNickname:
-        setSortRole(ContactsModel::NicknameRole);
-        break;
-    case SortByAlias:
-        setSortRole(ContactsModel::AliasRole);
-        break;
-    default:
-        //This should never happen
-        Q_ASSERT(false);
-        return;
-    }
-    Q_EMIT sortModeChanged(sortMode);
 }
 
 ContactsFilterModel::PresenceTypeFilterFlags ContactsFilterModel::presenceTypeFilterFlags() const
@@ -881,18 +808,37 @@ void ContactsFilterModel::setIdFilterMatchFlags(Qt::MatchFlags idFilterMatchFlag
     }
 }
 
+QStringList ContactsFilterModel::tubesFilterStrings() const
+{
+    return d->tubesFilterStrings;
+}
+
+void ContactsFilterModel::clearTubesFilterStrings()
+{
+    setTubesFilterStrings(QStringList());
+}
+
+void ContactsFilterModel::setTubesFilterStrings(const QStringList &tubesFilterStrings)
+{
+    if (d->tubesFilterStrings != tubesFilterStrings) {
+        d->tubesFilterStrings = tubesFilterStrings;
+        invalidateFilter();
+        Q_EMIT tubesFilterStringsChanged(tubesFilterStrings);
+    }
+}
+
 bool ContactsFilterModel::filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent) const
 {
     QModelIndex index = sourceModel()->index(sourceRow, 0, sourceParent);
 
-    int type = index.data(ContactsModel::TypeRole).toInt();
-    if (type == ContactsModel::ContactRowType) {
+    int type = index.data(KTp::RowTypeRole).toInt();
+    if (type == KTp::ContactRowType) {
         return d->filterAcceptsContact(index);
     }
-    else if (type == ContactsModel::AccountRowType) {
+    else if (type == KTp::AccountRowType) {
         return d->filterAcceptsAccount(index);
     }
-    else if (type == ContactsModel::GroupRowType) {
+    else if (type == KTp::GroupRowType) {
         return d->filterAcceptsGroup(index);
     }
     else {
@@ -908,16 +854,16 @@ bool ContactsFilterModel::lessThan(const QModelIndex &left, const QModelIndex &r
     QString rightDisplayedName = sourceModel()->data(right).toString();
 
     switch (sortRole()) {
-    case ContactsModel::PresenceTypeRole:
+        case KTp::ContactPresenceTypeRole:
     {
-        Tp::ConnectionPresenceType leftPresence = (Tp::ConnectionPresenceType)left.data(ContactsModel::PresenceTypeRole).toUInt();
-        Tp::ConnectionPresenceType rightPresence = (Tp::ConnectionPresenceType)right.data(ContactsModel::PresenceTypeRole).toUInt();
+        Tp::ConnectionPresenceType leftPresence = (Tp::ConnectionPresenceType)left.data(KTp::ContactPresenceTypeRole).toUInt();
+        Tp::ConnectionPresenceType rightPresence = (Tp::ConnectionPresenceType)right.data(KTp::ContactPresenceTypeRole).toUInt();
 
         if (leftPresence == rightPresence) {
             //presences are the same, compare client types
 
-            bool leftPhone = left.data(ContactsModel::ClientTypesRole).toStringList().contains(QLatin1String("phone"));
-            bool rightPhone = right.data(ContactsModel::ClientTypesRole).toStringList().contains(QLatin1String("phone"));
+            bool leftPhone = left.data(KTp::ContactClientTypesRole).toStringList().contains(QLatin1String("phone"));
+            bool rightPhone = right.data(KTp::ContactClientTypesRole).toStringList().contains(QLatin1String("phone"));
 
             if (leftPhone && ! rightPhone) {
                 return false;
@@ -941,19 +887,12 @@ bool ContactsFilterModel::lessThan(const QModelIndex &left, const QModelIndex &r
             return KTp::Presence::sortPriority(leftPresence) < KTp::Presence::sortPriority(rightPresence);
         }
     }
-    case ContactsModel::NicknameRole:
+    case Qt::DisplayRole:
     {
-        QString leftNickname = sourceModel()->data(left, ContactsModel::NicknameRole).toString();
-        QString rightNickName = sourceModel()->data(right, ContactsModel::NicknameRole).toString();
-        return QString::localeAwareCompare(leftNickname, rightNickName) < 0;
-    }
-    case ContactsModel::AliasRole:
-    {
-        QString leftAlias = sourceModel()->data(left, ContactsModel::AliasRole).toString();
-        QString rightAlias = sourceModel()->data(right, ContactsModel::AliasRole).toString();
+        QString leftAlias = sourceModel()->data(left, Qt::DisplayRole).toString();
+        QString rightAlias = sourceModel()->data(right, Qt::DisplayRole).toString();
         return QString::localeAwareCompare(rightAlias, rightAlias) < 0;
     }
-    case Qt::DisplayRole:
     default:
         return QString::localeAwareCompare(leftDisplayedName, rightDisplayedName) < 0;
     }

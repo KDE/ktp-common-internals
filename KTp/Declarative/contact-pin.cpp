@@ -32,7 +32,7 @@ Tp::AccountPtr ContactPin::account() const
     return m_account;
 }
 
-Tp::ContactPtr ContactPin::contact() const
+KTp::ContactPtr ContactPin::contact() const
 {
     return m_contact;
 }
@@ -67,7 +67,7 @@ void ContactPin::setAccount(const Tp::AccountPtr &account)
     Q_EMIT pinnedChanged();
 }
 
-void ContactPin::setContact(const Tp::ContactPtr &contact)
+void ContactPin::setContact(const KTp::ContactPtr &contact)
 {
     m_contact = contact;
     Q_EMIT pinnedChanged();

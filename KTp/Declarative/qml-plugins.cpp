@@ -33,7 +33,7 @@
 #include "pinned-contacts-model.h"
 #include "contact-pin.h"
 
-#include "Models/accounts-filter-model.h"
+#include "Models/contacts-filter-model.h"
 
 void QmlPlugins::registerTypes(const char *uri)
 {
@@ -44,7 +44,7 @@ void QmlPlugins::registerTypes(const char *uri)
     qmlRegisterType<PinnedContactsModel>(uri, 0, 1, "PinnedContactsModel");
     qmlRegisterType<ContactPin>(uri, 0, 1, "ContactPin");
 
-    qmlRegisterUncreatableType<AccountsFilterModel> (uri, 0, 1, "AccountsFilterModel",
+    qmlRegisterUncreatableType<KTp::ContactsFilterModel> (uri, 0, 1, "AccountsFilterModel",
         QLatin1String("Filter cannot be created. Access through ContactList.filter"));
     qmlRegisterUncreatableType<MessagesModel> (uri, 0, 1, "MessagesModel",
         QLatin1String("It will be created once the conversation is created"));
@@ -52,7 +52,7 @@ void QmlPlugins::registerTypes(const char *uri)
     qmlRegisterType<ConversationTarget>();
     qmlRegisterType<ConversationsModel>();
     qRegisterMetaType<Tp::AccountManagerPtr>();
-    qRegisterMetaType<Tp::ContactPtr>();
+    qRegisterMetaType<KTp::ContactPtr>();
     qRegisterMetaType<Tp::AccountPtr>();
 }
 

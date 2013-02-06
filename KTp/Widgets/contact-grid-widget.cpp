@@ -30,8 +30,8 @@
 #include <QtGui/QVBoxLayout>
 #include <QtGui/QListView>
 
+#include "types.h"
 #include <KTp/Models/contacts-list-model.h>
-#include <KTp/Models/contacts-model.h>
 #include <KTp/Models/contacts-filter-model.h>
 
 namespace KTp {
@@ -242,12 +242,12 @@ bool KTp::ContactGridWidget::hasSelection() const
 
 Tp::AccountPtr KTp::ContactGridWidget::selectedAccount() const
 {
-    return d->contactGridView->currentIndex().data(ContactsModel::AccountRole).value<Tp::AccountPtr>();
+    return d->contactGridView->currentIndex().data(KTp::AccountRole).value<Tp::AccountPtr>();
 }
 
 Tp::ContactPtr KTp::ContactGridWidget::selectedContact() const
 {
-    return d->contactGridView->currentIndex().data(ContactsModel::ContactRole).value<Tp::ContactPtr>();
+    return d->contactGridView->currentIndex().data(KTp::ContactRole).value<KTp::ContactPtr>();
 }
 
 KTp::ContactsFilterModel* KTp::ContactGridWidget::filter() const

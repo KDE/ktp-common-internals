@@ -21,7 +21,6 @@
 #include "conversation.h"
 
 #include <TelepathyQt/Types>
-#include <TelepathyQt/Contact>
 #include <TelepathyQt/AvatarData>
 #include <TelepathyQt/Presence>
 #include <TelepathyQt/Account>
@@ -38,6 +37,7 @@
 #include <KDebug>
 
 #include <KTp/presence.h>
+#include <KTp/contact.h>
 
 struct Pin {
     Tp::ContactPtr contact;
@@ -123,13 +123,13 @@ void PinnedContactsModel::pinPendingContacts(Tp::PendingOperation* j)
     if (j->isValid()) {
         Tp::PendingContacts *job = qobject_cast<Tp::PendingContacts*>(j);
         Tp::AccountPtr account = job->property("account").value<Tp::AccountPtr>();
-        Tp::ContactPtr contact = job->contacts().first();
+        KTp::ContactPtr contact = KTp::ContactPtr::qObjectCast(job->contacts().first());
         setPinning(account, contact, true);
     } else
         kDebug() << "error:" << j->errorName() << j->errorMessage();
 }
 
-QModelIndex PinnedContactsModel::indexForContact(Tp::AccountPtr account, Tp::ContactPtr contact) const
+QModelIndex PinnedContactsModel::indexForContact(Tp::AccountPtr account, KTp::ContactPtr contact) const
 {
     int i = 0;
     Q_FOREACH(const Pin &p, d->m_pins) {
@@ -145,7 +145,7 @@ QModelIndex PinnedContactsModel::indexForContact(Tp::AccountPtr account, Tp::Con
     }
 }
 
-void PinnedContactsModel::setPinning(const Tp::AccountPtr &account, const Tp::ContactPtr &contact, bool newState)
+void PinnedContactsModel::setPinning(const Tp::AccountPtr &account, const KTp::ContactPtr &contact, bool newState)
 {
     QModelIndex idx = indexForContact(account, contact);
     bool found = idx.isValid();
@@ -174,14 +174,14 @@ QVariant PinnedContactsModel::data(const QModelIndex &index, int role) const
                     && p.contact->presence().type()!=Tp::ConnectionPresenceTypeUnset
                     && p.contact->presence().type()!=Tp::ConnectionPresenceTypeUnknown;
             case ContactRole:
-                return QVariant::fromValue<Tp::ContactPtr>(p.contact);
+                return QVariant::fromValue<KTp::ContactPtr>(KTp::ContactPtr::qObjectCast(p.contact));
             case AccountRole:
                 return QVariant::fromValue<Tp::AccountPtr>(p.account);
             case AlreadyChattingRole: {
                 bool found = false;
                 for (int i = 0; !found && i < d->convesations->rowCount(); i++) {
                     QModelIndex idx = d->convesations->index(i, 0);
-                    Tp::ContactPtr contact = idx.data(ConversationsModel::ConversationRole).value<Conversation*>()->target()->contact();
+                    KTp::ContactPtr contact = KTp::ContactPtr::qObjectCast(idx.data(ConversationsModel::ConversationRole).value<Conversation*>()->target()->contact());
                     found |= contact->id() == p.contact->id();
                 }
                 return found;
@@ -240,7 +240,7 @@ void PinnedContactsModel::appendContact(const Pin &p)
 
 void PinnedContactsModel::contactDataChanged()
 {
-    Tp::Contact *c = qobject_cast<Tp::Contact*>(sender());
+    KTp::Contact *c = qobject_cast<KTp::Contact*>(sender());
     int i = 0;
     Q_FOREACH(const Pin &p, d->m_pins) {
         if (p.contact == c) {
@@ -265,7 +265,7 @@ void PinnedContactsModel::conversationsStateChanged(const QModelIndex &parent, i
 {
     for (int i = start; i <= end; i++) {
         QModelIndex idx = d->convesations->index(i, 0, parent);
-        Tp::ContactPtr contact = idx.data(ConversationsModel::ConversationRole).value<Conversation*>()->target()->contact();
+        KTp::ContactPtr contact = KTp::ContactPtr::qObjectCast(idx.data(ConversationsModel::ConversationRole).value<Conversation*>()->target()->contact());
         Q_FOREACH(const Pin &p, d->m_pins) {
             if (p.contact->id() == contact->id())
                 QMetaObject::invokeMethod(this, "dataChanged", Qt::QueuedConnection, Q_ARG(QModelIndex, idx), Q_ARG(QModelIndex, idx));

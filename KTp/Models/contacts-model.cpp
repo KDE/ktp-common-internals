@@ -1,9 +1,7 @@
 /*
- * Accounts and contacts model
- * This file is based on TelepathyQtYell Models
+ * Model of all accounts with inbuilt grouping and filtering
  *
- * Copyright (C) 2010 Collabora Ltd. <info@collabora.co.uk>
- * Copyright (C) 2011 Martin Klapetek <martin dot klapetek at gmail dot com>
+ * Copyright (C) 2013 David Edmundson <kde@davidedmundson.co.uk>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -22,301 +20,89 @@
 
 #include "contacts-model.h"
 
-#include <TelepathyQt/ContactManager>
-#include <TelepathyQt/PendingReady>
+#include "contacts-list-model.h"
+#include "accounts-tree-proxy-model.h"
+#include "groups-tree-proxy-model.h"
 
-#include "accounts-model-item.h"
-#include "contact-model-item.h"
-
-#include <KDebug>
-
-struct ContactsModel::Private
+namespace KTp
 {
-    Private()
-    {
-    }
-
-    TreeNode *node(const QModelIndex &index) const;
-
-    Tp::AccountManagerPtr mAM;
-    TreeNode *mTree;
+class ContactsModel::Private
+{
+public:
+    GroupMode groupMode;
+    QWeakPointer<KTp::AbstractGroupingProxyModel> proxy;
+    KTp::ContactsListModel *source;
+    Tp::AccountManagerPtr accountManager;
 };
-
-TreeNode *ContactsModel::Private::node(const QModelIndex &index) const
-{
-    TreeNode *node = reinterpret_cast<TreeNode *>(index.internalPointer());
-    return node ? node : mTree;
 }
 
-ContactsModel::ContactsModel(QObject *parent)
-    : QAbstractItemModel(parent),
-      mPriv(new ContactsModel::Private())
+
+KTp::ContactsModel::ContactsModel(QObject *parent)
+    : KTp::ContactsFilterModel(parent),
+      d(new Private)
 {
-    mPriv->mTree = new TreeNode;
-    connect(mPriv->mTree,
-            SIGNAL(changed(TreeNode*)),
-            SLOT(onItemChanged(TreeNode*)));
-
-    connect(mPriv->mTree,
-            SIGNAL(childrenAdded(TreeNode*,QList<TreeNode*>)),
-            SLOT(onItemsAdded(TreeNode*,QList<TreeNode*>)));
-
-    connect(mPriv->mTree,
-            SIGNAL(childrenRemoved(TreeNode*,int,int)),
-            SLOT(onItemsRemoved(TreeNode*,int,int)));
-
-    QHash<int, QByteArray> roles;
-    roles[ItemRole] = "item";
-    roles[IdRole] = "id";
-    roles[AccountRole] = "account";
-    roles[ContactRole] = "contact";
-    roles[ValidRole] = "valid";
-    roles[EnabledRole] = "enabled";
-    roles[ConnectionManagerNameRole] = "connectionManager";
-    roles[ProtocolNameRole] = "protocol";
-    roles[DisplayNameRole] = "displayName";
-    roles[IconRole] = "icon";
-    roles[NicknameRole] = "nickname";
-    roles[ConnectsAutomaticallyRole] = "connectsAutomatically";
-    roles[ChangingPresenceRole] = "changingPresence";
-    roles[AutomaticPresenceRole] = "automaticPresence";
-    roles[AutomaticPresenceTypeRole] = "automaticPresenceType";
-    roles[AutomaticPresenceStatusRole] = "automaticPresenceStatus";
-    roles[AutomaticPresenceStatusMessageRole] = "automaticPresenceStatusMessage";
-    roles[CurrentPresenceRole] = "currentPresence";
-    roles[CurrentPresenceTypeRole] = "currentPresenceType";
-    roles[CurrentPresenceStatusRole] = "currentPresenceStatus";
-    roles[CurrentPresenceStatusMessageRole] = "currentPresenceStatusMessage";
-    roles[RequestedPresenceRole] = "requestedPresence";
-    roles[RequestedPresenceTypeRole] = "requestedPresenceType";
-    roles[RequestedPresenceStatusRole] = "requestedPresenceStatus";
-    roles[RequestedPresenceStatusMessageRole] = "requestedPresenceStatusMessage";
-    roles[ConnectionStatusRole] = "connectionStatus";
-    roles[ConnectionStatusReasonRole] = "connectionStatusReason";
-    roles[AliasRole] = "aliasName";
-    roles[AvatarRole] = "avatar";
-    roles[PresenceRole] = "presence";
-    roles[PresenceIconRole] = "presenceIcon";
-    roles[PresenceStatusRole] = "presenceStatus";
-    roles[PresenceTypeRole] = "presenceType";
-    roles[PresenceMessageRole] = "presenceMessage";
-    roles[SubscriptionStateRole] = "subscriptionState";
-    roles[PublishStateRole] = "publishState";
-    roles[BlockedRole] = "blocked";
-    roles[GroupsRole] = "groups";
-    roles[TextChatCapabilityRole] = "textChat";
-    roles[MediaCallCapabilityRole] = "mediaCall";
-    roles[AudioCallCapabilityRole] = "audioCall";
-    roles[VideoCallCapabilityRole] = "videoCall";
-    roles[UpgradeCallCapabilityRole] = "upgradeCall";
-    roles[FileTransferCapabilityRole] = "fileTransfer";
-    roles[DesktopSharingCapabilityRole] = "desktopSharing";
-    roles[SSHContactCapabilityRole] = "sshContact";
-    setRoleNames(roles);
+    d->groupMode = NoGrouping;
+    d->source = new KTp::ContactsListModel(this);
 }
 
-ContactsModel::~ContactsModel()
+KTp::ContactsModel::~ContactsModel()
 {
-    mPriv->mTree->deleteLater();
-    delete mPriv;
+    delete d;
 }
 
-void ContactsModel::setAccountManager(const Tp::AccountManagerPtr &am)
+
+void KTp::ContactsModel::setAccountManager(const Tp::AccountManagerPtr &accountManager)
 {
-    if (! mPriv->mAM.isNull()) {
-        kDebug() << "account manager already set, ignoring";
+    d->accountManager = accountManager;
+
+    updateGroupProxyModels();
+
+    //set the account manager after we've reloaded the groups so that we don't send a list to the view, only to replace it with a grouped tree
+    d->source->setAccountManager(accountManager);
+}
+
+void KTp::ContactsModel::setGroupMode(KTp::ContactsModel::GroupMode mode)
+{
+    if (mode == d->groupMode) {
+        //if nothing has changed, do nothing.
+        return;
     }
 
-    mPriv->mAM = am;
-    Q_FOREACH (Tp::AccountPtr account, mPriv->mAM->allAccounts()) {
-       onNewAccount(account);
+    d->groupMode = mode;
+
+    updateGroupProxyModels();
+
+    Q_EMIT groupModeChanged();
+}
+
+void KTp::ContactsModel::updateGroupProxyModels()
+{
+    //if there no account manager there's not a lot point doing anything
+    if (!d->accountManager) {
+        return;
     }
 
-    connect(mPriv->mAM.data(),
-            SIGNAL(newAccount(Tp::AccountPtr)),
-            SLOT(onNewAccount(Tp::AccountPtr)));
-}
-
-void ContactsModel::onNewAccount(const Tp::AccountPtr &account)
-{
-    AccountsModelItem *accountNode = new AccountsModelItem(account);
-
-    connect(accountNode, SIGNAL(connectionStatusChanged(QString,int)),
-            this, SIGNAL(accountConnectionStatusChanged(QString,int)));
-
-    onItemsAdded(mPriv->mTree, QList<TreeNode *>() << accountNode);
-}
-
-void ContactsModel::onItemChanged(TreeNode *node)
-{
-    if (node->parent()) {
-        //if it is a group item
-        if (node->parent() != mPriv->mTree) {
-            Q_EMIT dataChanged(index(node->parent()), index(node->parent()));
-        }
-    }
-    QModelIndex accountIndex = index(node);
-    Q_EMIT dataChanged(accountIndex, accountIndex);
-}
-
-void ContactsModel::onItemsAdded(TreeNode *parent, const QList<TreeNode *> &nodes)
-{
-    QModelIndex parentIndex = index(parent);
-    int currentSize = rowCount(parentIndex);
-    beginInsertRows(parentIndex, currentSize, currentSize + nodes.size() - 1);
-    Q_FOREACH (TreeNode *node, nodes) {
-        parent->addChild(node);
-    }
-    endInsertRows();
-    Q_EMIT accountCountChanged();
-    Q_EMIT dataChanged(index(parent), index(parent));
-}
-
-void ContactsModel::onItemsRemoved(TreeNode *parent, int first, int last)
-{
-    QModelIndex parentIndex = index(parent);
-    QList<TreeNode *> removedItems;
-    beginRemoveRows(parentIndex, first, last);
-    for (int i = last; i >= first; i--) {
-        parent->childAt(i)->remove();
-    }
-    endRemoveRows();
-
-    Q_EMIT accountCountChanged();
-}
-
-int ContactsModel::accountCount() const
-{
-    return mPriv->mTree->size();
-}
-
-QObject *ContactsModel::accountItemForId(const QString &id) const
-{
-    for (int i = 0; i < mPriv->mTree->size(); ++i) {
-        AccountsModelItem *item = qobject_cast<AccountsModelItem*>(mPriv->mTree->childAt(i));
-        if (!item) {
-            continue;
-        }
-
-        if (item->data(IdRole) == id) {
-            return item;
-        }
+    //delete any previous proxy
+    if (d->proxy) {
+        d->proxy.data()->deleteLater();
     }
 
-    return 0;
-}
-
-QObject *ContactsModel::contactItemForId(const QString &accountId, const QString &contactId) const
-{
-    AccountsModelItem *accountItem = qobject_cast<AccountsModelItem*>(accountItemForId(accountId));
-    if (!accountItem) {
-        return 0;
-    }
-
-    for (int i = 0; i < accountItem->size(); ++i) {
-        ContactModelItem *item = qobject_cast<ContactModelItem*>(accountItem->childAt(i));
-        if (!item) {
-            continue;
-        }
-
-        if (item->data(IdRole) == contactId) {
-            return item;
-        }
-    }
-
-    return 0;
-}
-
-int ContactsModel::columnCount(const QModelIndex &parent) const
-{
-    Q_UNUSED(parent);
-    return 1;
-}
-
-int ContactsModel::rowCount(const QModelIndex &parent) const
-{
-    return mPriv->node(parent)->size();
-}
-
-QVariant ContactsModel::data(const QModelIndex &index, int role) const
-{
-    if (!index.isValid()) {
-        return QVariant();
-    }
-
-    return mPriv->node(index)->data(role);
-}
-
-
-Tp::AccountPtr ContactsModel::accountForContactItem(ContactModelItem *contactItem) const
-{
-    AccountsModelItem *accountItem = qobject_cast<AccountsModelItem*>(contactItem->parent());
-    if (accountItem) {
-        return accountItem->account();
-    } else {
-        return Tp::AccountPtr();
+    switch (d->groupMode) {
+    case NoGrouping:
+        setSourceModel(d->source);
+        break;
+    case AccountGrouping:
+        d->proxy = new KTp::AccountsTreeProxyModel(d->source, d->accountManager);
+        setSourceModel(d->proxy.data());
+        break;
+    case GroupGrouping:
+        d->proxy = new KTp::GroupsTreeProxyModel(d->source);
+        setSourceModel(d->proxy.data());
+        break;
     }
 }
 
-Tp::AccountPtr ContactsModel::accountPtrForPath(const QString& accountPath) const
+KTp::ContactsModel::GroupMode KTp::ContactsModel::groupMode() const
 {
-    if (mPriv->mAM.isNull()) {
-        return Tp::AccountPtr();
-    }
-    return mPriv->mAM->accountForPath(accountPath);
+    return d->groupMode;
 }
-
-Qt::ItemFlags ContactsModel::flags(const QModelIndex &index) const
-{
-    if (index.isValid()) {
-        return Qt::ItemIsEnabled | Qt::ItemIsSelectable;
-    }
-
-    return QAbstractItemModel::flags(index) | Qt::ItemIsEditable;
-}
-
-bool ContactsModel::setData(const QModelIndex &index, const QVariant &value, int role)
-{
-    if (index.isValid()) {
-        mPriv->node(index)->setData(role, value);
-    }
-
-    return false;
-}
-
-QModelIndex ContactsModel::index(int row, int column, const QModelIndex &parent) const
-{
-    TreeNode *parentNode = mPriv->node(parent);
-    Q_ASSERT(parentNode);
-    if (row >= 0 && row < parentNode->size() && column == 0) {
-        return createIndex(row, column, parentNode->childAt(row));
-    }
-
-    return QModelIndex();
-}
-
-QModelIndex ContactsModel::index(TreeNode *node) const
-{
-    if (node->parent()) {
-        return createIndex(node->parent()->indexOf(node), 0, node);
-    } else {
-        return QModelIndex();
-    }
-}
-
-QModelIndex ContactsModel::parent(const QModelIndex &index) const
-{
-    if (!index.isValid()) {
-        return QModelIndex();
-    }
-
-    TreeNode *currentNode = mPriv->node(index);
-    if (currentNode->parent()) {
-        return ContactsModel::index(currentNode->parent());
-    } else {
-        // no parent: return root node
-        return QModelIndex();
-    }
-}
-
-#include "contacts-model.moc"

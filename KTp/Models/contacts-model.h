@@ -1,9 +1,7 @@
 /*
- * Accounts and contacts model
- * This file is based on TelepathyQtYell Models
+ * Model of all accounts with inbuilt grouping and filtering
  *
- * Copyright (C) 2010 Collabora Ltd. <info@collabora.co.uk>
- * Copyright (C) 2011 Martin Klapetek <martin dot klapetek at gmail dot com>
+ * Copyright (C) 2013 David Edmundson <kde@davidedmundson.co.uk>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -20,137 +18,61 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef TELEPATHY_CONTACTS_MODEL_H
-#define TELEPATHY_CONTACTS_MODEL_H
+#ifndef KTP_CONTACTS_MODEL_H
+#define KTP_CONTACTS_MODEL_H
 
-#include <QAbstractListModel>
-
-#include <TelepathyQt/Account>
-#include <TelepathyQt/AccountManager>
-#include <TelepathyQt/TextChannel>
-#include <TelepathyQt/Types>
-
-#include <KTp/ktp-metatypes.h>
+#include <KTp/Models/contacts-filter-model.h>
+#include <KTp/types.h>
 #include <KTp/ktp-export.h>
 
-class ContactModelItem;
-class TreeNode;
+namespace KTp
+{
 
-class KTP_EXPORT ContactsModel : public QAbstractItemModel
+/** This class combines the list model and all the relevant filtering into a simple to use class
+    In most cases you should use this as the entry point to the models in your application
+ */
+
+class KTP_EXPORT ContactsModel : public KTp::ContactsFilterModel
 {
     Q_OBJECT
-    Q_DISABLE_COPY(ContactsModel)
-    Q_PROPERTY(int accountCount READ accountCount NOTIFY accountCountChanged)
-    Q_ENUMS(Role)
-    Q_ENUMS(RowType)
+    Q_PROPERTY(GroupMode groupMode READ groupMode WRITE setGroupMode NOTIFY groupModeChanged)
+    Q_PROPERTY(Tp::AccountManagerPtr accountManager WRITE setAccountManager)
+
+    Q_ENUMS(GroupMode)
 
 public:
-
-    enum RowType {
-        ContactRowType,
-        AccountRowType,
-        GroupRowType,
-        UserRowType
+    enum GroupMode {
+        /** Contacts are not grouped and are a simple flat list*/
+        NoGrouping,
+        /** Contacts are grouped by their account using AccountsTreeProxyModel*/
+        AccountGrouping,
+        /** Contacts are grouped by their group name using GroupsTreeProxyModel*/
+        GroupGrouping
     };
 
-    enum Role {
-        // general roles
-        ItemRole = Qt::UserRole,
-        AvatarRole,
-        IdRole,
-        TypeRole,
+    ContactsModel(QObject *parent);
 
-        AccountRole,
-        ContactRole,
-
-        // account roles
-        ValidRole,
-        EnabledRole,
-        ConnectionManagerNameRole,
-        ProtocolNameRole,
-        DisplayNameRole,
-        IconRole,
-        NicknameRole,
-        ConnectsAutomaticallyRole,
-        ChangingPresenceRole,
-        AutomaticPresenceRole,
-        AutomaticPresenceTypeRole,
-        AutomaticPresenceStatusRole,
-        AutomaticPresenceStatusMessageRole,
-        CurrentPresenceRole,
-        CurrentPresenceTypeRole,
-        CurrentPresenceStatusRole,
-        CurrentPresenceStatusMessageRole,
-        RequestedPresenceRole,
-        RequestedPresenceTypeRole,
-        RequestedPresenceStatusRole,
-        RequestedPresenceStatusMessageRole,
-        ConnectionStatusRole,
-        ConnectionStatusReasonRole,
-
-        // contact roles
-        AliasRole,
-        PresenceRole,
-        PresenceIconRole,
-        PresenceStatusRole,
-        PresenceTypeRole,
-        PresenceMessageRole,
-        SubscriptionStateRole,
-        PublishStateRole,
-        BlockedRole,
-        GroupsRole,
-        TextChatCapabilityRole,
-        MediaCallCapabilityRole,
-        AudioCallCapabilityRole,
-        VideoCallCapabilityRole,
-        UpgradeCallCapabilityRole,
-        FileTransferCapabilityRole,
-        DesktopSharingCapabilityRole,
-        SSHContactCapabilityRole,
-        ClientTypesRole,
-
-        TotalUsersCountRole,
-        OnlineUsersCountRole,
-
-        CustomRole // a placemark for custom roles in inherited models
-    };
-
-    explicit ContactsModel(QObject *parent = 0);
     virtual ~ContactsModel();
 
-    void setAccountManager(const Tp::AccountManagerPtr &am);
+    /** Sets the accounts manager to be used for the KTp::ContactListModel*/
+    void setAccountManager(const Tp::AccountManagerPtr &accountManager);
 
-    virtual int rowCount(const QModelIndex &parent = QModelIndex()) const;
-    virtual int columnCount(const QModelIndex &parent = QModelIndex()) const;
-    virtual QVariant data(const QModelIndex &index, int role) const;
+    /** Specify how the contacts should be grouped together*/
+    void setGroupMode(GroupMode mode);
 
-    Tp::AccountPtr accountForContactItem(ContactModelItem* contactItem) const;
-    Tp::AccountPtr accountPtrForPath(const QString &accountPath) const;
-
-    virtual Qt::ItemFlags flags(const QModelIndex &index) const;
-    virtual bool setData(const QModelIndex &index, const QVariant &value, int role = Qt::EditRole);
-    virtual QModelIndex index(int row, int column = 0, const QModelIndex &parent = QModelIndex()) const;
-    virtual QModelIndex index(TreeNode *node) const;
-    virtual QModelIndex parent(const QModelIndex &index) const;
-
-    int accountCount() const;
-    Q_INVOKABLE QObject *accountItemForId(const QString &id) const;
-    Q_INVOKABLE QObject *contactItemForId(const QString &accountId, const QString &contactId) const;
+    /** The currently specified grouping model*/
+    GroupMode groupMode() const;
 
 Q_SIGNALS:
-    void accountCountChanged();
-    void accountConnectionStatusChanged(const QString &accountId, int status);
-
-public Q_SLOTS:
-    void onNewAccount(const Tp::AccountPtr &account);
-    void onItemChanged(TreeNode *node);
-    void onItemsAdded(TreeNode *parent, const QList<TreeNode *> &nodes);
-    void onItemsRemoved(TreeNode *parent, int first, int last);
+    void groupModeChanged();
 
 private:
-    struct Private;
-    friend struct Private;
-    Private *mPriv;
+    class Private;
+    Private *d;
+
+    void updateGroupProxyModels();
 };
 
-#endif // TELEPATHY_ACCOUNTS_MODEL_H
+}
+
+#endif // KTP_CONTACTS_MODEL_H

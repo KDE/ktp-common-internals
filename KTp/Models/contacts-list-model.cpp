@@ -17,7 +17,6 @@
 */
 
 #include "contacts-list-model.h"
-#include "contact.h"
 
 #include <TelepathyQt/Account>
 #include <TelepathyQt/Contact>
@@ -25,8 +24,9 @@
 #include <TelepathyQt/Connection>
 #include <TelepathyQt/ContactManager>
 
-#include <KTp/Models/contacts-model.h>
-#include <KTp/presence.h>
+#include "contact.h"
+#include "presence.h"
+#include "types.h"
 
 class KTp::ContactsListModel::Private
 {
@@ -43,51 +43,26 @@ KTp::ContactsListModel::ContactsListModel(QObject *parent) :
     d->contactManager = 0;
 
     QHash<int, QByteArray> roles;
-    roles[ContactsModel::IdRole] = "id";
-    roles[ContactsModel::AccountRole] = "account";
-    roles[ContactsModel::ContactRole] = "contact";
-    roles[ContactsModel::ValidRole] = "valid";
-    roles[ContactsModel::EnabledRole] = "enabled";
-    roles[ContactsModel::ConnectionManagerNameRole] = "connectionManager";
-    roles[ContactsModel::ProtocolNameRole] = "protocol";
-    roles[ContactsModel::DisplayNameRole] = "displayName";
-    roles[ContactsModel::IconRole] = "icon";
-    roles[ContactsModel::NicknameRole] = "nickname";
-    roles[ContactsModel::ConnectsAutomaticallyRole] = "connectsAutomatically";
-    roles[ContactsModel::ChangingPresenceRole] = "changingPresence";
-    roles[ContactsModel::AutomaticPresenceRole] = "automaticPresence";
-    roles[ContactsModel::AutomaticPresenceTypeRole] = "automaticPresenceType";
-    roles[ContactsModel::AutomaticPresenceStatusRole] = "automaticPresenceStatus";
-    roles[ContactsModel::AutomaticPresenceStatusMessageRole] = "automaticPresenceStatusMessage";
-    roles[ContactsModel::CurrentPresenceRole] = "currentPresence";
-    roles[ContactsModel::CurrentPresenceTypeRole] = "currentPresenceType";
-    roles[ContactsModel::CurrentPresenceStatusRole] = "currentPresenceStatus";
-    roles[ContactsModel::CurrentPresenceStatusMessageRole] = "currentPresenceStatusMessage";
-    roles[ContactsModel::RequestedPresenceRole] = "requestedPresence";
-    roles[ContactsModel::RequestedPresenceTypeRole] = "requestedPresenceType";
-    roles[ContactsModel::RequestedPresenceStatusRole] = "requestedPresenceStatus";
-    roles[ContactsModel::RequestedPresenceStatusMessageRole] = "requestedPresenceStatusMessage";
-    roles[ContactsModel::ConnectionStatusRole] = "connectionStatus";
-    roles[ContactsModel::ConnectionStatusReasonRole] = "connectionStatusReason";
-    roles[ContactsModel::AliasRole] = "aliasName";
-    roles[ContactsModel::AvatarRole] = "avatar";
-    roles[ContactsModel::PresenceRole] = "presence";
-    roles[ContactsModel::PresenceIconRole] = "presenceIcon";
-    roles[ContactsModel::PresenceStatusRole] = "presenceStatus";
-    roles[ContactsModel::PresenceTypeRole] = "presenceType";
-    roles[ContactsModel::PresenceMessageRole] = "presenceMessage";
-    roles[ContactsModel::SubscriptionStateRole] = "subscriptionState";
-    roles[ContactsModel::PublishStateRole] = "publishState";
-    roles[ContactsModel::BlockedRole] = "blocked";
-    roles[ContactsModel::GroupsRole] = "groups";
-    roles[ContactsModel::TextChatCapabilityRole] = "textChat";
-    roles[ContactsModel::MediaCallCapabilityRole] = "mediaCall";
-    roles[ContactsModel::AudioCallCapabilityRole] = "audioCall";
-    roles[ContactsModel::VideoCallCapabilityRole] = "videoCall";
-    roles[ContactsModel::UpgradeCallCapabilityRole] = "upgradeCall";
-    roles[ContactsModel::FileTransferCapabilityRole] = "fileTransfer";
-    roles[ContactsModel::DesktopSharingCapabilityRole] = "desktopSharing";
-    roles[ContactsModel::SSHContactCapabilityRole] = "sshContact";
+    roles[KTp::RowTypeRole]= "type";
+    roles[KTp::IdRole]= "id";
+
+    roles[KTp::ContactRole]= "contact";
+    roles[KTp::AccountRole]= "account";
+
+    roles[KTp::ContactClientTypesRole]= "clientTypes";
+    roles[KTp::ContactAvatarPathRole]= "avatar";
+    roles[KTp::ContactGroupsRole]= "groups";
+    roles[KTp::ContactPresenceMessageRole]= "presenceMessage";
+    roles[KTp::ContactPresenceTypeRole]= "presenceType";
+    roles[KTp::ContactPresenceIconRole]= "presenceIcon";
+    roles[KTp::ContactSubscriptionStateRole]= "subscriptionState";
+    roles[KTp::ContactPublishStateRole]= "publishState";
+    roles[KTp::ContactIsBlockedRole]= "blocked";
+    roles[KTp::ContactCanTextChatRole]= "textChat";
+    roles[KTp::ContactCanFileTransferRole]= "fileTransfer";
+    roles[KTp::ContactCanAudioCallRole]= "audioCall";
+    roles[KTp::ContactCanVideoCallRole]= "videoCall";
+    roles[KTp::ContactTubesRole]= "tubes";
     setRoleNames(roles);
 }
 
@@ -119,54 +94,57 @@ QVariant KTp::ContactsListModel::data(const QModelIndex &index, int role) const
                    "Failed to cast Tp::ContactPtr to KTp::ContactPtr. Are you using KTp::ContactFactory?");
 
         switch (role) {
-        case ContactsModel::IdRole:
-            return contact->id();
-        case ContactsModel::TypeRole:
-            return ContactsModel::ContactRowType;
-        case ContactsModel::ContactRole:
-            return QVariant::fromValue(d->contacts[row]); //Tp::ContactPtr and NOT KTp::ContactPtr
-        case ContactsModel::AccountRole:
-            return QVariant::fromValue(d->contactManager->accountForContact(contact));
+        case KTp::RowTypeRole:
+            return KTp::ContactRowType;
         case Qt::DisplayRole:
-            return contact->alias();
-        case ContactsModel::AliasRole:
-            return contact->alias();
-        case ContactsModel::PresenceRole:
-            return QVariant::fromValue(contact->presence());
-        case ContactsModel::PresenceIconRole:
-            return QIcon(contact->presence().icon());
-        case ContactsModel::PresenceStatusRole:
-            return contact->presence().status();
-        case ContactsModel::PresenceTypeRole:
-            return contact->presence().type();
-        case ContactsModel::PresenceMessageRole:
-            return contact->presence().statusMessage();
-        case ContactsModel::SubscriptionStateRole:
-            return contact->subscriptionState();
-        case ContactsModel::PublishStateRole:
-            return contact->publishState();
-        case ContactsModel::BlockedRole:
-            return contact->isBlocked();
-        case ContactsModel::GroupsRole:
-            return contact->groups();
-        case ContactsModel::AvatarRole:
-            return contact->avatarData().fileName;
-        case Qt::DecorationRole:
-            return QImage(contact->avatarData().fileName);
-        case ContactsModel::TextChatCapabilityRole:
-            return contact->capabilities().textChats();
-        case ContactsModel::ClientTypesRole:
+            return contact->alias();    
+       case KTp::IdRole:
+            return contact->id();
+
+        case KTp::ContactRole:
+            return QVariant::fromValue(contact);
+        case KTp::AccountRole:
+            return QVariant::fromValue(d->contactManager->accountForContact(contact));
+
+        case KTp::ContactClientTypesRole:
             return contact->clientTypes();
-        case ContactsModel::FileTransferCapabilityRole:
+        case KTp::ContactAvatarPathRole:
+            return contact->avatarData().fileName;
+        case KTp::ContactGroupsRole:
+            return contact->groups();
+        
+        case KTp::ContactPresenceNameRole:
+            return contact->presence().displayString();
+        case KTp::ContactPresenceMessageRole:
+            return contact->presence().statusMessage();
+        case KTp::ContactPresenceTypeRole:
+            return contact->presence().type();
+        case KTp::ContactPresenceIconRole:
+            return contact->presence().iconName();
+        
+        case KTp::ContactSubscriptionStateRole:
+            return contact->subscriptionState();
+          case KTp::ContactPublishStateRole:
+            return contact->publishState();
+        case KTp::ContactIsBlockedRole:
+            return contact->isBlocked();
+
+        case KTp::ContactCanTextChatRole:
+            return true; //FIXME
+          case KTp::ContactCanFileTransferRole:
             return contact->fileTransferCapability();
-        case ContactsModel::AudioCallCapabilityRole:
+        case KTp::ContactCanAudioCallRole:
             return contact->audioCallCapability();
-        case ContactsModel::VideoCallCapabilityRole:
+        case KTp::ContactCanVideoCallRole:
             return contact->videoCallCapability();
+        case KTp::ContactTubesRole:
+            //FIXME this does not check own selfContact caps.
+            return QStringList() << contact->capabilities().streamTubeServices()
+                                 << contact->capabilities().dbusTubeServices();
+
         default:
             break;
         }
-
     }
     return QVariant();
 }

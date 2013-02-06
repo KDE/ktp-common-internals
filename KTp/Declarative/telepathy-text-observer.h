@@ -21,10 +21,9 @@
 #define TELEPATHY_TEXT_OBSERVER_H
 
 #include "conversations-model.h"
+#include "types.h"
 
 #include <TelepathyQt/AbstractClientHandler>
-#include "ktp-metatypes.h"
-
 
 class TelepathyTextObserver : public QObject
 {
