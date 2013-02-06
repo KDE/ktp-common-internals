@@ -42,7 +42,7 @@ KTp::ContactsListModel::ContactsListModel(QObject *parent) :
 {
     d->contactManager = 0;
 
-    QHash<int, QByteArray> roles;
+    QHash<int, QByteArray> roles = roleNames();
     roles[KTp::RowTypeRole]= "type";
     roles[KTp::IdRole]= "id";
 
@@ -97,7 +97,7 @@ QVariant KTp::ContactsListModel::data(const QModelIndex &index, int role) const
         case KTp::RowTypeRole:
             return KTp::ContactRowType;
         case Qt::DisplayRole:
-            return contact->alias();    
+            return contact->alias();
        case KTp::IdRole:
             return contact->id();
 
@@ -112,7 +112,7 @@ QVariant KTp::ContactsListModel::data(const QModelIndex &index, int role) const
             return contact->avatarData().fileName;
         case KTp::ContactGroupsRole:
             return contact->groups();
-        
+
         case KTp::ContactPresenceNameRole:
             return contact->presence().displayString();
         case KTp::ContactPresenceMessageRole:
@@ -121,7 +121,7 @@ QVariant KTp::ContactsListModel::data(const QModelIndex &index, int role) const
             return contact->presence().type();
         case KTp::ContactPresenceIconRole:
             return contact->presence().iconName();
-        
+
         case KTp::ContactSubscriptionStateRole:
             return contact->subscriptionState();
           case KTp::ContactPublishStateRole:
