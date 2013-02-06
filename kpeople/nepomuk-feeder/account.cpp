@@ -132,13 +132,12 @@ void Account::onContactManagerStateChanged(Tp::ContactListState state)
     }
 }
 
-
-void Account::onNicknameChanged(const QString& nickname)
+void Account::onNicknameChanged(const QString &nickname)
 {
     emit nicknameChanged(m_account->objectPath(), nickname);
 }
 
-void Account::onAllKnownContactsChanged(const Tp::Contacts& added, const Tp::Contacts& removed)
+void Account::onAllKnownContactsChanged(const Tp::Contacts &added, const Tp::Contacts &removed)
 {
     // For each added contact, let's check if we already have a Contact wrapper for it
     foreach (const Tp::ContactPtr &contact, added) {
@@ -184,7 +183,7 @@ void Account::onNewContact(const Tp::ContactPtr &contact)
     }
 }
 
-void Account::onContactAddedToGroup(const QString& group)
+void Account::onContactAddedToGroup(const QString &group)
 {
     const Tp::ContactPtr contact(qobject_cast<Tp::Contact*>(sender()));
     Q_ASSERT(contact);
@@ -192,7 +191,7 @@ void Account::onContactAddedToGroup(const QString& group)
     emit contactGroupsChanged(m_account->objectPath(), contact->id(), contact->groups());
 }
 
-void Account::onContactRemovedFromGroup(const QString& group)
+void Account::onContactRemovedFromGroup(const QString &group)
 {
     const Tp::ContactPtr contact(qobject_cast<Tp::Contact*>(sender()));
     Q_ASSERT(contact);
@@ -217,4 +216,3 @@ void Account::onContactAvatarChanged(const Tp::AvatarData &avatar)
 }
 
 #include "account.moc"
-

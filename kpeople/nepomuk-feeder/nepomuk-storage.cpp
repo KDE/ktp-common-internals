@@ -77,25 +77,29 @@ public:
     QString protocol;
 };
 
-AccountResources::AccountResources(const QUrl &account,
-                                   const QString &protocol)
-  : d(new Data(account, protocol))
-{ }
+AccountResources::AccountResources(const QUrl &account, const QString &protocol)
+    : d(new Data(account, protocol))
+{
+}
 
 AccountResources::AccountResources()
-  : d(new Data())
-{ }
+    : d(new Data())
+{
+}
 
 AccountResources::AccountResources(const AccountResources &other)
-  : d(other.d)
-{ }
+    : d(other.d)
+{
+}
 
 AccountResources::AccountResources(const QUrl &url)
-  : d(new Data(url, QString()))
-{ }
+    : d(new Data(url, QString()))
+{
+}
 
 AccountResources::~AccountResources()
-{ }
+{
+}
 
 const QUrl &AccountResources::account() const
 {
@@ -157,36 +161,40 @@ public:
 };
 
 ContactIdentifier::ContactIdentifier(const QString &accountId, const QString &contactId)
-  : d(new Data(accountId, contactId))
-{ }
+    : d(new Data(accountId, contactId))
+{
+}
 
 ContactIdentifier::ContactIdentifier(const ContactIdentifier &other)
-  : d(other.d)
-{ }
+    : d(other.d)
+{
+}
 
 ContactIdentifier::ContactIdentifier()
-  : d(new Data())
-{ }
+    : d(new Data())
+{
+}
 
 ContactIdentifier::~ContactIdentifier()
-{ }
+{
+}
 
-const QString &ContactIdentifier::accountId() const
+const QString& ContactIdentifier::accountId() const
 {
     return d->accountId;
 }
 
-const QString &ContactIdentifier::contactId() const
+const QString& ContactIdentifier::contactId() const
 {
     return d->contactId;
 }
 
-bool ContactIdentifier::operator==(const ContactIdentifier& other) const
+bool ContactIdentifier::operator==(const ContactIdentifier &other) const
 {
     return ((other.accountId() == accountId()) && (other.contactId() == contactId()));
 }
 
-bool ContactIdentifier::operator!=(const ContactIdentifier& other) const
+bool ContactIdentifier::operator!=(const ContactIdentifier &other) const
 {
     return !(*this == other);
 }
@@ -215,39 +223,42 @@ public:
     QUrl imAccount;
 };
 
-ContactResources::ContactResources(const QUrl &personContact,
-                                   const QUrl &imAccount)
-  : d(new Data(personContact, imAccount))
-{ }
+ContactResources::ContactResources(const QUrl &personContact, const QUrl &imAccount)
+    : d(new Data(personContact, imAccount))
+{
+}
 
 ContactResources::ContactResources()
-  : d(new Data())
-{ }
+    : d(new Data())
+{
+}
 
 ContactResources::ContactResources(const ContactResources &other)
-  : d(other.d)
-{ }
+    : d(other.d)
+{
+}
 
 ContactResources::~ContactResources()
-{ }
+{
+}
 
-const QUrl &ContactResources::personContact() const
+const QUrl& ContactResources::personContact() const
 {
     return d->personContact;
 }
 
-const QUrl &ContactResources::imAccount() const
+const QUrl& ContactResources::imAccount() const
 {
     return d->imAccount;
 }
 
-bool ContactResources::operator==(const ContactResources& other) const
+bool ContactResources::operator==(const ContactResources &other) const
 {
     return ((other.personContact() == personContact()) &&
             (other.imAccount() == imAccount()));
 }
 
-bool ContactResources::operator!=(const ContactResources& other) const
+bool ContactResources::operator!=(const ContactResources &other) const
 {
     return !(*this == other);
 }
@@ -263,16 +274,12 @@ NepomukStorage::NepomukStorage(QObject *parent)
 {
     QTimer::singleShot(0, this, SLOT(init()));
 
-    m_graphTimer.setSingleShot( true );
-    connect( &m_graphTimer, SIGNAL(timeout()), this, SLOT(onContactTimer()) );
+    m_graphTimer.setSingleShot(true);
+    connect(&m_graphTimer, SIGNAL(timeout()), this, SLOT(onContactTimer()));
 }
 
 NepomukStorage::~NepomukStorage()
 {
-    kDebug();
-//     if (!m_runningJobs.isEmpty()) {
-//         m_aboutToBeDestroyed = true;
-//     }
 }
 
 void NepomukStorage::init()
@@ -282,32 +289,32 @@ void NepomukStorage::init()
 
     QLatin1String query("select ?o where { <nepomuk:/me> pimo:groundingOccurrence ?o."
                         "?o a nco:PersonContact .}");
-    Soprano::Model* model = Nepomuk2::ResourceManager::instance()->mainModel();
-    Soprano::QueryResultIterator it = model->executeQuery( query, Soprano::Query::QueryLanguageSparql );
+    Soprano::Model *model = Nepomuk2::ResourceManager::instance()->mainModel();
+    Soprano::QueryResultIterator it = model->executeQuery(query, Soprano::Query::QueryLanguageSparql);
 
     QList<QUrl> groundingOccurrences;
-    while( it.next() ) {
+    while (it.next()) {
         groundingOccurrences << it["o"].uri();
     }
 
-    if( groundingOccurrences.isEmpty() ) {
+    if (groundingOccurrences.isEmpty()) {
         Nepomuk2::SimpleResource personContact;
-        personContact.addType( NCO::PersonContact() );
+        personContact.addType(NCO::PersonContact());
 
-        Nepomuk2::SimpleResource me( QUrl("nepomuk:/me") );
-        me.addProperty( PIMO::groundingOccurrence(), personContact );
+        Nepomuk2::SimpleResource me(QUrl("nepomuk:/me"));
+        me.addProperty(PIMO::groundingOccurrence(), personContact);
 
         Nepomuk2::SimpleResourceGraph graph;
         graph << me << personContact;
 
-        Nepomuk2::StoreResourcesJob * job = Nepomuk2::storeResources( graph );
+        Nepomuk2::StoreResourcesJob *job = Nepomuk2::storeResources(graph);
         job->exec();
 
-        if( job->error() ) {
+        if (job->error()) {
             kWarning() << job->errorString();
             return;
         }
-        groundingOccurrences << job->mappings().value( personContact.uri() );
+        groundingOccurrences << job->mappings().value(personContact.uri());
     }
 
     //FIXME: Use all of them, not just the first one
@@ -325,11 +332,11 @@ void NepomukStorage::init()
                                             " ?r a nco:IMAccount . ?r nco:imAccountType ?protocol ."
                                             " ?r %1 ?accountIdentifier . "
                                             " %2 nco:hasIMAccount ?r . }")
-                        .arg( Soprano::Node::resourceToN3(Telepathy::accountIdentifier()),
-                              Soprano::Node::resourceToN3( m_mePersonContact ) );
+                        .arg(Soprano::Node::resourceToN3(Telepathy::accountIdentifier()),
+                             Soprano::Node::resourceToN3(m_mePersonContact));
 
-        Soprano::QueryResultIterator it = model->executeQuery( query, Soprano::Query::QueryLanguageSparql );
-        while( it.next() ) {
+        Soprano::QueryResultIterator it = model->executeQuery(query, Soprano::Query::QueryLanguageSparql);
+        while (it.next()) {
             QUrl imAccount(it["r"].uri());
 
             // If no Telepathy identifier, then the account is ignored.
@@ -342,11 +349,11 @@ void NepomukStorage::init()
 
 
             // If it does have a telepathy identifier, then it is added to the cache.
-            AccountResources acRes( imAccount, it["protocol"].literal().toString() );
-            m_accounts.insert( identifier, acRes );
+            AccountResources acRes(imAccount, it["protocol"].literal().toString());
+            m_accounts.insert(identifier, acRes);
         }
 
-        QTimer::singleShot( 0, this, SLOT(onAccountsQueryFinishedListing()) );
+        QTimer::singleShot(0, this, SLOT(onAccountsQueryFinishedListing()));
     }
 }
 
@@ -354,11 +361,11 @@ void NepomukStorage::init()
 void NepomukStorage::onAccountsQueryFinishedListing()
 {
     kDebug() << "Accounts Query Finished Successfully.";
-    Soprano::Model* model = Nepomuk2::ResourceManager::instance()->mainModel();
+    Soprano::Model *model = Nepomuk2::ResourceManager::instance()->mainModel();
     // Got all the accounts, now move on to the contacts.
 
-    QHashIterator<QString, AccountResources> iter( m_accounts );
-    while( iter.hasNext() ) {
+    QHashIterator<QString, AccountResources> iter(m_accounts);
+    while (iter.hasNext()) {
         iter.next();
 
         const QString& accountId = iter.key();
@@ -367,23 +374,23 @@ void NepomukStorage::onAccountsQueryFinishedListing()
         QString query = QString::fromLatin1("select distinct ?r ?id ?contact where { ?r a nco:IMAccount . "
                                             " ?r nco:imID ?id ; nco:isAccessedBy %1 . "
                                             " ?contact nco:hasIMAccount ?r . }")
-                        .arg( Soprano::Node::resourceToN3(accRes.account()) );
+                        .arg(Soprano::Node::resourceToN3(accRes.account()));
 
-        Soprano::QueryResultIterator it = model->executeQuery( query, Soprano::Query::QueryLanguageSparql );
-        while( it.next() ) {
+        Soprano::QueryResultIterator it = model->executeQuery(query, Soprano::Query::QueryLanguageSparql);
+        while (it.next()) {
 
             QUrl imAccount = it["r"].uri();
             QUrl contact = it["contact"].uri();
             QString id = it["id"].literal().toString();
 
-            ContactIdentifier ci( accountId, id );
-            ContactResources cr( contact, imAccount );
+            ContactIdentifier ci(accountId, id);
+            ContactResources cr(contact, imAccount);
 
-            m_contacts.insert( ci, cr );
+            m_contacts.insert(ci, cr);
         }
     }
 
-    emit initialised( true );
+    emit initialised(true);
 }
 
 
@@ -394,8 +401,8 @@ void NepomukStorage::cleanupAccounts(const QList<QString> &paths)
     // Go through all our accounts and remove all the ones that are not there in the path
     // list given by the controller
     QList<QUrl> removedAccounts;
-    QMutableHashIterator<QString, AccountResources> it( m_accounts );
-    while( it.hasNext() ) {
+    QMutableHashIterator<QString, AccountResources> it(m_accounts);
+    while (it.hasNext()) {
         it.next();
         if (!pathSet.contains(it.key())) {
             removedAccounts << it.value().account();
@@ -406,10 +413,10 @@ void NepomukStorage::cleanupAccounts(const QList<QString> &paths)
     // TODO: Do this properly once the ontology supports this
     // TODO: What do we do with an account in nepomuk which the use has removed?
     //       For now we're just deleting them
-    if( !removedAccounts.isEmpty() ) {
-        KJob *job = Nepomuk2::removeResources( removedAccounts, Nepomuk2::RemoveSubResoures );
+    if (!removedAccounts.isEmpty()) {
+        KJob *job = Nepomuk2::removeResources(removedAccounts, Nepomuk2::RemoveSubResoures);
         job->exec();
-        if( job->error() ) {
+        if (job->error()) {
             kWarning() << job->errorString();
         }
     }
@@ -437,32 +444,32 @@ void NepomukStorage::createAccount(const QString &path, const QString &id, const
     kDebug() << "Could not find corresponding IMAccount in Nepomuk. Creating a new one.";
 
     Nepomuk2::SimpleResource imAccount;
-    imAccount.addType( NCO::IMAccount() );
-    imAccount.addProperty( Telepathy::accountIdentifier(), path );
-    imAccount.addProperty( NCO::imAccountType(), protocol );
-    imAccount.addProperty( NCO::imID(), id );
+    imAccount.addType(NCO::IMAccount());
+    imAccount.addProperty(Telepathy::accountIdentifier(), path);
+    imAccount.addProperty(NCO::imAccountType(), protocol);
+    imAccount.addProperty(NCO::imID(), id);
 
     Nepomuk2::SimpleResource mePersonContact(m_mePersonContact);
-    mePersonContact.addProperty( NCO::hasIMAccount(), imAccount );
+    mePersonContact.addProperty(NCO::hasIMAccount(), imAccount);
 
     Nepomuk2::SimpleResourceGraph graph;
     graph << imAccount << mePersonContact;
 
-    Nepomuk2::StoreResourcesJob* job = graph.save();
+    Nepomuk2::StoreResourcesJob *job = graph.save();
     job->exec();
-    if( job->error() ) {
+    if (job->error()) {
         kError() << job->error();
-        Q_ASSERT( job->error() );
+        Q_ASSERT(job->error());
     }
 
-    const QUrl imAccountUri = job->mappings().value( imAccount.uri() );
+    const QUrl imAccountUri = job->mappings().value(imAccount.uri());
     m_accounts.insert(path, AccountResources(imAccountUri, protocol));
 }
 
-AccountResources NepomukStorage::findAccount(const QString& path)
+AccountResources NepomukStorage::findAccount(const QString &path)
 {
     QHash<QString, AccountResources>::const_iterator it = m_accounts.constFind(path);
-    if( it == m_accounts.constEnd() ) {
+    if (it == m_accounts.constEnd()) {
         kWarning() << "Account not found: " << path;
         return AccountResources();
     }
@@ -473,11 +480,12 @@ AccountResources NepomukStorage::findAccount(const QString& path)
 void NepomukStorage::setAccountNickname(const QString &path, const QString &nickname)
 {
     AccountResources account = findAccount(path);
-    if( account.isEmpty() )
+    if (account.isEmpty()) {
         return;
+    }
 
     Nepomuk2::SimpleResource &accountRes = m_graph[account.account()];
-    accountRes.setProperty( NCO::imNickname(), nickname );
+    accountRes.setProperty(NCO::imNickname(), nickname);
 
     fireGraphTimer();
 }
@@ -486,7 +494,7 @@ void NepomukStorage::setAccountNickname(const QString &path, const QString &nick
 // Contact Functions
 //
 
-ContactResources NepomukStorage::findContact(const QString& path, const QString& id)
+ContactResources NepomukStorage::findContact(const QString &path, const QString &id)
 {
     const ContactIdentifier identifier(path, id);
 
@@ -503,8 +511,9 @@ ContactResources NepomukStorage::findContact(const QString& path, const QString&
 
 void NepomukStorage::fireGraphTimer()
 {
-    if( !m_graphTimer.isActive() )
-        m_graphTimer.start( 500 );
+    if (!m_graphTimer.isActive()) {
+        m_graphTimer.start(500);
+    }
 }
 
 
@@ -516,11 +525,12 @@ void NepomukStorage::cleanupAccountContacts(const QString &path, const QList<QSt
     // Go through all the contacts that we have received from the account and create any
     // new ones in Nepomuk.
     QSet<QString> nepomukIds;
-    foreach( const ContactIdentifier& ci, m_contacts.keys() )
-        nepomukIds.insert( ci.contactId() );
+    foreach (const ContactIdentifier &ci, m_contacts.keys()) {
+        nepomukIds.insert(ci.contactId());
+    }
 
-    QSet<QString> newIds = idSet.subtract( nepomukIds );
-    foreach( const QString& id, newIds ) {
+    QSet<QString> newIds = idSet.subtract(nepomukIds);
+    foreach (const QString &id, newIds) {
         createContact(path, id);
     }
 }
@@ -552,39 +562,40 @@ void NepomukStorage::createContact(const QString &path, const QString &id)
 
     Nepomuk2::SimpleResource newImAccount;
     //TODO: Somehow add this imAccount as a sub resource the account, maybe.
-    newImAccount.addType( NCO::IMAccount() );
-    newImAccount.setProperty( NCO::imStatus(), QString::fromLatin1("unknown") );
-    newImAccount.setProperty( NCO::imID(), id );
-    newImAccount.setProperty( Telepathy::statusType(), Tp::ConnectionPresenceTypeUnknown );
-    newImAccount.setProperty( NCO::imAccountType(), accountRes.protocol() );
-    newImAccount.addProperty( NCO::isAccessedBy(), accountUri );
+    newImAccount.addType(NCO::IMAccount());
+    newImAccount.setProperty(NCO::imStatus(), QString::fromLatin1("unknown"));
+    newImAccount.setProperty(NCO::imID(), id);
+    newImAccount.setProperty(Telepathy::statusType(), Tp::ConnectionPresenceTypeUnknown);
+    newImAccount.setProperty(NCO::imAccountType(), accountRes.protocol());
+    newImAccount.addProperty(NCO::isAccessedBy(), accountUri);
 
-    newPersonContact.addProperty( NCO::hasIMAccount(), newImAccount );
+    newPersonContact.addProperty(NCO::hasIMAccount(), newImAccount);
 
     Nepomuk2::SimpleResourceGraph graph;
     graph << newPersonContact << newImAccount;
 
-    Nepomuk2::StoreResourcesJob* job = graph.save();
+    Nepomuk2::StoreResourcesJob *job = graph.save();
     job->exec();
-    if( job->error() ) {
+    if (job->error()) {
         kError() << job->errorString();
-        Q_ASSERT( job->error() );
+        Q_ASSERT(job->error());
         return;
     }
 
-    const QUrl personContactUri = job->mappings().value( newPersonContact.uri() );
-    const QUrl imAccountUri = job->mappings().value( newImAccount.uri() );
-    m_contacts.insert( identifier, ContactResources(personContactUri, imAccountUri) );
+    const QUrl personContactUri = job->mappings().value(newPersonContact.uri());
+    const QUrl imAccountUri = job->mappings().value(newImAccount.uri());
+    m_contacts.insert(identifier, ContactResources(personContactUri, imAccountUri));
 }
 
 void NepomukStorage::setContactAlias(const QString &path, const QString &id, const QString &alias)
 {
     ContactResources contact = findContact(path, id);
-    if( contact.isEmpty() )
+    if (contact.isEmpty()) {
         return;
+    }
 
     Nepomuk2::SimpleResource &imAccount = m_graph[contact.imAccount()];
-    imAccount.setProperty( NCO::imNickname(), alias);
+    imAccount.setProperty(NCO::imNickname(), alias);
 
     fireGraphTimer();
 }
@@ -602,6 +613,7 @@ void NepomukStorage::setContactGroups(const QString &path,
     if (groups.isEmpty()) {
         KJob *job = Nepomuk2::removeProperties(QList<QUrl>() << contact.personContact(),
                                                QList<QUrl>() << NCO::belongsToGroup());
+
         connect(job, SIGNAL(finished(KJob*)), this, SLOT(onRemovePropertiesJob(KJob*)));
         //TODO: Maybe remove empty groups?
         return;
@@ -632,19 +644,21 @@ void NepomukStorage::setContactAvatar(const QString &path,
                                       const Tp::AvatarData &avatar)
 {
     ContactResources contact = findContact(path, id);
-    if( contact.isEmpty() )
+    if (contact.isEmpty()) {
         return;
+    }
 
     QUrl avatarUrl = avatar.fileName;
-    if( avatarUrl.isEmpty() )
+    if (avatarUrl.isEmpty()) {
         return;
+    }
 
     //FIXME: Do not remove the old avatar from the photos list?
-    Nepomuk2::SimpleResource& personContact = m_graph[contact.personContact()];
-    personContact.setProperty( NCO::photo(), avatarUrl );
+    Nepomuk2::SimpleResource &personContact = m_graph[contact.personContact()];
+    personContact.setProperty(NCO::photo(), avatarUrl);
 
-    Nepomuk2::SimpleResource& imAccount = m_graph[contact.imAccount()];
-    imAccount.setProperty( Telepathy::avatar(), avatarUrl );
+    Nepomuk2::SimpleResource &imAccount = m_graph[contact.imAccount()];
+    imAccount.setProperty(Telepathy::avatar(), avatarUrl);
 
     fireGraphTimer();
     //TODO: Find a way to index the file as well.
@@ -652,15 +666,15 @@ void NepomukStorage::setContactAvatar(const QString &path,
 
 void NepomukStorage::onContactTimer()
 {
-    KJob *job = Nepomuk2::storeResources( m_graph, Nepomuk2::IdentifyNew, Nepomuk2::OverwriteAllProperties );
-    connect( job, SIGNAL(finished(KJob*)), this, SLOT(onContactGraphJob(KJob*)) );
+    KJob *job = Nepomuk2::storeResources(m_graph, Nepomuk2::IdentifyNew, Nepomuk2::OverwriteAllProperties);
+    connect(job, SIGNAL(finished(KJob*)), this, SLOT(onContactGraphJob(KJob*)));
 
     m_graph.clear();
 }
 
-void NepomukStorage::onContactGraphJob(KJob* job)
+void NepomukStorage::onContactGraphJob(KJob *job)
 {
-    if( job->error() ) {
+    if (job->error()) {
         kError() << job->errorString();
     }
 }
@@ -670,7 +684,7 @@ int qHash(ContactIdentifier c)
 {
     // FIXME: This is a shit way of doing it.
     QString temp;
-    temp.reserve( c.accountId().size() + 8 + c.contactId().size() );
+    temp.reserve(c.accountId().size() + 8 + c.contactId().size());
     temp.append(c.accountId());
     temp.append(QLatin1String("#--__--#"));
     temp.append(c.contactId());

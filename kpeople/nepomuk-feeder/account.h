@@ -80,6 +80,4 @@ private:
     QList< Tp::ContactPtr > m_contacts;
 };
 
-
 #endif // Header guard
-
