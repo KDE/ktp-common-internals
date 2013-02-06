@@ -9,6 +9,7 @@ set (ktp_models_private_SRCS
     accounts-tree-proxy-model.cpp
     contacts-filter-model.cpp
     contacts-list-model.cpp
+    contacts-model.cpp
     groups-tree-proxy-model.cpp
     rooms-model.cpp
 )
@@ -19,6 +20,7 @@ set (ktp_models_private_HDRS
     accounts-tree-proxy-model.h
     contacts-filter-model.h
     contacts-list-model.h
+    contacts-model.h
     groups-tree-proxy-model.h
     rooms-model.h
 )

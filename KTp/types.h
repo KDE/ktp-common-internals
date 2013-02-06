@@ -52,12 +52,12 @@ namespace KTp
         ContactClientTypesRole = Qt::UserRole + 2000, ///< stringlist. See Tp::Contact::ClientTypes
         ContactAvatarPathRole, ///<string. path to avatar file
         ContactGroupsRole, ///< stringlist. of all groups contact is in
-        
+
         ContactPresenceNameRole,
         ContactPresenceMessageRole,
         ContactPresenceTypeRole,
         ContactPresenceIconRole,
-        
+
         ContactSubscriptionStateRole, ///< enum of type Tp::Contact::PresenceState
         ContactPublishStateRole, ///< enum of type Tp::Contact::PresenceState
         ContactIsBlockedRole, ///< bool, true if contact is blocked
