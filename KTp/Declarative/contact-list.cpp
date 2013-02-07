@@ -89,7 +89,7 @@ KTp::ContactsFilterModel* ContactList::filterModel() const
     return m_filterModel;
 }
 
-void ContactList::startChat(const Tp::AccountPtr &account, const Tp::ContactPtr &contact)
+void ContactList::startChat(const Tp::AccountPtr &account, const KTp::ContactPtr &contact)
 {
     kDebug() << "Requesting chat for contact" << contact->alias();
     kDebug() << "account is" << account->normalizedName();

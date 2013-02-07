@@ -21,6 +21,7 @@
 
 #include <KTp/Models/contacts-list-model.h>
 #include <KTp/Models/contacts-filter-model.h>
+#include <KTp/contact.h>
 
 #include <TelepathyQt/Types>
 
@@ -35,7 +36,7 @@ class ContactList : public QObject
     KTp::ContactsFilterModel* filterModel() const;
 
   public Q_SLOTS:
-    void startChat(const Tp::AccountPtr &account, const Tp::ContactPtr &contact);
+    void startChat(const Tp::AccountPtr &account, const KTp::ContactPtr &contact);
 
   private Q_SLOTS:
     void onAccountManagerReady(Tp::PendingOperation *op);
