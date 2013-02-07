@@ -51,6 +51,10 @@ void Account::init()
             SIGNAL(connectionChanged(Tp::ConnectionPtr)),
             SLOT(onConnectionChanged(Tp::ConnectionPtr)));
 
+    connect(m_account.data(),
+            SIGNAL(removed()),
+            SLOT(onAccountRemoved()));
+
     QString protocolName = m_account->serviceName().isEmpty() ? m_account->protocolName() : m_account->serviceName();
     // Emit a signal to notify the storage that a new account has been constructed
     // FIXME: Some IM Accounts don't have an ID as such, e.g. Link-Local-XMPP.
@@ -149,6 +153,16 @@ void Account::onAllKnownContactsChanged(const Tp::Contacts &added, const Tp::Con
 
     // If contacts are removed, we don't actually need to do anything!
     Q_UNUSED(removed);
+}
+
+void Account::onAccountRemoved()
+{
+    Tp::AccountPtr account(qobject_cast<Tp::Account*>(sender()));
+    Q_ASSERT(account);
+
+    kDebug() << "Account being removed";
+
+    emit accountRemoved(account->objectPath());
 }
 
 void Account::onNewContact(const Tp::ContactPtr &contact)

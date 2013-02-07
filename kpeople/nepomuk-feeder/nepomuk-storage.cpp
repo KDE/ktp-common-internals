@@ -535,6 +535,30 @@ void NepomukStorage::cleanupAccountContacts(const QString &path, const QList<QSt
     }
 }
 
+void NepomukStorage::onAccountRemoved(const QString &path)
+{
+    AccountResources accountRes = m_accounts.value(path);
+    QUrl accountUri = accountRes.account();
+
+    QList<QUrl> urisToDelete;
+    urisToDelete << accountUri;
+
+    QList<ContactIdentifier> keys = m_contacts.keys(); // Splitting it so that the keys do not need to be reconstructed each time
+
+    for (int i = 0; i < m_contacts.keys().size(); i++) {
+        ContactIdentifier ci = keys.at(i);
+        if (ci.accountId() == path) {
+            ContactResources cr = m_contacts.value(ci);
+            urisToDelete << cr.personContact();
+            urisToDelete << cr.imAccount();
+        }
+    }
+
+    KJob *removeJob = Nepomuk2::removeDataByApplication(urisToDelete);
+    connect(removeJob, SIGNAL(finished(KJob*)),
+            this, SLOT(onContactGraphJob(KJob*)));
+}
+
 void NepomukStorage::createContact(const QString &path, const QString &id)
 {
     // First, check that we don't already have a record for this contact.

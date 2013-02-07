@@ -124,6 +124,7 @@ public Q_SLOTS:
     virtual void createAccount(const QString &path, const QString &id, const QString &protocol);
     virtual void setAccountNickname(const QString &path, const QString &nickname);
     virtual void cleanupAccountContacts(const QString &path, const QList<QString> &ids);
+    virtual void onAccountRemoved(const QString &path);
 
     virtual void createContact(const QString &path, const QString &id);
     virtual void setContactAlias(const QString &path, const QString &id, const QString &alias);

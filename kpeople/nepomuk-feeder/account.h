@@ -52,6 +52,7 @@ Q_SIGNALS:
     void accountDestroyed(const QString &path);
     void nicknameChanged(const QString &path, const QString &nickname);
     void initialContactsLoaded(const QString &path, const QList<QString> &ids);
+    void accountRemoved(const QString &path);
 
     void contactCreated(const QString &path, const QString &id);
     void contactAliasChanged(const QString &path, const QString &id, const QString &alias);
@@ -64,6 +65,7 @@ private Q_SLOTS:
     void onNicknameChanged(const QString &nickname);
     void onAllKnownContactsChanged(const Tp::Contacts &added, const Tp::Contacts &removed);
     void onNewContact(const Tp::ContactPtr &contact);
+    void onAccountRemoved();
 
     void onContactAddedToGroup(const QString &group);
     void onContactRemovedFromGroup(const QString &group);

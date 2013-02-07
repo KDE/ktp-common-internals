@@ -88,6 +88,13 @@ public Q_SLOTS:
      */
     virtual void cleanupAccountContacts(const QString &path, const QList<QString> &ids) = 0;
 
+    /**
+     * Invoked when the Tp account is removed from AccountManager
+     *
+     * \param path the object path of the account
+     */
+    virtual void onAccountRemoved(const QString &path) = 0;
+
 
     /**
      * Invoked when a Telepathy Contact is constructed.

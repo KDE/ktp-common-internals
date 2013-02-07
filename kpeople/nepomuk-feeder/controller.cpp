@@ -138,6 +138,8 @@ void Controller::onNewAccount(const Tp::AccountPtr &account)
             m_storage, SLOT(setAccountNickname(QString,QString)));
     connect(acc, SIGNAL(initialContactsLoaded(QString,QList<QString>)),
             m_storage, SLOT(cleanupAccountContacts(QString,QList<QString>)));
+    connect(acc, SIGNAL(accountRemoved(QString)),
+            m_storage, SLOT(onAccountRemoved(QString)));
 
     // Connect to all the signals/slots that signify the contacts are changing in some way.
     connect(acc, SIGNAL(contactCreated(QString,QString)),
