@@ -36,7 +36,7 @@ class KTP_EXPORT ContactsModel : public KTp::ContactsFilterModel
 {
     Q_OBJECT
     Q_PROPERTY(GroupMode groupMode READ groupMode WRITE setGroupMode NOTIFY groupModeChanged)
-    Q_PROPERTY(Tp::AccountManagerPtr accountManager WRITE setAccountManager)
+    Q_PROPERTY(Tp::AccountManagerPtr accountManager READ accountManager WRITE setAccountManager)
 
     Q_ENUMS(GroupMode)
 
@@ -56,6 +56,9 @@ public:
 
     /** Sets the accounts manager to be used for the KTp::ContactListModel*/
     void setAccountManager(const Tp::AccountManagerPtr &accountManager);
+
+    /** Returns account manager currently used by the model */
+    Tp::AccountManagerPtr accountManager() const;
 
     /** Specify how the contacts should be grouped together*/
     void setGroupMode(GroupMode mode);

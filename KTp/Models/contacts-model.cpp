@@ -61,6 +61,11 @@ void KTp::ContactsModel::setAccountManager(const Tp::AccountManagerPtr &accountM
     d->source->setAccountManager(accountManager);
 }
 
+Tp::AccountManagerPtr KTp::ContactsModel::accountManager() const
+{
+    return d->accountManager;
+}
+
 void KTp::ContactsModel::setGroupMode(KTp::ContactsModel::GroupMode mode)
 {
     if (mode == d->groupMode) {
