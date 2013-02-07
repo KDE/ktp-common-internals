@@ -139,7 +139,7 @@ private Q_SLOTS:
 
     void onAccountsQueryFinishedListing();
     void onContactTimer();
-    void onContactGraphJob(KJob* job);
+    void onContactGraphJob(KJob *job);
 
 private:
     Q_DISABLE_COPY(NepomukStorage);
@@ -154,8 +154,8 @@ private:
     Nepomuk2::SimpleResourceGraph m_graph;
     QTimer m_graphTimer;
 
-    ContactResources findContact(const QString& path, const QString& id);
-    AccountResources findAccount(const QString& path);
+    ContactResources findContact(const QString &path, const QString &id);
+    AccountResources findAccount(const QString &path);
 
     void fireGraphTimer();
 };
