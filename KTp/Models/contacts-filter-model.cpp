@@ -350,20 +350,7 @@ bool ContactsFilterModel::Private::filterAcceptsGroup(const QModelIndex &index)
 
 void ContactsFilterModel::Private::countContacts(const QModelIndex &sourceParent)
 {
-    QString key;
-
-    KTp::RowType rowType = static_cast<KTp::RowType>(sourceParent.data(KTp::RowTypeRole).toInt());
-    if (rowType == KTp::GroupRowType) {
-        key = sourceParent.data(Qt::DisplayRole).toString();
-    } else if (rowType == KTp::AccountRowType) {
-        Tp::AccountPtr account = sourceParent.data(KTp::AccountRole).value<Tp::AccountPtr>();
-        if (account.isNull()) {
-            return;
-        }
-        key = account->uniqueIdentifier();
-    } else {
-        return;
-    }
+    QString key = sourceParent.data(KTp::IdRole).toString();
 
     // Count the online contacts
     int tmpCounter = 0;
@@ -439,46 +426,18 @@ QVariant ContactsFilterModel::data(const QModelIndex &index, int role) const
         return QVariant();
     }
 
-    // Special handling for the counts
-    KTp::RowType rowType = static_cast<KTp::RowType>(sourceIndex.data(KTp::RowTypeRole).toInt());
     if (role == KTp::HeaderOnlineUsersRole) {
-        if (rowType == KTp::GroupRowType) {
-            const QString groupName = sourceIndex.data(Qt::DisplayRole).toString();
-            // If there is no cached value, create one
-            if (!d->m_onlineContactsCounts.contains(groupName)) {
-                d->countContacts(sourceIndex);
-            }
-            return d->m_onlineContactsCounts.value(groupName);
-        } else if (rowType == KTp::AccountRowType) {
-            const Tp::AccountPtr account = sourceIndex.data(KTp::AccountRole).value<Tp::AccountPtr>();
-            if (account.isNull()) {
-                return 0;
-            }
-            // If there is no cached value, create one
-            if (!d->m_onlineContactsCounts.contains(account->uniqueIdentifier())) {
-                d->countContacts(sourceIndex);
-            }
-            return d->m_onlineContactsCounts.value(account->uniqueIdentifier());
+        const QString &key = sourceIndex.data(KTp::IdRole).toString();
+        if (!d->m_onlineContactsCounts.contains(key)) {
+            d->countContacts(sourceIndex);
         }
+        return d->m_onlineContactsCounts.value(key);
     } else if (role == KTp::HeaderTotalUsersRole) {
-        if (rowType == KTp::GroupRowType) {
-            const QString groupName = sourceIndex.data(Qt::DisplayRole).toString();
-            // If there is no cached value, create one
-            if (!d->m_totalContactsCounts.contains(groupName)) {
-                d->countContacts(sourceIndex);
-            }
-            return d->m_totalContactsCounts.value(groupName);
-        } else if (rowType == KTp::AccountRowType) {
-            const Tp::AccountPtr account = sourceIndex.data(KTp::AccountRole).value<Tp::AccountPtr>();
-            if (account.isNull()) {
-                return 0;
-            }
-            // If there is no cached value, create one
-            if (!d->m_totalContactsCounts.contains(account->uniqueIdentifier())) {
-                d->countContacts(sourceIndex);
-            }
-            return d->m_totalContactsCounts.value(account->uniqueIdentifier());
+        const QString &key = sourceIndex.data(KTp::IdRole).toString();
+        if (!d->m_totalContactsCounts.contains(key)) {
+            d->countContacts(sourceIndex);
         }
+        return d->m_totalContactsCounts.value(key);
     }
 
     // In all other cases just delegate it to the source model

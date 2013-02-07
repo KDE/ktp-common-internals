@@ -80,6 +80,12 @@ QVariant KTp::AccountsTreeProxyModel::dataForGroup(const QString &group, int rol
         return QVariant::fromValue(d->accountManager->accountForObjectPath(group));
     case KTp::RowTypeRole:
         return KTp::AccountRowType;
+    case KTp::IdRole:
+        account = d->accountManager->accountForObjectPath(group);
+        if (account) {
+            return account->uniqueIdentifier();
+        }
+        break;
     }
 
     return QVariant();
