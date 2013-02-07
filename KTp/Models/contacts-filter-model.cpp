@@ -847,11 +847,6 @@ bool ContactsFilterModel::lessThan(const QModelIndex &left, const QModelIndex &r
         }
     }
     case Qt::DisplayRole:
-    {
-        QString leftAlias = sourceModel()->data(left, Qt::DisplayRole).toString();
-        QString rightAlias = sourceModel()->data(right, Qt::DisplayRole).toString();
-        return QString::localeAwareCompare(rightAlias, rightAlias) < 0;
-    }
     default:
         return QString::localeAwareCompare(leftDisplayedName, rightDisplayedName) < 0;
     }
