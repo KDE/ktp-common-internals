@@ -199,6 +199,7 @@ void Account::onNewContact(const Tp::ContactPtr &contact)
 
 void Account::onContactAddedToGroup(const QString &group)
 {
+    Q_UNUSED(group);
     const Tp::ContactPtr contact(qobject_cast<Tp::Contact*>(sender()));
     Q_ASSERT(contact);
 
@@ -207,6 +208,7 @@ void Account::onContactAddedToGroup(const QString &group)
 
 void Account::onContactRemovedFromGroup(const QString &group)
 {
+    Q_UNUSED(group);
     const Tp::ContactPtr contact(qobject_cast<Tp::Contact*>(sender()));
     Q_ASSERT(contact);
 
