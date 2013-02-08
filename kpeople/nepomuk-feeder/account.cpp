@@ -182,10 +182,10 @@ void Account::onNewContact(const Tp::ContactPtr &contact)
         // Connect to all its signals
         connect(contact.data(),
                 SIGNAL(aliasChanged(QString)),
-                SLOT(onContactAliasChanged(QString)));
+                SLOT(onContactAliasChanged()));
         connect(contact.data(),
                 SIGNAL(addedToGroup(QString)),
-                SLOT(onContactAddedToGroup(QString)));
+                SLOT(onContactAddedToGroup()));
         connect(contact.data(),
                 SIGNAL(removedFromGroup(QString)),
                 SLOT(onContactRemovedFromGroup(QString)));
@@ -194,15 +194,22 @@ void Account::onNewContact(const Tp::ContactPtr &contact)
                 SLOT(onContactAvatarChanged(Tp::AvatarData)));
 
         emit contactCreated(m_account->objectPath(), contact->id());
+
+        onContactAddedToGroup(contact);
+        onContactAliasChanged(contact);
     }
 }
 
-void Account::onContactAddedToGroup(const QString &group)
+void Account::onContactAddedToGroup()
 {
-    Q_UNUSED(group);
     const Tp::ContactPtr contact(qobject_cast<Tp::Contact*>(sender()));
     Q_ASSERT(contact);
 
+    onContactAddedToGroup(contact);
+}
+
+void Account::onContactAddedToGroup(const Tp::ContactPtr &contact)
+{
     emit contactGroupsChanged(m_account->objectPath(), contact->id(), contact->groups());
 }
 
@@ -215,12 +222,17 @@ void Account::onContactRemovedFromGroup(const QString &group)
     emit contactGroupsChanged(m_account->objectPath(), contact->id(), contact->groups());
 }
 
-void Account::onContactAliasChanged(const QString &alias)
+void Account::onContactAliasChanged()
 {
     const Tp::ContactPtr contact(qobject_cast<Tp::Contact*>(sender()));
     Q_ASSERT(contact);
 
-    emit contactAliasChanged(m_account->objectPath(), contact->id(), alias);
+    onContactAliasChanged(contact);
+}
+
+void Account::onContactAliasChanged(const Tp::ContactPtr &contact)
+{
+    emit contactAliasChanged(m_account->objectPath(), contact->id(), contact->alias());
 }
 
 void Account::onContactAvatarChanged(const Tp::AvatarData &avatar)

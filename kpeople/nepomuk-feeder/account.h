@@ -67,9 +67,11 @@ private Q_SLOTS:
     void onNewContact(const Tp::ContactPtr &contact);
     void onAccountRemoved();
 
-    void onContactAddedToGroup(const QString &group);
+    void onContactAddedToGroup();
+    void onContactAddedToGroup(const Tp::ContactPtr &contact);
     void onContactRemovedFromGroup(const QString &group);
-    void onContactAliasChanged(const QString &alias);
+    void onContactAliasChanged();
+    void onContactAliasChanged(const Tp::ContactPtr &contact);
     void onContactAvatarChanged(const Tp::AvatarData &avatar);
 
 private:
