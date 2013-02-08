@@ -638,7 +638,7 @@ void NepomukStorage::setContactGroups(const QString &path,
         KJob *job = Nepomuk2::removeProperties(QList<QUrl>() << contact.personContact(),
                                                QList<QUrl>() << NCO::belongsToGroup());
 
-        connect(job, SIGNAL(finished(KJob*)), this, SLOT(onRemovePropertiesJob(KJob*)));
+        connect(job, SIGNAL(finished(KJob*)), this, SLOT(onContactGraphJob(KJob*)));
         //TODO: Maybe remove empty groups?
         return;
     }
