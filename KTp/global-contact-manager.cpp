@@ -23,6 +23,7 @@
 #include <TelepathyQt/AccountManager>
 #include <TelepathyQt/Account>
 #include <TelepathyQt/ContactManager>
+#include <TelepathyQt/PendingReady>
 
 #include <KDebug>
 
@@ -41,11 +42,7 @@ GlobalContactManager::GlobalContactManager(const Tp::AccountManagerPtr &accountM
     d(new GlobalContactManagerPrivate())
 {
     d->accountManager = accountManager;
-
-    Q_FOREACH(const Tp::AccountPtr &account, accountManager->allAccounts()) {
-        onNewAccount(account);
-    }
-    connect(accountManager.data(), SIGNAL(newAccount(Tp::AccountPtr)), SLOT(onNewAccount(Tp::AccountPtr)));
+    connect(d->accountManager->becomeReady(), SIGNAL(finished(Tp::PendingOperation*)), SLOT(onAccountManagerReady(Tp::PendingOperation*)));
 }
 
 GlobalContactManager::~GlobalContactManager()
@@ -66,6 +63,19 @@ Tp::Contacts GlobalContactManager::allKnownContacts() const
         }
     }
     return allContacts;
+}
+
+void GlobalContactManager::onAccountManagerReady(Tp::PendingOperation *op)
+{
+    if (op->isError()) {
+        kWarning() << "Account Manager becomeReady failed";
+    }
+
+    Q_FOREACH(const Tp::AccountPtr &account, d->accountManager->allAccounts()) {
+        onNewAccount(account);
+    }
+    connect(d->accountManager.data(), SIGNAL(newAccount(Tp::AccountPtr)), SLOT(onNewAccount(Tp::AccountPtr)));
+
 }
 
 void GlobalContactManager::onNewAccount(const Tp::AccountPtr &account)

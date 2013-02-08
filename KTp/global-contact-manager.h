@@ -48,6 +48,7 @@ Q_SIGNALS:
     void presencePublicationRequested(const Tp::Contacts);
 
 private Q_SLOTS:
+    void onAccountManagerReady(Tp::PendingOperation *op);
     void onNewAccount(const Tp::AccountPtr &account);
     void onConnectionChanged(const Tp::ConnectionPtr &connection);
     void onContactManagerStateChanged(Tp::ContactListState state);
