@@ -70,8 +70,6 @@ ContactList::ContactList(QObject *parent)
                                                   channelFactory,
                                                   contactFactory);
 
-    m_filterModel->setDynamicSortFilter(true);
-
     connect(m_accountManager->becomeReady(),
             SIGNAL(finished(Tp::PendingOperation*)),
             SLOT(onAccountManagerReady(Tp::PendingOperation*)));

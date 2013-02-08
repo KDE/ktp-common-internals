@@ -408,6 +408,8 @@ ContactsFilterModel::ContactsFilterModel(QObject *parent)
     : QSortFilterProxyModel(parent),
       d(new Private(this))
 {
+    sort(0); //sort always
+    setDynamicSortFilter(true);
 }
 
 ContactsFilterModel::~ContactsFilterModel()
@@ -911,5 +913,16 @@ QModelIndexList ContactsFilterModel::match(const QModelIndex &start, int role,
     return result;
 }
 
+void ContactsFilterModel::setSortRoleString(const QString &role)
+{
+    Q_ASSERT(!roleNames().keys(role.toUtf8()).isEmpty());
+    setSortRole(roleNames().key(role.toUtf8()));
+}
+
+QString ContactsFilterModel::sortRoleString() const
+{
+    Q_ASSERT(roleNames().contains(sortRole()));
+    return QString::fromUtf8(roleNames().value(sortRole()));
+}
 
 #include "contacts-filter-model.moc"
