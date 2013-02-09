@@ -549,15 +549,16 @@ void NepomukStorage::onAccountRemoved(const QString &path)
     QList<QUrl> urisToDelete;
     urisToDelete << accountUri;
 
-    QList<ContactIdentifier> keys = m_contacts.keys(); // Splitting it so that the keys do not need to be reconstructed each time
+    QString query = QString::fromLatin1("select DISTINCT ?uri ?a "
+                                        "WHERE { "
+                                        "?uri a nco:PersonContact. "
+                                        "?uri nco:hasIMAccount ?a . "
+                                        "?a nco:isAccessedBy %1 . }").arg(Soprano::Node::resourceToN3(accountUri));
 
-    for (int i = 0; i < m_contacts.keys().size(); i++) {
-        ContactIdentifier ci = keys.at(i);
-        if (ci.accountId() == path) {
-            ContactResources cr = m_contacts.value(ci);
-            urisToDelete << cr.personContact();
-            urisToDelete << cr.imAccount();
-        }
+    Soprano::Model *model = Nepomuk2::ResourceManager::instance()->mainModel();
+    Soprano::QueryResultIterator it = model->executeQuery(query, Soprano::Query::QueryLanguageSparql);
+    while (it.next()) {
+        urisToDelete << it["uri"].uri() << it["a"].uri();
     }
 
     KJob *removeJob = Nepomuk2::removeDataByApplication(urisToDelete);
