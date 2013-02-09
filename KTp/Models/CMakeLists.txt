@@ -11,6 +11,7 @@ set (ktp_models_private_SRCS
     contacts-list-model.cpp
     contacts-model.cpp
     groups-tree-proxy-model.cpp
+    text-channel-watcher-proxy-model.cpp
     rooms-model.cpp
 )
 
@@ -22,6 +23,7 @@ set (ktp_models_private_HDRS
     contacts-list-model.h
     contacts-model.h
     groups-tree-proxy-model.h
+    text-channel-watcher-proxy-model.h
     rooms-model.h
 )
 
