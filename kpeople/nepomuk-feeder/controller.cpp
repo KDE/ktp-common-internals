@@ -52,6 +52,7 @@ void Controller::onStorageInitialised(bool success)
     Tp::Features fAccountFactory;
     fAccountFactory << Tp::Account::FeatureCore
                     << Tp::Account::FeatureAvatar
+                    << Tp::Account::FeatureProtocolInfo
                     << Tp::Account::FeatureProfile;
 
     Tp::AccountFactoryConstPtr accountFactory = Tp::AccountFactory::create(
