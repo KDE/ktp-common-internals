@@ -23,6 +23,9 @@
 #include "contacts-list-model.h"
 #include "accounts-tree-proxy-model.h"
 #include "groups-tree-proxy-model.h"
+#include "text-channel-watcher-proxy-model.h"
+
+#include <TelepathyQt/ClientRegistrar>
 
 namespace KTp
 {
@@ -30,9 +33,12 @@ class ContactsModel::Private
 {
 public:
     GroupMode groupMode;
+    bool trackUnread;
     QWeakPointer<KTp::AbstractGroupingProxyModel> proxy;
     KTp::ContactsListModel *source;
     Tp::AccountManagerPtr accountManager;
+    Tp::ClientRegistrarPtr clientRegistrar;
+    Tp::SharedPtr<KTp::TextChannelWatcherProxyModel> channelWatcherProxy;
 };
 }
 
@@ -42,6 +48,7 @@ KTp::ContactsModel::ContactsModel(QObject *parent)
       d(new Private)
 {
     d->groupMode = NoGrouping;
+    d->trackUnread = false;
     d->source = new KTp::ContactsListModel(this);
 }
 
@@ -80,11 +87,47 @@ void KTp::ContactsModel::setGroupMode(KTp::ContactsModel::GroupMode mode)
     Q_EMIT groupModeChanged();
 }
 
+KTp::ContactsModel::GroupMode KTp::ContactsModel::groupMode() const
+{
+    return d->groupMode;
+}
+
+void KTp::ContactsModel::setTrackUnreadMessages(bool trackUnread)
+{
+    if (d->trackUnread == trackUnread) {
+        return;
+    }
+    d->trackUnread = trackUnread;
+
+    updateGroupProxyModels();
+
+    Q_EMIT trackUnreadMessagesChanged();
+}
+
 void KTp::ContactsModel::updateGroupProxyModels()
 {
     //if there no account manager there's not a lot point doing anything
     if (!d->accountManager) {
         return;
+    }
+
+    //if needed set up the client registrar and observer proxy model
+    if (d->trackUnread && d->clientRegistrar.isNull()) {
+        d->clientRegistrar = Tp::ClientRegistrar::create(d->accountManager);
+        d->channelWatcherProxy = Tp::SharedPtr<KTp::TextChannelWatcherProxyModel>(new TextChannelWatcherProxyModel());
+        d->channelWatcherProxy->setSourceModel(d->source);
+        d->clientRegistrar->registerClient(Tp::AbstractClientPtr::dynamicCast(d->channelWatcherProxy), QLatin1String("ListWatcher"));
+    } else if (!d->trackUnread) {
+        //delete the client registrar
+        d->clientRegistrar.reset();
+        d->channelWatcherProxy.reset();
+    }
+
+    QAbstractItemModel *modelToGroup = 0;
+    if (d->trackUnread) {
+        modelToGroup = d->channelWatcherProxy.data();
+    } else {
+        modelToGroup = d->source;
     }
 
     //delete any previous proxy
@@ -94,20 +137,16 @@ void KTp::ContactsModel::updateGroupProxyModels()
 
     switch (d->groupMode) {
     case NoGrouping:
-        setSourceModel(d->source);
+        setSourceModel(modelToGroup);
         break;
     case AccountGrouping:
-        d->proxy = new KTp::AccountsTreeProxyModel(d->source, d->accountManager);
+        d->proxy = new KTp::AccountsTreeProxyModel(modelToGroup, d->accountManager);
         setSourceModel(d->proxy.data());
         break;
     case GroupGrouping:
-        d->proxy = new KTp::GroupsTreeProxyModel(d->source);
+        d->proxy = new KTp::GroupsTreeProxyModel(modelToGroup);
         setSourceModel(d->proxy.data());
         break;
     }
 }
 
-KTp::ContactsModel::GroupMode KTp::ContactsModel::groupMode() const
-{
-    return d->groupMode;
-}

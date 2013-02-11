@@ -36,6 +36,8 @@ class KTP_EXPORT ContactsModel : public KTp::ContactsFilterModel
 {
     Q_OBJECT
     Q_PROPERTY(GroupMode groupMode READ groupMode WRITE setGroupMode NOTIFY groupModeChanged)
+    Q_PROPERTY(bool trackUnreadMessages READ trackUnreadMessages WRITE setTrackUnreadMessages NOTIFY trackUnreadMessagesChanged)
+
     Q_PROPERTY(Tp::AccountManagerPtr accountManager READ accountManager WRITE setAccountManager)
 
     Q_ENUMS(GroupMode)
@@ -66,8 +68,16 @@ public:
     /** The currently specified grouping model*/
     GroupMode groupMode() const;
 
+    /** Specify whether to track unread messages or not. Note this adds additional overhead, so only use it if you're going to show the information
+      * Default is False
+    */
+    void setTrackUnreadMessages(bool trackUnread);
+    bool trackUnreadMessages();
+
+
 Q_SIGNALS:
     void groupModeChanged();
+    void trackUnreadMessagesChanged();
 
 private:
     class Private;
