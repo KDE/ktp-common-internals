@@ -74,7 +74,6 @@ KTp::ContactsListModel::~ContactsListModel()
 void KTp::ContactsListModel::setAccountManager(const Tp::AccountManagerPtr &accountManager)
 {
     d->contactManager = new KTp::GlobalContactManager(accountManager, this);
-    onContactsChanged(d->contactManager->allKnownContacts(), Tp::Contacts());
     connect(d->contactManager, SIGNAL(allKnownContactsChanged(Tp::Contacts,Tp::Contacts)), SLOT(onContactsChanged(Tp::Contacts,Tp::Contacts)));
 }
 
