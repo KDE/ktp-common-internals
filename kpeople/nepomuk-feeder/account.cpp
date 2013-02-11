@@ -119,13 +119,6 @@ void Account::onContactManagerStateChanged(Tp::ContactListState state)
     if (state == Tp::ContactListStateSuccess)  {
         Tp::Contacts contacts = m_connection->contactManager()->allKnownContacts();
 
-        // Create the hash containing all the contacts to notify the storage of the
-        // full set of contacts that still exist when the account is connected.
-        // This *must* be done before creating the contact wrapper objects.
-        QList<QString> initialContacts;
-        foreach (const Tp::ContactPtr &contact, contacts) {
-            initialContacts.append(contact->id());
-        }
         emit initialContactsLoaded(m_account->objectPath(), contacts);
 
         // Create wrapper objects for all the Contacts.
@@ -194,7 +187,6 @@ void Account::onNewContact(const Tp::ContactPtr &contact)
                 SLOT(onContactAvatarChanged(Tp::AvatarData)));
 
         emit contactCreated(m_account->objectPath(), contact);
-
     }
 }
 
