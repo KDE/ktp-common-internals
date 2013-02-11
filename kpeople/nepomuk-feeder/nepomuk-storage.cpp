@@ -518,9 +518,13 @@ void NepomukStorage::fireGraphTimer()
 
 
 
-void NepomukStorage::cleanupAccountContacts(const QString &path, const QList<QString> &ids)
+void NepomukStorage::cleanupAccountContacts(const QString &path, const Tp::Contacts &contacts)
 {
-    QSet<QString> idSet = ids.toSet();
+    QHash<QString, Tp::ContactPtr> contactHash;
+
+    Q_FOREACH (const Tp::ContactPtr &contact, contacts) {
+        contactHash.insert(contact->id(), contact);
+    }
 
     // Go through all the contacts that we have received from the account and create any
     // new ones in Nepomuk.
@@ -529,9 +533,11 @@ void NepomukStorage::cleanupAccountContacts(const QString &path, const QList<QSt
         nepomukIds.insert(ci.contactId());
     }
 
-    QSet<QString> newIds = idSet.subtract(nepomukIds);
+    QSet<QString> oldIds = contactHash.keys().toSet();
+
+    QSet<QString> newIds = oldIds.subtract(nepomukIds);
     foreach (const QString &id, newIds) {
-        createContact(path, id);
+        createContact(path, contactHash[id]);
     }
 }
 
@@ -559,17 +565,20 @@ void NepomukStorage::onAccountRemoved(const QString &path)
             this, SLOT(onContactGraphJob(KJob*)));
 }
 
-void NepomukStorage::createContact(const QString &path, const QString &id)
+void NepomukStorage::createContact(const QString &path, const Tp::ContactPtr &contact)
 {
+    if (contact.isNull()) {
+        return;
+    }
     // First, check that we don't already have a record for this contact.
-    ContactIdentifier identifier(path, id);
+    ContactIdentifier identifier(path, contact->id());
     if (m_contacts.contains(identifier)) {
 //        kDebug() << "Contact record already exists. Return.";
         return;
     }
 
     // Contact not found. Need to create it.
-    kDebug() << path << id;
+    kDebug() << path << contact->id();
     kDebug() << "Contact not found in Nepomuk. Creating it.";
 
     Q_ASSERT(m_accounts.contains(path));
@@ -587,11 +596,10 @@ void NepomukStorage::createContact(const QString &path, const QString &id)
     Nepomuk2::SimpleResource newImAccount;
     //TODO: Somehow add this imAccount as a sub resource the account, maybe.
     newImAccount.addType(NCO::IMAccount());
-    newImAccount.setProperty(NCO::imStatus(), QString::fromLatin1("unknown"));
-    newImAccount.setProperty(NCO::imID(), id);
-    newImAccount.setProperty(Telepathy::statusType(), Tp::ConnectionPresenceTypeUnknown);
+    newImAccount.setProperty(NCO::imID(), contact->id());
     newImAccount.setProperty(NCO::imAccountType(), accountRes.protocol());
     newImAccount.addProperty(NCO::isAccessedBy(), accountUri);
+    newImAccount.addProperty(NCO::imNickname(), contact->alias());
 
     newPersonContact.addProperty(NCO::hasIMAccount(), newImAccount);
 

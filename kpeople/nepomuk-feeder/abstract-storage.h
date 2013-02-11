@@ -86,7 +86,7 @@ public Q_SLOTS:
      * \param path the object path (unique identifier) of the account
      * \param ids the ids (e.g. me@example.com) of the complete server-side contact list of the account.
      */
-    virtual void cleanupAccountContacts(const QString &path, const QList<QString> &ids) = 0;
+    virtual void cleanupAccountContacts(const QString &path, const Tp::Contacts &contacts) = 0;
 
     /**
      * Invoked when the Tp account is removed from AccountManager
@@ -102,7 +102,7 @@ public Q_SLOTS:
      * \param path the object path (unique identifier) of the account
      * \param id the id (e.g. me@example.com) that in conjunction with the \p path uniquely identifies the contact.
      */
-    virtual void createContact(const QString &path, const QString &id) = 0;
+    virtual void createContact(const QString &path, const Tp::ContactPtr &contact) = 0;
 
     /**
      * Invoked to update the alias of the Telepathy Contact.

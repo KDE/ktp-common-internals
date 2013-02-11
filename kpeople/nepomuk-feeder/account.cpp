@@ -126,7 +126,7 @@ void Account::onContactManagerStateChanged(Tp::ContactListState state)
         foreach (const Tp::ContactPtr &contact, contacts) {
             initialContacts.append(contact->id());
         }
-        emit initialContactsLoaded(m_account->objectPath(), initialContacts);
+        emit initialContactsLoaded(m_account->objectPath(), contacts);
 
         // Create wrapper objects for all the Contacts.
         foreach (const Tp::ContactPtr &contact, contacts) {
@@ -193,10 +193,8 @@ void Account::onNewContact(const Tp::ContactPtr &contact)
                 SIGNAL(avatarDataChanged(Tp::AvatarData)),
                 SLOT(onContactAvatarChanged(Tp::AvatarData)));
 
-        emit contactCreated(m_account->objectPath(), contact->id());
+        emit contactCreated(m_account->objectPath(), contact);
 
-        onContactAddedToGroup(contact);
-        onContactAliasChanged(contact);
     }
 }
 

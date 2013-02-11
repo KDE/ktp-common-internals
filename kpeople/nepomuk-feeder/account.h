@@ -51,10 +51,10 @@ Q_SIGNALS:
     void created(const QString &path, const QString &id, const QString &protocol);
     void accountDestroyed(const QString &path);
     void nicknameChanged(const QString &path, const QString &nickname);
-    void initialContactsLoaded(const QString &path, const QList<QString> &ids);
+    void initialContactsLoaded(const QString &path, const Tp::Contacts &contacts);
     void accountRemoved(const QString &path);
 
-    void contactCreated(const QString &path, const QString &id);
+    void contactCreated(const QString &path, const Tp::ContactPtr &contact);
     void contactAliasChanged(const QString &path, const QString &id, const QString &alias);
     void contactGroupsChanged(const QString &path, const QString &id, const QStringList &groups);
     void contactAvatarChanged(const QString &path, const QString &id, const Tp::AvatarData &avatar);
