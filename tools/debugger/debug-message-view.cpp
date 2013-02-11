@@ -25,14 +25,28 @@
 #include <KDebug>
 #include <KIcon>
 #include <KColorScheme>
+#include <KStandardAction>
+#include <KAction>
+#include <KLocalizedString>
+#include <KFindDialog>
+#include <kfind.h>
 
 #include <ctime>
+#include <QDate>
+#include <QPointer>
 
 DebugMessageView::DebugMessageView(QWidget *parent)
     : QTextEdit(parent),
       m_ready(false)
 {
     setReadOnly(true);
+    setContextMenuPolicy(Qt::ActionsContextMenu);
+    KAction* addMark = new KAction(i18n("Add Mark"), this);
+    connect(addMark, SIGNAL(triggered(bool)), SLOT(onAddMark()));
+    addAction(KStandardAction::find(this, SLOT(openFindDialog()), this));
+    addAction(addMark);
+    addAction(KStandardAction::copy(this, SLOT(copy()), this));
+    addAction(KStandardAction::selectAll(this, SLOT(selectAll()), this));
 }
 
 
@@ -176,3 +190,24 @@ void DebugMessageView::appendMessage(const Tp::DebugMessage &msg)
     append(message);
 }
 
+void DebugMessageView::onAddMark()
+{
+    append(QString(QLatin1String("%1 -----------------------------")).arg(QDate::currentDate().toString()));
+}
+
+void DebugMessageView::openFindDialog()
+{
+    QPointer<KFindDialog> dialog(new KFindDialog(this));
+    dialog->setPattern(textCursor().selectedText());
+    if(dialog->exec()==QDialog::Accepted) {
+        QTextDocument::FindFlags flags=0;
+        if(dialog->options() & KFind::FindBackwards) flags |= QTextDocument::FindBackward;
+        if(dialog->options() & KFind::WholeWordsOnly) flags |= QTextDocument::FindWholeWords;
+        if(dialog->options() & KFind::CaseSensitive) flags |= QTextDocument::FindCaseSensitively;
+        bool ret = find(dialog->pattern(), flags);
+        if(!ret) {
+            Q_EMIT statusMessage(i18n("Could not find '%1'", dialog->pattern()));
+        }
+    }
+    delete dialog;
+}

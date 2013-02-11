@@ -39,6 +39,11 @@ private Q_SLOTS:
     void onDebugReceiverMonitoringEnabled(Tp::PendingOperation *op);
     void onFetchMessagesFinished(Tp::PendingOperation *op);
     void onNewDebugMessage(const Tp::DebugMessage &msg);
+    void onAddMark();
+    void openFindDialog();
+
+Q_SIGNALS:
+    void statusMessage(const QString& msg);
 
 private:
     void appendMessage(const Tp::DebugMessage &msg);

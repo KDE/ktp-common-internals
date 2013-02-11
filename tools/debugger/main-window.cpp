@@ -17,6 +17,7 @@
 */
 #include "main-window.h"
 #include "debug-message-view.h"
+#include <KStatusBar>
 
 MainWindow::MainWindow(QWidget *parent)
     : KXmlGuiWindow(parent)
@@ -30,6 +31,11 @@ MainWindow::MainWindow(QWidget *parent)
     m_ui.hazeLogsView->setService(QLatin1String("org.freedesktop.Telepathy.ConnectionManager.haze"));
     m_ui.salutLogsView->setService(QLatin1String("org.freedesktop.Telepathy.ConnectionManager.salut"));
     m_ui.rakiaLogsView->setService(QLatin1String("org.freedesktop.Telepathy.ConnectionManager.rakia"));
+    connect(m_ui.mcLogsView, SIGNAL(statusMessage(QString)), statusBar(), SLOT(showMessage(QString)));
+    connect(m_ui.gabbleLogsView, SIGNAL(statusMessage(QString)), statusBar(), SLOT(showMessage(QString)));
+    connect(m_ui.hazeLogsView, SIGNAL(statusMessage(QString)), statusBar(), SLOT(showMessage(QString)));
+    connect(m_ui.salutLogsView, SIGNAL(statusMessage(QString)), statusBar(), SLOT(showMessage(QString)));
+    connect(m_ui.rakiaLogsView, SIGNAL(statusMessage(QString)), statusBar(), SLOT(showMessage(QString)));
 }
 
 MainWindow::~MainWindow()
