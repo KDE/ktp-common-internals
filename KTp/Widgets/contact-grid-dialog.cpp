@@ -30,13 +30,13 @@
 #include <TelepathyQt/AccountManager>
 #include <TelepathyQt/AccountFactory>
 #include <TelepathyQt/PendingReady>
+#include <TelepathyQt/PendingChannelRequest>
 
 #include <KTp/debug.h>
 #include <KTp/Models/contacts-list-model.h>
 #include <KTp/Models/contacts-filter-model.h>
 #include <KTp/Widgets/contact-grid-widget.h>
 #include <KTp/contact-factory.h>
-#include <TelepathyQt/PendingChannelRequest>
 
 
 

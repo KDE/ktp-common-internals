@@ -1,5 +1,7 @@
 project(ktp-common-internals)
 
+cmake_minimum_required (VERSION 2.6.3 FATAL_ERROR)
+
 set (CMAKE_MODULE_PATH
      "${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules"
      ${CMAKE_MODULE_PATH}
