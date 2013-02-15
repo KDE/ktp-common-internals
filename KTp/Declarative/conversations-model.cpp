@@ -167,3 +167,20 @@ void ConversationsModel::handleValidityChange(bool valid)
         }
     }
 }
+
+int ConversationsModel::nextActiveConversation(int fromRow)
+{
+    if(d->conversations.isEmpty()) {
+        return -1;
+    }
+    Q_ASSERT(qBound(0, fromRow, d->conversations.count()-1) == fromRow);
+
+    bool first = true; //let first be checked on the first loop
+    for(int i = fromRow; i != fromRow || first; i = (i + 1) % d->conversations.count()) {
+        if(d->conversations[i]->messages()->unreadCount() > 0) {
+            return i;
+        }
+        first = false;
+    }
+    return -1;
+}

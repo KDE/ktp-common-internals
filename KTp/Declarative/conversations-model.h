@@ -52,6 +52,7 @@ class ConversationsModel : public QAbstractListModel, public Tp::AbstractClientH
 
   public Q_SLOTS:
     void startChat(const Tp::AccountPtr &account, const Tp::ContactPtr &contact);
+    int nextActiveConversation(int first);
 
   private:
     class ConversationsModelPrivate;
