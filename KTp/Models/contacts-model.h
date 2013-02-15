@@ -72,7 +72,7 @@ public:
       * Default is False
     */
     void setTrackUnreadMessages(bool trackUnread);
-    bool trackUnreadMessages();
+    bool trackUnreadMessages() const;
 
 
 Q_SIGNALS:

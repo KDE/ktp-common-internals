@@ -104,6 +104,11 @@ void KTp::ContactsModel::setTrackUnreadMessages(bool trackUnread)
     Q_EMIT trackUnreadMessagesChanged();
 }
 
+bool KTp::ContactsModel::trackUnreadMessages() const
+{
+    return d->trackUnread;
+}
+
 void KTp::ContactsModel::updateGroupProxyModels()
 {
     //if there no account manager there's not a lot point doing anything
