@@ -35,7 +35,7 @@
 #include <KTp/Models/accounts-model.h>
 #include <KTp/Models/accounts-filter-model.h>
 #include <KTp/Widgets/contact-grid-widget.h>
-#include <telepathy-qt4/TelepathyQt/PendingChannelRequest>
+#include <TelepathyQt/PendingChannelRequest>
 
 
 
