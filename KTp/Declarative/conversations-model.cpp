@@ -145,7 +145,7 @@ bool ConversationsModel::bypassApproval() const
     return true;
 }
 
-void ConversationsModel::startChat(const Tp::AccountPtr &account, const Tp::ContactPtr &contact)
+void ConversationsModel::startChat(const Tp::AccountPtr &account, const KTp::ContactPtr &contact)
 {
     Q_ASSERT(account);
     account->ensureTextChat(contact, QDateTime::currentDateTime(),

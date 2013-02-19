@@ -23,6 +23,7 @@
 #include <QAbstractListModel>
 
 #include <TelepathyQt/AbstractClientApprover>
+#include <KTp/contact.h>
 
 class Conversation;
 
@@ -51,7 +52,7 @@ class ConversationsModel : public QAbstractListModel, public Tp::AbstractClientH
     bool bypassApproval() const;
 
   public Q_SLOTS:
-    void startChat(const Tp::AccountPtr &account, const Tp::ContactPtr &contact);
+    void startChat(const Tp::AccountPtr& account, const KTp::ContactPtr& contact);
     int nextActiveConversation(int first);
 
   private:
