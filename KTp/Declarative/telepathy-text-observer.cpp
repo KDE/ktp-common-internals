@@ -26,6 +26,8 @@
 #include <TelepathyQt/ConnectionFactory>
 #include <TelepathyQt/ClientRegistrar>
 
+#include <KTp/contact-factory.h>
+
 
 TelepathyTextObserver::TelepathyTextObserver(QObject *parent) :
     QObject(parent),
@@ -52,7 +54,7 @@ TelepathyTextObserver::TelepathyTextObserver(QObject *parent) :
     channelFactory->addFeaturesForTextChats(textFeatures);
     channelFactory->addFeaturesForTextChatrooms(textFeatures);
 
-    Tp::ContactFactoryPtr contactFactory = Tp::ContactFactory::create(
+    Tp::ContactFactoryPtr contactFactory = KTp::ContactFactory::create(
         Tp::Features() << Tp::Contact::FeatureAlias
                     << Tp::Contact::FeatureAvatarToken
                     << Tp::Contact::FeatureAvatarData
