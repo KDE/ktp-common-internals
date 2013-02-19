@@ -92,7 +92,7 @@ void ContactList::startChat(const Tp::AccountPtr &account, const KTp::ContactPtr
     kDebug() << "Requesting chat for contact" << contact->alias();
     kDebug() << "account is" << account->normalizedName();
 
-    Tp::PendingOperation *op = KTp::Actions::startChat(account, contact, true);
+    Tp::PendingOperation *op = KTp::Actions::startChat(account, contact, false);
     connect(op, SIGNAL(finished(Tp::PendingOperation*)), SLOT(onGenericOperationFinished(Tp::PendingOperation*)));
 }
 
