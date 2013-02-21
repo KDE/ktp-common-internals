@@ -63,7 +63,7 @@ public:
 static Tp::AccountPtr findAccountByUniqueId(Tp::AccountManagerPtr manager, const QString &id)
 {
     QList<Tp::AccountPtr> accounts = manager->allAccounts();
-    Q_FOREACH(const Tp::AccountPtr account, accounts) {
+    Q_FOREACH(const Tp::AccountPtr &account, accounts) {
         if (account->uniqueIdentifier() == id) {
             return account;
         }
