@@ -30,6 +30,7 @@ class Conversation;
 class ConversationsModel : public QAbstractListModel, public Tp::AbstractClientHandler
 {
     Q_OBJECT
+    Q_PROPERTY(int totalUnreadCount READ totalUnreadCount NOTIFY totalUnreadCountChanged)
 
   public:
     explicit ConversationsModel(QObject *parent);
@@ -37,6 +38,9 @@ class ConversationsModel : public QAbstractListModel, public Tp::AbstractClientH
 
     virtual QVariant data ( const QModelIndex &index, int role = Qt::DisplayRole ) const;
     virtual int rowCount ( const QModelIndex &parent = QModelIndex() ) const;
+
+    /** @returns the sum of all unread messages among all conversations */
+    int totalUnreadCount() const;
 
     enum role {
         ConversationRole = Qt::UserRole
@@ -64,6 +68,9 @@ class ConversationsModel : public QAbstractListModel, public Tp::AbstractClientH
   private Q_SLOTS:
     void handleValidityChange(bool);
     void conversationDelegated();
+
+  Q_SIGNALS:
+      void totalUnreadCountChanged();
 };
 
 #endif // CONVERSATIONS_MODEL_H

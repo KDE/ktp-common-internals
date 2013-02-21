@@ -48,6 +48,8 @@ ConversationsModel::ConversationsModel(QObject *parent) :
     QHash<int, QByteArray> roles;
     roles[ConversationRole] = "conversation";
     setRoleNames(roles);
+    connect(this, SIGNAL(rowsInserted(QModelIndex,int,int)), SIGNAL(totalUnreadCountChanged()));
+    connect(this, SIGNAL(rowsRemoved(QModelIndex,int,int)), SIGNAL(totalUnreadCountChanged()));
 }
 
 ConversationsModel::~ConversationsModel()
@@ -135,6 +137,7 @@ void ConversationsModel::handleChannels(const Tp::MethodInvocationContextPtr<> &
         d->conversations.append(newConvo);
         connect(newConvo, SIGNAL(validityChanged(bool)), SLOT(handleValidityChange(bool)));
         connect(newConvo, SIGNAL(conversationDelegated()), SLOT(conversationDelegated()));
+        connect(newConvo->messages(), SIGNAL(unreadCountChanged(int)), SIGNAL(unreadCountChanged()));
         endInsertRows();
         context->setFinished();
     }
@@ -193,4 +196,13 @@ int ConversationsModel::nextActiveConversation(int fromRow)
         first = false;
     }
     return -1;
+}
+
+int ConversationsModel::totalUnreadCount() const
+{
+    int ret = 0;
+    Q_FOREACH(Conversation *c, d->conversations) {
+        ret += c->messages()->unreadCount();
+    }
+    return ret;
 }
