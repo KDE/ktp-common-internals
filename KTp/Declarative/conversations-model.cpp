@@ -134,6 +134,7 @@ void ConversationsModel::handleChannels(const Tp::MethodInvocationContextPtr<> &
         Conversation *newConvo = new Conversation(textChannel, account, this);
         d->conversations.append(newConvo);
         connect(newConvo, SIGNAL(validityChanged(bool)), SLOT(handleValidityChange(bool)));
+        connect(newConvo, SIGNAL(conversationDelegated()), SLOT(conversationDelegated()));
         endInsertRows();
         context->setFinished();
     }
@@ -155,16 +156,25 @@ void ConversationsModel::startChat(const Tp::AccountPtr &account, const KTp::Con
 void ConversationsModel::handleValidityChange(bool valid)
 {
     if (!valid) {
-        Conversation *sender = qobject_cast<Conversation*>(QObject::sender());
-        int index = d->conversations.indexOf(sender);
-        if (index != -1) {
-            beginRemoveRows(QModelIndex(), index, index);
-            d->conversations.removeAt(index);
-            sender->deleteLater();
-            endRemoveRows();
-        } else {
-            kError() << "attempting to delete non-existent conversation";
-        }
+        removeConversation(qobject_cast<Conversation*>(QObject::sender()));
+    }
+}
+
+void ConversationsModel::conversationDelegated()
+{
+    removeConversation(qobject_cast<Conversation*>(QObject::sender()));
+}
+
+void ConversationsModel::removeConversation(Conversation* conv)
+{
+    int index = d->conversations.indexOf(conv);
+    if (index != -1) {
+        beginRemoveRows(QModelIndex(), index, index);
+        d->conversations.removeAt(index);
+        conv->deleteLater();
+        endRemoveRows();
+    } else {
+        kError() << "attempting to delete non-existent conversation";
     }
 }
 

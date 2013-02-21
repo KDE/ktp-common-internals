@@ -88,6 +88,7 @@ void Conversation::onChannelInvalidated(Tp::DBusProxy *proxy, const QString &err
 void Conversation::delegateToProperClient()
 {
     ChannelDelegator::delegateChannel(d->account, d->messages->textChannel());
+    Q_EMIT conversationDelegated();
 }
 
 void Conversation::requestClose()

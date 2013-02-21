@@ -52,6 +52,7 @@ class Conversation : public QObject
 
   Q_SIGNALS:
     void validityChanged(bool isValid);
+    void conversationDelegated();
 
   public Q_SLOTS:
     void delegateToProperClient();

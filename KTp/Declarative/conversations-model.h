@@ -56,11 +56,14 @@ class ConversationsModel : public QAbstractListModel, public Tp::AbstractClientH
     int nextActiveConversation(int first);
 
   private:
+    void removeConversation(Conversation* conversation);
+
     class ConversationsModelPrivate;
     ConversationsModelPrivate *d;
 
   private Q_SLOTS:
     void handleValidityChange(bool);
+    void conversationDelegated();
 };
 
 #endif // CONVERSATIONS_MODEL_H
