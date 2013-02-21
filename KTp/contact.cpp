@@ -28,6 +28,7 @@ KTp::Contact::Contact(Tp::ContactManager *manager, const Tp::ReferencedHandles &
     : Tp::Contact(manager, handle, requestedFeatures, attributes)
 {
     connect(manager->connection().data(), SIGNAL(destroyed()), SIGNAL(invalidated()));
+    connect(manager->connection().data(), SIGNAL(invalidated(Tp::DBusProxy*,QString,QString)), SIGNAL(invalidated()));
 }
 
 KTp::Presence KTp::Contact::presence() const
