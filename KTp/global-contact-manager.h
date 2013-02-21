@@ -42,6 +42,7 @@ public:
     Tp::Contacts allKnownContacts() const;
     Tp::AccountPtr accountForConnection(const Tp::ConnectionPtr &connection) const;
     Tp::AccountPtr accountForContact(const Tp::ContactPtr &contact) const;
+    Tp::AccountPtr accountForAccountId(const QString &accountId) const;
 
 Q_SIGNALS:
     void allKnownContactsChanged(const Tp::Contacts &contactsAdded, const Tp::Contacts &contactsRemoved);

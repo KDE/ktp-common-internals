@@ -131,3 +131,16 @@ Tp::AccountPtr GlobalContactManager::accountForConnection(const Tp::ConnectionPt
 
     return Tp::AccountPtr();
 }
+
+Tp::AccountPtr GlobalContactManager::accountForAccountId(const QString &accountId) const
+{
+    if (!d->accountManager.isNull() && d->accountManager->isReady()) {
+        Q_FOREACH(const Tp::AccountPtr &account, d->accountManager->allAccounts()) {
+            if (account->uniqueIdentifier() == accountId) {
+                return account;
+            }
+        }
+    }
+
+    return Tp::AccountPtr();
+}
