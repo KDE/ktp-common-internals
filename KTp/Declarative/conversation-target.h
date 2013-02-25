@@ -23,7 +23,7 @@
 #include <QObject>
 #include <QIcon>
 
-#include "types.h"
+#include "KTp/types.h"
 
 class ConversationTarget : public QObject
 {

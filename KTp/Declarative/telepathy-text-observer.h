@@ -21,7 +21,7 @@
 #define TELEPATHY_TEXT_OBSERVER_H
 
 #include "conversations-model.h"
-#include "types.h"
+#include "KTp/types.h"
 
 #include <TelepathyQt/AbstractClientHandler>
 

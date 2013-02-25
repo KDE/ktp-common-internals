@@ -20,7 +20,7 @@
 #define CONTACTPIN_H
 
 #include <QObject>
-#include "types.h"
+#include "KTp/types.h"
 
 class PinnedContactsModel;
 

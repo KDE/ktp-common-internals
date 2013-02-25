@@ -21,7 +21,7 @@
 
 #include <QModelIndex>
 #include <QVector>
-#include "types.h"
+#include "KTp/types.h"
 
 struct Pin;
 class ConversationsModel;

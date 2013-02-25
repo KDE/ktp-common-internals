@@ -27,7 +27,7 @@
 #include <TelepathyQt/Account>
 
 
-#include "message-processor.h"
+#include "KTp/message-processor.h"
 
 class MessageItem
 {
