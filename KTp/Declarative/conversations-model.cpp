@@ -137,7 +137,7 @@ void ConversationsModel::handleChannels(const Tp::MethodInvocationContextPtr<> &
         d->conversations.append(newConvo);
         connect(newConvo, SIGNAL(validityChanged(bool)), SLOT(handleValidityChange(bool)));
         connect(newConvo, SIGNAL(conversationDelegated()), SLOT(conversationDelegated()));
-        connect(newConvo->messages(), SIGNAL(unreadCountChanged(int)), SIGNAL(unreadCountChanged()));
+        connect(newConvo->messages(), SIGNAL(unreadCountChanged(int)), SIGNAL(totalUnreadCountChanged()));
         endInsertRows();
         context->setFinished();
     }
