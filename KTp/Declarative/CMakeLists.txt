@@ -13,6 +13,7 @@ set (ktp_qml_plugin_SRCS
     messages-model.cpp
     telepathy-text-observer.cpp
     pinned-contacts-model.cpp
+    filtered-pinned-contacts-proxy-model.cpp
     contact-pin.cpp
 
     qml-plugins.cpp
