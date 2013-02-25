@@ -40,7 +40,7 @@
 #include <KTp/contact.h>
 
 struct Pin {
-    Tp::ContactPtr contact;
+    KTp::ContactPtr contact;
     Tp::AccountPtr account;
 };
 
@@ -101,7 +101,7 @@ QStringList PinnedContactsModel::state() const
 void PinnedContactsModel::setState(const QStringList &pins)
 {
     Q_ASSERT(pins.size() % 2 == 0 && "the state should be a pair number of account id and contact name");
-    if(!d->accountManager->isReady()) {
+    if (!d->accountManager->isReady()) {
         Tp::PendingReady *r = d->accountManager->becomeReady();
         r->setProperty("newState", pins);
         connect(r, SIGNAL(finished(Tp::PendingOperation*)), SLOT(initializeState(Tp::PendingOperation*)));
@@ -129,11 +129,11 @@ void PinnedContactsModel::pinPendingContacts(Tp::PendingOperation* j)
         kDebug() << "error:" << j->errorName() << j->errorMessage();
 }
 
-QModelIndex PinnedContactsModel::indexForContact(Tp::AccountPtr account, KTp::ContactPtr contact) const
+QModelIndex PinnedContactsModel::indexForContact(const KTp::ContactPtr &contact) const
 {
     int i = 0;
-    Q_FOREACH(const Pin &p, d->m_pins) {
-        if (p.account->uniqueIdentifier() == account->uniqueIdentifier() && p.contact->id() == contact->id()) {
+    Q_FOREACH (const Pin &p, d->m_pins) {
+        if (p.contact == contact) {
             break;
         }
         i++;
@@ -147,7 +147,7 @@ QModelIndex PinnedContactsModel::indexForContact(Tp::AccountPtr account, KTp::Co
 
 void PinnedContactsModel::setPinning(const Tp::AccountPtr &account, const KTp::ContactPtr &contact, bool newState)
 {
-    QModelIndex idx = indexForContact(account, contact);
+    QModelIndex idx = indexForContact(contact);
     bool found = idx.isValid();
     if (newState && !found) {
         Pin p;
@@ -174,14 +174,14 @@ QVariant PinnedContactsModel::data(const QModelIndex &index, int role) const
                     && p.contact->presence().type()!=Tp::ConnectionPresenceTypeUnset
                     && p.contact->presence().type()!=Tp::ConnectionPresenceTypeUnknown;
             case ContactRole:
-                return QVariant::fromValue<KTp::ContactPtr>(KTp::ContactPtr::qObjectCast(p.contact));
+                return QVariant::fromValue<KTp::ContactPtr>(p.contact);
             case AccountRole:
                 return QVariant::fromValue<Tp::AccountPtr>(p.account);
             case AlreadyChattingRole: {
                 bool found = false;
                 for (int i = 0; !found && i < d->convesations->rowCount(); i++) {
                     QModelIndex idx = d->convesations->index(i, 0);
-                    KTp::ContactPtr contact = KTp::ContactPtr::qObjectCast(idx.data(ConversationsModel::ConversationRole).value<Conversation*>()->target()->contact());
+                    KTp::ContactPtr contact = idx.data(ConversationsModel::ConversationRole).value<Conversation*>()->target()->contact();
                     found |= contact->id() == p.contact->id();
                 }
                 return found;
@@ -189,7 +189,10 @@ QVariant PinnedContactsModel::data(const QModelIndex &index, int role) const
             case Qt::DecorationRole: {
                 KIcon icon;
                 if (p.contact) {
-                    icon = KIcon(p.contact->avatarData().fileName);
+                    QString file = p.contact->avatarData().fileName;
+                    if (!file.isEmpty()) {
+                        icon = KIcon(file);
+                    }
                 }
                 if (icon.isNull()) {
                     icon = KIcon(QLatin1String("im-user"));
@@ -265,10 +268,14 @@ void PinnedContactsModel::conversationsStateChanged(const QModelIndex &parent, i
 {
     for (int i = start; i <= end; i++) {
         QModelIndex idx = d->convesations->index(i, 0, parent);
-        KTp::ContactPtr contact = KTp::ContactPtr::qObjectCast(idx.data(ConversationsModel::ConversationRole).value<Conversation*>()->target()->contact());
+        Conversation* conv = idx.data(ConversationsModel::ConversationRole).value<Conversation*>();
+        KTp::ContactPtr contact = conv->target()->contact();
         Q_FOREACH(const Pin &p, d->m_pins) {
-            if (p.contact->id() == contact->id())
-                QMetaObject::invokeMethod(this, "dataChanged", Qt::QueuedConnection, Q_ARG(QModelIndex, idx), Q_ARG(QModelIndex, idx));
+            if (p.contact == contact) {
+                QModelIndex contactIdx = indexForContact(p.contact);
+                //We need to delay the dataChanged until the next event loop, when endRowsRemoved has been called
+                QMetaObject::invokeMethod(this, "dataChanged", Qt::QueuedConnection, Q_ARG(QModelIndex, contactIdx), Q_ARG(QModelIndex, contactIdx));
+            }
         }
     }
 }

@@ -46,7 +46,7 @@ bool ContactPin::isPinned() const
 {
     bool ret = false;
     if (m_model && m_account && m_contact) {
-        QModelIndex idx = m_model->indexForContact(m_account, m_contact);
+        QModelIndex idx = m_model->indexForContact(m_contact);
         ret = idx.isValid();
     }
     return ret;
