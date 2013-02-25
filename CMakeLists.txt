@@ -40,3 +40,5 @@ configure_file(version.h.in ${CMAKE_CURRENT_BINARY_DIR}/version.h @ONLY)
 add_subdirectory(KTp)
 add_subdirectory(tools)
 add_subdirectory(data)
+add_subdirectory(tests)
+
