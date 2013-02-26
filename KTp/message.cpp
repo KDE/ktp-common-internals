@@ -185,6 +185,11 @@ Tp::ChannelTextMessageType Message::type() const
     return d->messageType;
 }
 
+QString Message::sender() const
+{
+    return property("sender").toString();
+}
+
 int Message::partsSize() const
 {
     return d->parts.size();

@@ -133,6 +133,8 @@ class KTP_EXPORT Message
     QString token() const;
     /*! \return the type of the message*/
     Tp::ChannelTextMessageType type() const;
+    /*! \return the alias of the contact who sent this message */
+    QString sender() const;
 
     /*! \return the number of appended parts */
     int partsSize() const;
