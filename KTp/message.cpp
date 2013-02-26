@@ -55,7 +55,11 @@ Message::Message(const Tp::Message &original, const KTp::MessageContext &context
     d->messageType = original.messageType();
     d->isHistory = false;
     d->direction = KTp::Message::LocalToRemote;
+
     setMainMessagePart(original.text());
+
+    setProperty("sender", context.account()->nickname());
+    setProperty("sender-avatar", context.account()->avatar().avatarData);
 }
 
 Message::Message(const Tp::ReceivedMessage &original, const KTp::MessageContext &context) :
@@ -69,6 +73,13 @@ Message::Message(const Tp::ReceivedMessage &original, const KTp::MessageContext 
     d->direction = KTp::Message::RemoteToLocal;
 
     setMainMessagePart(original.text());
+
+    if (!original.sender().isNull()) {
+        setProperty("sender", original.sender()->alias());
+        setProperty("sender-avatar", original.sender()->avatarData().fileName);
+    } else {
+        setProperty("sender", original.senderNickname());
+    }
 }
 
 Message::Message(const Tpl::TextEventPtr &original, const KTp::MessageContext &context) :
@@ -86,6 +97,9 @@ Message::Message(const Tpl::TextEventPtr &original, const KTp::MessageContext &c
     }
 
     setMainMessagePart(original->message());
+
+    setProperty("sender", original->sender()->alias());
+    setProperty("sender-avatar", original->sender()->avatarToken());
 }
 
 Message::Message(const Message& other):
