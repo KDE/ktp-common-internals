@@ -103,6 +103,14 @@ MessageProcessor::~MessageProcessor()
     delete d;
 }
 
+void MessageProcessor::appendFilter(AbstractMessageFilter *filter) {
+    d->filters.append(filter);
+}
+
+void MessageProcessor::removeFilter(AbstractMessageFilter *filter) {
+    d->filters.removeAll(filter);
+}
+
 QString MessageProcessor::header()
 {
     QStringList scripts;
