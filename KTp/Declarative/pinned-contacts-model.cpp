@@ -68,7 +68,6 @@ static Tp::AccountPtr findAccountByUniqueId(Tp::AccountManagerPtr manager, const
             return account;
         }
     }
-    Q_ASSERT(false && "account not found");
     return Tp::AccountPtr();
 }
 
@@ -109,7 +108,7 @@ void PinnedContactsModel::setState(const QStringList &pins)
         kDebug() << "loading pinned...." << pins;
         for (int i = 0; i < pins.count(); i += 2) {
             Tp::AccountPtr account = findAccountByUniqueId(d->accountManager, pins[i]);
-            if (account->connection()) {
+            if (account && account->connection()) {
                 Tp::PendingContacts *pending = account->connection()->contactManager()->contactsForIdentifiers(QStringList(pins[i+1]));
                 pending->setProperty("account", qVariantFromValue<Tp::AccountPtr>(account));
                 connect(pending, SIGNAL(finished(Tp::PendingOperation*)), SLOT(pinPendingContacts(Tp::PendingOperation*)));
