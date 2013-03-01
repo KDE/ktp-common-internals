@@ -51,6 +51,7 @@ namespace KTp
         //contact/person roles
         ContactClientTypesRole = Qt::UserRole + 2000, ///< stringlist. See Tp::Contact::ClientTypes
         ContactAvatarPathRole, ///<string. path to avatar file
+        ContactAvatarPixmapRole, ///< QPixmap the pixmap that shall be use as avatar image
         ContactGroupsRole, ///< stringlist. of all groups contact is in
 
         ContactPresenceNameRole,
@@ -70,7 +71,6 @@ namespace KTp
         ContactCanAudioCallRole, ///< bool. You and contact can both audio call
         ContactCanVideoCallRole, ///< bool. You and contact can both video call
         ContactTubesRole, ///< stringlist. common supported dbus + stream services between you and contact
-        ContactAvatarPixmapRole, ///< QPixmap the pixmap that shall be use as avatar image
 
         //heading roles
         HeaderTotalUsersRole = Qt::UserRole  + 3000,

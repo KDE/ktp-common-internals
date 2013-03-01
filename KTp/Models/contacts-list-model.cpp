@@ -51,7 +51,7 @@ KTp::ContactsListModel::ContactsListModel(QObject *parent) :
 
     roles[KTp::ContactClientTypesRole]= "clientTypes";
     roles[KTp::ContactAvatarPathRole]= "avatar";
-    roles[KTp::ContactAvatarPixmapRole]="avatarQPixmap";
+    roles[KTp::ContactAvatarPixmapRole]="avatarPixmap";
     roles[KTp::ContactGroupsRole]= "groups";
     roles[KTp::ContactPresenceMessageRole]= "presenceMessage";
     roles[KTp::ContactPresenceTypeRole]= "presenceType";

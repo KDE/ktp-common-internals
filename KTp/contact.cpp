@@ -34,7 +34,7 @@ KTp::Contact::Contact(Tp::ContactManager *manager, const Tp::ReferencedHandles &
     : Tp::Contact(manager, handle, requestedFeatures, attributes)
 {
     connect(manager->connection().data(), SIGNAL(destroyed()), SIGNAL(invalidated()));
-    connect(manager->connection().data(), SIGNAL(invalidated(Tp::DBusProxy*, QString, QString)), SIGNAL(invalidated()));
+    connect(manager->connection().data(), SIGNAL(invalidated(Tp::DBusProxy*,QString,QString)), SIGNAL(invalidated()));
 }
 
 KTp::Presence KTp::Contact::presence() const
@@ -102,14 +102,14 @@ QStringList KTp::Contact::clientTypes() const
 
 QPixmap KTp::Contact::avatarPixmap()
 {
-    QString file = Tp::Contact::avatarData().fileName;
+    QString file = avatarData().fileName;
     QPixmap avatar;
     if (file.isEmpty()) {
         avatar = KIconLoader::global()->loadIcon(QLatin1String("im-user"), KIconLoader::NoGroup, 96);
     } else {
         avatar.load(file);
     }
-    if (Tp::Contact::presence().type() == Tp::ConnectionPresenceTypeOffline) {
+    if (presence().type() == Tp::ConnectionPresenceTypeOffline) {
         avatarToGray(avatar);
     }
     return avatar;
