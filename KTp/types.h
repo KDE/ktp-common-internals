@@ -70,6 +70,7 @@ namespace KTp
         ContactCanAudioCallRole, ///< bool. You and contact can both audio call
         ContactCanVideoCallRole, ///< bool. You and contact can both video call
         ContactTubesRole, ///< stringlist. common supported dbus + stream services between you and contact
+        ContactAvatarPixmapRole, ///< QPixmap the pixmap that shall be use as avatar image
 
         //heading roles
         HeaderTotalUsersRole = Qt::UserRole  + 3000,

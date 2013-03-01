@@ -21,6 +21,12 @@
 #include <TelepathyQt/ContactManager>
 #include <TelepathyQt/Connection>
 #include <TelepathyQt/ContactCapabilities>
+#include <TelepathyQt/AvatarData>
+
+#include <QBitmap>
+#include <QPixmap>
+
+#include <KIconLoader>
 
 #include "capabilities-hack-private.h"
 
@@ -28,7 +34,7 @@ KTp::Contact::Contact(Tp::ContactManager *manager, const Tp::ReferencedHandles &
     : Tp::Contact(manager, handle, requestedFeatures, attributes)
 {
     connect(manager->connection().data(), SIGNAL(destroyed()), SIGNAL(invalidated()));
-    connect(manager->connection().data(), SIGNAL(invalidated(Tp::DBusProxy*,QString,QString)), SIGNAL(invalidated()));
+    connect(manager->connection().data(), SIGNAL(invalidated(Tp::DBusProxy*, QString, QString)), SIGNAL(invalidated()));
 }
 
 KTp::Presence KTp::Contact::presence() const
@@ -44,9 +50,9 @@ bool KTp::Contact::audioCallCapability() const
     Tp::ConnectionPtr connection = manager()->connection();
     if (connection) {
         bool contactCanStreamAudio = CapabilitiesHackPrivate::audioCalls(
-                    capabilities(), connection->cmName());
+                                         capabilities(), connection->cmName());
         bool selfCanStreamAudio = CapabilitiesHackPrivate::audioCalls(
-                    connection->selfContact()->capabilities(), connection->cmName());
+                                      connection->selfContact()->capabilities(), connection->cmName());
         return contactCanStreamAudio && selfCanStreamAudio;
     }
     return false;
@@ -60,9 +66,9 @@ bool KTp::Contact::videoCallCapability() const
     Tp::ConnectionPtr connection = manager()->connection();
     if (connection) {
         bool contactCanStreamVideo = CapabilitiesHackPrivate::videoCalls(
-                    capabilities(), connection->cmName());
+                                         capabilities(), connection->cmName());
         bool selfCanStreamVideo = CapabilitiesHackPrivate::videoCalls(
-                    connection->selfContact()->capabilities(), connection->cmName());
+                                      connection->selfContact()->capabilities(), connection->cmName());
         return contactCanStreamVideo && selfCanStreamVideo;
     }
 
@@ -93,4 +99,34 @@ QStringList KTp::Contact::clientTypes() const
 
     return Tp::Contact::clientTypes();
 }
+
+QPixmap KTp::Contact::avatarPixmap()
+{
+    QString file = Tp::Contact::avatarData().fileName;
+    QPixmap avatar;
+    if (file.isEmpty()) {
+        avatar = KIconLoader::global()->loadIcon(QLatin1String("im-user"), KIconLoader::NoGroup, 96);
+    } else {
+        avatar.load(file);
+    }
+    if (Tp::Contact::presence().type() == Tp::ConnectionPresenceTypeOffline) {
+        avatarToGray(avatar);
+    }
+    return avatar;
+}
+
+void KTp::Contact::avatarToGray(QPixmap &avatar)
+{
+    QImage image = avatar.toImage();
+    QBitmap alphaMask = avatar.mask();
+    for (int i = 0; i < image.width(); ++i) {
+        for (int j = 0; j < image.height(); ++j) {
+            int colour = qGray(image.pixel(i, j));
+            image.setPixel(i, j, qRgb(colour, colour, colour));
+        }
+    }
+    avatar = avatar.fromImage(image);
+    avatar.setMask(alphaMask);
+}
+
 

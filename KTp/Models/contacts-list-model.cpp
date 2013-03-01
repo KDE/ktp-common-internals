@@ -51,6 +51,7 @@ KTp::ContactsListModel::ContactsListModel(QObject *parent) :
 
     roles[KTp::ContactClientTypesRole]= "clientTypes";
     roles[KTp::ContactAvatarPathRole]= "avatar";
+    roles[KTp::ContactAvatarPixmapRole]="avatarQPixmap";
     roles[KTp::ContactGroupsRole]= "groups";
     roles[KTp::ContactPresenceMessageRole]= "presenceMessage";
     roles[KTp::ContactPresenceTypeRole]= "presenceType";
@@ -109,6 +110,8 @@ QVariant KTp::ContactsListModel::data(const QModelIndex &index, int role) const
             return contact->clientTypes();
         case KTp::ContactAvatarPathRole:
             return contact->avatarData().fileName;
+        case KTp::ContactAvatarPixmapRole:
+            return contact->avatarPixmap();
         case KTp::ContactGroupsRole:
             return contact->groups();
 

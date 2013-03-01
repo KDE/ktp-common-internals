@@ -44,9 +44,15 @@ public:
 
      //Overridden as a workaround for upstream bug https://bugs.freedesktop.org/show_bug.cgi?id=55883
      QStringList clientTypes() const;
+     /** Returns the pixmap of an avatar coloured according to the presence*/
+     QPixmap avatarPixmap();
 
 Q_SIGNALS:
      void invalidated();
+     
+private:
+    void avatarToGray(QPixmap &avatar);
+
 };
 
 
