@@ -22,6 +22,7 @@ set (ktp_common_internals_private_SRCS
      message-filter-config-manager.cpp
      message-processor.cpp
      message-url-filter.cpp
+     persistent-contact.cpp
      presence.cpp
      service-availability-checker.cpp
      telepathy-handler-application.cpp
@@ -47,6 +48,7 @@ set (ktp_common_internals_private_HDRS
      message.h
      message-context.h
      message-processor.h
+     persistent-contact.h
      presence.h
      service-availability-checker.h
      telepathy-handler-application.h
