@@ -93,7 +93,8 @@ void KTp::ContactGridDelegate::paint(QPainter *painter, const QStyleOptionViewIt
     QRect avatarRect = option.rect.adjusted(0, 0, 0, -textHeight);
     QRect textRect = option.rect.adjusted(0, option.rect.height() - textHeight, 0, -3);
 
-    QPixmap avatar = index.data(Qt::DecorationRole).value<QPixmap>();
+    QPixmap avatar;
+    avatar.load(index.data(KTp::ContactAvatarPathRole).toString());
     if (avatar.isNull()) {
         avatar = KIcon(QLatin1String("im-user-online")).pixmap(option.decorationSize);
     } else if (avatar.width() > option.decorationSize.width() || avatar.height() > option.decorationSize.height()) {
