@@ -72,7 +72,12 @@ Message::Message(const Tp::ReceivedMessage &original, const KTp::MessageContext 
     d(new Private)
 {
     Q_UNUSED(context)
+
     d->sentTime = original.sent();
+    if (d->sentTime.isNull()) {
+        d->sentTime = original.received();
+    }
+
     d->token = original.messageToken();
     d->messageType = original.messageType();
     d->isHistory = original.isScrollback();
