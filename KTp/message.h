@@ -28,6 +28,7 @@
 #include <KTp/ktp-export.h>
 #include <KTp/message-context.h>
 
+#include <QSharedData>
 #include <QSharedDataPointer>
 
 namespace KTp
@@ -57,6 +58,7 @@ class KTP_EXPORT Message
     };
 
     Message(const KTp::Message &other);
+    KTp::Message& operator=(const KTp::Message &other);
     virtual ~Message();
 
     /*! \brief The body of the message

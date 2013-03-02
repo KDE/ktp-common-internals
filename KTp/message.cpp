@@ -34,7 +34,8 @@ class Message::Private : public QSharedData {
   public:
     Private() :
         isHistory(false)
-    {};
+    {}
+
     QDateTime   sentTime;
     QString     token;
     Tp::ChannelTextMessageType messageType;
@@ -45,6 +46,11 @@ class Message::Private : public QSharedData {
     bool isHistory;
     MessageDirection direction;
 };
+
+Message& Message::operator=(const Message &other) {
+    d = other.d;
+    return *this;
+}
 
 Message::Message(const Tp::Message &original, const KTp::MessageContext &context) :
     d(new Private)
