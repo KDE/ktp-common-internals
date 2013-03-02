@@ -200,7 +200,7 @@ Tp::ChannelTextMessageType Message::type() const
     return d->messageType;
 }
 
-QString Message::senderName() const
+QString Message::senderAlias() const
 {
     return property("senderName").toString();
 }

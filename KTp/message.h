@@ -136,7 +136,7 @@ class KTP_EXPORT Message
     /*! \return the type of the message*/
     Tp::ChannelTextMessageType type() const;
     /*! \return the alias of the contact who composed this message */
-    QString senderName() const;
+    QString senderAlias() const;
     /*! \return the Id of the contact who composed this message */
     QString senderId() const;
 

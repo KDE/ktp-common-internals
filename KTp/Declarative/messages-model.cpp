@@ -170,7 +170,7 @@ QVariant MessagesModel::data(const QModelIndex &index, int role) const
 
         switch (role) {
         case UserRole:
-            result = requestedData.senderName();
+            result = requestedData.senderAlias();
             break;
         case TextRole:
             result = requestedData.finalizedMessage();
