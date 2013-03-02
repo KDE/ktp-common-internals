@@ -40,6 +40,7 @@
 #include <Nepomuk2/Vocabulary/PIMO>
 #include <Soprano/Vocabulary/RDF>
 #include <Soprano/Vocabulary/NAO>
+#include <Soprano/Vocabulary/NRL>
 
 #include <Soprano/Model>
 #include <Soprano/QueryResultIterator>
@@ -607,7 +608,12 @@ void NepomukStorage::createContact(const QString &path, const Tp::ContactPtr &co
     Nepomuk2::SimpleResourceGraph graph;
     graph << newPersonContact << newImAccount;
 
-    Nepomuk2::StoreResourcesJob *job = graph.save();
+    QHash<QUrl, QVariant> additional;
+    additional.insert(RDF::type(), NRL::DiscardableInstanceBase());
+
+    Nepomuk2::StoreResourcesJob *job = Nepomuk2::storeResources(graph, Nepomuk2::IdentifyNone,
+                                                                Nepomuk2::NoStoreResourcesFlags,
+                                                                additional);
     job->exec();
     if (job->error()) {
         kError() << job->errorString();
@@ -699,7 +705,11 @@ void NepomukStorage::setContactAvatar(const QString &path,
 
 void NepomukStorage::onContactTimer()
 {
-    KJob *job = Nepomuk2::storeResources(m_graph, Nepomuk2::IdentifyNew, Nepomuk2::OverwriteAllProperties);
+    QHash<QUrl, QVariant> additional;
+    additional.insert(RDF::type(), NRL::DiscardableInstanceBase());
+
+    KJob *job = Nepomuk2::storeResources(m_graph, Nepomuk2::IdentifyNew,
+                                         Nepomuk2::OverwriteAllProperties, additional);
     connect(job, SIGNAL(finished(KJob*)), this, SLOT(onContactGraphJob(KJob*)));
 
     m_graph.clear();
