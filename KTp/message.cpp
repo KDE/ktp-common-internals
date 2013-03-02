@@ -64,8 +64,8 @@ Message::Message(const Tp::Message &original, const KTp::MessageContext &context
 
     setMainMessagePart(original.text());
 
-    setProperty("sender", context.account()->nickname());
-    setProperty("sender-avatar", context.account()->avatar().avatarData);
+    setProperty("senderName", context.account()->nickname());
+    setProperty("senderAvatar", context.account()->avatar().avatarData);
 }
 
 Message::Message(const Tp::ReceivedMessage &original, const KTp::MessageContext &context) :
@@ -86,10 +86,10 @@ Message::Message(const Tp::ReceivedMessage &original, const KTp::MessageContext 
     setMainMessagePart(original.text());
 
     if (!original.sender().isNull()) {
-        setProperty("sender", original.sender()->alias());
-        setProperty("sender-avatar", original.sender()->avatarData().fileName);
+        setProperty("senderName", original.sender()->alias());
+        setProperty("senderAvatar", original.sender()->avatarData().fileName);
     } else {
-        setProperty("sender", original.senderNickname());
+        setProperty("senderName", original.senderNickname());
     }
 }
 
@@ -109,8 +109,8 @@ Message::Message(const Tpl::TextEventPtr &original, const KTp::MessageContext &c
 
     setMainMessagePart(original->message());
 
-    setProperty("sender", original->sender()->alias());
-    setProperty("sender-avatar", original->sender()->avatarToken());
+    setProperty("senderName", original->sender()->alias());
+    setProperty("senderAvatar", original->sender()->avatarToken());
 }
 
 Message::Message(const Message& other):
@@ -196,9 +196,9 @@ Tp::ChannelTextMessageType Message::type() const
     return d->messageType;
 }
 
-QString Message::sender() const
+QString Message::senderName() const
 {
-    return property("sender").toString();
+    return property("senderName").toString();
 }
 
 int Message::partsSize() const
