@@ -51,7 +51,7 @@ class MessagesModel::MessagesModelPrivate
   public:
     Tp::TextChannelPtr textChannel;
     Tp::AccountPtr account;
-    QList<MessageItem> messages;
+    QList<KTp::Message> messages;
     bool visible;
 };
 
@@ -116,10 +116,10 @@ void MessagesModel::setTextChannel(Tp::TextChannelPtr channel)
     QList<Tp::ReceivedMessage> messageQueue = channel->messageQueue();
     Q_FOREACH(const Tp::ReceivedMessage &message, messageQueue) {
         bool messageAlreadyInModel = false;
-        Q_FOREACH(const MessageItem &current, d->messages) {
+        Q_FOREACH(const KTp::Message &current, d->messages) {
             //FIXME: docs say messageToken can return an empty string. What to do if that happens?
             //Tp::Message has an == operator. maybe I can use that?
-            if (current.id == message.messageToken()) {
+            if (current.token() == message.messageToken()) {
                 messageAlreadyInModel = true;
                 break;
             }
@@ -143,16 +143,9 @@ void MessagesModel::onMessageReceived(const Tp::ReceivedMessage &message)
         int length = rowCount();
         beginInsertRows(QModelIndex(), length, length);
 
-        //TODO simply use ktpMessage as d->messages()
-        KTp::Message ktpMessage = KTp::MessageProcessor::instance()->processMessage(message, d->account, d->textChannel);
 
-        d->messages.append(MessageItem(
-                               message.sender()->alias(),
-                               ktpMessage.finalizedMessage(),
-                               message.received(),
-                               message.messageType() == Tp::ChannelTextMessageTypeAction ? MessageTypeAction : MessageTypeIncoming,
-                               message.messageToken()
-                           ));
+        d->messages.append(KTp::MessageProcessor::instance()->processMessage(
+                               message, d->account, d->textChannel));
 
         endInsertRows();
 
@@ -175,15 +168,8 @@ void MessagesModel::onMessageSent(const Tp::Message &message, Tp::MessageSending
     beginInsertRows(QModelIndex(), length, length);
     kDebug() << "text =" << message.text();
 
-    KTp::Message ktpMessage = KTp::MessageProcessor::instance()->processMessage(message, d->account, d->textChannel);
-
-    d->messages.append(MessageItem(
-                           d->account->nickname(),
-                           ktpMessage.finalizedMessage(),
-                           message.sent(),
-                           message.messageType() == Tp::ChannelTextMessageTypeAction ? MessageTypeAction : MessageTypeOutgoing,
-                           message.messageToken()
-                       ));
+    d->messages.append(KTp::MessageProcessor::instance()->processMessage(
+                           message, d->account, d->textChannel));
 
     endInsertRows();
 }
@@ -198,20 +184,28 @@ QVariant MessagesModel::data(const QModelIndex &index, int role) const
     QVariant result;
 
     if (index.isValid()) {
-        MessageItem *requestedData = &d->messages[index.row()];
+        KTp::Message requestedData = d->messages[index.row()];
 
         switch (role) {
         case UserRole:
-            result = requestedData->user;
+            result = requestedData.sender();
             break;
         case TextRole:
-            result = requestedData->text;
+            result = requestedData.finalizedMessage();
             break;
         case TypeRole:
-            result = requestedData->type;
+            if (requestedData.type() == Tp::ChannelTextMessageTypeAction) {
+                result = MessageTypeAction;
+            } else {
+                if (requestedData.direction() == KTp::Message::LocalToRemote) {
+                    result = MessageTypeOutgoing;
+                } else {
+                    result = MessageTypeIncoming;
+                }
+            }
             break;
         case TimeRole:
-            result = requestedData->time;
+            result = requestedData.time();
             break;
         };
     } else {
