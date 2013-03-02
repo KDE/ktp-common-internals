@@ -66,6 +66,8 @@ Message::Message(const Tp::Message &original, const KTp::MessageContext &context
 
     setProperty("senderName", context.account()->nickname());
     setProperty("senderAvatar", context.account()->avatar().avatarData);
+    setProperty("senderId",
+                context.account()->connection()->selfContact()->id());
 }
 
 Message::Message(const Tp::ReceivedMessage &original, const KTp::MessageContext &context) :
@@ -88,6 +90,7 @@ Message::Message(const Tp::ReceivedMessage &original, const KTp::MessageContext 
     if (!original.sender().isNull()) {
         setProperty("senderName", original.sender()->alias());
         setProperty("senderAvatar", original.sender()->avatarData().fileName);
+        setProperty("senderId", original.sender()->id());
     } else {
         setProperty("senderName", original.senderNickname());
     }
@@ -111,6 +114,7 @@ Message::Message(const Tpl::TextEventPtr &original, const KTp::MessageContext &c
 
     setProperty("senderName", original->sender()->alias());
     setProperty("senderAvatar", original->sender()->avatarToken());
+    setProperty("senderId", original->sender()->identifier());
 }
 
 Message::Message(const Message& other):
@@ -199,6 +203,11 @@ Tp::ChannelTextMessageType Message::type() const
 QString Message::senderName() const
 {
     return property("senderName").toString();
+}
+
+QString Message::senderId() const
+{
+    return property("senderId").toString();
 }
 
 int Message::partsSize() const

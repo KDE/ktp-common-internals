@@ -137,6 +137,8 @@ class KTP_EXPORT Message
     Tp::ChannelTextMessageType type() const;
     /*! \return the alias of the contact who composed this message */
     QString senderName() const;
+    /*! \return the Id of the contact who composed this message */
+    QString senderId() const;
 
     /*! \return the number of appended parts */
     int partsSize() const;
