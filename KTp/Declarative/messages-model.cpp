@@ -26,25 +26,7 @@
 #include <TelepathyQt/TextChannel>
 #include <TelepathyQt/Account>
 
-
 #include "KTp/message-processor.h"
-
-class MessageItem
-{
-  public:
-    QString user;
-    QString text;
-    QDateTime time;
-    QString id;
-    MessagesModel::MessageType type;
-
-    MessageItem(QString user, QString text, QDateTime time, MessagesModel::MessageType type, QString messageId)
-            : user(user), text(text), time(time), id(messageId), type(type) {
-        if (this->text.endsWith(QLatin1String("\n"))) {
-            this->text.chop(1);
-        }
-    }
-};
 
 class MessagesModel::MessagesModelPrivate
 {
