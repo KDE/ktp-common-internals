@@ -52,6 +52,7 @@ Q_SIGNALS:
 
 private:
     void avatarToGray(QPixmap &avatar);
+    QString keyCache() const;
 
 };
 

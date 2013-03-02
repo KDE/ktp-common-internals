@@ -25,6 +25,7 @@
 
 #include <QBitmap>
 #include <QPixmap>
+#include <QPixmapCache>
 
 #include <KIconLoader>
 
@@ -102,15 +103,18 @@ QStringList KTp::Contact::clientTypes() const
 
 QPixmap KTp::Contact::avatarPixmap()
 {
-    QString file = avatarData().fileName;
     QPixmap avatar;
+    QString file = avatarData().fileName;
     if (file.isEmpty()) {
         avatar = KIconLoader::global()->loadIcon(QLatin1String("im-user"), KIconLoader::NoGroup, 96);
     } else {
         avatar.load(file);
     }
     if (presence().type() == Tp::ConnectionPresenceTypeOffline) {
-        avatarToGray(avatar);
+        if (!QPixmapCache::find(keyCache(),avatar)){
+            avatarToGray(avatar);
+            QPixmapCache::insert(keyCache(), avatar);
+        }
     }
     return avatar;
 }
@@ -129,4 +133,8 @@ void KTp::Contact::avatarToGray(QPixmap &avatar)
     avatar.setMask(alphaMask);
 }
 
+QString KTp::Contact::keyCache() const
+{
+    return avatarToken()+QLatin1String("-offline");
+}
 
