@@ -152,6 +152,7 @@ protected:
     Message(const Tp::Message &original, const KTp::MessageContext &context);
     Message(const Tp::ReceivedMessage &original, const KTp::MessageContext &context);
     Message(const Tpl::TextEventPtr &original, const KTp::MessageContext &context);
+    explicit Message(const QString &messageText, const KTp::MessageContext &context);
 
 
 private:

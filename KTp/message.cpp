@@ -120,6 +120,23 @@ Message::Message(const Tpl::TextEventPtr &original, const KTp::MessageContext &c
     setMainMessagePart(original->message());
 }
 
+Message::Message(const QString &messageText, const MessageContext &context) :
+    d(new Private)
+{
+    d->sentTime = QDateTime::currentDateTime();
+    d->messageType = Tp::ChannelTextMessageTypeNormal;
+    d->direction = LocalToRemote;
+    d->isHistory = false;
+
+    setProperty("senderName", context.account()->nickname());
+    setProperty("senderId", context.account()->
+                connection()->selfContact()->id());
+    setProperty("senderAvatar", context.account()->
+                connection()->selfContact()->avatarData().fileName);
+
+    setMainMessagePart(messageText);
+}
+
 Message::Message(const Message& other):
     d(other.d)
 {
