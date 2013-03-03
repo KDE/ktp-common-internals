@@ -126,7 +126,7 @@ void MessagesModel::onMessageReceived(const Tp::ReceivedMessage &message)
         beginInsertRows(QModelIndex(), length, length);
 
 
-        d->messages.append(KTp::MessageProcessor::instance()->processMessage(
+        d->messages.append(KTp::MessageProcessor::instance()->processIncomingMessage(
                                message, d->account, d->textChannel));
 
         endInsertRows();
@@ -150,7 +150,7 @@ void MessagesModel::onMessageSent(const Tp::Message &message, Tp::MessageSending
     beginInsertRows(QModelIndex(), length, length);
     kDebug() << "text =" << message.text();
 
-    d->messages.append(KTp::MessageProcessor::instance()->processMessage(
+    d->messages.append(KTp::MessageProcessor::instance()->processIncomingMessage(
                            message, d->account, d->textChannel));
 
     endInsertRows();

@@ -139,26 +139,26 @@ QString MessageProcessor::header()
     return out;
 }
 
-KTp::Message MessageProcessor::processMessage(const Tp::Message &message, const Tp::AccountPtr &account, const Tp::TextChannelPtr &channel)
+KTp::Message MessageProcessor::processIncomingMessage(const Tp::Message &message, const Tp::AccountPtr &account, const Tp::TextChannelPtr &channel)
 {
     KTp::MessageContext context(account, channel);
-    return processMessage(KTp::Message(message, context), context);
+    return processIncomingMessage(KTp::Message(message, context), context);
 }
 
-KTp::Message KTp::MessageProcessor::processMessage(const Tp::ReceivedMessage &message, const Tp::AccountPtr &account, const Tp::TextChannelPtr &channel)
+KTp::Message KTp::MessageProcessor::processIncomingMessage(const Tp::ReceivedMessage &message, const Tp::AccountPtr &account, const Tp::TextChannelPtr &channel)
 {
     KTp::MessageContext context(account, channel);
-    return processMessage(KTp::Message(message, context), context);
+    return processIncomingMessage(KTp::Message(message, context), context);
 }
 
-KTp::Message KTp::MessageProcessor::processMessage(const Tpl::TextEventPtr &message, const Tp::AccountPtr &account, const Tp::TextChannelPtr &channel)
+KTp::Message KTp::MessageProcessor::processIncomingMessage(const Tpl::TextEventPtr &message, const Tp::AccountPtr &account, const Tp::TextChannelPtr &channel)
 {
     KTp::MessageContext context(account, channel);
-    return processMessage(KTp::Message(message, context), context);
+    return processIncomingMessage(KTp::Message(message, context), context);
 }
 
 
-KTp::Message MessageProcessor::processMessage(KTp::Message message, const KTp::MessageContext &context)
+KTp::Message MessageProcessor::processIncomingMessage(KTp::Message message, const KTp::MessageContext &context)
 {
     Q_FOREACH (AbstractMessageFilter *filter, d->filters) {
         kDebug() << "running filter :" << filter->metaObject()->className();
