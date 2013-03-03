@@ -21,27 +21,34 @@
 
 #include <QObject>
 
-#include "KTp/global-contact-manager.h"
 #include "KTp/contact.h"
+
+#include "ktp-export.h"
 
 namespace KTp {
 
 /** Object monitors a specific account/contact identifier and will populate it with the most up-to-date contact as connections get destroyed/created
  *
  */
-class PersistentContact : public QObject
+class KTP_EXPORT PersistentContact : public QObject, public Tp::RefCounted
 {
     Q_OBJECT
 public:
-    explicit PersistentContact(const QString &accountId, const QString contactId, KTp::GlobalContactManager *globalContactManager);
+    static Tp::SharedPtr<KTp::PersistentContact> create(const QString &accountId, const QString contactId);
+    virtual ~PersistentContact();
 
     QString contactId() const;
     QString accountId() const;
 
+    void setAccountManager(const Tp::AccountManagerPtr &accountManager);
+
     /** The contact object for these ID
-      @warning This may be null
+      @warning This may be null if no accountManager is set or if you are offline
     */
     KTp::ContactPtr contact() const;
+    /**
+     * @warning This may be null if no accountManager is set or the account has been deleted
+     */
     Tp::AccountPtr account() const;
 
 Q_SIGNALS:
@@ -50,12 +57,16 @@ Q_SIGNALS:
 
 private Q_SLOTS:
     void onAccountConnectionChanged(const Tp::ConnectionPtr &connection);
-    void onPendingContactsFinished(Tp::PendingContacts*);
+    void onPendingContactsFinished(Tp::PendingOperation*);
 
 private:
+    PersistentContact(const QString &accountId, const QString contactId);
+
     class Private;
     Private *d;
 };
+
+typedef Tp::SharedPtr<KTp::PersistentContact> PersistentContactPtr;
 
 }
 #endif // PERSISTENTCONTACT_H

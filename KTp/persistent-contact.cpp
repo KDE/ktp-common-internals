@@ -19,8 +19,11 @@
 #include "persistent-contact.h"
 
 #include <TelepathyQt/Account>
+#include <TelepathyQt/AccountManager>
 #include <TelepathyQt/PendingContacts>
 #include <TelepathyQt/ContactManager>
+
+#include <KDebug>
 
 namespace KTp
 {
@@ -30,20 +33,26 @@ public:
     QString contactId;
     QString accountId;
     KTp::ContactPtr contact;
+    Tp::AccountPtr account;
 };
 }
 
-KTp::PersistentContact::PersistentContact(const QString &accountId, const QString contactId, KTp::GlobalContactManager *globalContactManager)
-    : QObject(globalContactManager)
+KTp::PersistentContactPtr KTp::PersistentContact::create(const QString &accountId, const QString contactId)
+{
+    return KTp::PersistentContactPtr(new KTp::PersistentContact(accountId, contactId));
+}
+
+KTp::PersistentContact::PersistentContact(const QString &accountId, const QString contactId)
+    : QObject(),
+      d(new PersistentContact::Private())
 {
     d->contactId = contactId;
     d->accountId = accountId;
+}
 
-    const Tp::AccountPtr account = globalContactManager->accountForAccountId(accountId);
-    if (account) {
-        connect(account.data(), SIGNAL(connectionChanged(Tp::ConnectionPtr)), SLOT(onAccountConnectionChanged()));
-        onAccountConnectionChanged(account->connection());
-    }
+KTp::PersistentContact::~PersistentContact()
+{
+    delete d;
 }
 
 QString KTp::PersistentContact::contactId() const
@@ -56,21 +65,38 @@ QString KTp::PersistentContact::accountId() const
     return d->accountId;
 }
 
+void KTp::PersistentContact::setAccountManager(const Tp::AccountManagerPtr &accountManager)
+{
+    Q_FOREACH(const Tp::AccountPtr &account, accountManager->allAccounts()) {
+        if (account->uniqueIdentifier() == d->accountId) {
+            d->account = account;
+            connect(account.data(), SIGNAL(connectionChanged(Tp::ConnectionPtr)), SLOT(onAccountConnectionChanged(Tp::ConnectionPtr)));
+            onAccountConnectionChanged(account->connection());
+            return;
+        }
+    }
+    kWarning() << "Could not find account " << d->accountId;
+}
+
 KTp::ContactPtr KTp::PersistentContact::contact() const
 {
     return d->contact;
 }
 
+Tp::AccountPtr KTp::PersistentContact::account() const
+{
+    return d->account;
+}
 
 void KTp::PersistentContact::onAccountConnectionChanged(const Tp::ConnectionPtr &connection)
 {
     if (connection) {
         Tp::ContactManagerPtr manager = connection->contactManager();
-        connect(manager->contactsForIdentifiers(QStringList() << d->contactId), SIGNAL(finished(Tp::PendingOperation*)), SLOT(onPendingContactsFinished(Tp::PendingContacts*)));
+        connect(manager->contactsForIdentifiers(QStringList() << d->contactId), SIGNAL(finished(Tp::PendingOperation*)), SLOT(onPendingContactsFinished(Tp::PendingOperation*)));
     }
 }
 
-void KTp::PersistentContact::onPendingContactsFinished(Tp::PendingContacts *op)
+void KTp::PersistentContact::onPendingContactsFinished(Tp::PendingOperation *op)
 {
     Tp::PendingContacts* pendingContactsOp = qobject_cast<Tp::PendingContacts*>(op);
     Q_ASSERT(pendingContactsOp);
