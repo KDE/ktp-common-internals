@@ -45,6 +45,9 @@ class KTP_EXPORT AbstractMessageFilter : public QObject
 
     /** Stylesheets that must be included in the <head> section of the html required by this message filter.*/
     virtual QStringList requiredStylesheets();
+
+    /** Filter composed messages about to be sent to telepathy backend */
+    virtual void filterOutgoingMessage(KTp::Message &message, const KTp::MessageContext &context);
 };
 
 }

@@ -17,6 +17,7 @@
 */
 
 #include "abstract-message-filter.h"
+#include <KDebug>
 
 namespace KTp {
 
@@ -43,6 +44,14 @@ QStringList AbstractMessageFilter::requiredScripts()
 QStringList AbstractMessageFilter::requiredStylesheets()
 {
     return QStringList();
+}
+
+void AbstractMessageFilter::filterOutgoingMessage(Message &message, const MessageContext &context)
+{
+    Q_UNUSED(message)
+    Q_UNUSED(context)
+
+    kDebug() << metaObject()->className() << " has no outgoing component";
 }
 
 }
