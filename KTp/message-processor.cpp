@@ -167,7 +167,7 @@ KTp::Message MessageProcessor::processIncomingMessage(KTp::Message message, cons
     return message;
 }
 
-KTp::Message MessageProcessor::preprocessMessage(const QString &messageText, const Tp::AccountPtr &account, const Tp::TextChannelPtr &channel)
+KTp::Message MessageProcessor::processOutgoingMessage(const QString &messageText, const Tp::AccountPtr &account, const Tp::TextChannelPtr &channel)
 {
     KTp::MessageContext context(account, channel);
     KTp::Message message(messageText, context);
