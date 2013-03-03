@@ -34,7 +34,7 @@ class KTP_EXPORT PersistentContact : public QObject, public Tp::RefCounted
 {
     Q_OBJECT
 public:
-    static Tp::SharedPtr<KTp::PersistentContact> create(const QString &accountId, const QString contactId);
+    static Tp::SharedPtr<KTp::PersistentContact> create(const QString &accountId, const QString &contactId);
     virtual ~PersistentContact();
 
     QString contactId() const;
@@ -60,7 +60,7 @@ private Q_SLOTS:
     void onPendingContactsFinished(Tp::PendingOperation*);
 
 private:
-    PersistentContact(const QString &accountId, const QString contactId);
+    PersistentContact(const QString &accountId, const QString &contactId);
 
     class Private;
     Private *d;

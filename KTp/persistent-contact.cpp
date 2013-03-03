@@ -37,12 +37,12 @@ public:
 };
 }
 
-KTp::PersistentContactPtr KTp::PersistentContact::create(const QString &accountId, const QString contactId)
+KTp::PersistentContactPtr KTp::PersistentContact::create(const QString &accountId, const QString &contactId)
 {
     return KTp::PersistentContactPtr(new KTp::PersistentContact(accountId, contactId));
 }
 
-KTp::PersistentContact::PersistentContact(const QString &accountId, const QString contactId)
+KTp::PersistentContact::PersistentContact(const QString &accountId, const QString &contactId)
     : QObject(),
       d(new PersistentContact::Private())
 {
@@ -98,7 +98,7 @@ void KTp::PersistentContact::onAccountConnectionChanged(const Tp::ConnectionPtr 
 
 void KTp::PersistentContact::onPendingContactsFinished(Tp::PendingOperation *op)
 {
-    Tp::PendingContacts* pendingContactsOp = qobject_cast<Tp::PendingContacts*>(op);
+    Tp::PendingContacts *pendingContactsOp = qobject_cast<Tp::PendingContacts*>(op);
     Q_ASSERT(pendingContactsOp);
 
     if (pendingContactsOp->contacts().size() == 1) {
