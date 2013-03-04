@@ -104,5 +104,12 @@ void KTp::PersistentContact::onPendingContactsFinished(Tp::PendingOperation *op)
     if (pendingContactsOp->contacts().size() == 1) {
         d->contact = KTp::ContactPtr::qObjectCast(pendingContactsOp->contacts()[0]);
         Q_EMIT contactChanged(d->contact);
+        connect(d->contact.data(), SIGNAL(invalidated()), SLOT(onContactInvalid()));
     }
+}
+
+void KTp::PersistentContact::onContactInvalid()
+{
+    d->contact = KTp::ContactPtr();
+    Q_EMIT contactChanged(d->contact);
 }

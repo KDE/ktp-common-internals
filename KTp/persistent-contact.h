@@ -58,6 +58,7 @@ Q_SIGNALS:
 private Q_SLOTS:
     void onAccountConnectionChanged(const Tp::ConnectionPtr &connection);
     void onPendingContactsFinished(Tp::PendingOperation*);
+    void onContactInvalid();
 
 private:
     PersistentContact(const QString &accountId, const QString &contactId);
