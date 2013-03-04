@@ -36,10 +36,8 @@
 #include <KStandardDirs>
 #include <KDebug>
 
-#include <KTp/presence.h>
-#include <KTp/contact.h>
-#include "KTp/global-contact-manager.h"
-
+#include "KTp/presence.h"
+#include "KTp/contact.h"
 #include "KTp/persistent-contact.h"
 
 class PinnedContactsModelPrivate {

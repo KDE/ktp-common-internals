@@ -22,8 +22,8 @@
 #include <QModelIndex>
 #include <QVector>
 
-#include "types.h"
-#include "persistent-contact.h"
+#include <KTp/types.h>
+#include <KTp/persistent-contact.h>
 
 class ConversationsModel;
 class PinnedContactsModelPrivate;
