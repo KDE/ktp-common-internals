@@ -42,6 +42,7 @@ TelepathyTextObserver::TelepathyTextObserver(QObject *parent) :
         QDBusConnection::sessionBus(),
         Tp::Features() << Tp::Connection::FeatureSelfContact
                        << Tp::Connection::FeatureCore
+                       << Tp::Connection::FeatureConnected
     );
 
     Tp::ChannelFactoryPtr channelFactory = Tp::ChannelFactory::create(QDBusConnection::sessionBus());

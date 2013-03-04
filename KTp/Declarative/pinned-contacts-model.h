@@ -21,19 +21,22 @@
 
 #include <QModelIndex>
 #include <QVector>
-#include "KTp/types.h"
 
-struct Pin;
+#include <KTp/types.h>
+#include <KTp/persistent-contact.h>
+
 class ConversationsModel;
 class PinnedContactsModelPrivate;
 
 class PinnedContactsModel : public QAbstractListModel
 {
     Q_OBJECT
+
     Q_PROPERTY(ConversationsModel *conversations READ conversationsModel WRITE setConversationsModel)
     Q_PROPERTY(Tp::AccountManagerPtr accountManager READ accountManager WRITE setAccountManager)
     Q_PROPERTY(QStringList state READ state WRITE setState)
-    Q_PROPERTY(int count READ rowCount NOTIFY countChanged);
+    Q_PROPERTY(int count READ rowCount NOTIFY countChanged)
+
   public:
     explicit PinnedContactsModel(QObject *parent = 0);
     virtual ~PinnedContactsModel();
@@ -48,9 +51,9 @@ class PinnedContactsModel : public QAbstractListModel
 
     virtual QVariant data(const QModelIndex &index, int role) const;
     virtual int rowCount(const QModelIndex &parent = QModelIndex()) const;
-    virtual bool removeRows(int row, int count, const QModelIndex &parent = QModelIndex());
 
     Q_SLOT void setPinning(const Tp::AccountPtr &account, const KTp::ContactPtr &contact, bool newState);
+
     QModelIndex indexForContact(const KTp::ContactPtr &contact) const;
 
     ConversationsModel* conversationsModel() const;
@@ -64,15 +67,16 @@ class PinnedContactsModel : public QAbstractListModel
 
   private Q_SLOTS:
     void contactDataChanged();
-    void pinPendingContacts(Tp::PendingOperation *job);
-    void initializeState(Tp::PendingOperation *op);
+    void contactChanged(const KTp::ContactPtr &contact);
     void conversationsStateChanged(const QModelIndex &parent, int start, int end);
+    void onAccountManagerReady();
 
   Q_SIGNALS:
     void countChanged();
 
   private:
-    void appendContact(const Pin &p);
+    void appendContactPin(const KTp::PersistentContactPtr &pin);
+    void removeContactPin(const KTp::PersistentContactPtr &pin);
     PinnedContactsModelPrivate * const d;
 };
 
