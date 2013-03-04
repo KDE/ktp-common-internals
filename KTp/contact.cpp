@@ -122,7 +122,7 @@ QPixmap KTp::Contact::avatarPixmap()
 void KTp::Contact::avatarToGray(QPixmap &avatar)
 {
     QImage image = avatar.toImage();
-    QBitmap alphaMask = avatar.mask();
+    QPixmap alpha= avatar.alphaChannel();
     for (int i = 0; i < image.width(); ++i) {
         for (int j = 0; j < image.height(); ++j) {
             int colour = qGray(image.pixel(i, j));
@@ -130,7 +130,7 @@ void KTp::Contact::avatarToGray(QPixmap &avatar)
         }
     }
     avatar = avatar.fromImage(image);
-    avatar.setMask(alphaMask);
+    avatar.setAlphaChannel(alpha);
 }
 
 QString KTp::Contact::keyCache() const
