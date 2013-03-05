@@ -107,14 +107,16 @@ Message::Message(const Tpl::TextEventPtr &original, const KTp::MessageContext &c
     setProperty("senderName", original->sender()->alias());
     setProperty("senderId", original->sender()->identifier());
 
-    if (original->sender()->identifier() == context.account()->normalizedName()) {
-        d->direction = KTp::Message::LocalToRemote;
-        setProperty("senderAvatar", context.account()->
-                    connection()->selfContact()->avatarData().fileName);
-    } else {
-        d->direction = KTp::Message::RemoteToLocal;
-        setProperty("senderAvatar",
-                    context.channel()->targetContact()->avatarData().fileName);
+    if (context.account() && context.account()->connection() && context.channel()) {
+        if (original->sender()->identifier() == context.account()->normalizedName()) {
+            d->direction = KTp::Message::LocalToRemote;
+            setProperty("senderAvatar", context.account()->
+                        connection()->selfContact()->avatarData().fileName);
+        } else {
+            d->direction = KTp::Message::RemoteToLocal;
+                setProperty("senderAvatar",
+                            context.channel()->targetContact()->avatarData().fileName);
+        }
     }
 
     setMainMessagePart(original->message());
