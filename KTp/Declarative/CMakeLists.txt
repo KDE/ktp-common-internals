@@ -15,6 +15,7 @@ set (ktp_qml_plugin_SRCS
     pinned-contacts-model.cpp
     filtered-pinned-contacts-proxy-model.cpp
     contact-pin.cpp
+    declarative-ktp-actions.cpp
 
     qml-plugins.cpp
 )

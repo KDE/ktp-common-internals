@@ -33,6 +33,7 @@
 #include "pinned-contacts-model.h"
 #include "contact-pin.h"
 #include "filtered-pinned-contacts-proxy-model.h"
+#include "declarative-ktp-actions.h"
 
 #include "Models/contacts-filter-model.h"
 
@@ -45,6 +46,7 @@ void QmlPlugins::registerTypes(const char *uri)
     qmlRegisterType<PinnedContactsModel>(uri, 0, 1, "PinnedContactsModel");
     qmlRegisterType<ContactPin>(uri, 0, 1, "ContactPin");
     qmlRegisterType<FilteredPinnedContactsProxyModel>(uri, 0, 1, "FilteredPinnedContactsProxyModel");
+    qmlRegisterType<DeclarativeKTpActions>(uri, 0, 1, "DeclarativeKTpActions");
 
     qmlRegisterUncreatableType<KTp::ContactsFilterModel> (uri, 0, 1, "AccountsFilterModel",
         QLatin1String("Filter cannot be created. Access through ContactList.filter"));
