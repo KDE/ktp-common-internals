@@ -49,12 +49,12 @@ void LogsImporter::Private::run()
 {
     QStringList files = findKopeteLogs(m_accountId);
     if (files.isEmpty()) {
-	Q_EMIT error(i18n("No Kopete logs found"));
-	return;
+        Q_EMIT error(i18n("No Kopete logs found"));
+        return;
     }
 
     Q_FOREACH (const QString &file, files) {
-	convertKopeteLog(file);
+        convertKopeteLog(file);
     }
 }
 
@@ -89,30 +89,30 @@ QString LogsImporter::Private::accountIdToAccountName(const QString &accountId) 
 QString LogsImporter::Private::accountIdToProtocol(const QString &accountId) const
 {
     if (accountId.startsWith(QLatin1String("haze/aim/"))) {
-	return QLatin1String("AIMProtocol");
+        return QLatin1String("AIMProtocol");
     } else if (accountId.startsWith(QLatin1String("haze/msn/"))) {
-	return QLatin1String("WlmProtocol");
+        return QLatin1String("WlmProtocol");
     } else if (accountId.startsWith(QLatin1String("haze/icq/"))) {
-	return QLatin1String("ICQProtocol");
+        return QLatin1String("ICQProtocol");
     } else if (accountId.startsWith(QLatin1String("haze/yahoo/"))) {
-	return QLatin1String("YahooProtocol");
+        return QLatin1String("YahooProtocol");
     } else if (accountId.startsWith(QLatin1String("gabble/jabber/"))) {
-	return QLatin1String("JabberProtocol");
+        return QLatin1String("JabberProtocol");
     } else if (accountId.startsWith(QLatin1String("sunshine/gadugadu/")) ||
-	       accountId.startsWith(QLatin1String("haze/gadugadu/"))) {
-	return QLatin1String("GaduProtocol");
+               accountId.startsWith(QLatin1String("haze/gadugadu/"))) {
+        return QLatin1String("GaduProtocol");
     } else {
-	/* We don't support these Kopete protocols:
-	 * 	Bonjour - unable to reliably map Telepathy account to Kopete
-	 * 	GroupWise - no support in Telepathy
-	 * 	Meanwhile - no support in Telepathy
-	 * 	QQ - no support in Telepathy
-	 * 	SMS - no support in Telepathy
-	 * 	Skype - not supported by KTp
-	 * 	WinPopup - no support in Telepathy
-	 */
-	kWarning() << accountId << "is an unsupported protocol";
-	return QString();
+        /* We don't support these Kopete protocols:
+         *         Bonjour - unable to reliably map Telepathy account to Kopete
+         *         GroupWise - no support in Telepathy
+         *         Meanwhile - no support in Telepathy
+         *         QQ - no support in Telepathy
+         *         SMS - no support in Telepathy
+         *         Skype - not supported by KTp
+         *         WinPopup - no support in Telepathy
+         */
+        kWarning() << accountId << "is an unsupported protocol";
+        return QString();
     }
 }
 
@@ -122,24 +122,24 @@ QStringList LogsImporter::Private::findKopeteLogs(const QString &accountId) cons
 
     QString protocol = accountIdToProtocol(accountId);
     if (protocol.isEmpty()) {
-	kWarning() << "Unsupported protocol";
-	return files;
+        kWarning() << "Unsupported protocol";
+        return files;
     }
 
     QString kopeteAccountId = accountIdToAccountName(accountId);
     if (kopeteAccountId.isEmpty()) {
-	kWarning() << "Unable to parse account ID";
-	return files;
+        kWarning() << "Unable to parse account ID";
+        return files;
     }
 
     QDir dir(KStandardDirs::locateLocal("data", QLatin1String("kopete/logs/") +
-	     protocol + QDir::separator() + kopeteAccountId));
+             protocol + QDir::separator() + kopeteAccountId));
 
     if (dir.exists()) {
-	QFileInfoList entries = dir.entryInfoList(QStringList() << QLatin1String("*.xml"), QDir::Files | QDir::NoDotAndDotDot | QDir::Readable);
-	Q_FOREACH (const QFileInfo &finfo, entries) {
-	    files << finfo.filePath();
-	}
+        QFileInfoList entries = dir.entryInfoList(QStringList() << QLatin1String("*.xml"), QDir::Files | QDir::NoDotAndDotDot | QDir::Readable);
+        Q_FOREACH (const QFileInfo &finfo, entries) {
+            files << finfo.filePath();
+        }
     }
 
     return files;
@@ -151,11 +151,11 @@ void LogsImporter::Private::initKTpDocument()
     m_ktpLogElement.clear();
 
     QDomNode xmlNode = m_ktpDocument.createProcessingInstruction(
-	QLatin1String("xml"), QLatin1String("version='1.0' encoding='utf-8'"));
+        QLatin1String("xml"), QLatin1String("version='1.0' encoding='utf-8'"));
     m_ktpDocument.appendChild(xmlNode);
 
     xmlNode = m_ktpDocument.createProcessingInstruction(
-	QLatin1String("xml-stylesheet"), QLatin1String("type=\"text/xsl\" href=\"log-store-xml.xsl\""));
+        QLatin1String("xml-stylesheet"), QLatin1String("type=\"text/xsl\" href=\"log-store-xml.xsl\""));
     m_ktpDocument.appendChild(xmlNode);
 
     m_ktpLogElement = m_ktpDocument.createElement(QLatin1String("log"));
@@ -165,22 +165,22 @@ void LogsImporter::Private::initKTpDocument()
 void LogsImporter::Private::saveKTpDocument()
 {
     QString filename = QString(QLatin1String("%1%2%3.log"))
-	.arg(m_year)
-	.arg(m_month, 2, 10, QLatin1Char('0'))
-	.arg(m_day, 2, 10, QLatin1Char('0'));
+        .arg(m_year)
+        .arg(m_month, 2, 10, QLatin1Char('0'))
+        .arg(m_day, 2, 10, QLatin1Char('0'));
 
     KStandardDirs dirs;
     QString path = dirs.localxdgdatadir() + QDir::separator() + QLatin1String("TpLogger") + QDir::separator() + QLatin1String("logs");
 
     if (m_isMUCLog) {
-	path += QDir::separator() + QLatin1String("chatrooms");
+        path += QDir::separator() + QLatin1String("chatrooms");
     } else {
-	QString accountId = m_accountId;
-	/* Escape '/' in accountId as '_' */
-	if (m_accountId.contains(QLatin1Char('/'))) {
-	  accountId.replace(QLatin1Char('/'), QLatin1String("_"));
-	}
-	path += QDir::separator() + accountId;
+        QString accountId = m_accountId;
+        /* Escape '/' in accountId as '_' */
+        if (m_accountId.contains(QLatin1Char('/'))) {
+          accountId.replace(QLatin1Char('/'), QLatin1String("_"));
+        }
+        path += QDir::separator() + accountId;
     }
 
     path += QDir::separator() + m_contactId;
@@ -188,15 +188,15 @@ void LogsImporter::Private::saveKTpDocument()
     /* Make sure the path exists */
     QDir dir(path);
     if (!dir.exists()) {
-	QDir::home().mkpath(QDir::home().relativeFilePath(dir.path()));
+        QDir::home().mkpath(QDir::home().relativeFilePath(dir.path()));
     }
 
     path += QDir::separator() + filename;
 
     QFile outFile(path);
     if (outFile.exists()) {
-	kWarning() << path << "already exists, not importing logs";
-	return;
+        kWarning() << path << "already exists, not importing logs";
+        return;
     }
 
     outFile.open(QIODevice::WriteOnly);
@@ -210,25 +210,25 @@ KDateTime LogsImporter::Private::parseKopeteTime(const QDomElement& kopeteMessag
 {
     QString strtime = kopeteMessage.attribute(QLatin1String("time"));
     if (strtime.isEmpty()) {
-	return KDateTime();
+        return KDateTime();
     }
 
     /* Kopete time attribute is in format "D H:M:S" - year and month are stored in
      * log header, Hour, minute and seconds don't have zero padding */
     QStringList dateTime = strtime.split(QLatin1Char(' '), QString::SkipEmptyParts);
     if (dateTime.length() != 2) {
-	return KDateTime();
+        return KDateTime();
     }
 
     QStringList time = dateTime.at(1).split(QLatin1Char(':'));
 
     QString str = QString(QLatin1String("%1-%2-%3T%4:%5:%6Z"))
-	.arg(m_year)
-	.arg(m_month, 2, 10, QLatin1Char('0'))
-	.arg(dateTime.at(0).toInt(), 2, 10, QLatin1Char('0'))
-	.arg(time.at(0).toInt(), 2, 10, QLatin1Char('0'))
-	.arg(time.at(1).toInt(), 2, 10, QLatin1Char('0'))
-	.arg(time.at(2).toInt(), 2, 10, QLatin1Char('0'));
+        .arg(m_year)
+        .arg(m_month, 2, 10, QLatin1Char('0'))
+        .arg(dateTime.at(0).toInt(), 2, 10, QLatin1Char('0'))
+        .arg(time.at(0).toInt(), 2, 10, QLatin1Char('0'))
+        .arg(time.at(1).toInt(), 2, 10, QLatin1Char('0'))
+        .arg(time.at(2).toInt(), 2, 10, QLatin1Char('0'));
 
     /* Kopete stores date in local timezone but Telepathy in UTC. Note that we
      * must use time offset at the specific date rather then current offset
@@ -243,23 +243,23 @@ QDomElement LogsImporter::Private::convertKopeteMessage(const QDomElement& kopet
 {
     KDateTime time = parseKopeteTime(kopeteMessage);
     if (!time.isValid()) {
-	kWarning() << "Failed to parse message time, skipping message";
-	return QDomElement();
+        kWarning() << "Failed to parse message time, skipping message";
+        return QDomElement();
     }
 
     /* If this is the very first message we are processing, then initialize
     * the day counter */
     if (m_day == 0) {
-	m_day = time.date().day();
+        m_day = time.date().day();
     }
 
     /* Kopete stores logs by months, while Telepathy by days. When day changes,
     * save to current KTp log and prepare a new document */
     if (time.date().day() != m_day) {
-	saveKTpDocument();
-	m_day = time.date().day();
+        saveKTpDocument();
+        m_day = time.date().day();
 
-	initKTpDocument();
+        initKTpDocument();
     }
 
     QDomElement ktpMessage = m_ktpDocument.createElement(QLatin1String("message"));
@@ -267,22 +267,22 @@ QDomElement LogsImporter::Private::convertKopeteMessage(const QDomElement& kopet
 
     QString sender = kopeteMessage.attribute(QLatin1String("from"));
     if (!m_isMUCLog && sender.startsWith(m_contactId) && sender.length() > m_contactId.length()) {
-	m_isMUCLog = true;
+        m_isMUCLog = true;
     }
 
     /* In MUC, the "from" attribute is in format "room@conf.server/senderId", so strip
      * the room name */
     if (m_isMUCLog) {
-	sender = sender.remove(m_contactId);
+        sender = sender.remove(m_contactId);
     }
 
     ktpMessage.setAttribute(QLatin1String("id"), sender);
     ktpMessage.setAttribute(QLatin1String("name"), kopeteMessage.attribute(QLatin1String("nick")));
 
     if (sender == m_meId) {
-	ktpMessage.setAttribute(QLatin1String("isuser"), QLatin1String("true"));
+        ktpMessage.setAttribute(QLatin1String("isuser"), QLatin1String("true"));
     } else {
-	ktpMessage.setAttribute(QLatin1String("isuser"), QLatin1String("false"));
+        ktpMessage.setAttribute(QLatin1String("isuser"), QLatin1String("false"));
     }
 
     /* These are not present in Kopete logs, but that should not matter */
@@ -325,43 +325,43 @@ void LogsImporter::Private::convertKopeteLog(const QString& filepath)
     /* Get <head> node and parse it */
     QDomNodeList heads = history.elementsByTagName(QLatin1String("head"));
     if (heads.isEmpty()) {
-	Q_EMIT error(i18n("Invalid Kopete log format"));
-	return;
+        Q_EMIT error(i18n("Invalid Kopete log format"));
+        return;
     }
 
     QDomNode head = heads.item(0);
     QDomNodeList headData = head.childNodes();
     if (headData.length() < 3) {
-	Q_EMIT error(i18n("Invalid Kopete log format"));
-	return;
+        Q_EMIT error(i18n("Invalid Kopete log format"));
+        return;
     }
 
     for (int i = 0; i < headData.count(); i++) {
-	QDomElement el = headData.item(i).toElement();
+        QDomElement el = headData.item(i).toElement();
 
-	if (el.tagName() == QLatin1String("date")) {
-	    m_year = el.attribute(QLatin1String("year"), QString()).toInt();
-	    m_month = el.attribute(QLatin1String("month"), QString()).toInt();
-	} else if (el.tagName() == QLatin1String("contact")) {
-	    if (el.attribute(QLatin1String("type")) == QLatin1String("myself")) {
-		m_meId = el.attribute(QLatin1String("contactId"));
-	    } else {
-		m_contactId = el.attribute(QLatin1String("contactId"));
-	    }
-	}
+        if (el.tagName() == QLatin1String("date")) {
+            m_year = el.attribute(QLatin1String("year"), QString()).toInt();
+            m_month = el.attribute(QLatin1String("month"), QString()).toInt();
+        } else if (el.tagName() == QLatin1String("contact")) {
+            if (el.attribute(QLatin1String("type")) == QLatin1String("myself")) {
+                m_meId = el.attribute(QLatin1String("contactId"));
+            } else {
+                m_contactId = el.attribute(QLatin1String("contactId"));
+            }
+        }
     }
 
     if ((m_year == 0) || (m_month == 0) || m_meId.isEmpty() || m_contactId.isEmpty()) {
-	kWarning() << "Failed to correctly parse header. Possibly invalid log format";
-	return;
+        kWarning() << "Failed to correctly parse header. Possibly invalid log format";
+        return;
     }
 
     for (int i = 0; i < kopeteMessages.count(); i++) {
-	QDomElement kopeteMessage = kopeteMessages.item(i).toElement();
+        QDomElement kopeteMessage = kopeteMessages.item(i).toElement();
 
-	QDomElement ktpMessage = convertKopeteMessage(kopeteMessage);
+        QDomElement ktpMessage = convertKopeteMessage(kopeteMessage);
 
-	m_ktpLogElement.appendChild(ktpMessage);
+        m_ktpLogElement.appendChild(ktpMessage);
     }
 
     saveKTpDocument();
