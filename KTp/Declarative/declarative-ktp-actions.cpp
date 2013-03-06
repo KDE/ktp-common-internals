@@ -48,3 +48,8 @@ Tp::PendingChannelRequest* DeclarativeKTpActions::startFileTransfer(const Tp::Ac
 {
     return KTp::Actions::startFileTransfer(account, contact, filePath);
 }
+
+Tp::PendingOperation* DeclarativeKTpActions::startFileTransfer(const Tp::AccountPtr& account, const KTp::ContactPtr& contact, const QUrl& url)
+{
+    return KTp::Actions::startFileTransfer(account, contact, url);
+}

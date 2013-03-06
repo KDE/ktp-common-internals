@@ -22,10 +22,12 @@
 #include <TelepathyQt/ChannelRequestHints>
 #include <TelepathyQt/Contact>
 #include <TelepathyQt/PendingChannelRequest>
+#include <TelepathyQt/PendingFailure>
 
 #include <KMimeType>
 #include <KToolInvocation>
 #include <KDebug>
+#include <KLocalizedString>
 
 #define PREFERRED_TEXT_CHAT_HANDLER QLatin1String("org.freedesktop.Telepathy.Client.KTp.TextUi")
 #define PREFERRED_FILE_TRANSFER_HANDLER QLatin1String("org.freedesktop.Telepathy.Client.KTp.FileTransfer")
@@ -120,6 +122,19 @@ Tp::PendingChannelRequest* Actions::startFileTransfer(const Tp::AccountPtr& acco
                                        fileTransferProperties,
                                        QDateTime::currentDateTime(),
                                        PREFERRED_FILE_TRANSFER_HANDLER);
+}
+
+Tp::PendingOperation* Actions::startFileTransfer(const Tp::AccountPtr& account,
+                                                 const Tp::ContactPtr& contact,
+                                                 const QUrl& url)
+{
+    Tp::PendingOperation *ret = 0;
+    if (url.isLocalFile()) {
+        ret = startFileTransfer(account, contact, url.toLocalFile());
+    } else {
+        ret = new Tp::PendingFailure(QLatin1String("Failed file transfer"), QString(QLatin1String("You are only supposed to send local files, not %1")).arg(url.toString()), account);
+    }
+    return ret;
 }
 
 void Actions::openLogViewer(const Tp::AccountPtr& account,

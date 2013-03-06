@@ -25,6 +25,7 @@
 
 namespace Tp {
 class PendingChannelRequest;
+class PendingOperation;
 }
 
 namespace KTp {
@@ -47,6 +48,10 @@ namespace Actions {
     KTP_EXPORT Tp::PendingChannelRequest* startFileTransfer(const Tp::AccountPtr &account,
                                                             const Tp::ContactPtr &contact,
                                                             const QString &filePath);
+
+    KTP_EXPORT Tp::PendingOperation* startFileTransfer(const Tp::AccountPtr &account,
+                                                       const Tp::ContactPtr &contact,
+                                                       const QUrl &url);
 
     KTP_EXPORT void openLogViewer(const Tp::AccountPtr &account,
                                   const Tp::ContactPtr &contact);
