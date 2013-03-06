@@ -17,6 +17,8 @@
 */
 
 #include "main-window.h"
+#include "version.h"
+
 #include <KAboutData>
 #include <KCmdLineArgs>
 #include <KApplication>
@@ -27,7 +29,7 @@ int main(int argc, char **argv)
 {
     KAboutData aboutData("ktp-debugger", 0,
             ki18n("KDE Telepathy Debug Tool"),
-            "0.4.60",
+            KTP_VERSION,
             ki18n("Tool for inspecting logs of the various underlying telepathy components"),
             KAboutData::License_LGPL,
             ki18n("Copyright (C) 2011 Collabora Ltd."));
