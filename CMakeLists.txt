@@ -9,8 +9,8 @@ set (CMAKE_MODULE_PATH
 
 set (KTP_VERSION "0.5.3")
 # Bump for every 0.x release, or whenever BC changes
-set (KTP_SONUMBER 4)
-set (KTP_MESSAGE_FILTER_FRAMEWORK_VERSION "2")
+set (KTP_SONUMBER 5)
+set (KTP_MESSAGE_FILTER_FRAMEWORK_VERSION "3")
 
 find_package (KDE4 REQUIRED)
 find_package (TelepathyQt4 0.9.2.1 REQUIRED)
