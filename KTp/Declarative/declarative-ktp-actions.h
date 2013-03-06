@@ -42,8 +42,8 @@ class DeclarativeKTpActions : public QObject
         Tp::PendingChannelRequest* startDesktopSharing(const Tp::AccountPtr &account,
                                                                 const KTp::ContactPtr &contact);
 
-        Tp::PendingOperation* startFileTransfer(const Tp::AccountPtr& account,
-                                                const KTp::ContactPtr& contact,
+        Tp::PendingOperation* startFileTransfer(const Tp::AccountPtr &account,
+                                                const KTp::ContactPtr &contact,
                                                 const QUrl& url);
 
         Tp::PendingChannelRequest* startFileTransfer(const Tp::AccountPtr &account,

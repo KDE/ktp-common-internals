@@ -36,8 +36,8 @@
 
 using namespace KTp;
 
-Tp::PendingChannelRequest* Actions::startChat(const Tp::AccountPtr& account,
-                                              const Tp::ContactPtr& contact,
+Tp::PendingChannelRequest* Actions::startChat(const Tp::AccountPtr &account,
+                                              const Tp::ContactPtr &contact,
                                               bool delegateToPreferredHandler)
 {
     if (account.isNull() || contact.isNull()) {
@@ -59,8 +59,8 @@ Tp::PendingChannelRequest* Actions::startChat(const Tp::AccountPtr& account,
                                    hints);
 }
 
-Tp::PendingChannelRequest* Actions::startAudioCall(const Tp::AccountPtr& account,
-                                                   const Tp::ContactPtr& contact)
+Tp::PendingChannelRequest* Actions::startAudioCall(const Tp::AccountPtr &account,
+                                                   const Tp::ContactPtr &contact)
 {
     if (account.isNull() || contact.isNull()) {
         kWarning() << "Parameters invalid";
@@ -74,8 +74,8 @@ Tp::PendingChannelRequest* Actions::startAudioCall(const Tp::AccountPtr& account
                                     PREFERRED_AUDIO_VIDEO_HANDLER);
 }
 
-Tp::PendingChannelRequest* Actions::startAudioVideoCall(const Tp::AccountPtr& account,
-                                                        const Tp::ContactPtr& contact)
+Tp::PendingChannelRequest* Actions::startAudioVideoCall(const Tp::AccountPtr &account,
+                                                        const Tp::ContactPtr &contact)
 {
     if (account.isNull() || contact.isNull()) {
         kWarning() << "Parameters invalid";
@@ -90,8 +90,8 @@ Tp::PendingChannelRequest* Actions::startAudioVideoCall(const Tp::AccountPtr& ac
                                          PREFERRED_AUDIO_VIDEO_HANDLER);
 }
 
-Tp::PendingChannelRequest* Actions::startDesktopSharing(const Tp::AccountPtr& account,
-                                                        const Tp::ContactPtr& contact)
+Tp::PendingChannelRequest* Actions::startDesktopSharing(const Tp::AccountPtr &account,
+                                                        const Tp::ContactPtr &contact)
 {
     if (account.isNull() || contact.isNull()) {
         kWarning() << "Parameters invalid";
@@ -105,9 +105,9 @@ Tp::PendingChannelRequest* Actions::startDesktopSharing(const Tp::AccountPtr& ac
                                      PREFERRED_RFB_HANDLER);
 }
 
-Tp::PendingChannelRequest* Actions::startFileTransfer(const Tp::AccountPtr& account,
-                                                      const Tp::ContactPtr& contact,
-                                                      const QString& filePath)
+Tp::PendingChannelRequest* Actions::startFileTransfer(const Tp::AccountPtr &account,
+                                                      const Tp::ContactPtr &contact,
+                                                      const QString &filePath)
 {
     if (account.isNull() || contact.isNull()) {
         kWarning() << "Parameters invalid";
@@ -124,9 +124,9 @@ Tp::PendingChannelRequest* Actions::startFileTransfer(const Tp::AccountPtr& acco
                                        PREFERRED_FILE_TRANSFER_HANDLER);
 }
 
-Tp::PendingOperation* Actions::startFileTransfer(const Tp::AccountPtr& account,
-                                                 const Tp::ContactPtr& contact,
-                                                 const QUrl& url)
+Tp::PendingOperation* Actions::startFileTransfer(const Tp::AccountPtr &account,
+                                                 const Tp::ContactPtr &contact,
+                                                 const QUrl &url)
 {
     Tp::PendingOperation *ret = 0;
     if (url.isLocalFile()) {
@@ -137,8 +137,8 @@ Tp::PendingOperation* Actions::startFileTransfer(const Tp::AccountPtr& account,
     return ret;
 }
 
-void Actions::openLogViewer(const Tp::AccountPtr& account,
-                            const Tp::ContactPtr& contact)
+void Actions::openLogViewer(const Tp::AccountPtr &account,
+                            const Tp::ContactPtr &contact)
 {
     if (account.isNull() || contact.isNull()) {
         kWarning() << "Parameters invalid";

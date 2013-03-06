@@ -19,37 +19,37 @@
 #include "declarative-ktp-actions.h"
 #include <KTp/actions.h>
 
-void DeclarativeKTpActions::openLogViewer(const Tp::AccountPtr& account, const KTp::ContactPtr& contact)
+void DeclarativeKTpActions::openLogViewer(const Tp::AccountPtr &account, const KTp::ContactPtr &contact)
 {
     KTp::Actions::openLogViewer(account, contact);
 }
 
-Tp::PendingChannelRequest* DeclarativeKTpActions::startAudioCall(const Tp::AccountPtr& account, const KTp::ContactPtr& contact)
+Tp::PendingChannelRequest* DeclarativeKTpActions::startAudioCall(const Tp::AccountPtr &account, const KTp::ContactPtr &contact)
 {
     return KTp::Actions::startAudioCall(account, contact);
 }
 
-Tp::PendingChannelRequest* DeclarativeKTpActions::startAudioVideoCall(const Tp::AccountPtr& account, const KTp::ContactPtr& contact)
+Tp::PendingChannelRequest* DeclarativeKTpActions::startAudioVideoCall(const Tp::AccountPtr &account, const KTp::ContactPtr &contact)
 {
     return KTp::Actions::startAudioVideoCall(account, contact);
 }
 
-Tp::PendingChannelRequest* DeclarativeKTpActions::startChat(const Tp::AccountPtr& account, const KTp::ContactPtr& contact, bool delegateToPreferredHandler)
+Tp::PendingChannelRequest* DeclarativeKTpActions::startChat(const Tp::AccountPtr &account, const KTp::ContactPtr &contact, bool delegateToPreferredHandler)
 {
     return KTp::Actions::startChat(account, contact, delegateToPreferredHandler);
 }
 
-Tp::PendingChannelRequest* DeclarativeKTpActions::startDesktopSharing(const Tp::AccountPtr& account, const KTp::ContactPtr& contact)
+Tp::PendingChannelRequest* DeclarativeKTpActions::startDesktopSharing(const Tp::AccountPtr &account, const KTp::ContactPtr &contact)
 {
     return KTp::Actions::startDesktopSharing(account, contact);
 }
 
-Tp::PendingChannelRequest* DeclarativeKTpActions::startFileTransfer(const Tp::AccountPtr& account, const KTp::ContactPtr& contact, const QString& filePath)
+Tp::PendingChannelRequest* DeclarativeKTpActions::startFileTransfer(const Tp::AccountPtr &account, const KTp::ContactPtr &contact, const QString &filePath)
 {
     return KTp::Actions::startFileTransfer(account, contact, filePath);
 }
 
-Tp::PendingOperation* DeclarativeKTpActions::startFileTransfer(const Tp::AccountPtr& account, const KTp::ContactPtr& contact, const QUrl& url)
+Tp::PendingOperation* DeclarativeKTpActions::startFileTransfer(const Tp::AccountPtr &account, const KTp::ContactPtr &contact, const QUrl &url)
 {
     return KTp::Actions::startFileTransfer(account, contact, url);
 }
