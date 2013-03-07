@@ -49,7 +49,8 @@ void RolesProxyModel::setSourceModel(QAbstractItemModel *sourceModel)
 }
 
 int RolesProxyModel::columnCount(const QModelIndex &parent) const
-{
+{   
+    Q_UNUSED(parent);
     // Number of columns is number of roles available to QML
     return sourceModel()->roleNames().size();
 }
@@ -116,6 +117,7 @@ Qt::ItemFlags RolesProxyModel::flags(const QModelIndex &index) const
 
 QVariant RolesProxyModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
+    Q_UNUSED(orientation);
     if (role == Qt::DisplayRole) {
         return sourceModel()->roleNames().values().at(section);
     }
