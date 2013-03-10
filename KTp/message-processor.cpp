@@ -47,11 +47,30 @@ class MessageProcessor::Private
     MessageProcessor *q;
 };
 
+bool pluginWeightLessThan(const KPluginInfo &p1, const KPluginInfo &p2)
+{
+    bool ok;
+    int weight1 = p1.service()->property(QLatin1String("X-KDE-PluginInfo-Weight"), QVariant::Int).toInt(&ok);
+    if (!ok) {
+        weight1 = 100;
+    }
+    int weight2 = p2.service()->property(QLatin1String("X-KDE-PluginInfo-Weight"), QVariant::Int).toInt(&ok);
+    if (!ok) {
+        weight2 = 100;
+    }
+
+    return weight1 < weight2;
+}
+
 void MessageProcessor::Private::loadFilters()
 {
     kDebug() << "Starting loading filters...";
 
-    Q_FOREACH (const KPluginInfo &plugin, MessageFilterConfigManager::self()->enabledPlugins()) {
+    KPluginInfo::List plugins = MessageFilterConfigManager::self()->enabledPlugins();
+
+    qSort(plugins.begin(), plugins.end(), pluginWeightLessThan);
+
+    Q_FOREACH (const KPluginInfo &plugin, plugins) {
         KService::Ptr service = plugin.service();
 
         KPluginFactory *factory = KPluginLoader(service->library()).factory();
