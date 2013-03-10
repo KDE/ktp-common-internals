@@ -240,7 +240,12 @@ void KTp::JoinChatRoomDialog::removeFavorite()
 
 void KTp::JoinChatRoomDialog::addRecentRoom()
 {
-    QString accountIdentifier = ui->comboBox->currentAccount()->uniqueIdentifier();
+    Tp::AccountPtr account = ui->comboBox->currentAccount();
+    if (!account) {
+        return;
+    }
+
+    QString accountIdentifier = account->uniqueIdentifier();
     QString handle = ui->lineEdit->text();
 
     if (!handle.isEmpty()) {
@@ -311,6 +316,9 @@ void KTp::JoinChatRoomDialog::clearRecentRooms()
 void KTp::JoinChatRoomDialog::getRoomList()
 {
     Tp::AccountPtr account = ui->comboBox->currentAccount();
+    if (!account) {
+        return;
+    }
 
     // Clear the list from previous items
     m_model->clearRoomInfoList();
