@@ -56,6 +56,7 @@ public:
     QString group() const;
     virtual QVariant data(int role) const;
     bool forced() const;
+    void changed(); //expose protected method in QStandardItem
     void setForced(bool forced);
 private:
     const QString m_groupId;
@@ -120,6 +121,11 @@ bool GroupNode::forced() const
     return m_forced;
 }
 
+void GroupNode::changed()
+{
+    QStandardItem::emitDataChanged();
+}
+
 
 KTp::AbstractGroupingProxyModel::AbstractGroupingProxyModel(QAbstractItemModel *source):
     QStandardItemModel(source),
@@ -159,6 +165,14 @@ void KTp::AbstractGroupingProxyModel::unforceGroup(const QString &group)
     if (groupNode->rowCount() == 0) {
         takeRow(groupNode->row());
         d->groupMap.remove(groupNode->group());
+    }
+}
+
+void KTp::AbstractGroupingProxyModel::groupChanged(const QString &group)
+{
+    GroupNode *node = d->groupMap[group];
+    if (node) {
+        node->changed();
     }
 }
 

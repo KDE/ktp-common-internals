@@ -37,6 +37,7 @@ public:
     virtual QVariant dataForGroup(const QString &group, int role) const;
 
 private Q_SLOTS:
+    void onAccountChanged();
     void onAccountAdded(const Tp::AccountPtr &account);
     void onAccountRemoved(const Tp::AccountPtr &account);
 

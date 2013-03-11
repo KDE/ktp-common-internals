@@ -91,9 +91,17 @@ QVariant KTp::AccountsTreeProxyModel::dataForGroup(const QString &group, int rol
     return QVariant();
 }
 
+void KTp::AccountsTreeProxyModel::onAccountChanged()
+{
+    Tp::AccountPtr account(qobject_cast<Tp::Account*>(sender()));
+    groupChanged(account->objectPath());
+}
+
 void KTp::AccountsTreeProxyModel::onAccountAdded(const Tp::AccountPtr &account)
 {
     forceGroup(account->objectPath());
+    connect(account.data(), SIGNAL(normalizedNameChanged(QString)), SLOT(onAccountChanged()));
+    connect(account.data(), SIGNAL(iconNameChanged(QString)), SLOT(onAccountChanged()));
 }
 
 void KTp::AccountsTreeProxyModel::onAccountRemoved(const Tp::AccountPtr &account)

@@ -42,6 +42,7 @@ public:
     void forceGroup(const QString &group);
     void unforceGroup(const QString &group);
 
+    void groupChanged(const QString &group);
 
 //protected:
     /** Return a list of all groups this items belongs to. Subclasses must override this*/
