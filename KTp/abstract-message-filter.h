@@ -20,6 +20,8 @@
 #define KTP_ABSTRACT_MESSAGE_FILTER_H
 
 #include <KTp/message.h>
+#include <KTp/outgoing-message.h>
+
 #include <KTp/message-context.h>
 #include <KTp/ktp-export.h>
 
@@ -47,7 +49,7 @@ class KTP_EXPORT AbstractMessageFilter : public QObject
     virtual QStringList requiredStylesheets();
 
     /** Filter composed messages about to be sent to telepathy backend */
-    virtual void filterOutgoingMessage(KTp::Message &message, const KTp::MessageContext &context);
+    virtual void filterOutgoingMessage(KTp::OutgoingMessage &message, const KTp::MessageContext &context);
 };
 
 }

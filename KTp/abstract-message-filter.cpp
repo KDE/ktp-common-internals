@@ -46,7 +46,7 @@ QStringList AbstractMessageFilter::requiredStylesheets()
     return QStringList();
 }
 
-void AbstractMessageFilter::filterOutgoingMessage(Message &message, const MessageContext &context)
+void AbstractMessageFilter::filterOutgoingMessage(KTp::OutgoingMessage &message, const MessageContext &context)
 {
     Q_UNUSED(message)
     Q_UNUSED(context)

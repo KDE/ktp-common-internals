@@ -25,6 +25,8 @@
 #include <KPluginInfo>
 
 #include <KTp/message.h>
+#include <KTp/outgoing-message.h>
+
 #include <KTp/ktp-export.h>
 #include <KTp/abstract-message-filter.h>
 #include <TelepathyLoggerQt4/Types>
@@ -58,7 +60,7 @@ class KTP_EXPORT MessageProcessor : public QObject
     KTp::Message processIncomingMessage(const Tp::ReceivedMessage &message, const Tp::AccountPtr &account, const Tp::TextChannelPtr &channel);
     KTp::Message processIncomingMessage(const Tpl::TextEventPtr &message, const Tp::AccountPtr &account, const Tp::TextChannelPtr &channel);
 
-    KTp::Message processOutgoingMessage(const QString &messageText, const Tp::AccountPtr &account, const Tp::TextChannelPtr &channel);
+    KTp::OutgoingMessage processOutgoingMessage(const QString &messageText, const Tp::AccountPtr &account, const Tp::TextChannelPtr &channel);
 
   protected:
     KTp::Message processIncomingMessage(KTp::Message message, const KTp::MessageContext &context);

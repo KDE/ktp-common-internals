@@ -186,10 +186,10 @@ KTp::Message MessageProcessor::processIncomingMessage(KTp::Message message, cons
     return message;
 }
 
-KTp::Message MessageProcessor::processOutgoingMessage(const QString &messageText, const Tp::AccountPtr &account, const Tp::TextChannelPtr &channel)
+KTp::OutgoingMessage MessageProcessor::processOutgoingMessage(const QString &messageText, const Tp::AccountPtr &account, const Tp::TextChannelPtr &channel)
 {
     KTp::MessageContext context(account, channel);
-    KTp::Message message(messageText, context);
+    KTp::OutgoingMessage message(messageText);
 
     Q_FOREACH (AbstractMessageFilter *filter, d->filters) {
         kDebug() << "running outgoing filter : " << filter->metaObject()->className();
