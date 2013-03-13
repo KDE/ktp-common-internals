@@ -36,6 +36,9 @@ namespace Actions {
                                                     const Tp::ContactPtr &contact,
                                                     bool delegateToPreferredHandler = true);
 
+    KTP_EXPORT Tp::PendingChannelRequest* startGroupChat(const Tp::AccountPtr &account,
+                                                         const QString &roomName);
+
     KTP_EXPORT Tp::PendingChannelRequest* startAudioCall(const Tp::AccountPtr &account,
                                                          const Tp::ContactPtr &contact);
 

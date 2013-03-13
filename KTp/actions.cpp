@@ -59,6 +59,24 @@ Tp::PendingChannelRequest* Actions::startChat(const Tp::AccountPtr &account,
                                    hints);
 }
 
+Tp::PendingChannelRequest* Actions::startGroupChat(const Tp::AccountPtr &account,
+                                                   const QString &roomName)
+{
+    if (account.isNull() || roomName.isEmpty()) {
+        kWarning() << "Parameters invalid";
+    }
+
+    kDebug() << "Requesting text chat room " << roomName;
+
+    Tp::ChannelRequestHints hints;
+    hints.setHint(QLatin1String("org.kde.telepathy"), QLatin1String("forceRaiseWindow"), QVariant(true));
+
+    return account->ensureTextChatroom(roomName,
+                                       QDateTime::currentDateTime(),
+                                       PREFERRED_TEXT_CHAT_HANDLER,
+                                       hints);
+}
+
 Tp::PendingChannelRequest* Actions::startAudioCall(const Tp::AccountPtr &account,
                                                    const Tp::ContactPtr &contact)
 {
