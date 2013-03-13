@@ -146,6 +146,12 @@ Tp::PendingOperation* Actions::startFileTransfer(const Tp::AccountPtr &account,
                                                  const Tp::ContactPtr &contact,
                                                  const QUrl &url)
 {
+    if (account.isNull() || contact.isNull() || url.isEmpty()) {
+        kWarning() << "Parameters invalid";
+    }
+
+    kDebug() << "Requesting file transfer of" << url.toLocalFile() << "to" << contact->id();
+
     Tp::PendingOperation *ret = 0;
     if (url.isLocalFile()) {
         ret = startFileTransfer(account, contact, url.toLocalFile());
