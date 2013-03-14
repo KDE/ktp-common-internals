@@ -22,12 +22,15 @@
 #include <TelepathyQt/Connection>
 #include <TelepathyQt/ContactCapabilities>
 #include <TelepathyQt/AvatarData>
+#include <TelepathyQt/Utils>
 
 #include <QBitmap>
 #include <QPixmap>
 #include <QPixmapCache>
 
 #include <KIconLoader>
+#include <KConfigGroup>
+#include <KConfig>
 
 #include "capabilities-hack-private.h"
 
@@ -105,17 +108,31 @@ QPixmap KTp::Contact::avatarPixmap()
 {
     QPixmap avatar;
     QString file = avatarData().fileName;
-    if (file.isEmpty()) {
-        avatar = KIconLoader::global()->loadIcon(QLatin1String("im-user"), KIconLoader::NoGroup, 96);
+
+    //if the user is offline, look into the cache for avatar
+    if (file.isEmpty() && presence().type() == Tp::ConnectionPresenceTypeOffline) {
+        KConfig config(QLatin1String("ktelepathy-avatarsrc"));
+        KConfigGroup avatarTokenGroup = config.group(id());
+        QString avatarToken = avatarTokenGroup.readEntry(QLatin1String("avatarToken"));
+
+        if (!avatarToken.isEmpty()) {
+            avatar.load(buildAvatarPath(avatarToken));
+        }
     } else {
         avatar.load(file);
     }
+
+    if (avatar.isNull()) {
+        avatar = KIconLoader::global()->loadIcon(QLatin1String("im-user"), KIconLoader::NoGroup, 96);
+    }
+
     if (presence().type() == Tp::ConnectionPresenceTypeOffline) {
         if (!QPixmapCache::find(keyCache(),avatar)){
             avatarToGray(avatar);
             QPixmapCache::insert(keyCache(), avatar);
         }
     }
+
     return avatar;
 }
 
@@ -138,3 +155,26 @@ QString KTp::Contact::keyCache() const
     return avatarToken()+QLatin1String("-offline");
 }
 
+QString KTp::Contact::buildAvatarPath(const QString &avatarToken)
+{
+    QString cacheDir = QString::fromLatin1(qgetenv("XDG_CACHE_HOME"));
+    if (cacheDir.isEmpty()) {
+        cacheDir = QString::fromLatin1("%1/.cache").arg(QLatin1String(qgetenv("HOME")));
+    }
+
+    if (manager().isNull()) {
+        return QString();
+    }
+
+    if (manager()->connection().isNull()) {
+        return QString();
+    }
+
+    Tp::ConnectionPtr conn = manager()->connection();
+    QString path = QString::fromLatin1("%1/telepathy/avatars/%2/%3").
+        arg(cacheDir).arg(conn->cmName()).arg(conn->protocolName());
+
+    QString avatarFileName = QString::fromLatin1("%1/%2").arg(path).arg(Tp::escapeAsIdentifier(avatarToken));
+
+    return avatarFileName;
+}
