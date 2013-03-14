@@ -24,6 +24,7 @@
 
 #include <QSortFilterProxyModel>
 
+#include <KTp/types.h>
 #include <KTp/ktp-export.h>
 
 namespace KTp
@@ -132,6 +133,13 @@ class KTP_EXPORT ContactsFilterModel : public QSortFilterProxyModel
                RESET resetIdFilterMatchFlags
                WRITE setIdFilterMatchFlags
                NOTIFY idFilterMatchFlagsChanged)
+
+    Q_PROPERTY(Tp::AccountPtr accountFilter
+               READ accountFilter
+               RESET clearAccountFilter
+               WRITE setAccountFilter
+               NOTIFY accountFilterChanged)
+
     Q_PROPERTY(QString sortRoleString
                READ sortRoleString
                WRITE setSortRoleString)
@@ -269,6 +277,11 @@ public:
     Q_SLOT void resetIdFilterMatchFlags();
     Q_SLOT void setIdFilterMatchFlags(Qt::MatchFlags idFilterMatchFlags);
     Q_SIGNAL void idFilterMatchFlagsChanged(Qt::MatchFlags idFilterMatchFlags);
+
+    Tp::AccountPtr accountFilter() const;
+    Q_SLOT void clearAccountFilter();
+    Q_SLOT void setAccountFilter(const Tp::AccountPtr &accountFilter);
+    Q_SIGNAL void accountFilterChanged(const Tp::AccountPtr &accountFilter);
 
     QStringList tubesFilterStrings() const;
     Q_SLOT void clearTubesFilterStrings();

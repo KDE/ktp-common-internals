@@ -67,6 +67,7 @@ public:
     Qt::MatchFlags aliasFilterMatchFlags;
     Qt::MatchFlags groupsFilterMatchFlags;
     Qt::MatchFlags idFilterMatchFlags;
+    Tp::AccountPtr accountFilter;
 
     bool filterAcceptsAccount(const QModelIndex &index) const;
     bool filterAcceptsContact(const QModelIndex &index) const;
@@ -313,6 +314,13 @@ bool ContactsFilterModel::Private::filterAcceptsContact(const QModelIndex &index
             if (q->match(index, KTp::IdRole, idFilterString, 1, idFilterMatchFlags).isEmpty()) {
                 return false;
             }
+        }
+    }
+
+    //check account
+    if (accountFilter) {
+        if(index.data(KTp::AccountRole).value<Tp::AccountPtr>() != accountFilter) {
+            return false;
         }
     }
 
@@ -753,6 +761,26 @@ void ContactsFilterModel::setIdFilterString(const QString &idFilterString)
 Qt::MatchFlags ContactsFilterModel::idFilterMatchFlags() const
 {
     return d->idFilterMatchFlags;
+}
+
+
+Tp::AccountPtr ContactsFilterModel::accountFilter() const
+{
+    return d->accountFilter;
+}
+
+void ContactsFilterModel::setAccountFilter(const Tp::AccountPtr &accountFilter)
+{
+    if (d->accountFilter != accountFilter) {
+        d->accountFilter = accountFilter;
+        invalidateFilter();
+        Q_EMIT accountFilterChanged(accountFilter);
+    }
+}
+
+void ContactsFilterModel::clearAccountFilter()
+{
+    setAccountFilter(Tp::AccountPtr());
 }
 
 void ContactsFilterModel::resetIdFilterMatchFlags()
