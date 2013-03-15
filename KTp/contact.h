@@ -52,7 +52,7 @@ Q_SIGNALS:
 
 private:
     void avatarToGray(QPixmap &avatar);
-    QString keyCache() const;
+    QString keyCache(const QString &avatarHash) const;
     QString buildAvatarPath(const QString &avatarToken);
 
 };

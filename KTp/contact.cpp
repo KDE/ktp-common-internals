@@ -108,12 +108,13 @@ QPixmap KTp::Contact::avatarPixmap()
 {
     QPixmap avatar;
     QString file = avatarData().fileName;
+    QString avatarToken;
 
     //if the user is offline, look into the cache for avatar
     if (file.isEmpty() && presence().type() == Tp::ConnectionPresenceTypeOffline) {
         KConfig config(QLatin1String("ktelepathy-avatarsrc"));
         KConfigGroup avatarTokenGroup = config.group(id());
-        QString avatarToken = avatarTokenGroup.readEntry(QLatin1String("avatarToken"));
+        avatarToken = avatarTokenGroup.readEntry(QLatin1String("avatarToken"));
 
         if (!avatarToken.isEmpty()) {
             avatar.load(buildAvatarPath(avatarToken));
@@ -127,9 +128,9 @@ QPixmap KTp::Contact::avatarPixmap()
     }
 
     if (presence().type() == Tp::ConnectionPresenceTypeOffline) {
-        if (!QPixmapCache::find(keyCache(),avatar)){
+        if (!QPixmapCache::find(keyCache(avatarToken),avatar)){
             avatarToGray(avatar);
-            QPixmapCache::insert(keyCache(), avatar);
+            QPixmapCache::insert(keyCache(avatarToken), avatar);
         }
     }
 
@@ -150,9 +151,9 @@ void KTp::Contact::avatarToGray(QPixmap &avatar)
     avatar.setAlphaChannel(alpha);
 }
 
-QString KTp::Contact::keyCache() const
+QString KTp::Contact::keyCache(const QString &avatarToken) const
 {
-    return avatarToken()+QLatin1String("-offline");
+    return avatarToken+QLatin1String("-offline");
 }
 
 QString KTp::Contact::buildAvatarPath(const QString &avatarToken)
