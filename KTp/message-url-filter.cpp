@@ -20,11 +20,7 @@
 
 #include "message-filters-private.h"
 
-#include <QImageReader>
-
 #include <KUrl>
-#include <KProtocolInfo>
-#include <KDebug>
 #include <KTp/text-parser.h>
 
 MessageUrlFilter::MessageUrlFilter(QObject *parent)
