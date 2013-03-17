@@ -41,14 +41,16 @@ void MessageUrlFilter::filterMessage(KTp::Message &info, const KTp::MessageConte
     int offset = 0;
     for (int i = 0; i < parsedUrl.fixedUrls.size(); i++) {
          KUrl url(parsedUrl.fixedUrls.at(i));
-         QString originalText = message.mid(parsedUrl.urlRanges.at(i).first + offset, parsedUrl.urlRanges.at(i).second);
-         QString link = QString::fromLatin1("<a href=\"%1\">%2</a>").arg(QString::fromAscii(url.toEncoded()), originalText);
-         message.replace(parsedUrl.urlRanges.at(i).first + offset, parsedUrl.urlRanges.at(i).second, link);
+         if (url.protocol() != QLatin1String("mailto")) {
+             QString originalText = message.mid(parsedUrl.urlRanges.at(i).first + offset, parsedUrl.urlRanges.at(i).second);
+             QString link = QString::fromLatin1("<a href=\"%1\">%2</a>").arg(QString::fromAscii(url.toEncoded()), originalText);
+             message.replace(parsedUrl.urlRanges.at(i).first + offset, parsedUrl.urlRanges.at(i).second, link);
 
-         urls.append(url);
+             urls.append(url);
 
-         //after the first replacement is made, the original position values are not valid anymore, this adjusts them
-         offset += link.length() - originalText.length();
+             //after the first replacement is made, the original position values are not valid anymore, this adjusts them
+             offset += link.length() - originalText.length();
+         }
      }
 
     info.setProperty("Urls", urls);
