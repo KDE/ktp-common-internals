@@ -80,8 +80,11 @@ void KTp::ContactsListModel::setAccountManager(const Tp::AccountManagerPtr &acco
 
 int KTp::ContactsListModel::rowCount(const QModelIndex &parent) const
 {
-    Q_UNUSED (parent);
-    return d->contacts.size();
+    if (!parent.isValid()) {
+        return d->contacts.size();
+    } else {
+        return 0;
+    }
 }
 
 QVariant KTp::ContactsListModel::data(const QModelIndex &index, int role) const
