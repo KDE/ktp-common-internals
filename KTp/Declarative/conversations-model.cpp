@@ -54,6 +54,7 @@ ConversationsModel::ConversationsModel(QObject *parent) :
 
 ConversationsModel::~ConversationsModel()
 {
+    qDeleteAll(d->conversations);
     delete d;
 }
 

@@ -100,5 +100,6 @@ void Conversation::requestClose()
 Conversation::~Conversation()
 {
     kDebug();
+    requestClose();
     delete d;
 }
