@@ -35,7 +35,7 @@ class KTp::ContactsFilterModel::Private
 public:
     Private(ContactsFilterModel *parent)
         : q(parent),
-          presenceTypeFilterFlags(DoNotFilterByCapability),
+          presenceTypeFilterFlags(DoNotFilterByPresence),
           capabilityFilterFlags(DoNotFilterByCapability),
           subscriptionStateFilterFlags(DoNotFilterBySubscription),
           globalFilterMatchFlags(Qt::MatchContains),
