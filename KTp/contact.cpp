@@ -39,6 +39,8 @@ KTp::Contact::Contact(Tp::ContactManager *manager, const Tp::ReferencedHandles &
 {
     connect(manager->connection().data(), SIGNAL(destroyed()), SIGNAL(invalidated()));
     connect(manager->connection().data(), SIGNAL(invalidated(Tp::DBusProxy*,QString,QString)), SIGNAL(invalidated()));
+    connect(this, SIGNAL(avatarTokenChanged(QString)), SLOT(invalidateAvatarCache()));
+    connect(this, SIGNAL(avatarDataChanged(Tp::AvatarData)), SLOT(invalidateAvatarCache()));
 }
 
 KTp::Presence KTp::Contact::presence() const
@@ -107,31 +109,36 @@ QStringList KTp::Contact::clientTypes() const
 QPixmap KTp::Contact::avatarPixmap()
 {
     QPixmap avatar;
-    QString file = avatarData().fileName;
-    QString avatarToken;
 
-    //if the user is offline, look into the cache for avatar
-    if (file.isEmpty() && presence().type() == Tp::ConnectionPresenceTypeOffline) {
-        KConfig config(QLatin1String("ktelepathy-avatarsrc"));
-        KConfigGroup avatarTokenGroup = config.group(id());
-        avatarToken = avatarTokenGroup.readEntry(QLatin1String("avatarToken"));
+    //check pixmap cache for the avatar, if not present, load the avatar
+    if (!QPixmapCache::find(keyCache(), avatar)){
+        QString file = avatarData().fileName;
 
-        if (!avatarToken.isEmpty()) {
-            avatar.load(buildAvatarPath(avatarToken));
+        //if contact does not provide path, let's see if we have avatar for the stored token
+        if (file.isEmpty()) {
+            KConfig config(QLatin1String("ktelepathy-avatarsrc"));
+            KConfigGroup avatarTokenGroup = config.group(id());
+            QString avatarToken = avatarTokenGroup.readEntry(QLatin1String("avatarToken"));
+            //only bother loading the pixmap if the token is not empty
+            if (!avatarToken.isEmpty()) {
+                avatar.load(buildAvatarPath(avatarToken));
+            }
+        } else {
+            avatar.load(file);
         }
-    } else {
-        avatar.load(file);
-    }
 
-    if (avatar.isNull()) {
-        avatar = KIconLoader::global()->loadIcon(QLatin1String("im-user"), KIconLoader::NoGroup, 96);
-    }
+        //if neither above succeeded, we need to load the icon
+        if (avatar.isNull()) {
+            avatar = KIconLoader::global()->loadIcon(QLatin1String("im-user"), KIconLoader::NoGroup, 96);
+        }
 
-    if (presence().type() == Tp::ConnectionPresenceTypeOffline) {
-        if (!QPixmapCache::find(keyCache(avatarToken),avatar)){
+        //if the contact is offline, gray it out
+        if (presence().type() == Tp::ConnectionPresenceTypeOffline) {
             avatarToGray(avatar);
-            QPixmapCache::insert(keyCache(avatarToken), avatar);
         }
+
+        //insert the contact into pixmap cache for faster lookup
+        QPixmapCache::insert(keyCache(), avatar);
     }
 
     return avatar;
@@ -151,9 +158,9 @@ void KTp::Contact::avatarToGray(QPixmap &avatar)
     avatar.setAlphaChannel(alpha);
 }
 
-QString KTp::Contact::keyCache(const QString &avatarToken) const
+QString KTp::Contact::keyCache() const
 {
-    return avatarToken+QLatin1String("-offline");
+    return id() + (presence().type() == Tp::ConnectionPresenceTypeOffline ? QLatin1String("-offline") : QLatin1String("-online"));
 }
 
 QString KTp::Contact::buildAvatarPath(const QString &avatarToken)
@@ -178,4 +185,10 @@ QString KTp::Contact::buildAvatarPath(const QString &avatarToken)
     QString avatarFileName = QString::fromLatin1("%1/%2").arg(path).arg(Tp::escapeAsIdentifier(avatarToken));
 
     return avatarFileName;
+}
+
+void KTp::Contact::invalidateAvatarCache()
+{
+    QPixmapCache::remove(id() + QLatin1String("-offline"));
+    QPixmapCache::remove(id() + QLatin1String("-online"));
 }

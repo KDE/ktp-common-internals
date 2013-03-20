@@ -48,11 +48,14 @@ public:
      QPixmap avatarPixmap();
 
 Q_SIGNALS:
-     void invalidated();
+    void invalidated();
+
+private Q_SLOTS:
+    void invalidateAvatarCache();
 
 private:
     void avatarToGray(QPixmap &avatar);
-    QString keyCache(const QString &avatarHash) const;
+    QString keyCache() const;
     QString buildAvatarPath(const QString &avatarToken);
 
 };
