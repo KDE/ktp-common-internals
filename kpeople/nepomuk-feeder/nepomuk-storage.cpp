@@ -368,8 +368,8 @@ void NepomukStorage::onAccountsQueryFinishedListing()
     while (iter.hasNext()) {
         iter.next();
 
-        const QString& accountId = iter.key();
-        const AccountResources& accRes = iter.value();
+        const QString &accountId = iter.key();
+        const AccountResources &accRes = iter.value();
 
         QString query = QString::fromLatin1("select distinct ?r ?id ?contact where { ?r a nco:IMAccount . "
                                             " ?r nco:imID ?id ; nco:isAccessedBy %1 . "
