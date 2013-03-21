@@ -181,6 +181,9 @@ void Account::onNewContact(const Tp::ContactPtr &contact)
                 SIGNAL(avatarDataChanged(Tp::AvatarData)),
                 SLOT(onContactAvatarChanged(Tp::AvatarData)));
 
+        onContactAliasChanged(contact);
+        onContactAddedToGroup(contact);
+
         emit contactCreated(m_account->objectPath(), contact);
     }
 }
