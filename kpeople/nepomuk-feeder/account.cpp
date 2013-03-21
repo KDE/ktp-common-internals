@@ -88,11 +88,6 @@ void Account::onConnectionChanged(const Tp::ConnectionPtr &connection)
 
         m_connection = connection;
 
-        // We need to destroy ourselves if the connection goes down.
-        connect(m_connection.data(),
-            SIGNAL(invalidated(Tp::DBusProxy*,QString,QString)),
-            SLOT(deleteLater()));
-
         if (!m_connection->contactManager()) {
             kWarning() << "ContactManager is Null. Abort getting contacts.";
             return;
