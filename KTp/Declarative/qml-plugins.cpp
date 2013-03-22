@@ -36,6 +36,7 @@
 #include "declarative-ktp-actions.h"
 
 #include "Models/contacts-filter-model.h"
+#include <Models/contacts-model.h>
 
 void QmlPlugins::registerTypes(const char *uri)
 {
@@ -52,6 +53,8 @@ void QmlPlugins::registerTypes(const char *uri)
         QLatin1String("Filter cannot be created. Access through ContactList.filter"));
     qmlRegisterUncreatableType<MessagesModel> (uri, 0, 1, "MessagesModel",
         QLatin1String("It will be created once the conversation is created"));
+    qmlRegisterUncreatableType<KTp::ContactsModel> (uri, 0, 1, "ContactsModel",
+        QLatin1String("It will be created through ContactList"));
 
     qmlRegisterType<ConversationTarget>();
     qmlRegisterType<ConversationsModel>();

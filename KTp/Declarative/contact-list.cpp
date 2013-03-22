@@ -29,16 +29,13 @@
 #include <KTp/contact-factory.h>
 
 #include <KTp/actions.h>
+#include <Models/contacts-model.h>
+#include <Models/contacts-list-model.h>
 
 ContactList::ContactList(QObject *parent)
     : QObject(parent),
-      m_contactsModel(new KTp::ContactsListModel(this)),
-      m_filterModel(new KTp::ContactsFilterModel(this))
+      m_filterModel(new KTp::ContactsModel(this))
 {
-    m_filterModel->setSourceModel(m_contactsModel);
-    //flat model takes the source as a constructor parameter, the other's don't.
-    //due to a bug somewhere creating the flat model proxy with the filter model as a source before the filter model has a source means the rolenames do not get propgated up
-
     Tp::registerTypes();
 
     // Start setting up the Telepathy AccountManager.
@@ -64,25 +61,16 @@ ContactList::ContactList(QObject *parent)
 
     Tp::ChannelFactoryPtr channelFactory = Tp::ChannelFactory::create(QDBusConnection::sessionBus());
 
-    m_accountManager = Tp::AccountManager::create(QDBusConnection::sessionBus(),
+    Tp::AccountManagerPtr accountManager = Tp::AccountManager::create(QDBusConnection::sessionBus(),
                                                   accountFactory,
                                                   connectionFactory,
                                                   channelFactory,
                                                   contactFactory);
 
-    connect(m_accountManager->becomeReady(),
-            SIGNAL(finished(Tp::PendingOperation*)),
-            SLOT(onAccountManagerReady(Tp::PendingOperation*)));
+    m_filterModel->setAccountManager(accountManager);
 }
 
-
-void ContactList::onAccountManagerReady(Tp::PendingOperation *op)
-{
-    Q_UNUSED(op);
-    m_contactsModel->setAccountManager(m_accountManager);
-}
-
-KTp::ContactsFilterModel* ContactList::filterModel() const
+KTp::ContactsModel* ContactList::filterModel() const
 {
     return m_filterModel;
 }
