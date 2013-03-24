@@ -155,3 +155,7 @@ void KTp::ContactsModel::updateGroupProxyModels()
     }
 }
 
+void KTp::ContactsModel::setSourceModel(QAbstractItemModel *sourceModel)
+{
+    KTp::ContactsFilterModel::setSourceModel(sourceModel);
+}

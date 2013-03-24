@@ -74,6 +74,9 @@ public:
     void setTrackUnreadMessages(bool trackUnread);
     bool trackUnreadMessages() const;
 
+protected:
+    //prevent previously public setSourceModel being called externally
+    virtual void setSourceModel(QAbstractItemModel *sourceModel);
 
 Q_SIGNALS:
     void groupModeChanged();
