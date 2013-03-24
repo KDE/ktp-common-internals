@@ -37,11 +37,4 @@ class MessageEscapeFilter : public KTp::AbstractMessageFilter
     virtual void filterMessage(KTp::Message& message, const KTp::MessageContext &context);
 };
 
-class MessageBackslashFilter : public KTp::AbstractMessageFilter
-{
-public:
-    explicit MessageBackslashFilter(QObject *parent = 0);
-    virtual void filterMessage(KTp::Message& message, const KTp::MessageContext &context);
-};
-
 #endif

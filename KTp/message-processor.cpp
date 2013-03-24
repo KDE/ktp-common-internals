@@ -112,8 +112,6 @@ MessageProcessor::MessageProcessor():
     d->filters.append(new MessageUrlFilter(this));
 
     d->loadFilters();
-
-    d->filters.append(new MessageBackslashFilter(this));
 }
 
 
