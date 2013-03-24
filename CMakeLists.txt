@@ -6,6 +6,7 @@ set (CMAKE_MODULE_PATH
      "${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules"
      ${CMAKE_MODULE_PATH}
 )
+cmake_policy(SET CMP0002 OLD)
 
 set (KTP_VERSION "0.5.80")
 # Bump for every 0.x release, or whenever BC changes
