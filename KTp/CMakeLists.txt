@@ -90,3 +90,14 @@ install (FILES ${ktp_common_internals_private_HDRS}
 add_subdirectory(Declarative)
 add_subdirectory(Models)
 add_subdirectory(Widgets)
+
+# API docs
+find_package(Doxygen)
+
+if(DOXYGEN_EXECUTABLE)
+  configure_file(${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile.cmake ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile)
+
+  add_custom_target(
+    apidox
+    COMMAND ${DOXYGEN_EXECUTABLE} Doxyfile)
+endif(DOXYGEN_EXECUTABLE)
