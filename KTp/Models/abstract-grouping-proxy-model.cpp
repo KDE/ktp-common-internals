@@ -188,8 +188,6 @@ void KTp::AbstractGroupingProxyModel::onRowsInserted(const QModelIndex &sourcePa
 {
     //if top level in root model
     if (!sourceParent.isValid()) {
-        kDebug() << "invalid source parent";
-
         for (int i = start; i <= end; i++) {
             QModelIndex index = d->source->index(i, 0, sourceParent);
             kDebug() << index;
@@ -198,12 +196,10 @@ void KTp::AbstractGroupingProxyModel::onRowsInserted(const QModelIndex &sourcePa
             }
         }
     } else {
-        kDebug() << "source parent is ok" << start << end;
         for (int i = start; i <= end; i++) {
             QModelIndex index = d->source->index(i, 0, sourceParent);
             QHash<QPersistentModelIndex, ProxyNode*>::const_iterator it = d->proxyMap.find(sourceParent);
             while (it != d->proxyMap.end()  && it.key() == sourceParent) {
-                kDebug() << "adding proxy for" << index << it.value() << it.value()->data(Qt::DisplayRole);
                 addProxyNode(index, it.value());
                 it++;
             }
@@ -213,12 +209,9 @@ void KTp::AbstractGroupingProxyModel::onRowsInserted(const QModelIndex &sourcePa
 
 void KTp::AbstractGroupingProxyModel::addProxyNode(const QModelIndex &sourceIndex, QStandardItem *parent)
 {
-    kDebug() << parent->rowCount();
     ProxyNode *proxyNode = new ProxyNode(sourceIndex);
     d->proxyMap.insertMulti(sourceIndex, proxyNode);
     parent->appendRow(proxyNode);
-
-    kDebug() << parent->rowCount();
 
     //add proxy nodes for all children of this sourceIndex
     for (int i=0; i < d->source->rowCount(sourceIndex); i++) {
