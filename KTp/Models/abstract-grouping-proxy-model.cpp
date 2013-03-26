@@ -197,8 +197,8 @@ void KTp::AbstractGroupingProxyModel::onRowsInserted(const QModelIndex &sourcePa
     } else {
         for (int i = start; i <= end; i++) {
             QModelIndex index = d->source->index(i, 0, sourceParent);
-            QHash<QPersistentModelIndex, ProxyNode*>::const_iterator it = d->proxyMap.find(index);
-            while (it != d->proxyMap.end()  && it.key() == index) {
+            QHash<QPersistentModelIndex, ProxyNode*>::const_iterator it = d->proxyMap.find(sourceParent);
+            while (it != d->proxyMap.end()  && it.key() == sourceParent) {
                 addProxyNode(index, it.value());
                 it++;
             }
