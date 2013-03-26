@@ -299,9 +299,8 @@ void KTp::AbstractGroupingProxyModel::onDataChanged(const QModelIndex &sourceTop
 
                 //remaining items in itemGroups are now the new groups
                 Q_FOREACH(const QString &group, itemGroups) {
-                    ProxyNode *proxyNode = new ProxyNode(index);
-                    d->proxyMap.insertMulti(index, proxyNode);
-                    itemForGroup(group)->appendRow(proxyNode);
+                    GroupNode *groupNode = itemForGroup(group);
+                    addProxyNode(index, groupNode);
 
                     kDebug() << "adding " << index.data().toString() << " to group " << group;
                 }
