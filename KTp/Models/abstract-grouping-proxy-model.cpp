@@ -187,7 +187,7 @@ void KTp::AbstractGroupingProxyModel::groupChanged(const QString &group)
 void KTp::AbstractGroupingProxyModel::onRowsInserted(const QModelIndex &sourceParent, int start, int end)
 {
     //if top level in root model
-    if (!sourceParent.parent().isValid()) {
+    if (!sourceParent.isValid()) {
         for (int i = start; i <= end; i++) {
             QModelIndex index = d->source->index(i, 0, sourceParent);
             Q_FOREACH(const QString &group, groupsForIndex(index)) {
