@@ -821,7 +821,7 @@ bool ContactsFilterModel::filterAcceptsRow(int sourceRow, const QModelIndex &sou
     QModelIndex index = sourceModel()->index(sourceRow, 0, sourceParent);
 
     int type = index.data(KTp::RowTypeRole).toInt();
-    if (type == KTp::ContactRowType) {
+    if (type == KTp::ContactRowType || type == KTp::PersonRowType) {
         return d->filterAcceptsContact(index);
     }
     else if (type == KTp::AccountRowType) {
