@@ -211,6 +211,12 @@ void KTp::AbstractGroupingProxyModel::addProxyNode(const QModelIndex &sourceInde
     ProxyNode *proxyNode = new ProxyNode(sourceIndex);
     d->proxyMap.insertMulti(sourceIndex, proxyNode);
     parent->appendRow(proxyNode);
+
+    //add proxy nodes for all children of this sourceIndex
+    for (int i=0; i < d->source->rowCount(sourceIndex); i++) {
+        addProxyNode(sourceIndex.child(i,0), proxyNode);
+    }
+
 }
 
 void KTp::AbstractGroupingProxyModel::removeProxyNodes(const QModelIndex &sourceIndex, const QList<ProxyNode *> &removedItems)
