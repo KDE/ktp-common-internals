@@ -187,7 +187,7 @@ void KTp::AbstractGroupingProxyModel::groupChanged(const QString &group)
 void KTp::AbstractGroupingProxyModel::onRowsInserted(const QModelIndex &sourceParent, int start, int end)
 {
     //if top level in root model
-    if (!sourceParent.parent().isValid()) {
+    if (!sourceParent.isValid()) {
         for (int i = start; i <= end; i++) {
             QModelIndex index = d->source->index(i, 0, sourceParent);
             Q_FOREACH(const QString &group, groupsForIndex(index)) {
@@ -197,8 +197,8 @@ void KTp::AbstractGroupingProxyModel::onRowsInserted(const QModelIndex &sourcePa
     } else {
         for (int i = start; i <= end; i++) {
             QModelIndex index = d->source->index(i, 0, sourceParent);
-            QHash<QPersistentModelIndex, ProxyNode*>::const_iterator it = d->proxyMap.find(index);
-            while (it != d->proxyMap.end()  && it.key() == index) {
+            QHash<QPersistentModelIndex, ProxyNode*>::const_iterator it = d->proxyMap.find(sourceParent);
+            while (it != d->proxyMap.end()  && it.key() == sourceParent) {
                 addProxyNode(index, it.value());
                 it++;
             }
@@ -211,6 +211,12 @@ void KTp::AbstractGroupingProxyModel::addProxyNode(const QModelIndex &sourceInde
     ProxyNode *proxyNode = new ProxyNode(sourceIndex);
     d->proxyMap.insertMulti(sourceIndex, proxyNode);
     parent->appendRow(proxyNode);
+
+    //add proxy nodes for all children of this sourceIndex
+    for (int i=0; i < d->source->rowCount(sourceIndex); i++) {
+        addProxyNode(sourceIndex.child(i,0), proxyNode);
+    }
+
 }
 
 void KTp::AbstractGroupingProxyModel::removeProxyNodes(const QModelIndex &sourceIndex, const QList<ProxyNode *> &removedItems)
@@ -293,9 +299,8 @@ void KTp::AbstractGroupingProxyModel::onDataChanged(const QModelIndex &sourceTop
 
                 //remaining items in itemGroups are now the new groups
                 Q_FOREACH(const QString &group, itemGroups) {
-                    ProxyNode *proxyNode = new ProxyNode(index);
-                    d->proxyMap.insertMulti(index, proxyNode);
-                    itemForGroup(group)->appendRow(proxyNode);
+                    GroupNode *groupNode = itemForGroup(group);
+                    addProxyNode(index, groupNode);
 
                     kDebug() << "adding " << index.data().toString() << " to group " << group;
                 }

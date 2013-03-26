@@ -128,6 +128,11 @@ bool ContactsFilterModel::Private::filterAcceptsContact(const QModelIndex &index
         return false;
     }
 
+    //always return all subcontacts of a metacontact
+    if (index.parent().isValid() && index.parent().data(KTp::RowTypeRole).toUInt() == KTp::PersonRowType) {
+        return true;
+    }
+
     // Check presence type
     if (presenceTypeFilterFlags != DoNotFilterByPresence) {
         switch (static_cast<Tp::ConnectionPresenceType>(index.data(KTp::ContactPresenceTypeRole).toUInt())) {
@@ -825,7 +830,7 @@ bool ContactsFilterModel::filterAcceptsRow(int sourceRow, const QModelIndex &sou
     QModelIndex index = sourceModel()->index(sourceRow, 0, sourceParent);
 
     int type = index.data(KTp::RowTypeRole).toInt();
-    if (type == KTp::ContactRowType) {
+    if (type == KTp::ContactRowType || type == KTp::PersonRowType) {
         return d->filterAcceptsContact(index);
     }
     else if (type == KTp::AccountRowType) {
