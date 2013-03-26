@@ -302,7 +302,8 @@ private:
     class Private;
     Private * const d;
 
-    Q_PRIVATE_SLOT(d, void sourceModelChanged(const QModelIndex &index))
+    Q_PRIVATE_SLOT(d, void sourceModelParentIndexChanged(const QModelIndex &sourceIndex))
+    Q_PRIVATE_SLOT(d, void sourceModelIndexChanged(const QModelIndex &sourceIndex))
     Q_PRIVATE_SLOT(d, void countContacts(const QModelIndex &index))
 };
 

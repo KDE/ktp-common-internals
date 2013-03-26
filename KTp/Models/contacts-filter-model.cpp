@@ -74,7 +74,9 @@ public:
     bool filterAcceptsGroup(const QModelIndex &index);
 
     void countContacts(const QModelIndex &sourceParent);
-    void sourceModelChanged(const QModelIndex &sourceIndex);
+
+    void sourceModelParentIndexChanged(const QModelIndex &sourceIndex);
+    void sourceModelIndexChanged(const QModelIndex &sourceIndex);
 
     QHash<QString, int> m_onlineContactsCounts;
     QHash<QString, int> m_totalContactsCounts;
@@ -396,19 +398,18 @@ void ContactsFilterModel::Private::countContacts(const QModelIndex &sourceParent
     m_totalContactsCounts.insert(key, tmpCounter);
 }
 
-void ContactsFilterModel::Private::sourceModelChanged(const QModelIndex &sourceIndex)
+void ContactsFilterModel::Private::sourceModelParentIndexChanged(const QModelIndex &sourceIndex)
 {
-    QModelIndex groupSourceIndex;
-    if (sourceIndex.data(KTp::RowTypeRole).toUInt() == KTp::ContactRowType) {
-        groupSourceIndex = sourceIndex.parent();
-    } else {
-        groupSourceIndex = sourceIndex;
+    if (sourceIndex.isValid()) {
+        countContacts(sourceIndex);
+        const QModelIndex mappedIndex = q->mapFromSource(sourceIndex);
+        Q_EMIT q->dataChanged(mappedIndex, mappedIndex);
     }
+}
 
-    countContacts(groupSourceIndex);
-
-    const QModelIndex mappedIndex = q->mapFromSource(sourceIndex);
-    Q_EMIT q->dataChanged(mappedIndex, mappedIndex);
+void ContactsFilterModel::Private::sourceModelIndexChanged(const QModelIndex &sourceIndex)
+{
+    sourceModelParentIndexChanged(sourceIndex.parent());
 }
 
 
@@ -459,29 +460,32 @@ void ContactsFilterModel::setSourceModel(QAbstractItemModel *sourceModel)
     // Disconnect the previous source model
     if (this->sourceModel()) {
         disconnect(this->sourceModel(), SIGNAL(dataChanged(QModelIndex,QModelIndex)),
-                this, SLOT(sourceModelChanged(QModelIndex)));
+                this, SLOT(sourceModelIndexChanged(QModelIndex)));
         disconnect(this->sourceModel(), SIGNAL(rowsInserted(QModelIndex,int,int)),
-                this, SLOT(sourceModelChanged(QModelIndex)));
+                this, SLOT(sourceModelParentIndexChanged(QModelIndex)));
         disconnect(this->sourceModel(), SIGNAL(rowsRemoved(QModelIndex,int,int)),
-                this, SLOT(sourceModelChanged(QModelIndex)));
+                this, SLOT(sourceModelParentIndexChanged(QModelIndex)));
         disconnect(this->sourceModel(), SIGNAL(rowsMoved(QModelIndex,int,int,QModelIndex,int)),
-                this, SLOT(sourceModelChanged(QModelIndex)));
+                this, SLOT(sourceModelParentIndexChanged(QModelIndex)));
     }
 
     // Clear all cached values as they aren't valid anymore because the source model changed.
     d->m_onlineContactsCounts.clear();
     d->m_totalContactsCounts.clear();
-    QSortFilterProxyModel::setSourceModel(sourceModel);
 
-    // Connect the new source model
-    connect(this->sourceModel(), SIGNAL(dataChanged(QModelIndex,QModelIndex)),
-            this, SLOT(sourceModelChanged(QModelIndex)));
-    connect(this->sourceModel(), SIGNAL(rowsInserted(QModelIndex,int,int)),
-            this, SLOT(sourceModelChanged(QModelIndex)));
-    connect(this->sourceModel(), SIGNAL(rowsRemoved(QModelIndex,int,int)),
-            this, SLOT(sourceModelChanged(QModelIndex)));
-    connect(this->sourceModel(), SIGNAL(rowsMoved(QModelIndex,int,int,QModelIndex,int)),
-            this, SLOT(sourceModelChanged(QModelIndex)));
+    if (sourceModel) {
+        QSortFilterProxyModel::setSourceModel(sourceModel);
+
+        // Connect the new source model
+        connect(this->sourceModel(), SIGNAL(dataChanged(QModelIndex,QModelIndex)),
+                this, SLOT(sourceModelIndexChanged(QModelIndex)));
+        connect(this->sourceModel(), SIGNAL(rowsInserted(QModelIndex,int,int)),
+                this, SLOT(sourceModelParentIndexChanged(QModelIndex)));
+        connect(this->sourceModel(), SIGNAL(rowsRemoved(QModelIndex,int,int)),
+                this, SLOT(sourceModelParentIndexChanged(QModelIndex)));
+        connect(this->sourceModel(), SIGNAL(rowsMoved(QModelIndex,int,int,QModelIndex,int)),
+                this, SLOT(sourceModelParentIndexChanged(QModelIndex)));
+    }
 }
 
 void ContactsFilterModel::invalidateFilter()
