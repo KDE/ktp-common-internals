@@ -111,7 +111,7 @@ void PinnedContactsModel::setPinning(const Tp::AccountPtr &account, const KTp::C
         KTp::PersistentContactPtr p = KTp::PersistentContact::create(account->uniqueIdentifier(), contact->id());
         appendContactPin(p);
     } else if (!newState && found) {
-        removeRow(idx.row());
+        removeContactPin(d->m_pins[idx.row()]);
     }
 }
 
