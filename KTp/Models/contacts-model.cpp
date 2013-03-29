@@ -111,6 +111,11 @@ bool KTp::ContactsModel::trackUnreadMessages() const
 
 void KTp::ContactsModel::updateGroupProxyModels()
 {
+    //reset the filter
+    //trying to track current selections whilst updating proxy models can cause issues
+    //debug versions of Qt will assert
+    reset();
+
     //if there no account manager there's not a lot point doing anything
     if (!d->accountManager) {
         return;
