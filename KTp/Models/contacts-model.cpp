@@ -111,6 +111,11 @@ bool KTp::ContactsModel::trackUnreadMessages() const
 
 void KTp::ContactsModel::updateGroupProxyModels()
 {
+    //reset the filter
+    //trying to track current selections whilst updating proxy models can cause issues
+    //debug versions of Qt will assert
+    reset();
+
     //if there no account manager there's not a lot point doing anything
     if (!d->accountManager) {
         return;
@@ -142,11 +147,6 @@ void KTp::ContactsModel::updateGroupProxyModels()
 
     switch (d->groupMode) {
     case NoGrouping:
-        //This is a workaround to a Qt assert which gets confused when we switch from a source model that was
-        //part of the proxy chain, and is now used in the view directly
-        //
-        //do not disable until you have tested on Qt in debug mode
-        setSourceModel(0);
         setSourceModel(modelToGroup);
         break;
     case AccountGrouping:
