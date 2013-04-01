@@ -100,7 +100,7 @@ class ContactInfoDialog::Private
     void addStateRow(const QString &description, Tp::Contact::PresenceState state);
 
     Tp::AccountPtr account;
-    Tp::ContactPtr contact;
+    KTp::ContactPtr contact;
     bool editable;
 
     bool infoDataChanged;
@@ -135,7 +135,7 @@ void ContactInfoDialog::Private::onContactUpgraded(Tp::PendingOperation* op)
     Tp::PendingContacts *contacts = qobject_cast<Tp::PendingContacts*>(op);
     Q_ASSERT(contacts->contacts().count() == 1);
 
-    contact = contacts->contacts().first();
+    contact = KTp::ContactPtr::qObjectCast(contacts->contacts().first());
 
     /* Show avatar immediatelly */
     if (contacts->features().contains(Tp::Contact::FeatureAvatarData)) {
@@ -162,13 +162,7 @@ void ContactInfoDialog::Private::onContactUpgraded(Tp::PendingOperation* op)
             avatarLayout->addStretch(1);
         }
 
-        QPixmap avatar(contact->avatarData().fileName);
-        if (avatar.isNull()) {
-            avatar = KIconLoader::global()->loadIcon(QLatin1String("im-user"), KIconLoader::Desktop, 128);
-            if (clearAvatarButton) {
-                clearAvatarButton->setEnabled(false);
-            }
-        }
+        QPixmap avatar(contact->avatarPixmap());
         avatarLabel->setPixmap(avatar.scaled(avatarLabel->maximumSize(), Qt::KeepAspectRatio, Qt::SmoothTransformation));
     }
 
@@ -345,7 +339,7 @@ ContactInfoDialog::ContactInfoDialog(const Tp::AccountPtr& account, const Tp::Co
 #endif
     d->editable = false;
     d->account = account;
-    d->contact = contact;
+    d->contact = KTp::ContactPtr::qObjectCast(contact);
 
 
     if (d->editable) {
