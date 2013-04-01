@@ -36,7 +36,6 @@
 #include <TelepathyQt/PendingContacts>
 
 #include <KDebug>
-#include <KMessageWidget>
 #include <KTitleWidget>
 #include <KLocalizedString>
 #include <KPushButton>
@@ -80,7 +79,6 @@ class ContactInfoDialog::Private
         editable(false),
         infoDataChanged(false),
         avatarChanged(false),
-        messageWidget(0),
         columnsLayout(0),
         infoLayout(0),
         stateLayout(0),
@@ -100,7 +98,7 @@ class ContactInfoDialog::Private
     void addStateRow(const QString &description, Tp::Contact::PresenceState state);
 
     Tp::AccountPtr account;
-    Tp::ContactPtr contact;
+    KTp::ContactPtr contact;
     bool editable;
 
     bool infoDataChanged;
@@ -109,7 +107,6 @@ class ContactInfoDialog::Private
 
     QMap<InfoRowIndex,QWidget*> infoValueWidgets;
 
-    KMessageWidget *messageWidget;
     QHBoxLayout *columnsLayout;
     QFormLayout *infoLayout;
     QFormLayout *stateLayout;
@@ -123,19 +120,10 @@ class ContactInfoDialog::Private
 
 void ContactInfoDialog::Private::onContactUpgraded(Tp::PendingOperation* op)
 {
-    if (op->isError()) {
-        messageWidget->setMessageType(KMessageWidget::Error);
-        messageWidget->setText(op->errorMessage());
-        messageWidget->setCloseButtonVisible(false);
-        messageWidget->setWordWrap(true);
-        messageWidget->animatedShow();
-        return;
-    }
-
     Tp::PendingContacts *contacts = qobject_cast<Tp::PendingContacts*>(op);
     Q_ASSERT(contacts->contacts().count() == 1);
 
-    contact = contacts->contacts().first();
+    contact = KTp::ContactPtr::qObjectCast(contacts->contacts().first());
 
     /* Show avatar immediatelly */
     if (contacts->features().contains(Tp::Contact::FeatureAvatarData)) {
@@ -162,13 +150,7 @@ void ContactInfoDialog::Private::onContactUpgraded(Tp::PendingOperation* op)
             avatarLayout->addStretch(1);
         }
 
-        QPixmap avatar(contact->avatarData().fileName);
-        if (avatar.isNull()) {
-            avatar = KIconLoader::global()->loadIcon(QLatin1String("im-user"), KIconLoader::Desktop, 128);
-            if (clearAvatarButton) {
-                clearAvatarButton->setEnabled(false);
-            }
-        }
+        QPixmap avatar(contact->avatarPixmap());
         avatarLabel->setPixmap(avatar.scaled(avatarLabel->maximumSize(), Qt::KeepAspectRatio, Qt::SmoothTransformation));
     }
 
@@ -186,15 +168,6 @@ void ContactInfoDialog::Private::onContactUpgraded(Tp::PendingOperation* op)
 
 void ContactInfoDialog::Private::onContactInfoReceived(Tp::PendingOperation* op)
 {
-    if (op->isError()) {
-        messageWidget->setMessageType(KMessageWidget::Error);
-        messageWidget->setText(op->errorMessage());
-        messageWidget->setCloseButtonVisible(false);
-        messageWidget->setWordWrap(true);
-        messageWidget->animatedShow();
-        return;
-    }
-
     Tp::PendingContactInfo *ci = qobject_cast<Tp::PendingContactInfo*>(op);
     const Tp::ContactInfoFieldList fieldList = ci->infoFields().allFields();
 
@@ -345,7 +318,7 @@ ContactInfoDialog::ContactInfoDialog(const Tp::AccountPtr& account, const Tp::Co
 #endif
     d->editable = false;
     d->account = account;
-    d->contact = contact;
+    d->contact = KTp::ContactPtr::qObjectCast(contact);
 
 
     if (d->editable) {
@@ -367,11 +340,6 @@ ContactInfoDialog::ContactInfoDialog(const Tp::AccountPtr& account, const Tp::Co
     titleWidget->setText(contact->alias());
     titleWidget->setComment(contact->id());
     layout->addWidget(titleWidget);
-
-    /* Error message to show when an async operation fails */
-    d->messageWidget = new KMessageWidget(this);
-    d->messageWidget->setVisible(false);
-    layout->addWidget(d->messageWidget);
 
     /* 1st column: avatar; 2nd column: details */
     d->columnsLayout = new QHBoxLayout();
