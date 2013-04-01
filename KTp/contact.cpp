@@ -103,6 +103,11 @@ QStringList KTp::Contact::clientTypes() const
         return QStringList();
     }
 
+    //supress any errors trying to access ClientTypes when we don't have them
+    if (! actualFeatures().contains(Tp::Contact::FeatureClientTypes)) {
+        return QStringList();
+    }
+
     return Tp::Contact::clientTypes();
 }
 
