@@ -35,9 +35,9 @@ static void tpDebugCallback(const QString &libraryName,
                             const QString &msg)
 {
     if (Q_UNLIKELY(libraryString.isEmpty())) {
-        libraryString = QString::fromLatin1("%1 %2").arg(libraryName, libraryVersion);
+        libraryString = QString::fromLatin1("%1:%2()").arg(libraryName, libraryVersion);
     }
-    kDebugStream(type, s_tpqtDebugArea, __FILE__, __LINE__, 0) << qPrintable(msg);
+    kDebugStream(type, s_tpqtDebugArea, __FILE__, __LINE__, libraryString.toLatin1()) << qPrintable(msg);
 }
 } // namespace
 } // namespace KTp
