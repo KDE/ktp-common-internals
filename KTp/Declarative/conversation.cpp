@@ -31,6 +31,9 @@ class Conversation::ConversationPrivate
   public:
     MessagesModel *messages;
     ConversationTarget *target;
+    //stores if the conversation has been delegated to another client and we are only observing the channel
+    //and not handling it.
+    bool delegated;
     bool valid;
     Tp::AccountPtr account;
 };
@@ -51,6 +54,8 @@ Conversation::Conversation(const Tp::TextChannelPtr &channel,
     d->target = new ConversationTarget(account, KTp::ContactPtr::qObjectCast(channel->targetContact()), this);
 
     d->valid = channel->isValid();
+    d->delegated = false;
+
     connect(channel.data(), SIGNAL(invalidated(Tp::DBusProxy*,QString,QString)),
             SLOT(onChannelInvalidated(Tp::DBusProxy*,QString,QString)));
 }
@@ -88,13 +93,17 @@ void Conversation::onChannelInvalidated(Tp::DBusProxy *proxy, const QString &err
 void Conversation::delegateToProperClient()
 {
     ChannelDelegator::delegateChannel(d->account, d->messages->textChannel());
+    d->delegated = true;
     Q_EMIT conversationDelegated();
 }
 
 void Conversation::requestClose()
 {
     kDebug();
-    d->messages->textChannel()->requestClose();
+    //if we are not handling the channel do nothing.
+    if (!d->delegated) {
+        d->messages->textChannel()->requestClose();
+    }
 }
 
 Conversation::~Conversation()
