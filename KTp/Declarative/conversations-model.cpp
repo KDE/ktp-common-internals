@@ -21,7 +21,6 @@
 #include "conversation.h"
 #include "conversation-target.h"
 #include "messages-model.h"
-#include "channel-delegator.h"
 
 #include <KDebug>
 
@@ -121,7 +120,7 @@ void ConversationsModel::handleChannels(const Tp::MethodInvocationContextPtr<> &
                 convo->messages()->setTextChannel(textChannel);
             } else {
                 if (convo->messages()->textChannel() == textChannel) {
-                    ChannelDelegator::delegateChannel(account, textChannel, userActionTime);
+                    convo->delegateToProperClient();
                 }
             }
             handled = true;
