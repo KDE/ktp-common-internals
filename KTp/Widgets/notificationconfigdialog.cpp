@@ -42,7 +42,7 @@ KTp::NotificationConfigDialog::NotificationConfigDialog(const Tp::ContactPtr &co
     m_currentSelection = 0;
     setCaption(i18n("Configure notifications for %1", m_contact.data()->alias()));
     setAttribute(Qt::WA_DeleteOnClose);
-    setButtons(KDialog::Apply | KDialog::Cancel | KDialog::Default );
+    setButtons(KDialog::Ok | KDialog::Apply | KDialog::Cancel | KDialog::Default );
     enableButtonApply(false);
 
     QWidget *centralWidget = new QWidget(this);
@@ -65,6 +65,8 @@ KTp::NotificationConfigDialog::NotificationConfigDialog(const Tp::ContactPtr &co
                                    QLatin1String("contact"),
                                    m_contact.data()->id());
 
+    connect(this, SIGNAL(okClicked()),
+            SLOT(onOkClicked()));
     connect(this, SIGNAL(applyClicked()),
             SLOT(saveConfig()));
     connect(comboBox, SIGNAL(currentIndexChanged(int)),
@@ -129,4 +131,10 @@ void KTp::NotificationConfigDialog::defaults()
                         QLatin1String("org.kde.KNotify")).call( QLatin1String("reconfigure" ));
     }
     updateNotifyWidget(m_currentSelection);
+}
+
+void KTp::NotificationConfigDialog::onOkClicked()
+{
+    m_notifyWidget->save();
+    accept();
 }

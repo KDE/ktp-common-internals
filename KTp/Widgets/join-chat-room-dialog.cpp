@@ -84,7 +84,7 @@ KTp::JoinChatRoomDialog::JoinChatRoomDialog(Tp::AccountManagerPtr accountManager
     isOnlineFilter->addProperty(QLatin1String("online"), true);
 
     Tp::AccountCapabilityFilterPtr capabilityFilter = Tp::AccountCapabilityFilter::create(
-                Tp::RequestableChannelClassSpecList() << Tp::RequestableChannelClassSpec::conferenceTextChatroom());
+                Tp::RequestableChannelClassSpecList() << Tp::RequestableChannelClassSpec::textChatroom());
 
     Tp::AccountFilterPtr filter = Tp::AndFilter<Tp::Account>::create((QList<Tp::AccountFilterConstPtr>() <<
                                              isOnlineFilter <<
