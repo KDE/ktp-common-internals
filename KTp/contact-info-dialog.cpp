@@ -61,15 +61,15 @@ enum InfoRowIndex {
 static struct InfoRow {
     const InfoRowIndex index;
     const QString fieldName;
-    const QString title;
-} InfoRows[] = {
-    { FullName,         QLatin1String("fn"),            i18n("Full name:") },
-    { Nickname,         QLatin1String("nickname"),      i18n("Nickname:") },
-    { Email,            QLatin1String("email"),         i18n("Email:") },
-    { Phone,            QLatin1String("tel"),           i18n("Phone:") },
-    { Homepage,         QLatin1String("url"),           i18n("Homepage:") },
-    { Birthday,         QLatin1String("bday"),          i18n("Birthday:") },
-    { Organization,     QLatin1String("org"),           i18n("Organization:") }
+    const char* title;
+} InfoRows[] = {                                        // Don't use i18n in global static vars
+    { FullName,         QLatin1String("fn"),            I18N_NOOP("Full name:") },
+    { Nickname,         QLatin1String("nickname"),      I18N_NOOP("Nickname:") },
+    { Email,            QLatin1String("email"),         I18N_NOOP("Email:") },
+    { Phone,            QLatin1String("tel"),           I18N_NOOP("Phone:") },
+    { Homepage,         QLatin1String("url"),           I18N_NOOP("Homepage:") },
+    { Birthday,         QLatin1String("bday"),          I18N_NOOP("Birthday:") },
+    { Organization,     QLatin1String("org"),           I18N_NOOP("Organization:") }
 };
 
 class ContactInfoDialog::Private
@@ -238,7 +238,9 @@ void ContactInfoDialog::Private::addInfoRow(InfoRowIndex index, const QString &v
 {
     InfoRow *row = &InfoRows[index];
 
-    QLabel *descriptionLabel = new QLabel(row->title, q);
+    // I18N_NOOP only marks the string for translation, the actual lookup of
+    // translated row->title happens here
+    QLabel *descriptionLabel = new QLabel(i18n(row->title), q);
     QFont font = descriptionLabel->font();
     font.setBold(true);
     descriptionLabel->setFont(font);

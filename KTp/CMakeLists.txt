@@ -2,6 +2,7 @@ include_directories (${CMAKE_CURRENT_BINARY_DIR}
                      ${CMAKE_CURRENT_SOURCE_DIR})
 
 set (ktp_common_internals_private_SRCS
+     ${KTP_GLOBAL_SOURCES}
      abstract-message-filter.cpp
      actions.cpp
      capabilities-hack-private.cpp
