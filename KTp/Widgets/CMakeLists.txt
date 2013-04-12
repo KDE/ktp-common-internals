@@ -3,6 +3,7 @@ include_directories (${CMAKE_CURRENT_BINARY_DIR}
 )
 
 set (ktp_widgets_private_SRCS
+    ${KTP_GLOBAL_SOURCES}
     contact-grid-widget.cpp
     contact-grid-dialog.cpp
     add-contact-dialog.cpp

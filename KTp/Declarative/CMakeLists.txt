@@ -4,6 +4,7 @@ include_directories (${CMAKE_CURRENT_BINARY_DIR}
 )
 
 set (ktp_qml_plugin_SRCS
+    ${KTP_GLOBAL_SOURCES}
     contact-list.cpp
     conversation-queue-manager.cpp
     conversation-target.cpp

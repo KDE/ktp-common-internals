@@ -38,6 +38,8 @@ include_directories (${KDE4_INCLUDES}
 
 configure_file(version.h.in ${CMAKE_CURRENT_BINARY_DIR}/version.h @ONLY)
 
+set(KTP_GLOBAL_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/global.cpp)
+
 add_subdirectory(KTp)
 add_subdirectory(tools)
 add_subdirectory(data)
