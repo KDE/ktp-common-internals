@@ -40,7 +40,6 @@ kde4_add_executable(ktp_pinned-contact_list_model_view
     ../KTp/Declarative/conversation-target.cpp
     ../KTp/Declarative/contact-pin.cpp
     ../KTp/Declarative/messages-model.cpp
-    ../KTp/Declarative/conversation-queue-manager.cpp
     ../KTp/Declarative/conversation.cpp
 )
 

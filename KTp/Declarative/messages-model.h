@@ -25,10 +25,7 @@
 #include <TelepathyQt/Types>
 #include <TelepathyQt/ReceivedMessage>
 
-#include "conversation-queue-manager.h"
-
-
-class MessagesModel : public QAbstractListModel, public Queueable
+class MessagesModel : public QAbstractListModel
 {
     Q_OBJECT
     Q_ENUMS(MessageType)
@@ -72,9 +69,7 @@ class MessagesModel : public QAbstractListModel, public Queueable
 
   Q_SIGNALS:
     void visibleToUserChanged(bool visible);
-
     void unreadCountChanged(int unreadMesssagesCount);
-    void popoutRequested();
 
   public Q_SLOTS:
     void sendNewMessage(const QString &message);
@@ -88,7 +83,6 @@ class MessagesModel : public QAbstractListModel, public Queueable
   private:
     void setupChannelSignals(const Tp::TextChannelPtr &channel);
     void removeChannelSignals(const Tp::TextChannelPtr &channel);
-    virtual void selfDequeued();
 
     class MessagesModelPrivate;
     MessagesModelPrivate *d;
