@@ -1,5 +1,6 @@
 /*
     Copyright (C) 2011  Lasath Fernando <kde@lasath.org>
+    Copyright (C) 2013  Lasath Fernando <davidedmundson@kde.org>
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Lesser General Public
@@ -44,10 +45,12 @@ MessagesModel::MessagesModel(const Tp::AccountPtr &account, QObject *parent) :
     kDebug();
 
     QHash<int, QByteArray> roles;
-    roles[UserRole] = "user";
     roles[TextRole] = "text";
     roles[TimeRole] = "time";
     roles[TypeRole] = "type";
+    roles[SenderIdRole] = "senderId";
+    roles[SenderAliasRole] = "senderAlias";
+    roles[SenderAvatarRole] = "senderAvatar";
     setRoleNames(roles);
 
     d->account = account;
@@ -166,20 +169,17 @@ QVariant MessagesModel::data(const QModelIndex &index, int role) const
     QVariant result;
 
     if (index.isValid()) {
-        KTp::Message requestedData = d->messages[index.row()];
+        const KTp::Message message = d->messages[index.row()];
 
         switch (role) {
-        case UserRole:
-            result = requestedData.senderAlias();
-            break;
         case TextRole:
-            result = requestedData.finalizedMessage();
+            result = message.finalizedMessage();
             break;
         case TypeRole:
-            if (requestedData.type() == Tp::ChannelTextMessageTypeAction) {
+            if (message.type() == Tp::ChannelTextMessageTypeAction) {
                 result = MessageTypeAction;
             } else {
-                if (requestedData.direction() == KTp::Message::LocalToRemote) {
+                if (message .direction() == KTp::Message::LocalToRemote) {
                     result = MessageTypeOutgoing;
                 } else {
                     result = MessageTypeIncoming;
@@ -187,7 +187,18 @@ QVariant MessagesModel::data(const QModelIndex &index, int role) const
             }
             break;
         case TimeRole:
-            result = requestedData.time();
+            result = message.time();
+            break;
+        case SenderIdRole:
+            result = message.senderId();
+            break;
+        case SenderAliasRole:
+            result = message.senderAlias();
+            break;
+        case SenderAvatarRole:
+            if (message.sender()) {
+                result = QVariant::fromValue(message.sender()->avatarData());
+            }
             break;
         };
     } else {

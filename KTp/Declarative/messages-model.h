@@ -41,10 +41,12 @@ class MessagesModel : public QAbstractListModel, public Queueable
     virtual ~MessagesModel();
 
     enum Roles {
-        UserRole = Qt::UserRole,
-        TextRole,
-        TypeRole,
-        TimeRole
+        TextRole = Qt::UserRole, //String
+        TypeRole, //MessagesModel::MessageType (for now!)
+        TimeRole, //QDateTime
+        SenderIdRole, //string
+        SenderAliasRole, //string
+        SenderAvatarRole //pixmap
     };
 
     enum MessageType {
