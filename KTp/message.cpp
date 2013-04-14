@@ -45,6 +45,11 @@ class Message::Private : public QSharedData {
     QStringList scripts;
     bool isHistory;
     MessageDirection direction;
+
+    //if we have a valid sender pointer store that, otherwise store alias
+    KTp::ContactPtr sender;
+    QString senderAlias;
+    QString senderId;
 };
 
 Message& Message::operator=(const Message &other) {
@@ -64,10 +69,12 @@ Message::Message(const Tp::Message &original, const KTp::MessageContext &context
 
     setMainMessagePart(original.text());
 
-    setProperty("senderName", context.account()->nickname());
-    setProperty("senderAvatar", context.account()->avatar().avatarData);
-    setProperty("senderId",
-                context.account()->connection()->selfContact()->id());
+    if (context.account()->connection()) {
+        d->sender = KTp::ContactPtr::qObjectCast(context.account()->connection()->selfContact());
+    } else {
+        d->senderAlias = context.account()->nickname();
+        d->senderId = context.account()->uniqueIdentifier();
+    }
 }
 
 Message::Message(const Tp::ReceivedMessage &original, const KTp::MessageContext &context) :
@@ -88,11 +95,9 @@ Message::Message(const Tp::ReceivedMessage &original, const KTp::MessageContext 
     setMainMessagePart(original.text());
 
     if (!original.sender().isNull()) {
-        setProperty("senderName", original.sender()->alias());
-        setProperty("senderAvatar", original.sender()->avatarData().fileName);
-        setProperty("senderId", original.sender()->id());
+        d->sender = KTp::ContactPtr::qObjectCast(original.sender());
     } else {
-        setProperty("senderName", original.senderNickname());
+        d->senderAlias = original.senderNickname();
     }
 }
 
@@ -104,18 +109,20 @@ Message::Message(const Tpl::TextEventPtr &original, const KTp::MessageContext &c
     d->messageType = original->messageType();
     d->isHistory = true;
 
-    setProperty("senderName", original->sender()->alias());
-    setProperty("senderId", original->sender()->identifier());
+    d->senderAlias = original->sender()->alias();
+    d->senderId = original->sender()->identifier();
 
-    if (context.account() && context.account()->connection() && context.channel()) {
-        if (original->sender()->identifier() == context.account()->normalizedName()) {
-            d->direction = KTp::Message::LocalToRemote;
-            setProperty("senderAvatar", context.account()->
-                        connection()->selfContact()->avatarData().fileName);
-        } else {
-            d->direction = KTp::Message::RemoteToLocal;
-                setProperty("senderAvatar",
-                            context.channel()->targetContact()->avatarData().fileName);
+    if (original->sender()->identifier() == context.account()->normalizedName()) {
+        d->direction = KTp::Message::LocalToRemote;
+    } else {
+        d->direction = KTp::Message::RemoteToLocal;
+    }
+
+    if (context.channel()) {
+        Q_FOREACH (const Tp::ContactPtr &contact, context.channel()->groupContacts()) {
+            if (contact->id() == original->sender()->identifier()) {
+                d->sender = KTp::ContactPtr::qObjectCast(contact);
+            }
         }
     }
 
@@ -129,12 +136,6 @@ Message::Message(const QString &messageText, const MessageContext &context) :
     d->messageType = Tp::ChannelTextMessageTypeNormal;
     d->direction = LocalToRemote;
     d->isHistory = false;
-
-    setProperty("senderName", context.account()->nickname());
-    setProperty("senderId", context.account()->
-                connection()->selfContact()->id());
-    setProperty("senderAvatar", context.account()->
-                connection()->selfContact()->avatarData().fileName);
 
     setMainMessagePart(messageText);
 }
@@ -224,12 +225,23 @@ Tp::ChannelTextMessageType Message::type() const
 
 QString Message::senderAlias() const
 {
-    return property("senderName").toString();
+    if (d->sender) {
+        return d->sender->alias();
+    }
+    return d->senderAlias;
 }
 
 QString Message::senderId() const
 {
-    return property("senderId").toString();
+    if (d->sender) {
+        return d->sender->id();
+    }
+    return d->senderId;
+}
+
+KTp::ContactPtr Message::sender() const
+{
+    return d->sender;
 }
 
 int Message::partsSize() const

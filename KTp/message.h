@@ -26,6 +26,8 @@
 #include <TelepathyLoggerQt4/TextEvent>
 
 #include <KTp/ktp-export.h>
+#include <KTp/types.h>
+
 #include <KTp/message-context.h>
 
 #include <QSharedData>
@@ -51,7 +53,7 @@ namespace KTp
  */
 class KTP_EXPORT Message
 {
-  public:
+public:
     enum MessageDirection {
         LocalToRemote,
         RemoteToLocal
@@ -135,10 +137,16 @@ class KTP_EXPORT Message
     QString token() const;
     /*! \return the type of the message*/
     Tp::ChannelTextMessageType type() const;
+
     /*! \return the alias of the contact who composed this message */
     QString senderAlias() const;
-    /*! \return the Id of the contact who composed this message */
+    /*! \return the id of the contact who composed this message */
     QString senderId() const;
+
+    /*! \return the contact who composed this message
+     *   @warning This may be null for service messages, log messages and other cases
+     */
+    KTp::ContactPtr sender() const;
 
     /*! \return the number of appended parts */
     int partsSize() const;
