@@ -52,7 +52,7 @@ public:
         GroupGrouping
     };
 
-    ContactsModel(QObject *parent);
+    ContactsModel(QObject *parent=0);
 
     virtual ~ContactsModel();
 

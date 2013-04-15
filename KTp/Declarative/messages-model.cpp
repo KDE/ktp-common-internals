@@ -196,7 +196,7 @@ QVariant MessagesModel::data(const QModelIndex &index, int role) const
             break;
         case SenderAvatarRole:
             if (message.sender()) {
-                result = QVariant::fromValue(message.sender()->avatarData());
+                result = QVariant::fromValue(message.sender()->avatarPixmap());
             }
             break;
         };

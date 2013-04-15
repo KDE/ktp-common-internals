@@ -33,7 +33,7 @@ class ConversationsModel : public QAbstractListModel, public Tp::AbstractClientH
     Q_PROPERTY(int totalUnreadCount READ totalUnreadCount NOTIFY totalUnreadCountChanged)
 
   public:
-    explicit ConversationsModel(QObject *parent);
+    explicit ConversationsModel(QObject *parent=0);
     virtual ~ConversationsModel();
 
     virtual QVariant data ( const QModelIndex &index, int role = Qt::DisplayRole ) const;

@@ -22,40 +22,43 @@
 #include "qml-plugins.h"
 
 #include <QtDeclarative/QDeclarativeItem>
+#include <QtDeclarative/QDeclarativeEngine>
+#include <QtDeclarative/QDeclarativeContext>
 
-#include "contact-list.h"
+
 #include "conversation.h"
 #include "conversations-model.h"
 #include "conversation-target.h"
 #include "hide-window-component.h"
 #include "messages-model.h"
-#include "telepathy-text-observer.h"
 #include "pinned-contacts-model.h"
 #include "contact-pin.h"
 #include "filtered-pinned-contacts-proxy-model.h"
-#include "declarative-ktp-actions.h"
+#include "telepathy-manager.h"
 
-#include "Models/contacts-filter-model.h"
-#include <Models/contacts-model.h>
+#include "KTp/types.h"
+#include "KTp/Models/contacts-filter-model.h"
+#include "KTp/Models/contacts-model.h"
+
+void QmlPlugins::initializeEngine(QDeclarativeEngine *engine, const char *uri)
+{
+    engine->rootContext()->setContextProperty(QLatin1String("telepathyManager"), new TelepathyManager(engine));
+}
 
 void QmlPlugins::registerTypes(const char *uri)
 {
-    qmlRegisterType<ContactList> (uri, 0, 1, "ContactList");
-    qmlRegisterType<TelepathyTextObserver> (uri, 0, 1, "TelepathyTextObserver");
+    qmlRegisterType<KTp::ContactsModel> (uri, 0, 1, "ContactsModel");
+    qmlRegisterType<ConversationsModel> (uri, 0, 1, "ConversationsModel");
     qmlRegisterType<Conversation>(uri, 0, 1, "Conversation");
     qmlRegisterType<HideWindowComponent>(uri, 0, 1, "HideWindowComponent");
     qmlRegisterType<PinnedContactsModel>(uri, 0, 1, "PinnedContactsModel");
     qmlRegisterType<ContactPin>(uri, 0, 1, "ContactPin");
     qmlRegisterType<FilteredPinnedContactsProxyModel>(uri, 0, 1, "FilteredPinnedContactsProxyModel");
-    qmlRegisterType<DeclarativeKTpActions>(uri, 0, 1, "DeclarativeKTpActions");
 
-    qmlRegisterUncreatableType<KTp::ContactsFilterModel> (uri, 0, 1, "AccountsFilterModel",
-        QLatin1String("Filter cannot be created. Access through ContactList.filter"));
     qmlRegisterUncreatableType<MessagesModel> (uri, 0, 1, "MessagesModel",
         QLatin1String("It will be created once the conversation is created"));
-    qmlRegisterUncreatableType<KTp::ContactsModel> (uri, 0, 1, "ContactsModel",
-        QLatin1String("It will be created through ContactList"));
 
+    qmlRegisterType<TelepathyManager>();
     qmlRegisterType<ConversationTarget>();
     qmlRegisterType<ConversationsModel>();
     qRegisterMetaType<Tp::AccountManagerPtr>();

@@ -952,14 +952,14 @@ QModelIndexList ContactsFilterModel::match(const QModelIndex &start, int role,
 
 void ContactsFilterModel::setSortRoleString(const QString &role)
 {
-    Q_ASSERT(!roleNames().keys(role.toUtf8()).isEmpty());
     setSortRole(roleNames().key(role.toUtf8()));
 }
 
 QString ContactsFilterModel::sortRoleString() const
 {
-    Q_ASSERT(roleNames().contains(sortRole()));
-    return QString::fromUtf8(roleNames().value(sortRole()));
+//    Q_ASSERT(roleNames().contains(sortRole()));
+//    return QString::fromUtf8(roleNames().value(sortRole()));
+    return QString();
 }
 
 #include "contacts-filter-model.moc"

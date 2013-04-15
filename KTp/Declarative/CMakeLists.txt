@@ -5,18 +5,15 @@ include_directories (${CMAKE_CURRENT_BINARY_DIR}
 
 set (ktp_qml_plugin_SRCS
     ${KTP_GLOBAL_SOURCES}
-    contact-list.cpp
     conversation-target.cpp
     conversation.cpp
     conversations-model.cpp
     hide-window-component.cpp
     messages-model.cpp
-    telepathy-text-observer.cpp
     pinned-contacts-model.cpp
     filtered-pinned-contacts-proxy-model.cpp
     contact-pin.cpp
-    declarative-ktp-actions.cpp
-
+    telepathy-manager.cpp
     qml-plugins.cpp
 )
 
