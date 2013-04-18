@@ -101,10 +101,11 @@ QString LogsImporter::Private::accountIdToProtocol(const QString &accountId) con
     } else if (accountId.startsWith(QLatin1String("sunshine/gadugadu/")) ||
                accountId.startsWith(QLatin1String("haze/gadugadu/"))) {
         return QLatin1String("GaduProtocol");
+    } else if (accountId.startsWith(QLatin1String("haze/groupwise"))) {
+        return QLatin1String("GroupWiseProtocol");
     } else {
         /* We don't support these Kopete protocols:
          *         Bonjour - unable to reliably map Telepathy account to Kopete
-         *         GroupWise - no support in Telepathy
          *         Meanwhile - no support in Telepathy
          *         QQ - no support in Telepathy
          *         SMS - no support in Telepathy
