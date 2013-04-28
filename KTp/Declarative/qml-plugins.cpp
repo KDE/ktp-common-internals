@@ -39,6 +39,8 @@
 #include "KTp/types.h"
 #include "KTp/Models/contacts-filter-model.h"
 #include "KTp/Models/contacts-model.h"
+#include "KTp/Models/accounts-list-model.h"
+
 
 void QmlPlugins::initializeEngine(QDeclarativeEngine *engine, const char *uri)
 {
@@ -48,6 +50,8 @@ void QmlPlugins::initializeEngine(QDeclarativeEngine *engine, const char *uri)
 void QmlPlugins::registerTypes(const char *uri)
 {
     qmlRegisterType<KTp::ContactsModel> (uri, 0, 1, "ContactsModel");
+    qmlRegisterType<KTp::AccountsListModel> (uri, 0, 1, "AccountsListModel");
+
     qmlRegisterType<ConversationsModel> (uri, 0, 1, "ConversationsModel");
     qmlRegisterType<Conversation>(uri, 0, 1, "Conversation");
     qmlRegisterType<HideWindowComponent>(uri, 0, 1, "HideWindowComponent");
