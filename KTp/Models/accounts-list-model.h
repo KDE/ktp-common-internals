@@ -27,6 +27,7 @@
 #include <TelepathyQt/Account>
 
 #include <KTp/ktp-export.h>
+#include <KTp/types.h>
 
 class KIcon;
 
@@ -75,8 +76,6 @@ private:
 };
 
 }
-
-Q_DECLARE_METATYPE(Tp::AccountPtr)
 
 #endif // header guard
 
