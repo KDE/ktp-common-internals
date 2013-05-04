@@ -56,7 +56,6 @@ class ConversationsModel : public QAbstractListModel, public Tp::AbstractClientH
     bool bypassApproval() const;
 
   public Q_SLOTS:
-    void startChat(const Tp::AccountPtr &account, const KTp::ContactPtr &contact);
     int nextActiveConversation(int first);
 
   private:
