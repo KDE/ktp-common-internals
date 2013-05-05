@@ -77,6 +77,8 @@ public:
      */
     Q_INVOKABLE bool registerClient(QObject *client, const QString &clientName);
 
+    Q_INVOKABLE bool unregisterClient(QObject* client);
+
 public Q_SLOTS:
     /** Start a text chat using the default KTp text application
         @arg account the account to start the channel from

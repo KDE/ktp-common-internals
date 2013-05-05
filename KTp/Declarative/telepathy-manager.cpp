@@ -76,6 +76,12 @@ bool TelepathyManager::registerClient(QObject *client, const QString &name)
     return m_clientRegistrar->registerClient(Tp::AbstractClientPtr(abstractClient), name);
 }
 
+bool TelepathyManager::unregisterClient(QObject* client)
+{
+    Tp::AbstractClient* abstractClient = dynamic_cast<Tp::AbstractClient*>(client);
+    return abstractClient && m_clientRegistrar && m_clientRegistrar->unregisterClient(Tp::AbstractClientPtr(abstractClient));
+}
+
 void TelepathyManager::addTextChatFeatures()
 {
     m_connectionFactory->addFeatures(Tp::Features() << Tp::Connection::FeatureSelfContact);
