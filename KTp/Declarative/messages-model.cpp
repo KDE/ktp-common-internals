@@ -117,11 +117,17 @@ void MessagesModel::onMessageReceived(const Tp::ReceivedMessage &message)
     int unreadCount = d->textChannel->messageQueue().size();
     kDebug() << "unreadMessagesCount =" << unreadCount;
     kDebug() << "text =" << message.text();
+    kDebug() << "messageType = " << message.messageType();
     kDebug() << "messageToken =" << message.messageToken();
 
-    if (message.messageType() == Tp::ChannelTextMessageTypeNormal ||
-        message.messageType() == Tp::ChannelTextMessageTypeAction) {
+    //delivery reports do not contain message text, everything else does.
+    //simply ack these straight away
 
+    //TODO search through d->messages() for messages with identical messageToken and update sending state as appropriate
+
+    if (message.messageType() == Tp::ChannelTextMessageTypeDeliveryReport) {
+        d->textChannel->acknowledge(QList<Tp::ReceivedMessage>() << message);
+    } else {
         int length = rowCount();
         beginInsertRows(QModelIndex(), length, length);
 
@@ -138,7 +144,6 @@ void MessagesModel::onMessageReceived(const Tp::ReceivedMessage &message)
             Q_EMIT unreadCountChanged(unreadCount);
         }
     }
-
 }
 
 void MessagesModel::onMessageSent(const Tp::Message &message, Tp::MessageSendingFlags flags, const QString &messageToken)
@@ -152,7 +157,6 @@ void MessagesModel::onMessageSent(const Tp::Message &message, Tp::MessageSending
 
     d->messages.append(KTp::MessageProcessor::instance()->processIncomingMessage(
                            message, d->account, d->textChannel));
-
     endInsertRows();
 }
 
@@ -245,8 +249,7 @@ int MessagesModel::unreadCount() const
 
 void MessagesModel::acknowledgeAllMessages()
 {
-    QList<Tp::ReceivedMessage> queue
-    = d->textChannel->messageQueue();
+    QList<Tp::ReceivedMessage> queue = d->textChannel->messageQueue();
 
     kDebug() << "Conversation Visible, Acknowledging " << queue.size() << " messages.";
 
