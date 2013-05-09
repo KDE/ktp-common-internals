@@ -18,7 +18,7 @@
      </property>
      <widget class="QWidget" name="mcTab">
       <attribute name="title">
-       <string>Mission Control</string>
+       <string notr="true">Mission Control</string>
       </attribute>
       <layout class="QHBoxLayout" name="horizontalLayout_2">
        <item>
@@ -28,7 +28,7 @@
      </widget>
      <widget class="QWidget" name="gabbleTab">
       <attribute name="title">
-       <string>Gabble</string>
+       <string notr="true">Gabble</string>
       </attribute>
       <layout class="QHBoxLayout" name="horizontalLayout_3">
        <item>
@@ -38,7 +38,7 @@
      </widget>
      <widget class="QWidget" name="hazeTab">
       <attribute name="title">
-       <string>Haze</string>
+       <string notr="true">Haze</string>
       </attribute>
       <layout class="QHBoxLayout" name="horizontalLayout_4">
        <item>
@@ -48,7 +48,7 @@
      </widget>
      <widget class="QWidget" name="salutTab">
       <attribute name="title">
-       <string>Salut</string>
+       <string notr="true">Salut</string>
       </attribute>
       <layout class="QHBoxLayout" name="horizontalLayout_5">
        <item>
@@ -58,7 +58,7 @@
      </widget>
      <widget class="QWidget" name="rakiaTab">
       <attribute name="title">
-       <string>Rakia</string>
+       <string notr="true">Rakia</string>
       </attribute>
       <layout class="QHBoxLayout" name="horizontalLayout_6">
        <item>
