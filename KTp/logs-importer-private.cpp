@@ -195,11 +195,6 @@ void LogsImporter::Private::saveKTpDocument()
     path += QDir::separator() + filename;
 
     QFile outFile(path);
-    if (outFile.exists()) {
-        kWarning() << path << "already exists, not importing logs";
-        return;
-    }
-
     outFile.open(QIODevice::WriteOnly);
     QTextStream stream(&outFile);
     m_ktpDocument.save(stream, 0);
@@ -315,9 +310,18 @@ void LogsImporter::Private::convertKopeteLog(const QString& filepath)
     QFile f(filepath);
     f.open(QIODevice::ReadOnly);
 
-    QByteArray ba = f.readAll();
+    const QByteArray ba = f.readAll();
+    QString content = QString::fromUtf8(ba.constData(), ba.size());
 
-    m_kopeteDocument.setContent(ba);
+    /* Strip Kopete HTML wrapping, which is always
+     * &lt;sometag>....&lt;/sometag> - only "<" is escaped
+     * See https://bugs.kde.org/show_bug.cgi?id=318751
+     */
+    QRegExp rx(QLatin1String("\\&lt;[^>]*>"));
+    rx.setMinimal(true);
+    content = content.replace(rx, QString());
+
+    m_kopeteDocument.setContent(content);
     /* Get <history> node */
     QDomElement history = m_kopeteDocument.documentElement();
     /* Get all <msg> nodes in <history> node */
