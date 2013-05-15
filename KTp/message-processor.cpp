@@ -18,6 +18,7 @@
 
 
 #include "message-processor.h"
+#include "message-processor-private.h"
 #include "message-filters-private.h"
 #include "message-filter-config-manager.h"
 
@@ -32,34 +33,70 @@
 
 using namespace KTp;
 
-class MessageProcessor::Private
-{
-  public:
-    Private(MessageProcessor *parent):
-        q(parent)
-    { }
-
-    void loadFilters();
-
-    QList<KTp::AbstractMessageFilter*> filters;
-
-  private:
-    MessageProcessor *q;
-};
-
-bool pluginWeightLessThan(const KPluginInfo &p1, const KPluginInfo &p2)
+FilterPlugin::FilterPlugin(const KPluginInfo &pluginInfo, KTp::AbstractMessageFilter *instance_):
+    name(pluginInfo.pluginName()),
+    instance(instance_)
 {
     bool ok;
-    int weight1 = p1.service()->property(QLatin1String("X-KDE-PluginInfo-Weight"), QVariant::Int).toInt(&ok);
+    weight = pluginInfo.service()->property(QLatin1String("X-KDE-PluginInfo-Weight"), QVariant::Int).toInt(&ok);
     if (!ok) {
-        weight1 = 100;
+        weight = 100;
     }
-    int weight2 = p2.service()->property(QLatin1String("X-KDE-PluginInfo-Weight"), QVariant::Int).toInt(&ok);
-    if (!ok) {
-        weight2 = 100;
+}
+
+FilterPlugin::FilterPlugin(const QString &name_, int weight_, KTp::AbstractMessageFilter *instance_):
+    name(name_),
+    weight(weight_),
+    instance(instance_)
+{
+}
+
+bool FilterPlugin::operator<(const FilterPlugin &other) const
+{
+    return weight < other.weight;
+}
+
+bool FilterPlugin::operator==(const FilterPlugin &other) const
+{
+    return instance == other.instance &&
+           name == other.name &&
+           weight == other.weight;
+}
+
+void MessageProcessor::Private::loadFilter(const KPluginInfo &pluginInfo)
+{
+    KService::Ptr service = pluginInfo.service();
+
+    KPluginFactory *factory = KPluginLoader(service->library()).factory();
+    if (factory) {
+        kDebug() << "loaded factory :" << factory;
+        AbstractMessageFilter *filter = factory->create<AbstractMessageFilter>(q);
+
+        if (filter) {
+            kDebug() << "loaded message filter : " << filter;
+            filters << FilterPlugin(pluginInfo, filter);
+        }
+    } else {
+        kError() << "error loading plugin :" << service->library();
     }
 
-    return weight1 < weight2;
+    // Re-sort filters by weight
+    qSort(filters);
+}
+
+void MessageProcessor::Private::unloadFilter(const KPluginInfo &pluginInfo)
+{
+    QList<FilterPlugin>::Iterator iter = filters.begin();
+    for ( ; iter != filters.end(); ++iter) {
+        const FilterPlugin &plugin = *iter;
+
+        if (plugin.name == pluginInfo.pluginName()) {
+            kDebug() << "unloading message filter : " << plugin.instance;
+            plugin.instance->deleteLater();
+            filters.erase(iter);
+            return;
+        }
+    }
 }
 
 void MessageProcessor::Private::loadFilters()
@@ -68,26 +105,10 @@ void MessageProcessor::Private::loadFilters()
 
     KPluginInfo::List plugins = MessageFilterConfigManager::self()->enabledPlugins();
 
-    qSort(plugins.begin(), plugins.end(), pluginWeightLessThan);
-
     Q_FOREACH (const KPluginInfo &plugin, plugins) {
-        KService::Ptr service = plugin.service();
-
-        KPluginFactory *factory = KPluginLoader(service->library()).factory();
-        if(factory) {
-            kDebug() << "loaded factory :" << factory;
-            AbstractMessageFilter *filter = factory->create<AbstractMessageFilter>(q);
-
-            if(filter) {
-                kDebug() << "loaded message filter : " << filter;
-                filters.append(filter);
-            }
-        } else {
-            kError() << "error loading plugin :" << service->library();
-        }
+        loadFilter(plugin);
     }
 }
-
 
 KTp::MessageProcessor* MessageProcessor::instance()
 {
@@ -108,8 +129,10 @@ KTp::MessageProcessor* MessageProcessor::instance()
 MessageProcessor::MessageProcessor():
     d(new MessageProcessor::Private(this))
 {
-    d->filters.append(new MessageEscapeFilter(this));
-    d->filters.append(new MessageUrlFilter(this));
+    // Default weight is 100. Make sure these two plugins are always above those
+    // which don't have weight specified and in this exact order.
+    d->filters << FilterPlugin(QLatin1String("__messageEscapeFilter"), 98, new MessageEscapeFilter(this));
+    d->filters << FilterPlugin(QLatin1String("__messageUrlFilter"), 99, new MessageUrlFilter(this));
 
     d->loadFilters();
 }
@@ -124,14 +147,14 @@ QString MessageProcessor::header()
 {
     QStringList scripts;
     QStringList stylesheets;
-    Q_FOREACH (AbstractMessageFilter *filter, d->filters) {
-        Q_FOREACH (const QString &script, filter->requiredScripts()) {
+    Q_FOREACH (const FilterPlugin &plugin, d->filters) {
+        Q_FOREACH (const QString &script, plugin.instance->requiredScripts()) {
             // Avoid duplicates
             if (!scripts.contains(script)) {
                 scripts << script;
             }
         }
-        Q_FOREACH (const QString &stylesheet, filter->requiredStylesheets()) {
+        Q_FOREACH (const QString &stylesheet, plugin.instance->requiredStylesheets()) {
             // Avoid duplicates
             if (!stylesheets.contains(stylesheet)) {
                 stylesheets << stylesheet;
@@ -177,9 +200,9 @@ KTp::Message KTp::MessageProcessor::processIncomingMessage(const Tpl::TextEventP
 
 KTp::Message MessageProcessor::processIncomingMessage(KTp::Message message, const KTp::MessageContext &context)
 {
-    Q_FOREACH (AbstractMessageFilter *filter, d->filters) {
-        kDebug() << "running filter :" << filter->metaObject()->className();
-        filter->filterMessage(message, context);
+    Q_FOREACH (const FilterPlugin &plugin, d->filters) {
+        kDebug() << "running filter :" << plugin.instance->metaObject()->className();
+        plugin.instance->filterMessage(message, context);
     }
     return message;
 }
@@ -189,9 +212,9 @@ KTp::OutgoingMessage MessageProcessor::processOutgoingMessage(const QString &mes
     KTp::MessageContext context(account, channel);
     KTp::OutgoingMessage message(messageText);
 
-    Q_FOREACH (AbstractMessageFilter *filter, d->filters) {
-        kDebug() << "running outgoing filter : " << filter->metaObject()->className();
-        filter->filterOutgoingMessage(message, context);
+    Q_FOREACH (const FilterPlugin &plugin, d->filters) {
+        kDebug() << "running outgoing filter : " << plugin.instance->metaObject()->className();
+        plugin.instance->filterOutgoingMessage(message, context);
     }
 
     return message;

@@ -17,6 +17,7 @@
 */
 
 #include "message-filter-config-manager.h"
+#include "message-processor-private.h"
 #include "version.h"
 
 #include <QMutex>
@@ -111,4 +112,22 @@ KConfigGroup MessageFilterConfigManager::configGroup() const
 KSharedConfig::Ptr MessageFilterConfigManager::sharedConfig() const
 {
     return KSharedConfig::openConfig(QLatin1String("ktelepathyrc"));
+}
+
+void MessageFilterConfigManager::reloadConfig()
+{
+    PluginSet::ConstIterator iter = d->all.constBegin();
+    for ( ; iter != d->all.constEnd(); ++iter) {
+        KPluginInfo pluginInfo = *iter;
+
+        const bool wasEnabled = d->enabled.contains(pluginInfo);
+
+        if (!wasEnabled && pluginInfo.isPluginEnabled()) {
+            d->enabled.insert(pluginInfo);
+            MessageProcessor::instance()->d->loadFilter(pluginInfo);
+        } else if (wasEnabled && !pluginInfo.isPluginEnabled()) {
+            d->enabled.remove(pluginInfo);
+            MessageProcessor::instance()->d->unloadFilter(pluginInfo);
+        }
+    }
 }

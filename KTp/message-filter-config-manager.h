@@ -37,6 +37,8 @@ class KTP_EXPORT MessageFilterConfigManager
     KConfigGroup       configGroup() const;
     KSharedConfig::Ptr sharedConfig() const;
 
+    void reloadConfig();
+
   protected:
     MessageFilterConfigManager();
     ~MessageFilterConfigManager();

@@ -70,6 +70,7 @@ class KTP_EXPORT MessageProcessor : public QObject
     class Private;
     Private * const d;
 
+    friend class MessageFilterConfigManager;
 };
 
 }
