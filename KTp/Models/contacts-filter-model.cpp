@@ -914,7 +914,22 @@ QModelIndexList ContactsFilterModel::match(const QModelIndex &start, int role,
     } else { // QString based matching
         if (text.isEmpty()) // lazy conversion
             text = value.toString();
-        QString t = v.toString();
+        QString t;
+
+        // If we're being case-insensitve then we should also be "foreign character insensitive"
+        if (cs == Qt::CaseInsensitive) {
+            const QString normalized = v.toString().normalized(QString::NormalizationForm_D);
+            Q_FOREACH (const QChar &c, normalized) {
+                if (c.category() != QChar::Mark_NonSpacing
+                    && c.category() != QChar::Mark_SpacingCombining
+                    && c.category() != QChar::Mark_Enclosing) {
+                    t.append(c);
+                }
+            }
+        } else {
+            t = v.toString();
+        }
+
         switch (matchType) {
         case Qt::MatchRegExp:
             if (QRegExp(text, cs).exactMatch(t))

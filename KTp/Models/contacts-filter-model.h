@@ -287,7 +287,7 @@ public:
     Q_SLOT void clearTubesFilterStrings();
     Q_SLOT void setTubesFilterStrings(const QStringList &tubesFilterStrings);
     Q_SIGNAL void tubesFilterStringsChanged(const QStringList &tubesFilterStrings);
-    
+
     QString sortRoleString() const;
     Q_SLOT void setSortRoleString(const QString &role);
 
