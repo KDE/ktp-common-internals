@@ -136,8 +136,7 @@ void ConversationsModel::handleChannels(const Tp::MethodInvocationContextPtr<> &
         beginInsertRows(QModelIndex(), rowCount(), rowCount());
         Conversation *newConvo = new Conversation(textChannel, account, this);
         d->conversations.append(newConvo);
-        connect(newConvo, SIGNAL(validityChanged(bool)), SLOT(handleValidityChange(bool)));
-        connect(newConvo, SIGNAL(conversationDelegated()), SLOT(conversationDelegated()));
+        connect(newConvo, SIGNAL(conversationCloseRequested()), SLOT(onConversationCloseRequested()));
         connect(newConvo->messages(), SIGNAL(unreadCountChanged(int)), SIGNAL(totalUnreadCountChanged()));
         endInsertRows();
         context->setFinished();
@@ -150,14 +149,7 @@ bool ConversationsModel::bypassApproval() const
     return true;
 }
 
-void ConversationsModel::handleValidityChange(bool valid)
-{
-    if (!valid) {
-        removeConversation(qobject_cast<Conversation*>(QObject::sender()));
-    }
-}
-
-void ConversationsModel::conversationDelegated()
+void ConversationsModel::onConversationCloseRequested()
 {
     removeConversation(qobject_cast<Conversation*>(QObject::sender()));
 }

@@ -65,8 +65,7 @@ class ConversationsModel : public QAbstractListModel, public Tp::AbstractClientH
     ConversationsModelPrivate *d;
 
   private Q_SLOTS:
-    void handleValidityChange(bool);
-    void conversationDelegated();
+    void onConversationCloseRequested();
 
   Q_SIGNALS:
       void totalUnreadCountChanged();

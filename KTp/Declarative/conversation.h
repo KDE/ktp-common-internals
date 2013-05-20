@@ -39,7 +39,7 @@ class Conversation : public QObject
     Q_PROPERTY(MessagesModel *messages READ messages CONSTANT)
     Q_PROPERTY(bool valid READ isValid NOTIFY validityChanged)
 
-  public:
+public:
     Conversation(const Tp::TextChannelPtr &channel, const Tp::AccountPtr &account, QObject *parent = 0);
     Conversation(QObject *parent = 0);
     virtual ~Conversation();
@@ -49,18 +49,18 @@ class Conversation : public QObject
 
     bool isValid();
 
-  Q_SIGNALS:
+Q_SIGNALS:
     void validityChanged(bool isValid);
-    void conversationDelegated();
+    void conversationCloseRequested();
 
-  public Q_SLOTS:
+public Q_SLOTS:
     void delegateToProperClient();
     void requestClose();
 
-  private Q_SLOTS:
+private Q_SLOTS:
     void onChannelInvalidated(Tp::DBusProxy *proxy, const QString &errorName, const QString &errorMessage);
 
-  private:
+private:
     class ConversationPrivate;
     ConversationPrivate *d;
 };

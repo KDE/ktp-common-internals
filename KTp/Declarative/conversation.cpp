@@ -94,21 +94,23 @@ void Conversation::delegateToProperClient()
 {
     ChannelDelegator::delegateChannel(d->account, d->messages->textChannel());
     d->delegated = true;
-    Q_EMIT conversationDelegated();
+    Q_EMIT conversationCloseRequested();
 }
 
 void Conversation::requestClose()
+{
+    kDebug();
+
+    //removing from the model will delete this object closing the channel
+    Q_EMIT conversationCloseRequested();
+}
+
+Conversation::~Conversation()
 {
     kDebug();
     //if we are not handling the channel do nothing.
     if (!d->delegated) {
         d->messages->textChannel()->requestClose();
     }
-}
-
-Conversation::~Conversation()
-{
-    kDebug();
-    requestClose();
     delete d;
 }
