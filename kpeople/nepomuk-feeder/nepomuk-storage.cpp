@@ -38,6 +38,7 @@
 
 #include <Nepomuk2/Vocabulary/NCO>
 #include <Nepomuk2/Vocabulary/PIMO>
+#include <Nepomuk2/Vocabulary/NIE>
 #include <Soprano/Vocabulary/RDF>
 #include <Soprano/Vocabulary/NAO>
 #include <Soprano/Vocabulary/NRL>
@@ -594,6 +595,7 @@ void NepomukStorage::createContact(const QString &path, const Tp::ContactPtr &co
 
     Nepomuk2::SimpleResource newPersonContact;
     newPersonContact.addType(NCO::PersonContact());
+    newPersonContact.addType(NIE::DataObject());
 
     Nepomuk2::SimpleResource newImAccount;
     //TODO: Somehow add this imAccount as a sub resource the account, maybe.
