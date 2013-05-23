@@ -65,6 +65,8 @@ namespace KTp
 
         ContactHasTextChannelRole, ///< bool, returns true if a text channel is active for this contact
         ContactUnreadMessageCountRole, ///< int. the number of unread messages in active channels with this contact
+        ContactLastMessageRole, ///string, the last message to/from this contact in an active chat
+        ContactLastMessageDirectionRole, //enum KTp::Message::MessageDirection direction of last message
 
         ContactCanTextChatRole, ///< bool. You and contact can both text chat
         ContactCanFileTransferRole, ///< bool. You and contact can both file transfer

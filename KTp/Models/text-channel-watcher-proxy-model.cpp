@@ -26,6 +26,7 @@
 
 #include <KTp/types.h>
 #include <KTp/contact.h>
+#include <KTp/message.h>
 
 
 inline Tp::ChannelClassSpecList channelClasses() {
@@ -38,13 +39,20 @@ class ChannelWatcher : public QObject, public Tp::RefCounted
 public:
     ChannelWatcher(const QPersistentModelIndex &index, const Tp::TextChannelPtr &channel, QObject *parent=0);
     int unreadMessageCount() const;
+    QString lastMessage() const;
+    KTp::Message::MessageDirection lastMessageDirection() const;
     QPersistentModelIndex modelIndex() const;
 Q_SIGNALS:
     void messagesChanged();
     void invalidated();
+private Q_SLOTS:
+    void onMessageReceived(const Tp::ReceivedMessage &message);
+    void onMessageSent(const Tp::Message &message);
 private:
     QPersistentModelIndex m_index;
     Tp::TextChannelPtr m_channel;
+    QString m_lastMessage;
+    KTp::Message::MessageDirection m_lastMessageDirection;
 };
 
 typedef Tp::SharedPtr<ChannelWatcher> ChannelWatcherPtr;
@@ -52,11 +60,14 @@ typedef Tp::SharedPtr<ChannelWatcher> ChannelWatcherPtr;
 ChannelWatcher::ChannelWatcher(const QPersistentModelIndex &index, const Tp::TextChannelPtr &channel, QObject *parent):
     QObject(parent),
     m_index(index),
-    m_channel(channel)
+    m_channel(channel),
+    m_lastMessageDirection(KTp::Message::LocalToRemote)
 {
     connect(channel.data(), SIGNAL(pendingMessageRemoved(Tp::ReceivedMessage)), SIGNAL(messagesChanged()));
-    connect(channel.data(), SIGNAL(messageReceived(Tp::ReceivedMessage)), SIGNAL(messagesChanged()));
     connect(channel.data(), SIGNAL(invalidated(Tp::DBusProxy*,QString,QString)), SIGNAL(invalidated()));
+
+    connect(channel.data(), SIGNAL(messageReceived(Tp::ReceivedMessage)), SLOT(onMessageReceived(Tp::ReceivedMessage)));
+    connect(channel.data(), SIGNAL(messageSent(Tp::Message,Tp::MessageSendingFlags,QString)), SLOT(onMessageSent(Tp::Message)));
 
     //trigger an update to the contact straight away
     QTimer::singleShot(0, this, SIGNAL(messagesChanged()));
@@ -72,8 +83,31 @@ int ChannelWatcher::unreadMessageCount() const
     return m_channel->messageQueue().size();
 }
 
+QString ChannelWatcher::lastMessage() const
+{
+    return m_lastMessage;
+}
 
+KTp::Message::MessageDirection ChannelWatcher::lastMessageDirection() const
+{
+    return m_lastMessageDirection;
+}
 
+void ChannelWatcher::onMessageReceived(const Tp::ReceivedMessage &message)
+{
+    if (!message.isDeliveryReport()) {
+        m_lastMessage = message.text();
+        m_lastMessageDirection = KTp::Message::RemoteToLocal;
+        Q_EMIT messagesChanged();
+    }
+}
+
+void ChannelWatcher::onMessageSent(const Tp::Message &message)
+{
+    m_lastMessage = message.text();
+    m_lastMessageDirection - KTp::Message::LocalToRemote;
+    Q_EMIT messagesChanged();
+}
 
 namespace KTp {
 
@@ -140,7 +174,7 @@ void KTp::TextChannelWatcherProxyModel::observeChannels(const Tp::MethodInvocati
 
 QVariant KTp::TextChannelWatcherProxyModel::data(const QModelIndex &proxyIndex, int role) const
 {
-    QModelIndex sourceIndex = mapToSource(proxyIndex);
+    const QModelIndex sourceIndex = mapToSource(proxyIndex);
     if (role == KTp::ContactHasTextChannelRole) {
         KTp::ContactPtr contact = sourceIndex.data(KTp::ContactRole).value<KTp::ContactPtr>();
         if (contact) {
@@ -159,6 +193,24 @@ QVariant KTp::TextChannelWatcherProxyModel::data(const QModelIndex &proxyIndex, 
             }
         }
         return 0;
+    }
+    if (role == KTp::ContactLastMessageRole) {
+        KTp::ContactPtr contact = sourceIndex.data(KTp::ContactRole).value<KTp::ContactPtr>();
+        if (contact) {
+            if (d->currentChannels.contains(contact)) {
+                return d->currentChannels[contact]->lastMessage();
+            }
+        }
+        return QString();
+    }
+    if (role == KTp::ContactLastMessageDirectionRole) {
+        KTp::ContactPtr contact = sourceIndex.data(KTp::ContactRole).value<KTp::ContactPtr>();
+        if (contact) {
+            if (d->currentChannels.contains(contact)) {
+                return d->currentChannels[contact]->lastMessageDirection();
+            }
+        }
+        return KTp::Message::LocalToRemote;
     }
 
     return sourceIndex.data(role);
