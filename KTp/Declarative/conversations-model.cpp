@@ -115,12 +115,12 @@ void ConversationsModel::handleChannels(const Tp::MethodInvocationContextPtr<> &
     //if we are handling but should delegate, call delegate channel
     Q_FOREACH(Conversation *convo, d->conversations) {
         if (convo->target()->id() == textChannel->targetId() &&
-                convo->messages()->textChannel()->targetHandleType() == textChannel->targetHandleType())
+                convo->textChannel()->targetHandleType() == textChannel->targetHandleType())
         {
             if (!shouldDelegate) {
-                convo->messages()->setTextChannel(textChannel);
+                convo->setTextChannel(textChannel);
             } else {
-                if (convo->messages()->textChannel() == textChannel) {
+                if (convo->textChannel() == textChannel) {
                     convo->delegateToProperClient();
                 }
             }

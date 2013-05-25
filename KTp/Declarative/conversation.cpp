@@ -49,21 +49,31 @@ Conversation::Conversation(const Tp::TextChannelPtr &channel,
     d->account = account;
 
     d->messages = new MessagesModel(account, this);
-    d->messages->setTextChannel(channel);
-
+    setTextChannel(channel);
     d->target = new ConversationTarget(account, KTp::ContactPtr::qObjectCast(channel->targetContact()), this);
 
-    d->valid = channel->isValid();
     d->delegated = false;
 
-    connect(channel.data(), SIGNAL(invalidated(Tp::DBusProxy*,QString,QString)),
-            SLOT(onChannelInvalidated(Tp::DBusProxy*,QString,QString)));
 }
 
 Conversation::Conversation(QObject *parent) : QObject(parent)
 {
     kError() << "Conversation should not be created directly. Use ConversationWatcher instead.";
     Q_ASSERT(false);
+}
+
+void Conversation::setTextChannel(const Tp::TextChannelPtr& channel)
+{
+    d->messages->setTextChannel(channel);
+    d->valid = channel->isValid();
+    connect(channel.data(), SIGNAL(invalidated(Tp::DBusProxy*,QString,QString)),
+            SLOT(onChannelInvalidated(Tp::DBusProxy*,QString,QString)));
+    Q_EMIT validityChanged(d->valid);
+}
+
+Tp::TextChannelPtr Conversation::textChannel() const
+{
+    return d->messages->textChannel();
 }
 
 MessagesModel* Conversation::messages() const

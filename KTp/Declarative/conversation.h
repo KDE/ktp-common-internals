@@ -44,6 +44,9 @@ public:
     Conversation(QObject *parent = 0);
     virtual ~Conversation();
 
+    void setTextChannel(const Tp::TextChannelPtr &channel);
+    Tp::TextChannelPtr textChannel() const;
+
     MessagesModel* messages() const;
     ConversationTarget* target() const;
 
