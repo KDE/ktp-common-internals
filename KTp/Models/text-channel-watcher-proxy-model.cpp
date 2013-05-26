@@ -105,7 +105,7 @@ void ChannelWatcher::onMessageReceived(const Tp::ReceivedMessage &message)
 void ChannelWatcher::onMessageSent(const Tp::Message &message)
 {
     m_lastMessage = message.text();
-    m_lastMessageDirection - KTp::Message::LocalToRemote;
+    m_lastMessageDirection = KTp::Message::LocalToRemote;
     Q_EMIT messagesChanged();
 }
 
