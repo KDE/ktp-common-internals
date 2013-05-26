@@ -132,6 +132,8 @@ Message::Message(const Tpl::TextEventPtr &original, const KTp::MessageContext &c
 Message::Message(const QString &messageText, const MessageContext &context) :
     d(new Private)
 {
+    Q_UNUSED(context)
+
     d->sentTime = QDateTime::currentDateTime();
     d->messageType = Tp::ChannelTextMessageTypeNormal;
     d->direction = LocalToRemote;

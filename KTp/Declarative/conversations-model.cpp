@@ -85,6 +85,7 @@ void ConversationsModel::handleChannels(const Tp::MethodInvocationContextPtr<> &
 {
     Q_UNUSED(connection);
     Q_UNUSED(handlerInfo);
+    Q_UNUSED(userActionTime);
 
     bool handled = false;
     bool shouldDelegate = false;

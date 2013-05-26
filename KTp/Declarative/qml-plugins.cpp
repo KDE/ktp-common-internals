@@ -44,6 +44,8 @@
 
 void QmlPlugins::initializeEngine(QDeclarativeEngine *engine, const char *uri)
 {
+    Q_UNUSED(uri)
+
     engine->rootContext()->setContextProperty(QLatin1String("telepathyManager"), new TelepathyManager(engine));
 }
 
