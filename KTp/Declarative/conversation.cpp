@@ -21,6 +21,10 @@
 #include "messages-model.h"
 
 #include <TelepathyQt/TextChannel>
+#include <TelepathyQt/Account>
+#include <TelepathyQt/PendingChannelRequest>
+#include <TelepathyQt/PendingChannel>
+
 #include <KDebug>
 #include "conversation-target.h"
 
@@ -47,6 +51,7 @@ Conversation::Conversation(const Tp::TextChannelPtr &channel,
     kDebug();
 
     d->account = account;
+    connect(d->account.data(), SIGNAL(connectionChanged(Tp::ConnectionPtr)), SLOT(onAccountConnectionChanged(Tp::ConnectionPtr)));
 
     d->messages = new MessagesModel(account, this);
     setTextChannel(channel);
@@ -98,6 +103,32 @@ void Conversation::onChannelInvalidated(Tp::DBusProxy *proxy, const QString &err
     d->valid = false;
 
     Q_EMIT validityChanged(d->valid);
+}
+
+void Conversation::onAccountConnectionChanged(const Tp::ConnectionPtr& connection)
+{
+    //if we have reconnected and we were handling the channel
+    if (connection && ! d->delegated) {
+
+        //general convention is to never use ensureAndHandle when we already have a client registrar
+        //ensureAndHandle will implicity create a new temporary client registrar which is a waste
+        //it's also more code to get the new channel
+
+        //However, we cannot use use ensureChannel as normal because without being able to pass a preferredHandler
+        //we need a preferredHandler so that this handler is the one that ends up with the channel if multi handlers are active
+        //we do not know the name that this handler is currently registered with
+        Tp::PendingChannel *pendingChannel = d->account->ensureAndHandleTextChat(textChannel()->targetId());
+        connect(pendingChannel, SIGNAL(finished(Tp::PendingOperation*)), SLOT(onCreateChannelFinished(Tp::PendingOperation*)));
+    }
+}
+
+void Conversation::onCreateChannelFinished(Tp::PendingOperation* op)
+{
+    Tp::PendingChannel *pendingChannelOp = qobject_cast<Tp::PendingChannel*>(op);
+    Tp::TextChannelPtr textChannel = Tp::TextChannelPtr::dynamicCast(pendingChannelOp->channel());
+    if (textChannel) {
+        setTextChannel(textChannel);
+    }
 }
 
 void Conversation::delegateToProperClient()

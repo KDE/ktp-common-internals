@@ -62,6 +62,8 @@ public Q_SLOTS:
 
 private Q_SLOTS:
     void onChannelInvalidated(Tp::DBusProxy *proxy, const QString &errorName, const QString &errorMessage);
+    void onAccountConnectionChanged(const Tp::ConnectionPtr &connection);
+    void onCreateChannelFinished(Tp::PendingOperation *op);
 
 private:
     class ConversationPrivate;
