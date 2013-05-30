@@ -641,6 +641,48 @@ void NepomukStorage::setContactAlias(const QString &path, const QString &id, con
     fireGraphTimer();
 }
 
+QUrl NepomukStorage::findGroup(const QString& groupName)
+{
+    QHash< QString, QUrl >::const_iterator fit = m_groupCache.constFind( groupName );
+    if (fit != m_groupCache.constEnd()) {
+        return fit.value();
+    }
+
+    const QString query = QString::fromLatin1("select ?g where { ?g nco:contactGroupName %1 . } LIMIT 1")
+                          .arg(Soprano::Node::literalToN3(groupName));
+
+    Soprano::Model* model = Nepomuk2::ResourceManager::instance()->mainModel();
+    Soprano::QueryResultIterator iter = model->executeQuery( query,
+                                                Soprano::Query::QueryLanguageSparqlNoInference );
+
+    if (iter.next()) {
+        const QUrl uri = iter[0].uri();
+        m_groupCache.insert(groupName, uri);
+        return uri;
+    }
+
+    Nepomuk2::SimpleResource groupRes;
+    groupRes.addType(NCO::ContactGroup());
+    groupRes.setProperty(NCO::contactGroupName(), groupName);
+
+    Nepomuk2::SimpleResourceGraph graph;
+    graph << groupRes;
+
+    QHash<QUrl, QVariant> additional;
+    additional.insert(RDF::type(), NRL::DiscardableInstanceBase());
+
+    Nepomuk2::StoreResourcesJob *job = Nepomuk2::storeResources(graph, Nepomuk2::IdentifyNew,
+                                                                Nepomuk2::NoStoreResourcesFlags,
+                                                                additional);
+    // This is blocking, but the code is much easier this way
+    job->exec();
+
+    const QUrl uri = job->mappings().value(groupRes.uri());
+    m_groupCache.insert(groupName, uri);
+    return uri;
+}
+
+
 void NepomukStorage::setContactGroups(const QString &path,
                                       const QString &id,
                                       const QStringList &groups)
@@ -660,15 +702,9 @@ void NepomukStorage::setContactGroups(const QString &path,
         return;
     }
 
-    //FIXME: Ideally cache all the group uris
     QVariantList groupUris;
     foreach (const QString &groupName, groups) {
-        Nepomuk2::SimpleResource groupRes;
-        groupRes.addType(NCO::ContactGroup());
-        groupRes.setProperty(NCO::contactGroupName(), groupName);
-
-        groupUris << groupRes.uri();
-        m_graph << groupRes;
+        groupUris << findGroup(groupName);
     }
 
     QUrl contactUri = contact.personContact();

@@ -158,6 +158,9 @@ private:
     AccountResources findAccount(const QString &path);
 
     void fireGraphTimer();
+
+    QUrl findGroup(const QString& groupName);
+    QHash<QString, QUrl> m_groupCache;
 };
 
 
