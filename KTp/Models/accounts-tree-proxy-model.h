@@ -32,6 +32,7 @@ class KTP_EXPORT AccountsTreeProxyModel : public KTp::AbstractGroupingProxyModel
     Q_OBJECT
 public:
     AccountsTreeProxyModel(QAbstractItemModel *sourceModel, const Tp::AccountManagerPtr &accountManager);
+    virtual ~AccountsTreeProxyModel();
 
     virtual QSet<QString> groupsForIndex(const QModelIndex &sourceIndex) const;
     virtual QVariant dataForGroup(const QString &group, int role) const;

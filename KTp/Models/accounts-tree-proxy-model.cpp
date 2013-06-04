@@ -46,7 +46,11 @@ KTp::AccountsTreeProxyModel::AccountsTreeProxyModel(QAbstractItemModel *sourceMo
     Q_FOREACH(const Tp::AccountPtr &account, d->accountSet->accounts()) {
         onAccountAdded(account);
     }
+}
 
+KTp::AccountsTreeProxyModel::~AccountsTreeProxyModel()
+{
+    delete d;
 }
 
 QSet<QString> KTp::AccountsTreeProxyModel::groupsForIndex(const QModelIndex &sourceIndex) const
