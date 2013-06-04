@@ -39,6 +39,11 @@ KTp::AccountsComboBox::AccountsComboBox(QWidget *parent) :
     setModel(d->model);
 }
 
+KTp::AccountsComboBox::~AccountsComboBox()
+{
+    delete d;
+}
+
 void KTp::AccountsComboBox::setAccountSet(const Tp::AccountSetPtr &accountSet)
 {
     d->model->setAccountSet(accountSet);

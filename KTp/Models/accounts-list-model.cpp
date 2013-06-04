@@ -58,6 +58,7 @@ KTp::AccountsListModel::AccountsListModel(QObject *parent)
 
 KTp::AccountsListModel::~AccountsListModel()
 {
+    delete d;
 }
 
 void KTp::AccountsListModel::setAccountSet(const Tp::AccountSetPtr &accountSet)

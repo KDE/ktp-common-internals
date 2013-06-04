@@ -63,6 +63,7 @@ CircularCountdown::CircularCountdown(int msec, QWidget *parent)
 
 CircularCountdown::~CircularCountdown()
 {
+    delete d;
 }
 
 void CircularCountdown::paintEvent(QPaintEvent *event) {
