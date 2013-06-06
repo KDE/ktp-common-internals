@@ -47,6 +47,7 @@ DebugMessageView::DebugMessageView(QWidget *parent)
     addAction(addMark);
     addAction(KStandardAction::copy(this, SLOT(copy()), this));
     addAction(KStandardAction::selectAll(this, SLOT(selectAll()), this));
+    addAction(KStandardAction::clear(this, SLOT(clear()), this));
 }
 
 
