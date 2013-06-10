@@ -121,6 +121,10 @@ class ContactInfoDialog::Private
 void ContactInfoDialog::Private::onContactUpgraded(Tp::PendingOperation* op)
 {
     Tp::PendingContacts *contacts = qobject_cast<Tp::PendingContacts*>(op);
+    if (op->isError()) {
+        return;
+    }
+
     Q_ASSERT(contacts->contacts().count() == 1);
 
     contact = KTp::ContactPtr::qObjectCast(contacts->contacts().first());
