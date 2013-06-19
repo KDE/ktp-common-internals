@@ -16,12 +16,20 @@ set (KTP_MESSAGE_FILTER_FRAMEWORK_VERSION "4")
 find_package (KDE4 REQUIRED)
 find_package (TelepathyQt4 0.9.2.1 REQUIRED)
 find_package (TelepathyLoggerQt4 REQUIRED)
+find_package (KPeople)
 
 # set some default settings
 include (KDE4Defaults)
 
 # make some more macros available
 include (MacroLibrary)
+
+macro_log_feature(KPEOPLE_FOUND "KPeople" "Support for KDE Contact Aggregation" "https://projects.kde.org/libkpeople" FALSE "" "")
+macro_display_feature_log()
+
+if (KPEOPLE_FOUND)
+    add_definitions(-DHAVE_KPEOPLE)
+endif (KPEOPLE_FOUND)
 
 add_definitions (${KDE4_DEFINITIONS}
                  ${TELEPATHY_LOGGER_QT4_DEFINITIONS}
