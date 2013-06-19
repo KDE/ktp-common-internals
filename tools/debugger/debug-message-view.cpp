@@ -29,27 +29,51 @@
 #include <KAction>
 #include <KLocalizedString>
 #include <KFindDialog>
+#include <KService>
+#include <KTextEditor/View>
 #include <kfind.h>
 
 #include <ctime>
 #include <QDate>
 #include <QPointer>
+#include <QLayout>
 
 DebugMessageView::DebugMessageView(QWidget *parent)
-    : QTextEdit(parent),
-      m_ready(false)
+    : QWidget(parent)
+    , m_ready(false)
 {
-    setReadOnly(true);
-    setContextMenuPolicy(Qt::ActionsContextMenu);
-    KAction* addMark = new KAction(i18n("Add Mark"), this);
-    connect(addMark, SIGNAL(triggered(bool)), SLOT(onAddMark()));
-    addAction(KStandardAction::find(this, SLOT(openFindDialog()), this));
-    addAction(addMark);
-    addAction(KStandardAction::copy(this, SLOT(copy()), this));
-    addAction(KStandardAction::selectAll(this, SLOT(selectAll()), this));
-    addAction(KStandardAction::clear(this, SLOT(clear()), this));
+    KService::Ptr service = KService::serviceByDesktopPath(QString::fromLatin1("katepart.desktop"));
+
+    if (service) {
+        m_editor = qobject_cast<KTextEditor::Document*>(service->createInstance<KParts::ReadWritePart>(this));
+        Q_ASSERT(m_editor && "Failed to instantiate a KatePart");
+    }
+    else {
+        kFatal() << "Could not find kate part";
+    }
+
+    m_editor->setReadWrite(false);
+    KTextEditor::View* view = m_editor->createView(this);
+    setLayout(new QHBoxLayout());
+    layout()->addWidget(view);
+    m_editor->setHighlightingMode(QString::fromLatin1("KTp"));
 }
 
+void DebugMessageView::showEvent(QShowEvent* event)
+{
+    QWidget::showEvent(event);
+    addDelayedMessages();
+}
+
+void DebugMessageView::addDelayedMessages()
+{
+    m_editor->startEditing();
+    Q_FOREACH(const Tp::DebugMessage &msg, m_tmpCache) {
+        appendMessage(msg);
+    }
+    m_editor->endEditing();
+    m_tmpCache.clear();
+}
 
 DebugMessageView::~DebugMessageView()
 {
@@ -138,9 +162,11 @@ void DebugMessageView::onFetchMessagesFinished(Tp::PendingOperation* op)
         messages.append(m_tmpCache); //append any messages that were received from onNewDebugMessage()
         m_tmpCache.clear();
 
+        m_editor->startEditing();
         Q_FOREACH(const Tp::DebugMessage &msg, messages) {
             appendMessage(msg);
         }
+        m_editor->endEditing();
 
         //TODO limit m_messages size
 
@@ -185,30 +211,20 @@ static inline QString formatTimestamp(double timestamp)
 
 void DebugMessageView::appendMessage(const Tp::DebugMessage &msg)
 {
-    QString message = QString(formatTimestamp(msg.timestamp) %
-                              QLatin1Literal(" - [") % msg.domain % QLatin1Literal("] ") %
-                              msg.message);
-    append(message);
-}
-
-void DebugMessageView::onAddMark()
-{
-    append(QString(QLatin1String("%1 -----------------------------")).arg(QDate::currentDate().toString()));
-}
-
-void DebugMessageView::openFindDialog()
-{
-    QPointer<KFindDialog> dialog(new KFindDialog(this));
-    dialog->setPattern(textCursor().selectedText());
-    if(dialog->exec()==QDialog::Accepted) {
-        QTextDocument::FindFlags flags=0;
-        if(dialog->options() & KFind::FindBackwards) flags |= QTextDocument::FindBackward;
-        if(dialog->options() & KFind::WholeWordsOnly) flags |= QTextDocument::FindWholeWords;
-        if(dialog->options() & KFind::CaseSensitive) flags |= QTextDocument::FindCaseSensitively;
-        bool ret = find(dialog->pattern(), flags);
-        if(!ret) {
-            Q_EMIT statusMessage(i18n("Could not find '%1'", dialog->pattern()));
-        }
+    if ( isVisible() ) {
+        QString message = QString(formatTimestamp(msg.timestamp) %
+                                QLatin1Literal(" - [") % msg.domain % QLatin1Literal("] ") %
+                                msg.message);
+        m_editor->setReadWrite(true);
+        m_editor->insertText(m_editor->documentEnd(), message + QString::fromLatin1("\n"));
+        m_editor->setReadWrite(false);
     }
-    delete dialog;
+    else {
+        m_tmpCache.append(msg);
+    }
 }
+
+
+
+
+

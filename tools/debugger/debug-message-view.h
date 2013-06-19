@@ -21,15 +21,18 @@
 #include <QTextEdit>
 #include <TelepathyQt/Types>
 #include <TelepathyQt/PendingOperation>
+#include <kparts/part.h>
+#include <KTextEditor/Document>
 
 
-class DebugMessageView : public QTextEdit
+class DebugMessageView : public QWidget
 {
-    Q_OBJECT
+Q_OBJECT
 public:
     explicit DebugMessageView(QWidget *parent = 0);
     void setService(const QString & service);
     virtual ~DebugMessageView();
+    virtual void showEvent(QShowEvent* );
 
 private Q_SLOTS:
     void onServiceRegistered(const QString & service);
@@ -39,8 +42,7 @@ private Q_SLOTS:
     void onDebugReceiverMonitoringEnabled(Tp::PendingOperation *op);
     void onFetchMessagesFinished(Tp::PendingOperation *op);
     void onNewDebugMessage(const Tp::DebugMessage &msg);
-    void onAddMark();
-    void openFindDialog();
+    void addDelayedMessages();
 
 Q_SIGNALS:
     void statusMessage(const QString& msg);
@@ -53,6 +55,7 @@ private:
     Tp::DebugMessageList m_tmpCache;
     QDBusServiceWatcher *m_serviceWatcher;
     bool m_ready;
+    KTextEditor::Document* m_editor;
 };
 
 #endif // DEBUG_MESSAGES_MODEL_H

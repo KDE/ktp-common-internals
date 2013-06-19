@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE language SYSTEM "language.dtd">
+<!--
+Kate syntax highlighing for KTp debug output, used in ktp-debugger.
+Copyright 2013 Sven Brauch <svenbrauch@gmail.com>
+-->
+<language name="KTp" version="1.11" kateversion="2.1" section="Other" extensions="*.ktpdebugoutput" mimetype="text/plain">
+
+  <highlighting>
+
+    <list name="tags">
+      <item>presence</item>
+      <item>show</item>
+      <item>c</item>
+      <item>x</item>
+      <item>photo</item>
+      <item>query</item>
+      <item>feature</item>
+      <item>identity</item>
+      <item>status</item>
+      <item>priority</item>
+      <item>iq</item>
+      <item>vCard</item>
+      <item>FN</item>
+      <item>URL</item>
+      <item>PHOTO</item>
+      <item>TYPE</item>
+      <item>BINVAL</item>
+      <item>message</item>
+      <item>body</item>
+      <item>active</item>
+      <item>error</item>
+      <item>N</item>
+      <item>FAMILY</item>
+      <item>pubsub</item>
+      <item>items</item>
+    </list>
+
+    <contexts>
+      <context attribute="Normal" LineEndContext="#stay" name="Normal">
+        <RegExpr attribute="Timestamp" context="#stay" String="\d+/\d+/\d+ \d+:\d+:\d+\.\d+" column="0"/>
+        <RegExpr attribute="URL" context="#stay" String="([a-zA-Z0-9_]+)?(/[a-zA-Z0-9_]+)+(/)?"/>
+        <RegExpr attribute="URL" context="#stay" String="[a-zA-Z]+://[a-zA-Z_0-9\.@:]+(/[^,\.\s]*)?"/>
+        <RegExpr attribute="URL" context="#stay" String="[a-zA-Z0-9\.]+@[a-zA-Z_0-9\.@:]+(/[^,\)\(\s]*)?"/>
+        <RegExpr attribute="Location" context="#stay" String="[a-zA-Z_0-9]+: .*:\d+:"/>
+        <RegExpr attribute="Location" context="#stay" String="[a-zA-Z_]+[a-zA-Z_0-9]*( \(.*:\d+\))?:"/>
+        <Detect2Chars attribute="Symbol" context="HaveStar" char="*" char1=" " />
+        <HlCHex attribute="Hex" context="#stay"/>
+        <IncludeRules context="FindStrings" />
+        <IncludeRules context="FindStringsDQ" />
+        <IncludeRules context="FindServiceNames" />
+      </context>
+
+      <context attribute="Normal" lineEndContext="#stay" name="HaveStar">
+        <keyword attribute="Tag" String="tags" context="#pop"/>
+        <RegExpr attribute="Normal" String="." context="#pop"/>
+      </context>
+
+      <context attribute="Normal" lineEndContext="#stay" name="FindStrings">
+        <DetectChar attribute="String" context="StringSQ" char="'" />
+      </context>
+      <context attribute="String" lineEndContext="Normal" name="StringSQ">
+        <DetectChar attribute="String" context="#pop" char="'" />
+      </context>
+
+      <context attribute="Normal" lineEndContext="#stay" name="FindStringsDQ">
+        <DetectChar attribute="String" context="StringDQ" char="&quot;" />
+      </context>
+      <context attribute="String" lineEndContext="Normal" name="StringDQ">
+        <DetectChar attribute="String" context="#pop" char="&quot;" />
+      </context>
+
+      <context attribute="Normal" lineEndContext="#stay" name="FindServiceNames">
+        <DetectChar attribute="ServiceName" context="ServiceName" char="[" />
+      </context>
+      <context attribute="ServiceName" lineEndContext="Normal" name="ServiceName">
+        <DetectChar attribute="ServiceName" context="#pop" char="]" />
+      </context>
+    </contexts>
+
+    <itemDatas>
+      <itemData name="Normal" defStyleNum="dsNormal"/>
+      <itemData name="Keyword"  defStyleNum="dsKeyword"/>
+      <itemData name="String"  defStyleNum="dsString" color="#BC0D0D"/>
+      <itemData name="ServiceName" bold="1"/>
+      <itemData name="Tag" bold="1" defStyleNum="dsDataType"/>
+      <itemData name="Location" defStyleNum="dsFunction" italic="1"/>
+      <itemData name="Timestamp"  defStyleNum="dsComment" italic="0"/>
+      <itemData name="URL"  defStyleNum="dsOthers" italic="1"/>
+      <itemData name="Hex" defStyleNum="dsBaseN" spellChecking="false"/>
+    </itemDatas>
+
+  </highlighting>
+
+</language>
+
