@@ -37,6 +37,7 @@
 #include <QDate>
 #include <QPointer>
 #include <QLayout>
+#include <QMenu>
 
 DebugMessageView::DebugMessageView(QWidget *parent)
     : QWidget(parent)
@@ -57,6 +58,16 @@ DebugMessageView::DebugMessageView(QWidget *parent)
     setLayout(new QHBoxLayout());
     layout()->addWidget(view);
     m_editor->setHighlightingMode(QString::fromLatin1("KTp"));
+
+    m_editor->activeView()->setContextMenu(new QMenu());
+    m_editor->activeView()->contextMenu()->addAction(KStandardAction::clear(this, SLOT(clear()), this));
+}
+
+void DebugMessageView::clear()
+{
+    m_editor->setReadWrite(true);
+    m_editor->clear();
+    m_editor->setReadWrite(false);
 }
 
 void DebugMessageView::showEvent(QShowEvent* event)

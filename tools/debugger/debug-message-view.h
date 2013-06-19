@@ -43,6 +43,7 @@ private Q_SLOTS:
     void onFetchMessagesFinished(Tp::PendingOperation *op);
     void onNewDebugMessage(const Tp::DebugMessage &msg);
     void addDelayedMessages();
+    void clear();
 
 Q_SIGNALS:
     void statusMessage(const QString& msg);
