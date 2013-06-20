@@ -606,6 +606,7 @@ void NepomukStorage::createContact(const QString &path, const Tp::ContactPtr &co
     newImAccount.addProperty(NCO::imNickname(), contact->alias());
 
     newPersonContact.addProperty(NCO::hasIMAccount(), newImAccount);
+    newPersonContact.addProperties(NCO::nickname(), contact->alias());
 
     Nepomuk2::SimpleResourceGraph graph;
     graph << newPersonContact << newImAccount;
