@@ -4,7 +4,7 @@
 Kate syntax highlighing for KTp debug output, used in ktp-debugger.
 Copyright 2013 Sven Brauch <svenbrauch@gmail.com>
 -->
-<language name="KTp" version="1.11" kateversion="2.1" section="Other" extensions="*.ktpdebugoutput" mimetype="text/plain">
+<language name="KTp" version="1.11" kateversion="2.1" section="Other" extensions="*.ktpdebugoutput" mimetype="">
 
   <highlighting>
 
@@ -39,7 +39,7 @@ Copyright 2013 Sven Brauch <svenbrauch@gmail.com>
     <contexts>
       <context attribute="Normal" LineEndContext="#stay" name="Normal">
         <RegExpr attribute="Timestamp" context="#stay" String="\d+/\d+/\d+ \d+:\d+:\d+\.\d+" column="0"/>
-        <RegExpr attribute="URL" context="#stay" String="([a-zA-Z0-9_]+)?(/[a-zA-Z0-9_]+)+(/)?"/>
+        <RegExpr attribute="URL" context="#stay" String="([a-zA-Z0-9_\-]+)?(/[a-zA-Z0-9_\-]+)+(/)?"/>
         <RegExpr attribute="URL" context="#stay" String="[a-zA-Z]+://[a-zA-Z_0-9\.@:]+(/[^,\.\s]*)?"/>
         <RegExpr attribute="URL" context="#stay" String="[a-zA-Z0-9\.]+@[a-zA-Z_0-9\.@:]+(/[^,\)\(\s]*)?"/>
         <RegExpr attribute="Location" context="#stay" String="[a-zA-Z_0-9]+: .*:\d+:"/>
