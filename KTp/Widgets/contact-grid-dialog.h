@@ -60,8 +60,7 @@ private:
     Private * const d;
 
     Q_PRIVATE_SLOT(d, void _k_onAccountManagerReady());
-    Q_PRIVATE_SLOT(d, void _k_onOkClicked());
-    Q_PRIVATE_SLOT(d, void _k_onChanged());
+    Q_PRIVATE_SLOT(d, void _k_onSelectionChanged());
 };
 
 } // namespace KTp

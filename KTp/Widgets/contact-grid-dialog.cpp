@@ -45,9 +45,7 @@ class KTp::ContactGridDialog::Private
 public:
     Private(KTp::ContactGridDialog *parent) :
         q(parent),
-        contactsModel(0),
-        account(0),
-        contact(0)
+        contactsModel(0)
     {
     }
 
@@ -56,13 +54,10 @@ public:
     Tp::AccountManagerPtr accountManager;
     KTp::ContactsListModel *contactsModel;
     KTp::ContactGridWidget *contactGridWidget;
-    Tp::AccountPtr account;
-    Tp::ContactPtr contact;
 
 public Q_SLOTS:
     void _k_onAccountManagerReady();
-    void _k_onOkClicked();
-    void _k_onChanged();
+    void _k_onSelectionChanged();
 };
 
 
@@ -72,28 +67,7 @@ void KTp::ContactGridDialog::Private::_k_onAccountManagerReady()
     contactsModel->setAccountManager(accountManager);
 }
 
-void KTp::ContactGridDialog::Private::_k_onOkClicked()
-{
-    // don't do anytghing if no contact has been selected
-    if (!contactGridWidget->hasSelection()) {
-        // show message box?
-        return;
-    }
-
-    contact = contactGridWidget->selectedContact();
-    account = contactGridWidget->selectedAccount();
-
-    if (account.isNull()) {
-        kWarning() << "Account is NULL";
-    } else if (contact.isNull()) {
-        kWarning() << "Contact is NULL";
-    } else {
-        kDebug() << "Account is: " << account->displayName();
-        kDebug() << "Contact is: " << contact->alias();
-    }
-}
-
-void KTp::ContactGridDialog::Private::_k_onChanged()
+void KTp::ContactGridDialog::Private::_k_onSelectionChanged()
 {
     q->button(KDialog::Ok)->setEnabled(contactGridWidget->hasSelection());
 }
@@ -119,7 +93,7 @@ KTp::ContactGridDialog::ContactGridDialog(QWidget *parent) :
                                                                                               << Tp::Connection::FeatureRoster
                                                                                               << Tp::Connection::FeatureSelfContact);
 
-    Tp::ContactFactoryPtr contactFactory = KTp::ContactFactory::create(Tp::Features()  << Tp::Contact::FeatureAlias
+    Tp::ContactFactoryPtr contactFactory = KTp::ContactFactory::create(Tp::Features() << Tp::Contact::FeatureAlias
                                                                                       << Tp::Contact::FeatureAvatarData
                                                                                       << Tp::Contact::FeatureSimplePresence
                                                                                       << Tp::Contact::FeatureCapabilities);
@@ -143,12 +117,14 @@ KTp::ContactGridDialog::ContactGridDialog(QWidget *parent) :
     setMainWidget(d->contactGridWidget);
 
     connect(d->contactGridWidget,
-            SIGNAL(selectionChanged(Tp::AccountPtr,Tp::ContactPtr)),
-            SLOT(_k_onChanged()));
+            SIGNAL(contactDoubleClicked(Tp::AccountPtr,KTp::ContactPtr)),
+            SLOT(accept()));
+    connect(d->contactGridWidget,
+            SIGNAL(selectionChanged(Tp::AccountPtr,KTp::ContactPtr)),
+            SLOT(_k_onSelectionChanged()));
 
-    button(KDialog::Ok)->setDisabled(true);
+    d->_k_onSelectionChanged();
 
-    connect(this, SIGNAL(okClicked()), SLOT(_k_onOkClicked()));
     connect(this, SIGNAL(rejected()), SLOT(close()));
 }
 
@@ -159,12 +135,12 @@ KTp::ContactGridDialog::~ContactGridDialog()
 
 Tp::AccountPtr KTp::ContactGridDialog::account()
 {
-    return d->account;
+    return d->contactGridWidget->selectedAccount();
 }
 
 Tp::ContactPtr KTp::ContactGridDialog::contact()
 {
-    return d->contact;
+    return d->contactGridWidget->selectedContact();
 }
 
 KTp::ContactsFilterModel* KTp::ContactGridDialog::filter() const

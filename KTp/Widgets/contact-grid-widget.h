@@ -22,11 +22,14 @@
 #define CONTACT_GRID_WIDGET_H
 
 #include <QtGui/QWidget>
-#include <QAbstractItemDelegate>
+
 #include <TelepathyQt/Types>
+
+#include <KTp/contact.h>
 #include <KTp/ktp-export.h>
 
 class KLineEdit;
+class QItemSelection;
 
 namespace KTp
 {
@@ -65,16 +68,19 @@ public:
 
     virtual bool hasSelection() const;
     virtual Tp::AccountPtr selectedAccount() const;
-    virtual Tp::ContactPtr selectedContact() const;
+    virtual KTp::ContactPtr selectedContact() const;
 
 Q_SIGNALS:
-    void selectionChanged(Tp::AccountPtr selectedAccount, Tp::ContactPtr selectedContact);
+    void selectionChanged(const Tp::AccountPtr &selectedAccount, const KTp::ContactPtr &selectedContact);
+    void contactDoubleClicked(const Tp::AccountPtr &account, const KTp::ContactPtr &contact);
 
 private:
     class Private;
     Private * const d;
 
-    Q_PRIVATE_SLOT(d, void _k_onSelectionChanged(QItemSelection,QItemSelection));
+    Q_PRIVATE_SLOT(d, void _k_onSelectionChanged(const QItemSelection &currentSelection,
+                                                 const QItemSelection &previousSelection));
+    Q_PRIVATE_SLOT(d, void _k_onDoubleClicked(const QModelIndex &index));
 
 }; // class ContactGridWidget
 

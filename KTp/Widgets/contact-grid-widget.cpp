@@ -48,39 +48,18 @@ public:
     virtual void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
     virtual QSize sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const;
 
-private:
-    class Private;
-    Private * const d;
-
 }; // class ContactGridDelegate
 
 } // namespace KTp
 
 
-class KTp::ContactGridDelegate::Private
-{
-public:
-    Private(KTp::ContactGridDelegate *parent)
-        : q(parent)
-    {
-    }
-
-    ~Private()
-    {
-    }
-
-    KTp::ContactGridDelegate *q;
-};
-
 KTp::ContactGridDelegate::ContactGridDelegate(QObject *parent)
-    : QAbstractItemDelegate(parent),
-      d(new KTp::ContactGridDelegate::Private(this))
+    : QAbstractItemDelegate(parent)
 {
 }
 
 KTp::ContactGridDelegate::~ContactGridDelegate()
 {
-    delete d;
 }
 
 void KTp::ContactGridDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
@@ -138,7 +117,8 @@ public:
     {
     }
 
-    void _k_onSelectionChanged(QItemSelection,QItemSelection);
+    void _k_onSelectionChanged(const QItemSelection &newSelection, const QItemSelection &oldSelection);
+    void _k_onDoubleClicked(const QModelIndex &index);
 
     KTp::ContactGridWidget *q;
     QVBoxLayout *layout;
@@ -148,18 +128,30 @@ public:
     KTp::ContactsFilterModel *filterModel;
 };
 
-void KTp::ContactGridWidget::Private::_k_onSelectionChanged(QItemSelection newSelection, QItemSelection oldSelection)
+void KTp::ContactGridWidget::Private::_k_onSelectionChanged(const QItemSelection &newSelection,
+                                                            const QItemSelection &oldSelection)
 {
     Q_UNUSED(oldSelection)
     kDebug() << newSelection << oldSelection;
 
     if (newSelection.isEmpty()) {
-        Q_EMIT q->selectionChanged(Tp::AccountPtr(), Tp::ContactPtr());
+        Q_EMIT q->selectionChanged(Tp::AccountPtr(), KTp::ContactPtr());
         return;
     }
 
     Q_EMIT q->selectionChanged(q->selectedAccount(), q->selectedContact());
 }
+
+void KTp::ContactGridWidget::Private::_k_onDoubleClicked(const QModelIndex& index)
+{
+    if (!index.isValid()) {
+        return;
+    }
+
+    Q_EMIT q->contactDoubleClicked(index.data(KTp::AccountRole).value<Tp::AccountPtr>(),
+                                   index.data(KTp::ContactRole).value<KTp::ContactPtr>());
+}
+
 
 // -----------------------------------------------------------------------------
 
@@ -192,6 +184,9 @@ KTp::ContactGridWidget::ContactGridWidget(KTp::ContactsListModel* model, QWidget
     connect(d->contactGridView->selectionModel(),
             SIGNAL(selectionChanged(QItemSelection,QItemSelection)),
             SLOT(_k_onSelectionChanged(QItemSelection,QItemSelection)));
+    connect(d->contactGridView,
+            SIGNAL(doubleClicked(QModelIndex)),
+            SLOT(_k_onDoubleClicked(QModelIndex)));
 
     connect(d->contactFilterLineEdit,
             SIGNAL(textChanged(QString)),
@@ -246,7 +241,7 @@ Tp::AccountPtr KTp::ContactGridWidget::selectedAccount() const
     return d->contactGridView->currentIndex().data(KTp::AccountRole).value<Tp::AccountPtr>();
 }
 
-Tp::ContactPtr KTp::ContactGridWidget::selectedContact() const
+KTp::ContactPtr KTp::ContactGridWidget::selectedContact() const
 {
     return d->contactGridView->currentIndex().data(KTp::ContactRole).value<KTp::ContactPtr>();
 }
