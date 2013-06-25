@@ -27,6 +27,11 @@
 
 #include <TelepathyQt/ClientRegistrar>
 
+#ifdef HAVE_KPEOPLE
+#include <KPeople/PersonsModel>
+#include "kpeopletranslationproxy.h"
+#endif
+
 namespace KTp
 {
 class ContactsModel::Private
@@ -35,7 +40,12 @@ public:
     GroupMode groupMode;
     bool trackUnread;
     QWeakPointer<KTp::AbstractGroupingProxyModel> proxy;
-    KTp::ContactsListModel *source;
+#ifdef HAVE_KPEOPLE
+    KPeopleTranslationProxy *source;
+#else
+    ContactsListModel *source;
+#endif
+
     Tp::AccountManagerPtr accountManager;
     Tp::ClientRegistrarPtr clientRegistrar;
     Tp::SharedPtr<KTp::TextChannelWatcherProxyModel> channelWatcherProxy;
@@ -49,7 +59,16 @@ KTp::ContactsModel::ContactsModel(QObject *parent)
 {
     d->groupMode = NoGrouping;
     d->trackUnread = false;
+#ifdef HAVE_KPEOPLE
+    KPeople::PersonsModel *personsModel = new KPeople::PersonsModel(KPeople::PersonsModel::FeatureIM,
+                                              KPeople::PersonsModel::FeatureAvatars |
+                                              KPeople::PersonsModel::FeatureGroups,
+                                              this);
+    d->source = new KPeopleTranslationProxy(this);
+    d->source->setSourceModel(personsModel);
+#else
     d->source = new KTp::ContactsListModel(this);
+#endif
 }
 
 KTp::ContactsModel::~ContactsModel()
@@ -65,7 +84,9 @@ void KTp::ContactsModel::setAccountManager(const Tp::AccountManagerPtr &accountM
     updateGroupProxyModels();
 
     //set the account manager after we've reloaded the groups so that we don't send a list to the view, only to replace it with a grouped tree
+#ifndef HAVE_KPEOPLE
     d->source->setAccountManager(accountManager);
+#endif
 }
 
 Tp::AccountManagerPtr KTp::ContactsModel::accountManager() const
