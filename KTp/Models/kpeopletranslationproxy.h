@@ -36,6 +36,7 @@ public:
 
 private:
     QVariant translatePresence(const QVariant &presenceName) const;
+    QPixmap contactPixmap(const QModelIndex &index) const;
 };
 
 #endif // KTP_TRANSLATION_PROXY_H

@@ -27,6 +27,9 @@
 
 #include <KTp/types.h>
 #include <KDebug>
+#include <KIconLoader>
+
+#include <QPixmapCache>
 
 using namespace KPeople;
 
@@ -57,7 +60,7 @@ QVariant KPeopleTranslationProxy::data(const QModelIndex &proxyIndex, int role) 
         case KTp::ContactPresenceTypeRole:
             return translatePresence(mapToSource(proxyIndex).data(PersonsModel::PresenceTypeRole));
         case KTp::ContactPresenceIconRole:
-            return mapToSource(proxyIndex).data(PersonsModel::PresenceDecorationRole);
+            return mapToSource(proxyIndex).data(PersonsModel::PresenceIconNameRole);
         case KTp::ContactPresenceNameRole:
             return mapToSource(proxyIndex).data(PersonsModel::PresenceDisplayRole);
         case Qt::DisplayRole:
@@ -70,6 +73,8 @@ QVariant KPeopleTranslationProxy::data(const QModelIndex &proxyIndex, int role) 
             }
         case KTp::ContactAvatarPathRole:
             return mapToSource(proxyIndex).data(PersonsModel::PhotosRole);
+        case KTp::ContactAvatarPixmapRole:
+            return contactPixmap(proxyIndex);
         case KTp::IdRole:
             return mapToSource(proxyIndex).data(PersonsModel::IMsRole);
         case KTp::HeaderTotalUsersRole:
@@ -89,7 +94,7 @@ QVariant KPeopleTranslationProxy::data(const QModelIndex &proxyIndex, int role) 
 
     for (int i = 0; i < j; i++) {
         const QString contactId = isChildContact ? mapToSource(proxyIndex).data(PersonsModel::IMsRole).toString()
-                                                : mapToSource(proxyIndex).data(PersonsModel::IMsRole).toList().at(i).toString();
+        : mapToSource(proxyIndex).data(PersonsModel::IMsRole).toList().at(i).toString();
         const KTp::ContactPtr contact = imPlugin->contactForContactId(contactId);
 
         if (!contact.isNull()) {
@@ -156,4 +161,54 @@ QVariant KPeopleTranslationProxy::translatePresence(const QVariant &presenceName
     }
 
     return Tp::ConnectionPresenceTypeOffline;
+}
+
+QPixmap KPeopleTranslationProxy::contactPixmap(const QModelIndex &index) const
+{
+    QPixmap avatar;
+
+    int presenceType = index.data(KTp::ContactPresenceTypeRole).toInt();
+    const QVariantList ids = index.data(KTp::IdRole).toList();
+    QString id;
+    if (!ids.isEmpty()) {
+        id = ids.first().toString();
+    }
+
+    const QString keyCache = id + (presenceType == Tp::ConnectionPresenceTypeOffline ? QLatin1String("-offline") : QLatin1String("-online"));
+
+    //check pixmap cache for the avatar, if not present, load the avatar
+    if (!QPixmapCache::find(keyCache, avatar)){
+        const QVariantList files = index.data(KTp::ContactAvatarPathRole).toList();
+        QString file;
+        if (!files.isEmpty()) {
+            file = files.first().toUrl().toLocalFile();
+        }
+
+        //QPixmap::load() checks for empty path
+        avatar.load(file);
+
+        //if the above didn't succeed, we need to load the generic icon
+        if (avatar.isNull()) {
+            avatar = KIconLoader::global()->loadIcon(QLatin1String("im-user"), KIconLoader::NoGroup, 96);
+        }
+
+        //if the contact is offline, gray it out
+        if (presenceType == Tp::ConnectionPresenceTypeOffline) {
+            QImage image = avatar.toImage();
+            const QPixmap alpha = avatar.alphaChannel();
+            for (int i = 0; i < image.width(); ++i) {
+                for (int j = 0; j < image.height(); ++j) {
+                    int colour = qGray(image.pixel(i, j));
+                    image.setPixel(i, j, qRgb(colour, colour, colour));
+                }
+            }
+            avatar = avatar.fromImage(image);
+            avatar.setAlphaChannel(alpha);
+        }
+
+        //insert the contact into pixmap cache for faster lookup
+        QPixmapCache::insert(keyCache, avatar);
+    }
+
+    return avatar;
 }
