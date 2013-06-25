@@ -41,30 +41,6 @@ KTp::ContactsListModel::ContactsListModel(QObject *parent) :
     d(new KTp::ContactsListModel::Private())
 {
     d->contactManager = 0;
-
-    QHash<int, QByteArray> roles = roleNames();
-    roles[KTp::RowTypeRole]= "type";
-    roles[KTp::IdRole]= "id";
-
-    roles[KTp::ContactRole]= "contact";
-    roles[KTp::AccountRole]= "account";
-
-    roles[KTp::ContactClientTypesRole]= "clientTypes";
-    roles[KTp::ContactAvatarPathRole]= "avatar";
-    roles[KTp::ContactAvatarPixmapRole]="avatarPixmap";
-    roles[KTp::ContactGroupsRole]= "groups";
-    roles[KTp::ContactPresenceMessageRole]= "presenceMessage";
-    roles[KTp::ContactPresenceTypeRole]= "presenceType";
-    roles[KTp::ContactPresenceIconRole]= "presenceIcon";
-    roles[KTp::ContactSubscriptionStateRole]= "subscriptionState";
-    roles[KTp::ContactPublishStateRole]= "publishState";
-    roles[KTp::ContactIsBlockedRole]= "blocked";
-    roles[KTp::ContactCanTextChatRole]= "textChat";
-    roles[KTp::ContactCanFileTransferRole]= "fileTransfer";
-    roles[KTp::ContactCanAudioCallRole]= "audioCall";
-    roles[KTp::ContactCanVideoCallRole]= "videoCall";
-    roles[KTp::ContactTubesRole]= "tubes";
-    setRoleNames(roles);
 }
 
 KTp::ContactsListModel::~ContactsListModel()

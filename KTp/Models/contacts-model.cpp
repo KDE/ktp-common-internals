@@ -69,6 +69,8 @@ KTp::ContactsModel::ContactsModel(QObject *parent)
 #else
     d->source = new KTp::ContactsListModel(this);
 #endif
+
+
 }
 
 KTp::ContactsModel::~ContactsModel()
@@ -189,4 +191,34 @@ void KTp::ContactsModel::updateGroupProxyModels()
 void KTp::ContactsModel::setSourceModel(QAbstractItemModel *sourceModel)
 {
     KTp::ContactsFilterModel::setSourceModel(sourceModel);
+
+    //Qt automatically updates the role names to use that of the source model
+    //this causes problems when we have multiple source models that we change between
+    //instead we update here just after we set a source model
+
+    //in Qt5.0 override the virtual roleNames() method and do it there.
+
+    QHash<int, QByteArray> roles = roleNames();
+    roles[KTp::RowTypeRole]= "type";
+    roles[KTp::IdRole]= "id";
+
+    roles[KTp::ContactRole]= "contact";
+    roles[KTp::AccountRole]= "account";
+
+    roles[KTp::ContactClientTypesRole]= "clientTypes";
+    roles[KTp::ContactAvatarPathRole]= "avatar";
+    roles[KTp::ContactAvatarPixmapRole]="avatarPixmap";
+    roles[KTp::ContactGroupsRole]= "groups";
+    roles[KTp::ContactPresenceMessageRole]= "presenceMessage";
+    roles[KTp::ContactPresenceTypeRole]= "presenceType";
+    roles[KTp::ContactPresenceIconRole]= "presenceIcon";
+    roles[KTp::ContactSubscriptionStateRole]= "subscriptionState";
+    roles[KTp::ContactPublishStateRole]= "publishState";
+    roles[KTp::ContactIsBlockedRole]= "blocked";
+    roles[KTp::ContactCanTextChatRole]= "textChat";
+    roles[KTp::ContactCanFileTransferRole]= "fileTransfer";
+    roles[KTp::ContactCanAudioCallRole]= "audioCall";
+    roles[KTp::ContactCanVideoCallRole]= "videoCall";
+    roles[KTp::ContactTubesRole]= "tubes";
+    setRoleNames(roles);
 }
