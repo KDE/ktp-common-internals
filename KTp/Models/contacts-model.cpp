@@ -29,6 +29,8 @@
 
 #ifdef HAVE_KPEOPLE
 #include <KPeople/PersonsModel>
+#include <kpeople/personsmodelfeature.h>
+
 #include "kpeopletranslationproxy.h"
 #endif
 
@@ -60,10 +62,11 @@ KTp::ContactsModel::ContactsModel(QObject *parent)
     d->groupMode = NoGrouping;
     d->trackUnread = false;
 #ifdef HAVE_KPEOPLE
-    KPeople::PersonsModel *personsModel = new KPeople::PersonsModel(KPeople::PersonsModel::FeatureIM,
-                                              KPeople::PersonsModel::FeatureAvatars |
-                                              KPeople::PersonsModel::FeatureGroups,
-                                              this);
+    KPeople::PersonsModel *personsModel = new KPeople::PersonsModel(this);
+
+    personsModel->startQuery(QList<KPeople::PersonsModelFeature>() << KPeople::PersonsModelFeature::imModelFeature(false)
+                                                          << KPeople::PersonsModelFeature::avatarModelFeature(true)
+                                                          << KPeople::PersonsModelFeature::groupsModelFeature(true));
     d->source = new KPeopleTranslationProxy(this);
     d->source->setSourceModel(personsModel);
 #else
