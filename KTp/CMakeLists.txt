@@ -62,6 +62,26 @@ set (ktp_common_internals_private_HDRS
      ktp-export.h
 )
 
+set (ktp_private_LIBS
+                       ${KDE4_KDECORE_LIBS}
+                       ${KDE4_KIO_LIBS}
+                       ${TELEPATHY_QT4_LIBRARIES}
+                       ${TELEPATHY_LOGGER_QT4_LIBRARIES}
+                       ${KDE4_KDEUI_LIBS}
+)
+
+if (KPEOPLE_FOUND)
+        set (ktp_models_private_SRCS
+         ${ktp_models_private_SRCS}
+         im-persons-data-source.cpp
+         )
+
+    set (ktp_private_LIBS
+         ${ktp_private_LIBS}
+         kpeople
+         )
+endif(KPEOPLE_FOUND)
+
 kde4_add_library (ktpcommoninternalsprivate SHARED
                  ${ktp_common_internals_private_SRCS}
 )
@@ -73,11 +93,7 @@ set_target_properties(ktpcommoninternalsprivate PROPERTIES
                                                          DEFINE_SYMBOL MAKE_KTP_LIB)
 
 target_link_libraries (ktpcommoninternalsprivate
-                       ${KDE4_KDECORE_LIBS}
-                       ${KDE4_KIO_LIBS}
-                       ${TELEPATHY_QT4_LIBRARIES}
-                       ${TELEPATHY_LOGGER_QT4_LIBRARIES}
-                       ${KDE4_KDEUI_LIBS}
+                      ${ktp_private_LIBS}
 )
 
 install (TARGETS ktpcommoninternalsprivate

@@ -27,9 +27,6 @@ include (MacroLibrary)
 macro_log_feature(KPEOPLE_FOUND "KPeople" "Support for KDE Contact Aggregation" "https://projects.kde.org/libkpeople" FALSE "" "")
 macro_display_feature_log()
 
-if (KPEOPLE_FOUND)
-    add_definitions(-DHAVE_KPEOPLE)
-endif (KPEOPLE_FOUND)
 
 add_definitions (${KDE4_DEFINITIONS}
                  ${TELEPATHY_LOGGER_QT4_DEFINITIONS}
@@ -43,6 +40,12 @@ include_directories (${KDE4_INCLUDES}
                      ${TELEPATHY_QT4_INCLUDE_DIR}
                      ${TELEPATHY_LOGGER_QT4_INCLUDE_DIRS}
 )
+
+if (KPEOPLE_FOUND)
+    add_definitions(-DHAVE_KPEOPLE)
+    add_subdirectory(kpeople)
+endif (KPEOPLE_FOUND)
+
 
 configure_file(version.h.in ${CMAKE_CURRENT_BINARY_DIR}/version.h @ONLY)
 

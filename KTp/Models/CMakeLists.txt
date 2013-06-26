@@ -1,10 +1,6 @@
-
 include_directories (${CMAKE_CURRENT_BINARY_DIR}
                      ${CMAKE_CURRENT_SOURCE_DIR}
 )
-
-
-
 
 set (ktp_models_private_SRCS
     ${KTP_GLOBAL_SOURCES}
@@ -40,6 +36,7 @@ set (ktp_models_private_LIBS
 
 if (KPEOPLE_FOUND)
     add_definitions(-DHAVE_KPEOPLE)
+
     set (ktp_models_private_SRCS
          ${ktp_models_private_SRCS}
          kpeopletranslationproxy.cpp
