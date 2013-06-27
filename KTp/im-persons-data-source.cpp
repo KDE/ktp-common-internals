@@ -250,3 +250,4 @@ Tp::AccountManagerPtr IMPersonsDataSource::accountManager() const
     return d->accountManager;
 }
 
+#include "im-persons-data-source.moc"

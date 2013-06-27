@@ -71,14 +71,18 @@ set (ktp_private_LIBS
 )
 
 if (KPEOPLE_FOUND)
-        set (ktp_common_internals_private_SRCS
+    #this is temporary whilst im-persons-data-source still has it's own query
+    find_package (NepomukCore REQUIRED)
+
+    set (ktp_common_internals_private_SRCS
          ${ktp_common_internals_private_SRCS}
          im-persons-data-source.cpp
          )
 
     set (ktp_private_LIBS
          ${ktp_private_LIBS}
-         kpeople
+         ${NEPOMUK_CORE_LIBRARY}
+         ${KPEOPLE_LIBS}
          )
 endif(KPEOPLE_FOUND)
 

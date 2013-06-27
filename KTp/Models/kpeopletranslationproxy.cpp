@@ -21,11 +21,11 @@
 
 #include <KPeople/PersonsModel>
 
-//temporary hack until IM data source moves to KTp where it belongs
 #include <kpeople/personpluginmanager.h>
-#include <kpeople/impersonsdatasource.h>
 
-#include <KTp/types.h>
+#include "KTp/im-persons-data-source.h"
+#include "KTp/types.h"
+
 #include <KDebug>
 #include <KIconLoader>
 
