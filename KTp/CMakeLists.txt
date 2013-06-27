@@ -71,8 +71,8 @@ set (ktp_private_LIBS
 )
 
 if (KPEOPLE_FOUND)
-        set (ktp_models_private_SRCS
-         ${ktp_models_private_SRCS}
+        set (ktp_common_internals_private_SRCS
+         ${ktp_common_internals_private_SRCS}
          im-persons-data-source.cpp
          )
 

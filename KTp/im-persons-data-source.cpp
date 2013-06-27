@@ -17,7 +17,7 @@
 */
 
 
-#include "impersonsdatasource.h"
+#include "im-persons-data-source.h"
 
 #include <KPeople/PersonsModel>
 
