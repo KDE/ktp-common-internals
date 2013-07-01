@@ -83,59 +83,72 @@ QVariant KPeopleTranslationProxy::data(const QModelIndex &proxyIndex, int role) 
             return mapToSource(proxyIndex).data(PersonsModel::GroupsRole);
     }
 
-    QVariantList ret;
-
     int j = sourceModel()->rowCount(mapToSource(proxyIndex));
-    bool isChildContact = false;
-    if (j == 0) {
-        isChildContact = true;
-        j = 1;
     }
 
-    for (int i = 0; i < j; i++) {
-        const QString contactId = isChildContact ? mapToSource(proxyIndex).data(PersonsModel::IMsRole).toString()
-        : mapToSource(proxyIndex).data(PersonsModel::IMsRole).toList().at(i).toString();
-        const KTp::ContactPtr contact = imPlugin->contactForContactId(contactId);
+    KTp::ContactPtr contact;
 
-        if (!contact.isNull()) {
-            switch (role) {
-                case KTp::ContactRole:
-                    ret += QVariant::fromValue<KTp::ContactPtr>(contact);
-                    break;
-                case KTp::AccountRole:
-                    ret += QVariant::fromValue<Tp::AccountPtr>(imPlugin->accountForContact(contact));
-                    break;
-                case KTp::ContactPresenceMessageRole:
-                    ret += contact->presence().statusMessage();
-                    break;
-                case KTp::ContactIsBlockedRole:
-                    ret += contact->isBlocked();
-                    break;
-                case KTp::ContactCanTextChatRole:
-                    ret += true;
-                    break;
-                case KTp::ContactCanAudioCallRole:
-                    ret += contact->audioCallCapability();
-                    break;
-                case KTp::ContactCanVideoCallRole:
-                    ret += contact->videoCallCapability();
-                    break;
-                case KTp::ContactCanFileTransferRole:
-                    ret += contact->fileTransferCapability();
-                    break;
-                case KTp::ContactClientTypesRole:
-                    ret += contact->clientTypes();
-                    break;
+    if (j > 0) {
+        KTp::ContactPtr mostOnlineContact;
+
+        Q_FOREACH(const QVariant &v, mapToSource(proxyIndex).data(PersonsModel::IMsRole).toList()) {
+            KTp::ContactPtr c = imPlugin->contactForContactId(v.toString());
+            if (mostOnlineContact.isNull() && !c.isNull()) {
+                mostOnlineContact = c;
+                continue;
             }
-        } else if (contact.isNull() && role == KTp::AccountRole) {
-            //if the KTp contact is null, we still need the Tp account for that contact
-            //so we can either group it properly or bring that account online if user
-            //starts a chat with a contact that belongs to offline account
-            ret += QVariant::fromValue<Tp::AccountPtr>(imPlugin->accountForContactId(contactId));
+            if (!c.isNull()) {
+                if (c->presence() < mostOnlineContact->presence()) {
+                    mostOnlineContact = c;
+                }
+            }
         }
+        contact = mostOnlineContact;
+    } else if (j == 0) {
+        contact = imPlugin->contactForContactId(mapToSource(proxyIndex).data(PersonsModel::IMsRole).toString());
     }
 
-    return ret;
+    if (!contact.isNull()) {
+        switch (role) {
+            case KTp::ContactRole:
+                return QVariant::fromValue<KTp::ContactPtr>(contact);
+                break;
+            case KTp::AccountRole:
+                return QVariant::fromValue<Tp::AccountPtr>(imPlugin->accountForContact(contact));
+                break;
+            case KTp::ContactPresenceMessageRole:
+                return contact->presence().statusMessage();
+                break;
+            case KTp::ContactIsBlockedRole:
+                return contact->isBlocked();
+                break;
+            case KTp::ContactCanTextChatRole:
+                return true;
+                break;
+            case KTp::ContactCanAudioCallRole:
+                return contact->audioCallCapability();
+                break;
+            case KTp::ContactCanVideoCallRole:
+                return contact->videoCallCapability();
+                break;
+            case KTp::ContactCanFileTransferRole:
+                return contact->fileTransferCapability();
+                break;
+            case KTp::ContactClientTypesRole:
+                return contact->clientTypes();
+                break;
+        }
+    } else if (contact.isNull() && role == KTp::AccountRole) {
+        //if the KTp contact is null, we still need the Tp account for that contact
+        //so we can either group it properly or bring that account online if user
+        //starts a chat with a contact that belongs to offline account
+        QString contactId = j > 0 ? mapToSource(proxyIndex).data(PersonsModel::IMsRole).toList().first().toString()
+                                  : mapToSource(proxyIndex).data(PersonsModel::IMsRole).toString();
+        return QVariant::fromValue<Tp::AccountPtr>(imPlugin->accountForContactId(contactId));
+    }
+//     }
+
+    return mapToSource(proxyIndex).data(role);
 }
 
 QVariant KPeopleTranslationProxy::translatePresence(const QVariant &presenceName) const
