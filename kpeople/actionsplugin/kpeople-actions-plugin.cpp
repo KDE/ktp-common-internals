@@ -88,7 +88,7 @@ AbstractPersonPlugin(parent)
 {
 }
 
-QList<QAction*> KPeopleActionsPlugin::actionsForPerson(KPeople::PersonData *personData, QObject *parent)
+QList<QAction*> KPeopleActionsPlugin::actionsForPerson(const KPeople::PersonDataPtr &personData, QObject *parent)
 {
     QList<QAction*> actions;
 

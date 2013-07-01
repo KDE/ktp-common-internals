@@ -21,14 +21,12 @@
 
 #include <KPeople/AbstractPersonPlugin>
 
-class PersonData;
-
 class KPeopleActionsPlugin : public KPeople::AbstractPersonPlugin
 {
     Q_OBJECT
 public:
     KPeopleActionsPlugin(QObject *parent, const QVariantList &args);
-    virtual QList<QAction*> actionsForPerson(KPeople::PersonData *personData, QObject *parent);
+    virtual QList<QAction*> actionsForPerson(const KPeople::PersonDataPtr &personData, QObject *parent);
 
 private Q_SLOTS:
     void onActionTriggered();
