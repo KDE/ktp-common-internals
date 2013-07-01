@@ -66,7 +66,8 @@ QVariant KPeopleTranslationProxy::data(const QModelIndex &proxyIndex, int role) 
         case Qt::DisplayRole:
             return mapToSource(proxyIndex).data(Qt::DisplayRole);
         case KTp::RowTypeRole:
-            if (sourceModel()->rowCount(mapToSource(proxyIndex)) <= 1) {
+            //PersonsModel has only persons and contacts
+            if (mapToSource(proxyIndex).parent().isValid()) {
                 return KTp::ContactRowType;
             } else {
                 return KTp::PersonRowType;
