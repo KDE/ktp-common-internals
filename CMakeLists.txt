@@ -8,9 +8,9 @@ set (CMAKE_MODULE_PATH
 )
 cmake_policy(SET CMP0002 OLD)
 
-set (KTP_VERSION "0.6.2")
+set (KTP_VERSION "0.6.80")
 # Bump for every 0.x release, or whenever BC changes
-set (KTP_SONUMBER 5)
+set (KTP_SONUMBER 6)
 set (KTP_MESSAGE_FILTER_FRAMEWORK_VERSION "4")
 
 find_package (KDE4 REQUIRED)
