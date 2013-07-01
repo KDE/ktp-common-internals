@@ -86,7 +86,7 @@ QVariant KPeopleTranslationProxy::data(const QModelIndex &proxyIndex, int role) 
     }
 
     int j = sourceModel()->rowCount(mapToSource(proxyIndex));
-    }
+    
 
     KTp::ContactPtr contact;
 
