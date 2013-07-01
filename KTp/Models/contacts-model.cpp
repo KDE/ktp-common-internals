@@ -27,6 +27,13 @@
 
 #include <TelepathyQt/ClientRegistrar>
 
+#ifdef HAVE_KPEOPLE
+#include <KPeople/PersonsModel>
+#include <kpeople/personsmodelfeature.h>
+
+#include "kpeopletranslationproxy.h"
+#endif
+
 namespace KTp
 {
 class ContactsModel::Private
@@ -35,7 +42,12 @@ public:
     GroupMode groupMode;
     bool trackUnread;
     QWeakPointer<KTp::AbstractGroupingProxyModel> proxy;
-    KTp::ContactsListModel *source;
+#ifdef HAVE_KPEOPLE
+    KPeopleTranslationProxy *source;
+#else
+    ContactsListModel *source;
+#endif
+
     Tp::AccountManagerPtr accountManager;
     Tp::ClientRegistrarPtr clientRegistrar;
     Tp::SharedPtr<KTp::TextChannelWatcherProxyModel> channelWatcherProxy;
@@ -49,7 +61,19 @@ KTp::ContactsModel::ContactsModel(QObject *parent)
 {
     d->groupMode = NoGrouping;
     d->trackUnread = false;
+#ifdef HAVE_KPEOPLE
+    KPeople::PersonsModel *personsModel = new KPeople::PersonsModel(this);
+
+    personsModel->startQuery(QList<KPeople::PersonsModelFeature>() << KPeople::PersonsModelFeature::imModelFeature(false)
+                                                          << KPeople::PersonsModelFeature::avatarModelFeature(true)
+                                                          << KPeople::PersonsModelFeature::groupsModelFeature(true));
+    d->source = new KPeopleTranslationProxy(this);
+    d->source->setSourceModel(personsModel);
+#else
     d->source = new KTp::ContactsListModel(this);
+#endif
+
+
 }
 
 KTp::ContactsModel::~ContactsModel()
@@ -65,7 +89,9 @@ void KTp::ContactsModel::setAccountManager(const Tp::AccountManagerPtr &accountM
     updateGroupProxyModels();
 
     //set the account manager after we've reloaded the groups so that we don't send a list to the view, only to replace it with a grouped tree
+#ifndef HAVE_KPEOPLE
     d->source->setAccountManager(accountManager);
+#endif
 }
 
 Tp::AccountManagerPtr KTp::ContactsModel::accountManager() const
@@ -168,4 +194,34 @@ void KTp::ContactsModel::updateGroupProxyModels()
 void KTp::ContactsModel::setSourceModel(QAbstractItemModel *sourceModel)
 {
     KTp::ContactsFilterModel::setSourceModel(sourceModel);
+
+    //Qt automatically updates the role names to use that of the source model
+    //this causes problems when we have multiple source models that we change between
+    //instead we update here just after we set a source model
+
+    //in Qt5.0 override the virtual roleNames() method and do it there.
+
+    QHash<int, QByteArray> roles = roleNames();
+    roles[KTp::RowTypeRole]= "type";
+    roles[KTp::IdRole]= "id";
+
+    roles[KTp::ContactRole]= "contact";
+    roles[KTp::AccountRole]= "account";
+
+    roles[KTp::ContactClientTypesRole]= "clientTypes";
+    roles[KTp::ContactAvatarPathRole]= "avatar";
+    roles[KTp::ContactAvatarPixmapRole]="avatarPixmap";
+    roles[KTp::ContactGroupsRole]= "groups";
+    roles[KTp::ContactPresenceMessageRole]= "presenceMessage";
+    roles[KTp::ContactPresenceTypeRole]= "presenceType";
+    roles[KTp::ContactPresenceIconRole]= "presenceIcon";
+    roles[KTp::ContactSubscriptionStateRole]= "subscriptionState";
+    roles[KTp::ContactPublishStateRole]= "publishState";
+    roles[KTp::ContactIsBlockedRole]= "blocked";
+    roles[KTp::ContactCanTextChatRole]= "textChat";
+    roles[KTp::ContactCanFileTransferRole]= "fileTransfer";
+    roles[KTp::ContactCanAudioCallRole]= "audioCall";
+    roles[KTp::ContactCanVideoCallRole]= "videoCall";
+    roles[KTp::ContactTubesRole]= "tubes";
+    setRoleNames(roles);
 }

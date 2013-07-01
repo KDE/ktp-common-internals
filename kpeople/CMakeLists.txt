@@ -1,0 +1,2 @@
+add_subdirectory(actionsplugin)
+add_subdirectory(datasourceplugin)

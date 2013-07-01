@@ -1,4 +1,3 @@
-
 include_directories (${CMAKE_CURRENT_BINARY_DIR}
                      ${CMAKE_CURRENT_SOURCE_DIR}
 )
@@ -28,6 +27,27 @@ set (ktp_models_private_HDRS
     rooms-model.h
 )
 
+set (ktp_models_private_LIBS
+                       ${KDE4_KDECORE_LIBS}
+                       ${TELEPATHY_QT4_LIBRARIES}
+                       ${KDE4_KDEUI_LIBS}
+                       ktpcommoninternalsprivate
+)
+
+if (KPEOPLE_FOUND)
+    add_definitions(-DHAVE_KPEOPLE)
+
+    set (ktp_models_private_SRCS
+         ${ktp_models_private_SRCS}
+         kpeopletranslationproxy.cpp
+         )
+
+    set (ktp_models_private_LIBS
+         ${ktp_models_private_LIBS}
+         kpeople
+         )
+endif (KPEOPLE_FOUND)
+
 kde4_add_library (ktpmodelsprivate SHARED
                  ${ktp_models_private_SRCS}
 )
@@ -39,11 +59,10 @@ set_target_properties(ktpmodelsprivate PROPERTIES
                                                 DEFINE_SYMBOL MAKE_KTP_LIB)
 
 target_link_libraries (ktpmodelsprivate
-                       ${KDE4_KDECORE_LIBS}
-                       ${TELEPATHY_QT4_LIBRARIES}
-                       ${KDE4_KDEUI_LIBS}
-                       ktpcommoninternalsprivate
+                       ${ktp_models_private_LIBS}
 )
+
+
 
 install (TARGETS ktpmodelsprivate
          DESTINATION ${LIB_INSTALL_DIR}

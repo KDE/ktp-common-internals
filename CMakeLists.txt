@@ -8,20 +8,25 @@ set (CMAKE_MODULE_PATH
 )
 cmake_policy(SET CMP0002 OLD)
 
-set (KTP_VERSION "0.6.2")
+set (KTP_VERSION "0.6.80")
 # Bump for every 0.x release, or whenever BC changes
-set (KTP_SONUMBER 5)
+set (KTP_SONUMBER 6)
 set (KTP_MESSAGE_FILTER_FRAMEWORK_VERSION "4")
 
 find_package (KDE4 REQUIRED)
 find_package (TelepathyQt4 0.9.2.1 REQUIRED)
 find_package (TelepathyLoggerQt4 REQUIRED)
+find_package (KPeople)
 
 # set some default settings
 include (KDE4Defaults)
 
 # make some more macros available
 include (MacroLibrary)
+
+macro_log_feature(KPEOPLE_FOUND "KPeople" "Support for KDE Contact Aggregation" "https://projects.kde.org/libkpeople" FALSE "" "")
+macro_display_feature_log()
+
 
 add_definitions (${KDE4_DEFINITIONS}
                  ${TELEPATHY_LOGGER_QT4_DEFINITIONS}
@@ -35,6 +40,12 @@ include_directories (${KDE4_INCLUDES}
                      ${TELEPATHY_QT4_INCLUDE_DIR}
                      ${TELEPATHY_LOGGER_QT4_INCLUDE_DIRS}
 )
+
+if (KPEOPLE_FOUND)
+    add_definitions(-DHAVE_KPEOPLE)
+    add_subdirectory(kpeople)
+endif (KPEOPLE_FOUND)
+
 
 configure_file(version.h.in ${CMAKE_CURRENT_BINARY_DIR}/version.h @ONLY)
 

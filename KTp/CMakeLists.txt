@@ -62,6 +62,30 @@ set (ktp_common_internals_private_HDRS
      ktp-export.h
 )
 
+set (ktp_private_LIBS
+                       ${KDE4_KDECORE_LIBS}
+                       ${KDE4_KIO_LIBS}
+                       ${TELEPATHY_QT4_LIBRARIES}
+                       ${TELEPATHY_LOGGER_QT4_LIBRARIES}
+                       ${KDE4_KDEUI_LIBS}
+)
+
+if (KPEOPLE_FOUND)
+    #this is temporary whilst im-persons-data-source still has it's own query
+    find_package (NepomukCore REQUIRED)
+
+    set (ktp_common_internals_private_SRCS
+         ${ktp_common_internals_private_SRCS}
+         im-persons-data-source.cpp
+         )
+
+    set (ktp_private_LIBS
+         ${ktp_private_LIBS}
+         ${NEPOMUK_CORE_LIBRARY}
+         ${KPEOPLE_LIBS}
+         )
+endif(KPEOPLE_FOUND)
+
 kde4_add_library (ktpcommoninternalsprivate SHARED
                  ${ktp_common_internals_private_SRCS}
 )
@@ -73,11 +97,7 @@ set_target_properties(ktpcommoninternalsprivate PROPERTIES
                                                          DEFINE_SYMBOL MAKE_KTP_LIB)
 
 target_link_libraries (ktpcommoninternalsprivate
-                       ${KDE4_KDECORE_LIBS}
-                       ${KDE4_KIO_LIBS}
-                       ${TELEPATHY_QT4_LIBRARIES}
-                       ${TELEPATHY_LOGGER_QT4_LIBRARIES}
-                       ${KDE4_KDEUI_LIBS}
+                      ${ktp_private_LIBS}
 )
 
 install (TARGETS ktpcommoninternalsprivate
