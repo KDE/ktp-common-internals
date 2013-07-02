@@ -112,7 +112,7 @@ QList<QAction*> KPeopleActionsPlugin::actionsForPerson(const KPeople::PersonData
         }
 
         if (true) { //no such query for text chat capability, added an "if true" because makes the code look consistent
-            QAction *action = new IMAction(i18n("Start Chat"),
+            QAction *action = new IMAction(i18n("Start Chat Using %1...", account->displayName()),
                                 KIcon(QLatin1String("text-x-generic")),
                                 contact,
                                 account,
@@ -122,7 +122,7 @@ QList<QAction*> KPeopleActionsPlugin::actionsForPerson(const KPeople::PersonData
             actions << action;
         }
         if (contact->audioCallCapability()) {
-            QAction *action = new IMAction(i18n("Start Audio Call"),
+            QAction *action = new IMAction(i18n("Start Audio Call Using %1...", account->displayName()),
                                 KIcon(QLatin1String("audio-headset")),
                                 contact,
                                 account,
@@ -132,7 +132,7 @@ QList<QAction*> KPeopleActionsPlugin::actionsForPerson(const KPeople::PersonData
             actions << action;
         }
         if (contact->videoCallCapability()) {
-            QAction *action = new IMAction(i18n("Start Video Call"),
+            QAction *action = new IMAction(i18n("Start Video Call Using %1...", account->displayName()),
                                 KIcon(QLatin1String("camera-web")),
                                 contact,
                                 account,
@@ -143,7 +143,7 @@ QList<QAction*> KPeopleActionsPlugin::actionsForPerson(const KPeople::PersonData
         }
 
         if (contact->fileTransferCapability()) {
-            QAction *action = new IMAction(i18n("Send a file"),
+            QAction *action = new IMAction(i18n("Send a File Using %1...", account->displayName()),
                                         KIcon(QLatin1String("mail-attachment")),
                                         contact,
                                         account,
@@ -154,7 +154,7 @@ QList<QAction*> KPeopleActionsPlugin::actionsForPerson(const KPeople::PersonData
             actions << action;
         }
 
-        QAction *action = new IMAction(i18n("Open Log Viewer"),
+        QAction *action = new IMAction(i18n("Open Log Viewer..."),
                                     KIcon(QLatin1String("documentation")),
                                     contact,
                                     account,
