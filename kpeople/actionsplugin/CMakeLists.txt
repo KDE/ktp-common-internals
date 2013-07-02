@@ -1,3 +1,5 @@
+include_directories(${KPEOPLE_INCLUDES})
+
 set (ktp_kpeople_plugin_SRCS
      kpeople-actions-plugin.cpp
 )

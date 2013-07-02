@@ -73,6 +73,7 @@ set (ktp_private_LIBS
 if (KPEOPLE_FOUND)
     #this is temporary whilst im-persons-data-source still has it's own query
     find_package (NepomukCore REQUIRED)
+    include_directories(${KPEOPLE_INCLUDES})
 
     set (ktp_common_internals_private_SRCS
          ${ktp_common_internals_private_SRCS}
