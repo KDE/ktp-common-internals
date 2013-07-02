@@ -184,12 +184,20 @@ QPixmap KPeopleTranslationProxy::contactPixmap(const QModelIndex &index) const
     QPixmap avatar;
 
     int presenceType = index.data(KTp::ContactPresenceTypeRole).toInt();
-    const QVariantList ids = index.data(KTp::IdRole).toList();
+    //we need contact's ID to generate proper cache key for this contact
     QString id;
-    if (!ids.isEmpty()) {
-        id = ids.first().toString();
+    if (index.data(KTp::RowTypeRole).toInt() == KTp::PersonRowType) {
+        //persons return ids as list of child contacts ids
+        const QVariantList ids = index.data(KTp::IdRole).toList();
+        if (!ids.isEmpty()) {
+            id = ids.first().toString();
+        }
+    } else {
+        //contact returns id as string
+        id = index.data(KTp::IdRole).toString();
     }
 
+    //key for the pixmap cache, so we can look up the avatar
     const QString keyCache = id + (presenceType == Tp::ConnectionPresenceTypeOffline ? QLatin1String("-offline") : QLatin1String("-online"));
 
     //check pixmap cache for the avatar, if not present, load the avatar
