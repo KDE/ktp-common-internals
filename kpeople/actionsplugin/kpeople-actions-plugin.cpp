@@ -99,8 +99,8 @@ QList<QAction*> KPeopleActionsPlugin::actionsForPerson(const KPeople::PersonData
 
     QStringList imContactsIds = personData->imAccounts();
 
-    for (int i=0;i<imContactsIds.size();i+=3) { //FIXME imAccounts() returns a silly datatype
-        const QString contactId = imContactsIds[i+2];
+    for (int i = 0; i < imContactsIds.size(); i++) {
+        const QString contactId = imContactsIds[i];
         const KTp::ContactPtr contact = dataSource->contactForContactId(contactId);
         if (!contact || !contact->manager()) {
             continue;
