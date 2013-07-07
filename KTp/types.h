@@ -86,6 +86,7 @@ namespace KTp
 Q_DECLARE_METATYPE(Tp::AccountPtr)
 Q_DECLARE_METATYPE(KTp::ContactPtr)
 Q_DECLARE_METATYPE(Tp::AccountManagerPtr);
+Q_DECLARE_METATYPE(Tp::ConnectionPtr);
 
 
 #endif // KTP_TYPES_H

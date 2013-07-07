@@ -52,6 +52,7 @@ private Q_SLOTS:
     void onAccountManagerReady(Tp::PendingOperation *op);
     void onNewAccount(const Tp::AccountPtr &account);
     void onConnectionChanged(const Tp::ConnectionPtr &connection);
+    void onConnectionReady(Tp::PendingOperation *op);
     void onContactManagerStateChanged(Tp::ContactListState state);
 
 private:

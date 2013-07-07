@@ -25,6 +25,8 @@
 #include <TelepathyQt/ContactManager>
 #include <TelepathyQt/PendingReady>
 
+#include "KTp/types.h"
+
 #include <KDebug>
 
 
@@ -90,6 +92,18 @@ void GlobalContactManager::onConnectionChanged(const Tp::ConnectionPtr &connecti
     if (connection.isNull()) {
         return;
     }
+    Tp::PendingReady *op = connection->becomeReady(Tp::Features() << Tp::Connection::FeatureRoster << Tp::Connection::FeatureRosterGroups);
+    op->setProperty("connection", QVariant::fromValue<Tp::ConnectionPtr>(connection));
+    connect(op, SIGNAL(finished(Tp::PendingOperation*)), SLOT(onConnectionReady(Tp::PendingOperation*)));
+}
+
+void GlobalContactManager::onConnectionReady(Tp::PendingOperation *op)
+{
+    Tp::ConnectionPtr connection = op->property("connection").value<Tp::ConnectionPtr>();
+    if (!connection) {
+        return;
+    }
+
     onContactManagerStateChanged(connection->contactManager(), connection->contactManager()->state());
     connect(connection->contactManager().data(), SIGNAL(stateChanged(Tp::ContactListState)), SLOT(onContactManagerStateChanged(Tp::ContactListState)));
 }
