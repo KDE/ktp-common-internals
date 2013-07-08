@@ -28,11 +28,14 @@
 #include <TelepathyQt/ClientRegistrar>
 
 #ifdef HAVE_KPEOPLE
+#include <Nepomuk2/ResourceManager>
 #include <KPeople/PersonsModel>
 #include <kpeople/personsmodelfeature.h>
-
 #include "kpeopletranslationproxy.h"
 #endif
+
+#include <KDebug>
+
 
 namespace KTp
 {
@@ -41,13 +44,9 @@ class ContactsModel::Private
 public:
     GroupMode groupMode;
     bool trackUnread;
+    bool nepomukEnabled;
     QWeakPointer<KTp::AbstractGroupingProxyModel> proxy;
-#ifdef HAVE_KPEOPLE
-    KPeopleTranslationProxy *source;
-#else
-    ContactsListModel *source;
-#endif
-
+    QAbstractItemModel *source;
     Tp::AccountManagerPtr accountManager;
     Tp::ClientRegistrarPtr clientRegistrar;
     Tp::SharedPtr<KTp::TextChannelWatcherProxyModel> channelWatcherProxy;
@@ -61,19 +60,25 @@ KTp::ContactsModel::ContactsModel(QObject *parent)
 {
     d->groupMode = NoGrouping;
     d->trackUnread = false;
+    d->nepomukEnabled = false;
 #ifdef HAVE_KPEOPLE
-    KPeople::PersonsModel *personsModel = new KPeople::PersonsModel(this);
+    d->nepomukEnabled = Nepomuk2::ResourceManager::instance()->initialized();
 
-    personsModel->startQuery(QList<KPeople::PersonsModelFeature>() << KPeople::PersonsModelFeature::imModelFeature(false)
-                                                          << KPeople::PersonsModelFeature::avatarModelFeature(true)
-                                                          << KPeople::PersonsModelFeature::groupsModelFeature(true));
-    d->source = new KPeopleTranslationProxy(this);
-    d->source->setSourceModel(personsModel);
-#else
-    d->source = new KTp::ContactsListModel(this);
+    if (d->nepomukEnabled) {
+        kDebug() << "Nepomuk is enabled, using kpeople model";
+        KPeople::PersonsModel *personsModel = new KPeople::PersonsModel(this);
+
+        personsModel->startQuery(QList<KPeople::PersonsModelFeature>() << KPeople::PersonsModelFeature::imModelFeature(false)
+                                                            << KPeople::PersonsModelFeature::avatarModelFeature(true)
+                                                            << KPeople::PersonsModelFeature::groupsModelFeature(true));
+        d->source = new KPeopleTranslationProxy(this);
+        qobject_cast<KPeopleTranslationProxy*>(d->source)->setSourceModel(personsModel);
+    } else
 #endif
-
-
+    {
+        kDebug() << "Nepomuk is disabled, using normal model";
+        d->source = new KTp::ContactsListModel(this);
+    }
 }
 
 KTp::ContactsModel::~ContactsModel()
@@ -89,8 +94,12 @@ void KTp::ContactsModel::setAccountManager(const Tp::AccountManagerPtr &accountM
     updateGroupProxyModels();
 
     //set the account manager after we've reloaded the groups so that we don't send a list to the view, only to replace it with a grouped tree
-#ifndef HAVE_KPEOPLE
-    d->source->setAccountManager(accountManager);
+#ifdef HAVE_KPEOPLE
+    if (!d->nepomukEnabled) {
+        qobject_cast<ContactsListModel*>(d->source)->setAccountManager(accountManager);
+    }
+#else
+    qobject_cast<ContactsListModel*>(d->source)->setAccountManager(accountManager);
 #endif
 }
 
