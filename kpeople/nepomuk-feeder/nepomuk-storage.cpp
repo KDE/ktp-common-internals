@@ -639,6 +639,9 @@ void NepomukStorage::setContactAlias(const QString &path, const QString &id, con
     Nepomuk2::SimpleResource &imAccount = m_graph[contact.imAccount()];
     imAccount.setProperty(NCO::imNickname(), alias);
 
+    Nepomuk2::SimpleResource &personContact = m_graph[contact.personContact()];
+    personContact.setProperty(NCO::nickname(), alias);
+
     fireGraphTimer();
 }
 
