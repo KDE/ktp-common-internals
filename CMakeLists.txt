@@ -16,7 +16,7 @@ set (KTP_MESSAGE_FILTER_FRAMEWORK_VERSION "4")
 find_package (KDE4 REQUIRED)
 find_package (TelepathyQt4 0.9.2.1 REQUIRED)
 find_package (TelepathyLoggerQt4 REQUIRED)
-find_package (KPeople)
+find_package (KPeople QUIET)
 
 # set some default settings
 include (KDE4Defaults)
