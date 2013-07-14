@@ -68,9 +68,9 @@ KTp::ContactsModel::ContactsModel(QObject *parent)
         kDebug() << "Nepomuk is enabled, using kpeople model";
         KPeople::PersonsModel *personsModel = new KPeople::PersonsModel(this);
 
-        personsModel->startQuery(QList<KPeople::PersonsModelFeature>() << KPeople::PersonsModelFeature::imModelFeature(false)
-                                                            << KPeople::PersonsModelFeature::avatarModelFeature(true)
-                                                            << KPeople::PersonsModelFeature::groupsModelFeature(true));
+        personsModel->startQuery(QList<KPeople::PersonsModelFeature>() << KPeople::PersonsModelFeature::imModelFeature()
+                                                            << KPeople::PersonsModelFeature::avatarModelFeature(KPeople::PersonsModelFeature::Mandatory)
+                                                            << KPeople::PersonsModelFeature::groupsModelFeature(KPeople::PersonsModelFeature::Mandatory));
         d->source = new KPeopleTranslationProxy(this);
         qobject_cast<KPeopleTranslationProxy*>(d->source)->setSourceModel(personsModel);
     } else
