@@ -42,7 +42,7 @@ namespace KTp {
 class KTP_NO_EXPORT SubscribableAccountFilter : public Tp::AccountFilter
 {
 public:
-    SubscribableAccountFilter()
+    SubscribableAccountFilter() : Tp::AccountFilter()
     {
     }
 
