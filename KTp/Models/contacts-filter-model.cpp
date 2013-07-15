@@ -326,7 +326,7 @@ bool ContactsFilterModel::Private::filterAcceptsContact(const QModelIndex &index
 
     //check account
     if (accountFilter) {
-        if(index.data(KTp::AccountRole).value<Tp::AccountPtr>() != accountFilter) {
+        if(index.data(KTp::AccountRole).value<Tp::AccountPtr>()->uniqueIdentifier() != accountFilter->uniqueIdentifier()) {
             return false;
         }
     }
