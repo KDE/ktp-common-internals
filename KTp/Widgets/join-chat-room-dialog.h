@@ -67,6 +67,7 @@ private Q_SLOTS:
     void onFavoriteRoomClicked(const QModelIndex &index);
     void onRecentRoomClicked();
     void onRoomClicked(const QModelIndex &index);
+    void onAccountManagerReady(Tp::PendingOperation*);
 
 private:
     void sendNotificationToUser(const QString& errorMsg);
@@ -84,6 +85,7 @@ private:
     KConfigGroup m_recentRoomsGroup;
     QHash <QString, QStringList> m_recentRooms;
     KCompletion *m_recentComp;
+
 };
 
 } //namespace KTp
