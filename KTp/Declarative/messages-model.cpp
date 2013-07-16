@@ -89,6 +89,7 @@ void MessagesModel::setupChannelSignals(const Tp::TextChannelPtr &channel)
 
 void MessagesModel::setTextChannel(Tp::TextChannelPtr channel)
 {
+    Q_ASSERT(channel != d->textChannel);
     kDebug();
     setupChannelSignals(channel);
 

@@ -69,11 +69,13 @@ Conversation::Conversation(QObject *parent) : QObject(parent)
 
 void Conversation::setTextChannel(const Tp::TextChannelPtr& channel)
 {
-    d->messages->setTextChannel(channel);
-    d->valid = channel->isValid();
-    connect(channel.data(), SIGNAL(invalidated(Tp::DBusProxy*,QString,QString)),
-            SLOT(onChannelInvalidated(Tp::DBusProxy*,QString,QString)));
-    Q_EMIT validityChanged(d->valid);
+    if (d->messages->textChannel() != channel) {
+        d->messages->setTextChannel(channel);
+        d->valid = channel->isValid();
+        connect(channel.data(), SIGNAL(invalidated(Tp::DBusProxy*,QString,QString)),
+                SLOT(onChannelInvalidated(Tp::DBusProxy*,QString,QString)));
+        Q_EMIT validityChanged(d->valid);
+    }
 }
 
 Tp::TextChannelPtr Conversation::textChannel() const
