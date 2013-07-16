@@ -117,15 +117,18 @@ KTp::JoinChatRoomDialog::JoinChatRoomDialog(Tp::AccountManagerPtr accountManager
     // connects
     connect(ui->lineEdit, SIGNAL(textChanged(QString)), this, SLOT(onTextChanged(QString)));
     connect(ui->listView, SIGNAL(clicked(QModelIndex)), this, SLOT(onFavoriteRoomClicked(QModelIndex)));
+    connect(ui->listView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(accept()));
     connect(ui->addFavoritePushButton, SIGNAL(clicked(bool)), this, SLOT(addFavorite()));
     connect(ui->removeFavoritePushButton, SIGNAL(clicked(bool)), this, SLOT(removeFavorite()));
     connect(ui->recentListWidget, SIGNAL(currentTextChanged(QString)), ui->lineEdit, SLOT(setText(QString)));
     connect(ui->recentListWidget, SIGNAL(currentTextChanged(QString)), this, SLOT(onRecentRoomClicked()));
+    connect(ui->recentListWidget, SIGNAL(itemDoubleClicked(QListWidgetItem*)), this, SLOT(accept()));
     connect(ui->removeRecentPushButton, SIGNAL(clicked(bool)), this , SLOT(removeRecentRoom()));
     connect(ui->clearRecentPushButton, SIGNAL(clicked(bool)), this, SLOT(clearRecentRooms()));
     connect(ui->queryPushButton, SIGNAL(clicked(bool)), this, SLOT(getRoomList()));
     connect(ui->stopPushButton, SIGNAL(clicked(bool)), this, SLOT(stopListing()));
     connect(ui->treeView, SIGNAL(clicked(QModelIndex)), this, SLOT(onRoomClicked(QModelIndex)));
+    connect(ui->treeView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(accept()));
     connect(ui->filterBar, SIGNAL(textChanged(QString)), proxyModel, SLOT(setFilterFixedString(QString)));
     connect(ui->comboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(onAccountSelectionChanged(int)));
     connect(button(Ok), SIGNAL(clicked(bool)), this, SLOT(addRecentRoom()));
@@ -436,7 +439,7 @@ void KTp::JoinChatRoomDialog::onRecentRoomClicked()
     ui->removeRecentPushButton->setEnabled(true);
 }
 
-void KTp::JoinChatRoomDialog::onRoomClicked(const QModelIndex& index)
+void KTp::JoinChatRoomDialog::onRoomClicked(const QModelIndex &index)
 {
     ui->lineEdit->setText(index.data(RoomsModel::HandleNameRole).toString());
 }
