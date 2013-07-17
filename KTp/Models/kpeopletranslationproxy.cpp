@@ -56,6 +56,11 @@ QVariant KPeopleTranslationProxy::data(const QModelIndex &proxyIndex, int role) 
         return QVariant();
     }
 
+    if (role == KTp::AccountRole) {
+        QString accountPath = mapToSource(proxyIndex).data(PersonsModel::UserRole).toString();
+        imPlugin->accountManager()->accountForObjectPath(accountPath);
+    }
+
     switch (role) {
         case KTp::ContactPresenceTypeRole:
             return translatePresence(mapToSource(proxyIndex).data(PersonsModel::PresenceTypeRole));
@@ -116,9 +121,6 @@ QVariant KPeopleTranslationProxy::data(const QModelIndex &proxyIndex, int role) 
             case KTp::ContactRole:
                 return QVariant::fromValue<KTp::ContactPtr>(contact);
                 break;
-            case KTp::AccountRole:
-                return QVariant::fromValue<Tp::AccountPtr>(imPlugin->accountForContact(contact));
-                break;
             case KTp::ContactPresenceMessageRole:
                 return contact->presence().statusMessage();
                 break;
@@ -141,13 +143,6 @@ QVariant KPeopleTranslationProxy::data(const QModelIndex &proxyIndex, int role) 
                 return contact->clientTypes();
                 break;
         }
-    } else if (contact.isNull() && role == KTp::AccountRole) {
-        //if the KTp contact is null, we still need the Tp account for that contact
-        //so we can either group it properly or bring that account online if user
-        //starts a chat with a contact that belongs to offline account
-        QString contactId = j > 0 ? mapToSource(proxyIndex).data(PersonsModel::IMsRole).toList().first().toString()
-                                  : mapToSource(proxyIndex).data(PersonsModel::IMsRole).toString();
-        return QVariant::fromValue<Tp::AccountPtr>(imPlugin->accountForContactId(contactId));
     }
 //     }
 
