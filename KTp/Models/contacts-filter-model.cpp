@@ -346,7 +346,7 @@ bool ContactsFilterModel::Private::filterAcceptsGroup(const QModelIndex &index)
 
         // Don't accept groups with no online contacts
         if (m_onlineContactsCounts.value(groupName) == 0) {
-//             return false;
+            return false;
         }
     }
     else {
@@ -357,7 +357,7 @@ bool ContactsFilterModel::Private::filterAcceptsGroup(const QModelIndex &index)
 
         // Don't accept groups with no total contacts
         if (m_totalContactsCounts.value(groupName) == 0) {
-//             return false;
+            return false;
         }
     }
     return true;
@@ -407,8 +407,10 @@ void ContactsFilterModel::Private::sourceModelParentIndexChanged(const QModelInd
 {
     if (sourceIndex.isValid()) {
         countContacts(sourceIndex);
-        const QModelIndex mappedIndex = q->mapFromSource(sourceIndex);
-        Q_EMIT q->dataChanged(mappedIndex, mappedIndex);
+
+        //emit that the source parent changed, this way it will go through "filterAcceptsRow" again
+        //and filter empty groups
+        QMetaObject::invokeMethod(q->sourceModel(), "dataChanged", Q_ARG(QModelIndex, sourceIndex), Q_ARG(QModelIndex, sourceIndex));
     }
 }
 
