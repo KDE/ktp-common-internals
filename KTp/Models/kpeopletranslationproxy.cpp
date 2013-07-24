@@ -56,11 +56,6 @@ QVariant KPeopleTranslationProxy::data(const QModelIndex &proxyIndex, int role) 
         return QVariant();
     }
 
-    if (role == KTp::AccountRole) {
-        QString accountPath = mapToSource(proxyIndex).data(PersonsModel::UserRole).toString();
-        imPlugin->accountManager()->accountForObjectPath(accountPath);
-    }
-
     switch (role) {
         case KTp::ContactPresenceTypeRole:
             return translatePresence(mapToSource(proxyIndex).data(PersonsModel::PresenceTypeRole));
@@ -118,6 +113,9 @@ QVariant KPeopleTranslationProxy::data(const QModelIndex &proxyIndex, int role) 
 
     if (!contact.isNull()) {
         switch (role) {
+            case KTp::AccountRole:
+                return QVariant::fromValue<Tp::AccountPtr>(imPlugin->accountForContact(contact));
+                break;
             case KTp::ContactRole:
                 return QVariant::fromValue<KTp::ContactPtr>(contact);
                 break;
@@ -142,6 +140,13 @@ QVariant KPeopleTranslationProxy::data(const QModelIndex &proxyIndex, int role) 
             case KTp::ContactClientTypesRole:
                 return contact->clientTypes();
                 break;
+        }
+    } else if (contact.isNull() && role == KTp::AccountRole) {
+        QVariant accountPath = mapToSource(proxyIndex).data(PersonsModel::UserRole);
+        if (accountPath.type() == QVariant::List) {
+            return QVariant::fromValue<Tp::AccountPtr>(imPlugin->accountManager()->accountForObjectPath(accountPath.toList().first().toString()));
+        } else {
+            return QVariant::fromValue<Tp::AccountPtr>(imPlugin->accountManager()->accountForObjectPath(accountPath.toString()));
         }
     }
 //     }
