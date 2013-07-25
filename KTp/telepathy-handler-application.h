@@ -51,11 +51,13 @@ public:
                                          int initialTimeout = 15000,
                                          int timeout = 2000);
 
+#ifndef Q_OS_WIN
     explicit TelepathyHandlerApplication(Display *display,
                                          Qt::HANDLE visual = 0,
                                          Qt::HANDLE colormap = 0,
                                          int initialTimeout = 15000,
                                          int timeout = 2000);
+#endif
 
     virtual ~TelepathyHandlerApplication();
 

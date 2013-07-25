@@ -164,6 +164,7 @@ TelepathyHandlerApplication::TelepathyHandlerApplication(bool GUIenabled,
     d->init(initialTimeout, timeout);
 }
 
+#ifndef Q_OS_WIN
 TelepathyHandlerApplication::TelepathyHandlerApplication(Display *display,
                                                          Qt::HANDLE visual,
                                                          Qt::HANDLE colormap,
@@ -174,6 +175,7 @@ TelepathyHandlerApplication::TelepathyHandlerApplication(Display *display,
 {
     d->init(initialTimeout, timeout);
 }
+#endif
 
 TelepathyHandlerApplication::~TelepathyHandlerApplication()
 {
