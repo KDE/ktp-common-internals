@@ -25,8 +25,6 @@
 #include <TelepathyQt/ContactManager>
 #include <TelepathyQt/Connection>
 
-#include <TelepathyLoggerQt4/Entity>
-
 using namespace KTp;
 
 class OutgoingMessage::Private : public QSharedData {

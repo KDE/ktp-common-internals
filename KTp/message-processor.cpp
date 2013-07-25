@@ -191,12 +191,13 @@ KTp::Message KTp::MessageProcessor::processIncomingMessage(const Tp::ReceivedMes
     return processIncomingMessage(KTp::Message(message, context), context);
 }
 
+#ifdef HAVE_TPLOGGERQT
 KTp::Message KTp::MessageProcessor::processIncomingMessage(const Tpl::TextEventPtr &message, const Tp::AccountPtr &account, const Tp::TextChannelPtr &channel)
 {
     KTp::MessageContext context(account, channel);
     return processIncomingMessage(KTp::Message(message, context), context);
 }
-
+#endif
 
 KTp::Message MessageProcessor::processIncomingMessage(KTp::Message message, const KTp::MessageContext &context)
 {

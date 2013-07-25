@@ -25,7 +25,9 @@
 #include <TelepathyQt/ContactManager>
 #include <TelepathyQt/Connection>
 
+#ifdef HAVE_TPLOGGERQT
 #include <TelepathyLoggerQt4/Entity>
+#endif
 
 using namespace KTp;
 
@@ -101,6 +103,7 @@ Message::Message(const Tp::ReceivedMessage &original, const KTp::MessageContext 
     }
 }
 
+#ifdef HAVE_TPLOGGERQT
 Message::Message(const Tpl::TextEventPtr &original, const KTp::MessageContext &context) :
     d(new Private)
 {
@@ -128,6 +131,7 @@ Message::Message(const Tpl::TextEventPtr &original, const KTp::MessageContext &c
 
     setMainMessagePart(original->message());
 }
+#endif
 
 Message::Message(const QString &messageText, const MessageContext &context) :
     d(new Private)
