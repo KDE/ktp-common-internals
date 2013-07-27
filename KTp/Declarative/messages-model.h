@@ -57,7 +57,7 @@ class MessagesModel : public QAbstractListModel
     virtual int rowCount(const QModelIndex &parent = QModelIndex()) const;
 
     Tp::TextChannelPtr textChannel() const;
-    void setTextChannel(Tp::TextChannelPtr channel);
+    void setTextChannel(const Tp::TextChannelPtr &channel);
 
     bool isVisibleToUser() const;
     void setVisibleToUser(bool visible);
