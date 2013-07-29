@@ -75,10 +75,12 @@ KTp::ContactsModel::ContactsModel(QObject *parent)
         accountFeature.setOptional(false);
         accountFeature.setQueryPart(QLatin1String("?uri nco:hasIMAccount ?imAccount . ?imAccount nco:isAccessedBy ?accessedBy . ?accessedBy telepathy:accountIdentifier ?account . "));
 
-        personsModel->startQuery(QList<KPeople::PersonsModelFeature>() << KPeople::PersonsModelFeature::imModelFeature()
+        personsModel->startQuery(QList<KPeople::PersonsModelFeature>() << KPeople::PersonsModelFeature::imModelFeature(KPeople::PersonsModelFeature::Mandatory)
                                                             << accountFeature
-                                                            << KPeople::PersonsModelFeature::avatarModelFeature(KPeople::PersonsModelFeature::Mandatory)
-                                                            << KPeople::PersonsModelFeature::groupsModelFeature(KPeople::PersonsModelFeature::Mandatory));
+                                                            << KPeople::PersonsModelFeature::avatarModelFeature()
+                                                            << KPeople::PersonsModelFeature::groupsModelFeature()
+                                                            << KPeople::PersonsModelFeature::fullNameModelFeature()
+                                                            << KPeople::PersonsModelFeature::nicknameModelFeature());
         d->source = new KPeopleTranslationProxy(this);
         qobject_cast<KPeopleTranslationProxy*>(d->source)->setSourceModel(personsModel);
     } else
