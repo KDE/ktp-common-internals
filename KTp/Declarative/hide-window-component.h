@@ -20,7 +20,6 @@
 #define HIDEWINDOWCOMPONENT_H
 
 #include <QObject>
-#include <QWidget>
 
 /**
  * Plasma is not exposing such a feature to make its dialogs hidden from the taskbar,
@@ -33,7 +32,7 @@ class HideWindowComponent : public QObject
   public:
     explicit HideWindowComponent(QObject *parent = 0);
 
-    Q_SCRIPTABLE void hideWindowFromTaskbar(WId winId);
+    Q_SCRIPTABLE void hideWindowFromTaskbar(qulonglong winId);
 };
 
 #endif // HIDEWINDOWCOMPONENT_H

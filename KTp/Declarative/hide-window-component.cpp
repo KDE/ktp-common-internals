@@ -25,7 +25,7 @@ HideWindowComponent::HideWindowComponent(QObject *parent)
 {
 }
 
-void HideWindowComponent::hideWindowFromTaskbar(WId winId)
+void HideWindowComponent::hideWindowFromTaskbar(qulonglong winId)
 {
     KWindowSystem::setState(winId, NET::SkipTaskbar | NET::SkipPager);
 }
