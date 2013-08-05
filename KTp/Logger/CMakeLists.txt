@@ -6,6 +6,7 @@ include_directories (${CMAKE_CURRENT_BINARY_DIR}
 
 set (ktp_logger_private_SRCS
     ${KTP_GLOBAL_SOURCES}
+    abstract-logger-plugin.cpp
     log-entity.cpp
     log-manager.cpp
     pending-logger-dates.cpp

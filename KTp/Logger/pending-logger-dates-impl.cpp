@@ -26,6 +26,10 @@ PendingLoggerDatesImpl::PendingLoggerDatesImpl(const Tp::AccountPtr &account,
     PendingLoggerDates(account, contact, parent)
 {
     Q_FOREACH (KTp::AbstractLoggerPlugin *plugin, plugins()) {
+        if (!plugin->handlesAccount(account)) {
+            continue;
+        }
+
         PendingLoggerOperation *op = plugin->queryDates(account, contact);
         connect(op, SIGNAL(finished(PendingLoggerOperation*)),
                 this, SLOT(operationFinished(KTp::PendingLoggerOperation*)));

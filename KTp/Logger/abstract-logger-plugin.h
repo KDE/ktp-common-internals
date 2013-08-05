@@ -49,6 +49,7 @@ class KTP_EXPORT AbstractLoggerPlugin : public QObject
 
     virtual KTp::PendingLoggerEntities* queryEntities(const Tp::AccountPtr &account) = 0;
 
+    virtual bool handlesAccount(const Tp::AccountPtr &account);
 };
 
 }

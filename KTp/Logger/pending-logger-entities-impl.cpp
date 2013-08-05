@@ -25,6 +25,10 @@ PendingLoggerEntitiesImpl::PendingLoggerEntitiesImpl(const Tp::AccountPtr &accou
     PendingLoggerEntities(account, parent)
 {
     Q_FOREACH (KTp::AbstractLoggerPlugin *plugin, plugins()) {
+        if (!plugin->handlesAccount(account)) {
+            continue;
+        }
+
         PendingLoggerOperation *op = plugin->queryEntities(account);
         connect(op, SIGNAL(finished(PendingLoggerOperation*)),
                 this, SLOT(operationFinished(KTp::PendingLoggerOperation*)));
