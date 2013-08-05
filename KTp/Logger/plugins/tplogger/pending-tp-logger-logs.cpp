@@ -29,7 +29,7 @@
 PendingTpLoggerLogs::PendingTpLoggerLogs(const Tp::AccountPtr &account,
                                          const Tp::ContactPtr &contact,
                                          const QDate &date,
-                                         QObject* parent):
+                                         QObject *parent):
     PendingLoggerLogs(account, contact, date, parent)
 {
     // FIXME: Handle rooms
@@ -48,7 +48,7 @@ PendingTpLoggerLogs::~PendingTpLoggerLogs()
 {
 }
 
-void PendingTpLoggerLogs::logsRetrieved(Tpl::PendingOperation* op)
+void PendingTpLoggerLogs::logsRetrieved(Tpl::PendingOperation *op)
 {
     Tpl::PendingEvents *pe = qobject_cast<Tpl::PendingEvents*>(op);
     Q_ASSERT(pe);

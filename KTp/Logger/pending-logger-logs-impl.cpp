@@ -39,7 +39,7 @@ PendingLoggerLogsImpl::~PendingLoggerLogsImpl()
 {
 }
 
-void PendingLoggerLogsImpl::operationFinished(KTp::PendingLoggerOperation* op)
+void PendingLoggerLogsImpl::operationFinished(KTp::PendingLoggerOperation *op)
 {
     Q_ASSERT(mRunningOps.contains(op));
     mRunningOps.removeAll(op);

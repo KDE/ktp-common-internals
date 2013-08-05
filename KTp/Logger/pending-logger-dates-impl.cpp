@@ -37,7 +37,7 @@ PendingLoggerDatesImpl::~PendingLoggerDatesImpl()
 {
 }
 
-void PendingLoggerDatesImpl::operationFinished(KTp::PendingLoggerOperation* op)
+void PendingLoggerDatesImpl::operationFinished(KTp::PendingLoggerOperation *op)
 {
     Q_ASSERT(mRunningOps.contains(op));
     mRunningOps.removeAll(op);

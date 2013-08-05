@@ -42,9 +42,10 @@ void LogManager::Private::loadPlugins()
     const KService::List services = KServiceTypeTrader::self()->query(
                                          QLatin1String("KTpLogger/Plugin"),
                                          QLatin1String("[X-KTp-PluginInfo-Version] == " KTP_LOGGER_PLUGIN_VERSION));
+
     const KPluginInfo::List pluginInfos = KPluginInfo::fromServices(services);
     Q_FOREACH (const KPluginInfo &pluginInfo, pluginInfos) {
-        KService::Ptr service = pluginInfo.service();
+        const KService::Ptr service = pluginInfo.service();
         KPluginFactory *factory = KPluginLoader(service->library()).factory();
         if (factory) {
             kDebug() << "loaded factory :" << factory;
@@ -60,7 +61,7 @@ void LogManager::Private::loadPlugins()
     }
 }
 
-LogManager::Private::Private(LogManager* parent):
+LogManager::Private::Private(LogManager *parent):
     q(parent)
 {
     loadPlugins();
@@ -86,12 +87,15 @@ LogManager::~LogManager()
     delete d;
 }
 
-PendingLoggerDates* LogManager::queryDates(const Tp::AccountPtr &account, const Tp::ContactPtr &contact)
+PendingLoggerDates* LogManager::queryDates(const Tp::AccountPtr &account,
+                                           const Tp::ContactPtr &contact)
 {
     return new PendingLoggerDatesImpl(account, contact, this);
 }
 
-PendingLoggerLogs* LogManager::queryLogs(const Tp::AccountPtr& account, const Tp::ContactPtr& contact, const QDate& date)
+PendingLoggerLogs* LogManager::queryLogs(const Tp::AccountPtr &account,
+                                         const Tp::ContactPtr &contact,
+                                         const QDate &date)
 {
     return new PendingLoggerLogsImpl(account, contact, date, this);
 }

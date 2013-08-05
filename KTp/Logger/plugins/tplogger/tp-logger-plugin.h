@@ -1,5 +1,4 @@
 /*
- * <one line to give the program's name and a brief idea of what it does.>
  * Copyright (C) 2013  Daniel Vrátil <dvratil@redhat.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -27,6 +26,7 @@ class TpLoggerPlugin : public KTp::AbstractLoggerPlugin
 {
   public:
     explicit TpLoggerPlugin();
+    virtual ~TpLoggerPlugin();
 
     virtual KTp::PendingLoggerDates* queryDates(const Tp::AccountPtr &account,
                                                 const Tp::ContactPtr &contact);

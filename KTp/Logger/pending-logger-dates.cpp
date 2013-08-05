@@ -20,6 +20,9 @@
 #include "pending-logger-dates.h"
 #include "abstract-logger-plugin.h"
 
+#include <TelepathyQt/Account>
+#include <TelepathyQt/Contact>
+
 using namespace KTp;
 
 class PendingLoggerDates::Private
@@ -36,8 +39,8 @@ class PendingLoggerDates::Private
     QList<QDate> dates;
 };
 
-PendingLoggerDates::PendingLoggerDates(const Tp::AccountPtr& account,
-                                       const Tp::ContactPtr& contact,
+PendingLoggerDates::PendingLoggerDates(const Tp::AccountPtr &account,
+                                       const Tp::ContactPtr &contact,
                                        QObject *parent) :
     PendingLoggerOperation(parent),
     d(new Private(account, contact))

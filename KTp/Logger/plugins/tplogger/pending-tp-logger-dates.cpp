@@ -26,7 +26,7 @@
 
 PendingTpLoggerDates::PendingTpLoggerDates(const Tp::AccountPtr &account,
                                            const Tp::ContactPtr &contact,
-                                           QObject* parent):
+                                           QObject *parent):
     PendingLoggerDates(account, contact, parent)
 {
     // FIXME: Handle rooms

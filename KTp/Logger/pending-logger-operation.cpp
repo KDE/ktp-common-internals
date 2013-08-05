@@ -49,7 +49,7 @@ QString PendingLoggerOperation::error() const
     return d->error;
 }
 
-void PendingLoggerOperation::setError(const QString& error)
+void PendingLoggerOperation::setError(const QString &error)
 {
     d->error = error;
 }

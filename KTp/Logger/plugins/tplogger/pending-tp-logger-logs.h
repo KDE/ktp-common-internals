@@ -34,7 +34,7 @@ class PendingTpLoggerLogs : public KTp::PendingLoggerLogs
     explicit PendingTpLoggerLogs(const Tp::AccountPtr &account,
                                  const Tp::ContactPtr &contact,
                                  const QDate &date,
-                                 QObject* parent = 0);
+                                 QObject *parent = 0);
     virtual ~PendingTpLoggerLogs();
 
   private Q_SLOTS:

@@ -30,12 +30,19 @@ TpLoggerPlugin::TpLoggerPlugin():
     Tpl::init();
 }
 
-KTp::PendingLoggerDates* TpLoggerPlugin::queryDates(const Tp::AccountPtr& account, const Tp::ContactPtr& contact)
+TpLoggerPlugin::~TpLoggerPlugin()
+{
+}
+
+KTp::PendingLoggerDates* TpLoggerPlugin::queryDates(const Tp::AccountPtr &account,
+                                                    const Tp::ContactPtr &contact)
 {
     return new PendingTpLoggerDates(account, contact, this);
 }
 
-KTp::PendingLoggerLogs* TpLoggerPlugin::queryLogs(const Tp::AccountPtr& account, const Tp::ContactPtr& contact, const QDate& date)
+KTp::PendingLoggerLogs* TpLoggerPlugin::queryLogs(const Tp::AccountPtr &account,
+                                                  const Tp::ContactPtr &contact,
+                                                  const QDate &date)
 {
     return new PendingTpLoggerLogs(account, contact, date, this);
 }
