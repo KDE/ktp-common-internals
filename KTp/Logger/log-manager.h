@@ -20,11 +20,10 @@
 #ifndef KTP_LOGMANAGER_H
 #define KTP_LOGMANAGER_H
 
-#include <QObject>
+#include <KTp/Logger/abstract-logger-plugin.h>
+#include <KTp/ktp-export.h>
 
 #include <TelepathyQt/Types>
-
-#include <KTp/ktp-export.h>
 
 namespace KTp {
 
@@ -33,7 +32,7 @@ class PendingLoggerDates;
 class PendingLoggerLogs;
 class PendingLoggerEntities;
 
-class KTP_EXPORT LogManager : public QObject
+class KTP_EXPORT LogManager : public AbstractLoggerPlugin
 {
     Q_OBJECT
 
@@ -49,7 +48,7 @@ class KTP_EXPORT LogManager : public QObject
     virtual ~LogManager();
 
  private:
-    explicit LogManager(QObject* parent = 0);
+    explicit LogManager();
 
     class Private;
     Private * const d;

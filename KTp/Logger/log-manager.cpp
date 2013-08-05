@@ -75,8 +75,8 @@ LogManager* LogManager::instance()
     return Private::s_logManagerInstance;
 }
 
-LogManager::LogManager(QObject* parent):
-    QObject(parent),
+LogManager::LogManager():
+    AbstractLoggerPlugin(),
     d(new Private(this))
 {
 }
