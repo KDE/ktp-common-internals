@@ -164,6 +164,9 @@ protected:
 #ifdef HAVE_TPLOGGERQT
     Message(const Tpl::TextEventPtr &original, const KTp::MessageContext &context);
 #endif
+    Message(const QString &senderId, const QString &senderAlias,
+            const Tp::AccountPtr &account, const QDateTime &dt, const QString &message);
+
     explicit Message(const QString &messageText, const KTp::MessageContext &context);
 
 

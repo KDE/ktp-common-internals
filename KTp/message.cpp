@@ -146,6 +146,27 @@ Message::Message(const QString &messageText, const MessageContext &context) :
     setMainMessagePart(messageText);
 }
 
+Message::Message(const QString &senderId, const QString &senderAlias,
+                 const Tp::AccountPtr &account, const QDateTime &dt,
+                 const QString &message):
+    d(new Private)
+{
+    d->sentTime = dt;
+    d->messageType = Tp::ChannelTextMessageTypeNormal;
+    d->isHistory = true;
+    d->senderId = senderId;
+    d->senderAlias = senderAlias;
+
+    if (senderId == account->normalizedName()) {
+        d->direction = KTp::Message::LocalToRemote;
+    } else {
+        d->direction = KTp::Message::RemoteToLocal;
+    }
+
+    setMainMessagePart(message);
+}
+
+
 Message::Message(const Message& other):
     d(other.d)
 {
