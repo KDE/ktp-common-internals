@@ -47,3 +47,6 @@ install (TARGETS ktploggerprivate
 install (FILES ${ktp_logger_private_HDRS}
          DESTINATION ${INCLUDE_INSTALL_DIR}/KTp/Logger
 )
+
+
+add_subdirectory(plugins)
