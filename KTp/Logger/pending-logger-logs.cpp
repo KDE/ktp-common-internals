@@ -34,7 +34,7 @@ class PendingLoggerLogs::Private
     Tp::AccountPtr account;
     Tp::ContactPtr contact;
     QDate date;
-    QList<KTp::Message> logs;
+    QList<KTp::LogMessage> logs;
 };
 
 PendingLoggerLogs::PendingLoggerLogs(const Tp::AccountPtr &account,
@@ -66,12 +66,12 @@ QDate PendingLoggerLogs::date() const
     return d->date;
 }
 
-QList<KTp::Message> PendingLoggerLogs::logs() const
+QList<KTp::LogMessage> PendingLoggerLogs::logs() const
 {
     return d->logs;
 }
 
-void PendingLoggerLogs::appendLogs(const QList<Message> &logs)
+void PendingLoggerLogs::appendLogs(const QList<LogMessage> &logs)
 {
     d->logs.append(logs);
 }

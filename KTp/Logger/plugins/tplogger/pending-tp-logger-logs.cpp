@@ -60,9 +60,11 @@ void PendingTpLoggerLogs::logsRetrieved(Tpl::PendingOperation *op)
     }
 
     QList<Tpl::EventPtr> events = pe->events();
-    QList<KTp::Message> logs;
+    QList<KTp::LogMessage> logs;
     Q_FOREACH (const Tpl::EventPtr &event, events) {
-        logs << KTp::MessageProcessor::instance()->processIncomingMessage(event.dynamicCast<Tpl::TextEvent>(), account(), Tp::TextChannelPtr());
+        const Tpl::TextEventPtr textEvent = event.dynamicCast<Tpl::TextEvent>();
+        logs << KTp::LogMessage(KTp::LogEntity(event->sender()->identifier(), event->sender()->alias()),
+                                event->account(), event->timestamp(), textEvent->message());
     }
 
     appendLogs(logs);

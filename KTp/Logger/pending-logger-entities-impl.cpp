@@ -30,6 +30,10 @@ PendingLoggerEntitiesImpl::PendingLoggerEntitiesImpl(const Tp::AccountPtr &accou
         }
 
         PendingLoggerOperation *op = plugin->queryEntities(account);
+        if (!op) {
+            continue;
+        }
+
         connect(op, SIGNAL(finished(PendingLoggerOperation*)),
                 this, SLOT(operationFinished(KTp::PendingLoggerOperation*)));
         mRunningOps << op;

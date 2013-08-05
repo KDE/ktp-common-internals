@@ -21,7 +21,7 @@
 #define KTP_PENDINGLOGGERLOGS_H
 
 #include <KTp/Logger/pending-logger-operation.h>
-#include <KTp/message.h>
+#include <KTp/Logger/log-message.h>
 #include <KTp/ktp-export.h>
 
 #include <TelepathyQt/Types>
@@ -38,7 +38,7 @@ class KTP_EXPORT PendingLoggerLogs : public KTp::PendingLoggerOperation
     Tp::AccountPtr account() const;
     Tp::ContactPtr contact() const;
     QDate date() const;
-    QList<KTp::Message> logs() const;
+    QList<KTp::LogMessage> logs() const;
 
 
   protected:
@@ -47,7 +47,7 @@ class KTP_EXPORT PendingLoggerLogs : public KTp::PendingLoggerOperation
                                const QDate &date,
                                QObject* parent = 0);
 
-    void appendLogs(const QList<KTp::Message> &logs);
+    void appendLogs(const QList<KTp::LogMessage> &logs);
 
     class Private;
     Private * const d;

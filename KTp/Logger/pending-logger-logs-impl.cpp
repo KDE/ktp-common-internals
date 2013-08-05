@@ -32,6 +32,10 @@ PendingLoggerLogsImpl::PendingLoggerLogsImpl(const Tp::AccountPtr &account,
         }
 
         PendingLoggerOperation *op = plugin->queryLogs(account, contact, date);
+        if (!op) {
+            continue;
+        }
+
         connect(op, SIGNAL(finished(PendingLoggerOperation*)),
                 this, SLOT(operationFinished(KTp::PendingLoggerOperation*)));
         mRunningOps << op;
@@ -51,7 +55,7 @@ void PendingLoggerLogsImpl::operationFinished(KTp::PendingLoggerOperation *op)
     KTp::PendingLoggerLogs *operation = qobject_cast<KTp::PendingLoggerLogs*>(op);
     Q_ASSERT(operation);
 
-    const QList<KTp::Message> newLogs = operation->logs();
+    const QList<KTp::LogMessage> newLogs = operation->logs();
 
     // FIXME: Maybe handle duplicates?
     appendLogs(newLogs);
