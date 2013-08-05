@@ -118,6 +118,7 @@ install (FILES ${ktp_common_internals_private_HDRS}
 add_subdirectory(Declarative)
 add_subdirectory(Models)
 add_subdirectory(Widgets)
+add_subdirectory(Logger)
 
 # API docs
 find_package(Doxygen)
