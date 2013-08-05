@@ -9,7 +9,9 @@ set (ktp_logger_private_SRCS
     abstract-logger-plugin.cpp
     log-manager.cpp
     pending-logger-dates.cpp
+    pending-logger-dates-impl.cpp
     pending-logger-logs.cpp
+    pending-logger-logs-impl.cpp
     pending-logger-operation.cpp
 )
 

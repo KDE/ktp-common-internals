@@ -21,6 +21,9 @@
 #include "log-manager-private.h"
 #include "abstract-logger-plugin.h"
 
+#include "pending-logger-dates-impl.h"
+#include "pending-logger-logs-impl.h"
+
 #include <KGlobal>
 #include <KService>
 #include <KServiceTypeTrader>
@@ -85,12 +88,12 @@ LogManager::~LogManager()
 
 PendingLoggerDates* LogManager::queryDates(const Tp::AccountPtr &account, const Tp::ContactPtr &contact)
 {
-
+    return new PendingLoggerDatesImpl(account, contact, this);
 }
 
 PendingLoggerLogs* LogManager::queryLogs(const Tp::AccountPtr& account, const Tp::ContactPtr& contact, const QDate& date)
 {
-
+    return new PendingLoggerLogsImpl(account, contact, date, this);
 }
 
 using namespace KTp;
