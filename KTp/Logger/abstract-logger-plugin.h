@@ -21,15 +21,18 @@
 #define KTP_ABSTRACTLOGGERPLUGIN_H
 
 #include <QtCore/QObject>
-#include <TelepathyQt/Types>
+
 #include <KTp/message.h>
+#include <KTp/ktp-export.h>
+
+#include <TelepathyQt/Types>
 
 namespace KTp {
 
 class PendingLoggerDates;
 class PendingLoggerLogs;
 
-class AbstractLoggerPlugin : public QObject
+class KTP_EXPORT AbstractLoggerPlugin : public QObject
 {
     Q_OBJECT
 

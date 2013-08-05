@@ -21,12 +21,14 @@
 #define KTP_PENDINGLOGGERLOGS_H
 
 #include <KTp/Logger/pending-logger-operation.h>
-#include <TelepathyQt/Types>
 #include <KTp/message.h>
+#include <KTp/ktp-export.h>
+
+#include <TelepathyQt/Types>
 
 namespace KTp {
 
-class PendingLoggerLogs : public KTp::PendingLoggerOperation
+class KTP_EXPORT PendingLoggerLogs : public KTp::PendingLoggerOperation
 {
     Q_OBJECT
 

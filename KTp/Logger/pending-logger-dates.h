@@ -21,11 +21,13 @@
 #define KTP_PENDINGLOGGERDATES_H
 
 #include <KTp/Logger/pending-logger-operation.h>
+#include <KTp/ktp-export.h>
+
 #include <TelepathyQt/Types>
 
 namespace KTp {
 
-class PendingLoggerDates : public KTp::PendingLoggerOperation
+class KTP_EXPORT PendingLoggerDates : public KTp::PendingLoggerOperation
 {
     Q_OBJECT
 

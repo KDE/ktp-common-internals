@@ -21,8 +21,10 @@
 #define KTP_LOGMANAGER_H
 
 #include <QObject>
-#include <KGlobal>
+
 #include <TelepathyQt/Types>
+
+#include <KTp/ktp-export.h>
 
 namespace KTp {
 
@@ -31,7 +33,7 @@ class PendingLoggerDates;
 class PendingLoggerLogs;
 class PendingLoggerEntities;
 
-class LogManager : public QObject
+class KTP_EXPORT LogManager : public QObject
 {
     Q_OBJECT
 
