@@ -22,7 +22,6 @@
 
 #include <QtCore/QObject>
 
-#include <KTp/message.h>
 #include <KTp/ktp-export.h>
 
 #include <TelepathyQt/Types>
