@@ -17,23 +17,33 @@
  *
  */
 
-#ifndef TPLOGGERPLUGIN_H
-#define TPLOGGERPLUGIN_H
+#ifndef KTP_LOGENTITY_H
+#define KTP_LOGENTITY_H
 
-#include "KTp/Logger/abstract-logger-plugin.h"
+#include <QSharedDataPointer>
+#include <QString>
 
-class TpLoggerPlugin : public KTp::AbstractLoggerPlugin
+namespace KTp {
+
+class LogEntity
 {
   public:
-    explicit TpLoggerPlugin();
-    virtual ~TpLoggerPlugin();
+    explicit LogEntity(const QString &id, const QString &alias);
+    LogEntity(const KTp::LogEntity &other);
+    LogEntity();
+    ~LogEntity();
 
-    KTp::PendingLoggerDates* queryDates(const Tp::AccountPtr &account,
-                                        const Tp::ContactPtr &contact);
-    KTp::PendingLoggerLogs* queryLogs(const Tp::AccountPtr &account,
-                                      const Tp::ContactPtr &contact,
-                                      const QDate &date);
-    KTp::PendingLoggerEntities* queryEntities(const Tp::AccountPtr& account);
+    KTp::LogEntity& operator=(const KTp::LogEntity &other);
+    bool operator==(const KTp::LogEntity &other);
+
+    bool isValid();
+    QString id() const;
+    QString alias() const;
+
+  private:
+    class Private;
+    QSharedDataPointer<Private> d;
 };
+}
 
-#endif // TPLOGGERPLUGIN_H
+#endif // KTP_LOGENTITY_H

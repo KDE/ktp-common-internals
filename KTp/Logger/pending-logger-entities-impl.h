@@ -17,23 +17,25 @@
  *
  */
 
-#ifndef TPLOGGERPLUGIN_H
-#define TPLOGGERPLUGIN_H
+#ifndef PENDINGLOGGERENTITIESIMPL_H
+#define PENDINGLOGGERENTITIESIMPL_H
 
-#include "KTp/Logger/abstract-logger-plugin.h"
+#include "pending-logger-entities.h"
 
-class TpLoggerPlugin : public KTp::AbstractLoggerPlugin
+class PendingLoggerEntitiesImpl: public KTp::PendingLoggerEntities
 {
-  public:
-    explicit TpLoggerPlugin();
-    virtual ~TpLoggerPlugin();
+    Q_OBJECT
 
-    KTp::PendingLoggerDates* queryDates(const Tp::AccountPtr &account,
-                                        const Tp::ContactPtr &contact);
-    KTp::PendingLoggerLogs* queryLogs(const Tp::AccountPtr &account,
-                                      const Tp::ContactPtr &contact,
-                                      const QDate &date);
-    KTp::PendingLoggerEntities* queryEntities(const Tp::AccountPtr& account);
+  public:
+    explicit PendingLoggerEntitiesImpl(const Tp::AccountPtr &account,
+                                       QObject *parent = 0);
+    virtual ~PendingLoggerEntitiesImpl();
+
+  private Q_SLOTS:
+    void operationFinished(KTp::PendingLoggerOperation *op);
+
+  private:
+    QList<KTp::PendingLoggerOperation*> mRunningOps;
 };
 
-#endif // TPLOGGERPLUGIN_H
+#endif // PENDINGLOGGERENTITIESIMPL_H

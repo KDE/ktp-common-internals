@@ -17,47 +17,36 @@
  *
  */
 
-#ifndef KTP_LOGMANAGER_H
-#define KTP_LOGMANAGER_H
+#ifndef KTP_PENDINGLOGGERENTITIES_H
+#define KTP_PENDINGLOGGERENTITIES_H
 
-#include <KTp/Logger/abstract-logger-plugin.h>
+#include <KTp/Logger/pending-logger-operation.h>
+#include <KTp/Logger/log-entity.h>
 #include <KTp/ktp-export.h>
 
 #include <TelepathyQt/Types>
 
 namespace KTp {
 
-class PendingLoggerOperation;
-class PendingLoggerDates;
-class PendingLoggerLogs;
-class PendingLoggerEntities;
-
-class KTP_EXPORT LogManager : public AbstractLoggerPlugin
+class KTP_EXPORT PendingLoggerEntities : public KTp::PendingLoggerOperation
 {
     Q_OBJECT
 
   public:
-    static KTp::LogManager* instance();
+    virtual ~PendingLoggerEntities();
 
-    KTp::PendingLoggerDates* queryDates(const Tp::AccountPtr &account,
-                                        const Tp::ContactPtr &contact);
-    KTp::PendingLoggerLogs*  queryLogs(const Tp::AccountPtr &account,
-                                       const Tp::ContactPtr &contact,
-                                       const QDate &date);
-    KTp::PendingLoggerEntities* queryEntities(const Tp::AccountPtr &account);
+    Tp::AccountPtr account() const;
+    QList<KTp::LogEntity> entities() const;
 
-    virtual ~LogManager();
+  protected:
+    explicit PendingLoggerEntities(const Tp::AccountPtr &account, QObject* parent = 0);
 
- private:
-    explicit LogManager();
+    void setEntities(const QList<KTp::LogEntity> &entities);
 
     class Private;
     Private * const d;
-
-    friend class PendingLoggerOperation;
-
 };
 
-} // namespace KTp
+}
 
-#endif // KTP_LOGMANAGER_H
+#endif // KTP_PENDINGLOGGERENTITIES_H

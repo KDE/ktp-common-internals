@@ -1,6 +1,7 @@
 set (ktploggerplugin_tplogger_SRCS
      tp-logger-plugin.cpp
      pending-tp-logger-dates.cpp
+     pending-tp-logger-entities.cpp
      pending-tp-logger-logs.cpp
 )
 

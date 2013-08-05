@@ -19,6 +19,7 @@
 
 #include "tp-logger-plugin.h"
 #include "pending-tp-logger-dates.h"
+#include "pending-tp-logger-entities.h"
 #include "pending-tp-logger-logs.h"
 
 #include <TelepathyLoggerQt4/LogManager>
@@ -45,5 +46,10 @@ KTp::PendingLoggerLogs* TpLoggerPlugin::queryLogs(const Tp::AccountPtr &account,
                                                   const QDate &date)
 {
     return new PendingTpLoggerLogs(account, contact, date, this);
+}
+
+KTp::PendingLoggerEntities* TpLoggerPlugin::queryEntities(const Tp::AccountPtr& account)
+{
+    return new PendingTpLoggerEntities(account, this);
 }
 

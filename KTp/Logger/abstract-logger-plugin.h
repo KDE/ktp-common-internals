@@ -30,6 +30,7 @@ namespace KTp {
 
 class PendingLoggerDates;
 class PendingLoggerLogs;
+class PendingLoggerEntities;
 
 class KTP_EXPORT AbstractLoggerPlugin : public QObject
 {
@@ -45,6 +46,8 @@ class KTP_EXPORT AbstractLoggerPlugin : public QObject
     virtual KTp::PendingLoggerLogs* queryLogs(const Tp::AccountPtr &account,
                                               const Tp::ContactPtr &contact,
                                               const QDate &date) = 0;
+
+    virtual KTp::PendingLoggerEntities* queryEntities(const Tp::AccountPtr &account) = 0;
 
 };
 

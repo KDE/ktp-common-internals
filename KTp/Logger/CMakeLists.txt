@@ -6,9 +6,12 @@ include_directories (${CMAKE_CURRENT_BINARY_DIR}
 
 set (ktp_logger_private_SRCS
     ${KTP_GLOBAL_SOURCES}
+    log-entity.cpp
     log-manager.cpp
     pending-logger-dates.cpp
     pending-logger-dates-impl.cpp
+    pending-logger-entities.cpp
+    pending-logger-entities-impl.cpp
     pending-logger-logs.cpp
     pending-logger-logs-impl.cpp
     pending-logger-operation.cpp
@@ -16,8 +19,10 @@ set (ktp_logger_private_SRCS
 
 set (ktp_logger_private_HDRS
     abstract-logger-plugin.h
+    log-entity.h
     log-manager.h
     pending-logger-dates.h
+    pending-logger-entities.h
     pending-logger-operation.h
 )
 

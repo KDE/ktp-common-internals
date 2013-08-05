@@ -23,6 +23,7 @@
 
 #include "pending-logger-dates-impl.h"
 #include "pending-logger-logs-impl.h"
+#include "pending-logger-entities-impl.h"
 
 #include <KGlobal>
 #include <KService>
@@ -99,5 +100,11 @@ PendingLoggerLogs* LogManager::queryLogs(const Tp::AccountPtr &account,
 {
     return new PendingLoggerLogsImpl(account, contact, date, this);
 }
+
+PendingLoggerEntities* LogManager::queryEntities(const Tp::AccountPtr& account)
+{
+    return new PendingLoggerEntitiesImpl(account, this);
+}
+
 
 using namespace KTp;
