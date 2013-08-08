@@ -45,7 +45,7 @@ class KTP_EXPORT LogEntity
     KTp::LogEntity& operator=(const KTp::LogEntity &other);
     bool operator==(const KTp::LogEntity &other);
 
-    bool isValid();
+    bool isValid() const;
     QString id() const;
     QString alias() const;
     EntityType entityType() const;

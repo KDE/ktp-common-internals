@@ -95,7 +95,7 @@ bool LogEntity::operator==(const LogEntity& other)
     return *d == *other.d;
 }
 
-bool LogEntity::isValid()
+bool LogEntity::isValid() const
 {
     return d->entityType != EntityTypeInvalid
             && !d->id.isEmpty()
