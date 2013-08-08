@@ -12,9 +12,12 @@ kde4_add_plugin (ktploggerplugin_winlogger
 
 target_link_libraries (ktploggerplugin_winlogger
     ktpcommoninternalsprivate
-    ${QT_LIBRARIES}
+    ${QT_QTCORE_LIBRARIES}
+    ${QT_QTSQL_LIBRARIES}
     ${TELEPATHY_QT4_LIBRARIES}
     ${TELEPATHY_LOGGER_QT4_LIBRARIES}
+    ktpcommoninternalsprivate
+    ktploggerprivate
 )
 
 # Install:

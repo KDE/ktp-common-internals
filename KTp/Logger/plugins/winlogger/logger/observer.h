@@ -20,23 +20,22 @@
 #ifndef HANDLER_H
 #define HANDLER_H
 
-#include <TelepathyQt/AbstractClientHandler>
+#include <TelepathyQt/AbstractClientObserver>
 
-class Handler : public QObject, public Tp::AbstractClientHandler
+class Observer : public QObject, public Tp::AbstractClientObserver
 {
     Q_OBJECT
   public:
-    Handler(const QObject *parent = 0);
-    ~Handler();
+    Observer(QObject *parent = 0);
+    ~Observer();
 
-    void handleChannels(const Tp::MethodInvocationContextPtr<> &context,
-                        const Tp::AccountPtr &account,
-                        const Tp::ConnectionPtr &connection,
-                        const QList<Tp::ChannelPtr> &channels,
-                        const QList<Tp::ChannelRequestPtr> &requestsSatisfied,
-                        const QDateTime &userActionTime,
-                        const Tp::AbstractClientHandler::HandlerInfo &handlerInfo);
-    bool bypassApproval();
+    void observeChannels(const Tp::MethodInvocationContextPtr<> &context,
+                         const Tp::AccountPtr &account,
+                         const Tp::ConnectionPtr &connection,
+                         const QList<Tp::ChannelPtr> &channels,
+                         const Tp::ChannelDispatchOperationPtr &dispatchOperation,
+                         const QList<Tp::ChannelRequestPtr> &requestsSatisfied,
+                         const ObserverInfo &observerInfo);
 };
 
 #endif // HANDLER_H

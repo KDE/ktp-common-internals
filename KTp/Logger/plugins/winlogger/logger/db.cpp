@@ -101,22 +101,150 @@ void Db::initDb()
   query.exec(QLatin1String("CREATE TABLE contacts ( "
                            "  id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, "
                            "  uid TEXT NOT NULL, "
-                           "  name TEXT NOT NULL, "
-                           "  accountId INTEGER, "
-                           "  FOREIGN KEY(accountId) REFERENCES accounts(id))"));
+                           "  name TEXT, "
+                           "  type INTEGER NOT NULL)"));
   if (query.lastError().isValid()) {
     kWarning() << query.lastError().text();
     return;
   }
 
-  query.exec(QLatin1String("CREATE TABLE logs ( "
+  query.exec(QLatin1String("CREATE TABLE messages ( "
                            "  id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, "
-                           "  datetime DATETIME, "
-                           "  contactId INTEGER, "
-                           "  message TEXT, "
-                           "  FOREIGN KEY(contactId) REFERENCES contacts(id))"));
+                           "  direction INTEGER NOT NULL, "
+                           "  datetime DATETIME NOT NULL, "
+                           "  accountId INTEGER, "
+                           "  senderId INTEGER, "
+                           "  receiverId INTEGER,"
+                           "  message TEXT NOT NULL, "
+                           "  FOREIGN KEY(senderId,receiverId) REFERENCES contacts(id),"
+                           "  FOREIGN KEY(receiverId) REFERENCES accounts(id))"));
   if (query.lastError().isValid()) {
     kWarning() << query.lastError().text();
     return;
   }
+}
+
+void Db::logMessage(const QString &accountId, const KTp::LogEntity &sender,
+                    const KTp::LogEntity &receiver, const Tp::Message &message,
+                    bool outgoing)
+{
+    int accId = getAccountId(accountId);
+    if (accId == -1) {
+        accId = storeAccount(accountId);
+    }
+
+    int senderId = getContactId(sender.id());
+    if (senderId == -1) {
+        senderId = storeContact(sender);
+    }
+
+    int receiverId = getContactId(receiver.id());
+    if (receiverId == -1) {
+        receiverId = storeContact(receiver);
+    }
+
+    storeMessage(accId, outgoing, message.sent(), senderId, receiverId,
+                 message.text());
+}
+
+int Db::getAccountId(const QString &accountUid)
+{
+    return getEntityId(QLatin1String("accounts"), accountUid);
+}
+
+int Db::getContactId(const QString &contactUid)
+{
+    return getEntityId(QLatin1String("contacts"), contactUid);
+}
+
+int Db::getEntityId(const QString &entityTable, const QString &entityUid)
+{
+    QSqlQuery query(mDb);
+    if (!query.prepare(QString::fromLatin1("SELECT id FROM %1 WHERE uid=:1").arg(entityTable))) {
+        handleError(query);
+        return -1;
+    }
+
+    query.addBindValue(entityUid);
+
+    if (!query.exec()) {
+        handleError(query);
+        return -1;
+    }
+
+    if (query.first()) {
+        return query.value(0).toInt();
+    }
+
+    return -1;
+}
+
+int Db::storeAccount(const QString &accountId)
+{
+    QSqlQuery query(mDb);
+    if (!query.prepare(QLatin1String("INSERT INTO accounts (uid) VALUES (:1)"))) {
+        handleError(query);
+        return -1;
+    }
+
+    query.addBindValue(accountId);
+
+    if (!query.exec()) {
+        handleError(query);
+        return -1;
+    }
+
+    return query.lastInsertId().toInt();
+}
+
+int Db::storeContact(const KTp::LogEntity &contact)
+{
+    QSqlQuery query(mDb);
+    if (!query.prepare(QLatin1String("INSERT INTO contacts (uid, name, type) VALUES(:1, :2, :3)"))) {
+        handleError(query);
+        return -1;
+    }
+
+    query.addBindValue(contact.id());
+    query.addBindValue(contact.alias());
+    query.addBindValue(static_cast<int>(contact.entityType()));
+
+    if (!query.exec()) {
+        handleError(query);
+        return -1;
+    }
+
+    return query.lastInsertId().toInt();
+}
+
+int Db::storeMessage(int accountId, int messageType, const QDateTime &sent,
+                     int senderId, int receiverId, const QString &messageText)
+{
+    QSqlQuery query(mDb);
+    if (!query.prepare(QLatin1String("INSERT INTO messages (direction, datetime, accountId, senderId, receiverId, message) "
+                                     "VALUES(:1, :2, :3, :4, :5, :6)"))) 
+    {
+        handleError(query);
+        return -1;
+    }
+
+    query.addBindValue(accountId);
+    query.addBindValue(messageType);
+    query.addBindValue(sent);
+    query.addBindValue(senderId);
+    query.addBindValue(receiverId);
+    query.addBindValue(messageText);
+
+    if (!query.exec()) {
+        handleError(query);
+        return -1;
+    }
+
+    return query.lastInsertId().toInt();
+}
+
+void Db::handleError(const QSqlQuery &query)
+{
+    kWarning() << "SQL ERROR:" << query.lastError().text();
+    kWarning() << "Query was: " << query.executedQuery();
 }

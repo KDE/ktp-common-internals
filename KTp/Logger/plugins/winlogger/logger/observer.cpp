@@ -17,32 +17,37 @@
  *
  */
 
-#include "handler.h"
+#include "observer.h"
+#include "logger.h"
 
-Handler::Handler(const QObject* parent):
+#include <TelepathyQt/ChannelClassSpecList>
+#include <TelepathyQt/Channel>
+
+#include <KDE/KDebug>
+
+Observer::Observer(QObject* parent):
     QObject(parent),
-    AbstractClientHandler()
+    AbstractClientObserver(Tp::ChannelClassSpecList()
+                << Tp::ChannelClassSpec::textChat()
+                << Tp::ChannelClassSpec::textChatroom())
 {
 }
 
-Handler::~Handler()
+Observer::~Observer()
 {
 }
 
-bool Handler::bypassApproval()
+void Observer::observeChannels(const Tp::MethodInvocationContextPtr<> &context,
+                               const Tp::AccountPtr &account,
+                               const Tp::ConnectionPtr &connection,
+                               const QList<Tp::ChannelPtr> &channels,
+                               const Tp::ChannelDispatchOperationPtr &dispatchOperation,
+                               const QList<Tp::ChannelRequestPtr> &requestsSatisfied,
+                               const Tp::AbstractClientObserver::ObserverInfo &observerInfo)
 {
+    Q_FOREACH (const Tp::ChannelPtr &channel, channels) {
+        new Logger(account, connection, channel);
+    }
+
+    context->setFinished();
 }
-
-void Handler::handleChannels(const Tp::MethodInvocationContextPtr<> &context,
-                             const Tp::AccountPtr &account,
-                             const Tp::ConnectionPtr &connection,
-                             const QList<Tp::ChannelPtr> &channels,
-                             const QList<Tp::ChannelRequestPtr> &requestsSatisfied,
-                             const QDateTime &userActionTime,
-                             const Tp::AbstractClientHandler::HandlerInfo &handlerInfo)
-{
-    
-}
-
-
-

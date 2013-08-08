@@ -25,11 +25,14 @@
 #include <TelepathyQt/TextChannel>
 #include <TelepathyQt/ClientRegistrar>
 
+
+#include "observer.h"
+
 int main(int argc, char **argv)
 {
     KTp::TelepathyHandlerApplication app;
 
-    Tp::SharedPtr<Handler> handler (new Handler(&app));
+    Tp::SharedPtr<Observer> handler (new Observer(&app));
 
     // Setting up the Telepathy Client Registrar
     Tp::AccountFactoryPtr accountFactory = Tp::AccountFactory::create(QDBusConnection::sessionBus());
@@ -46,7 +49,8 @@ int main(int argc, char **argv)
                                                                    connectionFactory,
                                                                    channelFactory,
                                                                    contactFactory);
-    if (!registrar->registerClient(Tp::AbstractClientPtr(handler), "KTp.WinLogger")) {
+
+    if (!registrar->registerClient(Tp::AbstractClientPtr(handler), QLatin1String("KTp.WinLogger"))) {
         return 1;
     }
 

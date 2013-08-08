@@ -1,6 +1,7 @@
 set(ktpwinlogger_SRCS
     main.cpp
-    handler.cpp
+    observer.cpp
+    logger.cpp
     db.cpp
 )
 
@@ -10,10 +11,14 @@ kde4_add_executable (ktpwinlogger
 
 target_link_libraries(ktpwinlogger
                       ${QT_QTCORE_LIBRARY}
+                      ${QT_QTGUI_LIBRARY}
                       ${QT_QTDBUS_LIBRARY}
+                      ${QT_QTSQL_LIBRARY}
                       ${KDE4_KDECORE_LIBS}
                       ${TELEPATHY_QT4_LIBRARIES}
                       ${KTP_LIBRARIES}
+                      ktploggerprivate
+                      ktpcommoninternalsprivate
 )
 
 configure_file(org.freedesktop.Telepathy.Client.KTp.WinLogger.service.in

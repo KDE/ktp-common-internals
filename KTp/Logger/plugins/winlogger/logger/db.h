@@ -19,7 +19,14 @@
 
 #ifndef DB_H
 #define DB_H
+
 #include <QtSql/QSqlDatabase>
+
+#include <KTp/Logger/log-entity.h>
+
+#include <TelepathyQt/Message>
+
+class QSqlQuery;
 
 class Db
 {
@@ -32,11 +39,28 @@ class Db
 
     bool checkDb();
 
+    void logMessage(const QString &accountId,
+                    const KTp::LogEntity &sender,
+                    const KTp::LogEntity &receiver,
+                    const Tp::Message &message,
+                    bool outgoing);
+
+    int getAccountId(const QString &accountUid);
+    int storeAccount(const QString &accountUid);
+    int getContactId(const QString &contactUid);
+    int storeContact(const KTp::LogEntity &contact);
+
+    int storeMessage(int accountId, int messageType, const QDateTime &sent,
+                     int senderId, int receiverId, const QString &messageText);
+
   private:
     static Db *s_instance;
     Db();
 
     void initDb();
+    void handleError(const QSqlQuery &query);
+
+    int getEntityId(const QString &entityTable, const QString &entityUid);
 
     QSqlDatabase mDb;
 };

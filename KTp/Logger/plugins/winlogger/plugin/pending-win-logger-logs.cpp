@@ -49,7 +49,7 @@ PendingWinLoggerLogs::~PendingWinLoggerLogs()
 QList<KTp::LogMessage> PendingWinLoggerLogs::runQuery()
 {
     QSqlQuery query(mDb);
-    if (!query.prepare(QLatin1String("SELECT logs.datetime, logs.message, contacts.uid, contacts.name FROM logs "
+    if (!query.prepare(QLatin1String("SELECT logs.datetime, logs.message, contacts.type, contacts.uid, contacts.name FROM logs "
                                      "LEFT JOIN contacts ON logs.contactId = contacts.id "
                                      "LEFT JOIN accounts ON contacts.accountId = accounts.id "
                                      "WHERE accounts.uid = ? AND contacts.uid = ?"
@@ -70,8 +70,9 @@ QList<KTp::LogMessage> PendingWinLoggerLogs::runQuery()
 
     QList<KTp::LogMessage> messages;
     while (query.next()) {
-        KTp::LogEntity entity(query.value(2).toString(),
-                              query.value(3).toString());
+        KTp::LogEntity entity(static_cast<KTp::LogEntity::EntityType>(query.value(2).toInt()),
+                              query.value(3).toString(),
+                              query.value(4).toString());
         KTp::LogMessage message(entity, account(), query.value(0).toDateTime(),
                              query.value(1).toString());
 
