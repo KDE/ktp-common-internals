@@ -46,6 +46,17 @@ class LogEntity::Private: public QSharedData
     {
     }
 
+    ~Private()
+    {
+    }
+
+    bool operator==(const Private &other)
+    {
+        return entityType == other.entityType
+                && id == other.id
+                && alias == other.alias;
+    }
+
     EntityType entityType;
     QString id;
     QString alias;
@@ -72,7 +83,7 @@ LogEntity::~LogEntity()
 
 LogEntity& LogEntity::operator=(const LogEntity& other)
 {
-    if (d != other.d) {
+    if (this != &other) {
         d = other.d;
     }
 
@@ -81,7 +92,7 @@ LogEntity& LogEntity::operator=(const LogEntity& other)
 
 bool LogEntity::operator==(const LogEntity& other)
 {
-    return d->id == other.d->id && d->alias == other.d->alias;
+    return *d == *other.d;
 }
 
 bool LogEntity::isValid()

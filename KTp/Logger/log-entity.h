@@ -36,10 +36,10 @@ class KTP_EXPORT LogEntity
         EntityTypeRoom
     };
 
-    explicit LogEntity(EntityType entityType, const QString &id,
-                       const QString &alias = QString());
+    explicit LogEntity();
+    LogEntity(EntityType entityType, const QString &id,
+              const QString &alias = QString());
     LogEntity(const KTp::LogEntity &other);
-    LogEntity();
     ~LogEntity();
 
     KTp::LogEntity& operator=(const KTp::LogEntity &other);
