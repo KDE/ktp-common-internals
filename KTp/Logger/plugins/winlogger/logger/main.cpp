@@ -47,15 +47,22 @@ int main(int argc, char **argv)
 
     // Setting up the Telepathy Client Registrar
     Tp::AccountFactoryPtr accountFactory = Tp::AccountFactory::create(QDBusConnection::sessionBus());
+
     Tp::ConnectionFactoryPtr  connectionFactory = Tp::ConnectionFactory::create(QDBusConnection::sessionBus());
+    connectionFactory->addFeature(Tp::Connection::FeatureSelfContact);
+
     Tp::ChannelFactoryPtr channelFactory = Tp::ChannelFactory::create(QDBusConnection::sessionBus());
     channelFactory->addCommonFeatures(Tp::Channel::FeatureCore);
     channelFactory->addFeaturesForTextChatrooms(Tp::TextChannel::FeatureCore);
     channelFactory->addFeaturesForTextChatrooms(Tp::TextChannel::FeatureMessageQueue);
+    channelFactory->addFeaturesForTextChatrooms(Tp::TextChannel::FeatureMessageSentSignal);
     channelFactory->addFeaturesForTextChats(Tp::TextChannel::FeatureCore);
     channelFactory->addFeaturesForTextChats(Tp::TextChannel::FeatureMessageQueue);
+    channelFactory->addFeaturesForTextChats(Tp::TextChannel::FeatureMessageSentSignal);
 
     Tp::ContactFactoryPtr contactFactory = Tp::ContactFactory::create();
+    contactFactory->addFeature(Tp::Contact::FeatureAlias);
+
     Tp::ClientRegistrarPtr registrar = Tp::ClientRegistrar::create(accountFactory,
                                                                    connectionFactory,
                                                                    channelFactory,
