@@ -39,7 +39,7 @@ class KTP_EXPORT PendingLoggerOperation : public QObject
     QString error() const;
 
   Q_SIGNALS:
-    void finished(PendingLoggerOperation *self);
+    void finished(KTp::PendingLoggerOperation *self);
 
   protected:
     explicit PendingLoggerOperation(QObject *parent = 0);
