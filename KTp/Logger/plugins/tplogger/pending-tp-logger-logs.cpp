@@ -27,19 +27,19 @@
 #include <KTp/message-processor.h>
 
 PendingTpLoggerLogs::PendingTpLoggerLogs(const Tp::AccountPtr &account,
-                                         const Tp::ContactPtr &contact,
+                                         const KTp::LogEntity &entity,
                                          const QDate &date,
                                          QObject *parent):
-    PendingLoggerLogs(account, contact, date, parent)
+    PendingLoggerLogs(account, entity, date, parent)
 {
-    // FIXME: Handle rooms
-    Tpl::EntityPtr entity = Tpl::Entity::create(contact->id().toLatin1().constData(),
-                                                Tpl::EntityTypeContact,
-                                                contact->alias().toLatin1().constData(),
-                                                0);
+    Tpl::EntityPtr tplEntity = Tpl::Entity::create(
+                    entity.id().toLatin1().constData(),
+                    entity.entityType() == KTp::LogEntity::EntityTypeContact ?
+                        Tpl::EntityTypeContact : Tpl::EntityTypeRoom,
+                    entity.alias().toLatin1().constData(), 0);
 
     Tpl::LogManagerPtr manager = Tpl::LogManager::instance();
-    Tpl::PendingEvents *events = manager->queryEvents(account, entity, Tpl::EventTypeMaskText, date);
+    Tpl::PendingEvents *events = manager->queryEvents(account, tplEntity, Tpl::EventTypeMaskText, date);
     connect(events, SIGNAL(finished(Tpl::PendingOperation*)),
             this, SLOT(logsRetrieved(Tpl::PendingOperation*)));
 }

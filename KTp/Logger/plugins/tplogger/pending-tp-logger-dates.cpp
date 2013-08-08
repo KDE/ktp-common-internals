@@ -18,6 +18,7 @@
  */
 
 #include "pending-tp-logger-dates.h"
+#include "log-entity.h"
 
 #include <TelepathyLoggerQt4/LogManager>
 #include <TelepathyLoggerQt4/Entity>
@@ -25,18 +26,18 @@
 #include <TelepathyQt/Contact>
 
 PendingTpLoggerDates::PendingTpLoggerDates(const Tp::AccountPtr &account,
-                                           const Tp::ContactPtr &contact,
+                                           const KTp::LogEntity &entity,
                                            QObject *parent):
-    PendingLoggerDates(account, contact, parent)
+    PendingLoggerDates(account, entity, parent)
 {
-    // FIXME: Handle rooms
-    Tpl::EntityPtr entity = Tpl::Entity::create(contact->id().toLatin1().constData(),
-                                                Tpl::EntityTypeContact,
-                                                contact->alias().toLatin1().constData(),
-                                                0);
+    Tpl::EntityPtr tplEntity = Tpl::Entity::create(
+                entity.id().toLatin1().constData(),
+                entity.entityType() == KTp::LogEntity::EntityTypeContact ? 
+                        Tpl::EntityTypeContact : Tpl::EntityTypeRoom,
+                entity.alias().toLatin1().constData(), 0);
 
     Tpl::LogManagerPtr manager = Tpl::LogManager::instance();
-    Tpl::PendingDates *dates = manager->queryDates(account, entity, Tpl::EventTypeMaskText);
+    Tpl::PendingDates *dates = manager->queryDates(account, tplEntity, Tpl::EventTypeMaskText);
     connect(dates, SIGNAL(finished(Tpl::PendingOperation*)),
             this, SLOT(datesRetrieved(Tpl::PendingOperation*)));
 }

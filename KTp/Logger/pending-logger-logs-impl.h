@@ -28,7 +28,7 @@ class PendingLoggerLogsImpl : public KTp::PendingLoggerLogs
 
   public:
     explicit PendingLoggerLogsImpl(const Tp::AccountPtr &account,
-                                   const Tp::ContactPtr &contact,
+                                   const KTp::LogEntity &entity,
                                    const QDate &date,
                                    QObject *parent = 0);
     virtual ~PendingLoggerLogsImpl();

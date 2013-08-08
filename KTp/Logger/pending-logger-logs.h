@@ -36,14 +36,14 @@ class KTP_EXPORT PendingLoggerLogs : public KTp::PendingLoggerOperation
     virtual ~PendingLoggerLogs();
 
     Tp::AccountPtr account() const;
-    Tp::ContactPtr contact() const;
+    KTp::LogEntity entity() const;
     QDate date() const;
     QList<KTp::LogMessage> logs() const;
 
 
   protected:
     explicit PendingLoggerLogs(const Tp::AccountPtr &account,
-                               const Tp::ContactPtr &contact,
+                               const KTp::LogEntity &entity,
                                const QDate &date,
                                QObject* parent = 0);
 

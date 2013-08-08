@@ -27,6 +27,8 @@
 
 namespace KTp {
 
+class LogEntity;
+
 class PendingLoggerOperation;
 class PendingLoggerDates;
 class PendingLoggerLogs;
@@ -40,9 +42,9 @@ class KTP_EXPORT LogManager : public AbstractLoggerPlugin
     static KTp::LogManager* instance();
 
     KTp::PendingLoggerDates* queryDates(const Tp::AccountPtr &account,
-                                        const Tp::ContactPtr &contact);
+                                        const KTp::LogEntity &entity);
     KTp::PendingLoggerLogs*  queryLogs(const Tp::AccountPtr &account,
-                                       const Tp::ContactPtr &contact,
+                                       const KTp::LogEntity &entity,
                                        const QDate &date);
     KTp::PendingLoggerEntities* queryEntities(const Tp::AccountPtr &account);
 

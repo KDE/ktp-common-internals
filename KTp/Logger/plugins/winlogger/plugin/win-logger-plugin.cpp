@@ -41,13 +41,13 @@ WinLogger::~WinLogger()
 }
 
 KTp::PendingLoggerDates* WinLogger::queryDates(const Tp::AccountPtr &account,
-                                               const Tp::ContactPtr &contact)
+                                               const KTp::LogEntity &entity)
 {
     if (!mDb.isOpen()) {
         return 0;
     }
 
-    return new PendingWinLoggerDates(account, contact, mDb, this);
+    return new PendingWinLoggerDates(account, entity, mDb, this);
 }
 
 KTp::PendingLoggerEntities* WinLogger::queryEntities(const Tp::AccountPtr &account)
@@ -60,13 +60,13 @@ KTp::PendingLoggerEntities* WinLogger::queryEntities(const Tp::AccountPtr &accou
 }
 
 KTp::PendingLoggerLogs* WinLogger::queryLogs(const Tp::AccountPtr &account,
-                                             const Tp::ContactPtr &contact,
+                                             const KTp::LogEntity &entity,
                                              const QDate &date)
 {
     if (!mDb.isOpen()) {
         return 0;
     }
 
-    return new PendingWinLoggerLogs(account, contact, date, mDb, this);
+    return new PendingWinLoggerLogs(account, entity, date, mDb, this);
 }
 

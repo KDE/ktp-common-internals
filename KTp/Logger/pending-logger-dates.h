@@ -27,6 +27,8 @@
 
 namespace KTp {
 
+class LogEntity;
+
 class KTP_EXPORT PendingLoggerDates : public KTp::PendingLoggerOperation
 {
     Q_OBJECT
@@ -35,12 +37,12 @@ class KTP_EXPORT PendingLoggerDates : public KTp::PendingLoggerOperation
     virtual ~PendingLoggerDates();
 
     Tp::AccountPtr account() const;
-    Tp::ContactPtr contact() const;
+    KTp::LogEntity entity() const;
     QList<QDate> dates() const;
 
   protected:
     explicit PendingLoggerDates(const Tp::AccountPtr &account,
-                                const Tp::ContactPtr &contact,
+                                const KTp::LogEntity &entity,
                                 QObject *parent = 0);
 
     void setDates(const QList<QDate> &dates);

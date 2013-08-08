@@ -32,7 +32,7 @@ class PendingTpLoggerLogs : public KTp::PendingLoggerLogs
 
   public:
     explicit PendingTpLoggerLogs(const Tp::AccountPtr &account,
-                                 const Tp::ContactPtr &contact,
+                                 const KTp::LogEntity &entity,
                                  const QDate &date,
                                  QObject *parent = 0);
     virtual ~PendingTpLoggerLogs();

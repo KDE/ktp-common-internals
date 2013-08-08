@@ -24,25 +24,25 @@ using namespace KTp;
 class PendingLoggerLogs::Private
 {
   public:
-    Private(const Tp::AccountPtr &account_, const Tp::ContactPtr &contact_, const QDate &date_):
+    Private(const Tp::AccountPtr &account_, const KTp::LogEntity &entity_, const QDate &date_):
         account(account_),
-        contact(contact_),
+        entity(entity_),
         date(date_)
     {
     }
 
     Tp::AccountPtr account;
-    Tp::ContactPtr contact;
+    KTp::LogEntity entity;
     QDate date;
     QList<KTp::LogMessage> logs;
 };
 
 PendingLoggerLogs::PendingLoggerLogs(const Tp::AccountPtr &account,
-                                     const Tp::ContactPtr &contact,
+                                     const KTp::LogEntity &entity,
                                      const QDate &date,
                                      QObject* parent):
     PendingLoggerOperation(parent),
-    d(new Private(account, contact, date))
+    d(new Private(account, entity, date))
 {
 }
 
@@ -56,9 +56,9 @@ Tp::AccountPtr PendingLoggerLogs::account() const
     return d->account;
 }
 
-Tp::ContactPtr PendingLoggerLogs::contact() const
+LogEntity PendingLoggerLogs::entity() const
 {
-    return d->contact;
+    return d->entity;
 }
 
 QDate PendingLoggerLogs::date() const

@@ -29,9 +29,9 @@ class TpLoggerPlugin : public KTp::AbstractLoggerPlugin
     virtual ~TpLoggerPlugin();
 
     KTp::PendingLoggerDates* queryDates(const Tp::AccountPtr &account,
-                                        const Tp::ContactPtr &contact);
+                                        const KTp::LogEntity &entity);
     KTp::PendingLoggerLogs* queryLogs(const Tp::AccountPtr &account,
-                                      const Tp::ContactPtr &contact,
+                                      const KTp::LogEntity &entity,
                                       const QDate &date);
     KTp::PendingLoggerEntities* queryEntities(const Tp::AccountPtr& account);
 };

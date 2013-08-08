@@ -28,11 +28,11 @@
 #include <QtSql/QSqlError>
 
 PendingWinLoggerLogs::PendingWinLoggerLogs(const Tp::AccountPtr &account,
-                                           const Tp::ContactPtr &contact,
+                                           const KTp::LogEntity &entity,
                                            const QDate &date,
                                            const QSqlDatabase &db,
                                            QObject *parent): 
-    PendingLoggerLogs(account, contact, date, parent),
+    PendingLoggerLogs(account, entity, date, parent),
     mDb(db)
 {
     QFuture<QList<KTp::LogMessage> > future = QtConcurrent::run(this, &PendingWinLoggerLogs::runQuery);
@@ -49,17 +49,19 @@ PendingWinLoggerLogs::~PendingWinLoggerLogs()
 QList<KTp::LogMessage> PendingWinLoggerLogs::runQuery()
 {
     QSqlQuery query(mDb);
-    if (!query.prepare(QLatin1String("SELECT logs.datetime, logs.message, contacts.type, contacts.uid, contacts.name FROM logs "
+    if (!query.prepare(QLatin1String("SELECT logs.datetime, logs.message, "
+                                     "        contacts.type, contacts.uid, contacts.name "
+                                     "FROM logs "
                                      "LEFT JOIN contacts ON logs.contactId = contacts.id "
                                      "LEFT JOIN accounts ON contacts.accountId = accounts.id "
-                                     "WHERE accounts.uid = ? AND contacts.uid = ?"
-                                     "AND logs.datetime >= ? AND logs.datetime <= ?"))) {
+                                     "WHERE accounts.uid = :1 AND contacts.uid = :2"
+                                     "AND logs.datetime >= :3 AND logs.datetime <= :4"))) {
         kWarning() << query.lastError().text();
         return QList<KTp::LogMessage>();
     }
 
     query.addBindValue(account()->uniqueIdentifier());
-    query.addBindValue(contact()->id());
+    query.addBindValue(entity().id());
     query.addBindValue(QDateTime(date()));
     query.addBindValue(QDateTime(date(), QTime(23, 59, 59)));
 

@@ -18,6 +18,7 @@
  */
 
 #include "pending-win-logger-dates.h"
+#include "log-entity.h"
 
 #include <QtSql/QSqlQuery>
 #include <QtSql/QSqlError>
@@ -27,10 +28,10 @@
 #include <KDebug>
 
 PendingWinLoggerDates::PendingWinLoggerDates(const Tp::AccountPtr &account,
-                                             const Tp::ContactPtr &contact,
+                                             const KTp::LogEntity &entity,
                                              const QSqlDatabase &db,
                                              QObject *parent):
-    PendingLoggerDates(account, contact, parent),
+    PendingLoggerDates(account, entity, parent),
     mDb(db)
 {
     QFuture<QList<QDate> > future = QtConcurrent::run(this, &PendingWinLoggerDates::runQuery);
@@ -56,7 +57,7 @@ QList<QDate> PendingWinLoggerDates::runQuery()
     }
 
     query.addBindValue(account()->uniqueIdentifier());
-    query.addBindValue(contact()->id());
+    query.addBindValue(entity().id());
 
     if (!query.exec()) {
         kWarning() << query.lastError().text();

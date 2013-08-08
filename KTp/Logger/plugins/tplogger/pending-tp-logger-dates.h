@@ -32,7 +32,7 @@ class PendingTpLoggerDates : public KTp::PendingLoggerDates
 
   public:
     explicit PendingTpLoggerDates(const Tp::AccountPtr &account,
-                                  const Tp::ContactPtr &contact,
+                                  const KTp::LogEntity &entity,
                                   QObject *parent = 0);
     virtual ~PendingTpLoggerDates();
 

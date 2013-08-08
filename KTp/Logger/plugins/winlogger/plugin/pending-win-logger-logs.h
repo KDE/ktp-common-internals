@@ -30,7 +30,7 @@ class PendingWinLoggerLogs : public KTp::PendingLoggerLogs
 
   public:
     explicit PendingWinLoggerLogs(const Tp::AccountPtr &account,
-                                  const Tp::ContactPtr &contact,
+                                  const KTp::LogEntity &entity,
                                   const QDate &date,
                                   const QSqlDatabase &db,
                                   QObject* parent = 0);

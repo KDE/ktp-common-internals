@@ -29,7 +29,7 @@ class PendingWinLoggerDates : public KTp::PendingLoggerDates
 
   public:
     explicit PendingWinLoggerDates(const Tp::AccountPtr &account,
-                                   const Tp::ContactPtr &contact,
+                                   const KTp::LogEntity &entity,
                                    const QSqlDatabase &db,
                                    QObject* parent = 0);
     virtual ~PendingWinLoggerDates();

@@ -20,6 +20,7 @@
 #include "log-manager.h"
 #include "log-manager-private.h"
 #include "abstract-logger-plugin.h"
+#include "log-entity.h"
 
 #include "pending-logger-dates-impl.h"
 #include "pending-logger-logs-impl.h"
@@ -89,16 +90,16 @@ LogManager::~LogManager()
 }
 
 PendingLoggerDates* LogManager::queryDates(const Tp::AccountPtr &account,
-                                           const Tp::ContactPtr &contact)
+                                           const KTp::LogEntity &entity)
 {
-    return new PendingLoggerDatesImpl(account, contact, this);
+    return new PendingLoggerDatesImpl(account, entity, this);
 }
 
 PendingLoggerLogs* LogManager::queryLogs(const Tp::AccountPtr &account,
-                                         const Tp::ContactPtr &contact,
+                                         const KTp::LogEntity &entity,
                                          const QDate &date)
 {
-    return new PendingLoggerLogsImpl(account, contact, date, this);
+    return new PendingLoggerLogsImpl(account, entity, date, this);
 }
 
 PendingLoggerEntities* LogManager::queryEntities(const Tp::AccountPtr& account)

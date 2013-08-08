@@ -21,17 +21,17 @@
 #include "abstract-logger-plugin.h"
 
 PendingLoggerLogsImpl::PendingLoggerLogsImpl(const Tp::AccountPtr &account,
-                                             const Tp::ContactPtr &contact,
+                                             const KTp::LogEntity &entity,
                                              const QDate &date,
                                              QObject* parent):
-    PendingLoggerLogs(account, contact, date, parent)
+    PendingLoggerLogs(account, entity, date, parent)
 {
     Q_FOREACH (KTp::AbstractLoggerPlugin *plugin, plugins()) {
         if (!plugin->handlesAccount(account)) {
             continue;
         }
 
-        PendingLoggerOperation *op = plugin->queryLogs(account, contact, date);
+        PendingLoggerOperation *op = plugin->queryLogs(account, entity, date);
         if (!op) {
             continue;
         }

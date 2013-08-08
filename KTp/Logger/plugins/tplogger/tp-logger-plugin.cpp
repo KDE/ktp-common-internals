@@ -36,16 +36,16 @@ TpLoggerPlugin::~TpLoggerPlugin()
 }
 
 KTp::PendingLoggerDates* TpLoggerPlugin::queryDates(const Tp::AccountPtr &account,
-                                                    const Tp::ContactPtr &contact)
+                                                    const KTp::LogEntity &entity)
 {
-    return new PendingTpLoggerDates(account, contact, this);
+    return new PendingTpLoggerDates(account, entity, this);
 }
 
 KTp::PendingLoggerLogs* TpLoggerPlugin::queryLogs(const Tp::AccountPtr &account,
-                                                  const Tp::ContactPtr &contact,
+                                                  const KTp::LogEntity &entity,
                                                   const QDate &date)
 {
-    return new PendingTpLoggerLogs(account, contact, date, this);
+    return new PendingTpLoggerLogs(account, entity, date, this);
 }
 
 KTp::PendingLoggerEntities* TpLoggerPlugin::queryEntities(const Tp::AccountPtr& account)

@@ -19,6 +19,7 @@
 
 #include "pending-logger-dates.h"
 #include "abstract-logger-plugin.h"
+#include "log-entity.h"
 
 #include <TelepathyQt/Account>
 #include <TelepathyQt/Contact>
@@ -28,22 +29,22 @@ using namespace KTp;
 class PendingLoggerDates::Private
 {
   public:
-    Private(const Tp::AccountPtr &account_, const Tp::ContactPtr &contact_):
+    Private(const Tp::AccountPtr &account_, const KTp::LogEntity &entity_):
         account(account_),
-        contact(contact_)
+        entity(entity_)
     {
     }
 
     Tp::AccountPtr account;
-    Tp::ContactPtr contact;
+    KTp::LogEntity entity;
     QList<QDate> dates;
 };
 
 PendingLoggerDates::PendingLoggerDates(const Tp::AccountPtr &account,
-                                       const Tp::ContactPtr &contact,
+                                       const KTp::LogEntity &entity,
                                        QObject *parent) :
     PendingLoggerOperation(parent),
-    d(new Private(account, contact))
+    d(new Private(account, entity))
 {
 }
 
@@ -67,7 +68,7 @@ Tp::AccountPtr PendingLoggerDates::account() const
     return d->account;
 }
 
-Tp::ContactPtr PendingLoggerDates::contact() const
+LogEntity PendingLoggerDates::entity() const
 {
-    return d->contact;
+    return d->entity;
 }
