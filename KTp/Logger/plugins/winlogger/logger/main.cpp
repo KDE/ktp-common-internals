@@ -25,11 +25,22 @@
 #include <TelepathyQt/TextChannel>
 #include <TelepathyQt/ClientRegistrar>
 
+#include <KAboutData>
+#include <KCmdLineArgs>
 
 #include "observer.h"
+#include "db.h"
+#include "version.h"
 
 int main(int argc, char **argv)
 {
+    KAboutData aboutData("ktpwinlogger", 0,
+                         ki18n("KDE Telepathy Logger for Windows"),
+                         KTP_VERSION);
+    aboutData.addAuthor(ki18n("Daniel Vrátil"), ki18n("Developer"), "dvrati@redhat.com");
+    aboutData.setProductName("telepathy/winlogger");
+
+    KCmdLineArgs::init(argc, argv, &aboutData);
     KTp::TelepathyHandlerApplication app;
 
     Tp::SharedPtr<Observer> handler (new Observer(&app));
