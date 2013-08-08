@@ -46,6 +46,11 @@ Logger::Logger(const Tp::AccountPtr &account,
             this, SLOT(onMessageReceived(Tp::ReceivedMessage)));
     connect(mChannel.constData(), SIGNAL(messageSent(Tp::Message,Tp::MessageSendingFlags,QString)),
             this, SLOT(onMessageSent(Tp::Message,Tp::MessageSendingFlags,QString)));
+
+    // Store pending messages
+    Q_FOREACH (const Tp::ReceivedMessage &msg, mChannel->messageQueue()) {
+        onMessageReceived(msg);
+    }
 }
 
 Logger::~Logger()
