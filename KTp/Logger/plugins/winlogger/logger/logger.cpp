@@ -34,7 +34,11 @@ Logger::Logger(const Tp::AccountPtr &account,
     mConnection(connection),
     mChannel(Tp::TextChannelPtr::dynamicCast<Tp::Channel>(channel))
 {
-    kDebug() << "Logging channel" << channel << "to" << channel->targetId();
+    kDebug() << "Logging channel" << channel.constData() << "to" << channel->targetId();
+
+    mLocalEntity = KTp::LogEntity(KTp::LogEntity::EntityTypeContact,
+                                  mConnection->selfContact()->id(),
+                                  mConnection->selfContact()->alias());
 
     connect(mChannel.constData(), SIGNAL(invalidated(Tp::DBusProxy*,QString,QString)),
             this, SLOT(onChannelInvalidated(Tp::DBusProxy*,QString,QString)));
@@ -51,7 +55,7 @@ Logger::~Logger()
 void Logger::onChannelInvalidated(Tp::DBusProxy *dbusProxy, const QString &errorName,
                                   const QString &errorMessage)
 {
-    kDebug() << "Channel" << mChannel << "invalidated";
+    kDebug() << "Channel" << mChannel.constData() << "invalidated";
     kDebug() << "Error:" << errorName;
     kDebug() << "Error message:" << errorMessage;
 
@@ -60,6 +64,7 @@ void Logger::onChannelInvalidated(Tp::DBusProxy *dbusProxy, const QString &error
 
 void Logger::onMessageReceived(const Tp::ReceivedMessage &message)
 {
+    kDebug() << "Received message from" << remoteEntity().id();
     Db::instance()->logMessage(mAccount->uniqueIdentifier(),
                                remoteEntity(), mLocalEntity,
                                message, false);
@@ -68,6 +73,7 @@ void Logger::onMessageReceived(const Tp::ReceivedMessage &message)
 void Logger::onMessageSent(const Tp::Message &message, Tp::MessageSendingFlags flags,
                            const QString &sentMessageToken)
 {
+    kDebug() << "Sent message to" << remoteEntity().id();
     Db::instance()->logMessage(mAccount->uniqueIdentifier(),
                                mLocalEntity, remoteEntity(),
                                message, true);
@@ -82,7 +88,7 @@ KTp::LogEntity Logger::remoteEntity() const
             mChannel->targetContact()->alias());
     } else if (mChannel->targetHandleType() == Tp::HandleTypeRoom) {
         return KTp::LogEntity(KTp::LogEntity::EntityTypeRoom,
-                                mChannel->targetId());
+                              mChannel->targetId());
     }
 
     qWarning() << "Invalid channel target handle" << mChannel->targetId();
