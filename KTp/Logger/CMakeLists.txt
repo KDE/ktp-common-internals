@@ -56,5 +56,9 @@ install (FILES ${ktp_logger_private_HDRS}
          DESTINATION ${INCLUDE_INSTALL_DIR}/KTp/Logger
 )
 
+install(FILES ktp_logger_plugin.desktop
+        DESTINATION ${SERVICETYPES_INSTALL_DIR}
+)
+
 
 add_subdirectory(plugins)
