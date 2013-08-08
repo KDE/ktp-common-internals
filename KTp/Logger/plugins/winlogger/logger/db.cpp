@@ -242,9 +242,9 @@ int Db::storeMessage(int accountId, int messageType, const QDateTime &sent,
         return -1;
     }
 
-    query.addBindValue(accountId);
     query.addBindValue(messageType);
-    query.addBindValue(sent);
+    query.addBindValue(sent.isValid() ? sent : QDateTime::currentDateTime());
+    query.addBindValue(accountId);
     query.addBindValue(senderId);
     query.addBindValue(receiverId);
     query.addBindValue(messageText);
