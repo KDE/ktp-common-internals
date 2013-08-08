@@ -34,7 +34,7 @@ PendingLoggerEntitiesImpl::PendingLoggerEntitiesImpl(const Tp::AccountPtr &accou
             continue;
         }
 
-        connect(op, SIGNAL(finished(PendingLoggerOperation*)),
+        connect(op, SIGNAL(finished(KTp::PendingLoggerOperation*)),
                 this, SLOT(operationFinished(KTp::PendingLoggerOperation*)));
         mRunningOps << op;
     }
