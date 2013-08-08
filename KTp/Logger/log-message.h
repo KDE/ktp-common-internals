@@ -22,6 +22,7 @@
 
 #include <KTp/message.h>
 #include <KTp/Logger/log-entity.h>
+#include <KTp/ktp-export.h>
 
 namespace KTp {
 
@@ -29,7 +30,7 @@ namespace KTp {
  * TODO: This is not nice; we are just workarounding the fact, that KTp::Message
  *       has a protected constructor and we have no other access to KTp::MessagePrivate
  */
-class LogMessage : public KTp::Message
+class KTP_EXPORT LogMessage : public KTp::Message
 {
   public:
     explicit LogMessage(const KTp::LogEntity &from, const Tp::AccountPtr &account,

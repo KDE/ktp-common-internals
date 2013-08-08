@@ -23,9 +23,11 @@
 #include <QSharedDataPointer>
 #include <QString>
 
+#include <KTp/ktp-export.h>
+
 namespace KTp {
 
-class LogEntity
+class KTP_EXPORT LogEntity
 {
   public:
     enum EntityType {
