@@ -72,5 +72,17 @@ int main(int argc, char **argv)
         return 1;
     }
 
+    if (!Db::instance()->openDb().isValid()) {
+        return 2;
+    }
+
+    Db::instance()->checkDb();
+
     app.exec();
+
+    Db::instance()->closeDb();
+
+    // FIXME: Should we destroy all Loggers?
+
+    return 0;
 }
