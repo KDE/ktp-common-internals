@@ -45,6 +45,10 @@ void Observer::observeChannels(const Tp::MethodInvocationContextPtr<> &context,
                                const QList<Tp::ChannelRequestPtr> &requestsSatisfied,
                                const Tp::AbstractClientObserver::ObserverInfo &observerInfo)
 {
+    Q_UNUSED(dispatchOperation);
+    Q_UNUSED(requestsSatisfied);
+    Q_UNUSED(observerInfo);
+
     Q_FOREACH (const Tp::ChannelPtr &channel, channels) {
         new Logger(account, connection, channel);
     }
