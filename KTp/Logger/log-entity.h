@@ -28,7 +28,14 @@ namespace KTp {
 class LogEntity
 {
   public:
-    explicit LogEntity(const QString &id, const QString &alias);
+    enum EntityType {
+        EntityTypeInvalid,
+        EntityTypeContact,
+        EntityTypeRoom
+    };
+
+    explicit LogEntity(EntityType entityType, const QString &id,
+                       const QString &alias = QString());
     LogEntity(const KTp::LogEntity &other);
     LogEntity();
     ~LogEntity();
@@ -39,6 +46,7 @@ class LogEntity
     bool isValid();
     QString id() const;
     QString alias() const;
+    EntityType entityType() const;
 
   private:
     class Private;
