@@ -26,6 +26,7 @@ set (ktp_logger_private_HDRS
     log-message.h
     pending-logger-dates.h
     pending-logger-entities.h
+    pending-logger-logs.h
     pending-logger-operation.h
 )
 
