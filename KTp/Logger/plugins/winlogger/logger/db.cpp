@@ -78,50 +78,64 @@ void Db::closeDb()
 bool Db::checkDb()
 {
     QStringList tables = mDb.tables(QSql::AllTables);
-    if (tables.isEmpty()) {
-        initDb();
-        return false;
+    kDebug() << "Found tables" << tables;
+    if (!tables.contains(QLatin1String("accounts"))
+            || !tables.contains(QLatin1String("contacts"))
+            || !tables.contains(QLatin1String("messages")))
+    {
+        kDebug() << "Database does not exist or broken";
+        return initDb();
     }
 
     return true;
 }
 
-void Db::initDb()
+bool Db::initDb()
 {
     QSqlQuery query(mDb);
+    query.exec(QLatin1String("DROP TABLE IF EXISTS accounts"));
+    query.exec(QLatin1String("DROP TABLE IF EXISTS contacts"));
+    query.exec(QLatin1String("DROP TABLE IF EXISTS messages"));
 
-  query.exec(QLatin1String("CREATE TABLE accounts ( "
-                           "  id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, "
-                           "  uid TEXT NOT NULL)"));
-  if (query.lastError().isValid()) {
-    kWarning() << query.lastError().text();
-    return;
-  }
+    query.exec(QLatin1String("CREATE TABLE accounts ( "
+                            "  id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, "
+                            "  uid TEXT NOT NULL)"));
+    if (query.lastError().isValid()) {
+        kWarning() << query.lastError().text();
+        return false;
+    }
+    kDebug() << "Created table 'accounts'";
 
-  query.exec(QLatin1String("CREATE TABLE contacts ( "
-                           "  id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, "
-                           "  uid TEXT NOT NULL, "
-                           "  name TEXT, "
-                           "  type INTEGER NOT NULL)"));
-  if (query.lastError().isValid()) {
-    kWarning() << query.lastError().text();
-    return;
-  }
+    query.exec(QLatin1String("CREATE TABLE contacts ( "
+                            "  id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, "
+                            "  uid TEXT NOT NULL, "
+                            "  name TEXT NULL, "
+                            "  type INTEGER NOT NULL)"));
+    if (query.lastError().isValid()) {
+        kWarning() << query.lastError().text();
+        return false;
+    }
+    kDebug() << "Created table 'contacts'";
 
-  query.exec(QLatin1String("CREATE TABLE messages ( "
-                           "  id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, "
-                           "  direction INTEGER NOT NULL, "
-                           "  datetime DATETIME NOT NULL, "
-                           "  accountId INTEGER, "
-                           "  senderId INTEGER, "
-                           "  receiverId INTEGER,"
-                           "  message TEXT NOT NULL, "
-                           "  FOREIGN KEY(senderId,receiverId) REFERENCES contacts(id),"
-                           "  FOREIGN KEY(receiverId) REFERENCES accounts(id))"));
-  if (query.lastError().isValid()) {
-    kWarning() << query.lastError().text();
-    return;
-  }
+    query.exec(QLatin1String("CREATE TABLE messages ( "
+                            "  id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, "
+                            "  direction INTEGER NOT NULL, "
+                            "  datetime DATETIME NOT NULL, "
+                            "  accountId INTEGER, "
+                            "  senderId INTEGER, "
+                            "  receiverId INTEGER,"
+                            "  message TEXT NOT NULL, "
+                            "  FOREIGN KEY(senderId) REFERENCES contacts(id),"
+                            "  FOREIGN KEY(receiverId) REFERENCES contacts(id),"
+                            "  FOREIGN KEY(receiverId) REFERENCES accounts(id))"));
+    if (query.lastError().isValid()) {
+        kWarning() << query.lastError().text();
+        return false;
+    }
+    kDebug() << "Created table 'messages'";
+
+    kDebug() << "Database successfully initialized";
+    return true;
 }
 
 void Db::logMessage(const QString &accountId, const KTp::LogEntity &sender,
@@ -246,5 +260,5 @@ int Db::storeMessage(int accountId, int messageType, const QDateTime &sent,
 void Db::handleError(const QSqlQuery &query)
 {
     kWarning() << "SQL ERROR:" << query.lastError().text();
-    kWarning() << "Query was: " << query.executedQuery();
+    kWarning() << "Query was:" << query.executedQuery();
 }

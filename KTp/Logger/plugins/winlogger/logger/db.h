@@ -57,7 +57,7 @@ class Db
     static Db *s_instance;
     Db();
 
-    void initDb();
+    bool initDb();
     void handleError(const QSqlQuery &query);
 
     int getEntityId(const QString &entityTable, const QString &entityUid);
