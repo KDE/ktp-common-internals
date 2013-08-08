@@ -25,7 +25,7 @@
 class TpLoggerPlugin : public KTp::AbstractLoggerPlugin
 {
   public:
-    explicit TpLoggerPlugin();
+    explicit TpLoggerPlugin(QObject *parent, const QVariantList &);
     virtual ~TpLoggerPlugin();
 
     KTp::PendingLoggerDates* queryDates(const Tp::AccountPtr &account,

@@ -29,7 +29,7 @@ class WinLogger : public KTp::AbstractLoggerPlugin
     Q_OBJECT
 
   public:
-    explicit WinLogger();
+    explicit WinLogger(QObject *parent, const QVariantList &);
     virtual ~WinLogger();
 
     KTp::PendingLoggerDates* queryDates(const Tp::AccountPtr &account,

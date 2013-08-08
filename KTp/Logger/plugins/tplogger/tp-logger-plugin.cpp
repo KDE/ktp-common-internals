@@ -25,8 +25,10 @@
 #include <TelepathyLoggerQt4/LogManager>
 #include <TelepathyLoggerQt4/Init>
 
-TpLoggerPlugin::TpLoggerPlugin():
-    AbstractLoggerPlugin()
+#include <KPluginFactory>
+
+TpLoggerPlugin::TpLoggerPlugin(QObject *parent, const QVariantList &):
+    AbstractLoggerPlugin(parent)
 {
     Tpl::init();
 }
@@ -53,3 +55,5 @@ KTp::PendingLoggerEntities* TpLoggerPlugin::queryEntities(const Tp::AccountPtr& 
     return new PendingTpLoggerEntities(account, this);
 }
 
+K_PLUGIN_FACTORY(TpLoggerPluginFactory, registerPlugin<TpLoggerPlugin>();)
+K_EXPORT_PLUGIN(TpLoggerPluginFactory("ktp_logger_plugin_tpLogger"))

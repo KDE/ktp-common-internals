@@ -38,7 +38,7 @@ class KTP_EXPORT AbstractLoggerPlugin : public QObject
     Q_OBJECT
 
   public:
-    explicit AbstractLoggerPlugin();
+    explicit AbstractLoggerPlugin(QObject *parent = 0);
     virtual ~AbstractLoggerPlugin();
 
     virtual KTp::PendingLoggerDates* queryDates(const Tp::AccountPtr &account,

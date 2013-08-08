@@ -22,8 +22,8 @@
 
 using namespace KTp;
 
-AbstractLoggerPlugin::AbstractLoggerPlugin():
-    QObject()
+AbstractLoggerPlugin::AbstractLoggerPlugin(QObject *parent):
+    QObject(parent)
 {
 }
 

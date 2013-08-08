@@ -24,8 +24,10 @@
 #include "pending-win-logger-entities.h"
 #include "pending-win-logger-logs.h"
 
-WinLogger::WinLogger():
-    AbstractLoggerPlugin()
+#include <KPluginFactory>
+
+WinLogger::WinLogger(QObject *parent, const QVariantList &):
+    AbstractLoggerPlugin(parent)
 {
     mDb = Db::instance()->openDb();
     if (!mDb.isValid()) {
@@ -70,3 +72,5 @@ KTp::PendingLoggerLogs* WinLogger::queryLogs(const Tp::AccountPtr &account,
     return new PendingWinLoggerLogs(account, entity, date, mDb, this);
 }
 
+K_PLUGIN_FACTORY(WinLoggerFactory, registerPlugin<WinLogger>();)
+K_EXPORT_PLUGIN(WinLoggerFactory("ktp_logger_plugin_winlogger"))
