@@ -22,6 +22,15 @@
 
 using namespace KTp;
 
+AbstractLoggerPlugin::AbstractLoggerPlugin():
+    QObject()
+{
+}
+
+AbstractLoggerPlugin::~AbstractLoggerPlugin()
+{
+}
+
 bool KTp::AbstractLoggerPlugin::handlesAccount(const Tp::AccountPtr &account)
 {
     return account && account->isValid();

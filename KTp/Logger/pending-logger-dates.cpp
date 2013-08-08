@@ -52,6 +52,11 @@ PendingLoggerDates::~PendingLoggerDates()
     delete d;
 }
 
+void PendingLoggerDates::setDates(const QList<QDate> &dates)
+{
+    d->dates = dates;
+}
+
 QList<QDate> PendingLoggerDates::dates() const
 {
     return d->dates;
