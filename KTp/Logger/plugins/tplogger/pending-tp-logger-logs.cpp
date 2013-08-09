@@ -67,7 +67,7 @@ void PendingTpLoggerLogs::logsRetrieved(Tpl::PendingOperation *op)
                         event->sender()->entityType() == Tpl::EntityTypeContact ?
                             KTp::LogEntity::EntityTypeContact : KTp::LogEntity::EntityTypeRoom,
                             event->sender()->identifier(), event->sender()->alias()),
-                        event->account(), event->timestamp(), textEvent->message());
+                        account(), event->timestamp(), textEvent->message());
     }
 
     appendLogs(logs);
