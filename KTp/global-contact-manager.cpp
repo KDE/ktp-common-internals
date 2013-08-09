@@ -92,7 +92,16 @@ void GlobalContactManager::onConnectionChanged(const Tp::ConnectionPtr &connecti
     if (connection.isNull()) {
         return;
     }
-    Tp::PendingReady *op = connection->becomeReady(Tp::Features() << Tp::Connection::FeatureRoster << Tp::Connection::FeatureRosterGroups);
+
+    //fetch the roster
+    //only request roster groups if we support it. Otherwise it can error and not finish becoming ready
+    //this is needed to fetch contacts from Salut which do not support groups
+    Tp::Features connectionFeatures;
+    connectionFeatures << Tp::Connection::FeatureRoster;
+    if (connection->hasInterface(TP_QT_IFACE_CHANNEL + QLatin1String(".ContactGroups"))) {
+       connectionFeatures << Tp::Connection::FeatureRosterGroups;
+    }
+    Tp::PendingReady *op = connection->becomeReady(connectionFeatures);
     op->setProperty("connection", QVariant::fromValue<Tp::ConnectionPtr>(connection));
     connect(op, SIGNAL(finished(Tp::PendingOperation*)), SLOT(onConnectionReady(Tp::PendingOperation*)));
 }
