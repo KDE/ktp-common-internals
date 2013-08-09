@@ -53,14 +53,11 @@ void PendingLoggerEntitiesImpl::operationFinished(KTp::PendingLoggerOperation* o
     Q_ASSERT(operation);
 
     const QList<KTp::LogEntity> newEntities = operation->entities();
-    QList<KTp::LogEntity> existingEntities = entities();
     Q_FOREACH (const KTp::LogEntity &entity, newEntities) {
-        if (!existingEntities.contains(entity)) {
-            existingEntities << entity;
+        if (!entities().contains(entity)) {
+            appendEntity(entity);
         }
     }
-
-    setEntities(existingEntities);
 
     if (mRunningOps.isEmpty()) {
         emitFinished();

@@ -48,7 +48,7 @@ PendingWinLoggerEntities::~PendingWinLoggerEntities()
 QList<KTp::LogEntity> PendingWinLoggerEntities::runQuery()
 {
     QSqlQuery query(mDb);
-    if (!query.prepare(QLatin1String("SELECT contacts.type, contacts.uid, contacts.alias FROM contacts "
+    if (!query.prepare(QLatin1String("SELECT contacts.type, contacts.uid, contacts.name FROM contacts "
                                      "LEFT JOIN accounts ON contacts.accountId = accounts.id "
                                      "WHERE accounts.uid = :1"))) {
         kWarning() << query.lastError().text();
@@ -77,7 +77,7 @@ void PendingWinLoggerEntities::queryFinished()
     QFutureWatcher<QList<KTp::LogEntity> > *watcher = static_cast<QFutureWatcher<QList<KTp::LogEntity> >* >(sender());
     const QList<KTp::LogEntity> entities = watcher->result();
 
-    setEntities(entities);
+    appendEntities(entities);
     watcher->deleteLater();
 
     emitFinished();

@@ -58,7 +58,12 @@ QList<KTp::LogEntity> PendingLoggerEntities::entities() const
     return d->entities;
 }
 
-void PendingLoggerEntities::setEntities(const QList<KTp::LogEntity> &entities)
+void PendingLoggerEntities::appendEntities(const QList<LogEntity> &entities)
 {
-    d->entities = entities;
+    d->entities << entities;
+}
+
+void PendingLoggerEntities::appendEntity(const LogEntity &entity)
+{
+    d->entities << entity;
 }

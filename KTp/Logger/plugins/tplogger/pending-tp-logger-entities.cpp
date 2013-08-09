@@ -22,6 +22,7 @@
 #include <TelepathyLoggerQt4/LogManager>
 #include <TelepathyLoggerQt4/Entity>
 #include <TelepathyLoggerQt4/PendingEntities>
+#include <TelepathyQt/Account>
 
 PendingTpLoggerEntities::PendingTpLoggerEntities(const Tp::AccountPtr &account,
                                                  QObject *parent):
@@ -57,6 +58,6 @@ void PendingTpLoggerEntities::entitiesRetrieved(Tpl::PendingOperation *op)
             entity->identifier(), entity->alias());
     }
 
-    setEntities(logEntities);
+    appendEntities(logEntities);
     emitFinished();
 }
