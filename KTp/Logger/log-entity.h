@@ -22,6 +22,7 @@
 
 #include <QSharedDataPointer>
 #include <QString>
+#include <QMetaType>
 
 #include <KTp/ktp-export.h>
 
@@ -54,6 +55,9 @@ class KTP_EXPORT LogEntity
     class Private;
     QSharedDataPointer<Private> d;
 };
+
 }
+
+Q_DECLARE_METATYPE(KTp::LogEntity)
 
 #endif // KTP_LOGENTITY_H
