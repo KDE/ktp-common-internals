@@ -33,6 +33,9 @@ class PendingLoggerLogs;
 class PendingLoggerEntities;
 class LogEntity;
 
+/**
+ * @brief An interface for all KTp Logger plugins
+ */
 class KTP_EXPORT AbstractLoggerPlugin : public QObject
 {
     Q_OBJECT
@@ -41,16 +44,54 @@ class KTP_EXPORT AbstractLoggerPlugin : public QObject
     explicit AbstractLoggerPlugin(QObject *parent = 0);
     virtual ~AbstractLoggerPlugin();
 
+    /**
+     * Queries all available plugins that handle given @p account for list of dates
+     * with logs of user's chat with @p entity.
+     *
+     * @param account Account to query
+     * @param entity Entity
+     * @return Returns KTp::PendingLoggerDates operation that will emit finished()
+     *         signal when all backends are finished.
+     */
     virtual KTp::PendingLoggerDates* queryDates(const Tp::AccountPtr &account,
                                                 const KTp::LogEntity &entity) = 0;
 
+    /**
+     * Queries all available plugins that handle given @p account for list of
+     * logs of chats with @p entity.
+     *
+     * @param account Account to query
+     * @param entity Entity whose logs should be retrieved
+     * @param date Specific date for which to retrieve logs
+     * @return Returns KTp::PendingLoggerLogs operation that will emit finished()
+     *         signal when all backends are finished.
+     */
     virtual KTp::PendingLoggerLogs* queryLogs(const Tp::AccountPtr &account,
                                               const KTp::LogEntity &entity,
                                               const QDate &date) = 0;
 
+    /**
+     * Queries all available plugins that handle given @p account for list of
+     * entities for which they have conversation logs.
+     *
+     * @param account Account to query
+     * @return Returns KTp::PendingLoggerEntities operation that will emit finished()
+     *         signal when all backends are finished.
+     */
     virtual KTp::PendingLoggerEntities* queryEntities(const Tp::AccountPtr &account) = 0;
 
+    /**
+     * Returnes whether plugin handles logs for given @p account.
+     *
+     * For example, a dedicated Facebook plugin will handle only accounts that
+     * represent Facebook accounts, therefore it makes no sense to query it for
+     * logs from GTalk account for instance.
+     *
+     * By default this method returns true, which means that plugin supports any
+     * kind of account.
+     */
     virtual bool handlesAccount(const Tp::AccountPtr &account);
+
 };
 
 }

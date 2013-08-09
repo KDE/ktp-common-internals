@@ -27,8 +27,12 @@
 namespace KTp {
 
 /**
- * TODO: This is not nice; we are just workarounding the fact, that KTp::Message
- *       has a protected constructor and we have no other access to KTp::MessagePrivate
+ * Represents a single log message.
+ *
+ * TODO: This class is useless, it's just a workaround for KTp::Message having
+ *       a protected constructor and we have no other access to KTp::MessagePrivate
+ *       We already had to tweak the KTp::Message anyway, so maybe tweaking it
+ *       a bit more to avoid having to have this class would not matte that much
  */
 class KTP_EXPORT LogMessage : public KTp::Message
 {

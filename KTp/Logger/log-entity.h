@@ -28,6 +28,9 @@
 
 namespace KTp {
 
+/**
+ * @brief LogEntity represents a single contact or chat room
+ */
 class KTP_EXPORT LogEntity
 {
   public:
@@ -37,18 +40,61 @@ class KTP_EXPORT LogEntity
         EntityTypeRoom
     };
 
+    /**
+     * Constructs an invalid LogEntity
+     */
     explicit LogEntity();
+
+    /**
+     * Constructs a valid entity
+     *
+     * @param entityType Whether the entity represents a contact or a chat root
+     * @param id ID of the contact or chat root
+     * @param alias Optional alias (username) of the contact or chat root
+     */
     LogEntity(EntityType entityType, const QString &id,
               const QString &alias = QString());
+
+    /**
+     * Copy constructor
+     */
     LogEntity(const KTp::LogEntity &other);
+
+    /**
+     * Destructor
+     */
     ~LogEntity();
 
+    /**
+     * Assignment operator
+     */
     KTp::LogEntity& operator=(const KTp::LogEntity &other);
+
+    /**
+     * Compare operator
+     */
     bool operator==(const KTp::LogEntity &other);
 
+    /**
+     * Returns whether this entity is valid (i.e. whether entity type is valid and
+     * whether id is not empty)
+     */
     bool isValid() const;
+
+    /**
+     * Returns ID of contact or chat room that this entity represents
+     */
     QString id() const;
+
+    /**
+     * Returns username of the contact or name of the chat room this entity represents
+     * or an empty string if none was set.
+     */
     QString alias() const;
+
+    /**
+     * Returns whether this entity represents a contact or a chat root
+     */
     EntityType entityType() const;
 
   private:

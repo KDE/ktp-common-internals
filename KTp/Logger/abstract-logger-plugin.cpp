@@ -33,5 +33,6 @@ AbstractLoggerPlugin::~AbstractLoggerPlugin()
 
 bool KTp::AbstractLoggerPlugin::handlesAccount(const Tp::AccountPtr &account)
 {
+    // Handle all valid accounts
     return account && account->isValid();
 }

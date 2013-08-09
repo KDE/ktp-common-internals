@@ -34,20 +34,57 @@ class PendingLoggerDates;
 class PendingLoggerLogs;
 class PendingLoggerEntities;
 
+/**
+ * Log manager is a singleton that user can use to query the logs.
+ */
 class KTP_EXPORT LogManager : public AbstractLoggerPlugin
 {
     Q_OBJECT
 
   public:
+    /**
+     * Returns global instance of the LogManager
+     */
     static KTp::LogManager* instance();
 
+    /**
+     * Queries all available plugins for list of dates with logs of user's chat
+     * with @p entity.
+     *
+     * @param account Account to query
+     * @param entity Entity
+     * @return Returns KTp::PendingLoggerDates operation that will emit finished()
+     *         signal when all backends are finished.
+     */
     KTp::PendingLoggerDates* queryDates(const Tp::AccountPtr &account,
                                         const KTp::LogEntity &entity);
+
+    /**
+     * Queries all available plugins for list of logs of chats with @p entity.
+     *
+     * @param account Account to query
+     * @param entity Entity whose logs should be retrieved
+     * @param date Specific date for which to retrieve logs
+     * @return Returns KTp::PendingLoggerLogs operation that will emit finished()
+     *         signal when all backends are finished.
+     */
     KTp::PendingLoggerLogs*  queryLogs(const Tp::AccountPtr &account,
                                        const KTp::LogEntity &entity,
                                        const QDate &date);
+
+   /**
+     * Queries all available plugins for list of entities for which they have
+     * conversation logs.
+     *
+     * @param account Account to query
+     * @return Returns KTp::PendingLoggerEntities operation that will emit finished()
+     *         signal when all backends are finished.
+     */
     KTp::PendingLoggerEntities* queryEntities(const Tp::AccountPtr &account);
 
+    /**
+     * Destructor
+     */
     virtual ~LogManager();
 
  private:
