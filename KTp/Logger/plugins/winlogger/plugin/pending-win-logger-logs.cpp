@@ -84,7 +84,7 @@ QList<KTp::LogMessage> PendingWinLoggerLogs::runQuery()
     while (query.next()) {
         KTp::LogEntity entity;
 
-        if (query.value(2).toInt() == 1)  { // outgoing message
+        if (query.value(2).toInt() == 0)  { // incomming message
             entity = KTp::LogEntity(static_cast<KTp::LogEntity::EntityType>(query.value(3).toInt()),
                                     query.value(4).toString(),
                                     query.value(5).toString());

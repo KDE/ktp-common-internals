@@ -93,7 +93,7 @@ QList<KTp::LogSearchHit> PendingWinLoggerSearch::runQuery()
         }
 
         KTp::LogEntity entity;
-        if (query.value(7).toInt() == 1) { // outgoing message
+        if (query.value(7).toInt() == 0) { // incomming message
             entity = KTp::LogEntity(static_cast<KTp::LogEntity::EntityType>(query.value(6).toInt()),
                                     query.value(4).toString(),
                                     query.value(5).toString());
