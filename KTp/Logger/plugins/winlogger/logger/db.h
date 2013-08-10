@@ -51,7 +51,7 @@ class Db
     bool removeAccount(int accountId);
     bool removeContact(int contactId);
 
-    int storeMessage(int accountId, int messageType, const QDateTime &sent,
+    int storeMessage(int accountId, int direction, const QDateTime &sent,
                      int contactId, const QString &messageText);
 
     void removeAccountLogs(const QString &accountUid);

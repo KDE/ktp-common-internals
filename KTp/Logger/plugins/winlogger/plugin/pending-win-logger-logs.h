@@ -23,6 +23,7 @@
 #include <KTp/Logger/pending-logger-logs.h>
 
 #include <QtSql/QSqlDatabase>
+#include <QtSql/QSqlQuery>
 
 class PendingWinLoggerLogs : public KTp::PendingLoggerLogs
 {
@@ -41,6 +42,8 @@ class PendingWinLoggerLogs : public KTp::PendingLoggerLogs
 
   private:
     QList<KTp::LogMessage> runQuery();
+    KTp::LogEntity findSelfEntity(const QString &accountId,
+                                  const Tp::AccountManagerPtr &accountManager) const;
 
     QSqlDatabase mDb;
 };

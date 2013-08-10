@@ -222,7 +222,7 @@ int Db::storeContact(const KTp::LogEntity &contact)
     return query.lastInsertId().toInt();
 }
 
-int Db::storeMessage(int accountId, int messageType, const QDateTime &sent,
+int Db::storeMessage(int accountId, int direction, const QDateTime &sent,
                      int contactId, const QString &messageText)
 {
     QSqlQuery query(mDb);
@@ -233,7 +233,7 @@ int Db::storeMessage(int accountId, int messageType, const QDateTime &sent,
         return -1;
     }
 
-    query.addBindValue(messageType);
+    query.addBindValue(direction);
     query.addBindValue(sent.isValid() ? sent : QDateTime::currentDateTime());
     query.addBindValue(accountId);
     query.addBindValue(contactId);

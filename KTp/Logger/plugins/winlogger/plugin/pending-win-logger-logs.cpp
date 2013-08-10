@@ -23,9 +23,11 @@
 #include <KTp/Logger/log-message.h>
 
 #include <KDebug>
+#include <KTp/Logger/log-manager.h>
 
 #include <QtSql/QSqlQuery>
 #include <QtSql/QSqlError>
+#include <TelepathyQt/AccountSet>
 
 PendingWinLoggerLogs::PendingWinLoggerLogs(const Tp::AccountPtr &account,
                                            const KTp::LogEntity &entity,
@@ -49,8 +51,9 @@ PendingWinLoggerLogs::~PendingWinLoggerLogs()
 QList<KTp::LogMessage> PendingWinLoggerLogs::runQuery()
 {
     QSqlQuery query(mDb);
-    if (!query.prepare(QLatin1String("SELECT messages.datetime, messages.message, "
-                                     "       contacts.type, contacts.uid, contacts.name "
+    if (!query.prepare(QLatin1String("SELECT messages.datetime, messages.message, messages.direction, "
+                                     "       contacts.type, contacts.uid, contacts.name, "
+                                     "       accounts.uid "
                                      "FROM messages "
                                      "LEFT JOIN contacts ON messages.contactId = contacts.id "
                                      "LEFT JOIN accounts ON messages.accountId = accounts.id "
@@ -70,11 +73,33 @@ QList<KTp::LogMessage> PendingWinLoggerLogs::runQuery()
         return QList<KTp::LogMessage>();
     }
 
+    Tp::AccountManagerPtr accountManager = KTp::LogManager::instance()->accountManager();
+    if (!accountManager || !accountManager->isValid()) {
+        kWarning() << "No valid accountManager set";
+        return QList<KTp::LogMessage>();
+    }
+
     QList<KTp::LogMessage> messages;
+    KTp::LogEntity selfContact;
     while (query.next()) {
-        KTp::LogEntity entity(static_cast<KTp::LogEntity::EntityType>(query.value(2).toInt()),
-                              query.value(3).toString(),
-                              query.value(4).toString());
+        KTp::LogEntity entity;
+
+        if (query.value(2).toInt() == 1)  { // outgoing message
+            entity = KTp::LogEntity(static_cast<KTp::LogEntity::EntityType>(query.value(3).toInt()),
+                                    query.value(4).toString(),
+                                    query.value(5).toString());
+        } else {
+            if (!selfContact.isValid()) {
+                selfContact = findSelfEntity(query.value(6).toString(), accountManager);
+                if (!selfContact.isValid()) {
+                    kWarning() << "Failed to retrieve self contact, bailing";
+                    return QList<KTp::LogMessage>();
+                }
+            }
+
+            entity = selfContact;
+        }
+
         KTp::LogMessage message(entity, account(), query.value(0).toDateTime(),
                              query.value(1).toString());
 
@@ -93,4 +118,31 @@ void PendingWinLoggerLogs::queryFinished()
     watcher->deleteLater();
 
     emitFinished();
+}
+
+KTp::LogEntity PendingWinLoggerLogs::findSelfEntity(const QString &accountId,
+                                                    const Tp::AccountManagerPtr &accountManager) const
+{
+    const QList<Tp::AccountPtr> accounts = accountManager->validAccounts()->accounts();
+    Tp::AccountPtr logAccount;
+    Q_FOREACH (const Tp::AccountPtr &account, accounts) {
+        if (account->uniqueIdentifier() == accountId) {
+            logAccount = account;
+            break;
+        }
+    }
+
+    if (!logAccount) {
+        kWarning() << "Failed to find valid account" << accountId;
+        return KTp::LogEntity();
+    }
+
+    const Tp::ContactPtr contact = logAccount->connection()->selfContact();
+    if (!contact) {
+        kWarning() << "Failed to retrieve selfContact";
+        return KTp::LogEntity();
+    }
+
+    return KTp::LogEntity(KTp::LogEntity::EntityTypeContact, contact->id(),
+                          contact->alias());
 }
