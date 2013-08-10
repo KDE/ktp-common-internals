@@ -17,16 +17,25 @@
  *
  */
 
-#ifndef UTILS_H
-#define UTILS_H
+#ifndef PENDINGTPLOGGERSEARCH_H
+#define PENDINGTPLOGGERSEARCH_H
 
-#include <TelepathyLoggerQt4/Entity>
-#include <KTp/Logger/log-entity.h>
+#include <KTp/Logger/pending-logger-search.h>
 
-namespace Utils
+namespace Tpl {
+class PendingOperation;
+}
+
+class PendingTpLoggerSearch : public KTp::PendingLoggerSearch
 {
-    Tpl::EntityPtr toTplEntity(const KTp::LogEntity &entity);
-    KTp::LogEntity fromTplEntity(const Tpl::EntityPtr &entity);
+    Q_OBJECT
+
+  public:
+    explicit PendingTpLoggerSearch(const QString& term, QObject* parent = 0);
+    virtual ~PendingTpLoggerSearch();
+
+  private Q_SLOTS:
+    void searchFinished(Tpl::PendingOperation *op);
 };
 
-#endif // UTILS_H
+#endif // PENDINGTPLOGGERSEARCH_H

@@ -43,6 +43,9 @@ class TpLoggerPlugin : public KTp::AbstractLoggerPlugin
     void clearAccountLogs(const Tp::AccountPtr &account);
     void clearContactLogs(const Tp::AccountPtr &account,
                           const KTp::LogEntity &entity);
+    KTp::PendingLoggerSearch* search(const QString &term);
+
+    void setAccountManager(const Tp::AccountManagerPtr &accountManager);
 
   private Q_SLOTS:
     void genericOperationFinished(Tpl::PendingOperation *operation);

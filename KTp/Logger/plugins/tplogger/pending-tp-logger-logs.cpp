@@ -60,11 +60,8 @@ void PendingTpLoggerLogs::logsRetrieved(Tpl::PendingOperation *op)
     QList<KTp::LogMessage> logs;
     Q_FOREACH (const Tpl::EventPtr &event, events) {
         const Tpl::TextEventPtr textEvent = event.dynamicCast<Tpl::TextEvent>();
-        logs << KTp::LogMessage(KTp::LogEntity(
-                        event->sender()->entityType() == Tpl::EntityTypeContact ?
-                            KTp::LogEntity::EntityTypeContact : KTp::LogEntity::EntityTypeRoom,
-                            event->sender()->identifier(), event->sender()->alias()),
-                        account(), event->timestamp(), textEvent->message());
+        logs << KTp::LogMessage(Utils::fromTplEntity(event->sender()),
+                                account(), event->timestamp(), textEvent->message());
     }
 
     appendLogs(logs);

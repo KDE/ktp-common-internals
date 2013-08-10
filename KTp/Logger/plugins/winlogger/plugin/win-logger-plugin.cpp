@@ -23,6 +23,7 @@
 #include "pending-win-logger-dates.h"
 #include "pending-win-logger-entities.h"
 #include "pending-win-logger-logs.h"
+#include "pending-win-logger-search.h"
 
 #include <KPluginFactory>
 
@@ -90,6 +91,16 @@ void WinLogger::clearContactLogs(const Tp::AccountPtr &account,
 
     Db::instance()->removeContactLogs(account->uniqueIdentifier(), entity.id());
 }
+
+KTp::PendingLoggerSearch* WinLogger::search(const QString &term)
+{
+    if (!mDb.isOpen()) {
+        return 0;
+    }
+
+    return new PendingWinLoggerSearch(term, mDb, this);
+}
+
 
 
 K_PLUGIN_FACTORY(WinLoggerFactory, registerPlugin<WinLogger>();)

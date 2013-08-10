@@ -27,3 +27,11 @@ Tpl::EntityPtr Utils::toTplEntity(const KTp::LogEntity &entity)
                                entity.alias().toLatin1().constData(),
                                0);
 }
+
+KTp::LogEntity Utils::fromTplEntity(const Tpl::EntityPtr& entity)
+{
+    return KTp::LogEntity(entity->entityType() == Tpl::EntityTypeContact ?
+                                    KTp::LogEntity::EntityTypeContact : KTp::LogEntity::EntityTypeRoom,
+                          entity->identifier(),
+                          entity->alias());
+}

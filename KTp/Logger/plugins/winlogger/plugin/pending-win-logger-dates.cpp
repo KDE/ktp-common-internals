@@ -48,8 +48,8 @@ PendingWinLoggerDates::~PendingWinLoggerDates()
 QList<QDate> PendingWinLoggerDates::runQuery()
 {
     QSqlQuery query(mDb);
-    if (!query.prepare(QLatin1String("SELECT DISTINCT logs.timestamp FROM logs "
-                                     "LEFT JOIN contacts ON logs.contactId = contacts.id "
+    if (!query.prepare(QLatin1String("SELECT DISTINCT messages.datetime FROM messages "
+                                     "LEFT JOIN contacts ON messages.senderId = contacts.id "
                                      "LEFT JOIN accounts ON contacts.accountId = accounts.id "
                                      "WHERE accounts.uid = ? AND contacts.uid = ?"))) {
         kWarning() << query.lastError().text();

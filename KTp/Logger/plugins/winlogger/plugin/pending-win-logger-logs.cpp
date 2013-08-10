@@ -49,13 +49,13 @@ PendingWinLoggerLogs::~PendingWinLoggerLogs()
 QList<KTp::LogMessage> PendingWinLoggerLogs::runQuery()
 {
     QSqlQuery query(mDb);
-    if (!query.prepare(QLatin1String("SELECT logs.datetime, logs.message, "
-                                     "        contacts.type, contacts.uid, contacts.name "
-                                     "FROM logs "
-                                     "LEFT JOIN contacts ON logs.contactId = contacts.id "
+    if (!query.prepare(QLatin1String("SELECT messages.datetime, messages.message, "
+                                     "       contacts.type, contacts.uid, contacts.name "
+                                     "FROM messages "
+                                     "LEFT JOIN contacts ON messages.contactId = contacts.id "
                                      "LEFT JOIN accounts ON contacts.accountId = accounts.id "
                                      "WHERE accounts.uid = :1 AND contacts.uid = :2"
-                                     "AND logs.datetime >= :3 AND logs.datetime <= :4"))) {
+                                     "AND messages.datetime >= :3 AND messages.datetime <= :4"))) {
         kWarning() << query.lastError().text();
         return QList<KTp::LogMessage>();
     }

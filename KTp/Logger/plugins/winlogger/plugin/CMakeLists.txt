@@ -3,6 +3,7 @@ set (ktploggerplugin_winlogger_SRCS
      pending-win-logger-dates.cpp
      pending-win-logger-entities.cpp
      pending-win-logger-logs.cpp
+     pending-win-logger-search.cpp
      ../logger/db.cpp
 )
 

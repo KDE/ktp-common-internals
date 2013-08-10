@@ -22,6 +22,7 @@
 #include "pending-tp-logger-entities.h"
 #include "pending-tp-logger-logs.h"
 #include "utils.h"
+#include "pending-tp-logger-search.h"
 
 #include <TelepathyLoggerQt4/LogManager>
 #include <TelepathyLoggerQt4/Init>
@@ -38,6 +39,12 @@ TpLoggerPlugin::TpLoggerPlugin(QObject *parent, const QVariantList &):
 
 TpLoggerPlugin::~TpLoggerPlugin()
 {
+}
+
+void TpLoggerPlugin::setAccountManager(const Tp::AccountManagerPtr &accountManager)
+{
+    Tpl::LogManager::instance()->setAccountManagerPtr(accountManager);
+    AbstractLoggerPlugin::setAccountManager(accountManager);
 }
 
 KTp::PendingLoggerDates* TpLoggerPlugin::queryDates(const Tp::AccountPtr &account,
@@ -81,6 +88,12 @@ void TpLoggerPlugin::genericOperationFinished(Tpl::PendingOperation *operation)
         kWarning() << operation->errorName() << ":" << operation->errorMessage();
     }
 }
+
+KTp::PendingLoggerSearch* TpLoggerPlugin::search(const QString &term)
+{
+    return new PendingTpLoggerSearch(term, this);
+}
+
 
 
 K_PLUGIN_FACTORY(TpLoggerPluginFactory, registerPlugin<TpLoggerPlugin>();)

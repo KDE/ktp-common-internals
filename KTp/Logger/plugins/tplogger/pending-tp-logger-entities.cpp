@@ -18,6 +18,7 @@
  */
 
 #include "pending-tp-logger-entities.h"
+#include "utils.h"
 
 #include <TelepathyLoggerQt4/LogManager>
 #include <TelepathyLoggerQt4/Entity>
@@ -52,10 +53,7 @@ void PendingTpLoggerEntities::entitiesRetrieved(Tpl::PendingOperation *op)
     Tpl::EntityPtrList entities = pe->entities();
     QList<KTp::LogEntity> logEntities;
     Q_FOREACH (const Tpl::EntityPtr entity, entities) {
-        logEntities << KTp::LogEntity(
-            entity->entityType() == Tpl::EntityTypeContact ?
-                        KTp::LogEntity::EntityTypeContact : KTp::LogEntity::EntityTypeRoom,
-            entity->identifier(), entity->alias());
+        logEntities << Utils::fromTplEntity(entity);
     }
 
     appendEntities(logEntities);

@@ -17,16 +17,29 @@
  *
  */
 
-#ifndef UTILS_H
-#define UTILS_H
+#ifndef PENDINGWINLOGGERSEARCH_H
+#define PENDINGWINLOGGERSEARCH_H
 
-#include <TelepathyLoggerQt4/Entity>
-#include <KTp/Logger/log-entity.h>
+#include <pending-logger-search.h>
 
-namespace Utils
+#include <QtSql/QSqlDatabase>
+
+class PendingWinLoggerSearch : public KTp::PendingLoggerSearch
 {
-    Tpl::EntityPtr toTplEntity(const KTp::LogEntity &entity);
-    KTp::LogEntity fromTplEntity(const Tpl::EntityPtr &entity);
+    Q_OBJECT
+
+  public:
+    explicit PendingWinLoggerSearch(const QString &term, const QSqlDatabase &db,
+                                    QObject *parent = 0);
+    virtual ~PendingWinLoggerSearch();
+
+  private Q_SLOTS:
+    void queryFinished();
+
+  private:
+    QList<KTp::LogSearchHit> runQuery();
+
+    QSqlDatabase mDb;
 };
 
-#endif // UTILS_H
+#endif // PENDINGWINLOGGERSEARCH_H
