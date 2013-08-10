@@ -19,6 +19,7 @@
 
 #include "pending-logger-dates-impl.h"
 #include "abstract-logger-plugin.h"
+#include <KDebug>
 
 PendingLoggerDatesImpl::PendingLoggerDatesImpl(const Tp::AccountPtr &account,
                                                const KTp::LogEntity &entity,
@@ -55,6 +56,7 @@ void PendingLoggerDatesImpl::operationFinished(KTp::PendingLoggerOperation *op)
 
     const QList<QDate> newDates = operation->dates();
     QList<QDate> existingDates = dates();
+    kDebug() << "Plugin" << op->parent() << "returned" << newDates.count() << "dates";
     Q_FOREACH (const QDate &date, newDates) {
         if (!existingDates.contains(date)) {
             existingDates << date;

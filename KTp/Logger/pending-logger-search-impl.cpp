@@ -20,6 +20,8 @@
 #include "pending-logger-search-impl.h"
 #include "abstract-logger-plugin.h"
 
+#include <KDebug>
+
 PendingLoggerSearchImpl::PendingLoggerSearchImpl(const QString& term, QObject* parent):
     PendingLoggerSearch(term, parent)
 {
@@ -48,6 +50,7 @@ void PendingLoggerSearchImpl::operationFinished(KTp::PendingLoggerOperation *op)
     Q_ASSERT(operation);
 
     const QList<KTp::LogSearchHit> hits = operation->searchHits();
+    kDebug() << "Plugin" << op->parent() << "returned" << hits.count() << "results";
     appendSearchHits(hits);
 
     if (mRunningOps.isEmpty()) {
