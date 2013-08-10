@@ -257,6 +257,109 @@ int Db::storeMessage(int accountId, int messageType, const QDateTime &sent,
     return query.lastInsertId().toInt();
 }
 
+bool Db::removeAccount(int accountId)
+{
+    QSqlQuery query(mDb);
+    if (!query.prepare(QLatin1String("DELETE FROM accounts WHERE id = :1"))) {
+        handleError(query);
+        return false;
+    }
+
+    query.addBindValue(accountId);
+
+    if (!query.exec()) {
+        handleError(query);
+        return false;
+    }
+
+    return true;
+}
+
+bool Db::removeContact(int contactId)
+{
+    QSqlQuery query(mDb);
+    if (!query.prepare(QLatin1String("DELETE FROM contacts WHERE id = :1"))) {
+        handleError(query);
+        return false;
+    }
+
+    query.addBindValue(contactId);
+
+    if (!query.exec()) {
+        handleError(query);
+        return false;
+    }
+
+    return true;
+}
+
+void Db::removeAccountLogs(const QString& accountUid)
+{
+    const int accountId = getAccountId(accountUid);
+
+    mDb.transaction();
+
+    QSqlQuery query(mDb);
+    if (!query.prepare(QLatin1String("DELETE FROM messages WHERE accountId = :1"))) {
+        handleError(query);
+        mDb.rollback();
+        return;
+    }
+
+    query.addBindValue(accountId);
+
+    if (!query.exec()) {
+        handleError(query);
+        mDb.rollback();
+        return;
+    }
+
+    if (!removeAccount(accountId)) {
+        mDb.rollback();
+        return;
+    }
+
+    mDb.commit();
+}
+
+void Db::removeContactLogs(const QString& accountUid, const QString& contactUid)
+{
+    const int accountId = getAccountId(accountUid);
+    const int contactId = getContactId(contactUid);
+
+    mDb.transaction();
+
+    QSqlQuery query(mDb);
+    if (!query.prepare(QLatin1String("DELETE FROM messages "
+                                     "WHERE accountId = :1 AND (senderId = :2 OR receiverId = :3)"))) {
+        handleError(query);
+        mDb.rollback();
+        return;
+    }
+
+    query.addBindValue(accountId);
+    query.addBindValue(contactId);
+    query.addBindValue(contactId);
+
+    if (!query.exec()) {
+        handleError(query);
+        mDb.rollback();
+        return;
+    }
+
+    if (!removeContact(contactId)) {
+        mDb.rollback();
+        return;
+    }
+
+    if (!removeAccount(accountId)) {
+        mDb.rollback();
+        return;
+    }
+
+    mDb.commit();
+}
+
 void Db::handleError(const QSqlQuery &query)
 {
     kWarning() << "SQL ERROR:" << query.lastError().text();

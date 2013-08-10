@@ -18,12 +18,14 @@
  */
 
 #include "pending-tp-logger-logs.h"
+#include "utils.h"
 
 #include <TelepathyQt/Contact>
 #include <TelepathyLoggerQt4/LogManager>
 #include <TelepathyLoggerQt4/Entity>
 #include <TelepathyLoggerQt4/TextEvent>
 #include <TelepathyLoggerQt4/PendingEvents>
+
 #include <KTp/message-processor.h>
 
 PendingTpLoggerLogs::PendingTpLoggerLogs(const Tp::AccountPtr &account,
@@ -32,14 +34,9 @@ PendingTpLoggerLogs::PendingTpLoggerLogs(const Tp::AccountPtr &account,
                                          QObject *parent):
     PendingLoggerLogs(account, entity, date, parent)
 {
-    Tpl::EntityPtr tplEntity = Tpl::Entity::create(
-                    entity.id().toLatin1().constData(),
-                    entity.entityType() == KTp::LogEntity::EntityTypeContact ?
-                        Tpl::EntityTypeContact : Tpl::EntityTypeRoom,
-                    entity.alias().toLatin1().constData(), 0);
-
     Tpl::LogManagerPtr manager = Tpl::LogManager::instance();
-    Tpl::PendingEvents *events = manager->queryEvents(account, tplEntity, Tpl::EventTypeMaskText, date);
+    Tpl::PendingEvents *events = manager->queryEvents(account, Utils::toTplEntity(entity),
+                                                      Tpl::EventTypeMaskText, date);
     connect(events, SIGNAL(finished(Tpl::PendingOperation*)),
             this, SLOT(logsRetrieved(Tpl::PendingOperation*)));
 }

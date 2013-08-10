@@ -21,10 +21,13 @@
 #include "pending-tp-logger-dates.h"
 #include "pending-tp-logger-entities.h"
 #include "pending-tp-logger-logs.h"
+#include "utils.h"
 
 #include <TelepathyLoggerQt4/LogManager>
 #include <TelepathyLoggerQt4/Init>
+#include <TelepathyLoggerQt4/PendingOperation>
 
+#include <KDebug>
 #include <KPluginFactory>
 
 TpLoggerPlugin::TpLoggerPlugin(QObject *parent, const QVariantList &):
@@ -54,6 +57,31 @@ KTp::PendingLoggerEntities* TpLoggerPlugin::queryEntities(const Tp::AccountPtr& 
 {
     return new PendingTpLoggerEntities(account, this);
 }
+
+void TpLoggerPlugin::clearAccountLogs(const Tp::AccountPtr &account)
+{
+    Tpl::LogManagerPtr manager = Tpl::LogManager::instance();
+    Tpl::PendingOperation *op = manager->clearAccountHistory(account);
+    connect(op, SIGNAL(finished(Tpl::PendingOperation*)),
+            this, SLOT(genericOperationFinished(Tpl::PendingOperation*)));
+}
+
+void TpLoggerPlugin::clearContactLogs(const Tp::AccountPtr &account,
+                                      const KTp::LogEntity &entity)
+{
+    Tpl::LogManagerPtr manager = Tpl::LogManager::instance();
+    Tpl::PendingOperation *op = manager->clearEntityHistory(account, Utils::toTplEntity(entity));
+    connect(op, SIGNAL(finished(Tpl::PendingOperation*)),
+            this, SLOT(genericOperationFinished(Tpl::PendingOperation*)));
+}
+
+void TpLoggerPlugin::genericOperationFinished(Tpl::PendingOperation *operation)
+{
+    if (operation->isError()) {
+        kWarning() << operation->errorName() << ":" << operation->errorMessage();
+    }
+}
+
 
 K_PLUGIN_FACTORY(TpLoggerPluginFactory, registerPlugin<TpLoggerPlugin>();)
 K_EXPORT_PLUGIN(TpLoggerPluginFactory("ktp_logger_plugin_tpLogger"))

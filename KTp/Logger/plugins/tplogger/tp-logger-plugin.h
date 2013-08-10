@@ -22,8 +22,14 @@
 
 #include "KTp/Logger/abstract-logger-plugin.h"
 
+namespace Tpl {
+class PendingOperation;
+}
+
 class TpLoggerPlugin : public KTp::AbstractLoggerPlugin
 {
+    Q_OBJECT
+
   public:
     explicit TpLoggerPlugin(QObject *parent, const QVariantList &);
     virtual ~TpLoggerPlugin();
@@ -33,7 +39,13 @@ class TpLoggerPlugin : public KTp::AbstractLoggerPlugin
     KTp::PendingLoggerLogs* queryLogs(const Tp::AccountPtr &account,
                                       const KTp::LogEntity &entity,
                                       const QDate &date);
-    KTp::PendingLoggerEntities* queryEntities(const Tp::AccountPtr& account);
+    KTp::PendingLoggerEntities* queryEntities(const Tp::AccountPtr &account);
+    void clearAccountLogs(const Tp::AccountPtr &account);
+    void clearContactLogs(const Tp::AccountPtr &account,
+                          const KTp::LogEntity &entity);
+
+  private Q_SLOTS:
+    void genericOperationFinished(Tpl::PendingOperation *operation);
 };
 
 #endif // TPLOGGERPLUGIN_H

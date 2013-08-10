@@ -3,6 +3,7 @@ set (ktploggerplugin_tplogger_SRCS
      pending-tp-logger-dates.cpp
      pending-tp-logger-entities.cpp
      pending-tp-logger-logs.cpp
+     utils.cpp
 )
 
 kde4_add_plugin (ktploggerplugin_tplogger

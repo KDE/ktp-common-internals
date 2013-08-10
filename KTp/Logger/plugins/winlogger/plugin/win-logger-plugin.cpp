@@ -72,5 +72,25 @@ KTp::PendingLoggerLogs* WinLogger::queryLogs(const Tp::AccountPtr &account,
     return new PendingWinLoggerLogs(account, entity, date, mDb, this);
 }
 
+void WinLogger::clearAccountLogs(const Tp::AccountPtr &account)
+{
+    if (!mDb.isOpen()) {
+        return;
+    }
+
+    Db::instance()->removeAccountLogs(account->uniqueIdentifier());
+}
+
+void WinLogger::clearContactLogs(const Tp::AccountPtr &account,
+                                 const KTp::LogEntity &entity)
+{
+    if (!mDb.isOpen()) {
+        return;
+    }
+
+    Db::instance()->removeContactLogs(account->uniqueIdentifier(), entity.id());
+}
+
+
 K_PLUGIN_FACTORY(WinLoggerFactory, registerPlugin<WinLogger>();)
 K_EXPORT_PLUGIN(WinLoggerFactory("ktp_logger_plugin_winlogger"))

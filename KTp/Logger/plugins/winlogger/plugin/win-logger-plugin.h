@@ -38,6 +38,9 @@ class WinLogger : public KTp::AbstractLoggerPlugin
     KTp::PendingLoggerLogs* queryLogs(const Tp::AccountPtr &account,
                                       const KTp::LogEntity &entity,
                                       const QDate &date);
+    void clearAccountLogs(const Tp::AccountPtr &account);
+    void clearContactLogs(const Tp::AccountPtr &account,
+                          const KTp::LogEntity &entity);
   private:
     QSqlDatabase mDb;
 };

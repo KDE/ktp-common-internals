@@ -49,9 +49,14 @@ class Db
     int storeAccount(const QString &accountUid);
     int getContactId(const QString &contactUid);
     int storeContact(const KTp::LogEntity &contact);
+    bool removeAccount(int accountId);
+    bool removeContact(int contactId);
 
     int storeMessage(int accountId, int messageType, const QDateTime &sent,
                      int senderId, int receiverId, const QString &messageText);
+
+    void removeAccountLogs(const QString &accountUid);
+    void removeContactLogs(const QString &accountUid, const QString &contactUid);
 
   private:
     static Db *s_instance;
