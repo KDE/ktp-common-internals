@@ -25,6 +25,7 @@
 #include "pending-logger-dates-impl.h"
 #include "pending-logger-logs-impl.h"
 #include "pending-logger-entities-impl.h"
+#include "pending-logger-search-impl.h"
 
 #include <KGlobal>
 #include <KService>
@@ -89,6 +90,23 @@ LogManager::~LogManager()
     delete d;
 }
 
+Tp::AccountManagerPtr LogManager::accountManager() const
+{
+    if (d->plugins.isEmpty()) {
+        return Tp::AccountManagerPtr();
+    }
+
+    return d->plugins.first()->accountManager();
+}
+
+void LogManager::setAccountManager(const Tp::AccountManagerPtr &accountManager)
+{
+    Q_FOREACH (KTp::AbstractLoggerPlugin *plugin, d->plugins) {
+        plugin->setAccountManager(accountManager);
+    }
+}
+
+
 PendingLoggerDates* LogManager::queryDates(const Tp::AccountPtr &account,
                                            const KTp::LogEntity &entity)
 {
@@ -129,6 +147,12 @@ void LogManager::clearContactLogs(const Tp::AccountPtr &account,
         plugin->clearContactLogs(account, entity);
     }
 }
+
+PendingLoggerSearch* LogManager::search(const QString& term)
+{
+    return new PendingLoggerSearchImpl(term, this);
+}
+
 
 
 using namespace KTp;

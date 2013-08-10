@@ -10,6 +10,7 @@ set (ktp_logger_private_SRCS
     log-entity.cpp
     log-manager.cpp
     log-message.cpp
+    log-search-hit.cpp
     pending-logger-dates.cpp
     pending-logger-dates-impl.cpp
     pending-logger-entities.cpp
@@ -17,6 +18,8 @@ set (ktp_logger_private_SRCS
     pending-logger-logs.cpp
     pending-logger-logs-impl.cpp
     pending-logger-operation.cpp
+    pending-logger-search.cpp
+    pending-logger-search-impl.cpp
 )
 
 set (ktp_logger_private_HDRS
@@ -24,10 +27,12 @@ set (ktp_logger_private_HDRS
     log-entity.h
     log-manager.h
     log-message.h
+    log-search-hit.h
     pending-logger-dates.h
     pending-logger-entities.h
     pending-logger-logs.h
     pending-logger-operation.h
+    pending-logger-search.h
 )
 
 set (ktp_logger_private_LIBS

@@ -17,42 +17,32 @@
  *
  */
 
-#include "abstract-logger-plugin.h"
+#ifndef KTP_LOGSEARCHHIT_H
+#define KTP_LOGSEARCHHIT_H
+#include <TelepathyQt/Types>
 
-#include <TelepathyQt/Account>
-#include <TelepathyQt/AccountManager>
+namespace KTp {
 
-using namespace KTp;
+class LogEntity;
 
-class AbstractLoggerPlugin::Private
+class LogSearchHit
 {
   public:
-    Tp::AccountManagerPtr accountManager;
+    LogSearchHit(const Tp::AccountPtr &account, const KTp::LogEntity &entity,
+                 const QDate &date);
+    LogSearchHit(const LogSearchHit &other);
+    ~LogSearchHit();
+
+    LogSearchHit& operator=(const KTp::LogSearchHit &other);
+
+    Tp::AccountPtr account() const;
+    KTp::LogEntity entity() const;
+    QDate date() const;
+
+  private:
+    class Private;
+    QSharedDataPointer<Private> d;
 };
-
-AbstractLoggerPlugin::AbstractLoggerPlugin(QObject *parent):
-    QObject(parent),
-    d(new Private)
-{
 }
 
-AbstractLoggerPlugin::~AbstractLoggerPlugin()
-{
-    delete d;
-}
-
-bool KTp::AbstractLoggerPlugin::handlesAccount(const Tp::AccountPtr &account)
-{
-    // Handle all valid accounts
-    return account && account->isValid();
-}
-
-void AbstractLoggerPlugin::setAccountManager(const Tp::AccountManagerPtr &accountManager)
-{
-    d->accountManager = accountManager;
-}
-
-Tp::AccountManagerPtr AbstractLoggerPlugin::accountManager() const
-{
-    return d->accountManager;
-}
+#endif // KTP_LOGSEARCHHIT_H

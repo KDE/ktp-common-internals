@@ -48,6 +48,20 @@ class KTP_EXPORT LogManager : public AbstractLoggerPlugin
     static KTp::LogManager* instance();
 
     /**
+     * Sets a new Tp::AccountManager to be used by the LogManager.
+     *
+     * The @p accountManager is expected to be in ready state.
+     *
+     * @param accountManager An Tp::AccountManager in the ready state.
+     */
+    void setAccountManager(const Tp::AccountManagerPtr &accountManager);
+
+    /**
+     * Returns the set Tp::AccountManager or an empty pointer if none was set.
+     */
+    Tp::AccountManagerPtr accountManager() const;
+
+    /**
      * Queries all available plugins for list of dates with logs of user's chat
      * with @p entity.
      *
@@ -90,7 +104,7 @@ class KTP_EXPORT LogManager : public AbstractLoggerPlugin
      */
     void clearAccountLogs(const Tp::AccountPtr &account);
 
-  /**
+    /**
      * Removes all logs for given @p entity from all available plugins that
      * handle the @p account.
      *
@@ -99,6 +113,15 @@ class KTP_EXPORT LogManager : public AbstractLoggerPlugin
      */
     void clearContactLogs(const Tp::AccountPtr &account,
                           const KTp::LogEntity &entity);
+
+    /**
+     * Searches all logs for given @p term.
+     *
+     * @param term Term to search
+     * @return Returns KTp::PendingLoggerSearch operation that will emit finished()
+     *         signal when search is finished.
+     */
+    KTp::PendingLoggerSearch* search(const QString &term);
 
     /**
      * Destructor

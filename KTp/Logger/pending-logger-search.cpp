@@ -17,42 +17,52 @@
  *
  */
 
-#include "abstract-logger-plugin.h"
-
-#include <TelepathyQt/Account>
-#include <TelepathyQt/AccountManager>
+#include "pending-logger-search.h"
 
 using namespace KTp;
 
-class AbstractLoggerPlugin::Private
+class PendingLoggerSearch::Private
 {
   public:
-    Tp::AccountManagerPtr accountManager;
+    Private(const QString &term_):
+        term(term_)
+    {
+    }
+
+    QString term;
+    QList<KTp::LogSearchHit> searchHits;
 };
 
-AbstractLoggerPlugin::AbstractLoggerPlugin(QObject *parent):
-    QObject(parent),
-    d(new Private)
+PendingLoggerSearch::PendingLoggerSearch(const QString &term, QObject *parent):
+    PendingLoggerOperation(parent),
+    d(new Private(term))
 {
 }
 
-AbstractLoggerPlugin::~AbstractLoggerPlugin()
+PendingLoggerSearch::~PendingLoggerSearch()
 {
     delete d;
 }
 
-bool KTp::AbstractLoggerPlugin::handlesAccount(const Tp::AccountPtr &account)
+QString PendingLoggerSearch::term() const
 {
-    // Handle all valid accounts
-    return account && account->isValid();
+    return d->term;
 }
 
-void AbstractLoggerPlugin::setAccountManager(const Tp::AccountManagerPtr &accountManager)
+QList<KTp::LogSearchHit> PendingLoggerSearch::searchHits() const
 {
-    d->accountManager = accountManager;
+    return d->searchHits;
 }
 
-Tp::AccountManagerPtr AbstractLoggerPlugin::accountManager() const
+void PendingLoggerSearch::appendSearchHit(const KTp::LogSearchHit &searchHit)
 {
-    return d->accountManager;
+    d->searchHits << searchHit;
 }
+
+void PendingLoggerSearch::appendSearchHits(const QList<LogSearchHit> &searchHits)
+{
+    d->searchHits << searchHits;
+}
+
+
+using namespace KTp;

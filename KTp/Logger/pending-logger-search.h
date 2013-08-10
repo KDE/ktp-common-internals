@@ -17,42 +17,35 @@
  *
  */
 
-#include "abstract-logger-plugin.h"
+#ifndef KTP_PENDINGLOGGERSEARCH_H
+#define KTP_PENDINGLOGGERSEARCH_H
 
-#include <TelepathyQt/Account>
-#include <TelepathyQt/AccountManager>
+#include <KTp/Logger/pending-logger-operation.h>
+#include <KTp/Logger/log-search-hit.h>
 
-using namespace KTp;
+namespace KTp {
 
-class AbstractLoggerPlugin::Private
+class PendingLoggerSearch : public  KTp::PendingLoggerOperation
 {
+    Q_OBJECT
+
   public:
-    Tp::AccountManagerPtr accountManager;
+    explicit PendingLoggerSearch(const QString &term, QObject *parent = 0);
+    virtual ~PendingLoggerSearch();
+
+    QString term() const;
+    QList<KTp::LogSearchHit> searchHits() const;
+
+  protected:
+    void appendSearchHits(const QList<KTp::LogSearchHit> &searchHits);
+    void appendSearchHit(const KTp::LogSearchHit &searchHit);
+
+  private:
+    class Private;
+    Private * const d;
+
 };
 
-AbstractLoggerPlugin::AbstractLoggerPlugin(QObject *parent):
-    QObject(parent),
-    d(new Private)
-{
 }
 
-AbstractLoggerPlugin::~AbstractLoggerPlugin()
-{
-    delete d;
-}
-
-bool KTp::AbstractLoggerPlugin::handlesAccount(const Tp::AccountPtr &account)
-{
-    // Handle all valid accounts
-    return account && account->isValid();
-}
-
-void AbstractLoggerPlugin::setAccountManager(const Tp::AccountManagerPtr &accountManager)
-{
-    d->accountManager = accountManager;
-}
-
-Tp::AccountManagerPtr AbstractLoggerPlugin::accountManager() const
-{
-    return d->accountManager;
-}
+#endif // KTP_PENDINGLOGGERSEARCH_H

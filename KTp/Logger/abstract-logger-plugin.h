@@ -31,6 +31,7 @@ namespace KTp {
 class PendingLoggerDates;
 class PendingLoggerLogs;
 class PendingLoggerEntities;
+class PendingLoggerSearch;
 class LogEntity;
 
 /**
@@ -109,6 +110,33 @@ class KTP_EXPORT AbstractLoggerPlugin : public QObject
      */
     virtual void clearContactLogs(const Tp::AccountPtr &account,
                                   const KTp::LogEntity &entity) = 0;
+
+    /**
+     * Searches all logs for given @p term.
+     *
+     * @param term Term to search
+     * @return Returns KTp::PendingLoggerSearch operation that will emit finished()
+     *         when all results are available
+     */
+    virtual KTp::PendingLoggerSearch* search(const QString &term) = 0;
+
+    /**
+     * Sets a new Tp::AccountManager to be used by the plugin.
+     *
+     * The @p accountManager is expected to be in ready state.
+     *
+     * @param accountManager An Tp::AccountManager in the ready state.
+     */
+    virtual void setAccountManager(const Tp::AccountManagerPtr &accountManager);
+
+    /**
+     * Returns the set Tp::AccountManager or an empty pointer if none was set.
+     */
+    virtual Tp::AccountManagerPtr accountManager() const;
+
+  private:
+    class Private;
+    Private * const d;
 };
 
 }
