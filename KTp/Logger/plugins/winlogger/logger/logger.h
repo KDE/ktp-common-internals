@@ -42,9 +42,7 @@ class Logger : public QObject
                        const QString &sentMessageToken);
 
   private:
-    KTp::LogEntity remoteEntity() const;
-
-    KTp::LogEntity mLocalEntity;
+    KTp::LogEntity mRemoteEntity;
     Tp::AccountPtr mAccount;
     Tp::ConnectionPtr mConnection;
     Tp::TextChannelPtr mChannel;

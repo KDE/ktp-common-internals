@@ -40,8 +40,7 @@ class Db
     bool checkDb();
 
     void logMessage(const QString &accountId,
-                    const KTp::LogEntity &sender,
-                    const KTp::LogEntity &receiver,
+                    const KTp::LogEntity &contact,
                     const Tp::Message &message,
                     bool outgoing);
 
@@ -53,7 +52,7 @@ class Db
     bool removeContact(int contactId);
 
     int storeMessage(int accountId, int messageType, const QDateTime &sent,
-                     int senderId, int receiverId, const QString &messageText);
+                     int contactId, const QString &messageText);
 
     void removeAccountLogs(const QString &accountUid);
     void removeContactLogs(const QString &accountUid, const QString &contactUid);

@@ -53,8 +53,8 @@ QList<KTp::LogMessage> PendingWinLoggerLogs::runQuery()
                                      "       contacts.type, contacts.uid, contacts.name "
                                      "FROM messages "
                                      "LEFT JOIN contacts ON messages.contactId = contacts.id "
-                                     "LEFT JOIN accounts ON contacts.accountId = accounts.id "
-                                     "WHERE accounts.uid = :1 AND contacts.uid = :2"
+                                     "LEFT JOIN accounts ON messages.accountId = accounts.id "
+                                     "WHERE accounts.uid = :1 AND contacts.uid = :2 "
                                      "AND messages.datetime >= :3 AND messages.datetime <= :4"))) {
         kWarning() << query.lastError().text();
         return QList<KTp::LogMessage>();

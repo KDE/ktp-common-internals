@@ -49,8 +49,8 @@ QList<QDate> PendingWinLoggerDates::runQuery()
 {
     QSqlQuery query(mDb);
     if (!query.prepare(QLatin1String("SELECT DISTINCT messages.datetime FROM messages "
-                                     "LEFT JOIN contacts ON messages.senderId = contacts.id "
-                                     "LEFT JOIN accounts ON contacts.accountId = accounts.id "
+                                     "LEFT JOIN contacts ON messages.contactId = contacts.id "
+                                     "LEFT JOIN accounts ON messages.accountId = accounts.id "
                                      "WHERE accounts.uid = ? AND contacts.uid = ?"))) {
         kWarning() << query.lastError().text();
         return QList<QDate>();

@@ -122,12 +122,10 @@ bool Db::initDb()
                             "  direction INTEGER NOT NULL, "
                             "  datetime DATETIME NOT NULL, "
                             "  accountId INTEGER, "
-                            "  senderId INTEGER, "
-                            "  receiverId INTEGER,"
+                            "  contactId INTEGER, "
                             "  message TEXT NOT NULL, "
-                            "  FOREIGN KEY(senderId) REFERENCES contacts(id),"
-                            "  FOREIGN KEY(receiverId) REFERENCES contacts(id),"
-                            "  FOREIGN KEY(receiverId) REFERENCES accounts(id))"));
+                            "  FOREIGN KEY(contactId) REFERENCES contacts(id),"
+                            "  FOREIGN KEY(accountId) REFERENCES accounts(id))"));
     if (query.lastError().isValid()) {
         kWarning() << query.lastError().text();
         return false;
@@ -138,27 +136,20 @@ bool Db::initDb()
     return true;
 }
 
-void Db::logMessage(const QString &accountId, const KTp::LogEntity &sender,
-                    const KTp::LogEntity &receiver, const Tp::Message &message,
-                    bool outgoing)
+void Db::logMessage(const QString &accountId, const KTp::LogEntity &contact,
+                    const Tp::Message &message, bool outgoing)
 {
     int accId = getAccountId(accountId);
     if (accId == -1) {
         accId = storeAccount(accountId);
     }
 
-    int senderId = getContactId(sender.id());
-    if (senderId == -1) {
-        senderId = storeContact(sender);
+    int contactId = getContactId(contact.id());
+    if (contactId == -1) {
+        contactId = storeContact(contact);
     }
 
-    int receiverId = getContactId(receiver.id());
-    if (receiverId == -1) {
-        receiverId = storeContact(receiver);
-    }
-
-    storeMessage(accId, outgoing, message.sent(), senderId, receiverId,
-                 message.text());
+    storeMessage(accId, outgoing, message.sent(), contactId, message.text());
 }
 
 int Db::getAccountId(const QString &accountUid)
@@ -232,11 +223,11 @@ int Db::storeContact(const KTp::LogEntity &contact)
 }
 
 int Db::storeMessage(int accountId, int messageType, const QDateTime &sent,
-                     int senderId, int receiverId, const QString &messageText)
+                     int contactId, const QString &messageText)
 {
     QSqlQuery query(mDb);
-    if (!query.prepare(QLatin1String("INSERT INTO messages (direction, datetime, accountId, senderId, receiverId, message) "
-                                     "VALUES(:1, :2, :3, :4, :5, :6)"))) 
+    if (!query.prepare(QLatin1String("INSERT INTO messages (direction, datetime, accountId, contactId, message) "
+                                     "VALUES(:1, :2, :3, :4, :5)"))) 
     {
         handleError(query);
         return -1;
@@ -245,8 +236,7 @@ int Db::storeMessage(int accountId, int messageType, const QDateTime &sent,
     query.addBindValue(messageType);
     query.addBindValue(sent.isValid() ? sent : QDateTime::currentDateTime());
     query.addBindValue(accountId);
-    query.addBindValue(senderId);
-    query.addBindValue(receiverId);
+    query.addBindValue(contactId);
     query.addBindValue(messageText);
 
     if (!query.exec()) {
@@ -331,14 +321,13 @@ void Db::removeContactLogs(const QString& accountUid, const QString& contactUid)
 
     QSqlQuery query(mDb);
     if (!query.prepare(QLatin1String("DELETE FROM messages "
-                                     "WHERE accountId = :1 AND (senderId = :2 OR receiverId = :3)"))) {
+                                     "WHERE accountId = :1 AND contactId = :2"))) {
         handleError(query);
         mDb.rollback();
         return;
     }
 
     query.addBindValue(accountId);
-    query.addBindValue(contactId);
     query.addBindValue(contactId);
 
     if (!query.exec()) {

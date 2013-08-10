@@ -56,12 +56,10 @@ QList<KTp::LogSearchHit> PendingWinLoggerSearch::runQuery()
     bool prep = query.prepare(
                    QLatin1String("SELECT DISTINCT messages.datetime"
                                  "       messages.accountId, accounts.name"
-                                 "       messages.senderId, contacts1.uid, contacts1.name, contacts1.type"
-                                 "       messages.receiverId, contacts2.uid, contacts2.name, contacts2.type"
+                                 "       messages.contactId, contacts.uid, contacts.name, contacts.type"
                                  "       messages.direction "
                                  "FROM messages "
-                                 "LEFT JOIN contacts AS contacts1 ON messages.senderId = contacts.id "
-                                 "LEFT JOIN contacts AS contacts2 ON messages.receiverId = contacts.id "
+                                 "LEFT JOIN contacts AS contacts ON messages.contactId = contacts.id "
                                  "WHERE messages.message LIKE '%:1%'"));
     if (!prep) {
         kWarning() << query.lastError().text();
@@ -89,22 +87,23 @@ QList<KTp::LogSearchHit> PendingWinLoggerSearch::runQuery()
 
     while (query.next()) {
         const QString accountId = query.value(2).toString();
-        if (!accounts.contains(accountId)) {
+        const Tp::AccountPtr account = accounts.value(accountId);
+        if (!account) {
             continue;
         }
 
         KTp::LogEntity entity;
-        if (query.value(11).toInt() == 1) { // outgoing message
-            entity = KTp::LogEntity(static_cast<KTp::LogEntity::EntityType>(query.value(10).toInt()),
-                                    query.value(8).toString(),
-                                    query.value(9).toString());
-        } else {
+        if (query.value(7).toInt() == 1) { // outgoing message
             entity = KTp::LogEntity(static_cast<KTp::LogEntity::EntityType>(query.value(6).toInt()),
                                     query.value(4).toString(),
                                     query.value(5).toString());
+        } else {
+            const Tp::ContactPtr contact = account->connection()->selfContact();
+            entity = KTp::LogEntity(KTp::LogEntity::EntityTypeContact,
+                                    contact->id(), contact->alias());
         }
 
-        hits << KTp::LogSearchHit(accounts.value(accountId), entity,
+        hits << KTp::LogSearchHit(account, entity,
                                   query.value(0).toDateTime().date());
     }
 

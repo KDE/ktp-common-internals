@@ -48,9 +48,9 @@ PendingWinLoggerEntities::~PendingWinLoggerEntities()
 QList<KTp::LogEntity> PendingWinLoggerEntities::runQuery()
 {
     QSqlQuery query(mDb);
-    if (!query.prepare(QLatin1String("SELECT contacts.type, contacts.uid, contacts.name "
+    if (!query.prepare(QLatin1String("SELECT DISTINCT contacts.uid, contacts.type, contacts.name "
                                      "FROM messages "
-                                     "LEFT JOIN contacts ON contacts.id = messages.senderId "
+                                     "LEFT JOIN contacts ON contacts.id = messages.contactId "
                                      "LEFT JOIN accounts ON accounts.id = messages.accountId "
                                      "WHERE accounts.uid = :1"))) {
         kWarning() << query.lastError().text();
@@ -66,8 +66,8 @@ QList<KTp::LogEntity> PendingWinLoggerEntities::runQuery()
 
     QList<KTp::LogEntity> entities;
     while (query.next()) {
-        entities << KTp::LogEntity(static_cast<KTp::LogEntity::EntityType>(query.value(0).toInt()),
-                                   query.value(1).toString(),
+        entities << KTp::LogEntity(static_cast<KTp::LogEntity::EntityType>(query.value(1).toInt()),
+                                   query.value(0).toString(),
                                    query.value(2).toString());
     }
 
