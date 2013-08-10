@@ -107,5 +107,28 @@ PendingLoggerEntities* LogManager::queryEntities(const Tp::AccountPtr& account)
     return new PendingLoggerEntitiesImpl(account, this);
 }
 
+void LogManager::clearAccountLogs(const Tp::AccountPtr &account)
+{
+   Q_FOREACH (KTp::AbstractLoggerPlugin *plugin, d->plugins) {
+        if (!plugin->handlesAccount(account)) {
+            continue;
+        }
+
+        plugin->clearAccountLogs(account);
+    }
+}
+
+void LogManager::clearContactLogs(const Tp::AccountPtr &account,
+                                  const KTp::LogEntity &entity)
+{
+    Q_FOREACH (KTp::AbstractLoggerPlugin *plugin, d->plugins) {
+        if (!plugin->handlesAccount(account)) {
+            continue;
+        }
+
+        plugin->clearContactLogs(account, entity);
+    }
+}
+
 
 using namespace KTp;

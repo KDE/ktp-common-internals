@@ -92,6 +92,23 @@ class KTP_EXPORT AbstractLoggerPlugin : public QObject
      */
     virtual bool handlesAccount(const Tp::AccountPtr &account);
 
+    /**
+     * Removes all logs for given @p account from all available plugins that
+     * handle it
+     *
+     * @param account Account of which to remove logs
+     */
+    virtual void clearAccountLogs(const Tp::AccountPtr &account) = 0;
+
+    /**
+     * Removes all logs for given @p entity from all available plugins that
+     * handle the @p account.
+     *
+     * @param account Account to query
+     * @param entity Entity whose logs to remove
+     */
+    virtual void clearContactLogs(const Tp::AccountPtr &account,
+                                  const KTp::LogEntity &entity) = 0;
 };
 
 }
