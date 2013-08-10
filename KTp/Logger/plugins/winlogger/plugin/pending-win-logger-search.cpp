@@ -53,6 +53,8 @@ PendingWinLoggerSearch::~PendingWinLoggerSearch()
 QList<KTp::LogSearchHit> PendingWinLoggerSearch::runQuery()
 {
     QSqlQuery query(mDb);
+
+    // FIXME: Use SQLite's FTS feature for full-text-search
     bool prep = query.prepare(
                    QLatin1String("SELECT DISTINCT messages.datetime"
                                  "       messages.accountId, accounts.name"
