@@ -26,6 +26,7 @@
 #include "pending-win-logger-search.h"
 
 #include <KPluginFactory>
+#include <QSqlError>
 
 WinLogger::WinLogger(QObject *parent, const QVariantList &):
     AbstractLoggerPlugin(parent)
@@ -101,6 +102,39 @@ KTp::PendingLoggerSearch* WinLogger::search(const QString &term)
     return new PendingWinLoggerSearch(term, mDb, this);
 }
 
+bool WinLogger::logsExist(const Tp::AccountPtr &account, const KTp::LogEntity &contact)
+{
+    if (!mDb.isOpen()) {
+        return false;
+    }
+
+    const int accountId = Db::instance()->getAccountId(account->uniqueIdentifier());
+    if (accountId == -1) {
+        return false;
+    }
+
+    const int contactId = Db::instance()->getContactId(contact.id());
+    if (contactId == -1) {
+        return false;
+    }
+
+    QSqlQuery query(mDb);
+    if (!query.prepare(QLatin1String("SELECT COUNT(id) FROM messages "
+                                     "WHERE accountId = :1 AND contactId = :2")))
+    {
+        return false;
+    }
+
+    query.addBindValue(accountId);
+    query.addBindValue(contactId);
+
+    if (!query.exec() || !query.first()) {
+        return false;
+    }
+
+    const int results = query.value(0).toInt();
+    return (results > 0);
+}
 
 
 K_PLUGIN_FACTORY(WinLoggerFactory, registerPlugin<WinLogger>();)

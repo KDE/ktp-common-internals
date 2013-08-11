@@ -134,6 +134,18 @@ class KTP_EXPORT AbstractLoggerPlugin : public QObject
      */
     virtual Tp::AccountManagerPtr accountManager() const;
 
+    /**
+     * Checks whether there are any logs for given @p account and @p contact.
+     *
+     * For easy use this method is synchronous and can block for a while in case
+     * of a slower plugin.
+     *
+     * @param account Account to query
+     * @param contact Contact to query
+     * @return Returns whether there are any logs for given person
+     */
+    virtual bool logsExist(const Tp::AccountPtr &account, const KTp::LogEntity &contact) = 0;
+
   private:
     class Private;
     Private * const d;

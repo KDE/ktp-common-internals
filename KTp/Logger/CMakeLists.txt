@@ -35,11 +35,6 @@ set (ktp_logger_private_HDRS
     pending-logger-search.h
 )
 
-set (ktp_logger_private_LIBS
-                       ${KDE4_KDECORE_LIBS}
-                       ${TELEPATHY_QT4_LIBRARIES}
-)
-
 kde4_add_library (ktploggerprivate SHARED
                  ${ktp_logger_private_SRCS}
 )
@@ -50,7 +45,9 @@ set_target_properties(ktploggerprivate PROPERTIES
                                        DEFINE_SYMBOL MAKE_KTP_LIB)
 
 target_link_libraries (ktploggerprivate
-                       ${ktp_logger_private_LIBS}
+                       ${KDE4_KDECORE_LIBS}
+                       ${TELEPATHY_QT4_LIBRARIES}
+                       ktpcommoninternalsprivate
 )
 
 install (TARGETS ktploggerprivate

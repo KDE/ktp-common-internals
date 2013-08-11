@@ -153,6 +153,20 @@ PendingLoggerSearch* LogManager::search(const QString& term)
     return new PendingLoggerSearchImpl(term, this);
 }
 
+bool LogManager::logsExist(const Tp::AccountPtr &account, const KTp::LogEntity &contact)
+{
+    Q_FOREACH (KTp::AbstractLoggerPlugin *plugin, d->plugins) {
+        if (!plugin->handlesAccount(account)) {
+            continue;
+        }
+
+        if (plugin->logsExist(account, contact)) {
+            return true;
+        }
+    }
+
+    return false;
+}
 
 
 using namespace KTp;

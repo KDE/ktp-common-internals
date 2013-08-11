@@ -124,6 +124,18 @@ class KTP_EXPORT LogManager : public AbstractLoggerPlugin
     KTp::PendingLoggerSearch* search(const QString &term);
 
     /**
+     * Checks whether there are any logs for given @p account and @p contact.
+     *
+     * For easy use this method is synchronous and can block in case of a slower
+     * plugin.
+     *
+     * @param account Account to query
+     * @param contact Contact to query
+     * @return Returns whether there are any logs for given person
+     */
+    bool logsExist(const Tp::AccountPtr &account, const KTp::LogEntity &contact);
+
+    /**
      * Destructor
      */
     virtual ~LogManager();

@@ -42,6 +42,7 @@ class WinLogger : public KTp::AbstractLoggerPlugin
     void clearContactLogs(const Tp::AccountPtr &account,
                           const KTp::LogEntity &entity);
     KTp::PendingLoggerSearch* search(const QString& term);
+    bool logsExist(const Tp::AccountPtr &account, const KTp::LogEntity &contact);
   private:
     QSqlDatabase mDb;
 };

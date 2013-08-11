@@ -94,6 +94,11 @@ KTp::PendingLoggerSearch* TpLoggerPlugin::search(const QString &term)
     return new PendingTpLoggerSearch(term, this);
 }
 
+bool TpLoggerPlugin::logsExist(const Tp::AccountPtr &account, const KTp::LogEntity &contact)
+{
+    Tpl::LogManagerPtr manager = Tpl::LogManager::instance();
+    return manager->exists(account, Utils::toTplEntity(contact), Tpl::EventTypeMaskText);
+}
 
 
 K_PLUGIN_FACTORY(TpLoggerPluginFactory, registerPlugin<TpLoggerPlugin>();)
