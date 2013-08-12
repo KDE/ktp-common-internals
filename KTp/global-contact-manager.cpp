@@ -98,7 +98,8 @@ void GlobalContactManager::onConnectionChanged(const Tp::ConnectionPtr &connecti
     //this is needed to fetch contacts from Salut which do not support groups
     Tp::Features connectionFeatures;
     connectionFeatures << Tp::Connection::FeatureRoster;
-    if (connection->hasInterface(TP_QT_IFACE_CHANNEL + QLatin1String(".ContactGroups"))) {
+
+    if (connection->hasInterface(TP_QT_IFACE_CONNECTION_INTERFACE_CONTACT_GROUPS)) {
        connectionFeatures << Tp::Connection::FeatureRosterGroups;
     }
     Tp::PendingReady *op = connection->becomeReady(connectionFeatures);
