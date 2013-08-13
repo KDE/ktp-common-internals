@@ -30,6 +30,9 @@ namespace KTp {
 
 /**
  * @brief LogEntity represents a single contact or chat room
+ *
+ * @since 0.7
+ * @author Daniel Vrátil <dvratil@redhat.com>
  */
 class KTP_EXPORT LogEntity
 {
@@ -41,12 +44,12 @@ class KTP_EXPORT LogEntity
     };
 
     /**
-     * Constructs an invalid LogEntity
+     * Constructs an invalid LogEntity.
      */
     explicit LogEntity();
 
     /**
-     * Constructs a valid entity
+     * Constructs a valid entity.
      *
      * @param entityType Whether the entity represents a contact or a chat root
      * @param id ID of the contact or chat root
@@ -56,33 +59,33 @@ class KTP_EXPORT LogEntity
               const QString &alias = QString());
 
     /**
-     * Copy constructor
+     * Copy constructor.
      */
     LogEntity(const KTp::LogEntity &other);
 
     /**
-     * Destructor
+     * Destructor.
      */
     ~LogEntity();
 
     /**
-     * Assignment operator
+     * Assignment operator.
      */
     KTp::LogEntity& operator=(const KTp::LogEntity &other);
 
     /**
-     * Compare operator
+     * Compare operator.
      */
     bool operator==(const KTp::LogEntity &other);
 
     /**
      * Returns whether this entity is valid (i.e. whether entity type is valid and
-     * whether id is not empty)
+     * whether id is not empty).
      */
     bool isValid() const;
 
     /**
-     * Returns ID of contact or chat room that this entity represents
+     * Returns ID of contact or chat room that this entity represents.
      */
     QString id() const;
 
@@ -93,7 +96,7 @@ class KTP_EXPORT LogEntity
     QString alias() const;
 
     /**
-     * Returns whether this entity represents a contact or a chat root
+     * Returns whether this entity represents a contact or a chat room.
      */
     EntityType entityType() const;
 

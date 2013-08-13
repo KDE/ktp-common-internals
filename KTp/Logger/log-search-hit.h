@@ -25,24 +25,63 @@ namespace KTp {
 
 class LogEntity;
 
+/**
+ * @brief LogSearchHit is a result of PendingLoggerSearch operation.
+ *
+ * It describes a log that contains at least one message that matched the given
+ * search term.
+ *
+ * @since 0.7
+ * @author Daniel Vrátil <dvratil@redhat.com>
+ */
 class LogSearchHit
 {
   public:
+    /**
+     * Constructor.
+     *
+     * @param account Matching account.
+     * @param entity Matching entity.
+     * @param date Matching date.
+     */
     LogSearchHit(const Tp::AccountPtr &account, const KTp::LogEntity &entity,
                  const QDate &date);
+
+    /**
+     * Copy constructor.
+     */
     LogSearchHit(const LogSearchHit &other);
+
+    /**
+     * Destructor.
+     */
     ~LogSearchHit();
 
+    /**
+     * Assignment operator.
+     */
     LogSearchHit& operator=(const KTp::LogSearchHit &other);
 
+    /**
+     * Returns account that contains the matching log message.
+     */
     Tp::AccountPtr account() const;
+
+    /**
+     * Returns entity that contains the matching log messages.
+     */
     KTp::LogEntity entity() const;
+
+    /**
+     * Returns date of the log that contains the matching message(s).
+     */
     QDate date() const;
 
   private:
     class Private;
     QSharedDataPointer<Private> d;
 };
-}
+
+} // namespace KTp
 
 #endif // KTP_LOGSEARCHHIT_H

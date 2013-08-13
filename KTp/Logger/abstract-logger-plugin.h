@@ -36,13 +36,23 @@ class LogEntity;
 
 /**
  * @brief An interface for all KTp Logger plugins
+ *
+ * @since 0.7
+ * @author Daniel Vrátil <dvratil@redhat.com>
  */
 class KTP_EXPORT AbstractLoggerPlugin : public QObject
 {
     Q_OBJECT
 
   public:
+    /**
+     * Constructor.
+     */
     explicit AbstractLoggerPlugin(QObject *parent = 0);
+
+    /**
+     * Destructor.
+     */
     virtual ~AbstractLoggerPlugin();
 
     /**
@@ -95,7 +105,7 @@ class KTP_EXPORT AbstractLoggerPlugin : public QObject
 
     /**
      * Removes all logs for given @p account from all available plugins that
-     * handle it
+     * handle it.
      *
      * @param account Account of which to remove logs
      */
@@ -151,6 +161,6 @@ class KTP_EXPORT AbstractLoggerPlugin : public QObject
     Private * const d;
 };
 
-}
+} // namespace KTp
 
 #endif // KTP_ABSTRACTLOGGERPLUGIN_H

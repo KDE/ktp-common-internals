@@ -36,6 +36,9 @@ class PendingLoggerEntities;
 
 /**
  * Log manager is a singleton that user can use to query the logs.
+ *
+ * @since 0.7
+ * @author Daniel Vrátil <dvratil@redhat.com>
  */
 class KTP_EXPORT LogManager : public AbstractLoggerPlugin
 {
@@ -43,7 +46,7 @@ class KTP_EXPORT LogManager : public AbstractLoggerPlugin
 
   public:
     /**
-     * Returns global instance of the LogManager
+     * Returns global instance of the LogManager.
      */
     static KTp::LogManager* instance();
 
@@ -98,7 +101,7 @@ class KTP_EXPORT LogManager : public AbstractLoggerPlugin
 
     /**
      * Removes all logs for given @p account from all available plugins that
-     * handle it
+     * handle it.
      *
      * @param account Account of which to remove logs
      */
@@ -136,7 +139,7 @@ class KTP_EXPORT LogManager : public AbstractLoggerPlugin
     bool logsExist(const Tp::AccountPtr &account, const KTp::LogEntity &contact);
 
     /**
-     * Destructor
+     * Destructor.
      */
     virtual ~LogManager();
 

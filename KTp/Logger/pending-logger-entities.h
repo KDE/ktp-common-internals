@@ -28,14 +28,35 @@
 
 namespace KTp {
 
+/**
+ * @brief An operation that will retrieve list of entities for which there are any
+ *        logs in each backend and merges them together.
+ *
+ * The operation will emit finished(KTp::PendingLoggerOperation*) signal when
+ * all entities were retrieved. When an error occurs in any backend hasError()
+ * will be set to true. Use error() to retrieve the error message.
+ *
+ * @since 0.7
+ * @author Daniel Vrátil <dvratil@redhat.com>
+ */
 class KTP_EXPORT PendingLoggerEntities : public KTp::PendingLoggerOperation
 {
     Q_OBJECT
 
   public:
+    /**
+     * Destructor.
+     */
     virtual ~PendingLoggerEntities();
 
+    /**
+     * Returns account for which the entities are being queried.
+     */
     Tp::AccountPtr account() const;
+
+    /**
+     * Returns list of fetched entities.
+     */
     QList<KTp::LogEntity> entities() const;
 
   protected:
@@ -48,6 +69,6 @@ class KTP_EXPORT PendingLoggerEntities : public KTp::PendingLoggerOperation
     Private * const d;
 };
 
-}
+} // namespace KTp
 
 #endif // KTP_PENDINGLOGGERENTITIES_H

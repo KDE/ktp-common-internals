@@ -28,16 +28,45 @@
 
 namespace KTp {
 
+/**
+ * @brief An operation that will retrieve list of chat logs for given account,
+ *        entity and date from all backends.
+ *
+ * The operation will emit finished(KTp::PendingLoggerOperation*) signal when
+ * all logs were retrieved. When an error occurs in any backend hasError()
+ * will be set to true. Use error() to retrieve the error message.
+ *
+ * @since 0.7
+ * @author Daniel Vrátil <dvratil@redhat.com>
+ */
 class KTP_EXPORT PendingLoggerLogs : public KTp::PendingLoggerOperation
 {
     Q_OBJECT
 
   public:
+    /**
+     * Destructor.
+     */
     virtual ~PendingLoggerLogs();
 
+    /**
+     * Returns account for which logs are being queried.
+     */
     Tp::AccountPtr account() const;
+
+    /**
+     * Returns entity for which logs are being queried.
+     */
     KTp::LogEntity entity() const;
+
+    /**
+     * Returns date for which logs are being queried.
+     */
     QDate date() const;
+
+    /**
+     * Returns list of retrieved log messages.
+     */
     QList<KTp::LogMessage> logs() const;
 
 
@@ -53,6 +82,6 @@ class KTP_EXPORT PendingLoggerLogs : public KTp::PendingLoggerOperation
     Private * const d;
 };
 
-}
+} // namespace KTp
 
 #endif // KTP_PENDINGLOGGERLOGS_H

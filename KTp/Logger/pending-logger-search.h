@@ -25,18 +25,41 @@
 
 namespace KTp {
 
+/**
+ * @brief An operation that will retrieve list of chat logs matching given search
+ *        term.
+ *
+ * The operation will emit finished(KTp::PendingLoggerOperation*) signal when
+ * search is finished. When an error occurs in any backend hasError() will be
+ * set to true. Use error() to retrieve the error message.
+ *
+ * @since 0.7
+ * @author Daniel Vrátil <dvratil@redhat.com>
+ */
 class PendingLoggerSearch : public  KTp::PendingLoggerOperation
 {
     Q_OBJECT
 
   public:
-    explicit PendingLoggerSearch(const QString &term, QObject *parent = 0);
+    /**
+     * Destructor.
+     */
     virtual ~PendingLoggerSearch();
 
+    /**
+     * Returns the search term that is used.
+     */
     QString term() const;
+
+    /**
+     * Returns list of hits matching givem search term.
+     */
     QList<KTp::LogSearchHit> searchHits() const;
 
   protected:
+    explicit PendingLoggerSearch(const QString &term,
+                                 QObject *parent = 0);
+
     void appendSearchHits(const QList<KTp::LogSearchHit> &searchHits);
     void appendSearchHit(const KTp::LogSearchHit &searchHit);
 
@@ -46,6 +69,6 @@ class PendingLoggerSearch : public  KTp::PendingLoggerOperation
 
 };
 
-}
+} // namespace KTp
 
 #endif // KTP_PENDINGLOGGERSEARCH_H

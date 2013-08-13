@@ -29,15 +29,41 @@ namespace KTp {
 
 class LogEntity;
 
+/**
+ * @brief An operation that will retrieve list of dates for which there are any
+ *        logs in each backend and merges them together.
+ *
+ * The operation will emit finished(KTp::PendingLoggerOperation*) signal when
+ * all dates were retrieved. When an error occurs in any backend hasError()
+ * will be set to true. Use error() to retrieve the error message.
+ *
+ * @since 0.7
+ * @author Daniel Vrátil <dvratil@redhat.com>
+ */
 class KTP_EXPORT PendingLoggerDates : public KTp::PendingLoggerOperation
 {
     Q_OBJECT
 
   public:
+    /**
+     * Destructor.
+     */
     virtual ~PendingLoggerDates();
 
+    /**
+     * Returns account for which the dates are queried.
+     */
     Tp::AccountPtr account() const;
+
+    /**
+     * Returns entity for which the dates are queried.
+     */
     KTp::LogEntity entity() const;
+
+    /**
+     * Returns list of retrieved dates. The list is always sort in ascending
+     * order.
+     */
     QList<QDate> dates() const;
 
   protected:
@@ -50,6 +76,7 @@ class KTP_EXPORT PendingLoggerDates : public KTp::PendingLoggerOperation
     class Private;
     Private * const d;
 };
-}
+
+} // namespace KTp
 
 #endif // KTP_PENDINGLOGGERDATES_H

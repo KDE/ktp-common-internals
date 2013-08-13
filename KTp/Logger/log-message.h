@@ -33,6 +33,9 @@ namespace KTp {
  *       a protected constructor and we have no other access to KTp::MessagePrivate
  *       We already had to tweak the KTp::Message anyway, so maybe tweaking it
  *       a bit more to avoid having to have this class would not matte that much
+ *
+ * @since 0.7
+ * @author Daniel Vrátil <dvratil@redhat.com>
  */
 class KTP_EXPORT LogMessage : public KTp::Message
 {
@@ -42,6 +45,6 @@ class KTP_EXPORT LogMessage : public KTp::Message
     virtual ~LogMessage();
 };
 
-}
+} // namespace KTp
 
 #endif // KTP_LOGMESSAGE_H
