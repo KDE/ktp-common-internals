@@ -25,10 +25,6 @@
 #include <TelepathyQt/ContactManager>
 #include <TelepathyQt/Connection>
 
-#ifdef HAVE_TPLOGGERQT
-#include <TelepathyLoggerQt4/Entity>
-#endif
-
 using namespace KTp;
 
 class Message::Private : public QSharedData {
@@ -102,36 +98,6 @@ Message::Message(const Tp::ReceivedMessage &original, const KTp::MessageContext 
         d->senderAlias = original.senderNickname();
     }
 }
-
-#ifdef HAVE_TPLOGGERQT
-Message::Message(const Tpl::TextEventPtr &original, const KTp::MessageContext &context) :
-    d(new Private)
-{
-    d->sentTime = original->timestamp();
-    d->token = original->messageToken();
-    d->messageType = original->messageType();
-    d->isHistory = true;
-
-    d->senderAlias = original->sender()->alias();
-    d->senderId = original->sender()->identifier();
-
-    if (original->sender()->identifier() == context.account()->normalizedName()) {
-        d->direction = KTp::Message::LocalToRemote;
-    } else {
-        d->direction = KTp::Message::RemoteToLocal;
-    }
-
-    if (context.channel()) {
-        Q_FOREACH (const Tp::ContactPtr &contact, context.channel()->groupContacts()) {
-            if (contact->id() == original->sender()->identifier()) {
-                d->sender = KTp::ContactPtr::qObjectCast(contact);
-            }
-        }
-    }
-
-    setMainMessagePart(original->message());
-}
-#endif
 
 Message::Message(const QString &messageText, const MessageContext &context) :
     d(new Private)
