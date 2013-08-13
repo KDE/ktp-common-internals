@@ -66,6 +66,10 @@ void PendingLoggerDatesImpl::operationFinished(KTp::PendingLoggerOperation *op)
     setDates(existingDates);
 
     if (mRunningOps.isEmpty()) {
+        QList<QDate> allDates = dates();
+        qSort(allDates);
+        setDates(allDates);
+
         emitFinished();
     }
 }
