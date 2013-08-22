@@ -25,6 +25,11 @@
 PendingLoggerSearchImpl::PendingLoggerSearchImpl(const QString& term, QObject* parent):
     PendingLoggerSearch(term, parent)
 {
+    if (plugins().isEmpty()) {
+        emitFinished();
+        return;
+    }
+
     Q_FOREACH (KTp::AbstractLoggerPlugin *plugin, plugins()) {
         PendingLoggerOperation *op = plugin->search(term);
         if (!op) {

@@ -27,6 +27,11 @@ PendingLoggerLogsImpl::PendingLoggerLogsImpl(const Tp::AccountPtr &account,
                                              QObject* parent):
     PendingLoggerLogs(account, entity, date, parent)
 {
+    if (plugins().isEmpty()) {
+        emitFinished();
+        return;
+    }
+
     Q_FOREACH (KTp::AbstractLoggerPlugin *plugin, plugins()) {
         if (!plugin->handlesAccount(account)) {
             continue;
