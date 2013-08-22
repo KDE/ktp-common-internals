@@ -39,6 +39,8 @@ class LogsImporter::Private: public QThread
     void setAccountId(const QString &accountId);
     QStringList findKopeteLogs(const QString &accountId) const;
 
+    void stop();
+
   Q_SIGNALS:
     void error(const QString &error);
 
@@ -69,6 +71,7 @@ class LogsImporter::Private: public QThread
     int m_year;
 
     bool m_isMUCLog;
+    QAtomicInt m_shouldStop;
 
     friend class KTp::LogsImporter;
 };

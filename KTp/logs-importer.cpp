@@ -33,7 +33,12 @@ LogsImporter::LogsImporter(QObject *parent)
 
 LogsImporter::~LogsImporter()
 {
-    delete d;
+    if (d->isRunning()) {
+        d->stop();
+        d->wait();
+    }
+
+    // d is deleted by QObject
 }
 
 bool LogsImporter::hasKopeteLogs(const Tp::AccountPtr& account)
