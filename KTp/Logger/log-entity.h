@@ -26,6 +26,8 @@
 
 #include <KTp/ktp-export.h>
 
+#include <TelepathyQt/Constants>
+
 namespace KTp {
 
 /**
@@ -37,12 +39,6 @@ namespace KTp {
 class KTP_EXPORT LogEntity
 {
   public:
-    enum EntityType {
-        EntityTypeInvalid,
-        EntityTypeContact,
-        EntityTypeRoom
-    };
-
     /**
      * Constructs an invalid LogEntity.
      */
@@ -51,11 +47,11 @@ class KTP_EXPORT LogEntity
     /**
      * Constructs a valid entity.
      *
-     * @param entityType Whether the entity represents a contact or a chat root
-     * @param id ID of the contact or chat root
-     * @param alias Optional alias (username) of the contact or chat root
+     * @param entityType Whether the entity represents a contact or a chat room
+     * @param id ID of the contact or chat room
+     * @param alias Optional alias (username) of the contact or chat room
      */
-    LogEntity(EntityType entityType, const QString &id,
+    LogEntity(Tp::HandleType entityType, const QString &id,
               const QString &alias = QString());
 
     /**
@@ -98,7 +94,7 @@ class KTP_EXPORT LogEntity
     /**
      * Returns whether this entity represents a contact or a chat room.
      */
-    EntityType entityType() const;
+    Tp::HandleType entityType() const;
 
   private:
     class Private;

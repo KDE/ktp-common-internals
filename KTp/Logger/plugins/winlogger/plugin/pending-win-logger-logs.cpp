@@ -85,7 +85,7 @@ QList<KTp::LogMessage> PendingWinLoggerLogs::runQuery()
         KTp::LogEntity entity;
 
         if (query.value(2).toInt() == 0)  { // incomming message
-            entity = KTp::LogEntity(static_cast<KTp::LogEntity::EntityType>(query.value(3).toInt()),
+            entity = KTp::LogEntity(static_cast<Tp::HandleType>(query.value(3).toInt()),
                                     query.value(4).toString(),
                                     query.value(5).toString());
         } else {
@@ -143,6 +143,6 @@ KTp::LogEntity PendingWinLoggerLogs::findSelfEntity(const QString &accountId,
         return KTp::LogEntity();
     }
 
-    return KTp::LogEntity(KTp::LogEntity::EntityTypeContact, contact->id(),
+    return KTp::LogEntity(Tp::HandleTypeContact, contact->id(),
                           contact->alias());
 }

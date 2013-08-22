@@ -66,7 +66,7 @@ QList<KTp::LogEntity> PendingWinLoggerEntities::runQuery()
 
     QList<KTp::LogEntity> entities;
     while (query.next()) {
-        entities << KTp::LogEntity(static_cast<KTp::LogEntity::EntityType>(query.value(1).toInt()),
+        entities << KTp::LogEntity(static_cast<Tp::HandleType>(query.value(1).toInt()),
                                    query.value(0).toString(),
                                    query.value(2).toString());
     }

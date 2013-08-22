@@ -96,12 +96,12 @@ QList<KTp::LogSearchHit> PendingWinLoggerSearch::runQuery()
 
         KTp::LogEntity entity;
         if (query.value(7).toInt() == 0) { // incomming message
-            entity = KTp::LogEntity(static_cast<KTp::LogEntity::EntityType>(query.value(6).toInt()),
+            entity = KTp::LogEntity(static_cast<Tp::HandleType>(query.value(6).toInt()),
                                     query.value(4).toString(),
                                     query.value(5).toString());
         } else {
             const Tp::ContactPtr contact = account->connection()->selfContact();
-            entity = KTp::LogEntity(KTp::LogEntity::EntityTypeContact,
+            entity = KTp::LogEntity(Tp::HandleTypeContact,
                                     contact->id(), contact->alias());
         }
 

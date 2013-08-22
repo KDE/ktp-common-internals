@@ -37,11 +37,11 @@ Logger::Logger(const Tp::AccountPtr &account,
     kDebug() << "Logging channel" << channel.constData() << "to" << channel->targetId();
 
     if (mChannel->targetHandleType() == Tp::HandleTypeContact) {
-        mRemoteEntity = KTp::LogEntity(KTp::LogEntity::EntityTypeContact,
+        mRemoteEntity = KTp::LogEntity(mChannel->targetHandleType(),
                             mChannel->targetContact()->id(),
                             mChannel->targetContact()->alias());
     } else if (mChannel->targetHandleType() == Tp::HandleTypeRoom) {
-        mRemoteEntity = KTp::LogEntity(KTp::LogEntity::EntityTypeRoom,
+        mRemoteEntity = KTp::LogEntity(mChannel->targetHandleType(),
                             mChannel->targetId());
     }
 
