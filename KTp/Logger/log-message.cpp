@@ -18,12 +18,31 @@
  */
 
 #include "log-message.h"
+#include "message-private.h"
 
 using namespace KTp;
 
 LogMessage::LogMessage(const LogEntity &from, const Tp::AccountPtr &account,
                        const QDateTime &dt, const QString &message):
-    Message(from.id(), from.alias(), account, dt, message)
+    Message(new KTp::Message::Private)
+{
+    d->senderId = from.id();
+    d->senderAlias = from.alias();
+    d->isHistory = true;
+    d->messageType = Tp::ChannelTextMessageTypeNormal;
+    d->sentTime = dt;
+
+    setMainMessagePart(message);
+
+    if (account->connection()->selfContact()->id() == senderId()) {
+        d->direction = KTp::Message::LocalToRemote;
+    } else {
+        d->direction = KTp::Message::RemoteToLocal;
+    }
+}
+
+LogMessage::LogMessage(const LogMessage& other):
+    Message(other)
 {
 }
 

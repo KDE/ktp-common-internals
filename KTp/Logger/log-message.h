@@ -42,6 +42,8 @@ class KTP_EXPORT LogMessage : public KTp::Message
   public:
     explicit LogMessage(const KTp::LogEntity &from, const Tp::AccountPtr &account,
                         const QDateTime &dt, const QString &message);
+    LogMessage(const LogMessage& other);
+
     virtual ~LogMessage();
 };
 

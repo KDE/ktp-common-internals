@@ -154,16 +154,12 @@ public:
     MessageDirection direction() const;
 
 protected:
+    class Private;
+
     Message(const Tp::Message &original, const KTp::MessageContext &context);
     Message(const Tp::ReceivedMessage &original, const KTp::MessageContext &context);
-    Message(const QString &senderId, const QString &senderAlias,
-            const Tp::AccountPtr &account, const QDateTime &dt, const QString &message);
+    Message(KTp::Message::Private *dd);
 
-    explicit Message(const QString &messageText, const KTp::MessageContext &context);
-
-
-private:
-    class Private;
     QSharedDataPointer<Private> d;
     friend class MessageProcessor;
 };

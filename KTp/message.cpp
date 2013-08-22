@@ -18,6 +18,7 @@
 
 
 #include "message.h"
+#include "message-private.h"
 
 #include <KDebug>
 #include <QSharedData>
@@ -27,32 +28,14 @@
 
 using namespace KTp;
 
-class Message::Private : public QSharedData {
-
-  public:
-    Private() :
-        isHistory(false)
-    {}
-
-    QDateTime   sentTime;
-    QString     token;
-    Tp::ChannelTextMessageType messageType;
-    QVariantMap properties;
-    QString     mainPart;
-    QStringList parts;
-    QStringList scripts;
-    bool isHistory;
-    MessageDirection direction;
-
-    //if we have a valid sender pointer store that, otherwise store alias
-    KTp::ContactPtr sender;
-    QString senderAlias;
-    QString senderId;
-};
-
 Message& Message::operator=(const Message &other) {
     d = other.d;
     return *this;
+}
+
+Message::Message(Message::Private *dd):
+    d(dd)
+{
 }
 
 Message::Message(const Tp::Message &original, const KTp::MessageContext &context) :
@@ -98,40 +81,6 @@ Message::Message(const Tp::ReceivedMessage &original, const KTp::MessageContext 
         d->senderAlias = original.senderNickname();
     }
 }
-
-Message::Message(const QString &messageText, const MessageContext &context) :
-    d(new Private)
-{
-    Q_UNUSED(context)
-
-    d->sentTime = QDateTime::currentDateTime();
-    d->messageType = Tp::ChannelTextMessageTypeNormal;
-    d->direction = LocalToRemote;
-    d->isHistory = false;
-
-    setMainMessagePart(messageText);
-}
-
-Message::Message(const QString &senderId, const QString &senderAlias,
-                 const Tp::AccountPtr &account, const QDateTime &dt,
-                 const QString &message):
-    d(new Private)
-{
-    d->sentTime = dt;
-    d->messageType = Tp::ChannelTextMessageTypeNormal;
-    d->isHistory = true;
-    d->senderId = senderId;
-    d->senderAlias = senderAlias;
-
-    if (senderId == account->normalizedName()) {
-        d->direction = KTp::Message::LocalToRemote;
-    } else {
-        d->direction = KTp::Message::RemoteToLocal;
-    }
-
-    setMainMessagePart(message);
-}
-
 
 Message::Message(const Message& other):
     d(other.d)
