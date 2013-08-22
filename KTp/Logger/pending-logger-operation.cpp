@@ -57,8 +57,7 @@ void PendingLoggerOperation::setError(const QString &error)
 void PendingLoggerOperation::emitFinished()
 {
     Q_EMIT finished(this);
-
-    QTimer::singleShot(0, this, SLOT(deleteLater()));
+    deleteLater();
 }
 
 QList<AbstractLoggerPlugin*> PendingLoggerOperation::plugins() const
