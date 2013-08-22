@@ -231,12 +231,17 @@ void KTp::ContactsModel::setSourceModel(QAbstractItemModel *sourceModel)
     roles[KTp::ContactAvatarPathRole]= "avatar";
     roles[KTp::ContactAvatarPixmapRole]="avatarPixmap";
     roles[KTp::ContactGroupsRole]= "groups";
+    roles[KTp::ContactPresenceNameRole]= "presenceName";
     roles[KTp::ContactPresenceMessageRole]= "presenceMessage";
     roles[KTp::ContactPresenceTypeRole]= "presenceType";
     roles[KTp::ContactPresenceIconRole]= "presenceIcon";
     roles[KTp::ContactSubscriptionStateRole]= "subscriptionState";
     roles[KTp::ContactPublishStateRole]= "publishState";
     roles[KTp::ContactIsBlockedRole]= "blocked";
+    roles[KTp::ContactHasTextChannelRole]= "hasTextChannel";
+    roles[KTp::ContactUnreadMessageCountRole]= "unreadMessageCount";
+    roles[KTp::ContactLastMessageRole]= "lastMessage";
+    roles[KTp::ContactLastMessageDirectionRole]= "lastMessageDirection";
     roles[KTp::ContactCanTextChatRole]= "textChat";
     roles[KTp::ContactCanFileTransferRole]= "fileTransfer";
     roles[KTp::ContactCanAudioCallRole]= "audioCall";
