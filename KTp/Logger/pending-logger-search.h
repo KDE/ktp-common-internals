@@ -23,6 +23,8 @@
 #include <KTp/Logger/pending-logger-operation.h>
 #include <KTp/Logger/log-search-hit.h>
 
+#include <KTp/ktp-export.h>
+
 namespace KTp {
 
 /**
@@ -36,7 +38,7 @@ namespace KTp {
  * @since 0.7
  * @author Daniel Vrátil <dvratil@redhat.com>
  */
-class PendingLoggerSearch : public  KTp::PendingLoggerOperation
+class KTP_EXPORT PendingLoggerSearch : public  KTp::PendingLoggerOperation
 {
     Q_OBJECT
 

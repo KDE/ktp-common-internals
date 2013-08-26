@@ -15,6 +15,7 @@ target_link_libraries (ktploggerplugin_tplogger
     ktpcommoninternalsprivate
     ktploggerprivate
     ${QT_LIBRARIES}
+    ${KDE4_KDECORE_LIBS}
     ${TELEPATHY_QT4_LIBRARIES}
     ${TELEPATHY_LOGGER_QT4_LIBRARIES}
 )

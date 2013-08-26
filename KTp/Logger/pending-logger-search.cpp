@@ -63,6 +63,3 @@ void PendingLoggerSearch::appendSearchHits(const QList<LogSearchHit> &searchHits
 {
     d->searchHits << searchHits;
 }
-
-
-using namespace KTp;
