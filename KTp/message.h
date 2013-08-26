@@ -22,11 +22,6 @@
 
 #include <TelepathyQt/Message>
 
-#ifdef HAVE_TPLOGGERQT
-#include <TelepathyLoggerQt4/Types>
-#include <TelepathyLoggerQt4/TextEvent>
-#endif
-
 #include <KTp/ktp-export.h>
 #include <KTp/types.h>
 
@@ -159,16 +154,12 @@ public:
     MessageDirection direction() const;
 
 protected:
+    class Private;
+
     Message(const Tp::Message &original, const KTp::MessageContext &context);
     Message(const Tp::ReceivedMessage &original, const KTp::MessageContext &context);
-#ifdef HAVE_TPLOGGERQT
-    Message(const Tpl::TextEventPtr &original, const KTp::MessageContext &context);
-#endif
-    explicit Message(const QString &messageText, const KTp::MessageContext &context);
+    Message(KTp::Message::Private *dd);
 
-
-private:
-    class Private;
     QSharedDataPointer<Private> d;
     friend class MessageProcessor;
 };

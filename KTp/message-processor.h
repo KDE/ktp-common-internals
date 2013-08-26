@@ -30,10 +30,6 @@
 #include <KTp/ktp-export.h>
 #include <KTp/abstract-message-filter.h>
 
-#ifdef HAVE_TPLOGGERQT
-#include <TelepathyLoggerQt4/Types>
-#endif
-
 namespace Tp
 {
 class ReceivedMessage;
@@ -61,14 +57,11 @@ class KTP_EXPORT MessageProcessor : public QObject
     //text-ui will call this somewhere in handleIncommingMessage just before displaying it
     KTp::Message processIncomingMessage(const Tp::Message &message, const Tp::AccountPtr &account, const Tp::TextChannelPtr &channel);
     KTp::Message processIncomingMessage(const Tp::ReceivedMessage &message, const Tp::AccountPtr &account, const Tp::TextChannelPtr &channel);
-#ifdef HAVE_TPLOGGERQT
-    KTp::Message processIncomingMessage(const Tpl::TextEventPtr &message, const Tp::AccountPtr &account, const Tp::TextChannelPtr &channel);
-#endif
 
     KTp::OutgoingMessage processOutgoingMessage(const QString &messageText, const Tp::AccountPtr &account, const Tp::TextChannelPtr &channel);
 
-  protected:
     KTp::Message processIncomingMessage(KTp::Message message, const KTp::MessageContext &context);
+  protected:
     explicit MessageProcessor();
 
   private:

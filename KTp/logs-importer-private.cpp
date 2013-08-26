@@ -31,18 +31,13 @@ LogsImporter::Private::Private(KTp::LogsImporter* parent)
   , m_month(0)
   , m_year(0)
   , m_isMUCLog(false)
-  , m_shouldStop(0)
 {
 
 }
 
 LogsImporter::Private::~Private()
 {
-}
 
-void LogsImporter::Private::stop()
-{
-    m_shouldStop = 1;
 }
 
 void LogsImporter::Private::setAccountId(const QString& accountId)
@@ -60,10 +55,6 @@ void LogsImporter::Private::run()
 
     Q_FOREACH (const QString &file, files) {
         convertKopeteLog(file);
-
-        if (m_shouldStop == 1) {
-            return;
-        }
     }
 }
 
@@ -371,16 +362,11 @@ void LogsImporter::Private::convertKopeteLog(const QString& filepath)
     }
 
     for (int i = 0; i < kopeteMessages.count(); i++) {
-        const QDomElement kopeteMessage = kopeteMessages.item(i).toElement();
-        const QDomElement ktpMessage = convertKopeteMessage(kopeteMessage);
+        QDomElement kopeteMessage = kopeteMessages.item(i).toElement();
 
-        if (!ktpMessage.isNull()) {
-            m_ktpLogElement.appendChild(ktpMessage);
-        }
+        QDomElement ktpMessage = convertKopeteMessage(kopeteMessage);
 
-        if (m_shouldStop == 1) {
-            return;
-        }
+        m_ktpLogElement.appendChild(ktpMessage);
     }
 
     saveKTpDocument();
