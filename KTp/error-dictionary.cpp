@@ -100,7 +100,7 @@ QString ErrorDictionary::displayVerboseErrorMessage(const QString& dbusErrorName
     } else if (dbusErrorName == QLatin1String(TP_QT_ERROR_NO_ANSWER)) {
         return i18nc("Verbose user visible error string", "You were removed from the channel because you did not respond"); //FIXME: this sound bad
     } else if (dbusErrorName == QLatin1String(TP_QT_ERROR_NOT_AVAILABLE)) {
-        return i18nc("Verbose user visible error string", "This capability is not available");
+        return i18nc("Verbose user visible error string", "The service is not available");
     } else if (dbusErrorName == QLatin1String(TP_QT_ERROR_NOT_CAPABLE)) {
         return i18nc("Verbose user visible error string", "The contact does not have the requested capabilities");
     } else if (dbusErrorName == QLatin1String(TP_QT_ERROR_NOT_IMPLEMENTED)) {
@@ -207,7 +207,7 @@ QString ErrorDictionary::displayShortErrorMessage(const QString& dbusErrorName)
     } else if (dbusErrorName == QLatin1String(TP_QT_ERROR_NO_ANSWER)) {
         return i18nc("Short user visible error string", "Removed from channel");
     } else if (dbusErrorName == QLatin1String(TP_QT_ERROR_NOT_AVAILABLE)) {
-        return i18nc("Short user visible error string", "Capability not available");
+        return i18nc("Short user visible error string", "Service not available");
     } else if (dbusErrorName == QLatin1String(TP_QT_ERROR_NOT_CAPABLE)) {
         return i18nc("Short user visible error string", "Contact has no support");
     } else if (dbusErrorName == QLatin1String(TP_QT_ERROR_NOT_IMPLEMENTED)) {
