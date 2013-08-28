@@ -2,6 +2,11 @@
 Type=ServiceType
 X-KDE-ServiceType=KTpLogger/Plugin
 Comment=KTp Logger Plugin
+Comment[nl]=KTp Logger-plug-in
+Comment[sl]=Vstavek za beleženje KTp
+Comment[sv]=KTp-loggningsinsticksprogram
+Comment[uk]=Додаток ведення журналу KTp
+Comment[x-test]=xxKTp Logger Pluginxx
 
 # The ktp-text-ui plugin framework version for which the plugin is written
 [PropertyDef::X-KTp-PluginInfo-Version]
