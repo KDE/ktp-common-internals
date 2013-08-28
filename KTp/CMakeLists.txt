@@ -10,6 +10,7 @@ set (ktp_common_internals_private_SRCS
      circular-countdown.cpp
      contact.cpp
      contact-factory.cpp
+     core.cpp
      debug.cpp
      error-dictionary.cpp
      global-contact-manager.cpp
@@ -40,6 +41,7 @@ set (ktp_common_internals_private_HDRS
      contact.h
      contact-info-dialog.h
      contact-factory.h
+     core.h
      debug.h
      error-dictionary.h
      global-contact-manager.h

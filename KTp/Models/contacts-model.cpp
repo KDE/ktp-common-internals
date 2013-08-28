@@ -25,10 +25,11 @@
 #include "groups-tree-proxy-model.h"
 #include "text-channel-watcher-proxy-model.h"
 
+#include "core.h"
+
 #include <TelepathyQt/ClientRegistrar>
 
 #ifdef HAVE_KPEOPLE
-#include <Nepomuk2/ResourceManager>
 #include <KPeople/PersonsModel>
 #include <kpeople/personsmodelfeature.h>
 #include "kpeopletranslationproxy.h"
@@ -44,7 +45,6 @@ class ContactsModel::Private
 public:
     GroupMode groupMode;
     bool trackUnread;
-    bool nepomukEnabled;
     QWeakPointer<KTp::AbstractGroupingProxyModel> proxy;
     QAbstractItemModel *source;
     Tp::AccountManagerPtr accountManager;
@@ -60,11 +60,8 @@ KTp::ContactsModel::ContactsModel(QObject *parent)
 {
     d->groupMode = NoGrouping;
     d->trackUnread = false;
-    d->nepomukEnabled = false;
-#ifdef HAVE_KPEOPLE
-    d->nepomukEnabled = Nepomuk2::ResourceManager::instance()->initialized();
-
-    if (d->nepomukEnabled) {
+    if (KTp::kpeopleEnabled()) {
+        #ifdef HAVE_KPEOPLE
         kDebug() << "Nepomuk is enabled, using kpeople model";
         KPeople::PersonsModel *personsModel = new KPeople::PersonsModel(this);
 
@@ -83,8 +80,9 @@ KTp::ContactsModel::ContactsModel(QObject *parent)
                                                             << KPeople::PersonsModelFeature::nicknameModelFeature());
         d->source = new KPeopleTranslationProxy(this);
         qobject_cast<KPeopleTranslationProxy*>(d->source)->setSourceModel(personsModel);
-    } else
-#endif
+        #endif
+    }
+    else
     {
         kDebug() << "Nepomuk is disabled, using normal model";
         d->source = new KTp::ContactsListModel(this);
@@ -104,13 +102,9 @@ void KTp::ContactsModel::setAccountManager(const Tp::AccountManagerPtr &accountM
     updateGroupProxyModels();
 
     //set the account manager after we've reloaded the groups so that we don't send a list to the view, only to replace it with a grouped tree
-#ifdef HAVE_KPEOPLE
-    if (!d->nepomukEnabled) {
+    if (qobject_cast<ContactsListModel*>(d->source)) {
         qobject_cast<ContactsListModel*>(d->source)->setAccountManager(accountManager);
     }
-#else
-    qobject_cast<ContactsListModel*>(d->source)->setAccountManager(accountManager);
-#endif
 }
 
 Tp::AccountManagerPtr KTp::ContactsModel::accountManager() const

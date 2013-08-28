@@ -23,6 +23,8 @@
 
 #include "contact.h"
 
+#include "core.h"
+
 #include <TelepathyQt/Account>
 #include <TelepathyQt/AccountManager>
 
