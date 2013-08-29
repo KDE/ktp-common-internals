@@ -20,6 +20,7 @@
 #define KTP_ACTIONS_H
 
 #include <TelepathyQt/Types>
+#include <KUrl>
 
 #include <KTp/ktp-export.h>
 
@@ -31,6 +32,8 @@ class PendingOperation;
 namespace KTp {
 
 namespace Actions {
+
+    typedef QList<KUrl> DocumentList;
 
     KTP_EXPORT Tp::PendingChannelRequest* startChat(const Tp::AccountPtr &account,
                                                     const Tp::ContactPtr &contact,
@@ -55,6 +58,17 @@ namespace Actions {
     KTP_EXPORT Tp::PendingOperation* startFileTransfer(const Tp::AccountPtr &account,
                                                        const Tp::ContactPtr &contact,
                                                        const QUrl &url);
+
+    KTP_EXPORT Tp::PendingChannelRequest* startCollaborativeEditing(const Tp::AccountPtr& account,
+                                                                    const Tp::ContactPtr& contact,
+                                                                    const DocumentList& documents,
+                                                                    bool needOpenEditor=false);
+
+
+    KTP_EXPORT Tp::PendingChannelRequest* startCollaborativeEditing(const Tp::AccountPtr& account,
+                                                                    const QString& chatroom,
+                                                                    const DocumentList& documents,
+                                                                    bool needOpenEditor=false);
 
     KTP_EXPORT void openLogViewer(const Tp::AccountPtr &account,
                                   const Tp::ContactPtr &contact);

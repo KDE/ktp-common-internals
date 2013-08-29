@@ -23,6 +23,7 @@
 #include <TelepathyQt/Contact>
 #include <TelepathyQt/PendingChannelRequest>
 #include <TelepathyQt/PendingFailure>
+#include <TelepathyQt/ReferencedHandles>
 
 #include <KMimeType>
 #include <KToolInvocation>
@@ -175,4 +176,68 @@ void Actions::openLogViewer(const Tp::AccountPtr &account,
 
     /* Use "--" so that KCmdLineArgs does not parse UIDs starting with "-" as arguments */
     KToolInvocation::kdeinitExec(QLatin1String("ktp-log-viewer"), arguments);
+}
+
+const QVariantMap createHintsForCollabRequest(const Actions::DocumentList& documents, bool needOpenEditor)
+{
+    QVariantMap hints;
+    hints.insert(QLatin1String("initialDocumentsSize"), documents.size());
+    for ( int i = 0; i < documents.size(); i++ ) {
+        const QString key(QLatin1String("initialDocument") + QString::number(i));
+        hints.insert(key, documents.at(i).fileName());
+        if ( needOpenEditor ) {
+            hints.insert(key + QLatin1String("_source"), documents.at(i).url());
+        }
+    }
+    if ( needOpenEditor ) {
+        hints.insert(QLatin1String("needToOpenDocument"), QVariant(true));
+    }
+    return hints;
+}
+
+Tp::PendingChannelRequest* createCollabRequest(const Tp::AccountPtr account,
+                                               const Actions::DocumentList documents,
+                                               QVariantMap requestBase,
+                                               bool needOpenEditor)
+{
+    QVariantMap hints = createHintsForCollabRequest(documents, needOpenEditor);
+
+    requestBase.insert(TP_QT_IFACE_CHANNEL + QLatin1String(".ChannelType"),
+                    TP_QT_IFACE_CHANNEL_TYPE_STREAM_TUBE);
+    requestBase.insert(TP_QT_IFACE_CHANNEL_TYPE_STREAM_TUBE + QLatin1String(".Service"),
+                    QLatin1String("infinote"));
+
+    Tp::PendingChannelRequest* channelRequest;
+    channelRequest = account->ensureChannel(requestBase,
+                                            QDateTime::currentDateTime(),
+                                            QLatin1String("org.freedesktop.Telepathy.Client.KTp.infinoteServer"),
+                                            hints);
+
+    return channelRequest;
+}
+
+Tp::PendingChannelRequest* Actions::startCollaborativeEditing(const Tp::AccountPtr& account,
+                                                              const Tp::ContactPtr& contact,
+                                                              const DocumentList& documents,
+                                                              bool needOpenEditor)
+{
+    QVariantMap request;
+    request.insert(TP_QT_IFACE_CHANNEL + QLatin1String(".TargetHandleType"),
+                (uint) Tp::HandleTypeContact);
+    request.insert(TP_QT_IFACE_CHANNEL + QLatin1String(".TargetHandle"),
+                contact->handle().at(0));
+    return createCollabRequest(account, documents, request, needOpenEditor);
+}
+
+Tp::PendingChannelRequest* Actions::startCollaborativeEditing(const Tp::AccountPtr& account,
+                                                              const QString& chatroom,
+                                                              const DocumentList& documents,
+                                                              bool needOpenEditor)
+{
+    QVariantMap request;
+    request.insert(TP_QT_IFACE_CHANNEL + QLatin1String(".TargetHandleType"),
+                (uint) Tp::HandleTypeRoom);
+    request.insert(TP_QT_IFACE_CHANNEL + QLatin1String(".TargetID"),
+                chatroom);
+    return createCollabRequest(account, documents, request, needOpenEditor);
 }
