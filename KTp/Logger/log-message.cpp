@@ -23,7 +23,8 @@
 using namespace KTp;
 
 LogMessage::LogMessage(const LogEntity &from, const Tp::AccountPtr &account,
-                       const QDateTime &dt, const QString &message):
+                       const QDateTime &dt, const QString &message,
+                       const QString &messageToken):
     Message(new KTp::Message::Private)
 {
     d->senderId = from.id();
@@ -31,6 +32,7 @@ LogMessage::LogMessage(const LogEntity &from, const Tp::AccountPtr &account,
     d->isHistory = true;
     d->messageType = Tp::ChannelTextMessageTypeNormal;
     d->sentTime = dt;
+    d->token = messageToken;
 
     setMainMessagePart(message);
 
