@@ -160,13 +160,6 @@ void Account::onNewContact(const Tp::ContactPtr &contact)
 
         m_contacts.append(contact);
 
-        // Become ready asynchronously with the avatar data, since this may take some time and we
-        // don't want to delay the rest of the contact's attributes being ready.
-        // Fire and forget because we can't do anything even if this fails.
-        contact->manager()->upgradeContacts(QList<Tp::ContactPtr>() << contact, 
-                                            Tp::Features() << Tp::Contact::FeatureAvatarData
-                                                           << Tp::Contact::FeatureAvatarToken);
-
         // Connect to all its signals
         connect(contact.data(),
                 SIGNAL(aliasChanged(QString)),
@@ -180,10 +173,6 @@ void Account::onNewContact(const Tp::ContactPtr &contact)
         connect(contact.data(),
                 SIGNAL(avatarDataChanged(Tp::AvatarData)),
                 SLOT(onContactAvatarChanged(Tp::AvatarData)));
-
-        onContactAliasChanged(contact);
-        onContactAddedToGroup(contact);
-
         emit contactCreated(m_account->objectPath(), contact);
     }
 }

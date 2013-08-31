@@ -603,10 +603,12 @@ void NepomukStorage::createContact(const QString &path, const Tp::ContactPtr &co
     newImAccount.setProperty(NCO::imID(), contact->id());
     newImAccount.setProperty(NCO::imAccountType(), accountRes.protocol());
     newImAccount.addProperty(NCO::isAccessedBy(), accountUri);
-    newImAccount.addProperty(NCO::imNickname(), contact->alias());
 
     newPersonContact.addProperty(NCO::hasIMAccount(), newImAccount);
-    newPersonContact.addProperty(NCO::nickname(), contact->alias());
+    updateAlias(newPersonContact, newImAccount, contact->alias());
+    updateContactGroups(newPersonContact, contact->groups());
+    updateContactAvatar(newPersonContact, newImAccount, contact->avatarData());
+
 
     Nepomuk2::SimpleResourceGraph graph;
     graph << newPersonContact << newImAccount;
@@ -636,14 +638,19 @@ void NepomukStorage::setContactAlias(const QString &path, const QString &id, con
         return;
     }
 
-    Nepomuk2::SimpleResource &imAccount = m_graph[contact.imAccount()];
-    imAccount.setProperty(NCO::imNickname(), alias);
-
     Nepomuk2::SimpleResource &personContact = m_graph[contact.personContact()];
-    personContact.setProperty(NCO::nickname(), alias);
+    Nepomuk2::SimpleResource &imAccount = m_graph[contact.imAccount()];
 
+    updateAlias(personContact, imAccount, alias);
     fireGraphTimer();
 }
+
+void NepomukStorage::updateAlias(Nepomuk2::SimpleResource &contactResource, Nepomuk2::SimpleResource &imAccountResource, const QString &alias)
+{
+    contactResource.setProperty(NCO::nickname(), alias);
+    imAccountResource.setProperty(NCO::imNickname(), alias);
+}
+
 
 QUrl NepomukStorage::findGroup(const QString& groupName)
 {
@@ -706,19 +713,22 @@ void NepomukStorage::setContactGroups(const QString &path,
         return;
     }
 
+    Nepomuk2::SimpleResource &personContact = m_graph[contact.personContact()];
+
+    updateContactGroups(personContact, groups);
+    fireGraphTimer();
+}
+
+void NepomukStorage::updateContactGroups(Nepomuk2::SimpleResource &contactResource, const QStringList &groups)
+{
     QVariantList groupUris;
     foreach (const QString &groupName, groups) {
         groupUris << findGroup(groupName);
     }
-
-    QUrl contactUri = contact.personContact();
-
-    Nepomuk2::SimpleResource &contactRes = m_graph[contactUri];
-    contactRes.setUri(contactUri);
-    contactRes.setProperty(NCO::belongsToGroup(), groupUris);
-
-    fireGraphTimer();
+    contactResource.setProperty(NCO::belongsToGroup(), groupUris);
 }
+
+
 
 void NepomukStorage::setContactAvatar(const QString &path,
                                       const QString &id,
@@ -729,20 +739,25 @@ void NepomukStorage::setContactAvatar(const QString &path,
         return;
     }
 
-    QUrl avatarUrl = avatar.fileName;
+
+    //FIXME: Do not remove the old avatar from the photos list?
+    Nepomuk2::SimpleResource &personContact = m_graph[contact.personContact()];
+    Nepomuk2::SimpleResource &imAccount = m_graph[contact.imAccount()];
+    updateContactAvatar(personContact, imAccount, avatar);
+
+    fireGraphTimer();
+    //TODO: Find a way to index the file as well.
+}
+
+void NepomukStorage::updateContactAvatar(Nepomuk2::SimpleResource &contactResource, Nepomuk2::SimpleResource &imAccountResource, const Tp::AvatarData &avatar)
+{
+    const QUrl &avatarUrl = avatar.fileName;
     if (avatarUrl.isEmpty()) {
         return;
     }
 
-    //FIXME: Do not remove the old avatar from the photos list?
-    Nepomuk2::SimpleResource &personContact = m_graph[contact.personContact()];
-    personContact.setProperty(NCO::photo(), avatarUrl);
-
-    Nepomuk2::SimpleResource &imAccount = m_graph[contact.imAccount()];
-    imAccount.setProperty(Telepathy::avatar(), avatarUrl);
-
-    fireGraphTimer();
-    //TODO: Find a way to index the file as well.
+    contactResource.setProperty(NCO::photo(), avatarUrl);
+    imAccountResource.setProperty(Telepathy::avatar(), avatarUrl);
 }
 
 void NepomukStorage::onContactTimer()

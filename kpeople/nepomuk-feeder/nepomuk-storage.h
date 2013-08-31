@@ -141,7 +141,12 @@ private Q_SLOTS:
     void onContactTimer();
     void onContactGraphJob(KJob *job);
 
+
 private:
+    void updateAlias(Nepomuk2::SimpleResource &contactResource, Nepomuk2::SimpleResource &imAccountResource, const QString &alias);
+    void updateContactGroups(Nepomuk2::SimpleResource &contactResource, const QStringList &groups);
+    void updateContactAvatar(Nepomuk2::SimpleResource &contactResource, Nepomuk2::SimpleResource &imAccountResource, const Tp::AvatarData &avatar);
+
     Q_DISABLE_COPY(NepomukStorage);
 
     friend class TestBackdoors;

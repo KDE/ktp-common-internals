@@ -74,7 +74,7 @@ void Controller::onStorageInitialised(bool success)
             QDBusConnection::sessionBus());
 
     Tp::Features fContactFactory;
-    fContactFactory << Tp::Contact::FeatureAlias;
+    fContactFactory << Tp::Contact::FeatureAlias << Tp::Contact::FeatureAvatarData;
 
     Tp::ContactFactoryConstPtr contactFactory = Tp::ContactFactory::create(fContactFactory);
 
