@@ -223,6 +223,13 @@ void KTp::AbstractGroupingProxyModel::removeProxyNodes(const QModelIndex &source
 {
     Q_FOREACH(ProxyNode *proxy, removedItems) {
         QStandardItem *parentItem = proxy->parent();
+
+        //also remove child items of this proxy node from the proxy map
+        for (int i = 0 ; i < d->source->rowCount(sourceIndex) ; i++) {
+            //we always remove child(0) because we're deleting the first child each time
+            removeProxyNodes(sourceIndex.child(i,0), QList<ProxyNode*>() << dynamic_cast<ProxyNode*>(proxy->child(0)));
+        }
+
         parentItem->removeRow(proxy->row());
         d->proxyMap.remove(sourceIndex, proxy);
 
