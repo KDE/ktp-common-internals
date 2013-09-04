@@ -4,6 +4,7 @@ X-KDE-ServiceType=KTpLogger/Plugin
 Comment=KTp Logger Plugin
 Comment[cs]=Modul záznamů KTp
 Comment[da]=KTp-logger-plugin
+Comment[es]=Complemento de gestor de registro de KTp
 Comment[fi]=KTp-lokitusliitännäinen
 Comment[fr]=Module externe de journalisation de KTp
 Comment[nl]=KTp Logger-plug-in
