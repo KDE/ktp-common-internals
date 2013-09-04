@@ -36,6 +36,10 @@ namespace Actions {
     typedef QList<KUrl> DocumentList;
 
     KTP_EXPORT Tp::PendingChannelRequest* startChat(const Tp::AccountPtr &account,
+                                                    const QString &contactIdentifier,
+                                                    bool delegateToPreferredHandler = true);
+
+    KTP_EXPORT Tp::PendingChannelRequest* startChat(const Tp::AccountPtr &account,
                                                     const Tp::ContactPtr &contact,
                                                     bool delegateToPreferredHandler = true);
 

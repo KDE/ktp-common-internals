@@ -38,6 +38,29 @@
 using namespace KTp;
 
 Tp::PendingChannelRequest* Actions::startChat(const Tp::AccountPtr &account,
+                                              const QString &contactIdentifier,
+                                              bool delegateToPreferredHandler)
+{
+    if (account.isNull() || contactIdentifier.isEmpty()) {
+        kWarning() << "Parameters invalid";
+    }
+
+    kDebug() << "Requesting text channel for contact id: " << contactIdentifier;
+
+    Tp::ChannelRequestHints hints;
+    if (delegateToPreferredHandler) {
+      hints.setHint(QLatin1String("org.freedesktop.Telepathy.ChannelRequest"),
+                    QLatin1String("DelegateToPreferredHandler"),
+                    QVariant(true));
+    }
+
+    return account->ensureTextChat(contactIdentifier,
+                                   QDateTime::currentDateTime(),
+                                   PREFERRED_TEXT_CHAT_HANDLER,
+                                   hints);
+}
+
+Tp::PendingChannelRequest* Actions::startChat(const Tp::AccountPtr &account,
                                               const Tp::ContactPtr &contact,
                                               bool delegateToPreferredHandler)
 {
