@@ -32,6 +32,7 @@ namespace KTp
 
 GlobalPresence::GlobalPresence(QObject *parent)
     : QObject(parent),
+      m_connectionStatus(Tp::ConnectionStatusDisconnected),
       m_changingPresence(false)
 {
     Tp::Presence unknown;
@@ -57,6 +58,7 @@ void GlobalPresence::setAccountManager(const Tp::AccountManagerPtr &accountManag
     onCurrentPresenceChanged();
     onRequestedPresenceChanged();
     onChangingPresence();
+    onConnectionStatusChanged();
 
     connect(m_enabledAccounts.data(), SIGNAL(accountAdded(Tp::AccountPtr)), SLOT(onAccountAdded(Tp::AccountPtr)));
 }
