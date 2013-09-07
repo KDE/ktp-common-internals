@@ -1,3 +1,5 @@
+include_directories(${KPEOPLE_INCLUDES})
+
 kde4_add_plugin(imdetailswidgetplugin imdetailswidget.cpp)
 target_link_libraries(imdetailswidgetplugin ${QT_QTCORE_LIBRARY}
     ${QT_QTGUI_LIBRARY}
