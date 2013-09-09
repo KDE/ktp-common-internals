@@ -1,5 +1,6 @@
 [Desktop Entry]
 Name=Telepathy Logger plugin
+Name[ca]=Connector de registre del Telepathy
 Name[cs]=Modul záznamů Telepathy
 Name[da]=Logger-plugin til Telepathy
 Name[es]=Complemento de gestor de registro de Telepathy
@@ -18,6 +19,7 @@ Name[sv]=Telepathy-loggningsinsticksprogram
 Name[uk]=Додаток ведення журналу Telepathy
 Name[x-test]=xxTelepathy Logger pluginxx
 Comment=Provides integration with Telepathy Logger
+Comment[ca]=Aquest connector proporciona integració amb l'enregistrador del Telepathy
 Comment[cs]=Poskytuje integraci se zaznamenáváním Telepathy
 Comment[da]=Giver integration med Telepathy Logger
 Comment[es]=Proporciona integración con el gestor de registro de Telepathy
