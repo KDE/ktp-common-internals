@@ -75,6 +75,11 @@ class KTP_EXPORT LogEntity
     bool operator==(const KTp::LogEntity &other);
 
     /**
+     * Compare operator.
+     */
+    bool operator!=(const KTp::LogEntity &other);
+
+    /**
      * Returns whether this entity is valid (i.e. whether entity type is valid and
      * whether id is not empty).
      */

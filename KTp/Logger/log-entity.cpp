@@ -95,6 +95,11 @@ bool LogEntity::operator==(const LogEntity& other)
     return *d == *other.d;
 }
 
+bool LogEntity::operator!=(const LogEntity& other)
+{
+    return !(operator==(other));
+}
+
 bool LogEntity::isValid() const
 {
     return d->entityType != Tp::HandleTypeNone
