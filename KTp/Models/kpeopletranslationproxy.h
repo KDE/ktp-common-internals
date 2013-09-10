@@ -33,6 +33,7 @@ public:
     virtual ~KPeopleTranslationProxy();
 
     virtual QVariant data(const QModelIndex &proxyIndex, int role = Qt::DisplayRole) const;
+    virtual int rowCount(const QModelIndex &parent) const;
 
 private:
     QVariant translatePresence(const QVariant &presenceName) const;
