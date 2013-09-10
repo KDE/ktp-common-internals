@@ -22,6 +22,8 @@
 #include "add-contact-dialog.h"
 #include "ui_add-contact-dialog.h"
 
+#include <KTp/types.h>
+
 #include <QObject>
 #include <QCloseEvent>
 
@@ -36,6 +38,7 @@
 #include <TelepathyQt/PendingContacts>
 #include <TelepathyQt/Filter>
 #include <TelepathyQt/AccountSet>
+#include <TelepathyQt/PendingReady>
 
 namespace KTp {
 
@@ -90,10 +93,26 @@ AddContactDialog::AddContactDialog(const Tp::AccountManagerPtr &accountManager, 
     d->ui->setupUi(widget);
     setMainWidget(widget);
 
+
     Tp::AccountFilterPtr filter = Tp::AccountFilterPtr(new KTp::SubscribableAccountFilter());
     Tp::AccountSetPtr accountSet = accountManager->filterAccounts(filter);
 
     d->ui->accountCombo->setAccountSet(accountSet);
+
+    //bodge.
+    //Wtih KPeople support we don't enable FeatureRoster
+    //We need FeatureRoster in order to determine canRequestPresenceSubscription();
+    //so we upgrade any accounts here
+
+    //See https://bugs.kde.org/show_bug.cgi?id=324698
+    Q_FOREACH(const Tp::AccountPtr &account, accountManager->allAccounts()) {
+        if (account->connection()) {
+            Tp::PendingOperation *op = account->connection()->becomeReady(Tp::Connection::FeatureRoster);
+            op->setProperty("account", QVariant::fromValue<Tp::AccountPtr>(account));
+            connect(op, SIGNAL(finished(Tp::PendingOperation*)), SLOT(_k_onAccountUpgraded(Tp::PendingOperation*)));
+        }
+    }
+    //end bodge
 
     d->ui->screenNameLineEdit->setFocus();
 }
@@ -103,6 +122,16 @@ AddContactDialog::~AddContactDialog()
     delete d->ui;
     delete d;
 }
+
+//bodge
+void AddContactDialog::_k_onAccountUpgraded(Tp::PendingOperation* op)
+{
+    const Tp::AccountPtr &account = op->property("account").value<Tp::AccountPtr>();
+    //pretend the account changed.
+    //emit that the account properties have changed to invalidate the filter
+    QMetaObject::invokeMethod(account.data(), "propertyChanged", Q_ARG(QString, QString()));
+}
+//end bodge
 
 void AddContactDialog::accept()
 {
