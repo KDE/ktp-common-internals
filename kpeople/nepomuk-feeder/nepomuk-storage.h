@@ -86,7 +86,7 @@ private:
     QSharedDataPointer<Data> d;
 };
 
-int qHash(ContactIdentifier c);
+uint qHash(const ContactIdentifier& c);
 
 class ContactResources {
 public:

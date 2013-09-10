@@ -780,7 +780,7 @@ void NepomukStorage::onContactGraphJob(KJob *job)
 }
 
 
-int qHash(ContactIdentifier c)
+uint qHash(const ContactIdentifier& c)
 {
     // FIXME: This is a shit way of doing it.
     QString temp;
