@@ -79,6 +79,7 @@ protected:
     virtual void setSourceModel(QAbstractItemModel *sourceModel);
 
 Q_SIGNALS:
+    void modelInitialized();
     void groupModeChanged();
     void trackUnreadMessagesChanged();
 

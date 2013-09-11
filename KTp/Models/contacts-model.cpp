@@ -78,6 +78,9 @@ KTp::ContactsModel::ContactsModel(QObject *parent)
                                                             << KPeople::PersonsModelFeature::groupsModelFeature()
                                                             << KPeople::PersonsModelFeature::fullNameModelFeature()
                                                             << KPeople::PersonsModelFeature::nicknameModelFeature());
+        connect(personsModel, SIGNAL(modelInitialized()),
+                this, SIGNAL(modelInitialized()));
+
         d->source = new KPeopleTranslationProxy(this);
         qobject_cast<KPeopleTranslationProxy*>(d->source)->setSourceModel(personsModel);
         #endif
@@ -86,7 +89,10 @@ KTp::ContactsModel::ContactsModel(QObject *parent)
     {
         kDebug() << "Nepomuk is disabled, using normal model";
         d->source = new KTp::ContactsListModel(this);
+        connect(d->source, SIGNAL(modelInitialized()),
+                this, SIGNAL(modelInitialized()));
     }
+
 }
 
 KTp::ContactsModel::~ContactsModel()

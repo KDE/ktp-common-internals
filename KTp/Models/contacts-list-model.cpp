@@ -23,6 +23,8 @@
 #include <TelepathyQt/ContactCapabilities>
 #include <TelepathyQt/Connection>
 #include <TelepathyQt/ContactManager>
+#include <TelepathyQt/AccountSet>
+#include <KDebug>
 
 #include "contact.h"
 #include "presence.h"
@@ -31,8 +33,14 @@
 class KTp::ContactsListModel::Private
 {
 public:
+    Private():
+        initialized(false)
+    {
+    }
+
     QList<Tp::ContactPtr> contacts;
     KTp::GlobalContactManager *contactManager;
+    bool initialized;
 };
 
 
@@ -52,6 +60,23 @@ void KTp::ContactsListModel::setAccountManager(const Tp::AccountManagerPtr &acco
 {
     d->contactManager = new KTp::GlobalContactManager(accountManager, this);
     connect(d->contactManager, SIGNAL(allKnownContactsChanged(Tp::Contacts,Tp::Contacts)), SLOT(onContactsChanged(Tp::Contacts,Tp::Contacts)));
+
+    // If there are no enabled account or no account is online, emit the signal
+    // directly, because onContactsChanged won't be called
+    const QList<Tp::AccountPtr> accounts = accountManager->enabledAccounts()->accounts();
+    if (accounts.isEmpty()) {
+        d->initialized = true;
+        Q_EMIT modelInitialized();
+    } else {
+        Q_FOREACH (const Tp::AccountPtr &account, accounts) {
+            if (account->isOnline()) {
+                return;
+            }
+        }
+
+        d->initialized = true;
+        Q_EMIT modelInitialized();
+    }
 }
 
 int KTp::ContactsListModel::rowCount(const QModelIndex &parent) const
@@ -199,6 +224,11 @@ void KTp::ContactsListModel::onContactsChanged(const Tp::Contacts &added, const 
             d->contacts.removeOne(contact);
             endRemoveRows();
         }
+    }
+
+    if (!d->initialized) {
+        Q_EMIT modelInitialized();
+        d->initialized = true;
     }
 }
 

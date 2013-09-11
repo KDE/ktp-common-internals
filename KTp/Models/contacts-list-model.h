@@ -40,6 +40,9 @@ public:
     int rowCount(const QModelIndex &parent) const;
     QVariant data(const QModelIndex &index, int role) const;
 
+Q_SIGNALS:
+    void modelInitialized();
+
 private Q_SLOTS:
     void onContactsChanged(const Tp::Contacts &added, const Tp::Contacts &removed);
     void onChanged();
