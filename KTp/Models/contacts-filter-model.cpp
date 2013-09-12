@@ -405,7 +405,10 @@ void ContactsFilterModel::Private::countContacts(const QModelIndex &sourceParent
 
 void ContactsFilterModel::Private::sourceModelParentIndexChanged(const QModelIndex &sourceIndex)
 {
-    if (sourceIndex.isValid()) {
+    //if parent is a group heading
+    if (sourceIndex.isValid() &&
+        (sourceIndex.data(KTp::RowTypeRole).toInt() == KTp::GroupRowType ||
+        sourceIndex.data(KTp::RowTypeRole).toInt() == KTp::AccountRowType)) {
         countContacts(sourceIndex);
 
         //emit that the source parent changed, this way it will go through "filterAcceptsRow" again
