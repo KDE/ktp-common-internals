@@ -206,15 +206,8 @@ void KTp::AbstractGroupingProxyModel::onRowsInserted(const QModelIndex &sourcePa
     }
 }
 
-#include <KTp/types.h>
-
 void KTp::AbstractGroupingProxyModel::addProxyNode(const QModelIndex &sourceIndex, QStandardItem *parent)
 {
-    Q_ASSERT(sourceIndex.isValid());
-    if (!sourceIndex.isValid()) {
-        return;
-    }
-
     ProxyNode *proxyNode = new ProxyNode(sourceIndex);
     d->proxyMap.insertMulti(sourceIndex, proxyNode);
     parent->appendRow(proxyNode);
