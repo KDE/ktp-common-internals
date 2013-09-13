@@ -154,17 +154,6 @@ QVariant KPeopleTranslationProxy::data(const QModelIndex &proxyIndex, int role) 
     return mapToSource(proxyIndex).data(role);
 }
 
-int KPeopleTranslationProxy::rowCount(const QModelIndex &parent) const
-{
-    int realRowCount = QIdentityProxyModel::rowCount(parent);
-    if (realRowCount > 1) {
-        return realRowCount;
-    } else {
-        return 0;
-    }
-}
-
-
 QVariant KPeopleTranslationProxy::translatePresence(const QVariant &presenceName) const
 {
     if (presenceName == QLatin1String("available")) {
