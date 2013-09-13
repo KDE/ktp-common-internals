@@ -25,6 +25,7 @@
 
 #include "core.h"
 
+#include <TelepathyQt/TextChannel>
 #include <TelepathyQt/Account>
 #include <TelepathyQt/AccountManager>
 
@@ -89,6 +90,7 @@ Q_DECLARE_METATYPE(Tp::AccountPtr)
 Q_DECLARE_METATYPE(KTp::ContactPtr)
 Q_DECLARE_METATYPE(Tp::AccountManagerPtr);
 Q_DECLARE_METATYPE(Tp::ConnectionPtr);
+Q_DECLARE_METATYPE(Tp::TextChannelPtr);
 
 
 #endif // KTP_TYPES_H
