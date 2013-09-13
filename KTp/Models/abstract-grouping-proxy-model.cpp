@@ -228,14 +228,7 @@ void KTp::AbstractGroupingProxyModel::addProxyNode(const QModelIndex &sourceInde
 
 void KTp::AbstractGroupingProxyModel::removeProxyNodes(const QModelIndex &sourceIndex, const QList<ProxyNode *> &removedItems)
 {
-    qDebug() << "removing " << sourceIndex.data() << " of type " << sourceIndex.data(KTp::RowTypeRole) << " with row count " << d->source->rowCount(sourceIndex);
-    qDebug() << removedItems;
-
     Q_FOREACH(ProxyNode *proxy, removedItems) {
-        if (!proxy) {
-            return;
-        }
-
         QStandardItem *parentItem = proxy->parent();
 
         //also remove child items of this proxy node from the proxy map
@@ -331,9 +324,7 @@ void KTp::AbstractGroupingProxyModel::onDataChanged(const QModelIndex &sourceTop
         //mark all proxy nodes as changed
         QHash<QPersistentModelIndex, ProxyNode*>::const_iterator it = d->proxyMap.find(index);
         while (it != d->proxyMap.end() && it.key() == index) {
-            if (it.value()) {
-                it.value()->changed();
-            }
+            it.value()->changed();
             ++it;
         }
     }
