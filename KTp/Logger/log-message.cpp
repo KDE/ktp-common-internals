@@ -36,7 +36,7 @@ LogMessage::LogMessage(const LogEntity &from, const Tp::AccountPtr &account,
 
     setMainMessagePart(message);
 
-    if (account->connection()->selfContact()->id() == senderId()) {
+    if (account->normalizedName() == senderId()) {
         d->direction = KTp::Message::LocalToRemote;
     } else {
         d->direction = KTp::Message::RemoteToLocal;
