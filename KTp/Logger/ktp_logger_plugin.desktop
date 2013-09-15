@@ -12,6 +12,7 @@ Comment[it]=Estensione di registro di KTp
 Comment[nl]=KTp Logger-plug-in
 Comment[pt]='Plugin' de Registo do KTp
 Comment[pt_BR]=Plugin de registro do KTp
+Comment[sk]=Plugin KTp záznam
 Comment[sl]=Vstavek za beleženje KTp
 Comment[sr]=Прикључак бележника
 Comment[sr@ijekavian]=Прикључак бележника
@@ -20,6 +21,7 @@ Comment[sr@latin]=Priključak beležnika
 Comment[sv]=KTp-loggningsinsticksprogram
 Comment[uk]=Додаток ведення журналу KTp
 Comment[x-test]=xxKTp Logger Pluginxx
+Comment[zh_TW]=KTp 紀錄器外掛程式
 
 # The ktp-text-ui plugin framework version for which the plugin is written
 [PropertyDef::X-KTp-PluginInfo-Version]
