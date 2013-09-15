@@ -201,6 +201,16 @@ void Actions::openLogViewer(const Tp::AccountPtr &account,
     KToolInvocation::kdeinitExec(QLatin1String("ktp-log-viewer"), arguments);
 }
 
+void Actions::openLogViewer(const QUrl &uri)
+{
+    kDebug() << "Opening logviewer for" << uri;
+
+    QStringList arguments;
+    arguments << QLatin1String("--") << uri.toString();
+
+    KToolInvocation::kdeinitExec(QLatin1String("ktp-log-viewer"), arguments);
+}
+
 const QVariantMap createHintsForCollabRequest(const Actions::DocumentList& documents, bool needOpenEditor)
 {
     QVariantMap hints;

@@ -49,12 +49,16 @@ class IMAction : public QAction {
 public:
     IMAction(const QString &text, const KIcon &icon, const KTp::ContactPtr &contact,
              const Tp::AccountPtr &account, IMActionType type, QObject *parent);
+    IMAction(const QString &text, const KIcon &icon, const QUrl &uri,
+             IMActionType type, QObject *parent);
     KTp::ContactPtr contact() const;
     Tp::AccountPtr account() const;
     IMActionType type() const;
+    QUrl uri() const;
 private:
     KTp::ContactPtr m_contact;
     Tp::AccountPtr m_account;
+    QUrl m_uri;
     IMActionType m_type;
 };
 
@@ -63,6 +67,14 @@ IMAction::IMAction(const QString &text, const KIcon &icon, const KTp::ContactPtr
     QAction(icon, text, parent),
     m_contact(contact),
     m_account(account),
+    m_type(type)
+{
+}
+
+IMAction::IMAction(const QString &text, const KIcon &icon, const QUrl &uri,
+                   IMActionType type, QObject *parent):
+    QAction(icon, text, parent),
+    m_uri(uri),
     m_type(type)
 {
 }
@@ -77,10 +89,14 @@ Tp::AccountPtr IMAction::account() const
     return m_account;
 }
 
-
 IMActionType IMAction::type() const
 {
     return m_type;
+}
+
+QUrl IMAction::uri() const
+{
+    return m_uri;
 }
 
 KPeopleActionsPlugin::KPeopleActionsPlugin(QObject* parent, const QVariantList &args):
@@ -153,16 +169,15 @@ QList<QAction*> KPeopleActionsPlugin::actionsForPerson(const KPeople::PersonData
             connect (action, SIGNAL(triggered(bool)), SLOT(onActionTriggered()));
             actions << action;
         }
-
-        QAction *action = new IMAction(i18n("Open Log Viewer..."),
-                                    KIcon(QLatin1String("documentation")),
-                                    contact,
-                                    account,
-                                    LogViewer,
-                                    parent);
-        connect(action, SIGNAL(triggered(bool)), SLOT(onActionTriggered()));
-        actions << action;
     }
+
+    QAction *action = new IMAction(i18n("Open Log Viewer..."),
+                                   KIcon(QLatin1String("documentation")),
+                                   personData->uri(),
+                                   LogViewer,
+                                   parent);
+    connect(action, SIGNAL(triggered(bool)), SLOT(onActionTriggered()));
+    actions << action;
     return actions;
 }
 
@@ -187,7 +202,7 @@ void KPeopleActionsPlugin::onActionTriggered()
             //TODO: add filetransfer
             break;
         case LogViewer:
-            KTp::Actions::openLogViewer(account, contact);
+            KTp::Actions::openLogViewer(action->uri());
             break;
     }
 }

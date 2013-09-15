@@ -77,6 +77,8 @@ namespace Actions {
     KTP_EXPORT void openLogViewer(const Tp::AccountPtr &account,
                                   const Tp::ContactPtr &contact);
 
+    KTP_EXPORT void openLogViewer(const QUrl &uri);
+
 
 } /* namespace Actions */
 
