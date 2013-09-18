@@ -52,6 +52,8 @@ class KTP_EXPORT PendingLoggerOperation : public QObject
   private:
     class Private;
     Private * const d;
+
+    Q_PRIVATE_SLOT(d, void __k__doEmitFinished());
 };
 }
 

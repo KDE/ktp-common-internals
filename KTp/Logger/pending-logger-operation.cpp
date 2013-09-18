@@ -25,12 +25,30 @@ using namespace KTp;
 class PendingLoggerOperation::Private
 {
   public:
+    Private(PendingLoggerOperation *parent);
     QString error;
+
+    void __k__doEmitFinished();
+
+  private:
+    PendingLoggerOperation *q;
 };
+
+PendingLoggerOperation::Private::Private(PendingLoggerOperation *parent):
+    q(parent)
+{
+}
+
+void PendingLoggerOperation::Private::__k__doEmitFinished()
+{
+    Q_EMIT q->finished(q);
+    q->deleteLater();
+}
+
 
 PendingLoggerOperation::PendingLoggerOperation(QObject *parent):
     QObject(parent),
-    d(new Private)
+    d(new Private(this))
 {
 }
 
@@ -56,11 +74,12 @@ void PendingLoggerOperation::setError(const QString &error)
 
 void PendingLoggerOperation::emitFinished()
 {
-    Q_EMIT finished(this);
-    deleteLater();
+    QTimer::singleShot(0, this, SLOT(__k__doEmitFinished()));
 }
 
 QList<AbstractLoggerPlugin*> PendingLoggerOperation::plugins() const
 {
     return LogManager::instance()->d->plugins;
 }
+
+#include "pending-logger-operation.moc"
