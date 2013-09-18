@@ -95,6 +95,17 @@ bool KTp::Contact::fileTransferCapability()  const
     return false;
 }
 
+bool KTp::Contact::collaborativeEditingCapability() const
+{
+    if (! manager()->connection()) {
+        return false;
+    }
+    const QString collab(QLatin1String("infinote"));
+    bool selfCanShare = manager()->connection()->selfContact()->capabilities().streamTubes(collab);
+    bool otherCanShare = capabilities().streamTubes(collab);
+    return selfCanShare && otherCanShare;
+}
+
 QStringList KTp::Contact::clientTypes() const
 {
     /* Temporary workaround for upstream bug https://bugs.freedesktop.org/show_bug.cgi?id=55883)

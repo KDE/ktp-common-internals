@@ -13,6 +13,7 @@ target_link_libraries (ktp_kpeople_plugin
     ${TELEPATHY_QT4_LIBRARIES}
     ${KDE4_KDEUI_LIBS}
     ${KPEOPLE_LIBS}
+    ${KDE4_KFILE_LIBS}
     ktpcommoninternalsprivate
 )
 

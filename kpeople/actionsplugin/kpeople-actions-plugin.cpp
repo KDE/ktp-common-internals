@@ -23,6 +23,7 @@
 #include <KIcon>
 #include <KLocalizedString>
 #include <KPluginFactory>
+#include <KFileDialog>
 #include <kdemacros.h>
 
 #include "KTp/contact.h"
@@ -41,7 +42,8 @@ enum IMActionType {
     AudioChannel,
     VideoChannel,
     FileTransfer,
-    LogViewer
+    LogViewer,
+    CollabEditing
 };
 
 class IMAction : public QAction {
@@ -169,6 +171,16 @@ QList<QAction*> KPeopleActionsPlugin::actionsForPerson(const KPeople::PersonData
             connect (action, SIGNAL(triggered(bool)), SLOT(onActionTriggered()));
             actions << action;
         }
+        if (contact->collaborativeEditingCapability()) {
+            QAction *action = new IMAction(i18n("Collaboratively edit a document Using %1...", account->displayName()),
+                                        KIcon(QLatin1String("document-edit")),
+                                        contact,
+                                        account,
+                                        CollabEditing,
+                                        parent);
+            connect (action, SIGNAL(triggered(bool)), SLOT(onActionTriggered()));
+            actions << action;
+        }
     }
 
     QAction *action = new IMAction(i18n("Open Log Viewer..."),
@@ -204,6 +216,11 @@ void KPeopleActionsPlugin::onActionTriggered()
         case LogViewer:
             KTp::Actions::openLogViewer(action->uri());
             break;
+        case CollabEditing: {
+            const KUrl file = KUrl(KFileDialog::getOpenFileName());
+            KTp::Actions::startCollaborativeEditing(account, contact, QList<KUrl>() << file, true);
+            break;
+        }
     }
 }
 

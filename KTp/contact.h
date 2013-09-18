@@ -41,6 +41,8 @@ public:
      bool videoCallCapability() const;
      /** Returns true if file transfers can be started with this contact*/
      bool fileTransferCapability() const;
+     /** Returns true if this contact supports collaborative editing*/
+     bool collaborativeEditingCapability() const;
 
      //Overridden as a workaround for upstream bug https://bugs.freedesktop.org/show_bug.cgi?id=55883
      QStringList clientTypes() const;
