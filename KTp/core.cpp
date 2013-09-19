@@ -21,7 +21,8 @@
 #include "core.h"
 
 #ifdef HAVE_KPEOPLE
-#include <Nepomuk2/ResourceManager>
+#include <QDBusMessage>
+#include <QDBusReply>
 #endif
 
 #include <KGlobal>
@@ -38,7 +39,14 @@ CorePrivate::CorePrivate()
 {
     //if built with kpeople support, enable kpeople if Nepomuk is running
     #ifdef HAVE_KPEOPLE
-        m_kPeopleEnabled = Nepomuk2::ResourceManager::instance()->initialized();
+    QDBusInterface nepomukServer(QLatin1String("org.kde.NepomukServer"), QLatin1String("/servicemanager"), QLatin1String("org.kde.nepomuk.ServiceManager"));
+    QDBusReply<bool> reply = nepomukServer.call(QLatin1String("startService"), QLatin1String("nepomuktelepathyservice"));
+    if (reply.isValid()) {
+        if (reply.value()) {
+            m_kPeopleEnabled = true;
+        }
+    }
+    //else if it can't be started, or nepomukServer doesn't reply lave it disabled.
     #endif
 }
 
