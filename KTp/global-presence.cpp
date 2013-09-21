@@ -106,8 +106,35 @@ void GlobalPresence::onAccountAdded(const Tp::AccountPtr &account)
 
 void GlobalPresence::onCurrentPresenceChanged()
 {
+    /* basic idea of choosing global presence it to make it reflects the presence
+     * over all accounts, usually this is used to indicates user the whole system
+     * status.
+     *
+     * If there isn't any account, currentPresence should be offline, since there is nothing
+     * online.
+     * If there's only one account, then currentPresence should represent the presence
+     * of this account.
+     * If there're more than one accounts, the situation is more complicated.
+     * There can be some accounts is still connecting (thus it's offline), and there can be
+     * some accounts doesn't support the presence you're choosing. The user-chosen presence
+     * priority will be higher than standard presence order.
+     *
+     * Example:
+     * user choose to be online, 1 account online, 1 account offline, current presence
+     * should be online, since online priority is higher than offline.
+     * user chooses a presence supported by part of the account, current presence will be
+     * the one chosen by user, to indicate there is at least one account supports it.
+     * user choose a presence supported by no account, current presence will be chosen
+     * from all accounts based on priority, and it also indicates there is no account support
+     * the user-chosen presence.
+     */
     Tp::Presence highestCurrentPresence = Tp::Presence::offline();
     Q_FOREACH(const Tp::AccountPtr &account, m_enabledAccounts->accounts()) {
+        if (account->currentPresence().type() == m_requestedPresence.type()) {
+            highestCurrentPresence = account->currentPresence();
+            break;
+        }
+
         if (Presence::sortPriority(account->currentPresence().type()) < Presence::sortPriority(highestCurrentPresence.type())) {
             highestCurrentPresence = account->currentPresence();
         }
@@ -137,6 +164,8 @@ void GlobalPresence::onRequestedPresenceChanged()
             highestRequestedPresence.status() != m_requestedPresence.status() ||
             highestRequestedPresence.statusMessage() != m_requestedPresence.statusMessage()) {
         m_requestedPresence = Presence(highestRequestedPresence);
+        // current presence priority is affected by requested presence
+        onCurrentPresenceChanged();
         Q_EMIT requestedPresenceChanged(m_requestedPresence);
     }
 }
