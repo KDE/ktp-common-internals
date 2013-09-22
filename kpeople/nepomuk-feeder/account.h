@@ -1,7 +1,7 @@
 /*
  * This file is part of telepathy-nepomuk-service
  *
- * Copyright (C) 2009-2010 Collabora Ltd. <info@collabora.co.uk>
+ * Copyright (C) 2009-2011 Collabora Ltd. <info@collabora.co.uk>
  *   @author George Goldberg <george.goldberg@collabora.co.uk>
  *
  * This library is free software; you can redistribute it and/or
@@ -26,8 +26,8 @@
 
 #include <QtCore/QObject>
 
-#include <TelepathyQt4/Account>
-#include <TelepathyQt4/Connection>
+#include <TelepathyQt/Account>
+#include <TelepathyQt/Connection>
 
 namespace Tp {
     class PendingOperation;
@@ -54,21 +54,24 @@ Q_SIGNALS:
     void accountDestroyed(const QString &path);
     void nicknameChanged(const QString &path, const QString &nickname);
     void currentPresenceChanged(const QString &path, const Tp::SimplePresence &presence);
+    void initialContactsLoaded(const QString &path, const QList<QString> &ids);
 
     void contactCreated(const QString &path, const QString &id);
     void contactDestroyed(const QString &path, const QString &id);
     void contactAliasChanged(const QString &path, const QString &id, const QString &alias);
     void contactPresenceChanged(const QString &path, const QString &id, const Tp::SimplePresence &presence);
-    void contactAddedToGroup(const QString &path, const QString &id, const QString &group);
-    void contactRemovedFromGroup(const QString &path, const QString &id, const QString &group);
+    void contactGroupsChanged(const QString &path, const QString &id, const QStringList &groups);
     void contactBlockStatusChanged(const QString &path, const QString &id, bool blocked);
     void contactPublishStateChanged(const QString &path, const QString &id, const Tp::Contact::PresenceState &state);
     void contactSubscriptionStateChanged(const QString &path, const QString &id, const Tp::Contact::PresenceState &state);
+    void contactCapabilitiesChanged(const QString &path, const QString &id, const Tp::ContactCapabilities &capabilities);
+    void contactAvatarChanged(const QString &path, const QString &id, const Tp::AvatarData &avatar);
 
 private Q_SLOTS:
-    void onConnectionStatusChanged(Tp::ConnectionStatus status);
+    void onConnectionChanged(const Tp::ConnectionPtr &connection);
+    void onContactManagerStateChanged(Tp::ContactListState state);
     void onNicknameChanged(const QString &nickname);
-    void onCurrentPresenceChanged(Tp::Presence presence);
+    void onCurrentPresenceChanged(const Tp::Presence &presence);
     void onAllKnownContactsChanged(const Tp::Contacts &added, const Tp::Contacts &removed);
     void onNewContact(const Tp::ContactPtr &contact);
     void onContactDestroyed(const QString &id, const Tp::ContactPtr &contact);
@@ -76,14 +79,17 @@ private Q_SLOTS:
     void onContactCreated(const QString &id);
     void onContactAliasChanged(const QString &id, const QString &alias);
     void onContactPresenceChanged(const QString &id, const Tp::SimplePresence &presence);
-    void onContactAddedToGroup(const QString &id, const QString &group);
-    void onContactRemovedFromGroup(const QString &id, const QString &group);
+    void onContactGroupsChanged(const QString &id, const QStringList &groups);
     void onContactBlockStatusChanged(const QString &id, bool blocked);
     void onContactPublishStateChanged(const QString &id, const Tp::Contact::PresenceState &state);
     void onContactSubscriptionStateChanged(const QString &id, const Tp::Contact::PresenceState &state);
+    void onContactCapabilitiesChanged(const QString &id, const Tp::ContactCapabilities &capabilities);
+    void onContactAvatarChanged(const QString &id, const Tp::AvatarData &avatar);
 
 private:
     Q_DISABLE_COPY(Account);
+
+    void loadContacts();
 
     Tp::AccountPtr m_account;
     Tp::ConnectionPtr m_connection;

@@ -1,7 +1,7 @@
 /*
  * This file is part of telepathy-nepomuk-service
  *
- * Copyright (C) 2009-2010 Collabora Ltd. <info@collabora.co.uk>
+ * Copyright (C) 2009-2011 Collabora Ltd. <info@collabora.co.uk>
  *   @author George Goldberg <george.goldberg@collabora.co.uk>
  *
  * This library is free software; you can redistribute it and/or
@@ -25,10 +25,10 @@
 
 #include <KDebug>
 
-#include <TelepathyQt4/ContactManager>
-#include <TelepathyQt4/PendingContacts>
-#include <TelepathyQt4/PendingOperation>
-#include <TelepathyQt4/PendingReady>
+#include <TelepathyQt/ContactManager>
+#include <TelepathyQt/PendingContacts>
+#include <TelepathyQt/PendingOperation>
+#include <TelepathyQt/PendingReady>
 
 Account::Account(const Tp::AccountPtr &account, QObject *parent)
  : QObject(parent),
@@ -43,8 +43,8 @@ void Account::init()
 {
     // Connect to all the signals that indicate changes in properties we care about.
     connect(m_account.data(),
-            SIGNAL(nicknameChanged(const QString &)),
-            SLOT(onNicknameChanged(const QString &)));
+            SIGNAL(nicknameChanged(QString)),
+            SLOT(onNicknameChanged(QString)));
     connect(m_account.data(),
             SIGNAL(currentPresenceChanged(Tp::Presence)),
             SLOT(onCurrentPresenceChanged(Tp::Presence)));
@@ -53,9 +53,8 @@ void Account::init()
     //            SLOT(onAvatarChanged(Tp::Avatar)));
     // ...... and any other properties we want to sync...
     connect(m_account.data(),
-            SIGNAL(connectionStatusChanged(Tp::ConnectionStatus)),
-            this,
-            SLOT(onConnectionStatusChanged(Tp::ConnectionStatus)));
+            SIGNAL(connectionChanged(Tp::ConnectionPtr)),
+            SLOT(onConnectionChanged(Tp::ConnectionPtr)));
 
     // Emit a signal to notify the storage that a new account has been constructed
     // FIXME: Some IM Accounts don't have an ID as such, e.g. Link-Local-XMPP.
@@ -68,7 +67,7 @@ void Account::init()
     onNicknameChanged(m_account->nickname());
 
     // Now that the storage stuff is done, simulate emission of all the account signals.
-    onConnectionStatusChanged(m_account->connectionStatus());
+    onConnectionChanged(m_account->connection());
 }
 
 Account::~Account()
@@ -89,32 +88,22 @@ void Account::shutdown()
     emit accountDestroyed(m_account->objectPath());
 }
 
-void Account::onConnectionStatusChanged(Tp::ConnectionStatus status)
+void Account::onConnectionChanged(const Tp::ConnectionPtr &connection)
 {
-    if (status == Tp::ConnectionStatusConnected) {
-        // We now have a connection to the account. Get the connection ready to use.
-        if (!m_connection.isNull()) {
-            kWarning() << "Connection should be null, but is not :/ Do nowt.";
-            return;
-        }
-
-        kDebug() << "Connection up:" << this;
-
-        m_connection = m_account->connection();
+    if (! connection.isNull()) {
+        m_connection = connection;
 
         if (!m_connection->contactManager()) {
             kWarning() << "ContactManager is Null. Abort getting contacts.";
             return;
         }
 
-        Tp::Contacts contacts = m_connection->contactManager()->allKnownContacts();
-
-        // Create wrapper objects for all the Contacts.
-        foreach (const Tp::ContactPtr &contact, contacts) {
-            kDebug();
-            onNewContact(contact);
-        }
-        kDebug() << "Loop over.";
+        //add contacts as soon as the contact manager is ready.
+        connect(m_connection->contactManager().data(),
+                SIGNAL(stateChanged(Tp::ContactListState)),
+                SLOT(onContactManagerStateChanged(Tp::ContactListState)));
+        // Simulate a state change signal in case it is already ready.
+        onContactManagerStateChanged(m_connection->contactManager()->state());
 
     } else {
         // Connection has gone down. Delete our pointer to it.
@@ -123,12 +112,37 @@ void Account::onConnectionStatusChanged(Tp::ConnectionStatus status)
     }
 }
 
+void Account::onContactManagerStateChanged(Tp::ContactListState state)
+{
+//    kDebug() << "contact manager state changed to " << state;
+
+    if (state == Tp::ContactListStateSuccess)  {
+        Tp::Contacts contacts = m_connection->contactManager()->allKnownContacts();
+
+        // Create the hash containing all the contacts to notify the storage of the
+        // full set of contacts that still exist when the account is connected.
+        // This *must* be done before creating the contact wrapper objects.
+        QList<QString> initialContacts;
+        foreach (const Tp::ContactPtr &contact, contacts) {
+            initialContacts.append(contact->id());
+        }
+        emit initialContactsLoaded(m_account->objectPath(), initialContacts);
+
+        // Create wrapper objects for all the Contacts.
+        foreach (const Tp::ContactPtr &contact, contacts) {
+            onNewContact(contact);
+        }
+//        kDebug() << "Loop over.";
+    }
+}
+
+
 void Account::onNicknameChanged(const QString& nickname)
 {
     emit nicknameChanged(m_account->objectPath(), nickname);
 }
 
-void Account::onCurrentPresenceChanged(Tp::Presence presence)
+void Account::onCurrentPresenceChanged(const Tp::Presence &presence)
 {
     emit currentPresenceChanged(m_account->objectPath(), presence.barePresence());
 }
@@ -149,7 +163,6 @@ void Account::onAllKnownContactsChanged(const Tp::Contacts& added, const Tp::Con
 
 void Account::onNewContact(const Tp::ContactPtr &contact)
 {
-    kDebug();
     // Only create a new contact if one doesn't already exist.
     if (!m_contacts.contains(contact)) {
         // Create a new Contact wrapper objectPath
@@ -159,24 +172,36 @@ void Account::onNewContact(const Tp::ContactPtr &contact)
         m_contacts.insert(contact, c);
 
         // Connect to all its signals
-        connect(c, SIGNAL(created(QString)),
-                this, SLOT(onContactCreated(QString)));
-        connect(c, SIGNAL(contactDestroyed(QString,Tp::ContactPtr)),
-                this, SLOT(onContactDestroyed(QString,Tp::ContactPtr)));
-        connect(c, SIGNAL(aliasChanged(QString,QString)),
-                this, SLOT(onContactAliasChanged(QString,QString)));
-        connect(c, SIGNAL(presenceChanged(QString,Tp::SimplePresence)),
-                this, SLOT(onContactPresenceChanged(QString,Tp::SimplePresence)));
-        connect(c, SIGNAL(addedToGroup(QString,QString)),
-                this, SLOT(onContactAddedToGroup(QString,QString)));
-        connect(c, SIGNAL(removedFromGroup(QString,QString)),
-                this, SLOT(onContactRemovedFromGroup(QString,QString)));
-        connect(c, SIGNAL(blockStatusChanged(QString,bool)),
-                this, SLOT(onContactBlockStatusChanged(QString,bool)));
-        connect(c, SIGNAL(publishStateChanged(QString,Tp::Contact::PresenceState)),
-                this, SLOT(onContactPublishStateChanged(QString,Tp::Contact::PresenceState)));
-        connect(c, SIGNAL(subscriptionStateChanged(QString,Tp::Contact::PresenceState)),
-                this, SLOT(onContactSubscriptionStateChanged(QString,Tp::Contact::PresenceState)));
+        connect(c,
+                SIGNAL(created(QString)),
+                SLOT(onContactCreated(QString)));
+        connect(c,
+                SIGNAL(contactDestroyed(QString,Tp::ContactPtr)),
+                SLOT(onContactDestroyed(QString,Tp::ContactPtr)));
+        connect(c,
+                SIGNAL(aliasChanged(QString,QString)),
+                SLOT(onContactAliasChanged(QString,QString)));
+        connect(c,
+                SIGNAL(presenceChanged(QString,Tp::SimplePresence)),
+                SLOT(onContactPresenceChanged(QString,Tp::SimplePresence)));
+        connect(c,
+                SIGNAL(groupsChanged(QString,QStringList)),
+                SLOT(onContactGroupsChanged(QString,QStringList)));
+        connect(c,
+                SIGNAL(blockStatusChanged(QString,bool)),
+                SLOT(onContactBlockStatusChanged(QString,bool)));
+        connect(c,
+                SIGNAL(publishStateChanged(QString,Tp::Contact::PresenceState)),
+                SLOT(onContactPublishStateChanged(QString,Tp::Contact::PresenceState)));
+        connect(c,
+                SIGNAL(subscriptionStateChanged(QString,Tp::Contact::PresenceState)),
+                SLOT(onContactSubscriptionStateChanged(QString,Tp::Contact::PresenceState)));
+        connect(c,
+                SIGNAL(capabilitiesChanged(QString,Tp::ContactCapabilities)),
+                SLOT(onContactCapabilitiesChanged(QString,Tp::ContactCapabilities)));
+        connect(c,
+                SIGNAL(avatarChanged(QString,Tp::AvatarData)),
+                SLOT(onContactAvatarChanged(QString,Tp::AvatarData)));
 
         c->init();
     }
@@ -205,14 +230,9 @@ void Account::onContactPresenceChanged(const QString &id, const Tp::SimplePresen
     emit contactPresenceChanged(m_account->objectPath(), id, presence);
 }
 
-void Account::onContactAddedToGroup(const QString &id, const QString &group)
+void Account::onContactGroupsChanged(const QString &id, const QStringList &groups)
 {
-    emit contactAddedToGroup(m_account->objectPath(), id, group);
-}
-
-void Account::onContactRemovedFromGroup(const QString &id, const QString &group)
-{
-    emit contactRemovedFromGroup(m_account->objectPath(), id, group);
+    emit contactGroupsChanged(m_account->objectPath(), id, groups);
 }
 
 void Account::onContactBlockStatusChanged(const QString &id, bool blocked)
@@ -229,6 +249,17 @@ void Account::onContactSubscriptionStateChanged(const QString &id, const Tp::Con
 {
     emit contactSubscriptionStateChanged(m_account->objectPath(), id, state);
 }
+
+void Account::onContactCapabilitiesChanged(const QString &id, const Tp::ContactCapabilities &capabilities)
+{
+    emit contactCapabilitiesChanged(m_account->objectPath(), id, capabilities);
+}
+
+void Account::onContactAvatarChanged(const QString &id, const Tp::AvatarData &avatar)
+{
+    emit contactAvatarChanged(m_account->objectPath(), id, avatar);
+}
+
 
 
 #include "account.moc"

@@ -6,16 +6,17 @@ set (CMAKE_MODULE_PATH
      ${CMAKE_MODULE_PATH}
 )
 
-set(KDE_MIN_VERSION "4.4.75")
+set(KDE_MIN_VERSION "4.8.0")
 find_package (KDE4 ${KDE_MIN_VERSION} REQUIRED)
 find_package (Nepomuk REQUIRED)
-find_package (TelepathyQt4 REQUIRED)
-set(SDO_MIN_VERSION "0.3.60")
+find_package (TelepathyQt4 0.8.9 REQUIRED)
+set(SDO_MIN_VERSION "0.6.50")
 find_package(SharedDesktopOntologies ${SDO_MIN_VERSION} REQUIRED)
 
 include (CheckIncludeFiles)
 include (KDE4Defaults)
 include (MacroLibrary)
+include (SopranoAddOntology)
 
 # Some magic win32 stuff. FIXME: What does this do?
 if (WIN32)
@@ -42,8 +43,6 @@ set (CMAKE_CXX_FLAGS
      "${CMAKE_CXX_FLAGS} ${KDE4_ENABLE_EXCEPTIONS}"
 )
 
-add_subdirectory (ontologies)
-
 ####################################
 # First target - nepomuktelepathyservice static library
 
@@ -54,6 +53,13 @@ set (nepomuktelepathyservice_static_SRCS
      abstract-storage.cpp
      nepomuk-storage.cpp
      test-backdoors.cpp
+)
+
+soprano_add_ontology (nepomuktelepathyservice_static_SRCS
+                      ${CMAKE_SOURCE_DIR}/telepathy.trig
+                      "Telepathy"
+                      "Nepomuk::Vocabulary"
+                      "trig"
 )
 
 kde4_add_library (nepomuktelepathyservice-static
@@ -69,7 +75,7 @@ target_link_libraries (nepomuktelepathyservice-static
                        ${SOPRANO_LIBRARIES}
                        ${NEPOMUK_LIBRARIES}
                        ${NEPOMUK_QUERY_LIBRARIES}
-                       ontologies
+                       nepomukdatamanagement
 )
 
 set_property(TARGET nepomuktelepathyservice-static PROPERTY COMPILE_FLAGS -fPIC)

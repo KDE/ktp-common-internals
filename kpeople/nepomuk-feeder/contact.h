@@ -1,7 +1,7 @@
 /*
  * This file is part of telepathy-nepomuk-service
  *
- * Copyright (C) 2010 Collabora Ltd. <info@collabora.co.uk>
+ * Copyright (C) 2010-2011 Collabora Ltd. <info@collabora.co.uk>
  *   @author George Goldberg <george.goldberg@collabora.co.uk>
  *
  * This library is free software; you can redistribute it and/or
@@ -24,9 +24,9 @@
 
 #include <QtCore/QObject>
 
-#include <TelepathyQt4/Connection>
-#include <TelepathyQt4/Contact>
-#include <TelepathyQt4/Presence>
+#include <TelepathyQt/Connection>
+#include <TelepathyQt/Contact>
+#include <TelepathyQt/Presence>
 
 /**
  * This class wraps one Telepathy Contact.
@@ -47,11 +47,12 @@ Q_SIGNALS:
     void contactDestroyed(const QString &id, const Tp::ContactPtr &contact);
     void aliasChanged(const QString &id, const QString &alias);
     void presenceChanged(const QString &id, const Tp::SimplePresence &presence);
-    void addedToGroup(const QString &id, const QString &group);
-    void removedFromGroup(const QString &id, const QString &group);
+    void groupsChanged(const QString &id, const QStringList &groups);
     void blockStatusChanged(const QString &id, bool blocked);
     void publishStateChanged(const QString &id, const Tp::Contact::PresenceState &state);
     void subscriptionStateChanged(const QString &id, const Tp::Contact::PresenceState &state);
+    void capabilitiesChanged(const QString &id, const Tp::ContactCapabilities &capabilities);
+    void avatarChanged(const QString &id, const Tp::AvatarData &avatar);
 
 private Q_SLOTS:
     void onAliasChanged(const QString &alias);
@@ -62,6 +63,7 @@ private Q_SLOTS:
     void onPublishStateChanged(Tp::Contact::PresenceState state);
     void onSubscriptionStateChanged(Tp::Contact::PresenceState state);
     void onCapabilitiesChanged(const Tp::ContactCapabilities &capabilities);
+    void onAvatarDataChanged(const Tp::AvatarData &avatar);
 
 private:
     Q_DISABLE_COPY(Contact);

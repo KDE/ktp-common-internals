@@ -1,7 +1,7 @@
 /*
  * This file is part of nepomuktelepathyservice
  *
- * Copyright (C) 2010 Collabora Ltd. <info@collabora.co.uk>
+ * Copyright (C) 2010-2011 Collabora Ltd. <info@collabora.co.uk>
  *   @author George Goldberg <george.goldberg@collabora.co.uk>
  *
  * This library is free software; you can redistribute it and/or
@@ -26,7 +26,7 @@
 
 #include <KTelepathy/TestLib/Test>
 
-#include <TelepathyQt4/AccountManager>
+#include <TelepathyQt/AccountManager>
 
 class Controller;
 
@@ -55,11 +55,13 @@ public Q_SLOTS:
 
 private Q_SLOTS:
     void initTestCase();
+    void init();
 
     void testConstructorDestructor();
     void testOnNewAccount();
   //  void testSignalRelays();
 
+    void cleanup();
     void cleanupTestCase();
 
 private:
@@ -86,6 +88,24 @@ public Q_SLOTS:
     virtual void createAccount(const QString &path, const QString &id, const QString &protocol);
     virtual void destroyAccount(const QString &path);
 
+    virtual void emitInitialisedSignal();
+
+    // Not used
+    virtual void cleanupAccounts(const QList<QString> &) { }
+    virtual void setAccountNickname(const QString &, const QString &) { }
+    virtual void setAccountCurrentPresence(const QString &, const Tp::SimplePresence &) { }
+    virtual void cleanupAccountContacts(const QString &, const QList<QString> &) { }
+    virtual void createContact(const QString &, const QString &) { }
+    virtual void destroyContact(const QString &, const QString &) { }
+    virtual void setContactAlias(const QString &, const QString &, const QString &) { }
+    virtual void setContactPresence(const QString &, const QString &, const Tp::SimplePresence &) { }
+    virtual void setContactGroups(const QString &, const QString &, const QStringList &) { }
+    virtual void setContactBlockStatus(const QString &, const QString &, bool) { }
+    virtual void setContactPublishState(const QString &, const QString &, const Tp::Contact::PresenceState &) { }
+    virtual void setContactSubscriptionState(const QString &, const QString &, const Tp::Contact::PresenceState &) { }
+    virtual void setContactCapabilities(const QString &, const QString &, const Tp::ContactCapabilities &) { }
+    virtual void setContactAvatar(const QString &, const QString &, const Tp::AvatarData &) { }
+
 private:
     ControllerTest *m_test;
 };
@@ -100,7 +120,25 @@ public:
 
 public Q_SLOTS:
     virtual void createAccount(const QString &path, const QString &id, const QString &protocol);
-    virtual void destroyAccount(const QString &path);
+
+    virtual void emitInitialisedSignal();
+
+    // Not used
+    virtual void cleanupAccounts(const QList<QString> &) { }
+    virtual void destroyAccount(const QString &) { }
+    virtual void setAccountNickname(const QString &, const QString &) { }
+    virtual void setAccountCurrentPresence(const QString &, const Tp::SimplePresence &) { }
+    virtual void cleanupAccountContacts(const QString &, const QList<QString> &) { }
+    virtual void createContact(const QString &, const QString &) { }
+    virtual void destroyContact(const QString &, const QString &) { }
+    virtual void setContactAlias(const QString &, const QString &, const QString &) { }
+    virtual void setContactPresence(const QString &, const QString &, const Tp::SimplePresence &) { }
+    virtual void setContactGroups(const QString &, const QString &, const QStringList &) { }
+    virtual void setContactBlockStatus(const QString &, const QString &, bool) { }
+    virtual void setContactPublishState(const QString &, const QString &, const Tp::Contact::PresenceState &) { }
+    virtual void setContactSubscriptionState(const QString &, const QString &, const Tp::Contact::PresenceState &) { }
+    virtual void setContactCapabilities(const QString &, const QString &, const Tp::ContactCapabilities &) { }
+    virtual void setContactAvatar(const QString &, const QString &, const Tp::AvatarData &) { }
 
 private:
     ControllerTest *m_test;

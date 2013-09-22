@@ -1,7 +1,7 @@
 /*
  * This file is part of telepathy-nepomuk-service
  *
- * Copyright (C) 2009-2010 Collabora Ltd. <info@collabora.co.uk>
+ * Copyright (C) 2009-2011 Collabora Ltd. <info@collabora.co.uk>
  *   @author George Goldberg <george.goldberg@collabora.co.uk>
  *
  * This library is free software; you can redistribute it and/or
@@ -26,14 +26,27 @@
 
 #include <KDebug>
 
-#include <TelepathyQt4/PendingReady>
+#include <TelepathyQt/PendingReady>
 
 Controller::Controller(AbstractStorage *storage, QObject *parent)
  : QObject(parent),
    m_storage(storage)
 {
-    // Take ownership of the storage.
+    // Become the parent of the Storage class.
     m_storage->setParent(this);
+
+    // We must wait for the storage to be initialised before anything else happens.
+    connect(m_storage, SIGNAL(initialised(bool)), SLOT(onStorageInitialised(bool)));
+}
+
+void Controller::onStorageInitialised(bool success)
+{
+    if (!success) {
+        emit storageInitialisationFailed();
+        return;
+    }
+
+    kDebug() << "Storage initialisation succeeded. Setting up Telepathy stuff now.";
 
     // Set up the Factories.
     Tp::Features fAccountFactory;
@@ -98,8 +111,16 @@ void Controller::onAccountManagerReady(Tp::PendingOperation *op)
 
      // Account Manager is now ready. We should watch for any new accounts being created.
     connect(m_accountManager.data(),
-            SIGNAL(newAccount(const Tp::AccountPtr &)),
-            SLOT(onNewAccount(const Tp::AccountPtr &)));
+            SIGNAL(newAccount(Tp::AccountPtr)),
+            SLOT(onNewAccount(Tp::AccountPtr)));
+
+    // Signal the full list of accounts to the storage so it can check that the list in Nepomuk
+    // corresponds to the list on the AM.
+    QList<QString> accounts;
+    foreach (const Tp::AccountPtr &account, m_accountManager->allAccounts()) {
+        accounts.append(account->objectPath());
+    }
+    m_storage->cleanupAccounts(accounts);
 
     // Take into account (ha ha) the accounts that already existed when the AM object became ready.
     foreach (const Tp::AccountPtr &account, m_accountManager->allAccounts()) {
@@ -122,6 +143,8 @@ void Controller::onNewAccount(const Tp::AccountPtr &account)
             m_storage, SLOT(setAccountNickname(QString,QString)));
     connect(acc, SIGNAL(currentPresenceChanged(QString,Tp::SimplePresence)),
             m_storage, SLOT(setAccountCurrentPresence(QString,Tp::SimplePresence)));
+    connect(acc, SIGNAL(initialContactsLoaded(QString,QList<QString>)),
+            m_storage, SLOT(cleanupAccountContacts(QString,QList<QString>)));
 
     // Connect to all the signals/slots that signify the contacts are changing in some way.
     connect(acc, SIGNAL(contactCreated(QString,QString)),
@@ -132,16 +155,18 @@ void Controller::onNewAccount(const Tp::AccountPtr &account)
             m_storage, SLOT(setContactAlias(QString,QString,QString)));
     connect(acc, SIGNAL(contactPresenceChanged(QString,QString,Tp::SimplePresence)),
             m_storage, SLOT(setContactPresence(QString,QString,Tp::SimplePresence)));
-    connect(acc, SIGNAL(contactAddedToGroup(QString,QString,QString)),
-            m_storage, SLOT(addContactToGroup(QString,QString,QString)));
-    connect(acc, SIGNAL(contactRemovedFromGroup(QString,QString,QString)),
-            m_storage, SLOT(removeContactFromGroup(QString,QString,QString)));
+    connect(acc, SIGNAL(contactGroupsChanged(QString,QString,QStringList)),
+            m_storage, SLOT(setContactGroups(QString,QString,QStringList)));
     connect(acc, SIGNAL(contactBlockStatusChanged(QString,QString,bool)),
             m_storage, SLOT(setContactBlockStatus(QString,QString,bool)));
     connect(acc, SIGNAL(contactPublishStateChanged(QString,QString,Tp::Contact::PresenceState)),
             m_storage, SLOT(setContactPublishState(QString,QString,Tp::Contact::PresenceState)));
     connect(acc, SIGNAL(contactSubscriptionStateChanged(QString,QString,Tp::Contact::PresenceState)),
             m_storage, SLOT(setContactSubscriptionState(QString,QString,Tp::Contact::PresenceState)));
+    connect(acc, SIGNAL(contactCapabilitiesChanged(QString,QString,Tp::ContactCapabilities)),
+            m_storage, SLOT(setContactCapabilities(QString,QString,Tp::ContactCapabilities)));
+    connect(acc, SIGNAL(contactAvatarChanged(QString,QString,Tp::AvatarData)),
+            m_storage, SLOT(setContactAvatar(QString,QString,Tp::AvatarData)));
 
     // Now the signal connections are done, initialise the account.
     acc->init();
