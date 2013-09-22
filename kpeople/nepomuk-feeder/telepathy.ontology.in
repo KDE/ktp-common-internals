@@ -1,0 +1,7 @@
+[Ontology]
+Name=Telepathy
+Comment=The Telepathy Ontology (Containing Telepathy Specific extensions for NCO)
+Namespace=http://nepomuk.kde.org/ontologies/2009/06/20/telepathy#
+Path=${ONTO_INSTALL_DIR}/telepathy.trig
+MimeType=application/x-trig
+Type=Data
