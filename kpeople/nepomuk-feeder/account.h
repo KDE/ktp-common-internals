@@ -22,8 +22,6 @@
 #ifndef TELEPATHY_NEPOMUK_SERVICE_ACCOUNT_H
 #define TELEPATHY_NEPOMUK_SERVICE_ACCOUNT_H
 
-#include "contact.h"
-
 #include <QtCore/QObject>
 
 #include <TelepathyQt/Account>
@@ -53,38 +51,28 @@ Q_SIGNALS:
     void created(const QString &path, const QString &id, const QString &protocol);
     void accountDestroyed(const QString &path);
     void nicknameChanged(const QString &path, const QString &nickname);
-    void currentPresenceChanged(const QString &path, const Tp::SimplePresence &presence);
-    void initialContactsLoaded(const QString &path, const QList<QString> &ids);
+    void initialContactsLoaded(const QString &path, const Tp::Contacts &contacts);
+    void accountRemoved(const QString &path);
 
-    void contactCreated(const QString &path, const QString &id);
-    void contactDestroyed(const QString &path, const QString &id);
+    void contactCreated(const QString &path, const Tp::ContactPtr &contact);
     void contactAliasChanged(const QString &path, const QString &id, const QString &alias);
-    void contactPresenceChanged(const QString &path, const QString &id, const Tp::SimplePresence &presence);
     void contactGroupsChanged(const QString &path, const QString &id, const QStringList &groups);
-    void contactBlockStatusChanged(const QString &path, const QString &id, bool blocked);
-    void contactPublishStateChanged(const QString &path, const QString &id, const Tp::Contact::PresenceState &state);
-    void contactSubscriptionStateChanged(const QString &path, const QString &id, const Tp::Contact::PresenceState &state);
-    void contactCapabilitiesChanged(const QString &path, const QString &id, const Tp::ContactCapabilities &capabilities);
     void contactAvatarChanged(const QString &path, const QString &id, const Tp::AvatarData &avatar);
 
 private Q_SLOTS:
     void onConnectionChanged(const Tp::ConnectionPtr &connection);
     void onContactManagerStateChanged(Tp::ContactListState state);
     void onNicknameChanged(const QString &nickname);
-    void onCurrentPresenceChanged(const Tp::Presence &presence);
     void onAllKnownContactsChanged(const Tp::Contacts &added, const Tp::Contacts &removed);
     void onNewContact(const Tp::ContactPtr &contact);
-    void onContactDestroyed(const QString &id, const Tp::ContactPtr &contact);
+    void onAccountRemoved();
 
-    void onContactCreated(const QString &id);
-    void onContactAliasChanged(const QString &id, const QString &alias);
-    void onContactPresenceChanged(const QString &id, const Tp::SimplePresence &presence);
-    void onContactGroupsChanged(const QString &id, const QStringList &groups);
-    void onContactBlockStatusChanged(const QString &id, bool blocked);
-    void onContactPublishStateChanged(const QString &id, const Tp::Contact::PresenceState &state);
-    void onContactSubscriptionStateChanged(const QString &id, const Tp::Contact::PresenceState &state);
-    void onContactCapabilitiesChanged(const QString &id, const Tp::ContactCapabilities &capabilities);
-    void onContactAvatarChanged(const QString &id, const Tp::AvatarData &avatar);
+    void onContactAddedToGroup();
+    void onContactAddedToGroup(const Tp::ContactPtr &contact);
+    void onContactRemovedFromGroup(const QString &group);
+    void onContactAliasChanged();
+    void onContactAliasChanged(const Tp::ContactPtr &contact);
+    void onContactAvatarChanged(const Tp::AvatarData &avatar);
 
 private:
     Q_DISABLE_COPY(Account);
@@ -93,9 +81,7 @@ private:
 
     Tp::AccountPtr m_account;
     Tp::ConnectionPtr m_connection;
-    QHash< Tp::ContactPtr, Contact* > m_contacts;
+    QList< Tp::ContactPtr > m_contacts;
 };
 
-
 #endif // Header guard
-

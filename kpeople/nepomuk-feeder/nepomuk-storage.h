@@ -33,10 +33,10 @@
 #include <TelepathyQt/Contact>
 #include <TelepathyQt/Types>
 
-#include <nepomuk/simpleresourcegraph.h>
+#include <nepomuk2/simpleresourcegraph.h>
 #include <KJob>
 
-namespace Nepomuk {
+namespace Nepomuk2 {
     class ResourceManager;
     namespace Query {
         class Result;
@@ -86,18 +86,16 @@ private:
     QSharedDataPointer<Data> d;
 };
 
-int qHash(ContactIdentifier c);
+uint qHash(const ContactIdentifier& c);
 
 class ContactResources {
 public:
-    ContactResources(const QUrl &person,
-                     const QUrl &personContact,
+    ContactResources(const QUrl &personContact,
                      const QUrl &imAccount);
     ContactResources(const ContactResources &other);
     ContactResources();
     ~ContactResources();
 
-    const QUrl &person() const;
     const QUrl &personContact() const;
     const QUrl &imAccount() const;
 
@@ -124,65 +122,50 @@ public:
 public Q_SLOTS:
     virtual void cleanupAccounts(const QList<QString> &paths);
     virtual void createAccount(const QString &path, const QString &id, const QString &protocol);
-    virtual void destroyAccount(const QString &path);
     virtual void setAccountNickname(const QString &path, const QString &nickname);
-    virtual void setAccountCurrentPresence(const QString &path, const Tp::SimplePresence &presence);
-    virtual void cleanupAccountContacts(const QString &path, const QList<QString> &ids);
+    virtual void cleanupAccountContacts(const QString &path, const Tp::Contacts &contacts);
+    virtual void onAccountRemoved(const QString &path);
 
-    virtual void createContact(const QString &path, const QString &id);
-    virtual void destroyContact(const QString &path, const QString &id);
+    virtual void createContact(const QString &path, const Tp::ContactPtr &contact);
     virtual void setContactAlias(const QString &path, const QString &id, const QString &alias);
-    virtual void setContactPresence(const QString &path, const QString &id, const Tp::SimplePresence &presence);
     virtual void setContactGroups(const QString &path, const QString &id, const QStringList &groups);
-    virtual void setContactBlockStatus(const QString &path, const QString &id, bool blocked);
-    virtual void setContactPublishState(const QString &path, const QString &id, const Tp::Contact::PresenceState &state);
-    virtual void setContactSubscriptionState(const QString &path, const QString &id, const Tp::Contact::PresenceState &state);
-    virtual void setContactCapabilities(const QString &path, const QString &id, const Tp::ContactCapabilities &capabilities);
     virtual void setContactAvatar(const QString &path, const QString &id, const Tp::AvatarData &avatar);
 
 signals:
     void graphSaved();
 
 private Q_SLOTS:
-    void onNepomukError(const QString &uri, int errorCode);
     void init();
-    void onSaveJobResult(KJob *job);
 
-    void onAccountsQueryNewEntries(const QList<Nepomuk::Query::Result> &entries);
-    void onAccountsQueryEntriesRemoved(const QList<QUrl> &entries);
-    void onAccountsQueryError(const QString &errorMessage);
     void onAccountsQueryFinishedListing();
-
-    void onContactsQueryNewEntries(const QList<Nepomuk::Query::Result> &entries);
-    void onContactsQueryEntriesRemoved(const QList<QUrl> &entries);
-    void onContactsQueryError(const QString &errorMessage);
-    void onContactsQueryFinishedListing();
-
     void onContactTimer();
     void onContactGraphJob(KJob *job);
-    void onRemovePropertiesJob(KJob *job);
+
+
 private:
+    void updateAlias(Nepomuk2::SimpleResource &contactResource, Nepomuk2::SimpleResource &imAccountResource, const QString &alias);
+    void updateContactGroups(Nepomuk2::SimpleResource &contactResource, const QStringList &groups);
+    void updateContactAvatar(Nepomuk2::SimpleResource &contactResource, Nepomuk2::SimpleResource &imAccountResource, const Tp::AvatarData &avatar);
+
     Q_DISABLE_COPY(NepomukStorage);
 
     friend class TestBackdoors;
 
-    Nepomuk::ResourceManager *m_resourceManager;
     QUrl m_mePersonContact;
 
     QHash<QString, AccountResources> m_accounts;
     QHash<ContactIdentifier, ContactResources> m_contacts;
 
-    QList<ContactIdentifier> m_unresolvedContacts;
-    QList<QString> m_unresolvedAccounts;
-
-    Nepomuk::SimpleResourceGraph m_graph;
+    Nepomuk2::SimpleResourceGraph m_graph;
     QTimer m_graphTimer;
 
-    ContactResources findContact(const QString& path, const QString& id);
-    AccountResources findAccount(const QString& path);
+    ContactResources findContact(const QString &path, const QString &id);
+    AccountResources findAccount(const QString &path);
 
     void fireGraphTimer();
-    bool hasInvalidResources() const;
+
+    QUrl findGroup(const QString& groupName);
+    QHash<QString, QUrl> m_groupCache;
 };
 
 

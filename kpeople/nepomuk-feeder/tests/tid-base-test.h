@@ -23,7 +23,7 @@
 #define TELEPATHY_BASE_TEST_H
 
 #include <KTelepathy/TestLib/NepomukTest>
-#include <Nepomuk/Resource>
+#include <Nepomuk2/Resource>
 #include <TelepathyQt4/Types>
 
 class TelepathyAccountMonitor;
@@ -46,7 +46,7 @@ public:
     void setupAccountMonitor();
 
     TelepathyAccountMonitor *accountMonitor();
-    Nepomuk::Resource mePersonContact();
+    Nepomuk2::Resource mePersonContact();
     Tp::AccountPtr account();
     Tp::ConnectionPtr connection();
 

@@ -21,13 +21,13 @@
 #ifndef TELEPATHY_NEPOMUK_SERVICE_SERVICE_H
 #define TELEPATHY_NEPOMUK_SERVICE_SERVICE_H
 
-#include <Nepomuk/Service>
+#include <Nepomuk2/Service>
 
 #include <QtCore/QVariantList>
 
 class Controller;
 
-class TelepathyService : public Nepomuk::Service
+class TelepathyService : public Nepomuk2::Service
 {
     Q_OBJECT
 
