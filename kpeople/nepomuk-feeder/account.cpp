@@ -58,7 +58,7 @@ void Account::init()
     QString protocolName = m_account->serviceName().isEmpty() ? m_account->protocolName() : m_account->serviceName();
     // Emit a signal to notify the storage that a new account has been constructed
     // FIXME: Some IM Accounts don't have an ID as such, e.g. Link-Local-XMPP.
-    emit created(m_account->objectPath(),
+    Q_EMIT created(m_account->objectPath(),
                  m_account->parameters().value(QLatin1String("account")).toString(),
                  protocolName);
 
@@ -79,7 +79,7 @@ void Account::shutdown()
     kDebug();
 
     // Emit a signal to say we were destroyed.
-    emit accountDestroyed(m_account->objectPath());
+    Q_EMIT accountDestroyed(m_account->objectPath());
 }
 
 void Account::onConnectionChanged(const Tp::ConnectionPtr &connection)
@@ -114,10 +114,10 @@ void Account::onContactManagerStateChanged(Tp::ContactListState state)
     if (state == Tp::ContactListStateSuccess)  {
         Tp::Contacts contacts = m_connection->contactManager()->allKnownContacts();
 
-        emit initialContactsLoaded(m_account->objectPath(), contacts);
+        Q_EMIT initialContactsLoaded(m_account->objectPath(), contacts);
 
         // Create wrapper objects for all the Contacts.
-        foreach (const Tp::ContactPtr &contact, contacts) {
+        Q_FOREACH (const Tp::ContactPtr &contact, contacts) {
             onNewContact(contact);
         }
 //        kDebug() << "Loop over.";
@@ -126,13 +126,13 @@ void Account::onContactManagerStateChanged(Tp::ContactListState state)
 
 void Account::onNicknameChanged(const QString &nickname)
 {
-    emit nicknameChanged(m_account->objectPath(), nickname);
+    Q_EMIT nicknameChanged(m_account->objectPath(), nickname);
 }
 
 void Account::onAllKnownContactsChanged(const Tp::Contacts &added, const Tp::Contacts &removed)
 {
     // For each added contact, let's check if we already have a Contact wrapper for it
-    foreach (const Tp::ContactPtr &contact, added) {
+    Q_FOREACH (const Tp::ContactPtr &contact, added) {
         if (!m_contacts.contains(contact)) {
             // It's a brand new one
             onNewContact(contact);
@@ -150,7 +150,7 @@ void Account::onAccountRemoved()
 
     kDebug() << "Account being removed";
 
-    emit accountRemoved(account->objectPath());
+    Q_EMIT accountRemoved(account->objectPath());
 }
 
 void Account::onNewContact(const Tp::ContactPtr &contact)
@@ -173,7 +173,7 @@ void Account::onNewContact(const Tp::ContactPtr &contact)
         connect(contact.data(),
                 SIGNAL(avatarDataChanged(Tp::AvatarData)),
                 SLOT(onContactAvatarChanged(Tp::AvatarData)));
-        emit contactCreated(m_account->objectPath(), contact);
+        Q_EMIT contactCreated(m_account->objectPath(), contact);
     }
 }
 
@@ -187,7 +187,7 @@ void Account::onContactAddedToGroup()
 
 void Account::onContactAddedToGroup(const Tp::ContactPtr &contact)
 {
-    emit contactGroupsChanged(m_account->objectPath(), contact->id(), contact->groups());
+    Q_EMIT contactGroupsChanged(m_account->objectPath(), contact->id(), contact->groups());
 }
 
 void Account::onContactRemovedFromGroup(const QString &group)
@@ -196,7 +196,7 @@ void Account::onContactRemovedFromGroup(const QString &group)
     const Tp::ContactPtr contact(qobject_cast<Tp::Contact*>(sender()));
     Q_ASSERT(contact);
 
-    emit contactGroupsChanged(m_account->objectPath(), contact->id(), contact->groups());
+    Q_EMIT contactGroupsChanged(m_account->objectPath(), contact->id(), contact->groups());
 }
 
 void Account::onContactAliasChanged()
@@ -209,7 +209,7 @@ void Account::onContactAliasChanged()
 
 void Account::onContactAliasChanged(const Tp::ContactPtr &contact)
 {
-    emit contactAliasChanged(m_account->objectPath(), contact->id(), contact->alias());
+    Q_EMIT contactAliasChanged(m_account->objectPath(), contact->id(), contact->alias());
 }
 
 void Account::onContactAvatarChanged(const Tp::AvatarData &avatar)
@@ -217,7 +217,7 @@ void Account::onContactAvatarChanged(const Tp::AvatarData &avatar)
     const Tp::ContactPtr contact(qobject_cast<Tp::Contact*>(sender()));
     Q_ASSERT(contact);
 
-    emit contactAvatarChanged(m_account->objectPath(), contact->id(), avatar);
+    Q_EMIT contactAvatarChanged(m_account->objectPath(), contact->id(), avatar);
 }
 
 #include "account.moc"

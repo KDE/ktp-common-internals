@@ -6,6 +6,9 @@ set (CMAKE_MODULE_PATH
      ${CMAKE_MODULE_PATH}
 )
 
+remove_definitions(-DQT_NO_CAST_TO_ASCII)
+remove_definitions(-DQT_NO_CAST_FROM_ASCII)
+
 set(KDE_MIN_VERSION "4.8.0")
 find_package (KDE4 ${KDE_MIN_VERSION} REQUIRED)
 find_package (Soprano REQUIRED)
@@ -57,7 +60,7 @@ set (nepomuktelepathyservice_static_SRCS
 )
 
 soprano_add_ontology (nepomuktelepathyservice_static_SRCS
-                      ${CMAKE_SOURCE_DIR}/telepathy.trig
+                      ${CMAKE_SOURCE_DIR}/kpeople/nepomuk-feeder/telepathy.trig
                       "Telepathy"
                       "Nepomuk2::Vocabulary"
                       "trig"

@@ -42,7 +42,7 @@ Controller::Controller(AbstractStorage *storage, QObject *parent)
 void Controller::onStorageInitialised(bool success)
 {
     if (!success) {
-        emit storageInitialisationFailed();
+        Q_EMIT storageInitialisationFailed();
         return;
     }
 
@@ -115,13 +115,13 @@ void Controller::onAccountManagerReady(Tp::PendingOperation *op)
     // Signal the full list of accounts to the storage so it can check that the list in Nepomuk
     // corresponds to the list on the AM.
     QList<QString> accounts;
-    foreach (const Tp::AccountPtr &account, m_accountManager->allAccounts()) {
+    Q_FOREACH (const Tp::AccountPtr &account, m_accountManager->allAccounts()) {
         accounts.append(account->objectPath());
     }
     m_storage->cleanupAccounts(accounts);
 
     // Take into account (ha ha) the accounts that already existed when the AM object became ready.
-    foreach (const Tp::AccountPtr &account, m_accountManager->allAccounts()) {
+    Q_FOREACH (const Tp::AccountPtr &account, m_accountManager->allAccounts()) {
         onNewAccount(account);
     }
 }
@@ -159,7 +159,7 @@ void Controller::onNewAccount(const Tp::AccountPtr &account)
 void Controller::shutdown()
 {
     // Loop over all our children, and if they're Accounts, shut them down.
-    foreach (QObject *child, children()) {
+    Q_FOREACH (QObject *child, children()) {
         Account *account = qobject_cast<Account*>(child);
         if (account) {
             account->shutdown();

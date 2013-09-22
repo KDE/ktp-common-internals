@@ -131,7 +131,7 @@ public Q_SLOTS:
     virtual void setContactGroups(const QString &path, const QString &id, const QStringList &groups);
     virtual void setContactAvatar(const QString &path, const QString &id, const Tp::AvatarData &avatar);
 
-signals:
+Q_SIGNALS:
     void graphSaved();
 
 private Q_SLOTS:

@@ -392,7 +392,7 @@ void NepomukStorage::onAccountsQueryFinishedListing()
         }
     }
 
-    emit initialised(true);
+    Q_EMIT initialised(true);
 }
 
 
@@ -425,7 +425,7 @@ void NepomukStorage::cleanupAccounts(const QList<QString> &paths)
 
     // Go through all the accounts that we have received from the controller and create any
     // new ones in neponmuk. Do this as a batch job to improve performance.
-    /*foreach (const QString &path, paths) {
+    /*Q_FOREACH (const QString &path, paths) {
         if (!m_accounts.keys().contains(path)) {
             // TODO: Implement me to do this as a batch job???
             //       For now, we just let the constructed signal do this one at a time.
@@ -531,14 +531,14 @@ void NepomukStorage::cleanupAccountContacts(const QString &path, const Tp::Conta
     // Go through all the contacts that we have received from the account and create any
     // new ones in Nepomuk.
     QSet<QString> nepomukIds;
-    foreach (const ContactIdentifier &ci, m_contacts.keys()) {
+    Q_FOREACH (const ContactIdentifier &ci, m_contacts.keys()) {
         nepomukIds.insert(ci.contactId());
     }
 
     QSet<QString> oldIds = contactHash.keys().toSet();
 
     QSet<QString> newIds = oldIds.subtract(nepomukIds);
-    foreach (const QString &id, newIds) {
+    Q_FOREACH (const QString &id, newIds) {
         createContact(path, contactHash[id]);
     }
 }
@@ -724,7 +724,7 @@ void NepomukStorage::setContactGroups(const QString &path,
 void NepomukStorage::updateContactGroups(Nepomuk2::SimpleResource &contactResource, const QStringList &groups)
 {
     QVariantList groupUris;
-    foreach (const QString &groupName, groups) {
+    Q_FOREACH (const QString &groupName, groups) {
         groupUris << findGroup(groupName);
     }
     contactResource.setProperty(NCO::belongsToGroup(), groupUris);
