@@ -604,6 +604,8 @@ void NepomukStorage::createContact(const QString &path, const Tp::ContactPtr &co
     newImAccount.setProperty(NCO::imAccountType(), accountRes.protocol());
     newImAccount.addProperty(NCO::isAccessedBy(), accountUri);
 
+    newPersonContact.setProperty(NCO::contactUID(), path + QLatin1Char('_') + contact->id());
+    
     newPersonContact.addProperty(NCO::hasIMAccount(), newImAccount);
     updateAlias(newPersonContact, newImAccount, contact->alias());
     updateContactGroups(newPersonContact, contact->groups());
