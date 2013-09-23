@@ -32,7 +32,7 @@
 #include "KTp/im-persons-data-source.h"
 
 K_PLUGIN_FACTORY( ImDetailsWidgetFactory, registerPlugin<ImDetailsWidget>(); )
-K_EXPORT_PLUGIN( ImDetailsWidgetFactory("imdetailswidgetplugin"))
+K_EXPORT_PLUGIN( ImDetailsWidgetFactory("imdetailswidgetplugin", "ktp-common-internals"))
 
 using namespace KPeople;
 

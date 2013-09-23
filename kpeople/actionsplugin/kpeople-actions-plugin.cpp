@@ -229,4 +229,4 @@ void KPeopleActionsPlugin::onActionTriggered()
 
 
 K_PLUGIN_FACTORY( KPeopleActionsPluginFactory, registerPlugin<KPeopleActionsPlugin>(); )
-K_EXPORT_PLUGIN( KPeopleActionsPluginFactory("ktp_kpeople_plugin") )
+K_EXPORT_PLUGIN( KPeopleActionsPluginFactory("ktp_kpeople_plugin", "ktp-common-internals") )
