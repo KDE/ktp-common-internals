@@ -105,6 +105,15 @@ public Q_SLOTS:
     virtual void createContact(const QString &path, const Tp::ContactPtr &contact) = 0;
 
     /**
+     * Invoked when a Telepathy Contact is removed.
+     *
+     * \param path the object path (unique identifier) of the account
+     * \param id the id (e.g. me@example.com) that in conjunction with the \p path uniquely identifies the contact.
+     */
+    virtual void removeContact(const QString &path, const Tp::ContactPtr &contact) = 0;
+
+
+    /**
      * Invoked to update the alias of the Telepathy Contact.
      *
      * \param path the object path (unique identifier) of the account

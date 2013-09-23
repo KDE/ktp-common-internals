@@ -126,6 +126,7 @@ public Q_SLOTS:
     virtual void cleanupAccountContacts(const QString &path, const Tp::Contacts &contacts);
     virtual void onAccountRemoved(const QString &path);
 
+    virtual void removeContact(const QString &path, const Tp::ContactPtr &contact);
     virtual void createContact(const QString &path, const Tp::ContactPtr &contact);
     virtual void setContactAlias(const QString &path, const QString &id, const QString &alias);
     virtual void setContactGroups(const QString &path, const QString &id, const QStringList &groups);

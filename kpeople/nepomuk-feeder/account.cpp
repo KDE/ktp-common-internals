@@ -97,6 +97,9 @@ void Account::onConnectionChanged(const Tp::ConnectionPtr &connection)
         connect(m_connection->contactManager().data(),
                 SIGNAL(stateChanged(Tp::ContactListState)),
                 SLOT(onContactManagerStateChanged(Tp::ContactListState)));
+        connect(m_connection->contactManager().data(),
+                SIGNAL(allKnownContactsChanged(Tp::Contacts,Tp::Contacts,Tp::Channel::GroupMemberChangeDetails)),
+                SLOT(onAllKnownContactsChanged(Tp::Contacts,Tp::Contacts)));
         // Simulate a state change signal in case it is already ready.
         onContactManagerStateChanged(m_connection->contactManager()->state());
 
@@ -139,8 +142,9 @@ void Account::onAllKnownContactsChanged(const Tp::Contacts &added, const Tp::Con
         }
     }
 
-    // If contacts are removed, we don't actually need to do anything!
-    Q_UNUSED(removed);
+    Q_FOREACH (const Tp::ContactPtr &contact, removed) {
+        onContactRemoved(contact);
+    }
 }
 
 void Account::onAccountRemoved()
@@ -175,6 +179,12 @@ void Account::onNewContact(const Tp::ContactPtr &contact)
                 SLOT(onContactAvatarChanged(Tp::AvatarData)));
         Q_EMIT contactCreated(m_account->objectPath(), contact);
     }
+}
+
+void Account::onContactRemoved(const Tp::ContactPtr& contact)
+{
+    m_contacts.removeAll(contact);
+    Q_EMIT contactRemoved(m_account->objectPath(), contact);
 }
 
 void Account::onContactAddedToGroup()

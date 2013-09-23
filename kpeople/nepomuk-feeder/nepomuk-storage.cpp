@@ -568,6 +568,17 @@ void NepomukStorage::onAccountRemoved(const QString &path)
             this, SLOT(onContactGraphJob(KJob*)));
 }
 
+void NepomukStorage::removeContact(const QString& path, const Tp::ContactPtr& contact)
+{
+    ContactIdentifier identifier(path, contact->id());
+    if (!m_contacts.contains(identifier)) {
+        return;
+    }
+    QUrl contactUri = m_contacts[identifier].personContact();
+    Nepomuk2::removeResources(QList<QUrl>() << contactUri);
+}
+
+
 void NepomukStorage::createContact(const QString &path, const Tp::ContactPtr &contact)
 {
     if (contact.isNull()) {
@@ -605,7 +616,7 @@ void NepomukStorage::createContact(const QString &path, const Tp::ContactPtr &co
     newImAccount.addProperty(NCO::isAccessedBy(), accountUri);
 
     newPersonContact.setProperty(NCO::contactUID(), path + QLatin1Char('_') + contact->id());
-    
+
     newPersonContact.addProperty(NCO::hasIMAccount(), newImAccount);
     updateAlias(newPersonContact, newImAccount, contact->alias());
     updateContactGroups(newPersonContact, contact->groups());

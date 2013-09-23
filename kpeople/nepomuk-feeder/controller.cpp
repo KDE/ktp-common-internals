@@ -145,6 +145,8 @@ void Controller::onNewAccount(const Tp::AccountPtr &account)
     // Connect to all the signals/slots that signify the contacts are changing in some way.
     connect(acc, SIGNAL(contactCreated(QString,Tp::ContactPtr)),
             m_storage, SLOT(createContact(QString,Tp::ContactPtr)));
+    connect(acc, SIGNAL(contactRemoved(QString,Tp::ContactPtr)),
+            m_storage, SLOT(removeContact(QString, Tp::ContactPtr)));
     connect(acc, SIGNAL(contactAliasChanged(QString,QString,QString)),
             m_storage, SLOT(setContactAlias(QString,QString,QString)));
     connect(acc, SIGNAL(contactGroupsChanged(QString,QString,QStringList)),
