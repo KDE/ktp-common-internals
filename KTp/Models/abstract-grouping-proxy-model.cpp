@@ -283,7 +283,10 @@ void KTp::AbstractGroupingProxyModel::onRowsRemoved(const QModelIndex &sourcePar
 void KTp::AbstractGroupingProxyModel::onDataChanged(const QModelIndex &sourceTopLeft, const QModelIndex &sourceBottomRight)
 {
     for (int i = sourceTopLeft.row(); i <= sourceBottomRight.row(); i++) {
-        QPersistentModelIndex index = d->source->index(i, 0, sourceTopLeft.parent());
+        QPersistentModelIndex index = sourceTopLeft.sibling(i,0);
+        if (!index.isValid()) {
+            continue;
+        }
 
         //if top level item
         if (!sourceTopLeft.parent().isValid()) {
