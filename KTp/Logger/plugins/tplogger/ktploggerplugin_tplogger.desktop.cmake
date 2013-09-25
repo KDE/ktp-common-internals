@@ -1,6 +1,24 @@
 [Desktop Entry]
 Name=Telepathy Logger plugin
+Name[bs]=Telepathy dnevnički dodatak
+Name[ca]=Connector de registre del Telepathy
+Name[fr]=Module externe de journalisation de Telepathy
+Name[it]=Estensione di Telepathy Logger
+Name[kk]=Telepathy журналын жүргізу плагині
+Name[nl]=Telepathy Logger-plug-in
+Name[sv]=Telepathy-loggningsinsticksprogram
+Name[uk]=Додаток ведення журналу Telepathy
+Name[x-test]=xxTelepathy Logger pluginxx
 Comment=Provides integration with Telepathy Logger
+Comment[bs]=Obavlja integraciju s Telepathy dnevnikom
+Comment[ca]=Proporciona integració amb l'enregistrador del Telepathy
+Comment[fr]=Fournit une intégration avec la journalisation de Telepathy
+Comment[it]=Fornisce integrazione con Telepathy Logger
+Comment[kk]=Telepathy журнал жүргізумен біріктіруін қамтамасыз ету
+Comment[nl]=Biedt integratie met Telepathy Logger
+Comment[sv]=Tillhandahåller integrering med Telepathy-loggningsinsticksprogram
+Comment[uk]=Забезпечує інтеграцію з засобом ведення журналу Telepathy
+Comment[x-test]=xxProvides integration with Telepathy Loggerxx
 
 ServiceTypes=KTpLogger/Plugin
 
