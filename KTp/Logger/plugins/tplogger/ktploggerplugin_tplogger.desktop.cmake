@@ -21,6 +21,7 @@ Name[sv]=Telepathy-loggningsinsticksprogram
 Name[uk]=Додаток ведення журналу Telepathy
 Name[x-test]=xxTelepathy Logger pluginxx
 Name[zh_CN]=Telepathy 日志插件
+Name[zh_TW]=Telepathy 紀錄器外掛程式
 Comment=Provides integration with Telepathy Logger
 Comment[bs]=Obavlja integraciju s Telepathy dnevnikom
 Comment[ca]=Proporciona integració amb l'enregistrador del Telepathy
@@ -43,6 +44,7 @@ Comment[sv]=Tillhandahåller integrering med Telepathy-loggningsinsticksprogram
 Comment[uk]=Забезпечує інтеграцію з засобом ведення журналу Telepathy
 Comment[x-test]=xxProvides integration with Telepathy Loggerxx
 Comment[zh_CN]=提供与 Telepathy 日志的集成
+Comment[zh_TW]=提供與 Telepathy 紀錄器的整合
 
 ServiceTypes=KTpLogger/Plugin
 
