@@ -53,6 +53,7 @@ private Q_SLOTS:
     void onTextChanged(QString newText);
     void onAccountSelectionChanged(int newIndex);
     void addFavorite();
+    void editFavorite();
     void removeFavorite();
     void addRecentRoom();
     void removeRecentRoom();
@@ -64,7 +65,8 @@ private Q_SLOTS:
     void onRoomListChannelClosed(Tp::PendingOperation *operation);
     void onListing(bool isListing);
     void onGotRooms(Tp::RoomInfoList roomInfoList);
-    void onFavoriteRoomClicked(const QModelIndex &index);
+    void onFavoriteRoomSelectionChanged(const QModelIndex &current, const QModelIndex &previous);
+    void onFavoriteRoomDataChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight);
     void onRecentRoomClicked();
     void onRoomClicked(const QModelIndex &index);
     void onAccountManagerReady(Tp::PendingOperation*);

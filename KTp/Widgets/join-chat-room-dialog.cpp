@@ -76,6 +76,7 @@ KTp::JoinChatRoomDialog::JoinChatRoomDialog(Tp::AccountManagerPtr accountManager
 
     //set icons
     ui->addFavoritePushButton->setIcon(KIcon(QLatin1String("list-add")));
+    ui->editFavoritePushButton->setIcon(KIcon(QLatin1String("list-edit")));
     ui->removeFavoritePushButton->setIcon(KIcon(QLatin1String("list-remove")));
     ui->removeRecentPushButton->setIcon(KIcon(QLatin1String("list-remove")));
     ui->clearRecentPushButton->setIcon(KIcon(QLatin1String("edit-clear-list")));
@@ -116,9 +117,13 @@ KTp::JoinChatRoomDialog::JoinChatRoomDialog(Tp::AccountManagerPtr accountManager
 
     // connects
     connect(ui->lineEdit, SIGNAL(textChanged(QString)), this, SLOT(onTextChanged(QString)));
-    connect(ui->listView, SIGNAL(clicked(QModelIndex)), this, SLOT(onFavoriteRoomClicked(QModelIndex)));
     connect(ui->listView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(accept()));
+    connect(ui->listView->selectionModel(), SIGNAL(currentRowChanged(QModelIndex,QModelIndex)),
+            this, SLOT(onFavoriteRoomSelectionChanged(QModelIndex,QModelIndex)));
+    connect(m_favoritesModel, SIGNAL(dataChanged(QModelIndex,QModelIndex)),
+            this, SLOT(onFavoriteRoomDataChanged(QModelIndex,QModelIndex)));
     connect(ui->addFavoritePushButton, SIGNAL(clicked(bool)), this, SLOT(addFavorite()));
+    connect(ui->editFavoritePushButton, SIGNAL(clicked(bool)), this, SLOT(editFavorite()));
     connect(ui->removeFavoritePushButton, SIGNAL(clicked(bool)), this, SLOT(removeFavorite()));
     connect(ui->recentListWidget, SIGNAL(currentTextChanged(QString)), ui->lineEdit, SLOT(setText(QString)));
     connect(ui->recentListWidget, SIGNAL(currentTextChanged(QString)), this, SLOT(onRecentRoomClicked()));
@@ -230,6 +235,11 @@ void KTp::JoinChatRoomDialog::addFavorite()
     }
 }
 
+void KTp::JoinChatRoomDialog::editFavorite()
+{
+    ui->listView->edit(ui->listView->currentIndex());
+}
+
 void KTp::JoinChatRoomDialog::removeFavorite()
 {
     QString favoriteHandle = ui->listView->currentIndex().data(FavoriteRoomsModel::HandleNameRole).toString();
@@ -247,6 +257,26 @@ void KTp::JoinChatRoomDialog::removeFavorite()
             ui->removeFavoritePushButton->setEnabled(false);
         }
     }
+}
+
+void KTp::JoinChatRoomDialog::onFavoriteRoomDataChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight)
+{
+    // Because listView only allows editing of a single row, assume that topLeft points to the changed data.
+    Q_UNUSED(bottomRight);
+
+    const QString &favoriteHandle = topLeft.data(FavoriteRoomsModel::HandleNameRole).toString();
+    const QString &favoriteName = topLeft.data(FavoriteRoomsModel::NameRole).toString();
+    const QString &favoriteAccount = topLeft.data(FavoriteRoomsModel::AccountRole).toString();
+
+    const QString &key = favoriteHandle + favoriteAccount;
+
+    // Write the changed room to the config file
+    QVariantList favorite;
+    favorite.append(favoriteName);
+    favorite.append(favoriteHandle);
+    favorite.append(favoriteAccount);
+    m_favoriteRoomsGroup.writeEntry(key, favorite);
+    m_favoriteRoomsGroup.sync();
 }
 
 void KTp::JoinChatRoomDialog::addRecentRoom()
@@ -424,12 +454,15 @@ void KTp::JoinChatRoomDialog::onGotRooms(Tp::RoomInfoList roomInfoList)
     m_model->addRooms(roomInfoList);
 }
 
-void KTp::JoinChatRoomDialog::onFavoriteRoomClicked(const QModelIndex &index)
+void KTp::JoinChatRoomDialog::onFavoriteRoomSelectionChanged(const QModelIndex &current, const QModelIndex &previous)
 {
-    if (index.isValid()) {
+    Q_UNUSED(previous);
+    if (current.isValid()) {
+        ui->editFavoritePushButton->setEnabled(true);
         ui->removeFavoritePushButton->setEnabled(true);
-        ui->lineEdit->setText(index.data(FavoriteRoomsModel::HandleNameRole).toString());
+        ui->lineEdit->setText(current.data(FavoriteRoomsModel::HandleNameRole).toString());
     } else {
+        ui->editFavoritePushButton->setEnabled(false);
         ui->removeFavoritePushButton->setEnabled(false);
     }
 }

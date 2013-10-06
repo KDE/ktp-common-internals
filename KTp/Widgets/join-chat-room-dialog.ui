@@ -65,6 +65,16 @@
             </widget>
            </item>
            <item>
+            <widget class="QPushButton" name="editFavoritePushButton">
+             <property name="enabled">
+              <bool>false</bool>
+             </property>
+             <property name="text">
+              <string>Edit Room</string>
+             </property>
+            </widget>
+           </item>
+           <item>
             <widget class="QPushButton" name="removeFavoritePushButton">
              <property name="enabled">
               <bool>false</bool>

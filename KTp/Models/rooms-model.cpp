@@ -196,11 +196,49 @@ QVariant KTp::FavoriteRoomsModel::data(const QModelIndex &index, int role) const
         return room.value(QLatin1String("handle-name"));
     case FavoriteRoomsModel::HandleNameRole:
         return room.value(QLatin1String("handle-name"));
+    case FavoriteRoomsModel::NameRole:
+        return room.value(QLatin1String("name"));
+    case FavoriteRoomsModel::AccountRole:
+        return room.value(QLatin1String("account-identifier"));
     case FavoriteRoomsModel::FavoriteRoomRole:
         return QVariant::fromValue<QVariantMap>(room);
     }
 
     return QVariant();
+}
+
+bool KTp::FavoriteRoomsModel::setData(const QModelIndex &index, const QVariant &value, int role)
+{
+    if (!index.isValid() || index.row() >= m_favoriteRoomsList.size()) {
+        return false;
+    }
+
+    const int row = index.row();
+    QVariantMap &room = m_favoriteRoomsList[row];
+
+    if (role == Qt::EditRole) {
+        switch (index.column()) {
+        case NameColumn:
+            room.insert(QLatin1String("name"), value);
+            break;
+        case HandleNameColumn:
+            room.insert(QLatin1String("handle-name"), value);
+            break;
+        case AccountIdentifierColumn:
+            room.insert(QLatin1String("account-identifier"), value);
+            break;
+        default:
+            return false;
+        }
+        Q_EMIT dataChanged(index, index);
+        return true;
+    }
+    return false;
+}
+
+Qt::ItemFlags KTp::FavoriteRoomsModel::flags(const QModelIndex &index) const {
+    Q_UNUSED(index);
+    return Qt::ItemIsEditable | Qt::ItemIsEnabled | Qt::ItemIsSelectable;
 }
 
 void KTp::FavoriteRoomsModel::addRooms(const QList<QVariantMap> newRoomList)
