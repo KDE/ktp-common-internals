@@ -220,7 +220,7 @@ void KTp::TextChannelWatcherProxyModel::onChannelMessagesChanged()
 {
     ChannelWatcher* watcher = qobject_cast<ChannelWatcher*>(sender());
     Q_ASSERT(watcher);
-    QModelIndex index = watcher->modelIndex();
+    const QModelIndex &index = mapFromSource(watcher->modelIndex());
     dataChanged(index, index);
 }
 
@@ -228,8 +228,8 @@ void KTp::TextChannelWatcherProxyModel::onChannelInvalidated()
 {
     ChannelWatcher* watcher = qobject_cast<ChannelWatcher*>(sender());
     Q_ASSERT(watcher);
-    QModelIndex index = watcher->modelIndex();
-    KTp::ContactPtr contact = index.data(KTp::ContactRole).value<KTp::ContactPtr>();
+    const QModelIndex &index = mapFromSource(watcher->modelIndex());
+    const KTp::ContactPtr &contact = index.data(KTp::ContactRole).value<KTp::ContactPtr>();
 
     d->currentChannels.remove(contact);
     dataChanged(index, index);
