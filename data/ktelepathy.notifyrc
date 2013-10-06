@@ -513,7 +513,7 @@ Comment[zh_TW]=即時訊息帳號的一般資訊
 Sound=KDE-Im-Low-Priority-Message.ogg
 Action=Popup|Sound
 
-#Contactlist notifications
+# Text UI Notifications
 #
 [Event/kde_telepathy_contact_incoming]
 IconName=mail-unread-new
@@ -693,6 +693,28 @@ Contexts=contact,group,class
 Sound=KDE-Im-Message-In.ogg
 Action=Sound
 
+[Event/kde_telepathy_group_chat_incoming]
+IconName=mail-unread-new
+Name=Incoming Message in Group Chat
+Name[x-test]=xxIncoming Message in Group Chatxx
+Comment=An incoming message has been received in a group chat
+Comment[x-test]=xxAn incoming message has been received in a group chatxx
+Contexts=contact,group,class
+Sound=KDE-Im-Message-In.ogg
+Action=None
+Persistant=true
+
+[Event/kde_telepathy_group_chat_incoming_active_window]
+IconName=mail-unread-new
+Name=Incoming Message in Active Group Chat
+Name[x-test]=xxIncoming Message in Active Group Chatxx
+Comment=An incoming message in the active group chat window has been received
+Comment[x-test]=xxAn incoming message in the active group chat window has been receivedxx
+Contexts=contact,group,class
+Sound=KDE-Im-Message-In.ogg
+Action=None
+Persistant=true
+
 [Event/kde_telepathy_outgoing]
 IconName=mail-queued
 Name=Outgoing Message
@@ -781,95 +803,26 @@ Contexts=contact,group,class
 Sound=KDE-Im-Message-Out.ogg
 Action=None
 
-[Event/kde_telepathy_contact_highlight]
+[Event/kde_telepathy_group_chat_highlight]
 IconName=mail-tagged
-Name=Highlight
-Name[bs]=Istaknuto
-Name[ca]=Ressaltat
-Name[ca@valencia]=Ressaltat
-Name[cs]=Zvýraznění
-Name[da]=Fremhævning
-Name[de]=Hervorhebung
-Name[el]=Τονισμός
-Name[es]=Resaltar
-Name[et]=Esiletõstmine
-Name[fi]=Korostus
-Name[fr]=Surlignage
-Name[ga]=Aibhsiú
-Name[gl]=Realzar
-Name[hu]=Kiemelés
-Name[ia]=Evidentia
-Name[it]=Evidenziazione
-Name[kk]=Бояп белгілеген
-Name[km]=រំលេច
-Name[lt]=Paryškinti
-Name[mr]=ठसवा
-Name[nb]=Framhev
-Name[nl]=Accentueren
-Name[pa]=ਉਭਾਰੋ
-Name[pl]=Podświetlenie
-Name[pt]=Realce
-Name[pt_BR]=Realce
-Name[ro]=Evidențiere
-Name[ru]=Выделенное сообщение
-Name[sk]=Zvýraznenie
-Name[sl]=Poudari
-Name[sr]=Истицање
-Name[sr@ijekavian]=Истицање
-Name[sr@ijekavianlatin]=Isticanje
-Name[sr@latin]=Isticanje
-Name[sv]=Markerat
-Name[tr]=Vurgula
-Name[ug]=يورۇت
-Name[uk]=Підсвічування
-Name[wa]=Mete e-n evidince
-Name[x-test]=xxHighlightxx
-Name[zh_CN]=突出显示
-Name[zh_TW]=高亮度
+Name=Highlight in Group Chat
+Name[x-test]=xxHighlight in Group Chatxx
 Contexts=contact,group,class
-Comment=A highlighted message has been received
-Comment[bs]=Primljena je označena poruka
-Comment[ca]=S'ha rebut un missatge ressaltat
-Comment[ca@valencia]=S'ha rebut un missatge ressaltat
-Comment[cs]=Byla přijata zvýrazněná zpráva
-Comment[da]=En fremhævet besked er blevet modtaget
-Comment[de]=Eine hervorgehobene Nachricht ist empfangen worden
-Comment[el]=Ένα τονισμένο μήνυμα έχει ληφθεί
-Comment[es]=Se ha recibido un mensaje resaltado
-Comment[et]=Saabus esiletõstetud sõnum
-Comment[fi]=Korostettu viesti on saapunut
-Comment[fr]=Un message surligné a été reçu
-Comment[ga]=Fuarthas teachtaireacht aibhsithe
-Comment[gl]=Recibiuse unha mensaxe realzada
-Comment[hu]=Egy kiemelt üzenet érkezett
-Comment[ia]=Un message evidentiate ha essite recipite
-Comment[it]=Un messaggio evidenziato è stato ricevuto
-Comment[kk]=Ерекше хабарлама келіп түсті
-Comment[km]=បាន​ទទួល​សារ​រំលេច
-Comment[lt]=Gauta paryškinta žinutė
-Comment[nb]=En framhevet melding er mottatt
-Comment[nl]=Er is een geaccentueerd bericht ontvangen
-Comment[pa]=ਉਭਾਰਿਆ ਸੁਨੇਹਾ ਪ੍ਰਾਪਤ ਹੋਇਆ
-Comment[pl]=Podświetlona wiadomość została odebrana
-Comment[pt]=Foi recebida uma mensagem realçada
-Comment[pt_BR]=Uma mensagem realçada foi recebida
-Comment[ro]=A fost recepționat un mesaj evidențiat
-Comment[ru]=Выделенное сообщение было получено
-Comment[sk]=Bola prijatá zvýraznená správa
-Comment[sl]=Prejeto je bilo poudarjeno sporočilo
-Comment[sr]=Примљена је истакнута порука
-Comment[sr@ijekavian]=Примљена је истакнута порука
-Comment[sr@ijekavianlatin]=Primljena je istaknuta poruka
-Comment[sr@latin]=Primljena je istaknuta poruka
-Comment[sv]=Ett markerat meddelande har anlänt
-Comment[tr]=Vurgulanmış bir ileti alındı
-Comment[uk]=Було отримано підсвічене повідомлення
-Comment[wa]=On messaedje metou e-n evidince a stî rçî
-Comment[x-test]=xxA highlighted message has been receivedxx
-Comment[zh_CN]=收到了突出显示的消息
-Comment[zh_TW]=已接收到高亮度訊息
+Comment=A highlighted message has been received in a group chat
+Comment[x-test]=xxA highlighted message has been received in a group chatxx
 Sound=KDE-Im-Highlight-Msg.ogg
 Action=Sound|Popup|Taskbar
+Persistant=true
+
+[Event/kde_telepathy_group_chat_highlight_active_window]
+IconName=mail-tagged
+Name=Highlight in Active Group Chat
+Name[x-test]=xxHighlight in Active Group Chatxx
+Contexts=contact,group,class
+Comment=A highlighted message has been received in the active group chat window
+Comment[x-test]=xxA highlighted message has been received the active group chat windowxx
+Sound=KDE-Im-Highlight-Msg.ogg
+Action=Sound
 Persistant=true
 
 [Event/buzz_nudge]
