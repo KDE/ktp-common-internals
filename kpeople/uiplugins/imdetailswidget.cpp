@@ -84,6 +84,7 @@ void ImDetailsWidget::setPerson(PersonData *person)
         m_layout->addWidget(iconLabel, i, 0);
 
         QLabel *label = new QLabel(contactId, this);
+        label->setTextInteractionFlags(Qt::TextSelectableByMouse);
         m_layout->addWidget(label, i, 1);
     }
 }
