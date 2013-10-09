@@ -2,6 +2,7 @@
 Name=Telepathy Logger plugin
 Name[bs]=Telepathy dnevnički dodatak
 Name[ca]=Connector de registre del Telepathy
+Name[ca@valencia]=Connector de registre del Telepathy
 Name[cs]=Modul záznamů Telepathy
 Name[da]=Logger-plugin til Telepathy
 Name[es]=Complemento de gestor de registro de Telepathy
@@ -29,6 +30,7 @@ Name[zh_TW]=Telepathy 紀錄器外掛程式
 Comment=Provides integration with Telepathy Logger
 Comment[bs]=Obavlja integraciju s Telepathy dnevnikom
 Comment[ca]=Proporciona integració amb l'enregistrador del Telepathy
+Comment[ca@valencia]=Proporciona integració amb l'enregistrador del Telepathy
 Comment[cs]=Poskytuje integraci se zaznamenáváním Telepathy
 Comment[da]=Giver integration med Telepathy Logger
 Comment[es]=Proporciona integración con el gestor de registro de Telepathy
