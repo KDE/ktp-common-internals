@@ -168,7 +168,12 @@ void KTp::ContactsModel::updateGroupProxyModels()
 
     //if needed set up the client registrar and observer proxy model
     if (d->trackUnread && d->clientRegistrar.isNull()) {
-        d->clientRegistrar = Tp::ClientRegistrar::create(d->accountManager);
+
+        //share the accountFactory and connectFactory etc. from the main application, but create a new channelFactory that fetches the message queue for text chats
+        Tp::ChannelFactoryPtr channelFactory = Tp::ChannelFactory::create(QDBusConnection::sessionBus());
+        channelFactory->addFeaturesForTextChats(Tp::Features() << Tp::Channel::FeatureCore << Tp::TextChannel::FeatureMessageQueue);
+        d->clientRegistrar = Tp::ClientRegistrar::create(d->accountManager->accountFactory(), d->accountManager->connectionFactory(), channelFactory, d->accountManager->contactFactory());
+
         d->channelWatcherProxy = Tp::SharedPtr<KTp::TextChannelWatcherProxyModel>(new TextChannelWatcherProxyModel());
         d->channelWatcherProxy->setSourceModel(d->source);
         d->clientRegistrar->registerClient(Tp::AbstractClientPtr::dynamicCast(d->channelWatcherProxy), QLatin1String("ListWatcher"));
