@@ -54,6 +54,7 @@ Q_SIGNALS:
     void storageInitialisationFailed();
 
 private Q_SLOTS:
+    void start();
     void onAccountManagerReady(Tp::PendingOperation *op);
     void onNewAccount(const Tp::AccountPtr &account);
     void onStorageInitialised(bool success);
