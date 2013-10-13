@@ -25,4 +25,17 @@
 namespace KTp
 {
     KTP_EXPORT bool kpeopleEnabled();
+
+
+    //FIXME for 0.8
+    /*  For 0.8 we have a plan to have a singleton accountManager
+        (or accountFactory/contactFactory/channelFactory/connectionFactory).
+
+        We didn't get this done for everyone to use this in time for 0.7.
+        However we still need the contact list and kpeople to share the connectionFactory
+        This is an initial half-completed version.
+
+        It is best not to use this method. It's only half complete.
+     */
+    KTP_EXPORT Tp::AccountManagerPtr accountManager();
 }
