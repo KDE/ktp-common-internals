@@ -25,8 +25,20 @@
 #include "abstract-storage.h"
 
 #include <KDebug>
+#include <KJob>
+#include <KConfig>
+#include <KConfigGroup>
 
 #include <TelepathyQt/PendingReady>
+
+
+#include <Nepomuk2/DataManagement>
+#include <Nepomuk2/Resource>
+#include <Nepomuk2/ResourceManager>
+#include <Soprano/Model>
+#include <Soprano/QueryResultIterator>
+
+#define CURRENT_FEEDER_VERSION 1
 
 Controller::Controller(AbstractStorage *storage, QObject *parent)
  : QObject(parent),
@@ -45,6 +57,54 @@ void Controller::onStorageInitialised(bool success)
         Q_EMIT storageInitialisationFailed();
         return;
     }
+
+    QTimer::singleShot(0, this, SLOT(start()));
+}
+
+
+
+Controller::~Controller()
+{
+    kDebug();
+}
+
+void Controller::start()
+{
+    //if old data, wipe everything before we start
+    //wiping this file will trigger a re-import
+    KSharedConfigPtr config = KSharedConfig::openConfig("telepathyfeeder");
+    KConfigGroup configGroup = config->group("Feeder");
+
+    if (configGroup.readEntry<int>("feederVersion", 0) != CURRENT_FEEDER_VERSION) {
+        kDebug() << "wiping old data";
+        //wipe contacts
+        {
+            const QString query = QString::fromLatin1("select distinct ?uri where {?uri a nco:PersonContact. ?uri nco:hasIMAccount ?x. }");
+            Soprano::Model *model = Nepomuk2::ResourceManager::instance()->mainModel();
+            Soprano::QueryResultIterator it = model->executeQuery(query, Soprano::Query::QueryLanguageSparql);
+            while (it.next()) {
+                KJob *job = Nepomuk2::removeResources(QList<QUrl>() << it["uri"].uri());
+                job->exec();
+            }
+            kDebug() << "wiping old contacts done";
+        }
+        //wipe people with no grounding occurences
+        {
+            const QString query = QString::fromLatin1("select ?uri ?where {?uri a pimo:Person. FILTER NOT EXISTS {?uri pimo:groundingOccurrence ?x}}");
+            Soprano::Model *model = Nepomuk2::ResourceManager::instance()->mainModel();
+            Soprano::QueryResultIterator it = model->executeQuery(query, Soprano::Query::QueryLanguageSparql);
+            while (it.next()) {
+                KJob *job = Nepomuk2::removeResources(QList<QUrl>() << it["uri"].uri());
+                job->exec();
+            }
+            kDebug() << "wiping old pimo:Persons done";
+        }
+    }
+
+    //update config file so this is only run once
+    configGroup.writeEntry("feederVersion", CURRENT_FEEDER_VERSION);
+    config->sync();
+
 
     kDebug() << "Storage initialisation succeeded. Setting up Telepathy stuff now.";
 
@@ -91,10 +151,6 @@ void Controller::onStorageInitialised(bool success)
     kDebug() << "Calling becomeReady on the AM.";
 }
 
-Controller::~Controller()
-{
-    kDebug();
-}
 
 void Controller::onAccountManagerReady(Tp::PendingOperation *op)
 {
