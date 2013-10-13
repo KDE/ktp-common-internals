@@ -86,31 +86,8 @@ IMPersonsDataSource::IMPersonsDataSource(QObject *parent, const QVariantList &da
 {
     d->q = this;
     Tp::registerTypes();
-    Tp::AccountFactoryPtr  accountFactory = Tp::AccountFactory::create(QDBusConnection::sessionBus(),
-                                                                       Tp::Features() << Tp::Account::FeatureCore
-                                                                       << Tp::Account::FeatureCapabilities
-                                                                       << Tp::Account::FeatureProtocolInfo
-                                                                       << Tp::Account::FeatureProfile);
 
-    Tp::ConnectionFactoryPtr connectionFactory = Tp::ConnectionFactory::create(QDBusConnection::sessionBus(),
-                                                                               Tp::Features() << Tp::Connection::FeatureCore
-                                                                               << Tp::Connection::FeatureRoster
-                                                                               << Tp::Connection::FeatureRosterGroups
-                                                                               << Tp::Connection::FeatureSelfContact);
-
-    Tp::ContactFactoryPtr contactFactory = KTp::ContactFactory::create(Tp::Features()  << Tp::Contact::FeatureAlias
-    << Tp::Contact::FeatureSimplePresence
-    << Tp::Contact::FeatureCapabilities
-    << Tp::Contact::FeatureClientTypes);
-
-    Tp::ChannelFactoryPtr channelFactory = Tp::ChannelFactory::create(QDBusConnection::sessionBus());
-
-    d->accountManager = Tp::AccountManager::create(QDBusConnection::sessionBus(),
-                                                   accountFactory,
-                                                   connectionFactory,
-                                                   channelFactory,
-                                                   contactFactory);
-
+    d->accountManager = KTp::accountManager();
     connect(d->accountManager->becomeReady(), SIGNAL(finished(Tp::PendingOperation*)),
             this, SLOT(onAccountManagerReady(Tp::PendingOperation*)));
 }
