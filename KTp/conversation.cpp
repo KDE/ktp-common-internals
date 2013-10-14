@@ -26,9 +26,11 @@
 #include <TelepathyQt/PendingChannel>
 
 #include <KDebug>
-#include "conversation-target.h"
+// #include "conversation-target.h"
 
-#include "channel-delegator.h"
+// #include "channel-delegator.h"
+
+#include <KTp/types.h>
 
 class Conversation::ConversationPrivate
 {
@@ -55,7 +57,7 @@ Conversation::Conversation(const Tp::TextChannelPtr &channel,
 
     d->messages = new MessagesModel(account, this);
     setTextChannel(channel);
-    d->target = new ConversationTarget(account, KTp::ContactPtr::qObjectCast(channel->targetContact()), this);
+//     d->target = new ConversationTarget(account, KTp::ContactPtr::qObjectCast(channel->targetContact()), this);
 
     d->delegated = false;
 
@@ -87,11 +89,11 @@ MessagesModel* Conversation::messages() const
 {
     return d->messages;
 }
-
+/*
 ConversationTarget* Conversation::target() const
 {
     return d->target;
-}
+}*/
 
 bool Conversation::isValid()
 {
@@ -135,7 +137,7 @@ void Conversation::onCreateChannelFinished(Tp::PendingOperation* op)
 
 void Conversation::delegateToProperClient()
 {
-    ChannelDelegator::delegateChannel(d->account, d->messages->textChannel());
+//     ChannelDelegator::delegateChannel(d->account, d->messages->textChannel());
     d->delegated = true;
     Q_EMIT conversationCloseRequested();
 }

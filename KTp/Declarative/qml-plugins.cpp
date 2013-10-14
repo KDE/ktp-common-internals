@@ -67,6 +67,7 @@ void QmlPlugins::registerTypes(const char *uri)
     qmlRegisterType<TelepathyManager>();
     qmlRegisterType<ConversationTarget>();
     qmlRegisterType<ConversationsModel>();
+
     qRegisterMetaType<Tp::AccountManagerPtr>();
     qRegisterMetaType<KTp::ContactPtr>();
     qRegisterMetaType<Tp::AccountPtr>();

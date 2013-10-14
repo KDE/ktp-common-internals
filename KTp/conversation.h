@@ -26,16 +26,19 @@
 
 #include <KIcon>
 
-#include "conversation-target.h"
+// #include "conversation-target.h"
 #include "messages-model.h"
+
+#include "ktp-export.h"
 
 class ConversationTarget;
 class MessagesModel;
-class Conversation : public QObject
+class KTP_EXPORT Conversation : public QObject
 {
     Q_OBJECT
 
-    Q_PROPERTY(ConversationTarget *target READ target CONSTANT)
+//     Q_PROPERTY(ConversationTarget *target READ target CONSTANT)
+
     Q_PROPERTY(MessagesModel *messages READ messages CONSTANT)
     Q_PROPERTY(bool valid READ isValid NOTIFY validityChanged)
 
@@ -48,7 +51,7 @@ public:
     Tp::TextChannelPtr textChannel() const;
 
     MessagesModel* messages() const;
-    ConversationTarget* target() const;
+//     ConversationTarget* target() const;
 
     bool isValid();
 

@@ -114,7 +114,7 @@ void ConversationsModel::handleChannels(const Tp::MethodInvocationContextPtr<> &
     //if we are handling and we're not told to delegate it, update the text channel
     //if we are handling but should delegate, call delegate channel
     Q_FOREACH(Conversation *convo, d->conversations) {
-        if (convo->target()->id() == textChannel->targetId() &&
+        if (convo->textChannel()->targetId() == textChannel->targetId() &&
                 convo->textChannel()->targetHandleType() == textChannel->targetHandleType())
         {
             if (!shouldDelegate) {

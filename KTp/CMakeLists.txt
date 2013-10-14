@@ -10,6 +10,7 @@ set (ktp_common_internals_private_SRCS
      circular-countdown.cpp
      contact.cpp
      contact-factory.cpp
+     conversation.cpp
      core.cpp
      debug.cpp
      error-dictionary.cpp
@@ -23,6 +24,7 @@ set (ktp_common_internals_private_SRCS
      message-filter-config-manager.cpp
      message-processor.cpp
      message-url-filter.cpp
+     messages-model.cpp
      outgoing-message.cpp
      persistent-contact.cpp
      presence.cpp
@@ -38,6 +40,7 @@ set (ktp_common_internals_private_HDRS
      abstract-message-filter.h
      actions.h
      circular-countdown.h
+     conversation.h
      contact.h
      contact-info-dialog.h
      contact-factory.h
@@ -51,6 +54,7 @@ set (ktp_common_internals_private_HDRS
      message.h
      message-context.h
      message-processor.h
+     messages-model.h
      outgoing-message.h
      persistent-contact.h
      presence.h

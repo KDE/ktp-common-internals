@@ -25,7 +25,10 @@
 #include <TelepathyQt/Types>
 #include <TelepathyQt/ReceivedMessage>
 
-class MessagesModel : public QAbstractListModel
+
+#include "ktp-export.h"
+
+class KTP_EXPORT MessagesModel : public QAbstractListModel
 {
     Q_OBJECT
     Q_ENUMS(MessageType)
@@ -87,5 +90,7 @@ class MessagesModel : public QAbstractListModel
     class MessagesModelPrivate;
     MessagesModelPrivate *d;
 };
+
+Q_DECLARE_METATYPE(MessagesModel*);
 
 #endif // CONVERSATION_MODEL_H
