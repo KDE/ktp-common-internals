@@ -29,6 +29,7 @@ class MessagesModel : public QAbstractListModel
 {
     Q_OBJECT
     Q_ENUMS(MessageType)
+    Q_ENUMS(DeliveryStatus)
     Q_PROPERTY(bool visibleToUser READ isVisibleToUser WRITE setVisibleToUser NOTIFY visibleToUserChanged)
     Q_PROPERTY(int unreadCount READ unreadCount NOTIFY unreadCountChanged)
     Q_PROPERTY(bool shouldStartOpened READ shouldStartOpened CONSTANT)
@@ -43,7 +44,9 @@ class MessagesModel : public QAbstractListModel
         TimeRole, //QDateTime
         SenderIdRole, //string
         SenderAliasRole, //string
-        SenderAvatarRole //pixmap
+        SenderAvatarRole, //pixmap
+        DeliveryStatusRole, //MessagesModel::DeliveryStatus
+        DeliveryReportReceiveTimeRole //QDateTime
     };
 
     enum MessageType {
@@ -51,6 +54,13 @@ class MessagesModel : public QAbstractListModel
         MessageTypeOutgoing,
         MessageTypeAction,
         MessageTypeNotice
+    };
+
+    enum DeliveryStatus {
+        DeliveryStatusUnknown,
+        DeliveryStatusDelivered,
+        DeliveryStatusRead, // implies DeliveryStatusDelivered
+        DeliveryStatusFailed
     };
 
     virtual QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;

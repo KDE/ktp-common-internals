@@ -28,13 +28,32 @@
 #include <TelepathyQt/Account>
 
 #include "KTp/message-processor.h"
+#include "KTp/message.h"
+
+class MessagePrivate
+{
+  public:
+    MessagePrivate(const KTp::Message &message);
+
+    KTp::Message message;
+    MessagesModel::DeliveryStatus deliveryStatus;
+    QDateTime deliveryReportReceiveTime;
+};
+
+MessagePrivate::MessagePrivate(const KTp::Message &message) :
+        message(message),
+        deliveryStatus(MessagesModel::DeliveryStatusUnknown)
+{
+}
 
 class MessagesModel::MessagesModelPrivate
 {
   public:
     Tp::TextChannelPtr textChannel;
     Tp::AccountPtr account;
-    QList<KTp::Message> messages;
+    QList<MessagePrivate> messages;
+    // For fast lookup of original messages upon receipt of a message delivery report.
+    QHash<QString /*messageToken*/, QPersistentModelIndex> messagesByMessageToken;
     bool visible;
 };
 
@@ -51,6 +70,8 @@ MessagesModel::MessagesModel(const Tp::AccountPtr &account, QObject *parent) :
     roles[SenderIdRole] = "senderId";
     roles[SenderAliasRole] = "senderAlias";
     roles[SenderAvatarRole] = "senderAvatar";
+    roles[DeliveryStatusRole] = "deliveryStatus";
+    roles[DeliveryReportReceiveTimeRole] = "deliveryReportReceiveTime";
     setRoleNames(roles);
 
     d->account = account;
@@ -102,10 +123,10 @@ void MessagesModel::setTextChannel(const Tp::TextChannelPtr &channel)
     QList<Tp::ReceivedMessage> messageQueue = channel->messageQueue();
     Q_FOREACH(const Tp::ReceivedMessage &message, messageQueue) {
         bool messageAlreadyInModel = false;
-        Q_FOREACH(const KTp::Message &current, d->messages) {
+        Q_FOREACH(const MessagePrivate &current, d->messages) {
             //FIXME: docs say messageToken can return an empty string. What to do if that happens?
             //Tp::Message has an == operator. maybe I can use that?
-            if (current.token() == message.messageToken()) {
+            if (current.message.token() == message.messageToken()) {
                 messageAlreadyInModel = true;
                 break;
             }
@@ -124,17 +145,50 @@ void MessagesModel::onMessageReceived(const Tp::ReceivedMessage &message)
     kDebug() << "messageType = " << message.messageType();
     kDebug() << "messageToken =" << message.messageToken();
 
-    //delivery reports do not contain message text, everything else does.
-    //simply ack these straight away
-
-    //TODO search through d->messages() for messages with identical messageToken and update sending state as appropriate
-
-    if (message.messageType() == Tp::ChannelTextMessageTypeDeliveryReport) {
+    if (message.isDeliveryReport()) {
         d->textChannel->acknowledge(QList<Tp::ReceivedMessage>() << message);
+
+        Tp::ReceivedMessage::DeliveryDetails deliveryDetails = message.deliveryDetails();
+        if(!deliveryDetails.hasOriginalToken()) {
+            kDebug() << "Delivery report without original message token received.";
+            // Matching the delivery report to the original message is impossible without the token.
+            return;
+        }
+        kDebug() << "originalMessageToken =" << deliveryDetails.originalToken();
+
+        QPersistentModelIndex originalMessageIndex = d->messagesByMessageToken.value(
+                    deliveryDetails.originalToken());
+        if (!originalMessageIndex.isValid() || originalMessageIndex.row() >= d->messages.count()) {
+            // The original message for this delivery report was not found.
+            return;
+        }
+
+        MessagePrivate &originalMessage = d->messages[originalMessageIndex.row()];
+        kDebug() << "Got delivery status" << deliveryDetails.status()
+                 << "for message with text" << originalMessage.message.mainMessagePart();
+        originalMessage.deliveryReportReceiveTime = message.received();
+        switch(deliveryDetails.status()) {
+        case Tp::DeliveryStatusPermanentlyFailed:
+        case Tp::DeliveryStatusTemporarilyFailed:
+            originalMessage.deliveryStatus = DeliveryStatusFailed;
+            if (deliveryDetails.hasDebugMessage()) {
+                kDebug() << "Delivery failure debug message:" << deliveryDetails.debugMessage();
+            }
+            break;
+        case Tp::DeliveryStatusDelivered:
+            originalMessage.deliveryStatus = DeliveryStatusDelivered;
+            break;
+        case Tp::DeliveryStatusRead:
+            originalMessage.deliveryStatus = DeliveryStatusRead;
+            break;
+        default:
+            originalMessage.deliveryStatus = DeliveryStatusUnknown;
+            break;
+        }
+        Q_EMIT dataChanged(originalMessageIndex, originalMessageIndex);
     } else {
         int length = rowCount();
         beginInsertRows(QModelIndex(), length, length);
-
 
         d->messages.append(KTp::MessageProcessor::instance()->processIncomingMessage(
                                message, d->account, d->textChannel));
@@ -152,14 +206,21 @@ void MessagesModel::onMessageReceived(const Tp::ReceivedMessage &message)
 void MessagesModel::onMessageSent(const Tp::Message &message, Tp::MessageSendingFlags flags, const QString &messageToken)
 {
     Q_UNUSED(flags);
-    Q_UNUSED(messageToken);
 
     int length = rowCount();
     beginInsertRows(QModelIndex(), length, length);
     kDebug() << "text =" << message.text();
 
-    d->messages.append(KTp::MessageProcessor::instance()->processIncomingMessage(
-                           message, d->account, d->textChannel));
+    const KTp::Message &newMessage = KTp::MessageProcessor::instance()->processIncomingMessage(
+                message, d->account, d->textChannel);
+    d->messages.append(newMessage);
+
+    if (!messageToken.isEmpty()) {
+        // Insert the message into the lookup table for delivery reports.
+        const QPersistentModelIndex &modelIndex(createIndex(length, 0));
+        d->messagesByMessageToken.insert(messageToken, modelIndex);
+    }
+
     endInsertRows();
 }
 
@@ -173,17 +234,17 @@ QVariant MessagesModel::data(const QModelIndex &index, int role) const
     QVariant result;
 
     if (index.isValid()) {
-        const KTp::Message message = d->messages[index.row()];
+        const MessagePrivate m = d->messages[index.row()];
 
         switch (role) {
         case TextRole:
-            result = message.finalizedMessage();
+            result = m.message.finalizedMessage();
             break;
         case TypeRole:
-            if (message.type() == Tp::ChannelTextMessageTypeAction) {
+            if (m.message.type() == Tp::ChannelTextMessageTypeAction) {
                 result = MessageTypeAction;
             } else {
-                if (message .direction() == KTp::Message::LocalToRemote) {
+                if (m.message.direction() == KTp::Message::LocalToRemote) {
                     result = MessageTypeOutgoing;
                 } else {
                     result = MessageTypeIncoming;
@@ -191,18 +252,24 @@ QVariant MessagesModel::data(const QModelIndex &index, int role) const
             }
             break;
         case TimeRole:
-            result = message.time();
+            result = m.message.time();
             break;
         case SenderIdRole:
-            result = message.senderId();
+            result = m.message.senderId();
             break;
         case SenderAliasRole:
-            result = message.senderAlias();
+            result = m.message.senderAlias();
             break;
         case SenderAvatarRole:
-            if (message.sender()) {
-                result = QVariant::fromValue(message.sender()->avatarPixmap());
+            if (m.message.sender()) {
+                result = QVariant::fromValue(m.message.sender()->avatarPixmap());
             }
+            break;
+        case DeliveryStatusRole:
+            result = m.deliveryStatus;
+            break;
+        case DeliveryReportReceiveTimeRole:
+            result = m.deliveryReportReceiveTime;
             break;
         };
     } else {
