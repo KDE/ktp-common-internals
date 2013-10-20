@@ -59,11 +59,13 @@ Q_SIGNALS:
 public Q_SLOTS:
     void delegateToProperClient();
     void requestClose();
+    void updateTextChanged(const QString &message);
 
 private Q_SLOTS:
     void onChannelInvalidated(Tp::DBusProxy *proxy, const QString &errorName, const QString &errorMessage);
     void onAccountConnectionChanged(const Tp::ConnectionPtr &connection);
     void onCreateChannelFinished(Tp::PendingOperation *op);
+    void onChatPausedTimerExpired();
 
 private:
     class ConversationPrivate;

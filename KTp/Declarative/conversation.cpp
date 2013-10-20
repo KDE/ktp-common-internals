@@ -40,6 +40,7 @@ class Conversation::ConversationPrivate
     bool delegated;
     bool valid;
     Tp::AccountPtr account;
+    QTimer *pausedStateTimer;
 };
 
 Conversation::Conversation(const Tp::TextChannelPtr &channel,
@@ -59,6 +60,9 @@ Conversation::Conversation(const Tp::TextChannelPtr &channel,
 
     d->delegated = false;
 
+    d->pausedStateTimer = new QTimer(this);
+    d->pausedStateTimer->setSingleShot(true);
+    connect(d->pausedStateTimer, SIGNAL(timeout()), this, SLOT(onChatPausedTimerExpired()));
 }
 
 Conversation::Conversation(QObject *parent) : QObject(parent)
@@ -146,6 +150,30 @@ void Conversation::requestClose()
 
     //removing from the model will delete this object closing the channel
     Q_EMIT conversationCloseRequested();
+}
+
+void Conversation::updateTextChanged(const QString &message)
+{
+    if (!message.isEmpty()) {
+        //if the timer is active, it means the user is continuously typing
+        if (d->pausedStateTimer->isActive()) {
+            //just restart the timer and don't spam with chat state changes
+            d->pausedStateTimer->start(5000);
+        } else {
+            //if the user has just typed some text, set state to Composing and start the timer
+            d->messages->textChannel()->requestChatState(Tp::ChannelChatStateComposing);
+            d->pausedStateTimer->start(5000);
+        }
+    } else {
+        //if the user typed no text/cleared the input field, set Active and stop the timer
+        d->messages->textChannel()->requestChatState(Tp::ChannelChatStateActive);
+        d->pausedStateTimer->stop();
+    }
+}
+
+void Conversation::onChatPausedTimerExpired()
+{
+    d->messages->textChannel()->requestChatState(Tp::ChannelChatStatePaused);
 }
 
 Conversation::~Conversation()
