@@ -31,6 +31,7 @@ class ConversationsModel : public QAbstractListModel, public Tp::AbstractClientH
 {
     Q_OBJECT
     Q_PROPERTY(int totalUnreadCount READ totalUnreadCount NOTIFY totalUnreadCountChanged)
+    Q_PROPERTY(int activeChatIndex READ activeChatIndex NOTIFY activeChatIndexChanged)
 
   public:
     explicit ConversationsModel(QObject *parent=0);
@@ -41,6 +42,9 @@ class ConversationsModel : public QAbstractListModel, public Tp::AbstractClientH
 
     /** @returns the sum of all unread messages among all conversations */
     int totalUnreadCount() const;
+
+    /** @returns the index of the active chat, ie one the user is interacting with */
+    int activeChatIndex() const;
 
     enum role {
         ConversationRole = Qt::UserRole
@@ -69,6 +73,7 @@ class ConversationsModel : public QAbstractListModel, public Tp::AbstractClientH
 
   Q_SIGNALS:
       void totalUnreadCountChanged();
+      void activeChatIndexChanged();
 };
 
 #endif // CONVERSATIONS_MODEL_H

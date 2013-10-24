@@ -37,6 +37,7 @@ class ConversationsModel::ConversationsModelPrivate
 {
   public:
     QList<Conversation*> conversations;
+    int activeChatIndex;
 };
 
 ConversationsModel::ConversationsModel(QObject *parent) :
@@ -47,6 +48,7 @@ ConversationsModel::ConversationsModel(QObject *parent) :
     QHash<int, QByteArray> roles;
     roles[ConversationRole] = "conversation";
     setRoleNames(roles);
+    d->activeChatIndex = -1;
     connect(this, SIGNAL(rowsInserted(QModelIndex,int,int)), SIGNAL(totalUnreadCountChanged()));
     connect(this, SIGNAL(rowsRemoved(QModelIndex,int,int)), SIGNAL(totalUnreadCountChanged()));
 }
@@ -101,24 +103,26 @@ void ConversationsModel::handleChannels(const Tp::MethodInvocationContextPtr<> &
 
     Q_ASSERT(textChannel);
 
-
     //find the relevant channelRequest
     Q_FOREACH(const Tp::ChannelRequestPtr channelRequest, channelRequests) {
         kDebug() << channelRequest->hints().allHints();
         shouldDelegate = channelRequest->hints().hint(QLatin1String("org.freedesktop.Telepathy.ChannelRequest"), QLatin1String("DelegateToPreferredHandler")).toBool();
     }
 
-
     //loop through all conversations checking for matches
 
     //if we are handling and we're not told to delegate it, update the text channel
     //if we are handling but should delegate, call delegate channel
+    int i = 0;
     Q_FOREACH(Conversation *convo, d->conversations) {
         if (convo->target()->id() == textChannel->targetId() &&
                 convo->textChannel()->targetHandleType() == textChannel->targetHandleType())
         {
             if (!shouldDelegate) {
                 convo->setTextChannel(textChannel);
+                //Update the active chat index to this channel
+                d->activeChatIndex = i;
+                Q_EMIT activeChatIndexChanged();
             } else {
                 if (convo->textChannel() == textChannel) {
                     convo->delegateToProperClient();
@@ -127,21 +131,27 @@ void ConversationsModel::handleChannels(const Tp::MethodInvocationContextPtr<> &
             handled = true;
             break;
         }
+        i++;
     }
 
     //if we are not handling channel already and should not delegate, add the conversation
     //if we not handling the channel but should delegate it, do nothing.
-
     if (!handled && !shouldDelegate) {
         beginInsertRows(QModelIndex(), rowCount(), rowCount());
         Conversation *newConvo = new Conversation(textChannel, account, this);
-        d->conversations.append(newConvo);
         connect(newConvo, SIGNAL(conversationCloseRequested()), SLOT(onConversationCloseRequested()));
         connect(newConvo->messages(), SIGNAL(unreadCountChanged(int)), SIGNAL(totalUnreadCountChanged()));
+        d->conversations.append(newConvo);
         endInsertRows();
+
+        //If this is a locally generated request or there is no active chat, the index of the newly inserted conversation is saved as the active chat
+        //The model is reset to load the newly created chat channel
+        if(textChannel->isRequested() || d->activeChatIndex == -1) {
+            d->activeChatIndex = rowCount() - 1;
+            Q_EMIT activeChatIndexChanged();
+        }
         context->setFinished();
     }
-
 }
 
 bool ConversationsModel::bypassApproval() const
@@ -191,4 +201,9 @@ int ConversationsModel::totalUnreadCount() const
         ret += c->messages()->unreadCount();
     }
     return ret;
+}
+
+int ConversationsModel::activeChatIndex() const
+{
+    return d->activeChatIndex;
 }
