@@ -125,6 +125,7 @@ KTp::JoinChatRoomDialog::JoinChatRoomDialog(Tp::AccountManagerPtr accountManager
     connect(ui->recentListWidget, SIGNAL(itemDoubleClicked(QListWidgetItem*)), this, SLOT(accept()));
     connect(ui->removeRecentPushButton, SIGNAL(clicked(bool)), this , SLOT(removeRecentRoom()));
     connect(ui->clearRecentPushButton, SIGNAL(clicked(bool)), this, SLOT(clearRecentRooms()));
+    connect(ui->serverLineEdit, SIGNAL(returnPressed()), this, SLOT(getRoomList()));
     connect(ui->queryPushButton, SIGNAL(clicked(bool)), this, SLOT(getRoomList()));
     connect(ui->stopPushButton, SIGNAL(clicked(bool)), this, SLOT(stopListing()));
     connect(ui->treeView, SIGNAL(clicked(QModelIndex)), this, SLOT(onRoomClicked(QModelIndex)));
