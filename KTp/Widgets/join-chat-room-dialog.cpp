@@ -98,11 +98,6 @@ KTp::JoinChatRoomDialog::JoinChatRoomDialog(Tp::AccountManagerPtr accountManager
     ui->lineEdit->setCompletionObject(m_recentComp);
     ui->lineEdit->setAutoDeleteCompletionObject(true);
 
-    // queryTab
-    if (ui->comboBox->count() > 0) {
-        ui->queryPushButton->setEnabled(true);
-    }
-
     QSortFilterProxyModel *proxyModel = new QSortFilterProxyModel(this);
     proxyModel->setSourceModel(m_model);
     proxyModel->setSortLocaleAware(true);
@@ -149,6 +144,11 @@ void KTp::JoinChatRoomDialog::onAccountManagerReady(Tp::PendingOperation* operat
                                              capabilityFilter));
 
     ui->comboBox->setAccountSet(accountManager->filterAccounts(filter));
+
+    // queryTab
+    if (ui->comboBox->count() > 0) {
+        ui->queryPushButton->setEnabled(true);
+    }
 
     // apply the filter after populating
     onAccountSelectionChanged(ui->comboBox->currentIndex());
