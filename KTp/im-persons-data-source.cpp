@@ -84,6 +84,8 @@ IMPersonsDataSource::IMPersonsDataSource(QObject *parent, const QVariantList &da
     : BasePersonsDataSource(parent)
     , d(new Private)
 {
+    Q_UNUSED(data);
+
     d->q = this;
     Tp::registerTypes();
 

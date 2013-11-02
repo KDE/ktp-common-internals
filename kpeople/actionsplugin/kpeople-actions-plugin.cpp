@@ -104,6 +104,7 @@ QUrl IMAction::uri() const
 KPeopleActionsPlugin::KPeopleActionsPlugin(QObject* parent, const QVariantList &args):
 AbstractPersonPlugin(parent)
 {
+    Q_UNUSED(args);
 }
 
 QList<QAction*> KPeopleActionsPlugin::actionsForPerson(const KPeople::PersonDataPtr &personData, QObject *parent)
