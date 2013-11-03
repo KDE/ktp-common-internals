@@ -67,6 +67,9 @@ void IMPersonsDataSource::Private::onAllKnownContactsChanged(const Tp::Contacts 
         connect(ktpContact.data(), SIGNAL(presenceChanged(Tp::Presence)),
                 q, SLOT(onContactChanged()));
 
+        connect(ktpContact.data(), SIGNAL(blockStatusChanged(bool)),
+                q, SLOT(onContactChanged()));
+
         connect(ktpContact.data(), SIGNAL(capabilitiesChanged(Tp::ContactCapabilities)),
                 q, SLOT(onContactChanged()));
 
