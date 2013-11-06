@@ -27,8 +27,9 @@
 #include <TelepathyQt/TextChannel>
 #include <TelepathyQt/Account>
 
-#include "KTp/message-processor.h"
-#include "KTp/message.h"
+#include "../message-processor.h"
+#include "../message.h"
+#include <../Logger/logmanager.h>
 
 class MessagePrivate
 {
@@ -51,6 +52,7 @@ class MessagesModel::MessagesModelPrivate
   public:
     Tp::TextChannelPtr textChannel;
     Tp::AccountPtr account;
+    LogManager *logManager;
     QList<MessagePrivate> messages;
     // For fast lookup of original messages upon receipt of a message delivery report.
     QHash<QString /*messageToken*/, QPersistentModelIndex> messagesByMessageToken;
@@ -76,6 +78,9 @@ MessagesModel::MessagesModel(const Tp::AccountPtr &account, QObject *parent) :
 
     d->account = account;
     d->visible = false;
+
+    d->logManager = new LogManager(this);
+    d->logManager->setScrollbackLength(10);
 }
 
 Tp::TextChannelPtr MessagesModel::textChannel() const
@@ -119,6 +124,10 @@ void MessagesModel::setTextChannel(const Tp::TextChannelPtr &channel)
     }
 
     d->textChannel = channel;
+
+    d->logManager->setTextChannel(d->account, d->textChannel);
+    m_previousConversationAvailable = d->logManager->exists();
+    d->logManager->fetchScrollback();
 
     QList<Tp::ReceivedMessage> messageQueue = channel->messageQueue();
     Q_FOREACH(const Tp::ReceivedMessage &message, messageQueue) {

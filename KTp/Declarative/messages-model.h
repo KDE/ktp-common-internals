@@ -96,6 +96,8 @@ class MessagesModel : public QAbstractListModel
 
     class MessagesModelPrivate;
     MessagesModelPrivate *d;
+
+    bool m_previousConversationAvailable;
 };
 
 #endif // CONVERSATION_MODEL_H
