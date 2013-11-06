@@ -28,7 +28,7 @@
 #include <TelepathyQt/Account>
 
 #include "../message-processor.h"
-#include "../message.h"
+#include "../message-context.h"
 #include <../Logger/logmanager.h>
 
 class MessagePrivate
@@ -80,6 +80,7 @@ MessagesModel::MessagesModel(const Tp::AccountPtr &account, QObject *parent) :
     d->visible = false;
 
     d->logManager = new LogManager(this);
+    connect(d->logManager, SIGNAL(fetched(QList<KTp::Message>)), SLOT(onHistoryFetched(QList<KTp::Message>)));
     d->logManager->setScrollbackLength(10);
 }
 
@@ -142,6 +143,20 @@ void MessagesModel::setTextChannel(const Tp::TextChannelPtr &channel)
         }
         if (!messageAlreadyInModel) {
             onMessageReceived(message);
+        }
+    }
+}
+
+void MessagesModel::onHistoryFetched(const QList<KTp::Message> &messages)
+{
+    kDebug() << "found" << messages.count() << "messages in history";
+    if (!messages.isEmpty()) {
+        //Add all messages before the ones already present in the channel
+        for(int i=messages.size()-1;i>=0;i--) {
+            beginInsertRows(QModelIndex(), 0, 0);
+            d->messages.prepend(KTp::MessageProcessor::instance()->processIncomingMessage(
+                               messages[i], KTp::MessageContext(d->account, d->textChannel)));
+            endInsertRows();
         }
     }
 }

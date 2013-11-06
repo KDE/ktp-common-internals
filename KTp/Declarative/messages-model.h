@@ -25,6 +25,8 @@
 #include <TelepathyQt/Types>
 #include <TelepathyQt/ReceivedMessage>
 
+#include "../message.h"
+
 class MessagesModel : public QAbstractListModel
 {
     Q_OBJECT
@@ -89,6 +91,7 @@ class MessagesModel : public QAbstractListModel
     void onMessageSent(const Tp::Message &message, Tp::MessageSendingFlags flags, const QString &messageToken);
     void onPendingMessageRemoved();
     bool verifyPendingOperation(Tp::PendingOperation *op);
+    void onHistoryFetched(const QList<KTp::Message> &messages);
 
   private:
     void setupChannelSignals(const Tp::TextChannelPtr &channel);
