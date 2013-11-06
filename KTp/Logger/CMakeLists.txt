@@ -9,6 +9,7 @@ set (ktp_logger_private_SRCS
     abstract-logger-plugin.cpp
     log-entity.cpp
     log-manager.cpp
+    logmanager.cpp
     log-message.cpp
     log-search-hit.cpp
     pending-logger-dates.cpp
@@ -26,6 +27,7 @@ set (ktp_logger_private_HDRS
     abstract-logger-plugin.h
     log-entity.h
     log-manager.h
+    logmanager.h
     log-message.h
     log-search-hit.h
     pending-logger-dates.h

@@ -27,8 +27,9 @@
 #include <TelepathyQt/TextChannel>
 #include <TelepathyQt/Account>
 
-#include "KTp/message-processor.h"
-#include "KTp/message.h"
+#include "../message-processor.h"
+#include "../message-context.h"
+#include <../Logger/logmanager.h>
 
 class MessagePrivate
 {
@@ -51,6 +52,7 @@ class MessagesModel::MessagesModelPrivate
   public:
     Tp::TextChannelPtr textChannel;
     Tp::AccountPtr account;
+    LogManager *logManager;
     QList<MessagePrivate> messages;
     // For fast lookup of original messages upon receipt of a message delivery report.
     QHash<QString /*messageToken*/, QPersistentModelIndex> messagesByMessageToken;
@@ -76,6 +78,10 @@ MessagesModel::MessagesModel(const Tp::AccountPtr &account, QObject *parent) :
 
     d->account = account;
     d->visible = false;
+
+    d->logManager = new LogManager(this);
+    connect(d->logManager, SIGNAL(fetched(QList<KTp::Message>)), SLOT(onHistoryFetched(QList<KTp::Message>)));
+    d->logManager->setScrollbackLength(10);
 }
 
 Tp::TextChannelPtr MessagesModel::textChannel() const
@@ -120,6 +126,10 @@ void MessagesModel::setTextChannel(const Tp::TextChannelPtr &channel)
 
     d->textChannel = channel;
 
+    d->logManager->setTextChannel(d->account, d->textChannel);
+    m_previousConversationAvailable = d->logManager->exists();
+    d->logManager->fetchScrollback();
+
     QList<Tp::ReceivedMessage> messageQueue = channel->messageQueue();
     Q_FOREACH(const Tp::ReceivedMessage &message, messageQueue) {
         bool messageAlreadyInModel = false;
@@ -133,6 +143,20 @@ void MessagesModel::setTextChannel(const Tp::TextChannelPtr &channel)
         }
         if (!messageAlreadyInModel) {
             onMessageReceived(message);
+        }
+    }
+}
+
+void MessagesModel::onHistoryFetched(const QList<KTp::Message> &messages)
+{
+    kDebug() << "found" << messages.count() << "messages in history";
+    if (!messages.isEmpty()) {
+        //Add all messages before the ones already present in the channel
+        for(int i=messages.size()-1;i>=0;i--) {
+            beginInsertRows(QModelIndex(), 0, 0);
+            d->messages.prepend(KTp::MessageProcessor::instance()->processIncomingMessage(
+                               messages[i], KTp::MessageContext(d->account, d->textChannel)));
+            endInsertRows();
         }
     }
 }
