@@ -18,7 +18,7 @@
 */
 
 
-#include "logmanager.h"
+#include "scrollback-manager.h"
 
 #include "../message-processor.h"
 #include "log-entity.h"
@@ -33,7 +33,7 @@
 #include <TelepathyQt/TextChannel>
 #include <TelepathyQt/ReceivedMessage>
 
-class LogManager::Private
+class ScrollbackManager::Private
 {
   public:
     Private(): scrollbackLength(10)
@@ -46,18 +46,18 @@ class LogManager::Private
     int scrollbackLength;
 };
 
-LogManager::LogManager(QObject *parent)
+ScrollbackManager::ScrollbackManager(QObject *parent)
     : QObject(parent),
     d(new Private)
 {
 }
 
-LogManager::~LogManager()
+ScrollbackManager::~ScrollbackManager()
 {
     delete d;
 }
 
-bool LogManager::exists() const
+bool ScrollbackManager::exists() const
 {
     if (d->account.isNull() || d->textChannel.isNull() ) {
         return false;
@@ -66,7 +66,7 @@ bool LogManager::exists() const
     return KTp::LogManager::instance()->logsExist(d->account, d->contactEntity);
 }
 
-void LogManager::setTextChannel(const Tp::AccountPtr &account, const Tp::TextChannelPtr &textChannel)
+void ScrollbackManager::setTextChannel(const Tp::AccountPtr &account, const Tp::TextChannelPtr &textChannel)
 {
     d->textChannel = textChannel;
     d->account = account;
@@ -86,22 +86,22 @@ void LogManager::setTextChannel(const Tp::AccountPtr &account, const Tp::TextCha
     }
 }
 
-void LogManager::setScrollbackLength(int n)
+void ScrollbackManager::setScrollbackLength(int n)
 {
     d->scrollbackLength = n;
 }
 
-int LogManager::scrollbackLength() const
+int ScrollbackManager::scrollbackLength() const
 {
     return d->scrollbackLength;
 }
 
-void LogManager::fetchScrollback()
+void ScrollbackManager::fetchScrollback()
 {
     fetchHistory(d->scrollbackLength);
 }
 
-void LogManager::fetchHistory(int n)
+void ScrollbackManager::fetchHistory(int n)
 {
     if (n > 0 && !d->account.isNull() && !d->textChannel.isNull()) {
         if (d->contactEntity.isValid()) {
@@ -118,7 +118,7 @@ void LogManager::fetchHistory(int n)
     Q_EMIT fetched(messages);
 }
 
-void LogManager::onDatesFinished(KTp::PendingLoggerOperation* po)
+void ScrollbackManager::onDatesFinished(KTp::PendingLoggerOperation* po)
 {
     KTp::PendingLoggerDates *datesOp = qobject_cast<KTp::PendingLoggerDates*>(po);
     if (datesOp->hasError()) {
@@ -140,7 +140,7 @@ void LogManager::onDatesFinished(KTp::PendingLoggerOperation* po)
             this, SLOT(onEventsFinished(KTp::PendingLoggerOperation*)));
 }
 
-void LogManager::onEventsFinished(KTp::PendingLoggerOperation *op)
+void ScrollbackManager::onEventsFinished(KTp::PendingLoggerOperation *op)
 {
     KTp::PendingLoggerLogs *logsOp = qobject_cast<KTp::PendingLoggerLogs*>(op);
     if (logsOp->hasError()) {

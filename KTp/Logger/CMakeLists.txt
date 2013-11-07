@@ -9,7 +9,6 @@ set (ktp_logger_private_SRCS
     abstract-logger-plugin.cpp
     log-entity.cpp
     log-manager.cpp
-    logmanager.cpp
     log-message.cpp
     log-search-hit.cpp
     pending-logger-dates.cpp
@@ -21,13 +20,13 @@ set (ktp_logger_private_SRCS
     pending-logger-operation.cpp
     pending-logger-search.cpp
     pending-logger-search-impl.cpp
+    scrollback-manager.cpp
 )
 
 set (ktp_logger_private_HDRS
     abstract-logger-plugin.h
     log-entity.h
     log-manager.h
-    logmanager.h
     log-message.h
     log-search-hit.h
     pending-logger-dates.h
@@ -35,6 +34,7 @@ set (ktp_logger_private_HDRS
     pending-logger-logs.h
     pending-logger-operation.h
     pending-logger-search.h
+    scrollback-manager.h
 )
 
 kde4_add_library (ktploggerprivate SHARED

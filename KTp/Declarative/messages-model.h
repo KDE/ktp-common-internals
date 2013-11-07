@@ -25,7 +25,7 @@
 #include <TelepathyQt/Types>
 #include <TelepathyQt/ReceivedMessage>
 
-#include "../message.h"
+#include <KTp/message.h>
 
 class MessagesModel : public QAbstractListModel
 {

@@ -27,9 +27,9 @@
 #include <TelepathyQt/TextChannel>
 #include <TelepathyQt/Account>
 
-#include "../message-processor.h"
-#include "../message-context.h"
-#include <../Logger/logmanager.h>
+#include <KTp/message-processor.h>
+#include <KTp/message-context.h>
+#include <KTp/Logger/scrollback-manager.h>
 
 class MessagePrivate
 {
@@ -52,7 +52,7 @@ class MessagesModel::MessagesModelPrivate
   public:
     Tp::TextChannelPtr textChannel;
     Tp::AccountPtr account;
-    LogManager *logManager;
+    ScrollbackManager *logManager;
     QList<MessagePrivate> messages;
     // For fast lookup of original messages upon receipt of a message delivery report.
     QHash<QString /*messageToken*/, QPersistentModelIndex> messagesByMessageToken;
@@ -79,7 +79,7 @@ MessagesModel::MessagesModel(const Tp::AccountPtr &account, QObject *parent) :
     d->account = account;
     d->visible = false;
 
-    d->logManager = new LogManager(this);
+    d->logManager = new ScrollbackManager(this);
     connect(d->logManager, SIGNAL(fetched(QList<KTp::Message>)), SLOT(onHistoryFetched(QList<KTp::Message>)));
     d->logManager->setScrollbackLength(10);
 }
