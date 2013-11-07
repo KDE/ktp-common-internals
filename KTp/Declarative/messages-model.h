@@ -25,7 +25,7 @@
 #include <TelepathyQt/Types>
 #include <TelepathyQt/ReceivedMessage>
 
-#include "../message.h"
+#include <KTp/message.h>
 
 class MessagesModel : public QAbstractListModel
 {
@@ -99,8 +99,6 @@ class MessagesModel : public QAbstractListModel
 
     class MessagesModelPrivate;
     MessagesModelPrivate *d;
-
-    bool m_previousConversationAvailable;
 };
 
 #endif // CONVERSATION_MODEL_H

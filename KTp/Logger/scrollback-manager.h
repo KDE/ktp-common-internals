@@ -18,8 +18,8 @@
 */
 
 
-#ifndef LOGMANAGER_H
-#define LOGMANAGER_H
+#ifndef SCROLLBACKMANAGER_H
+#define SCROLLBACKMANAGER_H
 
 #include <KTp/message.h>
 
@@ -27,13 +27,13 @@ namespace KTp {
 class PendingLoggerOperation;
 }
 
-class KTP_EXPORT LogManager : public QObject
+class KTP_EXPORT ScrollbackManager : public QObject
 {
     Q_OBJECT
 
 public:
-    explicit LogManager(QObject *parent = 0);
-    virtual ~LogManager();
+    explicit ScrollbackManager(QObject *parent = 0);
+    virtual ~ScrollbackManager();
 
     bool exists() const;
 
@@ -68,4 +68,4 @@ private:
     Private * const d;
 };
 
-#endif // LOGMANAGER_H
+#endif // SCROLLBACKMANAGER_H
