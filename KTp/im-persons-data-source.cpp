@@ -55,14 +55,14 @@ void IMPersonsDataSource::Private::onAllKnownContactsChanged(const Tp::Contacts 
     if (!contacts.isEmpty()) {
         Q_FOREACH (const Tp::ContactPtr &contact, contactsRemoved) {
             contacts.remove(contact->id());
+            Q_EMIT q->contactRemoved(contact->id());
         }
     }
 
     Q_FOREACH (const Tp::ContactPtr &contact, contactsAdded) {
         KTp::ContactPtr ktpContact = KTp::ContactPtr::qObjectCast(contact);
         contacts.insert(contact->id(), ktpContact);
-
-        Q_EMIT q->contactChanged(contact->id());
+        Q_EMIT q->contactAdded(contact->id());
 
         connect(ktpContact.data(), SIGNAL(presenceChanged(Tp::Presence)),
                 q, SLOT(onContactChanged()));
@@ -72,9 +72,6 @@ void IMPersonsDataSource::Private::onAllKnownContactsChanged(const Tp::Contacts 
 
         connect(ktpContact.data(), SIGNAL(invalidated()),
                 q, SLOT(onContactInvalidated()));
-
-        //TODO: add other stuff here etc
-
     }
 }
 
@@ -99,50 +96,28 @@ IMPersonsDataSource::~IMPersonsDataSource()
     delete d;
 }
 
-QVariant IMPersonsDataSource::dataForContact(const QString &contactId, int role) const
+const KABC::Addressee::Map IMPersonsDataSource::allContacts()
 {
-    KTp::ContactPtr contact = d->contacts.value(contactId);
-
-    //we need to handle only few roles here, all the rest must go to the source model
-    switch (role) {
-        case PersonsModel::PresenceTypeRole:
-            if (!contact.isNull()) {
-                return contact->presence().status();
-            } else if (!contactId.isEmpty()) {
-                return QLatin1String("offline");
-            } else if (contactId.isEmpty()) {
-                return QLatin1String("unknown");
-            }
-        break;
-        case PersonsModel::PresenceDisplayRole:
-            if (!contact.isNull()) {
-                return contact->presence().displayString();
-            } else if (!contactId.isEmpty()) {
-                return KTp::Presence(Tp::Presence::offline()).displayString();
-            } else if (contactId.isEmpty()) {
-                return QVariant();
-            }
-        break;
-        case PersonsModel::PresenceDecorationRole:
-            if (!contact.isNull()) {
-                return contact->presence().icon();
-            } else if (!contactId.isEmpty()) {
-                return KTp::Presence(Tp::Presence::offline()).icon();
-            } else if (contactId.isEmpty()) {
-                return QVariant();
-            }
-        break;
-        case PersonsModel::PresenceIconNameRole:
-            if (!contact.isNull()) {
-                return contact->presence().iconName();
-            } else if (!contactId.isEmpty()) {
-                return QString(QLatin1String("user-offline"));
-            } else if (contactId.isEmpty()) {
-                return QVariant();
-            }
+    KABC::Addressee::Map contacts;
+    Q_FOREACH(const QString &key, d->contacts.keys()) {
+        contacts.insert(key, contact(key));
     }
+    return contacts;
+}
 
-    return QVariant();
+const KABC::Addressee IMPersonsDataSource::contact(const QString &contactId)
+{
+    KABC::Addressee vcard;
+
+    qDebug() << "running ktp datasource" << contactId;
+    KTp::ContactPtr contact = d->contacts[contactId];
+    if (contact) {
+        vcard.setFormattedName(contact->alias());
+        vcard.insertCustom(QLatin1String("telepathy"), QLatin1String("contactId"), contact->id());
+//         vcard.insertCustom("telepathy", "accountId", contact->id());
+        vcard.setPhoto(KABC::Picture(contact->avatarData().fileName));
+    }
+    return vcard;
 }
 
 void IMPersonsDataSource::onAccountManagerReady(Tp::PendingOperation *op)

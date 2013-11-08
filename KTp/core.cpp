@@ -69,7 +69,8 @@ CorePrivate::CorePrivate()
     Tp::ContactFactoryPtr contactFactory = KTp::ContactFactory::create(Tp::Features()  << Tp::Contact::FeatureAlias
                                                                                        << Tp::Contact::FeatureSimplePresence
                                                                                        << Tp::Contact::FeatureCapabilities
-                                                                                       << Tp::Contact::FeatureClientTypes);
+                                                                                       << Tp::Contact::FeatureClientTypes
+                                                                                       << Tp::Contact::FeatureAvatarData);
 
     Tp::ChannelFactoryPtr channelFactory = Tp::ChannelFactory::create(QDBusConnection::sessionBus());
 

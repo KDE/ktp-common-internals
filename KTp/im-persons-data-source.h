@@ -27,6 +27,8 @@
 #include "KTp/contact.h"
 #include "KTp/ktp-export.h"
 
+#include <KABC/Addressee>
+
 namespace KTp { class GlobalContactManager; }
 namespace Tp { class PendingOperation; }
 
@@ -37,7 +39,9 @@ public:
     IMPersonsDataSource(QObject *parent, const QVariantList &data);
     virtual ~IMPersonsDataSource();
 
-    QVariant dataForContact(const QString &contactId, int role) const;
+    virtual const KABC::Addressee contact(const QString &contactId);
+    virtual const KABC::Addressee::Map allContacts();
+
     KTp::ContactPtr contactForContactId(const QString &contactId) const;
     Tp::AccountPtr accountForContact(const KTp::ContactPtr &contact) const;
 
