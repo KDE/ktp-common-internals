@@ -1,3 +1,5 @@
+find_package (KdepimLibs REQUIRED)
+
 include_directories (${CMAKE_CURRENT_BINARY_DIR}
                      ${CMAKE_CURRENT_SOURCE_DIR})
 
@@ -69,6 +71,7 @@ set (ktp_private_LIBS
                        ${KDE4_KIO_LIBS}
                        ${TELEPATHY_QT4_LIBRARIES}
                        ${KDE4_KDEUI_LIBS}
+                       ${KDEPIMLIBS_KABC_LIBS}
 )
 
 if (TELEPATHY_LOGGER_QT4_FOUND)

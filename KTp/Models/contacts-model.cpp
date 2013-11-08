@@ -65,19 +65,6 @@ KTp::ContactsModel::ContactsModel(QObject *parent)
         kDebug() << "Nepomuk is enabled, using kpeople model";
         KPeople::PersonsModel *personsModel = new KPeople::PersonsModel(this);
 
-        KPeople::PersonsModelFeature accountFeature;
-        QHash<QString, int> bindingMap;
-        bindingMap[QLatin1String("account")] = KPeople::PersonsModel::UserRole;
-        accountFeature.setBindingsMap(bindingMap);
-        accountFeature.setOptional(false);
-        accountFeature.setQueryPart(QLatin1String("?uri nco:hasIMAccount ?imAccount . ?imAccount nco:isAccessedBy ?accessedBy . ?accessedBy telepathy:accountIdentifier ?account . "));
-
-        personsModel->startQuery(QList<KPeople::PersonsModelFeature>() << KPeople::PersonsModelFeature::imModelFeature(KPeople::PersonsModelFeature::Mandatory)
-                                                            << accountFeature
-                                                            << KPeople::PersonsModelFeature::avatarModelFeature()
-                                                            << KPeople::PersonsModelFeature::groupsModelFeature()
-                                                            << KPeople::PersonsModelFeature::fullNameModelFeature()
-                                                            << KPeople::PersonsModelFeature::nicknameModelFeature());
         connect(personsModel, SIGNAL(modelInitialized()),
                 this, SIGNAL(modelInitialized()));
 

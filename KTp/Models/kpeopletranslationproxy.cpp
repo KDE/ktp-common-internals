@@ -49,107 +49,107 @@ QVariant KPeopleTranslationProxy::data(const QModelIndex &proxyIndex, int role) 
         return QVariant();
     }
 
-    IMPersonsDataSource *imPlugin = qobject_cast<IMPersonsDataSource*>(PersonPluginManager::presencePlugin());
-
-    if (!imPlugin) {
-        kWarning() << "No imPlugin";
-        return QVariant();
-    }
-
-    switch (role) {
-        case KTp::ContactPresenceTypeRole:
-            return translatePresence(mapToSource(proxyIndex).data(PersonsModel::PresenceTypeRole));
-        case KTp::ContactPresenceIconRole:
-            return mapToSource(proxyIndex).data(PersonsModel::PresenceIconNameRole);
-        case KTp::ContactPresenceNameRole:
-            return mapToSource(proxyIndex).data(PersonsModel::PresenceDisplayRole);
-        case Qt::DisplayRole:
-            return mapToSource(proxyIndex).data(Qt::DisplayRole);
-        case KTp::RowTypeRole:
-            //if the person has max 1 child, it's a fake person, so treat it as contact row
-            if (mapToSource(proxyIndex).parent().isValid() || sourceModel()->rowCount(mapToSource(proxyIndex)) <= 1) {
-                return KTp::ContactRowType;
-            } else {
-                return KTp::PersonRowType;
-            }
-        case KTp::ContactAvatarPathRole:
-            return mapToSource(proxyIndex).data(PersonsModel::PhotosRole);
-        case KTp::ContactAvatarPixmapRole:
-            return contactPixmap(proxyIndex);
-        case KTp::IdRole:
-            return mapToSource(proxyIndex).data(PersonsModel::IMsRole);
-        case KTp::HeaderTotalUsersRole:
-            return sourceModel()->rowCount(mapToSource(proxyIndex));
-        case KTp::ContactGroupsRole:
-            return mapToSource(proxyIndex).data(PersonsModel::GroupsRole);
-        case KTp::NepomukUriRole:
-            return mapToSource(proxyIndex).data(PersonsModel::UriRole);
-    }
-
-    int j = sourceModel()->rowCount(mapToSource(proxyIndex));
-    
-
-    KTp::ContactPtr contact;
-
-    if (j > 0) {
-        KTp::ContactPtr mostOnlineContact;
-
-        Q_FOREACH(const QVariant &v, mapToSource(proxyIndex).data(PersonsModel::IMsRole).toList()) {
-            KTp::ContactPtr c = imPlugin->contactForContactId(v.toString());
-            if (mostOnlineContact.isNull() && !c.isNull()) {
-                mostOnlineContact = c;
-                continue;
-            }
-            if (!c.isNull()) {
-                if (c->presence() < mostOnlineContact->presence()) {
-                    mostOnlineContact = c;
-                }
-            }
-        }
-        contact = mostOnlineContact;
-    } else if (j == 0) {
-        contact = imPlugin->contactForContactId(mapToSource(proxyIndex).data(PersonsModel::IMsRole).toString());
-    }
-
-    if (!contact.isNull()) {
-        switch (role) {
-            case KTp::AccountRole:
-                return QVariant::fromValue<Tp::AccountPtr>(imPlugin->accountForContact(contact));
-                break;
-            case KTp::ContactRole:
-                return QVariant::fromValue<KTp::ContactPtr>(contact);
-                break;
-            case KTp::ContactPresenceMessageRole:
-                return contact->presence().statusMessage();
-                break;
-            case KTp::ContactIsBlockedRole:
-                return contact->isBlocked();
-                break;
-            case KTp::ContactCanTextChatRole:
-                return true;
-                break;
-            case KTp::ContactCanAudioCallRole:
-                return contact->audioCallCapability();
-                break;
-            case KTp::ContactCanVideoCallRole:
-                return contact->videoCallCapability();
-                break;
-            case KTp::ContactCanFileTransferRole:
-                return contact->fileTransferCapability();
-                break;
-            case KTp::ContactClientTypesRole:
-                return contact->clientTypes();
-                break;
-        }
-    } else if (contact.isNull() && role == KTp::AccountRole) {
-        QVariant accountPath = mapToSource(proxyIndex).data(PersonsModel::UserRole);
-        if (accountPath.type() == QVariant::List) {
-            return QVariant::fromValue<Tp::AccountPtr>(imPlugin->accountManager()->accountForObjectPath(accountPath.toList().first().toString()));
-        } else {
-            return QVariant::fromValue<Tp::AccountPtr>(imPlugin->accountManager()->accountForObjectPath(accountPath.toString()));
-        }
-    }
+//     IMPersonsDataSource *imPlugin = qobject_cast<IMPersonsDataSource*>(PersonPluginManager::presencePlugin());
+//
+//     if (!imPlugin) {
+//         kWarning() << "No imPlugin";
+//         return QVariant();
 //     }
+//
+//     switch (role) {
+//         case KTp::ContactPresenceTypeRole:
+//             return translatePresence(mapToSource(proxyIndex).data(PersonsModel::PresenceTypeRole));
+//         case KTp::ContactPresenceIconRole:
+//             return mapToSource(proxyIndex).data(PersonsModel::PresenceIconNameRole);
+//         case KTp::ContactPresenceNameRole:
+//             return mapToSource(proxyIndex).data(PersonsModel::PresenceDisplayRole);
+//         case Qt::DisplayRole:
+//             return mapToSource(proxyIndex).data(Qt::DisplayRole);
+//         case KTp::RowTypeRole:
+//             //if the person has max 1 child, it's a fake person, so treat it as contact row
+//             if (mapToSource(proxyIndex).parent().isValid() || sourceModel()->rowCount(mapToSource(proxyIndex)) <= 1) {
+//                 return KTp::ContactRowType;
+//             } else {
+//                 return KTp::PersonRowType;
+//             }
+//         case KTp::ContactAvatarPathRole:
+//             return mapToSource(proxyIndex).data(PersonsModel::PhotosRole);
+//         case KTp::ContactAvatarPixmapRole:
+//             return contactPixmap(proxyIndex);
+//         case KTp::IdRole:
+//             return mapToSource(proxyIndex).data(PersonsModel::IMsRole);
+//         case KTp::HeaderTotalUsersRole:
+//             return sourceModel()->rowCount(mapToSource(proxyIndex));
+//         case KTp::ContactGroupsRole:
+//             return mapToSource(proxyIndex).data(PersonsModel::GroupsRole);
+//         case KTp::NepomukUriRole:
+//             return mapToSource(proxyIndex).data(PersonsModel::UriRole);
+//     }
+//
+//     int j = sourceModel()->rowCount(mapToSource(proxyIndex));
+//
+//
+//     KTp::ContactPtr contact;
+//
+//     if (j > 0) {
+//         KTp::ContactPtr mostOnlineContact;
+//
+//         Q_FOREACH(const QVariant &v, mapToSource(proxyIndex).data(PersonsModel::IMsRole).toList()) {
+//             KTp::ContactPtr c = imPlugin->contactForContactId(v.toString());
+//             if (mostOnlineContact.isNull() && !c.isNull()) {
+//                 mostOnlineContact = c;
+//                 continue;
+//             }
+//             if (!c.isNull()) {
+//                 if (c->presence() < mostOnlineContact->presence()) {
+//                     mostOnlineContact = c;
+//                 }
+//             }
+//         }
+//         contact = mostOnlineContact;
+//     } else if (j == 0) {
+//         contact = imPlugin->contactForContactId(mapToSource(proxyIndex).data(PersonsModel::IMsRole).toString());
+//     }
+//
+//     if (!contact.isNull()) {
+//         switch (role) {
+//             case KTp::AccountRole:
+//                 return QVariant::fromValue<Tp::AccountPtr>(imPlugin->accountForContact(contact));
+//                 break;
+//             case KTp::ContactRole:
+//                 return QVariant::fromValue<KTp::ContactPtr>(contact);
+//                 break;
+//             case KTp::ContactPresenceMessageRole:
+//                 return contact->presence().statusMessage();
+//                 break;
+//             case KTp::ContactIsBlockedRole:
+//                 return contact->isBlocked();
+//                 break;
+//             case KTp::ContactCanTextChatRole:
+//                 return true;
+//                 break;
+//             case KTp::ContactCanAudioCallRole:
+//                 return contact->audioCallCapability();
+//                 break;
+//             case KTp::ContactCanVideoCallRole:
+//                 return contact->videoCallCapability();
+//                 break;
+//             case KTp::ContactCanFileTransferRole:
+//                 return contact->fileTransferCapability();
+//                 break;
+//             case KTp::ContactClientTypesRole:
+//                 return contact->clientTypes();
+//                 break;
+//         }
+//     } else if (contact.isNull() && role == KTp::AccountRole) {
+//         QVariant accountPath = mapToSource(proxyIndex).data(PersonsModel::UserRole);
+//         if (accountPath.type() == QVariant::List) {
+//             return QVariant::fromValue<Tp::AccountPtr>(imPlugin->accountManager()->accountForObjectPath(accountPath.toList().first().toString()));
+//         } else {
+//             return QVariant::fromValue<Tp::AccountPtr>(imPlugin->accountManager()->accountForObjectPath(accountPath.toString()));
+//         }
+//     }
+// //     }
 
     return mapToSource(proxyIndex).data(role);
 }
