@@ -35,6 +35,8 @@ public:
     KTp::Presence presence() const;
 
 
+    /** Returns true if text chats can be started with this contact*/
+    bool textChatCapability() const;
      /** Returns true if audio calls can be started with this contact*/
      bool audioCallCapability() const;
      /** Returns true if video calls can be started with this contact*/

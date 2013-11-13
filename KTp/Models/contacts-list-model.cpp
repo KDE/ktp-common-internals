@@ -136,7 +136,7 @@ QVariant KTp::ContactsListModel::data(const QModelIndex &index, int role) const
             return contact->isBlocked();
 
         case KTp::ContactCanTextChatRole:
-            return true; //FIXME
+            return contact->textChatCapability();
           case KTp::ContactCanFileTransferRole:
             return contact->fileTransferCapability();
         case KTp::ContactCanAudioCallRole:

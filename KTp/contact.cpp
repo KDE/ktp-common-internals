@@ -48,6 +48,15 @@ KTp::Presence KTp::Contact::presence() const
     return KTp::Presence(Tp::Contact::presence());
 }
 
+bool KTp::Contact::textChatCapability() const
+{
+    if (!manager()->connection()) {
+        return false;
+    }
+
+    return capabilities().textChats();
+}
+
 bool KTp::Contact::audioCallCapability() const
 {
     if (! manager()->connection()) {
