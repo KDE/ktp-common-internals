@@ -31,10 +31,13 @@
 #include <TelepathyQt/AccountManager>
 #include <TelepathyQt/Account>
 #include <TelepathyQt/Connection>
+#include <TelepathyQt/ContactManager>
 #include <TelepathyQt/PendingChannelRequest>
+#include <TelepathyQt/PendingContacts>
 #include <TelepathyQt/AccountSet>
 
 #include <KTp/actions.h>
+#include <KTp/contact.h>
 
 namespace KTp {
 
@@ -47,6 +50,7 @@ struct KTP_NO_EXPORT StartChatDialog::Private
 
     Ui::StartChatDialog *ui;
     bool acceptInProgress;
+    QPointer<Tp::PendingContacts> pendingContact;
 };
 
 StartChatDialog::StartChatDialog(const Tp::AccountManagerPtr &accountManager, QWidget *parent) :
@@ -83,11 +87,32 @@ void StartChatDialog::accept()
     } else if (contactIdentifier.isEmpty()) {
         KMessageBox::sorry(this, i18n("You did not specify the name of the contact to start a chat with."));
     } else {
-        Tp::PendingChannelRequest *op = KTp::Actions::startChat(account, contactIdentifier, true);
-        connect(op, SIGNAL(finished(Tp::PendingOperation*)),
-                SLOT(_k_onStartChatFinished(Tp::PendingOperation*)));
+        d->pendingContact = account->connection()->contactManager()->contactsForIdentifiers(
+            QStringList() << contactIdentifier, Tp::Contact::FeatureCapabilities);
+
+        connect(d->pendingContact, SIGNAL(finished(Tp::PendingOperation*)),
+                SLOT(_k_onPendingContactFinished(Tp::PendingOperation*)));
 
         setInProgress(true);
+    }
+}
+
+void StartChatDialog::_k_onPendingContactFinished(Tp::PendingOperation *op)
+{
+    Tp::PendingContacts *pc = qobject_cast<Tp::PendingContacts*>(op);
+    Q_ASSERT(pc);
+
+    if (pc->isError()) {
+        KMessageBox::sorry(this, i18n("The contact Screen Name you provided is invalid or does not accept text chats."));
+        return;
+    }
+
+    if (pc == d->pendingContact && !pc->isError() && pc->contacts().size() > 0) {
+        KTp::ContactPtr currentContact = KTp::ContactPtr::qObjectCast(pc->contacts().at(0));
+
+        Tp::PendingChannelRequest *op = KTp::Actions::startChat(d->ui->accountCombo->currentAccount(), currentContact, true);
+        connect(op, SIGNAL(finished(Tp::PendingOperation*)),
+                SLOT(_k_onStartChatFinished(Tp::PendingOperation*)));
     }
 }
 

@@ -48,6 +48,7 @@ protected:
 
 private Q_SLOTS:
     KTP_NO_EXPORT void _k_onStartChatFinished(Tp::PendingOperation *op);
+    KTP_NO_EXPORT void _k_onPendingContactFinished(Tp::PendingOperation *op);
 
 private:
     KTP_NO_EXPORT void setInProgress(bool inProgress);
