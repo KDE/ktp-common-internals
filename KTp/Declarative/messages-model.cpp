@@ -81,7 +81,11 @@ MessagesModel::MessagesModel(const Tp::AccountPtr &account, QObject *parent) :
 
     d->logManager = new ScrollbackManager(this);
     connect(d->logManager, SIGNAL(fetched(QList<KTp::Message>)), SLOT(onHistoryFetched(QList<KTp::Message>)));
-    d->logManager->setScrollbackLength(10);
+
+    //Load configuration for number of message to show
+    KConfig config(QLatin1String("ktelepathyrc"));
+    KConfigGroup tabConfig = config.group("Behavior");
+    d->logManager->setScrollbackLength(tabConfig.readEntry<int>("scrollbackLength", 10));
 }
 
 Tp::TextChannelPtr MessagesModel::textChannel() const
