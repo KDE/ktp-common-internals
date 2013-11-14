@@ -149,14 +149,13 @@ KABC::Addressee::Map KTpAllContacts::contacts()
 KABC::Addressee KTpAllContacts::contactToAddressee(const QString &contactId) const
 {
     KABC::Addressee vcard;
-
-    qDebug() << "running ktp datasource" << contactId;
     KTp::ContactPtr contact = m_contacts[contactId];
-    if (contact) {
+    Tp::AccountPtr account = m_contactManager->accountForContact(contact);
+    if (contact && account) {
         vcard.setFormattedName(contact->alias());
         vcard.insertCustom(QLatin1String("telepathy"), QLatin1String("contactId"), contact->id());
+        vcard.insertCustom(QLatin1String("telepathy"), QLatin1String("accountPath"), account->objectPath());
         vcard.insertCustom(QLatin1String("telepathy"), QLatin1String("presence"), contact->presence().status());
-        //         vcard.insertCustom("telepathy", "accountId", contact->id());
         vcard.setPhoto(KABC::Picture(contact->avatarData().fileName));
     }
     return vcard;
