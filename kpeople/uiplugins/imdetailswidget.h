@@ -21,19 +21,17 @@
 #ifndef IM_DETAILS_WIDGET_H
 #define IM_DETAILS_WIDGET_H
 
-#include <kpeople/widgets/abstractpersondetailswidget.h>
+#include <kpeople/widgets/abstractfieldwidgetfactory.h>
 
 #include <QVariant>
 #include <QGridLayout>
 
-class ImDetailsWidget : public KPeople::AbstractPersonDetailsWidget
+class ImDetailsWidget : public KPeople::AbstractFieldWidgetFactory
 {
-    Q_OBJECT
 public:
-    explicit ImDetailsWidget(QWidget *parent, const QVariantList &args);
-    void setPerson(KPeople::PersonData *person);
-private:
-    QGridLayout *m_layout;
+    explicit ImDetailsWidget(QObject *parent, const QVariantList &args);
+    QString label() const;
+    virtual QWidget* createDetailsWidget(const KABC::Addressee& person, const KABC::AddresseeList &contacts, QWidget* parent) const;
 };
 
 #endif // IM_DETAILS_WIDGET_H
