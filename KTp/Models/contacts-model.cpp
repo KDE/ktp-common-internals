@@ -31,7 +31,6 @@
 
 #ifdef HAVE_KPEOPLE
 #include <KPeople/PersonsModel>
-#include <kpeople/personsmodelfeature.h>
 #include "kpeopletranslationproxy.h"
 #endif
 
