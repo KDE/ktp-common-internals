@@ -40,87 +40,43 @@
 
 using namespace KPeople;
 
-class IMPersonsDataSource::Private {
-public:
-    KTp::GlobalContactManager *contactManager;
-    Tp::AccountManagerPtr accountManager;
-    QHash<QString, KTp::ContactPtr> contacts;
-    IMPersonsDataSource *q;
 
+class KTpAllContacts : public AllContactsMonitor
+{
+    Q_OBJECT
+public:
+    KTpAllContacts();
+    ~KTpAllContacts();
+    virtual KABC::Addressee::Map contacts();
+
+private Q_SLOTS:
+    void onAccountManagerReady(Tp::PendingOperation *op);
+    void onContactChanged();
+    void onContactInvalidated();
     void onAllKnownContactsChanged(const Tp::Contacts &contactsAdded, const Tp::Contacts &contactsRemoved);
+
+private:
+    KABC::Addressee contactToAddressee(const QString &contactId) const;
+
+    KTp::GlobalContactManager *m_contactManager;
+    Tp::AccountManagerPtr m_accountManager;
+    QHash<QString, KTp::ContactPtr> m_contacts;
 };
 
-void IMPersonsDataSource::Private::onAllKnownContactsChanged(const Tp::Contacts &contactsAdded, const Tp::Contacts &contactsRemoved)
+KTpAllContacts::KTpAllContacts()
 {
-    if (!contacts.isEmpty()) {
-        Q_FOREACH (const Tp::ContactPtr &contact, contactsRemoved) {
-            contacts.remove(contact->id());
-            Q_EMIT q->contactRemoved(contact->id());
-        }
-    }
-
-    Q_FOREACH (const Tp::ContactPtr &contact, contactsAdded) {
-        KTp::ContactPtr ktpContact = KTp::ContactPtr::qObjectCast(contact);
-        contacts.insert(contact->id(), ktpContact);
-        Q_EMIT q->contactAdded(contact->id());
-
-        connect(ktpContact.data(), SIGNAL(presenceChanged(Tp::Presence)),
-                q, SLOT(onContactChanged()));
-
-        connect(ktpContact.data(), SIGNAL(capabilitiesChanged(Tp::ContactCapabilities)),
-                q, SLOT(onContactChanged()));
-
-        connect(ktpContact.data(), SIGNAL(invalidated()),
-                q, SLOT(onContactInvalidated()));
-    }
-}
-
-//-----------------------------------------------------------------------------
-
-IMPersonsDataSource::IMPersonsDataSource(QObject *parent, const QVariantList &data)
-    : BasePersonsDataSource(parent)
-    , d(new Private)
-{
-    Q_UNUSED(data);
-
-    d->q = this;
     Tp::registerTypes();
 
-    d->accountManager = KTp::accountManager();
-    connect(d->accountManager->becomeReady(), SIGNAL(finished(Tp::PendingOperation*)),
+    m_accountManager = KTp::accountManager();
+    connect(m_accountManager->becomeReady(), SIGNAL(finished(Tp::PendingOperation*)),
             this, SLOT(onAccountManagerReady(Tp::PendingOperation*)));
 }
 
-IMPersonsDataSource::~IMPersonsDataSource()
+KTpAllContacts::~KTpAllContacts()
 {
-    delete d;
 }
 
-const KABC::Addressee::Map IMPersonsDataSource::allContacts()
-{
-    KABC::Addressee::Map contacts;
-    Q_FOREACH(const QString &key, d->contacts.keys()) {
-        contacts.insert(key, contact(key));
-    }
-    return contacts;
-}
-
-const KABC::Addressee IMPersonsDataSource::contact(const QString &contactId)
-{
-    KABC::Addressee vcard;
-
-    qDebug() << "running ktp datasource" << contactId;
-    KTp::ContactPtr contact = d->contacts[contactId];
-    if (contact) {
-        vcard.setFormattedName(contact->alias());
-        vcard.insertCustom(QLatin1String("telepathy"), QLatin1String("contactId"), contact->id());
-//         vcard.insertCustom("telepathy", "accountId", contact->id());
-        vcard.setPhoto(KABC::Picture(contact->avatarData().fileName));
-    }
-    return vcard;
-}
-
-void IMPersonsDataSource::onAccountManagerReady(Tp::PendingOperation *op)
+void KTpAllContacts::onAccountManagerReady(Tp::PendingOperation *op)
 {
     if (op->isError()) {
         kWarning() << "Failed to initialize AccountManager:" << op->errorName();
@@ -131,42 +87,94 @@ void IMPersonsDataSource::onAccountManagerReady(Tp::PendingOperation *op)
 
     kDebug() << "Account manager ready";
 
-    d->contactManager = new KTp::GlobalContactManager(d->accountManager, this);
-    connect(d->contactManager, SIGNAL(allKnownContactsChanged(Tp::Contacts,Tp::Contacts)),
+    m_contactManager = new KTp::GlobalContactManager(m_accountManager, this);
+    connect(m_contactManager, SIGNAL(allKnownContactsChanged(Tp::Contacts,Tp::Contacts)),
             this, SLOT(onAllKnownContactsChanged(Tp::Contacts,Tp::Contacts)));
 
-    d->onAllKnownContactsChanged(d->contactManager->allKnownContacts(), Tp::Contacts());
+    onAllKnownContactsChanged(m_contactManager->allKnownContacts(), Tp::Contacts());
 }
 
-void IMPersonsDataSource::onContactChanged()
+void KTpAllContacts::onAllKnownContactsChanged(const Tp::Contacts &contactsAdded, const Tp::Contacts &contactsRemoved)
+{
+    if (!m_contacts.isEmpty()) {
+        Q_FOREACH (const Tp::ContactPtr &contact, contactsRemoved) {
+            m_contacts.remove(contact->id());
+            Q_EMIT contactRemoved(contact->id());
+        }
+    }
+
+    Q_FOREACH (const Tp::ContactPtr &contact, contactsAdded) {
+        KTp::ContactPtr ktpContact = KTp::ContactPtr::qObjectCast(contact);
+        m_contacts.insert(contact->id(), ktpContact);
+        QString contactId = contact->id();
+        Q_EMIT contactAdded(contactId, contactToAddressee(contactId));
+
+        connect(ktpContact.data(), SIGNAL(presenceChanged(Tp::Presence)),
+                this, SLOT(onContactChanged()));
+
+        connect(ktpContact.data(), SIGNAL(capabilitiesChanged(Tp::ContactCapabilities)),
+                this, SLOT(onContactChanged()));
+
+        connect(ktpContact.data(), SIGNAL(invalidated()),
+                this, SLOT(onContactInvalidated()));
+    }
+}
+
+void KTpAllContacts::onContactChanged()
 {
     QString id = qobject_cast<Tp::Contact*>(sender())->id();
 
-    Q_EMIT contactChanged(id);
+    Q_EMIT contactChanged(id, contactToAddressee(id));
 }
 
-void IMPersonsDataSource::onContactInvalidated()
+void KTpAllContacts::onContactInvalidated()
 {
     QString id = qobject_cast<Tp::Contact*>(sender())->id();
 
-    d->contacts.remove(id);
+    m_contacts.remove(id);
 
-    Q_EMIT contactChanged(id);
+    Q_EMIT contactChanged(id, contactToAddressee(id));
 }
 
-KTp::ContactPtr IMPersonsDataSource::contactForContactId(const QString &contactId) const
+KABC::Addressee::Map KTpAllContacts::contacts()
 {
-    return d->contacts.value(contactId);
+    KABC::Addressee::Map contactMap;
+    Q_FOREACH(const QString &key, m_contacts.keys()) {
+        contactMap.insert(key, contactToAddressee(key));
+    }
+    kDebug() << contactMap.keys().size();
+    return contactMap;
 }
 
-Tp::AccountPtr IMPersonsDataSource::accountForContact(const KTp::ContactPtr &contact) const
+KABC::Addressee KTpAllContacts::contactToAddressee(const QString &contactId) const
 {
-    return d->contactManager->accountForContact(contact);
+    KABC::Addressee vcard;
+
+    qDebug() << "running ktp datasource" << contactId;
+    KTp::ContactPtr contact = m_contacts[contactId];
+    if (contact) {
+        vcard.setFormattedName(contact->alias());
+        vcard.insertCustom(QLatin1String("telepathy"), QLatin1String("contactId"), contact->id());
+        vcard.insertCustom(QLatin1String("telepathy"), QLatin1String("presence"), contact->presence().status());
+        //         vcard.insertCustom("telepathy", "accountId", contact->id());
+        vcard.setPhoto(KABC::Picture(contact->avatarData().fileName));
+    }
+    return vcard;
 }
 
-Tp::AccountManagerPtr IMPersonsDataSource::accountManager() const
+IMPersonsDataSource::IMPersonsDataSource(QObject *parent, const QVariantList &args)
+    : BasePersonsDataSource(parent)
 {
-    return d->accountManager;
+    Q_UNUSED(args);
+}
+
+IMPersonsDataSource::~IMPersonsDataSource()
+{
+}
+
+AllContactsMonitor* IMPersonsDataSource::createAllContactsMonitor()
+{
+    return new KTpAllContacts();
 }
 
 #include "im-persons-data-source.moc"
