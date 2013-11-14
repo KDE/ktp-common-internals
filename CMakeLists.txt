@@ -17,6 +17,7 @@ find_package (KDE4 REQUIRED)
 find_package (TelepathyQt4 0.9.2.1 REQUIRED)
 find_package (TelepathyLoggerQt4 QUIET)
 find_package (KPeople QUIET)
+find_package (KdepimLibs REQUIRED)
 
 # set some default settings
 include (KDE4Defaults)
