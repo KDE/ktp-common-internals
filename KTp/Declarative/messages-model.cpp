@@ -155,11 +155,11 @@ void MessagesModel::onHistoryFetched(const QList<KTp::Message> &messages)
     kDebug() << "found" << messages.count() << "messages in history";
     if (!messages.isEmpty()) {
         //Add all messages before the ones already present in the channel
+        beginInsertRows(QModelIndex(), 0, messages.count() - 1);
         for(int i=messages.size()-1;i>=0;i--) {
-            beginInsertRows(QModelIndex(), 0, 0);
             d->messages.prepend(messages[i]);
-            endInsertRows();
         }
+        endInsertRows();
     }
 }
 
