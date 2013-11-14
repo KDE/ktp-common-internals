@@ -22,12 +22,16 @@
 #include <QLabel>
 #include <QApplication>
 #include <QStyle>
+#include <QVBoxLayout>
 
 #include <KLocalizedString>
 #include <KPluginFactory>
+#include <KABC/Addressee>
 
 #include <KPeople/PersonData>
-#include <kpeople/personpluginmanager.h> //no pretty include exists at time of writing.
+#include <TelepathyQt/AccountManager>
+#include <KTp/core.h>
+
 
 #include "KTp/im-persons-data-source.h"
 
@@ -36,55 +40,48 @@ K_EXPORT_PLUGIN( ImDetailsWidgetFactory("imdetailswidgetplugin", "ktp-common-int
 
 using namespace KPeople;
 
-ImDetailsWidget::ImDetailsWidget(QWidget *parent, const QVariantList &args):
-    AbstractPersonDetailsWidget(parent),
-    m_layout(new QGridLayout(this))
+ImDetailsWidget::ImDetailsWidget(QObject* parent, const QVariantList& args)
 {
-    Q_UNUSED(args);
-    setTitle(i18n("Instant Messaging Accounts"));
-    setIcon(QIcon::fromTheme(QLatin1String("telepathy-kde")));
 
-    setLayout(m_layout);
 }
 
-void ImDetailsWidget::setPerson(PersonData *person)
+QString ImDetailsWidget::label() const
 {
-    const QStringList &imAccounts = person->imAccounts();
+    return i18n("IM");
+}
 
-    //remove all existing widgets
-    QLayoutItem *child;
-    while ((child = m_layout->takeAt(0)) != 0) {
-        delete child->widget();
-        delete child;
-    }
+QWidget* ImDetailsWidget::createDetailsWidget(const KABC::Addressee& person, const KABC::AddresseeList &contacts, QWidget* parent) const
+{
+    QWidget *root = new QWidget(parent);
+    QGridLayout *layout = new QGridLayout(root);
+    root->setLayout(layout);
 
-    if (imAccounts.isEmpty()) {
-        setActive(false);
-        return;
-    } else {
-        setActive(true);
-    }
+    int row = 0;
+    Q_FOREACH(const KABC::Addressee &contact, contacts) {
+        const QString contactId = contact.custom(QLatin1String("telepathy"), QLatin1String("contactId"));
+        const QString accountPath = contact.custom(QLatin1String("telepathy"), QLatin1String("accountPath")); //probably unused till we fix everything properly
 
-    //fetch KTp::ContactPtr for the contact ID from KTp
-    //display presence and address in grid
-    IMPersonsDataSource *dataSource = dynamic_cast<IMPersonsDataSource*>(KPeople::PersonPluginManager::presencePlugin());
-    for (int i=0; i<imAccounts.size(); i++) {
-        const QString &contactId = imAccounts[i];
-        KTp::ContactPtr contact = dataSource->contactForContactId(contactId);
-        KTp::Presence presence;
-        if (contact) {
-            presence = contact->presence();
-        } else {
-            presence = KTp::Presence(Tp::Presence::offline());
+        Tp::AccountPtr account = KTp::accountManager()->accountForPath(accountPath);
+        if (!account) {
+            continue;
         }
 
-        QLabel *iconLabel = new QLabel(this);
-        const int iconSize = style()->pixelMetric(QStyle::PM_SmallIconSize);
-        iconLabel->setPixmap(presence.icon().pixmap(iconSize, iconSize));
-        m_layout->addWidget(iconLabel, i, 0);
+        QLabel *iconLabel = new QLabel(root);
+        const int iconSize = root->style()->pixelMetric(QStyle::PM_SmallIconSize);
+        iconLabel->setPixmap(QIcon::fromTheme(account->iconName()).pixmap(iconSize, iconSize));
+        layout->addWidget(iconLabel, row, 0);
 
-        QLabel *label = new QLabel(contactId, this);
+        QLabel *label = new QLabel(contactId, root);
         label->setTextInteractionFlags(Qt::TextSelectableByMouse);
-        m_layout->addWidget(label, i, 1);
+        layout->addWidget(label, row, 1);
+        qDebug() << contactId;
+        row++;
+        //FUTURE - presence here + blocked + presence subscription
+    }
+    if (layout->count()) {
+        return root;
+    } else {
+        return 0;
     }
 }
+
