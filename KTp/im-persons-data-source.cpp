@@ -57,9 +57,6 @@ private Q_SLOTS:
 
 private:
     KABC::Addressee contactToAddressee(const QString &contactId) const;
-
-    KTp::GlobalContactManager *m_contactManager;
-    Tp::AccountManagerPtr m_accountManager;
     QHash<QString, KTp::ContactPtr> m_contacts;
 };
 
@@ -67,8 +64,7 @@ KTpAllContacts::KTpAllContacts()
 {
     Tp::registerTypes();
 
-    m_accountManager = KTp::accountManager();
-    connect(m_accountManager->becomeReady(), SIGNAL(finished(Tp::PendingOperation*)),
+    connect(KTp::accountManager()->becomeReady(), SIGNAL(finished(Tp::PendingOperation*)),
             this, SLOT(onAccountManagerReady(Tp::PendingOperation*)));
 }
 
@@ -87,11 +83,10 @@ void KTpAllContacts::onAccountManagerReady(Tp::PendingOperation *op)
 
     kDebug() << "Account manager ready";
 
-    m_contactManager = new KTp::GlobalContactManager(m_accountManager, this);
-    connect(m_contactManager, SIGNAL(allKnownContactsChanged(Tp::Contacts,Tp::Contacts)),
+    connect(KTp::contactManager(), SIGNAL(allKnownContactsChanged(Tp::Contacts,Tp::Contacts)),
             this, SLOT(onAllKnownContactsChanged(Tp::Contacts,Tp::Contacts)));
 
-    onAllKnownContactsChanged(m_contactManager->allKnownContacts(), Tp::Contacts());
+    onAllKnownContactsChanged(KTp::contactManager()->allKnownContacts(), Tp::Contacts());
 }
 
 void KTpAllContacts::onAllKnownContactsChanged(const Tp::Contacts &contactsAdded, const Tp::Contacts &contactsRemoved)
@@ -150,7 +145,7 @@ KABC::Addressee KTpAllContacts::contactToAddressee(const QString &contactId) con
 {
     KABC::Addressee vcard;
     KTp::ContactPtr contact = m_contacts[contactId];
-    Tp::AccountPtr account = m_contactManager->accountForContact(contact);
+    Tp::AccountPtr account = KTp::contactManager()->accountForContact(contact);
     if (contact && account) {
         vcard.setFormattedName(contact->alias());
         vcard.insertCustom(QLatin1String("telepathy"), QLatin1String("contactId"), contact->id());
