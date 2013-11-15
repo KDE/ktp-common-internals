@@ -45,7 +45,7 @@ if (KPEOPLE_FOUND)
     set (ktp_models_private_LIBS
          ${ktp_models_private_LIBS}
          ${KPEOPLE_LIBS}
-         ${NEPOMUK_CORE_LIBRARY}
+         ${KDEPIMLIBS_KABC_LIBS}
          )
 endif (KPEOPLE_FOUND)
 
