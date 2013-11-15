@@ -24,6 +24,8 @@
 
 namespace KTp
 {
+class GlobalContactManager;
+
     KTP_EXPORT bool kpeopleEnabled();
 
 
@@ -38,4 +40,6 @@ namespace KTp
         It is best not to use this method. It's only half complete.
      */
     KTP_EXPORT Tp::AccountManagerPtr accountManager();
+
+    KTP_EXPORT KTp::GlobalContactManager* contactManager();
 }
