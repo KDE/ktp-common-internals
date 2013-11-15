@@ -27,8 +27,9 @@
 #include <TelepathyQt/TextChannel>
 #include <TelepathyQt/Account>
 
-#include "KTp/message-processor.h"
-#include "KTp/message.h"
+#include <KTp/message-processor.h>
+#include <KTp/message-context.h>
+#include <KTp/Logger/scrollback-manager.h>
 
 class MessagePrivate
 {
@@ -51,10 +52,12 @@ class MessagesModel::MessagesModelPrivate
   public:
     Tp::TextChannelPtr textChannel;
     Tp::AccountPtr account;
+    ScrollbackManager *logManager;
     QList<MessagePrivate> messages;
     // For fast lookup of original messages upon receipt of a message delivery report.
     QHash<QString /*messageToken*/, QPersistentModelIndex> messagesByMessageToken;
     bool visible;
+    bool logsLoaded;
 };
 
 MessagesModel::MessagesModel(const Tp::AccountPtr &account, QObject *parent) :
@@ -76,6 +79,15 @@ MessagesModel::MessagesModel(const Tp::AccountPtr &account, QObject *parent) :
 
     d->account = account;
     d->visible = false;
+
+    d->logManager = new ScrollbackManager(this);
+    d->logsLoaded = false;
+    connect(d->logManager, SIGNAL(fetched(QList<KTp::Message>)), SLOT(onHistoryFetched(QList<KTp::Message>)));
+
+    //Load configuration for number of message to show
+    KConfig config(QLatin1String("ktelepathyrc"));
+    KConfigGroup tabConfig = config.group("Behavior");
+    d->logManager->setScrollbackLength(tabConfig.readEntry<int>("scrollbackLength", 10));
 }
 
 Tp::TextChannelPtr MessagesModel::textChannel() const
@@ -120,6 +132,13 @@ void MessagesModel::setTextChannel(const Tp::TextChannelPtr &channel)
 
     d->textChannel = channel;
 
+    d->logManager->setTextChannel(d->account, d->textChannel);
+
+    //Load messages unless they have already been loaded
+    if(!d->logsLoaded) {
+        d->logManager->fetchScrollback();
+    }
+
     QList<Tp::ReceivedMessage> messageQueue = channel->messageQueue();
     Q_FOREACH(const Tp::ReceivedMessage &message, messageQueue) {
         bool messageAlreadyInModel = false;
@@ -135,6 +154,20 @@ void MessagesModel::setTextChannel(const Tp::TextChannelPtr &channel)
             onMessageReceived(message);
         }
     }
+}
+
+void MessagesModel::onHistoryFetched(const QList<KTp::Message> &messages)
+{
+    kDebug() << "found" << messages.count() << "messages in history";
+    if (!messages.isEmpty()) {
+        //Add all messages before the ones already present in the channel
+        beginInsertRows(QModelIndex(), 0, messages.count() - 1);
+        for(int i=messages.size()-1;i>=0;i--) {
+            d->messages.prepend(messages[i]);
+        }
+        endInsertRows();
+    }
+    d->logsLoaded = true;
 }
 
 void MessagesModel::onMessageReceived(const Tp::ReceivedMessage &message)

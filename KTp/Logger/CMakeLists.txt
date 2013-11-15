@@ -20,6 +20,7 @@ set (ktp_logger_private_SRCS
     pending-logger-operation.cpp
     pending-logger-search.cpp
     pending-logger-search-impl.cpp
+    scrollback-manager.cpp
 )
 
 set (ktp_logger_private_HDRS
@@ -33,6 +34,7 @@ set (ktp_logger_private_HDRS
     pending-logger-logs.h
     pending-logger-operation.h
     pending-logger-search.h
+    scrollback-manager.h
 )
 
 kde4_add_library (ktploggerprivate SHARED
