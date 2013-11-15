@@ -47,16 +47,7 @@ CorePrivate::CorePrivate()
 {
     //if built with kpeople support, enable kpeople if Nepomuk is running
     #ifdef HAVE_KPEOPLE
-    if (Nepomuk2::ResourceManager::instance()->initialized()) {
-        QDBusInterface nepomukServer(QLatin1String("org.kde.NepomukServer"), QLatin1String("/servicemanager"), QLatin1String("org.kde.nepomuk.ServiceManager"));
-        QDBusReply<bool> reply = nepomukServer.call(QLatin1String("startService"), QLatin1String("nepomuktelepathyservice"));
-        if (reply.isValid()) {
-            if (reply.value()) {
-                m_kPeopleEnabled = true;
-            }
-        }
-    }
-    //else if it can't be started, or nepomukServer doesn't reply leave it disabled.
+    m_kPeopleEnabled = true;
     #endif
 
     Tp::AccountFactoryPtr  accountFactory = Tp::AccountFactory::create(QDBusConnection::sessionBus(),
