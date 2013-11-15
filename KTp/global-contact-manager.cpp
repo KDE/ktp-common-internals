@@ -140,6 +140,9 @@ void GlobalContactManager::onContactManagerStateChanged(const Tp::ContactManager
 
 Tp::AccountPtr GlobalContactManager::accountForContact(const Tp::ContactPtr &contact) const
 {
+    if (!contact->manager()) {
+        return Tp::AccountPtr();
+    }
     return accountForConnection(contact->manager()->connection());
 }
 
