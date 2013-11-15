@@ -22,12 +22,14 @@
 #include <KPeople/PersonsModel>
 
 #include <kpeople/personpluginmanager.h>
+#include <kpeople/global.h>
 
 #include "KTp/im-persons-data-source.h"
 #include "KTp/types.h"
 
 #include <KDebug>
 #include <KIconLoader>
+#include <KABC/Addressee>
 
 #include <QPixmapCache>
 
@@ -56,16 +58,25 @@ QVariant KPeopleTranslationProxy::data(const QModelIndex &proxyIndex, int role) 
 //         return QVariant();
 //     }
 //
-//     switch (role) {
-//         case KTp::ContactPresenceTypeRole:
-//             return translatePresence(mapToSource(proxyIndex).data(PersonsModel::PresenceTypeRole));
-//         case KTp::ContactPresenceIconRole:
-//             return mapToSource(proxyIndex).data(PersonsModel::PresenceIconNameRole);
+    KABC::Addressee contact = mapToSource(proxyIndex).data(KPeople::PersonsModel::PersonVCardRole).value<KABC::Addressee>();
+
+    switch (role) {
+        case KTp::ContactPresenceTypeRole:
+            return translatePresence(contact.custom(QLatin1String("telepathy"), QLatin1String("presence")));
+        case KTp::ContactPresenceIconRole:
+            return KPeople::iconForPresenceString(contact.custom(QLatin1String("telepathy"), QLatin1String("presence")));
 //         case KTp::ContactPresenceNameRole:
 //             return mapToSource(proxyIndex).data(PersonsModel::PresenceDisplayRole);
-//         case Qt::DisplayRole:
-//             return mapToSource(proxyIndex).data(Qt::DisplayRole);
-//         case KTp::RowTypeRole:
+        case Qt::DisplayRole:
+            return mapToSource(proxyIndex).data(KPeople::PersonsModel::FormattedNameRole);
+        case KTp::RowTypeRole:
+            if (mapToSource(proxyIndex).data(KPeople::PersonsModel::PersonIdRole)
+                        .toString().startsWith((QLatin1String("kpeople://")))) {
+
+                return KTp::PersonRowType;
+            } else {
+                return KTp::ContactRowType;
+            }
 //             //if the person has max 1 child, it's a fake person, so treat it as contact row
 //             if (mapToSource(proxyIndex).parent().isValid() || sourceModel()->rowCount(mapToSource(proxyIndex)) <= 1) {
 //                 return KTp::ContactRowType;
@@ -74,17 +85,17 @@ QVariant KPeopleTranslationProxy::data(const QModelIndex &proxyIndex, int role) 
 //             }
 //         case KTp::ContactAvatarPathRole:
 //             return mapToSource(proxyIndex).data(PersonsModel::PhotosRole);
-//         case KTp::ContactAvatarPixmapRole:
-//             return contactPixmap(proxyIndex);
-//         case KTp::IdRole:
-//             return mapToSource(proxyIndex).data(PersonsModel::IMsRole);
+        case KTp::ContactAvatarPixmapRole:
+            return contactPixmap(proxyIndex);
+        case KTp::IdRole:
+            return contact.custom(QLatin1String("telepathy"), QLatin1String("contactId"));
 //         case KTp::HeaderTotalUsersRole:
 //             return sourceModel()->rowCount(mapToSource(proxyIndex));
 //         case KTp::ContactGroupsRole:
 //             return mapToSource(proxyIndex).data(PersonsModel::GroupsRole);
 //         case KTp::NepomukUriRole:
 //             return mapToSource(proxyIndex).data(PersonsModel::UriRole);
-//     }
+    }
 //
 //     int j = sourceModel()->rowCount(mapToSource(proxyIndex));
 //
@@ -186,7 +197,7 @@ QPixmap KPeopleTranslationProxy::contactPixmap(const QModelIndex &index) const
     int presenceType = index.data(KTp::ContactPresenceTypeRole).toInt();
     //we need some ID to generate proper cache key for this contact
     //so we'll use the contact's uri
-    const QString id = index.data(KTp::NepomukUriRole).toString();
+    const QString id = index.data(KTp::IdRole).toString();
 
     //key for the pixmap cache, so we can look up the avatar
     const QString keyCache = id + (presenceType == Tp::ConnectionPresenceTypeOffline ? QLatin1String("-offline") : QLatin1String("-online"));
