@@ -29,6 +29,7 @@
 #include <KGlobal>
 
 #include <TelepathyQt/AccountManager>
+#include <KTp/global-contact-manager.h>
 #include "contact-factory.h"
 
 class CorePrivate
@@ -37,10 +38,12 @@ public:
     CorePrivate();
     bool m_kPeopleEnabled;
     Tp::AccountManagerPtr m_accountManager;
+    KTp::GlobalContactManager *m_contactManager;
 };
 
 CorePrivate::CorePrivate()
-    : m_kPeopleEnabled(false)
+    : m_kPeopleEnabled(false),
+      m_contactManager(0)
 {
     //if built with kpeople support, enable kpeople if Nepomuk is running
     #ifdef HAVE_KPEOPLE
@@ -91,4 +94,13 @@ bool KTp::kpeopleEnabled()
 Tp::AccountManagerPtr KTp::accountManager()
 {
     return s_instance->m_accountManager;
+}
+
+KTp::GlobalContactManager* KTp::contactManager()
+{
+    if (!s_instance->m_contactManager) {
+        s_instance->m_contactManager = new KTp::GlobalContactManager(s_instance->m_accountManager, 0);
+    }
+
+    return s_instance->m_contactManager;
 }
