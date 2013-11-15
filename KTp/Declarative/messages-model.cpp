@@ -57,6 +57,7 @@ class MessagesModel::MessagesModelPrivate
     // For fast lookup of original messages upon receipt of a message delivery report.
     QHash<QString /*messageToken*/, QPersistentModelIndex> messagesByMessageToken;
     bool visible;
+    bool logsLoaded;
 };
 
 MessagesModel::MessagesModel(const Tp::AccountPtr &account, QObject *parent) :
@@ -80,6 +81,7 @@ MessagesModel::MessagesModel(const Tp::AccountPtr &account, QObject *parent) :
     d->visible = false;
 
     d->logManager = new ScrollbackManager(this);
+    d->logsLoaded = false;
     connect(d->logManager, SIGNAL(fetched(QList<KTp::Message>)), SLOT(onHistoryFetched(QList<KTp::Message>)));
 
     //Load configuration for number of message to show
@@ -131,7 +133,11 @@ void MessagesModel::setTextChannel(const Tp::TextChannelPtr &channel)
     d->textChannel = channel;
 
     d->logManager->setTextChannel(d->account, d->textChannel);
-    d->logManager->fetchScrollback();
+
+    //Load messages unless they have already been loaded
+    if(!d->logsLoaded) {
+        d->logManager->fetchScrollback();
+    }
 
     QList<Tp::ReceivedMessage> messageQueue = channel->messageQueue();
     Q_FOREACH(const Tp::ReceivedMessage &message, messageQueue) {
@@ -161,6 +167,7 @@ void MessagesModel::onHistoryFetched(const QList<KTp::Message> &messages)
         }
         endInsertRows();
     }
+    d->logsLoaded = true;
 }
 
 void MessagesModel::onMessageReceived(const Tp::ReceivedMessage &message)
