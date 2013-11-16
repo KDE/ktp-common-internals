@@ -91,8 +91,8 @@ QVariant KPeopleTranslationProxy::data(const QModelIndex &proxyIndex, int role) 
             return contact.custom(QLatin1String("telepathy"), QLatin1String("contactId"));
 //         case KTp::HeaderTotalUsersRole:
 //             return sourceModel()->rowCount(mapToSource(proxyIndex));
-//         case KTp::ContactGroupsRole:
-//             return mapToSource(proxyIndex).data(PersonsModel::GroupsRole);
+        case KTp::ContactGroupsRole:
+            return mapToSource(proxyIndex).data(PersonsModel::GroupsRole);
 //         case KTp::NepomukUriRole:
 //             return mapToSource(proxyIndex).data(PersonsModel::UriRole);
     }

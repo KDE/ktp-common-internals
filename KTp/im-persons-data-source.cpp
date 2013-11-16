@@ -148,6 +148,7 @@ KABC::Addressee KTpAllContacts::contactToAddressee(const QString &contactId) con
     Tp::AccountPtr account = KTp::contactManager()->accountForContact(contact);
     if (contact && account) {
         vcard.setFormattedName(contact->alias());
+        vcard.setCategories(contact->groups());
         vcard.insertCustom(QLatin1String("telepathy"), QLatin1String("contactId"), contact->id());
         vcard.insertCustom(QLatin1String("telepathy"), QLatin1String("accountPath"), account->objectPath());
         vcard.insertCustom(QLatin1String("telepathy"), QLatin1String("presence"), contact->presence().status());
