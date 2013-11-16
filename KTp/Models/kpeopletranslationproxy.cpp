@@ -70,12 +70,10 @@ QVariant KPeopleTranslationProxy::data(const QModelIndex &proxyIndex, int role) 
         case Qt::DisplayRole:
             return mapToSource(proxyIndex).data(KPeople::PersonsModel::FormattedNameRole);
         case KTp::RowTypeRole:
-            if (mapToSource(proxyIndex).data(KPeople::PersonsModel::PersonIdRole)
-                        .toString().startsWith((QLatin1String("kpeople://")))) {
-
-                return KTp::PersonRowType;
-            } else {
+            if (proxyIndex.parent().isValid() || sourceModel()->rowCount(mapToSource(proxyIndex)) <= 1) {
                 return KTp::ContactRowType;
+            } else {
+                return KTp::PersonRowType;
             }
 //             //if the person has max 1 child, it's a fake person, so treat it as contact row
 //             if (mapToSource(proxyIndex).parent().isValid() || sourceModel()->rowCount(mapToSource(proxyIndex)) <= 1) {
