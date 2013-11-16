@@ -58,7 +58,7 @@ QVariant KPeopleTranslationProxy::data(const QModelIndex &proxyIndex, int role) 
 //         return QVariant();
 //     }
 //
-    KABC::Addressee contact = mapToSource(proxyIndex).data(KPeople::PersonsModel::PersonVCardRole).value<KABC::Addressee>();
+    const KABC::Addressee &contact = mapToSource(proxyIndex).data(KPeople::PersonsModel::PersonVCardRole).value<KABC::Addressee>();
 
     switch (role) {
         case KTp::ContactPresenceTypeRole:
@@ -72,6 +72,7 @@ QVariant KPeopleTranslationProxy::data(const QModelIndex &proxyIndex, int role) 
         case KTp::RowTypeRole:
             if (mapToSource(proxyIndex).data(KPeople::PersonsModel::PersonIdRole)
                         .toString().startsWith((QLatin1String("kpeople://")))) {
+
                 return KTp::PersonRowType;
             } else {
                 return KTp::ContactRowType;
