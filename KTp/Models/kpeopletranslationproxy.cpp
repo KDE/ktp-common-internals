@@ -72,7 +72,6 @@ QVariant KPeopleTranslationProxy::data(const QModelIndex &proxyIndex, int role) 
         case KTp::RowTypeRole:
             if (mapToSource(proxyIndex).data(KPeople::PersonsModel::PersonIdRole)
                         .toString().startsWith((QLatin1String("kpeople://")))) {
-
                 return KTp::PersonRowType;
             } else {
                 return KTp::ContactRowType;
@@ -86,7 +85,7 @@ QVariant KPeopleTranslationProxy::data(const QModelIndex &proxyIndex, int role) 
 //         case KTp::ContactAvatarPathRole:
 //             return mapToSource(proxyIndex).data(PersonsModel::PhotosRole);
         case KTp::ContactAvatarPixmapRole:
-            return contactPixmap(proxyIndex);
+            return mapToSource(proxyIndex).data(KPeople::PersonsModel::PhotoRole);
         case KTp::IdRole:
             return contact.custom(QLatin1String("telepathy"), QLatin1String("contactId"));
 //         case KTp::HeaderTotalUsersRole:
