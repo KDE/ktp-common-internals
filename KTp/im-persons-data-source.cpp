@@ -56,7 +56,8 @@ private Q_SLOTS:
     void onAllKnownContactsChanged(const Tp::Contacts &contactsAdded, const Tp::Contacts &contactsRemoved);
 
 private:
-    KABC::Addressee contactToAddressee(const QString &contactId) const;
+    QString createUri(const Tp::ContactPtr &contact) const;
+    KABC::Addressee contactToAddressee(const Tp::ContactPtr &contact) const;
     QHash<QString, KTp::ContactPtr> m_contacts;
 };
 
@@ -70,6 +71,11 @@ KTpAllContacts::KTpAllContacts()
 
 KTpAllContacts::~KTpAllContacts()
 {
+}
+
+QString KTpAllContacts::createUri(const Tp::ContactPtr &contact) const
+{
+    return QLatin1String("ktp://") + contact->id();
 }
 
 void KTpAllContacts::onAccountManagerReady(Tp::PendingOperation *op)
@@ -94,15 +100,14 @@ void KTpAllContacts::onAllKnownContactsChanged(const Tp::Contacts &contactsAdded
     if (!m_contacts.isEmpty()) {
         Q_FOREACH (const Tp::ContactPtr &contact, contactsRemoved) {
             m_contacts.remove(contact->id());
-            Q_EMIT contactRemoved(contact->id());
+            Q_EMIT contactRemoved(createUri(contact));
         }
     }
 
     Q_FOREACH (const Tp::ContactPtr &contact, contactsAdded) {
         KTp::ContactPtr ktpContact = KTp::ContactPtr::qObjectCast(contact);
         m_contacts.insert(contact->id(), ktpContact);
-        QString contactId = contact->id();
-        Q_EMIT contactAdded(contactId, contactToAddressee(contactId));
+        Q_EMIT contactAdded(createUri(ktpContact), contactToAddressee(ktpContact));
 
         connect(ktpContact.data(), SIGNAL(presenceChanged(Tp::Presence)),
                 this, SLOT(onContactChanged()));
@@ -117,34 +122,30 @@ void KTpAllContacts::onAllKnownContactsChanged(const Tp::Contacts &contactsAdded
 
 void KTpAllContacts::onContactChanged()
 {
-    QString id = qobject_cast<Tp::Contact*>(sender())->id();
-
-    Q_EMIT contactChanged(id, contactToAddressee(id));
+    const Tp::ContactPtr contact(qobject_cast<Tp::Contact*>(sender()));
+    Q_EMIT contactChanged(createUri(contact), contactToAddressee(contact));
 }
 
 void KTpAllContacts::onContactInvalidated()
 {
-    QString id = qobject_cast<Tp::Contact*>(sender())->id();
-
-    m_contacts.remove(id);
-
-    Q_EMIT contactChanged(id, contactToAddressee(id));
+    const Tp::ContactPtr contact(qobject_cast<Tp::Contact*>(sender()));
+    Q_EMIT contactChanged(createUri(contact), contactToAddressee(contact));
+    m_contacts.remove(contact->id());
 }
 
 KABC::Addressee::Map KTpAllContacts::contacts()
 {
     KABC::Addressee::Map contactMap;
-    Q_FOREACH(const QString &key, m_contacts.keys()) {
-        contactMap.insert(key, contactToAddressee(key));
+    Q_FOREACH(const Tp::ContactPtr &contact, m_contacts.values()) {
+        contactMap.insert(createUri(contact), contactToAddressee(contact));
     }
     kDebug() << contactMap.keys().size();
     return contactMap;
 }
 
-KABC::Addressee KTpAllContacts::contactToAddressee(const QString &contactId) const
+KABC::Addressee KTpAllContacts::contactToAddressee(const Tp::ContactPtr &contact) const
 {
     KABC::Addressee vcard;
-    KTp::ContactPtr contact = m_contacts[contactId];
     Tp::AccountPtr account = KTp::contactManager()->accountForContact(contact);
     if (contact && account) {
         vcard.setFormattedName(contact->alias());
