@@ -64,7 +64,7 @@ QVariant KPeopleTranslationProxy::data(const QModelIndex &proxyIndex, int role) 
         case KTp::ContactPresenceTypeRole:
             return translatePresence(contact.custom(QLatin1String("telepathy"), QLatin1String("presence")));
         case KTp::ContactPresenceIconRole:
-            return KPeople::iconForPresenceString(contact.custom(QLatin1String("telepathy"), QLatin1String("presence")));
+            return KPeople::iconNameForPresenceString(contact.custom(QLatin1String("telepathy"), QLatin1String("presence")));
 //         case KTp::ContactPresenceNameRole:
 //             return mapToSource(proxyIndex).data(PersonsModel::PresenceDisplayRole);
         case Qt::DisplayRole:
