@@ -27,6 +27,7 @@
 #include <TelepathyQt/ContactManager>
 
 #include <KTp/ktp-export.h>
+#include <KTp/contact.h>
 
 namespace KTp {
 
@@ -43,6 +44,8 @@ public:
     Tp::AccountPtr accountForConnection(const Tp::ConnectionPtr &connection) const;
     Tp::AccountPtr accountForContact(const Tp::ContactPtr &contact) const;
     Tp::AccountPtr accountForAccountId(const QString &accountId) const;
+    Tp::AccountPtr accountForAccountPath(const QString &accountPath) const;
+    KTp::ContactPtr contactForContactId(const QString &accountPath, const QString &contactId);
 
 Q_SIGNALS:
     void allKnownContactsChanged(const Tp::Contacts &contactsAdded, const Tp::Contacts &contactsRemoved);
