@@ -172,3 +172,31 @@ Tp::AccountPtr GlobalContactManager::accountForAccountId(const QString &accountI
 
     return Tp::AccountPtr();
 }
+
+Tp::AccountPtr GlobalContactManager::accountForAccountPath(const QString &accountPath) const
+{
+    if (!d->accountManager.isNull() && d->accountManager->isReady()) {
+        return d->accountManager->accountForPath(accountPath);
+    }
+
+    return Tp::AccountPtr();
+}
+
+KTp::ContactPtr GlobalContactManager::contactForContactId(const QString &accountPath, const QString &contactId)
+{
+    if (!d->accountManager || accountPath.isEmpty()) {
+        return KTp::ContactPtr();
+    }
+
+    Tp::AccountPtr account = d->accountManager->accountForObjectPath(accountPath);
+    if (account->connection() && account->connection()->contactManager()) {
+        Tp::Contacts contactSet = account->connection()->contactManager()->allKnownContacts();
+        Q_FOREACH (const Tp::ContactPtr &contact, contactSet) {
+            if (contact->id() == contactId) {
+                return KTp::ContactPtr::qObjectCast(contact);
+            }
+        }
+    }
+
+    return KTp::ContactPtr();
+}
