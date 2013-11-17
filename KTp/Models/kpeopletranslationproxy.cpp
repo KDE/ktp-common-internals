@@ -38,8 +38,9 @@ using namespace KPeople;
 
 
 KPeopleTranslationProxy::KPeopleTranslationProxy(QObject *parent)
-    : QIdentityProxyModel(parent)
+    : QSortFilterProxyModel(parent)
 {
+    setDynamicSortFilter(true);
 }
 
 KPeopleTranslationProxy::~KPeopleTranslationProxy()
@@ -174,6 +175,13 @@ QVariant KPeopleTranslationProxy::dataForKTpContact(const QString &accountPath, 
     return QVariant();
 }
 
+bool KPeopleTranslationProxy::filterAcceptsRow(int source_row, const QModelIndex& source_parent) const
+{
+    QModelIndex sourceIndex = sourceModel()->index(source_row, 0, source_parent);
+
+    //if no valid presence (not even "offline") .. reject the contact
+    return !sourceIndex.data(KPeople::PersonsModel::PersonVCardRole).value<KABC::Addressee>().custom(QLatin1String("telepathy"), QLatin1String("presence")).isEmpty();
+}
 
 QVariant KPeopleTranslationProxy::translatePresence(const QVariant &presenceName) const
 {
