@@ -15,6 +15,7 @@ target_link_libraries (ktp_kpeople_plugin
     ${KPEOPLE_LIBS}
     ${KDE4_KFILE_LIBS}
     ktpcommoninternalsprivate
+    ${KDEPIMLIBS_KABC_LIBS}
 )
 
 # Install:
