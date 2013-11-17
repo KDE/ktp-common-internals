@@ -26,7 +26,9 @@ class KPeopleActionsPlugin : public KPeople::AbstractPersonPlugin
     Q_OBJECT
 public:
     KPeopleActionsPlugin(QObject *parent, const QVariantList &args);
-    virtual QList<QAction*> actionsForPerson(const KPeople::PersonDataPtr &personData, QObject *parent);
+    virtual QList<QAction*> actionsForPerson(const KABC::Addressee &person,
+                                             const KABC::AddresseeList &contacts,
+                                             QObject *parent) const;
 
 private Q_SLOTS:
     void onActionTriggered();
