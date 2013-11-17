@@ -26,6 +26,7 @@
 
 #include "KTp/im-persons-data-source.h"
 #include "KTp/types.h"
+#include <global-contact-manager.h>
 
 #include <KDebug>
 #include <KIconLoader>
@@ -94,74 +95,85 @@ QVariant KPeopleTranslationProxy::data(const QModelIndex &proxyIndex, int role) 
 //         case KTp::NepomukUriRole:
 //             return mapToSource(proxyIndex).data(PersonsModel::UriRole);
     }
-//
-//     int j = sourceModel()->rowCount(mapToSource(proxyIndex));
-//
-//
-//     KTp::ContactPtr contact;
-//
-//     if (j > 0) {
-//         KTp::ContactPtr mostOnlineContact;
-//
-//         Q_FOREACH(const QVariant &v, mapToSource(proxyIndex).data(PersonsModel::IMsRole).toList()) {
-//             KTp::ContactPtr c = imPlugin->contactForContactId(v.toString());
-//             if (mostOnlineContact.isNull() && !c.isNull()) {
-//                 mostOnlineContact = c;
-//                 continue;
-//             }
-//             if (!c.isNull()) {
-//                 if (c->presence() < mostOnlineContact->presence()) {
-//                     mostOnlineContact = c;
-//                 }
-//             }
-//         }
-//         contact = mostOnlineContact;
-//     } else if (j == 0) {
-//         contact = imPlugin->contactForContactId(mapToSource(proxyIndex).data(PersonsModel::IMsRole).toString());
-//     }
-//
-//     if (!contact.isNull()) {
-//         switch (role) {
-//             case KTp::AccountRole:
-//                 return QVariant::fromValue<Tp::AccountPtr>(imPlugin->accountForContact(contact));
-//                 break;
-//             case KTp::ContactRole:
-//                 return QVariant::fromValue<KTp::ContactPtr>(contact);
-//                 break;
-//             case KTp::ContactPresenceMessageRole:
-//                 return contact->presence().statusMessage();
-//                 break;
-//             case KTp::ContactIsBlockedRole:
-//                 return contact->isBlocked();
-//                 break;
-//             case KTp::ContactCanTextChatRole:
-//                 return true;
-//                 break;
-//             case KTp::ContactCanAudioCallRole:
-//                 return contact->audioCallCapability();
-//                 break;
-//             case KTp::ContactCanVideoCallRole:
-//                 return contact->videoCallCapability();
-//                 break;
-//             case KTp::ContactCanFileTransferRole:
-//                 return contact->fileTransferCapability();
-//                 break;
-//             case KTp::ContactClientTypesRole:
-//                 return contact->clientTypes();
-//                 break;
-//         }
-//     } else if (contact.isNull() && role == KTp::AccountRole) {
-//         QVariant accountPath = mapToSource(proxyIndex).data(PersonsModel::UserRole);
-//         if (accountPath.type() == QVariant::List) {
-//             return QVariant::fromValue<Tp::AccountPtr>(imPlugin->accountManager()->accountForObjectPath(accountPath.toList().first().toString()));
-//         } else {
-//             return QVariant::fromValue<Tp::AccountPtr>(imPlugin->accountManager()->accountForObjectPath(accountPath.toString()));
-//         }
-//     }
-// //     }
 
-    return mapToSource(proxyIndex).data(role);
+    const KABC::AddresseeList &contacts = mapToSource(proxyIndex).data(PersonsModel::ContactsVCardRole).value<KABC::AddresseeList>();
+
+    int mostOnlineIndex = 0;
+
+    for (int i = 0; i < contacts.size(); i++) {
+        if (KPeople::presenceSortPriority(contact.custom(QLatin1String("telepathy"), QLatin1String("presence")))
+            < KPeople::presenceSortPriority(contacts.at(mostOnlineIndex).custom(QLatin1String("telepathy"), QLatin1String("presence")))) {
+
+            mostOnlineIndex = i;
+        }
+    }
+
+    QVariant rValue;
+
+    if (contacts.size() == 0) {
+        rValue = dataForKTpContact(contact.custom(QLatin1String("telepathy"), QLatin1String("accountPath")),
+                                 contact.custom(QLatin1String("telepathy"), QLatin1String("contactId")),
+                                 role);
+    } else {
+        rValue = dataForKTpContact(contacts.at(mostOnlineIndex).custom(QLatin1String("telepathy"), QLatin1String("accountPath")),
+                                 contacts.at(mostOnlineIndex).custom(QLatin1String("telepathy"), QLatin1String("contactId")),
+                                 role);
+    }
+
+    if (rValue.isNull()) {
+        return mapToSource(proxyIndex).data(role);
+    } else {
+        return rValue;
+    }
 }
+
+QVariant KPeopleTranslationProxy::dataForKTpContact(const QString &accountPath, const QString &contactId, int role) const
+{
+    KTp::ContactPtr ktpContact = KTp::contactManager()->contactForContactId(accountPath, contactId);
+
+    if (!ktpContact.isNull()) {
+        switch (role) {
+        case KTp::AccountRole:
+            return QVariant::fromValue<Tp::AccountPtr>(KTp::contactManager()->accountForContact(ktpContact));
+            break;
+        case KTp::ContactRole:
+            return QVariant::fromValue<KTp::ContactPtr>(ktpContact);
+            break;
+        case KTp::ContactPresenceMessageRole:
+            return ktpContact->presence().statusMessage();
+            break;
+        case KTp::ContactIsBlockedRole:
+            return ktpContact->isBlocked();
+            break;
+        case KTp::ContactCanTextChatRole:
+            return true;
+            break;
+        case KTp::ContactCanAudioCallRole:
+            return ktpContact->audioCallCapability();
+            break;
+        case KTp::ContactCanVideoCallRole:
+            return ktpContact->videoCallCapability();
+            break;
+        case KTp::ContactCanFileTransferRole:
+            return ktpContact->fileTransferCapability();
+            break;
+        case KTp::ContactClientTypesRole:
+            return ktpContact->clientTypes();
+            break;
+        }
+    }
+    //     } else if (ktpContact.isNull() && role == KTp::AccountRole) {
+    //         QVariant accountPath = mapToSource(proxyIndex).data(PersonsModel::UserRole);
+    //         if (accountPath.type() == QVariant::List) {
+    //             return QVariant::fromValue<Tp::AccountPtr>(imPlugin->accountManager()->accountForObjectPath(accountPath.toList().first().toString()));
+    //         } else {
+    //             return QVariant::fromValue<Tp::AccountPtr>(imPlugin->accountManager()->accountForObjectPath(accountPath.toString()));
+    //         }
+    //     }
+    // //     }
+    return QVariant();
+}
+
 
 QVariant KPeopleTranslationProxy::translatePresence(const QVariant &presenceName) const
 {
