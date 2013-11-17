@@ -33,7 +33,7 @@ public:
     virtual ~KPeopleTranslationProxy();
 
     virtual QVariant data(const QModelIndex &proxyIndex, int role = Qt::DisplayRole) const;
-
+    QVariant dataForKTpContact(const QString &accountPath, const QString &contactId, int role) const;
 private:
     QVariant translatePresence(const QVariant &presenceName) const;
     QPixmap contactPixmap(const QModelIndex &index) const;
