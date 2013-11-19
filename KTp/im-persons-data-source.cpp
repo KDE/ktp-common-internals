@@ -117,6 +117,15 @@ void KTpAllContacts::onAllKnownContactsChanged(const Tp::Contacts &contactsAdded
 
         connect(ktpContact.data(), SIGNAL(invalidated()),
                 this, SLOT(onContactInvalidated()));
+
+        connect(ktpContact.data(), SIGNAL(avatarDataChanged(Tp::AvatarData)),
+                this, SLOT(onContactChanged()));
+
+        connect(ktpContact.data(), SIGNAL(addedToGroup(QString)),
+                this, SLOT(onContactChanged()));
+
+        connect(ktpContact.data(), SIGNAL(removedFromGroup(QString)),
+                this, SLOT(onContactChanged()));
     }
 }
 
