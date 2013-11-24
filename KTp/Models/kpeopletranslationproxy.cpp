@@ -93,7 +93,7 @@ QVariant KPeopleTranslationProxy::data(const QModelIndex &proxyIndex, int role) 
 //             return sourceModel()->rowCount(mapToSource(proxyIndex));
         case KTp::ContactGroupsRole:
             return mapToSource(proxyIndex).data(PersonsModel::GroupsRole);
-        case KTp::NepomukUriRole:
+        case KTp::PersonIdRole:
             return mapToSource(proxyIndex).data(PersonsModel::PersonIdRole);
     }
 
