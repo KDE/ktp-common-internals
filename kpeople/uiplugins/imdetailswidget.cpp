@@ -42,7 +42,8 @@ using namespace KPeople;
 
 ImDetailsWidget::ImDetailsWidget(QObject* parent, const QVariantList& args)
 {
-
+    Q_UNUSED(parent);
+    Q_UNUSED(args);
 }
 
 QString ImDetailsWidget::label() const
@@ -52,6 +53,7 @@ QString ImDetailsWidget::label() const
 
 QWidget* ImDetailsWidget::createDetailsWidget(const KABC::Addressee& person, const KABC::AddresseeList &contacts, QWidget* parent) const
 {
+    Q_UNUSED(person);
     QWidget *root = new QWidget(parent);
     QGridLayout *layout = new QGridLayout(root);
     root->setLayout(layout);
