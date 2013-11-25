@@ -24,35 +24,15 @@
 
 #include <TelepathyQt/Types>
 
-#include "KTp/contact.h"
 #include "KTp/ktp-export.h"
-
-namespace KTp { class GlobalContactManager; }
-namespace Tp { class PendingOperation; }
 
 class KTP_EXPORT IMPersonsDataSource : public KPeople::BasePersonsDataSource
 {
-    Q_OBJECT
 public:
     IMPersonsDataSource(QObject *parent, const QVariantList &data);
     virtual ~IMPersonsDataSource();
 
-    QVariant dataForContact(const QString &contactId, int role) const;
-    KTp::ContactPtr contactForContactId(const QString &contactId) const;
-    Tp::AccountPtr accountForContact(const KTp::ContactPtr &contact) const;
-
-    Tp::AccountManagerPtr accountManager() const;
-
-private Q_SLOTS:
-    void onAccountManagerReady(Tp::PendingOperation *op);
-    void onContactChanged();
-    void onContactInvalidated();
-
-private:
-    Q_PRIVATE_SLOT(d, void onAllKnownContactsChanged(const Tp::Contacts &contactsAdded, const Tp::Contacts &contactsRemoved) )
-
-    class Private;
-    Private* d;
+    virtual AllContactsMonitor* createAllContactsMonitor();
 };
 
 #endif // IM_PERSONS_DATA_SOURCE_H

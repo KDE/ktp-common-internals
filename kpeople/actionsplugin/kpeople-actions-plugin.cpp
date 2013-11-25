@@ -28,11 +28,11 @@
 
 #include "KTp/contact.h"
 #include "KTp/actions.h"
-#include "KTp/im-persons-data-source.h"
+#include "KTp/core.h"
+#include "KTp/global-contact-manager.h"
 
 #include <TelepathyQt/Account>
 #include <TelepathyQt/ContactManager>
-
 
 #include <kpeople/personpluginmanager.h>
 #include <KPeople/PersonData>
@@ -101,35 +101,44 @@ QUrl IMAction::uri() const
     return m_uri;
 }
 
-KPeopleActionsPlugin::KPeopleActionsPlugin(QObject* parent, const QVariantList &args):
-AbstractPersonPlugin(parent)
+KPeopleActionsPlugin::KPeopleActionsPlugin(QObject *parent, const QVariantList &args)
+    : AbstractPersonPlugin(parent)
 {
     Q_UNUSED(args);
 }
 
-QList<QAction*> KPeopleActionsPlugin::actionsForPerson(const KPeople::PersonDataPtr &personData, QObject *parent)
+QList<QAction*> KPeopleActionsPlugin::actionsForPerson(const KABC::Addressee &person,
+                                                       const KABC::AddresseeList &contacts,
+                                                       QObject *parent) const
 {
     QList<QAction*> actions;
 
-    IMPersonsDataSource *dataSource = dynamic_cast<IMPersonsDataSource*>(KPeople::PersonPluginManager::presencePlugin());
-    if (!dataSource) {
-        return actions;
+    const QString &accountPath = person.custom(QLatin1String("telepathy"), QLatin1String("accountPath"));
+    const QString &contactId = person.custom(QLatin1String("telepathy"), QLatin1String("contactId"));
+
+    // List of pair<accountPath, contactId> - these two always need to be together
+    QList<QPair<QString, QString> > accountContactList;
+
+    accountContactList << qMakePair(accountPath, contactId);
+
+    Q_FOREACH (const KABC::Addressee &contact, contacts) {
+        accountContactList << qMakePair(contact.custom(QLatin1String("telepathy"), QLatin1String("accountPath")),
+                                        contact.custom(QLatin1String("telepathy"), QLatin1String("contactId")));
     }
 
-    QStringList imContactsIds = personData->imAccounts();
-
-    for (int i = 0; i < imContactsIds.size(); i++) {
-        const QString contactId = imContactsIds[i];
-        const KTp::ContactPtr contact = dataSource->contactForContactId(contactId);
+    for (int i = 0; i < accountContactList.size(); i++) {
+        const KTp::ContactPtr contact = KTp::contactManager()->contactForContactId(accountContactList.at(i).first,
+                                                                                   accountContactList.at(i).second);
         if (!contact || !contact->manager()) {
             continue;
         }
-        const Tp::AccountPtr account = dataSource->accountForContact(contact);
+        const Tp::AccountPtr account = KTp::contactManager()->accountForAccountPath(accountContactList.at(i).first);
 
         if (!account) {
             continue;
         }
 
+        //FIXME - already in master
         if (true) { //no such query for text chat capability, added an "if true" because makes the code look consistent
             QAction *action = new IMAction(i18n("Start Chat Using %1...", account->displayName()),
                                 KIcon(QLatin1String("text-x-generic")),
@@ -184,13 +193,14 @@ QList<QAction*> KPeopleActionsPlugin::actionsForPerson(const KPeople::PersonData
         }
     }
 
-    QAction *action = new IMAction(i18n("Open Log Viewer..."),
-                                   KIcon(QLatin1String("documentation")),
-                                   personData->uri(),
-                                   LogViewer,
-                                   parent);
-    connect(action, SIGNAL(triggered(bool)), SLOT(onActionTriggered()));
-    actions << action;
+    //FIXME-KPEOPLE
+//     QAction *action = new IMAction(i18n("Open Log Viewer..."),
+//                                    KIcon(QLatin1String("documentation")),
+//                                    personData->uri(),
+//                                    LogViewer,
+//                                    parent);
+//     connect(action, SIGNAL(triggered(bool)), SLOT(onActionTriggered()));
+//     actions << action;
     return actions;
 }
 

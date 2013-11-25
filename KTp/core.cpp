@@ -29,6 +29,7 @@
 #include <KGlobal>
 
 #include <TelepathyQt/AccountManager>
+#include <KTp/global-contact-manager.h>
 #include "contact-factory.h"
 
 class CorePrivate
@@ -37,23 +38,16 @@ public:
     CorePrivate();
     bool m_kPeopleEnabled;
     Tp::AccountManagerPtr m_accountManager;
+    KTp::GlobalContactManager *m_contactManager;
 };
 
 CorePrivate::CorePrivate()
-    : m_kPeopleEnabled(false)
+    : m_kPeopleEnabled(false),
+      m_contactManager(0)
 {
     //if built with kpeople support, enable kpeople if Nepomuk is running
     #ifdef HAVE_KPEOPLE
-    if (Nepomuk2::ResourceManager::instance()->initialized()) {
-        QDBusInterface nepomukServer(QLatin1String("org.kde.NepomukServer"), QLatin1String("/servicemanager"), QLatin1String("org.kde.nepomuk.ServiceManager"));
-        QDBusReply<bool> reply = nepomukServer.call(QLatin1String("startService"), QLatin1String("nepomuktelepathyservice"));
-        if (reply.isValid()) {
-            if (reply.value()) {
-                m_kPeopleEnabled = true;
-            }
-        }
-    }
-    //else if it can't be started, or nepomukServer doesn't reply leave it disabled.
+    m_kPeopleEnabled = true;
     #endif
 
     Tp::AccountFactoryPtr  accountFactory = Tp::AccountFactory::create(QDBusConnection::sessionBus(),
@@ -69,7 +63,8 @@ CorePrivate::CorePrivate()
     Tp::ContactFactoryPtr contactFactory = KTp::ContactFactory::create(Tp::Features()  << Tp::Contact::FeatureAlias
                                                                                        << Tp::Contact::FeatureSimplePresence
                                                                                        << Tp::Contact::FeatureCapabilities
-                                                                                       << Tp::Contact::FeatureClientTypes);
+                                                                                       << Tp::Contact::FeatureClientTypes
+                                                                                       << Tp::Contact::FeatureAvatarData);
 
     Tp::ChannelFactoryPtr channelFactory = Tp::ChannelFactory::create(QDBusConnection::sessionBus());
 
@@ -90,4 +85,13 @@ bool KTp::kpeopleEnabled()
 Tp::AccountManagerPtr KTp::accountManager()
 {
     return s_instance->m_accountManager;
+}
+
+KTp::GlobalContactManager* KTp::contactManager()
+{
+    if (!s_instance->m_contactManager) {
+        s_instance->m_contactManager = new KTp::GlobalContactManager(s_instance->m_accountManager, 0);
+    }
+
+    return s_instance->m_contactManager;
 }

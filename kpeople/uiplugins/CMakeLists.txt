@@ -7,6 +7,7 @@ target_link_libraries(imdetailswidgetplugin ${QT_QTCORE_LIBRARY}
     ${KDE4_KDECORE_LIBRARY}
     ${KDE4_KDEUI_LIBRARY}
     ${KPEOPLE_LIBS}
+    ${KDEPIMLIBS_KABC_LIBS}
     kpeoplewidgets
     ktpcommoninternalsprivate
 )

@@ -46,7 +46,7 @@ namespace KTp
         // general roles
         RowTypeRole = Qt::UserRole, //returns one of KTp::ContactRowType, KTp::PersonRowType, KTp::GroupRowType, KTp::AccountRowType
         IdRole, //returns Contact ID, Account UID, or group ID (group name or "_ungrouped")
-        NepomukUriRole, ///< url of the corresponding contact/person resource in Nepomuk
+        PersonIdRole, ///< id of the corresponding contact/person resource in kpeople
 
         //telepathy roles
         ContactRole = Qt::UserRole + 1000,  ///<return Tp::ContactPtr

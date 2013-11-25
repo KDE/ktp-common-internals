@@ -40,112 +40,45 @@
 
 using namespace KPeople;
 
-class IMPersonsDataSource::Private {
-public:
-    KTp::GlobalContactManager *contactManager;
-    Tp::AccountManagerPtr accountManager;
-    QHash<QString, KTp::ContactPtr> contacts;
-    IMPersonsDataSource *q;
 
+class KTpAllContacts : public AllContactsMonitor
+{
+    Q_OBJECT
+public:
+    KTpAllContacts();
+    ~KTpAllContacts();
+    virtual KABC::Addressee::Map contacts();
+
+private Q_SLOTS:
+    void onAccountManagerReady(Tp::PendingOperation *op);
+    void onContactChanged();
+    void onContactInvalidated();
     void onAllKnownContactsChanged(const Tp::Contacts &contactsAdded, const Tp::Contacts &contactsRemoved);
+
+private:
+    QString createUri(const Tp::ContactPtr &contact) const;
+    KABC::Addressee contactToAddressee(const Tp::ContactPtr &contact) const;
+    QHash<QString, KTp::ContactPtr> m_contacts;
 };
 
-void IMPersonsDataSource::Private::onAllKnownContactsChanged(const Tp::Contacts &contactsAdded, const Tp::Contacts &contactsRemoved)
+KTpAllContacts::KTpAllContacts()
 {
-    if (!contacts.isEmpty()) {
-        Q_FOREACH (const Tp::ContactPtr &contact, contactsRemoved) {
-            contacts.remove(contact->id());
-        }
-    }
-
-    Q_FOREACH (const Tp::ContactPtr &contact, contactsAdded) {
-        KTp::ContactPtr ktpContact = KTp::ContactPtr::qObjectCast(contact);
-        contacts.insert(contact->id(), ktpContact);
-
-        Q_EMIT q->contactChanged(contact->id());
-
-        connect(ktpContact.data(), SIGNAL(presenceChanged(Tp::Presence)),
-                q, SLOT(onContactChanged()));
-
-        connect(ktpContact.data(), SIGNAL(capabilitiesChanged(Tp::ContactCapabilities)),
-                q, SLOT(onContactChanged()));
-
-        connect(ktpContact.data(), SIGNAL(invalidated()),
-                q, SLOT(onContactInvalidated()));
-
-        //TODO: add other stuff here etc
-
-    }
-}
-
-//-----------------------------------------------------------------------------
-
-IMPersonsDataSource::IMPersonsDataSource(QObject *parent, const QVariantList &data)
-    : BasePersonsDataSource(parent)
-    , d(new Private)
-{
-    Q_UNUSED(data);
-
-    d->q = this;
     Tp::registerTypes();
 
-    d->accountManager = KTp::accountManager();
-    connect(d->accountManager->becomeReady(), SIGNAL(finished(Tp::PendingOperation*)),
+    connect(KTp::accountManager()->becomeReady(), SIGNAL(finished(Tp::PendingOperation*)),
             this, SLOT(onAccountManagerReady(Tp::PendingOperation*)));
 }
 
-IMPersonsDataSource::~IMPersonsDataSource()
+KTpAllContacts::~KTpAllContacts()
 {
-    delete d;
 }
 
-QVariant IMPersonsDataSource::dataForContact(const QString &contactId, int role) const
+QString KTpAllContacts::createUri(const Tp::ContactPtr &contact) const
 {
-    KTp::ContactPtr contact = d->contacts.value(contactId);
-
-    //we need to handle only few roles here, all the rest must go to the source model
-    switch (role) {
-        case PersonsModel::PresenceTypeRole:
-            if (!contact.isNull()) {
-                return contact->presence().status();
-            } else if (!contactId.isEmpty()) {
-                return QLatin1String("offline");
-            } else if (contactId.isEmpty()) {
-                return QLatin1String("unknown");
-            }
-        break;
-        case PersonsModel::PresenceDisplayRole:
-            if (!contact.isNull()) {
-                return contact->presence().displayString();
-            } else if (!contactId.isEmpty()) {
-                return KTp::Presence(Tp::Presence::offline()).displayString();
-            } else if (contactId.isEmpty()) {
-                return QVariant();
-            }
-        break;
-        case PersonsModel::PresenceDecorationRole:
-            if (!contact.isNull()) {
-                return contact->presence().icon();
-            } else if (!contactId.isEmpty()) {
-                return KTp::Presence(Tp::Presence::offline()).icon();
-            } else if (contactId.isEmpty()) {
-                return QVariant();
-            }
-        break;
-        case PersonsModel::PresenceIconNameRole:
-            if (!contact.isNull()) {
-                return contact->presence().iconName();
-            } else if (!contactId.isEmpty()) {
-                return QString(QLatin1String("user-offline"));
-            } else if (contactId.isEmpty()) {
-                return QVariant();
-            }
-    }
-
-    return QVariant();
+    return QLatin1String("ktp://") + contact->id();
 }
 
-void IMPersonsDataSource::onAccountManagerReady(Tp::PendingOperation *op)
+void KTpAllContacts::onAccountManagerReady(Tp::PendingOperation *op)
 {
     if (op->isError()) {
         kWarning() << "Failed to initialize AccountManager:" << op->errorName();
@@ -156,42 +89,97 @@ void IMPersonsDataSource::onAccountManagerReady(Tp::PendingOperation *op)
 
     kDebug() << "Account manager ready";
 
-    d->contactManager = new KTp::GlobalContactManager(d->accountManager, this);
-    connect(d->contactManager, SIGNAL(allKnownContactsChanged(Tp::Contacts,Tp::Contacts)),
+    connect(KTp::contactManager(), SIGNAL(allKnownContactsChanged(Tp::Contacts,Tp::Contacts)),
             this, SLOT(onAllKnownContactsChanged(Tp::Contacts,Tp::Contacts)));
 
-    d->onAllKnownContactsChanged(d->contactManager->allKnownContacts(), Tp::Contacts());
+    onAllKnownContactsChanged(KTp::contactManager()->allKnownContacts(), Tp::Contacts());
 }
 
-void IMPersonsDataSource::onContactChanged()
+void KTpAllContacts::onAllKnownContactsChanged(const Tp::Contacts &contactsAdded, const Tp::Contacts &contactsRemoved)
 {
-    QString id = qobject_cast<Tp::Contact*>(sender())->id();
+    if (!m_contacts.isEmpty()) {
+        Q_FOREACH (const Tp::ContactPtr &contact, contactsRemoved) {
+            m_contacts.remove(contact->id());
+            Q_EMIT contactRemoved(createUri(contact));
+        }
+    }
 
-    Q_EMIT contactChanged(id);
+    Q_FOREACH (const Tp::ContactPtr &contact, contactsAdded) {
+        KTp::ContactPtr ktpContact = KTp::ContactPtr::qObjectCast(contact);
+        m_contacts.insert(contact->id(), ktpContact);
+        Q_EMIT contactAdded(createUri(ktpContact), contactToAddressee(ktpContact));
+
+        connect(ktpContact.data(), SIGNAL(presenceChanged(Tp::Presence)),
+                this, SLOT(onContactChanged()));
+
+        connect(ktpContact.data(), SIGNAL(capabilitiesChanged(Tp::ContactCapabilities)),
+                this, SLOT(onContactChanged()));
+
+        connect(ktpContact.data(), SIGNAL(invalidated()),
+                this, SLOT(onContactInvalidated()));
+
+        connect(ktpContact.data(), SIGNAL(avatarDataChanged(Tp::AvatarData)),
+                this, SLOT(onContactChanged()));
+
+        connect(ktpContact.data(), SIGNAL(addedToGroup(QString)),
+                this, SLOT(onContactChanged()));
+
+        connect(ktpContact.data(), SIGNAL(removedFromGroup(QString)),
+                this, SLOT(onContactChanged()));
+    }
 }
 
-void IMPersonsDataSource::onContactInvalidated()
+void KTpAllContacts::onContactChanged()
 {
-    QString id = qobject_cast<Tp::Contact*>(sender())->id();
-
-    d->contacts.remove(id);
-
-    Q_EMIT contactChanged(id);
+    const Tp::ContactPtr contact(qobject_cast<Tp::Contact*>(sender()));
+    Q_EMIT contactChanged(createUri(contact), contactToAddressee(contact));
 }
 
-KTp::ContactPtr IMPersonsDataSource::contactForContactId(const QString &contactId) const
+void KTpAllContacts::onContactInvalidated()
 {
-    return d->contacts.value(contactId);
+    const Tp::ContactPtr contact(qobject_cast<Tp::Contact*>(sender()));
+    Q_EMIT contactChanged(createUri(contact), contactToAddressee(contact));
+    m_contacts.remove(contact->id());
 }
 
-Tp::AccountPtr IMPersonsDataSource::accountForContact(const KTp::ContactPtr &contact) const
+KABC::Addressee::Map KTpAllContacts::contacts()
 {
-    return d->contactManager->accountForContact(contact);
+    KABC::Addressee::Map contactMap;
+    Q_FOREACH(const Tp::ContactPtr &contact, m_contacts.values()) {
+        contactMap.insert(createUri(contact), contactToAddressee(contact));
+    }
+    kDebug() << contactMap.keys().size();
+    return contactMap;
 }
 
-Tp::AccountManagerPtr IMPersonsDataSource::accountManager() const
+KABC::Addressee KTpAllContacts::contactToAddressee(const Tp::ContactPtr &contact) const
 {
-    return d->accountManager;
+    KABC::Addressee vcard;
+    Tp::AccountPtr account = KTp::contactManager()->accountForContact(contact);
+    if (contact && account) {
+        vcard.setFormattedName(contact->alias());
+        vcard.setCategories(contact->groups());
+        vcard.insertCustom(QLatin1String("telepathy"), QLatin1String("contactId"), contact->id());
+        vcard.insertCustom(QLatin1String("telepathy"), QLatin1String("accountPath"), account->objectPath());
+        vcard.insertCustom(QLatin1String("telepathy"), QLatin1String("presence"), contact->presence().status());
+        vcard.setPhoto(KABC::Picture(contact->avatarData().fileName));
+    }
+    return vcard;
+}
+
+IMPersonsDataSource::IMPersonsDataSource(QObject *parent, const QVariantList &args)
+    : BasePersonsDataSource(parent)
+{
+    Q_UNUSED(args);
+}
+
+IMPersonsDataSource::~IMPersonsDataSource()
+{
+}
+
+AllContactsMonitor* IMPersonsDataSource::createAllContactsMonitor()
+{
+    return new KTpAllContacts();
 }
 
 #include "im-persons-data-source.moc"

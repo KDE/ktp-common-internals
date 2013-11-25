@@ -20,11 +20,12 @@
 #ifndef KTP_TRANSLATION_PROXY_H
 #define KTP_TRANSLATION_PROXY_H
 
-#include <QIdentityProxyModel>
+// #include <QIdentityProxyModel>
+#include <QSortFilterProxyModel>
 
 #include <KTp/ktp-export.h>
 
-class KTP_EXPORT KPeopleTranslationProxy : public QIdentityProxyModel
+class KTP_EXPORT KPeopleTranslationProxy : public QSortFilterProxyModel
 {
     Q_OBJECT
 
@@ -33,7 +34,9 @@ public:
     virtual ~KPeopleTranslationProxy();
 
     virtual QVariant data(const QModelIndex &proxyIndex, int role = Qt::DisplayRole) const;
+    QVariant dataForKTpContact(const QString &accountPath, const QString &contactId, int role) const;
 
+    virtual bool filterAcceptsRow(int source_row, const QModelIndex & source_parent ) const;
 private:
     QVariant translatePresence(const QVariant &presenceName) const;
     QPixmap contactPixmap(const QModelIndex &index) const;

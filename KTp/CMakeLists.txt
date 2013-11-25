@@ -69,6 +69,7 @@ set (ktp_private_LIBS
                        ${KDE4_KIO_LIBS}
                        ${TELEPATHY_QT4_LIBRARIES}
                        ${KDE4_KDEUI_LIBS}
+                       ${KDEPIMLIBS_KABC_LIBS}
 )
 
 if (TELEPATHY_LOGGER_QT4_FOUND)
