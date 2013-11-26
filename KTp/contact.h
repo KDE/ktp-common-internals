@@ -37,19 +37,24 @@ public:
 
     /** Returns true if text chats can be started with this contact*/
     bool textChatCapability() const;
-     /** Returns true if audio calls can be started with this contact*/
-     bool audioCallCapability() const;
-     /** Returns true if video calls can be started with this contact*/
-     bool videoCallCapability() const;
-     /** Returns true if file transfers can be started with this contact*/
-     bool fileTransferCapability() const;
-     /** Returns true if this contact supports collaborative editing*/
-     bool collaborativeEditingCapability() const;
+    /** Returns true if audio calls can be started with this contact*/
+    bool audioCallCapability() const;
+    /** Returns true if video calls can be started with this contact*/
+    bool videoCallCapability() const;
+    /** Returns true if file transfers can be started with this contact*/
+    bool fileTransferCapability() const;
+    /** Returns true if this contact supports collaborative editing*/
+    bool collaborativeEditingCapability() const;
 
-     //Overridden as a workaround for upstream bug https://bugs.freedesktop.org/show_bug.cgi?id=55883
-     QStringList clientTypes() const;
-     /** Returns the pixmap of an avatar coloured to gray if contact online*/
-     QPixmap avatarPixmap();
+    /** Returns list of available dbus tube services*/
+    QStringList dbusTubeServicesCapability() const;
+    /** Returns list of available stream tube services*/
+    QStringList streamTubeServicesCapability() const;
+
+    //Overridden as a workaround for upstream bug https://bugs.freedesktop.org/show_bug.cgi?id=55883
+    QStringList clientTypes() const;
+    /** Returns the pixmap of an avatar coloured to gray if contact online*/
+    QPixmap avatarPixmap();
 
 Q_SIGNALS:
     void invalidated();
@@ -58,6 +63,7 @@ private Q_SLOTS:
     void invalidateAvatarCache();
 
 private:
+    static QStringList getCommonElements(const QStringList &list1, const QStringList &list2);
     void avatarToGray(QPixmap &avatar);
     QString keyCache() const;
     QString buildAvatarPath(const QString &avatarToken);

@@ -108,6 +108,26 @@ bool KTp::Contact::collaborativeEditingCapability() const
     return selfCanShare && otherCanShare;
 }
 
+QStringList KTp::Contact::dbusTubeServicesCapability() const
+{
+    if (!manager()->connection()) {
+        return QStringList();
+    }
+
+    return getCommonElements(capabilities().dbusTubeServices(),
+                             manager()->connection()->selfContact()->capabilities().dbusTubeServices());
+}
+
+QStringList KTp::Contact::streamTubeServicesCapability() const
+{
+    if (!manager()->connection()) {
+        return QStringList();
+    }
+
+    return getCommonElements(capabilities().streamTubeServices(),
+                             manager()->connection()->selfContact()->capabilities().streamTubeServices());
+}
+
 QStringList KTp::Contact::clientTypes() const
 {
     /* Temporary workaround for upstream bug https://bugs.freedesktop.org/show_bug.cgi?id=55883)
@@ -209,4 +229,17 @@ void KTp::Contact::invalidateAvatarCache()
 {
     QPixmapCache::remove(id() + QLatin1String("-offline"));
     QPixmapCache::remove(id() + QLatin1String("-online"));
+}
+
+QStringList KTp::Contact::getCommonElements(const QStringList &list1, const QStringList &list2)
+{
+    /* QStringList::contains(QString) perform iterative comparsion, so there is no reason
+     * to select smaller list as base for this cycle. */
+    QStringList commonElements;
+    Q_FOREACH(const QString &i, list1) {
+        if (list2.contains(i)) {
+            commonElements << i;
+        }
+    }
+    return commonElements;
 }
