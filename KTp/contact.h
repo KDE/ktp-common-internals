@@ -53,7 +53,7 @@ public:
 
     //Overridden as a workaround for upstream bug https://bugs.freedesktop.org/show_bug.cgi?id=55883
     QStringList clientTypes() const;
-    /** Returns the pixmap of an avatar coloured to gray if contact online*/
+    /** Returns the pixmap of an avatar desaturated to gray if contact is offline*/
     QPixmap avatarPixmap();
 
 Q_SIGNALS:
