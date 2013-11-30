@@ -176,7 +176,7 @@ Tp::AccountPtr GlobalContactManager::accountForAccountId(const QString &accountI
 Tp::AccountPtr GlobalContactManager::accountForAccountPath(const QString &accountPath) const
 {
     if (!d->accountManager.isNull() && d->accountManager->isReady()) {
-        return d->accountManager->accountForPath(accountPath);
+        return d->accountManager->accountForObjectPath(accountPath);
     }
 
     return Tp::AccountPtr();

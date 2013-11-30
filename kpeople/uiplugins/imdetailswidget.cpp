@@ -63,7 +63,7 @@ QWidget* ImDetailsWidget::createDetailsWidget(const KABC::Addressee& person, con
         const QString contactId = contact.custom(QLatin1String("telepathy"), QLatin1String("contactId"));
         const QString accountPath = contact.custom(QLatin1String("telepathy"), QLatin1String("accountPath")); //probably unused till we fix everything properly
 
-        Tp::AccountPtr account = KTp::accountManager()->accountForPath(accountPath);
+        Tp::AccountPtr account = KTp::accountManager()->accountForObjectPath(accountPath);
         if (!account) {
             continue;
         }
