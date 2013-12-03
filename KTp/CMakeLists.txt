@@ -80,8 +80,6 @@ if (TELEPATHY_LOGGER_QT4_FOUND)
 endif (TELEPATHY_LOGGER_QT4_FOUND)
 
 if (KPEOPLE_FOUND)
-    #this is temporary whilst im-persons-data-source still has it's own query
-    find_package (NepomukCore REQUIRED)
     include_directories(${KPEOPLE_INCLUDES})
 
     set (ktp_common_internals_private_SRCS
