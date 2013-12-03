@@ -44,7 +44,7 @@ CorePrivate::CorePrivate()
     : m_kPeopleEnabled(false),
       m_contactManager(0)
 {
-    //if built with kpeople support, enable kpeople if Nepomuk is running
+    //if built with kpeople support, enable it
     #ifdef HAVE_KPEOPLE
     m_kPeopleEnabled = true;
     #endif

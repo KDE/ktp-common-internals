@@ -61,7 +61,7 @@ KTp::ContactsModel::ContactsModel(QObject *parent)
     d->trackUnread = false;
     if (KTp::kpeopleEnabled()) {
         #ifdef HAVE_KPEOPLE
-        kDebug() << "Nepomuk is enabled, using kpeople model";
+        kDebug() << "Built with kpeople support, using kpeople model";
         KPeople::PersonsModel *personsModel = new KPeople::PersonsModel(this);
 
         connect(personsModel, SIGNAL(modelInitialized()),
@@ -73,7 +73,7 @@ KTp::ContactsModel::ContactsModel(QObject *parent)
     }
     else
     {
-        kDebug() << "Nepomuk is disabled, using normal model";
+        kDebug() << "KPeople support not built-in, using normal model";
         d->source = new KTp::ContactsListModel(this);
         connect(d->source, SIGNAL(modelInitialized()),
                 this, SIGNAL(modelInitialized()));
