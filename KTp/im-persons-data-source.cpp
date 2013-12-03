@@ -34,10 +34,6 @@
 
 #include <KDebug>
 
-#include <Soprano/Model>
-#include <Soprano/QueryResultIterator>
-#include <Nepomuk2/ResourceManager>
-
 using namespace KPeople;
 
 

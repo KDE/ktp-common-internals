@@ -21,7 +21,6 @@
 #include "core.h"
 
 #ifdef HAVE_KPEOPLE
-#include <Nepomuk2/ResourceManager>
 #include <QDBusMessage>
 #include <QDBusReply>
 #endif
