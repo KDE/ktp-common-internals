@@ -50,6 +50,7 @@ endif (TELEPATHY_LOGGER_QT4_FOUND)
 
 if (KPEOPLE_FOUND)
     find_package (KdepimLibs REQUIRED)
+    include_directories (${KDEPIMLIBS_INCLUDE_DIRS})
     add_definitions(-DHAVE_KPEOPLE)
     add_subdirectory(kpeople)
 endif (KPEOPLE_FOUND)
