@@ -8,8 +8,6 @@ set (CMAKE_MODULE_PATH
 )
 cmake_policy(SET CMP0002 OLD)
 
-set(CMAKE_CXX_FLAGS "-Werror")
-
 set (KTP_VERSION "0.7.0")
 # Bump for every 0.x release, or whenever BC changes
 set (KTP_SONUMBER 6)
