@@ -52,7 +52,7 @@ private Q_SLOTS:
     void onAllKnownContactsChanged(const Tp::Contacts &contactsAdded, const Tp::Contacts &contactsRemoved);
 
 private:
-    QString createUri(const Tp::ContactPtr &contact) const;
+    QString createUri(const KTp::ContactPtr &contact) const;
     KABC::Addressee contactToAddressee(const Tp::ContactPtr &contact) const;
     QHash<QString, KTp::ContactPtr> m_contacts;
 };
@@ -69,9 +69,12 @@ KTpAllContacts::~KTpAllContacts()
 {
 }
 
-QString KTpAllContacts::createUri(const Tp::ContactPtr &contact) const
+QString KTpAllContacts::createUri(const KTp::ContactPtr &contact) const
 {
-    return QLatin1String("ktp://") + contact->id();
+    // so real ID will look like
+    // ktp://gabble/jabber/blah/asdfjwer?foo@bar.com
+    // ? is used as it is not a valid character in the dbus path that makes up the account UI
+    return QLatin1String("ktp://") + contact->accountUniqueIdentifier() + QLatin1Char('?') + contact->id();
 }
 
 void KTpAllContacts::onAccountManagerReady(Tp::PendingOperation *op)
@@ -94,15 +97,16 @@ void KTpAllContacts::onAccountManagerReady(Tp::PendingOperation *op)
 void KTpAllContacts::onAllKnownContactsChanged(const Tp::Contacts &contactsAdded, const Tp::Contacts &contactsRemoved)
 {
     if (!m_contacts.isEmpty()) {
-        Q_FOREACH (const Tp::ContactPtr &contact, contactsRemoved) {
-            m_contacts.remove(contact->id());
+        Q_FOREACH (const Tp::ContactPtr &c, contactsRemoved) {
+            const KTp::ContactPtr &contact = KTp::ContactPtr::qObjectCast(c);
+            m_contacts.remove(createUri(contact));
             Q_EMIT contactRemoved(createUri(contact));
         }
     }
 
     Q_FOREACH (const Tp::ContactPtr &contact, contactsAdded) {
         KTp::ContactPtr ktpContact = KTp::ContactPtr::qObjectCast(contact);
-        m_contacts.insert(contact->id(), ktpContact);
+        m_contacts.insert(createUri(ktpContact), ktpContact);
         Q_EMIT contactAdded(createUri(ktpContact), contactToAddressee(ktpContact));
 
         connect(ktpContact.data(), SIGNAL(presenceChanged(Tp::Presence)),
@@ -127,21 +131,23 @@ void KTpAllContacts::onAllKnownContactsChanged(const Tp::Contacts &contactsAdded
 
 void KTpAllContacts::onContactChanged()
 {
-    const Tp::ContactPtr contact(qobject_cast<Tp::Contact*>(sender()));
+    const KTp::ContactPtr contact(qobject_cast<KTp::Contact*>(sender()));
     Q_EMIT contactChanged(createUri(contact), contactToAddressee(contact));
 }
 
 void KTpAllContacts::onContactInvalidated()
 {
-    const Tp::ContactPtr contact(qobject_cast<Tp::Contact*>(sender()));
-    Q_EMIT contactChanged(createUri(contact), contactToAddressee(contact));
-    m_contacts.remove(contact->id());
+    const KTp::ContactPtr contact(qobject_cast<KTp::Contact*>(sender()));
+
+    const QString uri = createUri(contact);
+    Q_EMIT contactRemoved(uri);
+    m_contacts.remove(uri);
 }
 
 KABC::Addressee::Map KTpAllContacts::contacts()
 {
     KABC::Addressee::Map contactMap;
-    Q_FOREACH(const Tp::ContactPtr &contact, m_contacts.values()) {
+    Q_FOREACH(const KTp::ContactPtr &contact, m_contacts.values()) {
         contactMap.insert(createUri(contact), contactToAddressee(contact));
     }
     kDebug() << contactMap.keys().size();
