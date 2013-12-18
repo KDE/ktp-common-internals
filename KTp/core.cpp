@@ -36,6 +36,11 @@ class CorePrivate
 public:
     CorePrivate();
     bool m_kPeopleEnabled;
+    Tp::AccountFactoryPtr m_accountFactory;
+    Tp::ConnectionFactoryPtr m_connectionFactory;
+    Tp::ContactFactoryPtr m_contactFactory;
+    Tp::ChannelFactoryPtr m_channelFactory ;
+
     Tp::AccountManagerPtr m_accountManager;
     KTp::GlobalContactManager *m_contactManager;
 };
@@ -49,29 +54,21 @@ CorePrivate::CorePrivate()
     m_kPeopleEnabled = true;
     #endif
 
-    Tp::AccountFactoryPtr  accountFactory = Tp::AccountFactory::create(QDBusConnection::sessionBus(),
+    m_accountFactory = Tp::AccountFactory::create(QDBusConnection::sessionBus(),
                                                                     Tp::Features() << Tp::Account::FeatureCore
-                                                                                   << Tp::Account::FeatureCapabilities
-                                                                                   << Tp::Account::FeatureProtocolInfo
                                                                                    << Tp::Account::FeatureProfile);
 
-    Tp::ConnectionFactoryPtr connectionFactory = Tp::ConnectionFactory::create(QDBusConnection::sessionBus(),
+    m_connectionFactory = Tp::ConnectionFactory::create(QDBusConnection::sessionBus(),
                                                                                Tp::Features() << Tp::Connection::FeatureCore
                                                                                               << Tp::Connection::FeatureSelfContact);
 
-    Tp::ContactFactoryPtr contactFactory = KTp::ContactFactory::create(Tp::Features()  << Tp::Contact::FeatureAlias
+    m_contactFactory = KTp::ContactFactory::create(Tp::Features()  << Tp::Contact::FeatureAlias
                                                                                        << Tp::Contact::FeatureSimplePresence
                                                                                        << Tp::Contact::FeatureCapabilities
                                                                                        << Tp::Contact::FeatureClientTypes
                                                                                        << Tp::Contact::FeatureAvatarData);
 
-    Tp::ChannelFactoryPtr channelFactory = Tp::ChannelFactory::create(QDBusConnection::sessionBus());
-
-    m_accountManager = Tp::AccountManager::create(QDBusConnection::sessionBus(),
-                                                   accountFactory,
-                                                   connectionFactory,
-                                                   channelFactory,
-                                                   contactFactory);
+    m_channelFactory = Tp::ChannelFactory::create(QDBusConnection::sessionBus());
 }
 
 K_GLOBAL_STATIC(CorePrivate, s_instance)
@@ -81,8 +78,35 @@ bool KTp::kpeopleEnabled()
     return s_instance->m_kPeopleEnabled;
 }
 
+Tp::AccountFactoryPtr KTp::accountFactory()
+{
+    return s_instance->m_accountFactory;
+}
+
+Tp::ConnectionFactoryPtr KTp::connectionFactory()
+{
+    return s_instance->m_connectionFactory;
+}
+
+Tp::ChannelFactoryPtr KTp::channelFactory()
+{
+    return s_instance->m_channelFactory;
+}
+
+Tp::ContactFactoryPtr KTp::contactFactory()
+{
+    return s_instance->m_contactFactory;
+}
+
 Tp::AccountManagerPtr KTp::accountManager()
 {
+    if (!s_instance->m_accountManager) {
+        s_instance->m_accountManager = Tp::AccountManager::create(QDBusConnection::sessionBus(),
+                                                   KTp::accountFactory(),
+                                                   KTp::connectionFactory(),
+                                                   KTp::channelFactory(),
+                                                   KTp::contactFactory());
+    }
     return s_instance->m_accountManager;
 }
 
