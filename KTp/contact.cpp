@@ -144,26 +144,35 @@ QStringList KTp::Contact::clientTypes() const
     return Tp::Contact::clientTypes();
 }
 
+QString KTp::Contact::avatarPath()
+{
+    QString file;
+    //the app has requested the avatar,
+    //lets return the one from our cache, then upgrade
+    if (actualFeatures().contains(Tp::Contact::FeatureAvatarData)) {
+        file = avatarData().fileName;
+    }
+    if (file.isEmpty()) {
+        KSharedConfigPtr config = KSharedConfig::openConfig(QLatin1String("ktelepathy-avatarsrc"));
+        KConfigGroup avatarTokenGroup = config->group(id());
+        const QString avatarToken = avatarTokenGroup.readEntry(QLatin1String("avatarToken"));
+        if (!avatarToken.isEmpty()) {
+            return buildAvatarPath(avatarToken);
+        }
+    }
+
+    return file;
+}
+
 QPixmap KTp::Contact::avatarPixmap()
 {
     QPixmap avatar;
 
     //check pixmap cache for the avatar, if not present, load the avatar
     if (!QPixmapCache::find(keyCache(), avatar)){
-        QString file = avatarData().fileName;
 
         //if contact does not provide path, let's see if we have avatar for the stored token
-        if (file.isEmpty()) {
-            KConfig config(QLatin1String("ktelepathy-avatarsrc"));
-            KConfigGroup avatarTokenGroup = config.group(id());
-            QString avatarToken = avatarTokenGroup.readEntry(QLatin1String("avatarToken"));
-            //only bother loading the pixmap if the token is not empty
-            if (!avatarToken.isEmpty()) {
-                avatar.load(buildAvatarPath(avatarToken));
-            }
-        } else {
-            avatar.load(file);
-        }
+        avatar.load(avatarPath());
 
         //if neither above succeeded, we need to load the icon
         if (avatar.isNull()) {
@@ -201,7 +210,7 @@ QString KTp::Contact::keyCache() const
     return id() + (presence().type() == Tp::ConnectionPresenceTypeOffline ? QLatin1String("-offline") : QLatin1String("-online"));
 }
 
-QString KTp::Contact::buildAvatarPath(const QString &avatarToken)
+QString KTp::Contact::buildAvatarPath(const QString &avatarToken) const
 {
     QString cacheDir = QString::fromLatin1(qgetenv("XDG_CACHE_HOME"));
     if (cacheDir.isEmpty()) {

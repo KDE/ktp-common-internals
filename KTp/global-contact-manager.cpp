@@ -134,7 +134,9 @@ void GlobalContactManager::onContactManagerStateChanged(const Tp::ContactManager
 
     //contact manager connected, inform everyone of potential new contacts
     Q_EMIT allKnownContactsChanged(contactManager->allKnownContacts(), Tp::Contacts());
+    onAllKnownContactsChanged(contactManager->allKnownContacts(), Tp::Contacts());
 
+    connect(contactManager.data(), SIGNAL(allKnownContactsChanged(Tp::Contacts,Tp::Contacts,Tp::Channel::GroupMemberChangeDetails)), SLOT(onAllKnownContactsChanged(Tp::Contacts,Tp::Contacts)));
     connect(contactManager.data(), SIGNAL(allKnownContactsChanged(Tp::Contacts,Tp::Contacts,Tp::Channel::GroupMemberChangeDetails)), SIGNAL(allKnownContactsChanged(Tp::Contacts,Tp::Contacts)));
 }
 
@@ -199,4 +201,12 @@ KTp::ContactPtr GlobalContactManager::contactForContactId(const QString &account
     }
 
     return KTp::ContactPtr();
+}
+
+void GlobalContactManager::onAllKnownContactsChanged(const Tp::Contacts& contactsAdded, const Tp::Contacts& contactsRemoved)
+{
+    if (!contactsAdded.isEmpty()) {
+        QList<Tp::ContactPtr> contacts = contactsAdded.toList();
+        contacts.first()->manager()->upgradeContacts(contacts, Tp::Features() << Tp::Contact::FeatureAvatarData);
+    }
 }

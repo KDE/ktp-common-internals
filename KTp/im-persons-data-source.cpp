@@ -148,8 +148,9 @@ KABC::Addressee::Map KTpAllContacts::contacts()
     return contactMap;
 }
 
-KABC::Addressee KTpAllContacts::contactToAddressee(const Tp::ContactPtr &contact) const
+KABC::Addressee KTpAllContacts::contactToAddressee(const Tp::ContactPtr &c) const
 {
+    KTp::ContactPtr contact = KTp::ContactPtr::qObjectCast(c);
     KABC::Addressee vcard;
     Tp::AccountPtr account = KTp::contactManager()->accountForContact(contact);
     if (contact && account) {
@@ -158,7 +159,7 @@ KABC::Addressee KTpAllContacts::contactToAddressee(const Tp::ContactPtr &contact
         vcard.insertCustom(QLatin1String("telepathy"), QLatin1String("contactId"), contact->id());
         vcard.insertCustom(QLatin1String("telepathy"), QLatin1String("accountPath"), account->objectPath());
         vcard.insertCustom(QLatin1String("telepathy"), QLatin1String("presence"), contact->presence().status());
-        vcard.setPhoto(KABC::Picture(contact->avatarData().fileName));
+        vcard.setPhoto(KABC::Picture(contact->avatarPath()));
     }
     return vcard;
 }
