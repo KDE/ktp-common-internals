@@ -50,7 +50,7 @@ KTp::Presence KTp::Contact::presence() const
 
 bool KTp::Contact::textChatCapability() const
 {
-    if (!manager()->connection()) {
+    if (!manager() || !manager()->connection()) {
         return false;
     }
 
@@ -59,7 +59,7 @@ bool KTp::Contact::textChatCapability() const
 
 bool KTp::Contact::audioCallCapability() const
 {
-    if (!manager()->connection()) {
+    if (!manager() || !manager()->connection()) {
         return false;
     }
 
@@ -73,7 +73,7 @@ bool KTp::Contact::audioCallCapability() const
 
 bool KTp::Contact::videoCallCapability() const
 {
-    if (!manager()->connection()) {
+    if (!manager() || !manager()->connection()) {
         return false;
     }
 
@@ -87,7 +87,7 @@ bool KTp::Contact::videoCallCapability() const
 
 bool KTp::Contact::fileTransferCapability()  const
 {
-    if (!manager()->connection()) {
+    if (!manager() || !manager()->connection()) {
         return false;
     }
 
@@ -98,7 +98,7 @@ bool KTp::Contact::fileTransferCapability()  const
 
 bool KTp::Contact::collaborativeEditingCapability() const
 {
-    if (!manager()->connection()) {
+    if (!manager() || !manager()->connection()) {
         return false;
     }
 
@@ -110,7 +110,7 @@ bool KTp::Contact::collaborativeEditingCapability() const
 
 QStringList KTp::Contact::dbusTubeServicesCapability() const
 {
-    if (!manager()->connection()) {
+    if (!manager() || !manager()->connection()) {
         return QStringList();
     }
 
@@ -120,7 +120,7 @@ QStringList KTp::Contact::dbusTubeServicesCapability() const
 
 QStringList KTp::Contact::streamTubeServicesCapability() const
 {
-    if (!manager()->connection()) {
+    if (!manager() || !manager()->connection()) {
         return QStringList();
     }
 
