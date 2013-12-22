@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2013  Martin Klapetek <mklapetek@kde.org>
+    Copyright (C) 2013  David Edmundson <davidedmundson@kde.org>
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Lesser General Public
@@ -24,9 +24,7 @@
 
 #include <TelepathyQt/Types>
 
-#include "KTp/ktp-export.h"
-
-class KTP_EXPORT IMPersonsDataSource : public KPeople::BasePersonsDataSource
+class IMPersonsDataSource : public KPeople::BasePersonsDataSource
 {
 public:
     IMPersonsDataSource(QObject *parent, const QVariantList &data);
@@ -34,6 +32,7 @@ public:
     virtual QString sourcePluginId() const;
 
     virtual KPeople::AllContactsMonitor* createAllContactsMonitor();
+    virtual KPeople::ContactMonitor* createContactMonitor(const QString &contactId);
 };
 
 #endif // IM_PERSONS_DATA_SOURCE_H

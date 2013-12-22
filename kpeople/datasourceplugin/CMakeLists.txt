@@ -1,7 +1,9 @@
 include_directories(${KPEOPLE_INCLUDES})
 
 set (im_persons_data_source_SRCS
-     im-persons-data-source-plugin.cpp
+     ktp-contact-monitor.cpp
+     ktp-all-contacts-monitor.cpp
+     im-persons-data-source.cpp
 )
 
 kde4_add_plugin (im_persons_data_source_plugin
@@ -11,8 +13,8 @@ kde4_add_plugin (im_persons_data_source_plugin
 target_link_libraries (im_persons_data_source_plugin
     ${QT_LIBRARIES}
     ${TELEPATHY_QT4_LIBRARIES}
-    ${KDE4_KDEUI_LIBS}
     ${KPEOPLE_LIBS}
+    ${KDEPIMLIBS_KABC_LIBS}
     ktpcommoninternalsprivate
 )
 

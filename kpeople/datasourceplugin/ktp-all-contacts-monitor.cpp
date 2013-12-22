@@ -1,23 +1,25 @@
 /*
-    Copyright (C) 2013  Martin Klapetek <mklapetek@kde.org>
+ * <one line to give the library's name and an idea of what it does.>
+ * Copyright (C) 2013  David Edmundson <davidedmundson@kde.org>
+ * Copyright (C) 2013  Martin Klapetek <mklapetek@kde.org>
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ *
+ */
 
-    This library is free software; you can redistribute it and/or
-    modify it under the terms of the GNU Lesser General Public
-    License as published by the Free Software Foundation; either
-    version 2.1 of the License, or (at your option) any later version.
-
-    This library is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-    Lesser General Public License for more details.
-
-    You should have received a copy of the GNU Lesser General Public
-    License along with this library; if not, write to the Free Software
-    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
-*/
-
-
-#include "im-persons-data-source.h"
+#include "ktp-all-contacts-monitor.h"
 
 #include <TelepathyQt/AccountManager>
 #include <TelepathyQt/AccountFactory>
@@ -34,33 +36,10 @@
 
 #include <KDebug>
 
-using namespace KPeople;
-
-
-class KTpAllContacts : public AllContactsMonitor
-{
-    Q_OBJECT
-public:
-    KTpAllContacts();
-    ~KTpAllContacts();
-    virtual KABC::Addressee::Map contacts();
-
-private Q_SLOTS:
-    void onAccountManagerReady(Tp::PendingOperation *op);
-    void onContactChanged();
-    void onContactInvalidated();
-    void onAllKnownContactsChanged(const Tp::Contacts &contactsAdded, const Tp::Contacts &contactsRemoved);
-
-private:
-    QString createUri(const KTp::ContactPtr &contact) const;
-    KABC::Addressee contactToAddressee(const Tp::ContactPtr &contact) const;
-    QHash<QString, KTp::ContactPtr> m_contacts;
-};
+using namespace KTp;
 
 KTpAllContacts::KTpAllContacts()
 {
-    Tp::registerTypes();
-
     connect(KTp::accountManager()->becomeReady(), SIGNAL(finished(Tp::PendingOperation*)),
             this, SLOT(onAccountManagerReady(Tp::PendingOperation*)));
 }
@@ -150,7 +129,6 @@ KABC::Addressee::Map KTpAllContacts::contacts()
     Q_FOREACH(const KTp::ContactPtr &contact, m_contacts.values()) {
         contactMap.insert(createUri(contact), contactToAddressee(contact));
     }
-    kDebug() << contactMap.keys().size();
     return contactMap;
 }
 
@@ -169,24 +147,5 @@ KABC::Addressee KTpAllContacts::contactToAddressee(const Tp::ContactPtr &contact
     return vcard;
 }
 
-IMPersonsDataSource::IMPersonsDataSource(QObject *parent, const QVariantList &args)
-    : BasePersonsDataSource(parent)
-{
-    Q_UNUSED(args);
-}
+#include "ktp-all-contacts-monitor.moc"
 
-IMPersonsDataSource::~IMPersonsDataSource()
-{
-}
-
-QString IMPersonsDataSource::sourcePluginId() const
-{
-    return QLatin1String("ktp");
-}
-
-AllContactsMonitor* IMPersonsDataSource::createAllContactsMonitor()
-{
-    return new KTpAllContacts();
-}
-
-#include "im-persons-data-source.moc"

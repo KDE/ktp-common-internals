@@ -80,20 +80,6 @@ if (TELEPATHY_LOGGER_QT4_FOUND)
          )
 endif (TELEPATHY_LOGGER_QT4_FOUND)
 
-if (KPEOPLE_FOUND)
-    include_directories(${KPEOPLE_INCLUDES})
-
-    set (ktp_common_internals_private_SRCS
-         ${ktp_common_internals_private_SRCS}
-         im-persons-data-source.cpp
-         )
-
-    set (ktp_private_LIBS
-         ${ktp_private_LIBS}
-         ${NEPOMUK_CORE_LIBRARY}
-         ${KPEOPLE_LIBS}
-         )
-endif(KPEOPLE_FOUND)
 
 kde4_add_library (ktpcommoninternalsprivate SHARED
                  ${ktp_common_internals_private_SRCS}
