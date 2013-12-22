@@ -40,14 +40,18 @@ public:
     QString contactId() const;
     QString accountId() const;
 
-    void setAccountManager(const Tp::AccountManagerPtr &accountManager);
+    /**
+     * This does nothing. Do not use
+     */
+    void KDE_DEPRECATED setAccountManager(const Tp::AccountManagerPtr &accountManager);
 
     /** The contact object for these ID
-      @warning This may be null if no accountManager is set or if you are offline
+      @warning This may be null whilst loading or if you are offline
     */
     KTp::ContactPtr contact() const;
+
     /**
-     * @warning This may be null if no accountManager is set or the account has been deleted
+     * @warning This may be null whilst loading or if the account has been deleted
      */
     Tp::AccountPtr account() const;
 
@@ -56,6 +60,7 @@ Q_SIGNALS:
     void contactChanged(KTp::ContactPtr);
 
 private Q_SLOTS:
+    void onAccountReady(Tp::PendingOperation *op);
     void onAccountConnectionChanged(const Tp::ConnectionPtr &connection);
     void onPendingContactsFinished(Tp::PendingOperation*);
     void onContactInvalid();

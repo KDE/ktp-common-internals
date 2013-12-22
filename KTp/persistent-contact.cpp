@@ -21,7 +21,11 @@
 #include <TelepathyQt/Account>
 #include <TelepathyQt/AccountManager>
 #include <TelepathyQt/PendingContacts>
+#include <TelepathyQt/PendingReady>
 #include <TelepathyQt/ContactManager>
+
+
+#include <KTp/core.h>
 
 #include <KDebug>
 
@@ -48,6 +52,12 @@ KTp::PersistentContact::PersistentContact(const QString &accountId, const QStrin
 {
     d->contactId = contactId;
     d->accountId = accountId;
+
+    //FIXME there must be a const for this?
+    QString objectPath = TP_QT_ACCOUNT_OBJECT_PATH_BASE + QLatin1Char('/') + accountId;
+
+    Tp::PendingReady *op = KTp::accountFactory()->proxy(TP_QT_ACCOUNT_MANAGER_BUS_NAME, objectPath, KTp::connectionFactory(), KTp::channelFactory(), KTp::contactFactory());
+    connect(op, SIGNAL(finished(Tp::PendingOperation*)), SLOT(onCreateAccountFinished(Tp::PendingOperation*)));
 }
 
 KTp::PersistentContact::~PersistentContact()
@@ -67,15 +77,6 @@ QString KTp::PersistentContact::accountId() const
 
 void KTp::PersistentContact::setAccountManager(const Tp::AccountManagerPtr &accountManager)
 {
-    Q_FOREACH(const Tp::AccountPtr &account, accountManager->allAccounts()) {
-        if (account->uniqueIdentifier() == d->accountId) {
-            d->account = account;
-            connect(account.data(), SIGNAL(connectionChanged(Tp::ConnectionPtr)), SLOT(onAccountConnectionChanged(Tp::ConnectionPtr)));
-            onAccountConnectionChanged(account->connection());
-            return;
-        }
-    }
-    kWarning() << "Could not find account " << d->accountId;
 }
 
 KTp::ContactPtr KTp::PersistentContact::contact() const
@@ -87,6 +88,20 @@ Tp::AccountPtr KTp::PersistentContact::account() const
 {
     return d->account;
 }
+
+void KTp::PersistentContact::onAccountReady(Tp::PendingOperation *op)
+{
+    if (op->isError()) {
+        kWarning() << "could not load account " << d->accountId;
+    }
+    Tp::PendingReady *pendingReady = qobject_cast<Tp::PendingReady*>(op);
+    Q_ASSERT(pendingReady);
+    Tp::AccountPtr account = Tp::AccountPtr::qObjectCast(pendingReady->proxy());
+    d->account = account;
+    connect(account.data(), SIGNAL(connectionChanged(Tp::ConnectionPtr)), SLOT(onAccountConnectionChanged(Tp::ConnectionPtr)));
+    onAccountConnectionChanged(account->connection());
+}
+
 
 void KTp::PersistentContact::onAccountConnectionChanged(const Tp::ConnectionPtr &connection)
 {
