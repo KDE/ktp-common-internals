@@ -24,7 +24,6 @@
 #include <kpeople/personpluginmanager.h>
 #include <kpeople/global.h>
 
-#include "KTp/im-persons-data-source.h"
 #include "KTp/types.h"
 #include <global-contact-manager.h>
 
