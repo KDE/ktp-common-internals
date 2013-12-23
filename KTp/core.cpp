@@ -30,6 +30,7 @@
 #include <TelepathyQt/AccountManager>
 #include <KTp/global-contact-manager.h>
 #include "contact-factory.h"
+#include "account-factory_p.h"
 
 class CorePrivate
 {
@@ -54,7 +55,7 @@ CorePrivate::CorePrivate()
     m_kPeopleEnabled = true;
     #endif
 
-    m_accountFactory = Tp::AccountFactory::create(QDBusConnection::sessionBus(),
+    m_accountFactory = KTp::AccountFactory::create(QDBusConnection::sessionBus(),
                                                                     Tp::Features() << Tp::Account::FeatureCore
                                                                                    << Tp::Account::FeatureProfile);
 

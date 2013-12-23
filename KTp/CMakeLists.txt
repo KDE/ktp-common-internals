@@ -4,6 +4,7 @@ include_directories (${CMAKE_CURRENT_BINARY_DIR}
 set (ktp_common_internals_private_SRCS
      ${KTP_GLOBAL_SOURCES}
      abstract-message-filter.cpp
+     account-factory.cpp
      actions.cpp
      capabilities-hack-private.cpp
      contact-info-dialog.cpp

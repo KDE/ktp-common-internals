@@ -56,6 +56,8 @@ public:
     /** Returns the pixmap of an avatar desaturated to gray if contact is offline*/
     QPixmap avatarPixmap();
 
+    QString accountUniqueIdentifier() const;
+
 Q_SIGNALS:
     void invalidated();
 
@@ -67,6 +69,8 @@ private:
     void avatarToGray(QPixmap &avatar);
     QString keyCache() const;
     QString buildAvatarPath(const QString &avatarToken);
+
+    QString m_accountUniqueIdentifier;
 
 };
 

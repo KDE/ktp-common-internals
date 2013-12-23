@@ -37,10 +37,17 @@
 KTp::Contact::Contact(Tp::ContactManager *manager, const Tp::ReferencedHandles &handle, const Tp::Features &requestedFeatures, const QVariantMap &attributes)
     : Tp::Contact(manager, handle, requestedFeatures, attributes)
 {
+    m_accountUniqueIdentifier = manager->connection()->property("accountUID").toString();
+
     connect(manager->connection().data(), SIGNAL(destroyed()), SIGNAL(invalidated()));
     connect(manager->connection().data(), SIGNAL(invalidated(Tp::DBusProxy*,QString,QString)), SIGNAL(invalidated()));
     connect(this, SIGNAL(avatarTokenChanged(QString)), SLOT(invalidateAvatarCache()));
     connect(this, SIGNAL(avatarDataChanged(Tp::AvatarData)), SLOT(invalidateAvatarCache()));
+}
+
+QString KTp::Contact::accountUniqueIdentifier() const
+{
+    return m_accountUniqueIdentifier;
 }
 
 KTp::Presence KTp::Contact::presence() const
