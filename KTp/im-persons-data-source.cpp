@@ -173,6 +173,11 @@ IMPersonsDataSource::~IMPersonsDataSource()
 {
 }
 
+QString IMPersonsDataSource::sourcePluginId() const
+{
+    return QLatin1String("ktp");
+}
+
 AllContactsMonitor* IMPersonsDataSource::createAllContactsMonitor()
 {
     return new KTpAllContacts();

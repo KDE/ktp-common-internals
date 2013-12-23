@@ -31,8 +31,9 @@ class KTP_EXPORT IMPersonsDataSource : public KPeople::BasePersonsDataSource
 public:
     IMPersonsDataSource(QObject *parent, const QVariantList &data);
     virtual ~IMPersonsDataSource();
+    virtual QString sourcePluginId() const;
 
-    virtual AllContactsMonitor* createAllContactsMonitor();
+    virtual KPeople::AllContactsMonitor* createAllContactsMonitor();
 };
 
 #endif // IM_PERSONS_DATA_SOURCE_H
