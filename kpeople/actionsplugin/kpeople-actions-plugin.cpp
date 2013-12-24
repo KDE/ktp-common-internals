@@ -34,7 +34,6 @@
 #include <TelepathyQt/Account>
 #include <TelepathyQt/ContactManager>
 
-#include <kpeople/personpluginmanager.h>
 #include <KPeople/PersonData>
 
 enum IMActionType {
