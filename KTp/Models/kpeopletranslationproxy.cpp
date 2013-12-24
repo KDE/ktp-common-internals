@@ -21,7 +21,6 @@
 
 #include <KPeople/PersonsModel>
 
-#include <kpeople/personpluginmanager.h>
 #include <kpeople/global.h>
 
 #include "KTp/types.h"
