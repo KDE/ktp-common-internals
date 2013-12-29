@@ -153,7 +153,7 @@ QVariant PinnedContactsModel::data(const QModelIndex &index, int role) const
             bool found = false;
             for (int i = 0; !found && i < d->conversations->rowCount(); i++) {
                 QModelIndex idx = d->conversations->index(i, 0);
-                KTp::ContactPtr contact = idx.data(ConversationsModel::ConversationRole).value<Conversation*>()->target()->contact();
+                KTp::ContactPtr contact = idx.data(ConversationsModel::ConversationRole).value<Conversation*>()->targetContact();
                 found |= contact->id() == p->contact()->id();
             }
             return found;
@@ -248,7 +248,7 @@ void PinnedContactsModel::conversationsStateChanged(const QModelIndex &parent, i
     for (int i = start; i <= end; i++) {
         QModelIndex idx = d->conversations->index(i, 0, parent);
         Conversation* conv = idx.data(ConversationsModel::ConversationRole).value<Conversation*>();
-        KTp::ContactPtr contact = conv->target()->contact();
+        KTp::ContactPtr contact = conv->targetContact();
         Q_FOREACH(const KTp::PersistentContactPtr &p, d->m_pins) {
             if (p->contact() == contact) {
                 QModelIndex contactIdx = indexForContact(p->contact());

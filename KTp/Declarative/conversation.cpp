@@ -26,7 +26,6 @@
 #include <TelepathyQt/PendingChannel>
 
 #include <KDebug>
-#include "conversation-target.h"
 
 #include "channel-delegator.h"
 
@@ -34,13 +33,15 @@ class Conversation::ConversationPrivate
 {
   public:
     MessagesModel *messages;
-    ConversationTarget *target;
     //stores if the conversation has been delegated to another client and we are only observing the channel
     //and not handling it.
     bool delegated;
     bool valid;
     Tp::AccountPtr account;
     QTimer *pausedStateTimer;
+    // May be null for group chats.
+    KTp::ContactPtr targetContact;
+    bool isGroupChat;
 };
 
 Conversation::Conversation(const Tp::TextChannelPtr &channel,
@@ -56,13 +57,25 @@ Conversation::Conversation(const Tp::TextChannelPtr &channel,
 
     d->messages = new MessagesModel(account, this);
     setTextChannel(channel);
-    d->target = new ConversationTarget(account, KTp::ContactPtr::qObjectCast(channel->targetContact()), this);
 
     d->delegated = false;
 
     d->pausedStateTimer = new QTimer(this);
     d->pausedStateTimer->setSingleShot(true);
     connect(d->pausedStateTimer, SIGNAL(timeout()), this, SLOT(onChatPausedTimerExpired()));
+
+    if (channel->targetContact().isNull()) {
+        d->isGroupChat = true;
+    } else {
+        d->isGroupChat = false;
+        d->targetContact = KTp::ContactPtr::qObjectCast(channel->targetContact());
+        connect(d->targetContact.constData(), SIGNAL(aliasChanged(QString)),
+                this, SLOT(onTargetContactAliasChanged(QString)));
+        connect(d->targetContact.constData(), SIGNAL(avatarDataChanged(Tp::AvatarData)),
+                this, SLOT(onTargetContactAvatarDataChanged()));
+        connect(d->targetContact.constData(), SIGNAL(presenceChanged(Tp::Presence)),
+                this, SLOT(onTargetContactPresenceChanged()));
+    }
 }
 
 Conversation::Conversation(QObject *parent) : QObject(parent)
@@ -92,9 +105,48 @@ MessagesModel* Conversation::messages() const
     return d->messages;
 }
 
-ConversationTarget* Conversation::target() const
+QString Conversation::title() const
 {
-    return d->target;
+    if (d->isGroupChat) {
+        QString roomName = textChannel()->targetId();
+        return roomName.left(roomName.indexOf(QLatin1Char('@')));
+    } else {
+        return d->targetContact->alias();
+    }
+}
+
+QIcon Conversation::presenceIcon() const
+{
+    if (d->isGroupChat) {
+        return KTp::Presence(Tp::Presence::available()).icon();
+    } else {
+        return KTp::Presence(d->targetContact->presence()).icon();
+    }
+}
+
+QIcon Conversation::avatar() const
+{
+    if (d->isGroupChat) {
+        return QIcon();
+    } else {
+        QString path = d->targetContact->avatarData().fileName;
+        if (path.isEmpty()) {
+            path = QLatin1String("im-user");
+        }
+        return KIcon(path);
+    }
+}
+
+KTp::ContactPtr Conversation::targetContact() const {
+    if (d->isGroupChat) {
+        return KTp::ContactPtr();
+    } else {
+        return d->targetContact;
+    }
+}
+
+Tp::AccountPtr Conversation::account() const {
+    return d->account;
 }
 
 bool Conversation::isValid()
@@ -174,6 +226,21 @@ void Conversation::updateTextChanged(const QString &message)
 void Conversation::onChatPausedTimerExpired()
 {
     d->messages->textChannel()->requestChatState(Tp::ChannelChatStatePaused);
+}
+
+void Conversation::onTargetContactAvatarDataChanged()
+{
+    Q_EMIT avatarChanged(avatar());
+}
+
+void Conversation::onTargetContactAliasChanged()
+{
+    Q_EMIT titleChanged(title());
+}
+
+void Conversation::onTargetContactPresenceChanged()
+{
+    Q_EMIT presenceIconChanged(presenceIcon());
 }
 
 Conversation::~Conversation()

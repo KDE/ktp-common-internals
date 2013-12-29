@@ -19,7 +19,6 @@
 
 #include "conversations-model.h"
 #include "conversation.h"
-#include "conversation-target.h"
 #include "messages-model.h"
 
 #include <KDebug>
@@ -115,7 +114,7 @@ void ConversationsModel::handleChannels(const Tp::MethodInvocationContextPtr<> &
     //if we are handling but should delegate, call delegate channel
     int i = 0;
     Q_FOREACH(Conversation *convo, d->conversations) {
-        if (convo->target()->id() == textChannel->targetId() &&
+        if (convo->textChannel()->targetId() == textChannel->targetId() &&
                 convo->textChannel()->targetHandleType() == textChannel->targetHandleType())
         {
             if (!shouldDelegate) {

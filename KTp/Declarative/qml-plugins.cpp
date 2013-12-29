@@ -28,7 +28,6 @@
 
 #include "conversation.h"
 #include "conversations-model.h"
-#include "conversation-target.h"
 #include "hide-window-component.h"
 #include "messages-model.h"
 #include "pinned-contacts-model.h"
@@ -65,7 +64,6 @@ void QmlPlugins::registerTypes(const char *uri)
         QLatin1String("It will be created once the conversation is created"));
 
     qmlRegisterType<TelepathyManager>();
-    qmlRegisterType<ConversationTarget>();
     qmlRegisterType<ConversationsModel>();
     qRegisterMetaType<Tp::AccountManagerPtr>();
     qRegisterMetaType<KTp::ContactPtr>();
