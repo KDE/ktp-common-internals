@@ -19,8 +19,6 @@
 
 #include "im-persons-data-source.h"
 
-#include <KPeople/PersonsModel>
-
 #include <TelepathyQt/AccountManager>
 #include <TelepathyQt/AccountFactory>
 #include <TelepathyQt/ContactManager>
@@ -31,6 +29,8 @@
 #include "KTp/contact-factory.h"
 #include "KTp/global-contact-manager.h"
 #include "KTp/types.h"
+
+#include <KPeople/AllContactsMonitor>
 
 #include <KDebug>
 
