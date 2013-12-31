@@ -101,7 +101,7 @@ QUrl IMAction::uri() const
 }
 
 KPeopleActionsPlugin::KPeopleActionsPlugin(QObject *parent, const QVariantList &args)
-    : AbstractPersonPlugin(parent)
+    : AbstractPersonAction(parent)
 {
     Q_UNUSED(args);
 }

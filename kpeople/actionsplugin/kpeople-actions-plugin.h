@@ -19,9 +19,9 @@
 #ifndef IM_PLUGIN_H
 #define IM_PLUGIN_H
 
-#include <KPeople/AbstractPersonPlugin>
+#include <KPeople/AbstractPersonAction>
 
-class KPeopleActionsPlugin : public KPeople::AbstractPersonPlugin
+class KPeopleActionsPlugin : public KPeople::AbstractPersonAction
 {
     Q_OBJECT
 public:
