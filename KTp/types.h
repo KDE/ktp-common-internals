@@ -78,6 +78,8 @@ namespace KTp
         ContactCanVideoCallRole, ///< bool. You and contact can both video call
         ContactTubesRole, ///< stringlist. common supported dbus + stream services between you and contact
 
+        ContactVCardRole, ///< VCard of the contact in KABC::Addresse format; KPeople only at the moment
+
         //heading roles
         HeaderTotalUsersRole = Qt::UserRole  + 3000,
         HeaderOnlineUsersRole,

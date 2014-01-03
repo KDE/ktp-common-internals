@@ -93,6 +93,8 @@ QVariant KPeopleTranslationProxy::data(const QModelIndex &proxyIndex, int role) 
             return mapToSource(proxyIndex).data(PersonsModel::GroupsRole);
         case KTp::PersonIdRole:
             return mapToSource(proxyIndex).data(PersonsModel::PersonIdRole);
+        case KTp::ContactVCardRole:
+            return mapToSource(proxyIndex).data(KPeople::PersonsModel::PersonVCardRole);
     }
 
     const KABC::AddresseeList &contacts = mapToSource(proxyIndex).data(PersonsModel::ContactsVCardRole).value<KABC::AddresseeList>();
