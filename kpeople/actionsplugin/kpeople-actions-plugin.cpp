@@ -112,84 +112,77 @@ QList<QAction*> KPeopleActionsPlugin::actionsForPerson(const KABC::Addressee &pe
 {
     QList<QAction*> actions;
 
+    // === TODO ===
+    // This creates actions just for the "most online contact", what we want is to query all
+    // the subcontacts for all capabilities and fill them in on the Person, so if eg. one of
+    // the subcontacts can do audio calls and the other can do video calls, the Person
+    // should have both actions present.
+    Q_UNUSED(contacts);
+
     const QString &accountPath = person.custom(QLatin1String("telepathy"), QLatin1String("accountPath"));
     const QString &contactId = person.custom(QLatin1String("telepathy"), QLatin1String("contactId"));
 
-    // List of pair<accountPath, contactId> - these two always need to be together
-    QList<QPair<QString, QString> > accountContactList;
-
-    accountContactList << qMakePair(accountPath, contactId);
-
-    Q_FOREACH (const KABC::Addressee &contact, contacts) {
-        accountContactList << qMakePair(contact.custom(QLatin1String("telepathy"), QLatin1String("accountPath")),
-                                        contact.custom(QLatin1String("telepathy"), QLatin1String("contactId")));
+    const Tp::AccountPtr account = KTp::contactManager()->accountForAccountPath(accountPath);
+    if (!account) {
+        return actions;
     }
 
-    for (int i = 0; i < accountContactList.size(); i++) {
-        const KTp::ContactPtr contact = KTp::contactManager()->contactForContactId(accountContactList.at(i).first,
-                                                                                   accountContactList.at(i).second);
-        if (!contact || !contact->manager()) {
-            continue;
-        }
-        const Tp::AccountPtr account = KTp::contactManager()->accountForAccountPath(accountContactList.at(i).first);
+    const KTp::ContactPtr contact = KTp::contactManager()->contactForContactId(accountPath, contactId);
+    if (!contact || !contact->manager()) {
+        return actions;
+    }
 
-        if (!account) {
-            continue;
-        }
+    if (contact->textChatCapability()) {
+        QAction *action = new IMAction(i18n("Start Chat Using %1...", account->displayName()),
+                            KIcon(QLatin1String("text-x-generic")),
+                            contact,
+                            account,
+                            TextChannel,
+                            parent);
+        connect (action, SIGNAL(triggered(bool)), SLOT(onActionTriggered()));
+        actions << action;
+    }
+    if (contact->audioCallCapability()) {
+        QAction *action = new IMAction(i18n("Start Audio Call Using %1...", account->displayName()),
+                            KIcon(QLatin1String("audio-headset")),
+                            contact,
+                            account,
+                            AudioChannel,
+                            parent);
+        connect (action, SIGNAL(triggered(bool)), SLOT(onActionTriggered()));
+        actions << action;
+    }
+    if (contact->videoCallCapability()) {
+        QAction *action = new IMAction(i18n("Start Video Call Using %1...", account->displayName()),
+                            KIcon(QLatin1String("camera-web")),
+                            contact,
+                            account,
+                            VideoChannel,
+                            parent);
+        connect (action, SIGNAL(triggered(bool)), SLOT(onActionTriggered()));
+        actions << action;
+    }
 
-        //FIXME - already in master
-        if (true) { //no such query for text chat capability, added an "if true" because makes the code look consistent
-            QAction *action = new IMAction(i18n("Start Chat Using %1...", account->displayName()),
-                                KIcon(QLatin1String("text-x-generic")),
-                                contact,
-                                account,
-                                TextChannel,
-                                parent);
-            connect (action, SIGNAL(triggered(bool)), SLOT(onActionTriggered()));
-            actions << action;
-        }
-        if (contact->audioCallCapability()) {
-            QAction *action = new IMAction(i18n("Start Audio Call Using %1...", account->displayName()),
-                                KIcon(QLatin1String("audio-headset")),
-                                contact,
-                                account,
-                                AudioChannel,
-                                parent);
-            connect (action, SIGNAL(triggered(bool)), SLOT(onActionTriggered()));
-            actions << action;
-        }
-        if (contact->videoCallCapability()) {
-            QAction *action = new IMAction(i18n("Start Video Call Using %1...", account->displayName()),
-                                KIcon(QLatin1String("camera-web")),
-                                contact,
-                                account,
-                                VideoChannel,
-                                parent);
-            connect (action, SIGNAL(triggered(bool)), SLOT(onActionTriggered()));
-            actions << action;
-        }
-
-        if (contact->fileTransferCapability()) {
-            QAction *action = new IMAction(i18n("Send a File Using %1...", account->displayName()),
-                                        KIcon(QLatin1String("mail-attachment")),
-                                        contact,
-                                        account,
-                                        FileTransfer,
-                                        parent);
-            action->setDisabled(true); //FIXME: we need to prompt for file
-            connect (action, SIGNAL(triggered(bool)), SLOT(onActionTriggered()));
-            actions << action;
-        }
-        if (contact->collaborativeEditingCapability()) {
-            QAction *action = new IMAction(i18n("Collaboratively edit a document Using %1...", account->displayName()),
-                                        KIcon(QLatin1String("document-edit")),
-                                        contact,
-                                        account,
-                                        CollabEditing,
-                                        parent);
-            connect (action, SIGNAL(triggered(bool)), SLOT(onActionTriggered()));
-            actions << action;
-        }
+    if (contact->fileTransferCapability()) {
+        QAction *action = new IMAction(i18n("Send a File Using %1...", account->displayName()),
+                                    KIcon(QLatin1String("mail-attachment")),
+                                    contact,
+                                    account,
+                                    FileTransfer,
+                                    parent);
+        action->setDisabled(true); //FIXME: we need to prompt for file
+        connect (action, SIGNAL(triggered(bool)), SLOT(onActionTriggered()));
+        actions << action;
+    }
+    if (contact->collaborativeEditingCapability()) {
+        QAction *action = new IMAction(i18n("Collaboratively edit a document Using %1...", account->displayName()),
+                                    KIcon(QLatin1String("document-edit")),
+                                    contact,
+                                    account,
+                                    CollabEditing,
+                                    parent);
+        connect (action, SIGNAL(triggered(bool)), SLOT(onActionTriggered()));
+        actions << action;
     }
 
     //FIXME-KPEOPLE
