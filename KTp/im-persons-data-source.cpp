@@ -31,6 +31,7 @@
 #include "KTp/types.h"
 
 #include <KPeople/AllContactsMonitor>
+#include <KDE/KABC/Addressee>
 
 #include <KDebug>
 
@@ -55,6 +56,7 @@ private:
     QString createUri(const KTp::ContactPtr &contact) const;
     KABC::Addressee contactToAddressee(const Tp::ContactPtr &contact) const;
     QHash<QString, KTp::ContactPtr> m_contacts;
+    KABC::Addressee::Map m_contactMap;
 };
 
 KTpAllContacts::KTpAllContacts()
@@ -99,14 +101,17 @@ void KTpAllContacts::onAllKnownContactsChanged(const Tp::Contacts &contactsAdded
     if (!m_contacts.isEmpty()) {
         Q_FOREACH (const Tp::ContactPtr &c, contactsRemoved) {
             const KTp::ContactPtr &contact = KTp::ContactPtr::qObjectCast(c);
-            m_contacts.remove(createUri(contact));
-            Q_EMIT contactRemoved(createUri(contact));
+            const QString uri = createUri(contact);
+            m_contacts.remove(uri);
+            m_contactMap.remove(uri);
+            Q_EMIT contactRemoved(uri);
         }
     }
 
     Q_FOREACH (const Tp::ContactPtr &contact, contactsAdded) {
         KTp::ContactPtr ktpContact = KTp::ContactPtr::qObjectCast(contact);
         m_contacts.insert(createUri(ktpContact), ktpContact);
+        //no need to insert to m_contactMap here; will be done the first time it's requested
         Q_EMIT contactAdded(createUri(ktpContact), contactToAddressee(ktpContact));
 
         connect(ktpContact.data(), SIGNAL(presenceChanged(Tp::Presence)),
@@ -132,6 +137,7 @@ void KTpAllContacts::onAllKnownContactsChanged(const Tp::Contacts &contactsAdded
 void KTpAllContacts::onContactChanged()
 {
     const KTp::ContactPtr contact(qobject_cast<KTp::Contact*>(sender()));
+    m_contactMap.insert(createUri(contact), contactToAddressee(contact));
     Q_EMIT contactChanged(createUri(contact), contactToAddressee(contact));
 }
 
@@ -140,18 +146,20 @@ void KTpAllContacts::onContactInvalidated()
     const KTp::ContactPtr contact(qobject_cast<KTp::Contact*>(sender()));
 
     const QString uri = createUri(contact);
-    Q_EMIT contactRemoved(uri);
     m_contacts.remove(uri);
+    m_contactMap.remove(uri);
+    Q_EMIT contactRemoved(uri);
 }
 
 KABC::Addressee::Map KTpAllContacts::contacts()
 {
-    KABC::Addressee::Map contactMap;
-    Q_FOREACH(const KTp::ContactPtr &contact, m_contacts.values()) {
-        contactMap.insert(createUri(contact), contactToAddressee(contact));
+    if (m_contacts.values().size() != m_contactMap.values().size()) {
+        m_contactMap.clear();
+        Q_FOREACH(const KTp::ContactPtr &contact, m_contacts.values()) {
+            m_contactMap.insert(createUri(contact), contactToAddressee(contact));
+        }
     }
-    kDebug() << contactMap.keys().size();
-    return contactMap;
+    return m_contactMap;
 }
 
 KABC::Addressee KTpAllContacts::contactToAddressee(const Tp::ContactPtr &contact) const
