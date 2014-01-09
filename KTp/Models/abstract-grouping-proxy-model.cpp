@@ -197,8 +197,8 @@ void KTp::AbstractGroupingProxyModel::onRowsInserted(const QModelIndex &sourcePa
     } else {
         for (int i = start; i <= end; i++) {
             QModelIndex index = d->source->index(i, 0, sourceParent);
-            QHash<QPersistentModelIndex, ProxyNode*>::const_iterator it = d->proxyMap.find(sourceParent);
-            while (it != d->proxyMap.end()  && it.key() == sourceParent) {
+            QHash<QPersistentModelIndex, ProxyNode*>::const_iterator it = d->proxyMap.constFind(sourceParent);
+            while (it != d->proxyMap.constEnd()  && it.key() == sourceParent) {
                 addProxyNode(index, it.value());
                 it++;
             }
@@ -263,8 +263,8 @@ void KTp::AbstractGroupingProxyModel::onRowsRemoved(const QModelIndex &sourcePar
         QPersistentModelIndex index = d->source->index(i, 0, sourceParent);
         QList<ProxyNode *> itemsToRemove;
 
-        QHash<QPersistentModelIndex, ProxyNode*>::const_iterator it = d->proxyMap.find(index);
-        while (it != d->proxyMap.end()  && it.key() == index) {
+        QHash<QPersistentModelIndex, ProxyNode*>::const_iterator it = d->proxyMap.constFind(index);
+        while (it != d->proxyMap.constEnd() && it.key() == index) {
             kDebug() << "removing row" << index.data();
             itemsToRemove.append(it.value());
             ++it;
@@ -296,9 +296,9 @@ void KTp::AbstractGroupingProxyModel::onDataChanged(const QModelIndex &sourceTop
                 d->groupCache[index] = itemGroups;
 
                 //loop through existing proxy nodes, and check each one is still valid.
-                QHash<QPersistentModelIndex, ProxyNode*>::const_iterator it = d->proxyMap.find(index);
+                QHash<QPersistentModelIndex, ProxyNode*>::const_iterator it = d->proxyMap.constFind(index);
                 QList<ProxyNode*> removedItems;
-                while (it != d->proxyMap.end() && it.key() == index) {
+                while (it != d->proxyMap.constEnd() && it.key() == index) {
                     // if proxy's group is still in the item's groups.
                     if (itemGroups.contains(it.value()->group())) {
                         itemGroups.remove(it.value()->group());
@@ -325,8 +325,8 @@ void KTp::AbstractGroupingProxyModel::onDataChanged(const QModelIndex &sourceTop
         }
 
         //mark all proxy nodes as changed
-        QHash<QPersistentModelIndex, ProxyNode*>::const_iterator it = d->proxyMap.find(index);
-        while (it != d->proxyMap.end() && it.key() == index) {
+        QHash<QPersistentModelIndex, ProxyNode*>::const_iterator it = d->proxyMap.constFind(index);
+        while (it != d->proxyMap.constEnd() && it.key() == index) {
             it.value()->changed();
             ++it;
         }
