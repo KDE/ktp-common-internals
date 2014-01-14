@@ -26,6 +26,8 @@
 #endif
 
 #include <KGlobal>
+#include <KSharedConfig>
+#include <KConfigGroup>
 
 #include <TelepathyQt/AccountManager>
 #include "contact-factory.h"
@@ -41,15 +43,24 @@ public:
 CorePrivate::CorePrivate()
     : m_kPeopleEnabled(false)
 {
-    //if built with kpeople support, enable kpeople if Nepomuk is running
+    //if built with kpeople support, enable kpeople if not disabled in config and if Nepomuk is running correctly
     #ifdef HAVE_KPEOPLE
+
+    KSharedConfigPtr config = KSharedConfig::openConfig(QLatin1String("ktelepathyrc"));
+    bool enabled = config->group(QLatin1String("feeder")).readEntry(QLatin1String("enabled"), true);
+
+    bool nepomukRunning = false;
+
     QDBusInterface nepomukServer(QLatin1String("org.kde.NepomukServer"), QLatin1String("/servicemanager"), QLatin1String("org.kde.nepomuk.ServiceManager"));
     QDBusReply<bool> reply = nepomukServer.call(QLatin1String("startService"), QLatin1String("nepomuktelepathyservice"));
     if (reply.isValid()) {
         if (reply.value()) {
-            m_kPeopleEnabled = true;
+            nepomukRunning = true;
         }
     }
+
+    m_kPeopleEnabled = enabled && nepomukRunning;
+
     //else if it can't be started, or nepomukServer doesn't reply leave it disabled.
     #endif
 
