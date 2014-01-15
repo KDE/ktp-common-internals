@@ -176,6 +176,8 @@ void KTp::JoinChatRoomDialog::onAccountSelectionChanged(int newIndex)
     Q_UNUSED(newIndex)
 
     if (!ui->comboBox->currentAccount()) {
+        // Set a filter expression that matches no account identifier
+        m_favoritesProxyModel->setFilterRegExp(QLatin1String("a^"));
         return;
     }
 
