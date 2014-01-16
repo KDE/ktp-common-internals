@@ -1,6 +1,5 @@
 /*
- * Copyright (C) 2011 David Edmundson <kde@davidedmundson.co.uk>
- * Copyright (C) 2012 Daniele E. Domenichelli <daniele.domenichelli@gmail.com>
+ * Copyright (C) 2014 Amandeep Singh <aman.dedman@gmail.com>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -21,66 +20,18 @@
 #ifndef CONTACT_GRID_WIDGET_H
 #define CONTACT_GRID_WIDGET_H
 
-#include <QtGui/QWidget>
-
-#include <TelepathyQt/Types>
-
-#include <KTp/contact.h>
-#include <KTp/ktp-export.h>
-
-class KLineEdit;
-class QItemSelection;
+#include <KTp/Widgets/contact-view-widget.h>
 
 namespace KTp
 {
-class ContactsFilterModel;
-class ContactsListModel;
 
-class KTP_EXPORT ContactGridWidget : public QWidget
+class KTP_EXPORT ContactGridWidget : public ContactViewWidget
 {
     Q_OBJECT
     Q_DISABLE_COPY(ContactGridWidget)
 
-    Q_PROPERTY(QString displayNameFilter
-               READ displayNameFilter
-               RESET clearDisplayNameFilter
-               WRITE setDisplayNameFilter
-               NOTIFY displayNameFilterChanged)
-    Q_PROPERTY(QSize iconSize
-               READ iconSize
-               WRITE setIconSize
-               NOTIFY iconSizeChanged)
 public:
     explicit ContactGridWidget(ContactsListModel *model, QWidget *parent = 0);
-    virtual ~ContactGridWidget();
-
-    virtual QString displayNameFilter() const;
-    Q_SLOT virtual void clearDisplayNameFilter();
-    Q_SLOT virtual void setDisplayNameFilter(const QString &displayNameFilter);
-    Q_SIGNAL void displayNameFilterChanged(const QString &displayNameFilter);
-
-    virtual QSize iconSize() const;
-    Q_SLOT virtual void setIconSize(const QSize &iconSize);
-    Q_SIGNAL void iconSizeChanged(const QSize &iconSize);
-
-    virtual KTp::ContactsFilterModel* filter() const;
-    virtual KLineEdit* contactFilterLineEdit() const;
-
-    virtual bool hasSelection() const;
-    virtual Tp::AccountPtr selectedAccount() const;
-    virtual KTp::ContactPtr selectedContact() const;
-
-Q_SIGNALS:
-    void selectionChanged(const Tp::AccountPtr &selectedAccount, const KTp::ContactPtr &selectedContact);
-    void contactDoubleClicked(const Tp::AccountPtr &account, const KTp::ContactPtr &contact);
-
-private:
-    class Private;
-    Private * const d;
-
-    Q_PRIVATE_SLOT(d, void _k_onSelectionChanged(const QItemSelection &currentSelection,
-                                                 const QItemSelection &previousSelection));
-    Q_PRIVATE_SLOT(d, void _k_onDoubleClicked(const QModelIndex &index));
 
 }; // class ContactGridWidget
 
