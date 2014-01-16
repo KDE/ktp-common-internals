@@ -115,7 +115,7 @@ Tp::AccountManagerPtr KTp::accountManager()
 KTp::GlobalContactManager* KTp::contactManager()
 {
     if (!s_instance->m_contactManager) {
-        s_instance->m_contactManager = new KTp::GlobalContactManager(s_instance->m_accountManager, 0);
+        s_instance->m_contactManager = new KTp::GlobalContactManager(KTp::accountManager(), 0);
     }
 
     return s_instance->m_contactManager;
