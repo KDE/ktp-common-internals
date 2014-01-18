@@ -90,7 +90,6 @@ if (KPEOPLE_FOUND)
 
     set (ktp_private_LIBS
          ${ktp_private_LIBS}
-         ${NEPOMUK_CORE_LIBRARY}
          ${KPEOPLE_LIBS}
          )
 endif(KPEOPLE_FOUND)
