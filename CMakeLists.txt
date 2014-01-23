@@ -17,6 +17,7 @@ find_package (KDE4 REQUIRED)
 find_package (TelepathyQt4 0.9.2.1 REQUIRED)
 find_package (TelepathyLoggerQt4)
 find_package (KPeople 0.2)
+find_package (KdepimLibs)
 
 # set some default settings
 include (KDE4Defaults)
@@ -25,6 +26,7 @@ include (KDE4Defaults)
 include (MacroLibrary)
 
 macro_log_feature(KPEOPLE_FOUND "KPeople" "Support for KDE Contact Aggregation" "https://projects.kde.org/libkpeople" FALSE "" "")
+macro_log_feature(KDEPIMLIBS_FOUND "KDE-PIM Libraries" "Support for Contact Aggregation" "https://projects.kde.org/kdepimlibs" FALSE "" "")
 macro_log_feature(TELEPATHY_LOGGER_QT4_FOUND "TelepatyLoggerQt4" "Qt bindings for TelepathyLogger. This is needed to provide access to chat logs. HIGHLY recommended" "http://projects.kde.org/telepathy-logger-qt" FALSE "" "")
 macro_display_feature_log()
 
@@ -46,12 +48,11 @@ if (TELEPATHY_LOGGER_QT4_FOUND)
     include_directories(${TELEPATHY_LOGGER_QT4_INCLUDE_DIRS})
 endif (TELEPATHY_LOGGER_QT4_FOUND)
 
-if (KPEOPLE_FOUND)
-    find_package (KdepimLibs REQUIRED)
+if (KPEOPLE_FOUND AND KDEPIMLIBS_FOUND)
     include_directories (${KDEPIMLIBS_INCLUDE_DIRS})
     add_definitions(-DHAVE_KPEOPLE)
     add_subdirectory(kpeople)
-endif (KPEOPLE_FOUND)
+endif (KPEOPLE_FOUND AND KDEPIMLIBS_FOUND)
 
 
 configure_file(version.h.in ${CMAKE_CURRENT_BINARY_DIR}/version.h @ONLY)
