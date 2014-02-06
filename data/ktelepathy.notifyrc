@@ -1094,7 +1094,7 @@ Comment[pt_BR]=Uma mensagem foi filtrada pelo plugin de privacidade
 Comment[ro]=Un mesaj a fost filtrat de către modulul de intimitate
 Comment[ru]=Сообщение отфильтровано модулем конфиденциальности
 Comment[sk]=Správa bola filtrovaná modulom pre súkromie
-Comment[sl]=Sporočilo je bilo filtrirano s strani vstavka za zasebnost 
+Comment[sl]=Sporočilo je bilo filtrirano s strani vstavka za zasebnost
 Comment[sr]=Порука је филтрирана помоћу прикључка за приватност
 Comment[sr@ijekavian]=Порука је филтрирана помоћу прикључка за приватност
 Comment[sr@ijekavianlatin]=Poruka je filtrirana pomoću priključka za privatnost
@@ -1672,7 +1672,7 @@ Name[sr@latin]=Komplet emotikona uspešno instaliran
 Name[sv]=Smilisar installerad med lyckat resultat
 Name[tr]=İfadeseti Başarıyla Kuruldu
 Name[uk]=Набір піктограм успішно встановлено
-Name[wa]=Djeu di xhinêyes astalé comifåt 
+Name[wa]=Djeu di xhinêyes astalé comifåt
 Name[x-test]=xxEmoticonset Installed Successfullyxx
 Name[zh_CN]=安装表情集成功
 Name[zh_TW]=表情符號集安裝成功
@@ -1805,3 +1805,9 @@ Comment[zh_CN]=联系人的状态已更改
 Comment[zh_TW]=聯絡人的狀態已變更
 Contexts=contact
 Action=None
+
+[Event/googletalkExtensionsError]
+Name=File renamed for sending with Google Talk
+Comment=An outgoing file with forbidden extension .exe or .ini has been renamed
+Action=Popup
+Flags=Persistent

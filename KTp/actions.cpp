@@ -29,6 +29,8 @@
 #include <KToolInvocation>
 #include <KDebug>
 #include <KLocalizedString>
+#include <KNotification>
+#include <KAboutData>
 
 #define PREFERRED_TEXT_CHAT_HANDLER QLatin1String("org.freedesktop.Telepathy.Client.KTp.TextUi")
 #define PREFERRED_FILE_TRANSFER_HANDLER QLatin1String("org.freedesktop.Telepathy.Client.KTp.FileTransfer")
@@ -157,8 +159,37 @@ Tp::PendingChannelRequest* Actions::startFileTransfer(const Tp::AccountPtr &acco
 
     kDebug() << "Requesting file transfer of" << filePath << "to" << contact->id();
 
-    Tp::FileTransferChannelCreationProperties fileTransferProperties(
-                  filePath, KMimeType::findByFileContent(filePath)->name());
+    QFileInfo fileInfo(filePath);
+
+    Tp::FileTransferChannelCreationProperties fileTransferProperties;
+
+    if (account->serviceName() == QLatin1String("google-talk") &&
+        (fileInfo.suffix() == QLatin1String("exe") || fileInfo.suffix() == QLatin1String("ini"))) {
+
+        kDebug() << "Google Talk forbids transfering files with suffix \"ini\" or \"exe\". Renaming.";
+
+        QString fileName = fileInfo.fileName().append(QLatin1String("_"));
+
+        fileTransferProperties = Tp::FileTransferChannelCreationProperties(fileName,
+                                                                           KMimeType::findByFileContent(filePath)->name(),
+                                                                           fileInfo.size());
+
+        fileTransferProperties.setUri(QUrl::fromLocalFile(filePath).toString());
+        fileTransferProperties.setLastModificationTime(fileInfo.lastModified());
+
+        KNotification *notification = new KNotification (QLatin1String("googletalkExtensionsError"));
+        notification->setText(i18n("Transferring files with .exe or .ini extension is not allowed by Google Talk. It was sent with filename <i>%1</i>", fileName));
+        notification->setTitle(i18n("Transferred file renamed"));
+
+        KAboutData aboutData("ktelepathy", 0, KLocalizedString(), 0);
+        notification->setComponentData(KComponentData(aboutData));
+        notification->sendEvent();
+
+    } else {
+
+        fileTransferProperties = Tp::FileTransferChannelCreationProperties(
+                                    filePath, KMimeType::findByFileContent(filePath)->name());
+    }
 
     return account->createFileTransfer(contact,
                                        fileTransferProperties,
