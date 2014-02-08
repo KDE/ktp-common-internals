@@ -1808,6 +1808,20 @@ Action=None
 
 [Event/googletalkExtensionsError]
 Name=File renamed for sending with Google Talk
+Name[de]=Datei zum Senden mit Google Talk umbenannt
+Name[nl]=Bestand hernoemd om te verzenden met Google Talk
+Name[pt]=O ficheiro mudou de nome para ser enviado com o Google Talk
+Name[pt_BR]=O arquivo foi renomeado para ser enviado com o Google Talk
+Name[sv]=Filens namn ändrat för att skicka med Google Talk
+Name[uk]=Файл перейменовано для надсилання за допомогою Google Talk
+Name[x-test]=xxFile renamed for sending with Google Talkxx
 Comment=An outgoing file with forbidden extension .exe or .ini has been renamed
+Comment[de]=Eine ausgehende Datei mit der verbotenen Erweiterung „.exe“ oder „.ini“ wurde umbenannt
+Comment[nl]=Een uitgaand bestand met een verboden extensie .exe of .ini is hernoemd
+Comment[pt]=Um ficheiro enviado com as extensões proibidas '.exe' ou '.ini' mudou de nome
+Comment[pt_BR]=Um arquivo enviado com as extensões proibidas '.exe' ou '.ini' foi renomeado
+Comment[sv]=Namnet på en utgående fil med de förbjudna filändelserna .exe eller .ini har ändrats
+Comment[uk]=Вихідний файл із забороненим суфіксом назви, .exe або .ini, було перейменовано
+Comment[x-test]=xxAn outgoing file with forbidden extension .exe or .ini has been renamedxx
 Action=Popup
 Flags=Persistent
