@@ -70,6 +70,7 @@ set (ktp_private_LIBS
                        ${KDE4_KIO_LIBS}
                        ${TELEPATHY_QT4_LIBRARIES}
                        ${KDE4_KDEUI_LIBS}
+                       ${QT_QTSQL_LIBRARIES}
                        ${KDEPIMLIBS_KABC_LIBS}
 )
 
