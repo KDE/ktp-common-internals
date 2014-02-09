@@ -189,7 +189,7 @@ KTp::ContactPtr GlobalContactManager::contactForContactId(const QString &account
     }
 
     Tp::AccountPtr account = d->accountManager->accountForObjectPath(accountPath);
-    if (account->connection() && account->connection()->contactManager()) {
+    if (account && account->connection() && account->connection()->contactManager()) {
         Tp::Contacts contactSet = account->connection()->contactManager()->allKnownContacts();
         Q_FOREACH (const Tp::ContactPtr &contact, contactSet) {
             if (contact->id() == contactId) {
