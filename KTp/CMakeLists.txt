@@ -70,7 +70,6 @@ set (ktp_private_LIBS
                        ${KDE4_KIO_LIBS}
                        ${TELEPATHY_QT4_LIBRARIES}
                        ${KDE4_KDEUI_LIBS}
-                       ${QT_QTSQL_LIBRARIES}
                        ${KDEPIMLIBS_KABC_LIBS}
 )
 
@@ -83,11 +82,6 @@ endif (TELEPATHY_LOGGER_QT4_FOUND)
 
 if (KPEOPLE_FOUND)
     include_directories(${KPEOPLE_INCLUDES})
-
-    set (ktp_common_internals_private_SRCS
-         ${ktp_common_internals_private_SRCS}
-         im-persons-data-source.cpp
-         )
 
     set (ktp_private_LIBS
          ${ktp_private_LIBS}

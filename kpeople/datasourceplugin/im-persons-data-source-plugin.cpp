@@ -1,7 +1,7 @@
 #include <KPluginFactory>
 #include <KPluginLoader>
 
-#include "KTp/im-persons-data-source.h"
+#include "im-persons-data-source.h"
 
 //this is a new file so that IMPluginDataSource can be used from it's own plugin (this) and from the normal plugin
 

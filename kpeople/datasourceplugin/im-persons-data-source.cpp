@@ -78,11 +78,11 @@ KTpAllContacts::~KTpAllContacts()
 
 void KTpAllContacts::loadCache()
 {
-    QSqlDatabase m_db = QSqlDatabase::addDatabase(QLatin1String("QSQLITE"), QLatin1String("ktpCache"));
-    m_db.setDatabaseName(KGlobal::dirs()->locateLocal("data", QLatin1String("ktp/cache.db")));
-    m_db.open();
+    QSqlDatabase db = QSqlDatabase::addDatabase(QLatin1String("QSQLITE"), QLatin1String("ktpCache"));
+    db.setDatabaseName(KGlobal::dirs()->locateLocal("data", QLatin1String("ktp/cache.db")));
+    db.open();
 
-    QSqlQuery query(QLatin1String("SELECT accountId, contactId, alias, avatarFileName FROM contacts"), m_db);
+    QSqlQuery query(QLatin1String("SELECT accountId, contactId, alias, avatarFileName FROM contacts"), db);
 
     query.exec();
 
