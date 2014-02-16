@@ -22,6 +22,7 @@
 #include "model-view.h"
 
 #include "roles-proxy-model.h"
+#include <QSortFilterProxyModel>
 
 
 
@@ -30,10 +31,15 @@ ModelView::ModelView(QAbstractItemModel *model, QWidget *parent)
 {
     setupUi(this);
 
-    RolesProxyModel *proxyModel = new RolesProxyModel(this);
-    proxyModel->setSourceModel(model);
+//     RolesProxyModel *proxyModel = new RolesProxyModel(this);
+//     proxyModel->setSourceModel(model);
 
-    TreeView->setModel(proxyModel);
+    QSortFilterProxyModel *proxy = new QSortFilterProxyModel(this);
+    proxy->setDynamicSortFilter(true);
+    proxy->setSourceModel(model);
+    proxy->setSortRole(Qt::DisplayRole);
+
+    TreeView->setModel(proxy);
 }
 
 ModelView::~ModelView()
