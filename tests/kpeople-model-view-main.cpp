@@ -32,6 +32,7 @@
 #include <TelepathyQt/AccountFactory>
 #include <TelepathyQt/ConnectionFactory>
 #include <TelepathyQt/TextChannel>
+#include <KPeople/PersonsModel>
 
 #include <QDBusConnection>
 
@@ -61,9 +62,11 @@ int main(int argc, char *argv[])
     
     const Tp::AccountManagerPtr accountManager = KTp::accountManager();
 
+    KPeople::PersonsModel *pm = new KPeople::PersonsModel(&app);
     KPeopleTranslationProxy *model = new KPeopleTranslationProxy(&app);
 //     model->setAccountManager(accountManager);
-    
+    model->setSourceModel(pm);
+
     // Set up and show the main widget
     ModelView *mainWidget = new ModelView(model, 0);
     mainWidget->show();

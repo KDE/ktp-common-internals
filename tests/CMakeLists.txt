@@ -40,6 +40,7 @@ target_link_libraries(ktp_kpeople_list_model_view
   ${KDE4_KDECORE_LIBS}
   ${KDE4_KDEUI_LIBS}
   ${TELEPATHY_QT4_LIBRARIES}
+  ${KPEOPLE_LIBS}
   ktpcommoninternalsprivate
   ktpmodelsprivate
 )
