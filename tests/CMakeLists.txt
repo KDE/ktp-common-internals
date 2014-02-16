@@ -29,6 +29,10 @@ target_link_libraries(ktp_contact_list_model_view
   ktpmodelsprivate
 )
 
+if (KPEOPLE_FOUND)
+
+include_directories(${KPEOPLE_INCLUDES})
+
 
 kde4_add_executable(ktp_kpeople_list_model_view
     ${model_view_SRCS}
@@ -44,4 +48,7 @@ target_link_libraries(ktp_kpeople_list_model_view
   ktpcommoninternalsprivate
   ktpmodelsprivate
 )
+
+endif (KPEOPLE_FOUND)
+
 
