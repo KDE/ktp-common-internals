@@ -1,7 +1,6 @@
 include_directories(${KPEOPLE_INCLUDES})
 
 set (im_persons_data_source_SRCS
-     im-persons-data-source-plugin.cpp
      im-persons-data-source.cpp
 )
 

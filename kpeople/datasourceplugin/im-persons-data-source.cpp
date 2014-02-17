@@ -1,5 +1,7 @@
 /*
     Copyright (C) 2013  Martin Klapetek <mklapetek@kde.org>
+    Copyright (C) 2014  David Edmundson <davidedmundson@kde.org>
+
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Lesser General Public
@@ -36,6 +38,8 @@
 #include <KDebug>
 #include <KGlobal>
 #include <KStandardDirs>
+#include <KPluginFactory>
+#include <KPluginLoader>
 
 #include <QSqlDatabase>
 #include <QSqlQuery>
@@ -248,5 +252,9 @@ AllContactsMonitor* IMPersonsDataSource::createAllContactsMonitor()
 {
     return new KTpAllContacts();
 }
+
+K_PLUGIN_FACTORY( IMPersonsDataSourceFactory, registerPlugin<IMPersonsDataSource>(); )
+K_EXPORT_PLUGIN( IMPersonsDataSourceFactory("im_persons_data_source_plugin") )
+
 
 #include "im-persons-data-source.moc"
