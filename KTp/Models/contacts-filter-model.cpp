@@ -43,7 +43,8 @@ public:
           nicknameFilterMatchFlags(Qt::MatchContains),
           aliasFilterMatchFlags(Qt::MatchContains),
           groupsFilterMatchFlags(Qt::MatchContains),
-          idFilterMatchFlags(Qt::MatchContains)
+          idFilterMatchFlags(Qt::MatchContains),
+          m_qtSortHack(false)
     {
     }
 
@@ -80,6 +81,7 @@ public:
 
     QHash<QString, int> m_onlineContactsCounts;
     QHash<QString, int> m_totalContactsCounts;
+    bool m_qtSortHack;
 };
 
 using namespace KTp;
@@ -834,21 +836,56 @@ bool ContactsFilterModel::filterAcceptsRow(int sourceRow, const QModelIndex &sou
 {
     QModelIndex index = sourceModel()->index(sourceRow, 0, sourceParent);
 
+    bool rc;
     int type = index.data(KTp::RowTypeRole).toInt();
     if (type == KTp::ContactRowType || type == KTp::PersonRowType) {
-        return d->filterAcceptsContact(index);
+        rc = d->filterAcceptsContact(index);
     }
     else if (type == KTp::AccountRowType) {
-        return d->filterAcceptsAccount(index);
+        rc = d->filterAcceptsAccount(index);
     }
     else if (type == KTp::GroupRowType) {
-        return d->filterAcceptsGroup(index);
+        rc = d->filterAcceptsGroup(index);
     }
     else {
         kDebug() << "Unknown type found in Account Filter";
-        return true;
+        rc = true;
     }
+
+    //START HORRENDOUS HACK
+    //remove in 5.2.1 +
+
+    //This is a horrendous hack around https://bugreports.qt-project.org/browse/QTBUG-30662
+    //if sort is enabled and nothing passes the filter
+    //the proxy model is unable to map the proxy column to the source model if all items are filtered
+    //this patch causes it to call sort after the first items is added
+
+    //calling sort whilst we are currently filtering seems unsafe, so we do this on a delay
+    //we need to const cast to emit a signal, but that should be safe
+    if (!d->m_qtSortHack && rc && !sourceParent.isValid()) {
+        KTp::ContactsFilterModel *nonConstThis = const_cast<KTp::ContactsFilterModel*>(this);
+        QTimer::singleShot(0, nonConstThis, SLOT(delayedSortFix()));
+        d->m_qtSortHack = true;
+    }
+    //END HORRENDOUS HACK
+
+
+    return rc;
 }
+
+//START HORRENDOUS HACK
+//remove in 5.2.1 +
+void ContactsFilterModel::delayedSortFix()
+{
+    //we need to sort twice
+    //calling sort(0) will do nothing as the QSortFilterProxyModel::proxy_sort_column is already 0
+    //we need to change it to update the QSortFilterProxyModel::source_sort_column
+    sort(-1);
+    sort(0);
+}
+//END HORRENDOUS HACK
+
+
 
 bool ContactsFilterModel::lessThan(const QModelIndex &left, const QModelIndex &right) const
 {

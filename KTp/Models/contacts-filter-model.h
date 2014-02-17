@@ -291,6 +291,8 @@ public:
     QString sortRoleString() const;
     Q_SLOT void setSortRoleString(const QString &role);
 
+    Q_SLOT void delayedSortFix();
+
 protected:
     bool filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent) const;
     bool lessThan (const QModelIndex &left, const QModelIndex &right) const;
