@@ -107,6 +107,8 @@ void KTpAllContacts::loadCache()
     //now start fetching the up-to-date information
     connect(KTp::accountManager()->becomeReady(), SIGNAL(finished(Tp::PendingOperation*)),
         this, SLOT(onAccountManagerReady(Tp::PendingOperation*)));
+
+    emitInitialFetchComplete();
 }
 
 
