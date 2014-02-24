@@ -34,7 +34,7 @@
 
 #include "capabilities-hack-private.h"
 
-KTp::Contact::Contact(Tp::ContactManager *manager, const Tp::ReferencedHandles &handle, const Tp::Features &requestedFeatures, const QVariantMap &attributes)
+KTp::Contact::Contact(Tp::ContactManager *manager, const uint &handle, const Tp::Features &requestedFeatures, const QVariantMap &attributes)
     : Tp::Contact(manager, handle, requestedFeatures, attributes)
 {
     m_accountUniqueIdentifier = manager->connection()->property("accountUID").toString();

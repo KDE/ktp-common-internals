@@ -289,7 +289,7 @@ Tp::PendingChannelRequest* Actions::startCollaborativeEditing(const Tp::AccountP
     request.insert(TP_QT_IFACE_CHANNEL + QLatin1String(".TargetHandleType"),
                 (uint) Tp::HandleTypeContact);
     request.insert(TP_QT_IFACE_CHANNEL + QLatin1String(".TargetHandle"),
-                contact->handle().at(0));
+                contact->handle());
     return createCollabRequest(account, documents, request, needOpenEditor);
 }
 

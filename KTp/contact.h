@@ -30,7 +30,7 @@ class KTP_EXPORT Contact : public Tp::Contact
 {
     Q_OBJECT
 public:
-    explicit Contact(Tp::ContactManager *manager, const Tp::ReferencedHandles &handle, const Tp::Features &requestedFeatures, const QVariantMap &attributes);
+    explicit Contact(Tp::ContactManager *manager, const uint &handle, const Tp::Features &requestedFeatures, const QVariantMap &attributes);
 
     KTp::Presence presence() const;
 

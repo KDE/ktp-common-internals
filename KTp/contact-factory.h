@@ -31,7 +31,7 @@ public:
     static Tp::ContactFactoryPtr create(const Tp::Features &features=Tp::Features());
 protected:
     ContactFactory(const Tp::Features &features);
-    virtual Tp::ContactPtr construct(Tp::ContactManager *manager, const Tp::ReferencedHandles &handle, const Tp::Features &features, const QVariantMap &attributes) const;
+    virtual Tp::ContactPtr construct(Tp::ContactManager *manager, const uint &handle, const Tp::Features &features, const QVariantMap &attributes) const;
 };
 }
 

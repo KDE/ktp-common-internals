@@ -29,7 +29,7 @@ KTp::ContactFactory::ContactFactory(const Tp::Features &features)
 
 }
 
-Tp::ContactPtr KTp::ContactFactory::construct(Tp::ContactManager *manager, const Tp::ReferencedHandles &handle, const Tp::Features &features, const QVariantMap &attributes) const
+Tp::ContactPtr KTp::ContactFactory::construct(Tp::ContactManager *manager, const uint &handle, const Tp::Features &features, const QVariantMap &attributes) const
 {
     return Tp::ContactPtr(new KTp::Contact(manager, handle, features, attributes));
 }
