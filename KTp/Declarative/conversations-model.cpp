@@ -105,7 +105,7 @@ void ConversationsModel::handleChannels(const Tp::MethodInvocationContextPtr<> &
     //find the relevant channelRequest
     Q_FOREACH(const Tp::ChannelRequestPtr channelRequest, channelRequests) {
         kDebug() << channelRequest->hints().allHints();
-        shouldDelegate = channelRequest->hints().hint(QLatin1String("org.freedesktop.Telepathy.ChannelRequest"), QLatin1String("DelegateToPreferredHandler")).toBool();
+        shouldDelegate = channelRequest->hints().hint(QLatin1String("im.telepathy.v1.ChannelRequest"), QLatin1String("DelegateToPreferredHandler")).toBool();
     }
 
     //loop through all conversations checking for matches

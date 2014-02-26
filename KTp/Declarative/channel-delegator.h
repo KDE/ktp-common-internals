@@ -35,7 +35,7 @@ public:
 class ChannelDelegator {
 public:
     static void delegateChannel(const Tp::AccountPtr &account, const Tp::ChannelPtr &channel, const QDateTime &userActionTime = QDateTime::currentDateTime()) {
-        static_cast<AccountProxy*>(account.data())->dispatcherInterface()->DelegateChannels(Tp::ObjectPathList() << QDBusObjectPath(channel->objectPath()), userActionTime.toTime_t(), QLatin1String("org.freedesktop.Telepathy.Client.KTp.TextUi"));
+        static_cast<AccountProxy*>(account.data())->dispatcherInterface()->DelegateChannels(Tp::ObjectPathList() << QDBusObjectPath(channel->objectPath()), userActionTime.toTime_t(), QLatin1String("im.telepathy.v1.Client.KTp.TextUi"));
     }
 };
 

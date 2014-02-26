@@ -370,13 +370,13 @@ void KTp::JoinChatRoomDialog::getRoomList()
     // Build the channelrequest
     QVariantMap request;
     request.insert(TP_QT_IFACE_CHANNEL + QLatin1String(".ChannelType"),
-                   TP_QT_IFACE_CHANNEL_TYPE_ROOM_LIST);
+                   TP_QT_IFACE_CHANNEL_TYPE_ROOM_LIST1);
     request.insert(TP_QT_IFACE_CHANNEL + QLatin1String(".TargetHandleType"),
                    Tp::HandleTypeNone);
 
     // If the user provided a server use it, else use the standard server for the selected account
     if (!ui->serverLineEdit->text().isEmpty()) {
-        request.insert(TP_QT_IFACE_CHANNEL + QLatin1String(".Type.RoomList.Server"),
+        request.insert(TP_QT_IFACE_CHANNEL + QLatin1String(".Type.RoomList1.Server"),
                        ui->serverLineEdit->text());
     }
 
@@ -415,7 +415,7 @@ void KTp::JoinChatRoomDialog::onRoomListChannelReady(Tp::PendingOperation *opera
         QString errorMsg(operation->errorName() + QLatin1String(": ") + operation->errorMessage());
         sendNotificationToUser(errorMsg);
     } else {
-        m_iface = m_roomListChannel->interface<Tp::Client::ChannelTypeRoomListInterface>();
+        m_iface = m_roomListChannel->interface<Tp::Client::ChannelTypeRoomList1Interface>();
 
         m_iface->ListRooms();
 

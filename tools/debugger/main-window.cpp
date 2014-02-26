@@ -26,11 +26,11 @@ MainWindow::MainWindow(QWidget *parent)
     m_ui.setupUi(centralWidget());
     setupGUI();
 
-    m_ui.mcLogsView->setService(QLatin1String("org.freedesktop.Telepathy.MissionControl5"));
-    m_ui.gabbleLogsView->setService(QLatin1String("org.freedesktop.Telepathy.ConnectionManager.gabble"));
-    m_ui.hazeLogsView->setService(QLatin1String("org.freedesktop.Telepathy.ConnectionManager.haze"));
-    m_ui.salutLogsView->setService(QLatin1String("org.freedesktop.Telepathy.ConnectionManager.salut"));
-    m_ui.rakiaLogsView->setService(QLatin1String("org.freedesktop.Telepathy.ConnectionManager.rakia"));
+    m_ui.mcLogsView->setService(QLatin1String("im.telepathy.v1.MissionControl6"));
+    m_ui.gabbleLogsView->setService(QLatin1String("im.telepathy.v1.ConnectionManager.gabble"));
+    m_ui.hazeLogsView->setService(QLatin1String("im.telepathy.v1.ConnectionManager.haze"));
+    m_ui.salutLogsView->setService(QLatin1String("im.telepathy.v1.ConnectionManager.salut"));
+    m_ui.rakiaLogsView->setService(QLatin1String("im.telepathy.v1.ConnectionManager.rakia"));
     connect(m_ui.mcLogsView, SIGNAL(statusMessage(QString)), statusBar(), SLOT(showMessage(QString)));
     connect(m_ui.gabbleLogsView, SIGNAL(statusMessage(QString)), statusBar(), SLOT(showMessage(QString)));
     connect(m_ui.hazeLogsView, SIGNAL(statusMessage(QString)), statusBar(), SLOT(showMessage(QString)));

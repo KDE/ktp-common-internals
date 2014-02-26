@@ -32,10 +32,10 @@
 #include <KNotification>
 #include <KAboutData>
 
-#define PREFERRED_TEXT_CHAT_HANDLER QLatin1String("org.freedesktop.Telepathy.Client.KTp.TextUi")
-#define PREFERRED_FILE_TRANSFER_HANDLER QLatin1String("org.freedesktop.Telepathy.Client.KTp.FileTransfer")
-#define PREFERRED_AUDIO_VIDEO_HANDLER QLatin1String("org.freedesktop.Telepathy.Client.KTp.CallUi")
-#define PREFERRED_RFB_HANDLER QLatin1String("org.freedesktop.Telepathy.Client.krfb_rfb_handler")
+#define PREFERRED_TEXT_CHAT_HANDLER QLatin1String("im.telepathy.v1.Client.KTp.TextUi")
+#define PREFERRED_FILE_TRANSFER_HANDLER QLatin1String("im.telepathy.v1.Client.KTp.FileTransfer")
+#define PREFERRED_AUDIO_VIDEO_HANDLER QLatin1String("im.telepathy.v1.Client.KTp.CallUi")
+#define PREFERRED_RFB_HANDLER QLatin1String("im.telepathy.v1.Client.krfb_rfb_handler")
 
 using namespace KTp;
 
@@ -51,7 +51,7 @@ Tp::PendingChannelRequest* Actions::startChat(const Tp::AccountPtr &account,
 
     Tp::ChannelRequestHints hints;
     if (delegateToPreferredHandler) {
-      hints.setHint(QLatin1String("org.freedesktop.Telepathy.ChannelRequest"),
+      hints.setHint(QLatin1String("im.telepathy.v1.ChannelRequest"),
                     QLatin1String("DelegateToPreferredHandler"),
                     QVariant(true));
     }
@@ -74,7 +74,7 @@ Tp::PendingChannelRequest* Actions::startChat(const Tp::AccountPtr &account,
 
     Tp::ChannelRequestHints hints;
     if (delegateToPreferredHandler) {
-      hints.setHint(QLatin1String("org.freedesktop.Telepathy.ChannelRequest"),
+      hints.setHint(QLatin1String("im.telepathy.v1.ChannelRequest"),
                     QLatin1String("DelegateToPreferredHandler"),
                     QVariant(true));
     }
@@ -267,14 +267,14 @@ Tp::PendingChannelRequest* createCollabRequest(const Tp::AccountPtr account,
     QVariantMap hints = createHintsForCollabRequest(documents, needOpenEditor);
 
     requestBase.insert(TP_QT_IFACE_CHANNEL + QLatin1String(".ChannelType"),
-                    TP_QT_IFACE_CHANNEL_TYPE_STREAM_TUBE);
-    requestBase.insert(TP_QT_IFACE_CHANNEL_TYPE_STREAM_TUBE + QLatin1String(".Service"),
+                    TP_QT_IFACE_CHANNEL_TYPE_STREAM_TUBE1);
+    requestBase.insert(TP_QT_IFACE_CHANNEL_TYPE_STREAM_TUBE1 + QLatin1String(".Service"),
                     QLatin1String("infinote"));
 
     Tp::PendingChannelRequest* channelRequest;
     channelRequest = account->ensureChannel(requestBase,
                                             QDateTime::currentDateTime(),
-                                            QLatin1String("org.freedesktop.Telepathy.Client.KTp.infinoteServer"),
+                                            QLatin1String("im.telepathy.v1.Client.KTp.infinoteServer"),
                                             hints);
 
     return channelRequest;

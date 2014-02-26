@@ -99,7 +99,7 @@ void GlobalContactManager::onConnectionChanged(const Tp::ConnectionPtr &connecti
     Tp::Features connectionFeatures;
     connectionFeatures << Tp::Connection::FeatureRoster;
 
-    if (connection->hasInterface(TP_QT_IFACE_CONNECTION_INTERFACE_CONTACT_GROUPS)) {
+    if (connection->hasInterface(TP_QT_IFACE_CONNECTION_INTERFACE_CONTACT_GROUPS1)) {
        connectionFeatures << Tp::Connection::FeatureRosterGroups;
     }
     Tp::PendingReady *op = connection->becomeReady(connectionFeatures);

@@ -79,7 +79,7 @@ private:
     Ui::JoinChatRoomDialog *ui;
     Tp::PendingChannel *m_pendingRoomListChannel;
     Tp::ChannelPtr m_roomListChannel;
-    Tp::Client::ChannelTypeRoomListInterface *m_iface;
+    Tp::Client::ChannelTypeRoomList1Interface *m_iface;
     RoomsModel *m_model;
     FavoriteRoomsModel *m_favoritesModel;
     QSortFilterProxyModel *m_favoritesProxyModel;
