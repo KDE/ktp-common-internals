@@ -131,8 +131,9 @@ MessageProcessor::MessageProcessor():
 {
     // Default weight is 100. Make sure these two plugins are always above those
     // which don't have weight specified and in this exact order.
+    //
+    // The escape filter also has the URL filter in it, see message-escape-filter.cpp for details
     d->filters << FilterPlugin(QLatin1String("__messageEscapeFilter"), 98, new MessageEscapeFilter(this));
-    d->filters << FilterPlugin(QLatin1String("__messageUrlFilter"), 99, new MessageUrlFilter(this));
 
     d->loadFilters();
 }

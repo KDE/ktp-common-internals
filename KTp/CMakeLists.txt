@@ -23,7 +23,6 @@ set (ktp_common_internals_private_SRCS
      message-escape-filter.cpp
      message-filter-config-manager.cpp
      message-processor.cpp
-     message-url-filter.cpp
      outgoing-message.cpp
      persistent-contact.cpp
      presence.cpp
