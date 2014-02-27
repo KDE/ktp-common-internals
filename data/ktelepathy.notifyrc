@@ -1817,6 +1817,7 @@ Action=None
 [Event/googletalkExtensionsError]
 Name=File renamed for sending with Google Talk
 Name[ca]=Fitxer reanomenat per enviar amb el Google Talk
+Name[cs]=Soubor byl přejmenován pro přenos pomocí Google Talk
 Name[da]=Fil omdøbt for at blive sendt med Google Talk
 Name[de]=Datei zum Senden mit Google Talk umbenannt
 Name[fi]=Tiedoston nimi muutettu Google Talkilla lähetettäväksi
@@ -1837,6 +1838,7 @@ Name[uk]=Файл перейменовано для надсилання за д
 Name[x-test]=xxFile renamed for sending with Google Talkxx
 Comment=An outgoing file with forbidden extension .exe or .ini has been renamed
 Comment[ca]=S'ha reanomenat un fitxer sortint amb una extensió prohibida .exe o .ini
+Comment[cs]=Odesílaný soubor s nepovolenou příponou .exe nebo .ini byl přejmenován
 Comment[da]=En udgående fil med forbudt filendelse .exe eller .ini er blevet omdøbt
 Comment[de]=Eine ausgehende Datei mit der verbotenen Erweiterung „.exe“ oder „.ini“ wurde umbenannt
 Comment[fi]=Lähtevän tiedoston nimi on muutettu, koska sen tiedostopääte oli kielletty (.exe tai .ini)
