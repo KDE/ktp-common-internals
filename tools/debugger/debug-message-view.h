@@ -33,6 +33,7 @@ public:
     void setService(const QString & service);
     virtual ~DebugMessageView();
     virtual void showEvent(QShowEvent* );
+    void saveLogFile();
 
 private Q_SLOTS:
     void onServiceRegistered(const QString & service);

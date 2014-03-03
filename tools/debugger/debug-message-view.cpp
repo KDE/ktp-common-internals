@@ -32,6 +32,7 @@
 #include <KService>
 #include <KTextEditor/View>
 #include <kfind.h>
+#include <KFileDialog>
 
 #include <ctime>
 #include <QDate>
@@ -235,7 +236,11 @@ void DebugMessageView::appendMessage(const Tp::DebugMessage &msg)
     }
 }
 
-
+void DebugMessageView::saveLogFile()
+{
+    KUrl savedFile = KFileDialog::getSaveFileName(KUrl(), QString(), 0, i18n("Save Log"));
+    m_editor->saveAs(savedFile);
+}
 
 
 

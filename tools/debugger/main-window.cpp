@@ -36,6 +36,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(m_ui.hazeLogsView, SIGNAL(statusMessage(QString)), statusBar(), SLOT(showMessage(QString)));
     connect(m_ui.salutLogsView, SIGNAL(statusMessage(QString)), statusBar(), SLOT(showMessage(QString)));
     connect(m_ui.rakiaLogsView, SIGNAL(statusMessage(QString)), statusBar(), SLOT(showMessage(QString)));
+    connect(m_ui.saveButton, SIGNAL(clicked()), this, SLOT(saveLogFile()));
 }
 
 MainWindow::~MainWindow()
@@ -43,3 +44,7 @@ MainWindow::~MainWindow()
 
 }
 
+void MainWindow::saveLogFile()
+{
+    m_ui.tabWidget->currentWidget()->findChild<DebugMessageView *>()->saveLogFile();
+}

@@ -28,6 +28,9 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     virtual ~MainWindow();
 
+public Q_SLOTS:
+    void saveLogFile();
+
 private:
     Ui::MainWindow m_ui;
 };

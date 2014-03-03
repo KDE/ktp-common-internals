@@ -6,11 +6,21 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>592</width>
-    <height>420</height>
+    <width>598</width>
+    <height>435</height>
    </rect>
   </property>
-  <layout class="QHBoxLayout" name="horizontalLayout">
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <widget class="QToolButton" name="saveButton">
+     <property name="toolTip">
+      <string>Saves the log into a file.</string>
+     </property>
+     <property name="text">
+      <string>Save log</string>
+     </property>
+    </widget>
+   </item>
    <item>
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
