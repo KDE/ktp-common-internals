@@ -65,7 +65,7 @@ CorePrivate::CorePrivate()
                                                                                               << Tp::Connection::FeatureSelfContact);
 
     m_contactFactory = KTp::ContactFactory::create(Tp::Features()  << Tp::Contact::FeatureAlias
-                                                                                       << Tp::Contact::FeatureSimplePresence
+                                                                                       << Tp::Contact::FeaturePresence
                                                                                        << Tp::Contact::FeatureCapabilities
                                                                                        << Tp::Contact::FeatureClientTypes
                                                                                        << Tp::Contact::FeatureAvatarData);

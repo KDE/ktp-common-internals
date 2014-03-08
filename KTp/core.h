@@ -58,7 +58,7 @@ class GlobalContactManager;
 
     /**
      * Returns a contactFactory with the following features set:
-     *  - FeatureSimplePresence
+     *  - FeaturePresence
      *  - FeatureCapabilities
      *  - FeatureClientTypes
      *  - FeatureAvatarData

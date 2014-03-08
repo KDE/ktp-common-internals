@@ -41,7 +41,7 @@ TelepathyManager::TelepathyManager(QObject *parent)
                                                         Tp::Features() << Tp::Connection::FeatureCore);
 
     m_contactFactory = KTp::ContactFactory::create(Tp::Features()  << Tp::Contact::FeatureAlias
-                                                   << Tp::Contact::FeatureSimplePresence
+                                                   << Tp::Contact::FeaturePresence
                                                    << Tp::Contact::FeatureCapabilities);
 
     m_channelFactory = Tp::ChannelFactory::create(QDBusConnection::sessionBus());
@@ -96,7 +96,7 @@ void TelepathyManager::addTextChatFeatures()
                                             << Tp::TextChannel::FeatureMessageCapabilities;
 
     m_contactFactory->addFeatures(Tp::Features() << Tp::Contact::FeatureAlias
-                                  << Tp::Contact::FeatureSimplePresence
+                                  << Tp::Contact::FeaturePresence
                                   << Tp::Contact::FeatureCapabilities
                                   << Tp::Contact::FeatureAvatarData);
 
@@ -111,7 +111,7 @@ void TelepathyManager::addContactListFeatures()
                                      << Tp::Connection::FeatureSelfContact);
 
     m_contactFactory->addFeatures(Tp::Features() << Tp::Contact::FeatureAlias
-                                  << Tp::Contact::FeatureSimplePresence
+                                  << Tp::Contact::FeaturePresence
                                   << Tp::Contact::FeatureCapabilities
                                   << Tp::Contact::FeatureAvatarData);
 
