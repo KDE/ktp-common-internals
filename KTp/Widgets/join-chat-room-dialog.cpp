@@ -420,7 +420,7 @@ void KTp::JoinChatRoomDialog::onRoomListChannelReady(Tp::PendingOperation *opera
         m_iface->ListRooms();
 
         connect(m_iface, SIGNAL(ListingRooms(bool)), SLOT(onListing(bool)));
-        connect(m_iface, SIGNAL(GotRooms(Tp::RoomInfoList)), SLOT(onGotRooms(Tp::RoomInfoList)));
+        connect(m_iface, SIGNAL(GotRooms(TpDBus::RoomInfoList)), SLOT(onGotRooms(TpDBus::RoomInfoList)));
     }
 }
 
@@ -452,7 +452,7 @@ void KTp::JoinChatRoomDialog::onListing(bool isListing)
     }
 }
 
-void KTp::JoinChatRoomDialog::onGotRooms(Tp::RoomInfoList roomInfoList)
+void KTp::JoinChatRoomDialog::onGotRooms(TpDBus::RoomInfoList roomInfoList)
 {
     m_model->addRooms(roomInfoList);
 }

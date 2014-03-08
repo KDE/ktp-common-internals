@@ -41,7 +41,7 @@ private Q_SLOTS:
     void onDebugReceiverReady(Tp::PendingOperation *op);
     void onDebugReceiverMonitoringEnabled(Tp::PendingOperation *op);
     void onFetchMessagesFinished(Tp::PendingOperation *op);
-    void onNewDebugMessage(const Tp::DebugMessage &msg);
+    void onNewDebugMessage(const TpDBus::DebugMessage &msg);
     void addDelayedMessages();
     void clear();
 
@@ -49,11 +49,11 @@ Q_SIGNALS:
     void statusMessage(const QString& msg);
 
 private:
-    void appendMessage(const Tp::DebugMessage &msg);
+    void appendMessage(const TpDBus::DebugMessage &msg);
 
     QString m_serviceName;
     Tp::DebugReceiverPtr m_debugReceiver;
-    Tp::DebugMessageList m_tmpCache;
+    TpDBus::DebugMessageList m_tmpCache;
     QDBusServiceWatcher *m_serviceWatcher;
     bool m_ready;
     KTextEditor::Document* m_editor;

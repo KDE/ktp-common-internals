@@ -55,7 +55,7 @@ QVariant KTp::RoomsModel::data(const QModelIndex &index, int role) const
     }
 
     const int row = index.row();
-    const Tp::RoomInfo &roomInfo = m_roomInfoList.at(row);
+    const TpDBus::RoomInfo &roomInfo = m_roomInfoList.at(row);
 
     // this is handled here because when putting it in the switch below
     // all columns get an empty space for the decoration
@@ -128,7 +128,7 @@ QVariant KTp::RoomsModel::headerData(int section, Qt::Orientation orientation, i
     return QVariant();
 }
 
-void KTp::RoomsModel::addRooms(const Tp::RoomInfoList newRoomList)
+void KTp::RoomsModel::addRooms(const TpDBus::RoomInfoList newRoomList)
 {
     if (newRoomList.size() > 0) {
         beginInsertRows(QModelIndex(), m_roomInfoList.size(), m_roomInfoList.size() + newRoomList.size() - 1);

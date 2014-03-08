@@ -79,7 +79,7 @@ void DebugMessageView::showEvent(QShowEvent* event)
 void DebugMessageView::addDelayedMessages()
 {
     m_editor->startEditing();
-    Q_FOREACH(const Tp::DebugMessage &msg, m_tmpCache) {
+    Q_FOREACH(const TpDBus::DebugMessage &msg, m_tmpCache) {
         appendMessage(msg);
     }
     m_editor->endEditing();
@@ -138,8 +138,8 @@ void DebugMessageView::onDebugReceiverReady(Tp::PendingOperation *op)
                  << "Error was:" << op->errorName() << "-" << op->errorMessage();
         m_debugReceiver.reset();
     } else {
-        connect(m_debugReceiver.data(), SIGNAL(newDebugMessage(Tp::DebugMessage)),
-                SLOT(onNewDebugMessage(Tp::DebugMessage)));
+        connect(m_debugReceiver.data(), SIGNAL(newDebugMessage(TpDBus::DebugMessage)),
+                SLOT(onNewDebugMessage(TpDBus::DebugMessage)));
 
         connect(m_debugReceiver->setMonitoringEnabled(true),
                 SIGNAL(finished(Tp::PendingOperation*)),
@@ -169,12 +169,12 @@ void DebugMessageView::onFetchMessagesFinished(Tp::PendingOperation* op)
         m_debugReceiver.reset();
     } else {
         Tp::PendingDebugMessageList *pdml = qobject_cast<Tp::PendingDebugMessageList*>(op);
-        Tp::DebugMessageList messages = pdml->result();
+        TpDBus::DebugMessageList messages = pdml->result();
         messages.append(m_tmpCache); //append any messages that were received from onNewDebugMessage()
         m_tmpCache.clear();
 
         m_editor->startEditing();
-        Q_FOREACH(const Tp::DebugMessage &msg, messages) {
+        Q_FOREACH(const TpDBus::DebugMessage &msg, messages) {
             appendMessage(msg);
         }
         m_editor->endEditing();
@@ -188,7 +188,7 @@ void DebugMessageView::onFetchMessagesFinished(Tp::PendingOperation* op)
     }
 }
 
-void DebugMessageView::onNewDebugMessage(const Tp::DebugMessage & msg)
+void DebugMessageView::onNewDebugMessage(const TpDBus::DebugMessage & msg)
 {
     if (m_ready) {
         appendMessage(msg);
@@ -220,7 +220,7 @@ static inline QString formatTimestamp(double timestamp)
     return str;
 }
 
-void DebugMessageView::appendMessage(const Tp::DebugMessage &msg)
+void DebugMessageView::appendMessage(const TpDBus::DebugMessage &msg)
 {
     if ( isVisible() ) {
         QString message = QString(formatTimestamp(msg.timestamp) %

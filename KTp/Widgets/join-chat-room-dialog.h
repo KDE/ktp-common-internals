@@ -64,7 +64,7 @@ private Q_SLOTS:
     void onRoomListChannelReady(Tp::PendingOperation *operation);
     void onRoomListChannelClosed(Tp::PendingOperation *operation);
     void onListing(bool isListing);
-    void onGotRooms(Tp::RoomInfoList roomInfoList);
+    void onGotRooms(TpDBus::RoomInfoList roomInfoList);
     void onFavoriteRoomSelectionChanged(const QModelIndex &current, const QModelIndex &previous);
     void onFavoriteRoomDataChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight);
     void onRecentRoomClicked();

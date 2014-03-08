@@ -55,7 +55,7 @@ public:
      *
      * \param newRoomList The list with the new rooms to add.
      */
-    void addRooms(const Tp::RoomInfoList newRoomList);
+    void addRooms(const TpDBus::RoomInfoList newRoomList);
 
     /**
      * \brief Clear the room list.
@@ -63,7 +63,7 @@ public:
     void clearRoomInfoList();
 
 private:
-    Tp::RoomInfoList m_roomInfoList;
+    TpDBus::RoomInfoList m_roomInfoList;
 };
 
 class KTP_EXPORT FavoriteRoomsModel : public QAbstractListModel

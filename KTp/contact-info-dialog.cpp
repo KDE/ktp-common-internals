@@ -173,12 +173,12 @@ void ContactInfoDialog::Private::onContactUpgraded(Tp::PendingOperation* op)
 void ContactInfoDialog::Private::onContactInfoReceived(Tp::PendingOperation* op)
 {
     Tp::PendingContactInfo *ci = qobject_cast<Tp::PendingContactInfo*>(op);
-    const Tp::ContactInfoFieldList fieldList = ci->infoFields().allFields();
+    const TpDBus::ContactInfoFieldList fieldList = ci->infoFields().allFields();
 
     for (InfoRowIndex index = (InfoRowIndex) 0; index < _InfoRowCount; index = (InfoRowIndex)(index + 1)) {
         QString value;
 
-        Q_FOREACH(const Tp::ContactInfoField &field, fieldList) {
+        Q_FOREACH(const TpDBus::ContactInfoField &field, fieldList) {
             if (field.fieldValue.count() == 0) {
                 continue;
             }
@@ -379,7 +379,7 @@ void ContactInfoDialog::slotButtonClicked(int button)
 {
     if (button == User1) {
         if (d->avatarChanged) {
-            Tp::Avatar avatar;
+            TpDBus::Avatar avatar;
             if (!d->newAvatarFile.isEmpty()) {
                 QFile file(d->newAvatarFile);
                 file.open(QIODevice::ReadOnly);
@@ -395,12 +395,12 @@ void ContactInfoDialog::slotButtonClicked(int button)
         }
 
         if (d->infoDataChanged) {
-            Tp::ContactInfoFieldList fieldList;
+            TpDBus::ContactInfoFieldList fieldList;
 
             for (InfoRowIndex index = (InfoRowIndex) 0; index < _InfoRowCount; index = (InfoRowIndex) (index + 1)) {
                 InfoRow *row = &InfoRows[index];
 
-                Tp::ContactInfoField field;
+                TpDBus::ContactInfoField field;
                 field.fieldName = row->fieldName;
 
                 if (index == Birthday) {

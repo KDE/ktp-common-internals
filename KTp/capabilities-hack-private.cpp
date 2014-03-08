@@ -29,7 +29,7 @@ static Tp::RequestableChannelClassSpec gabbleAudioCallRCC()
     static Tp::RequestableChannelClassSpec spec;
 
     if (!spec.isValid()) {
-        Tp::RequestableChannelClass rcc;
+        TpDBus::RequestableChannelClass rcc;
         rcc.fixedProperties.insert(TP_QT_IFACE_CHANNEL + QLatin1String(".ChannelType"),
                 TP_QT_IFACE_CHANNEL_TYPE_CALL1);
         rcc.fixedProperties.insert(TP_QT_IFACE_CHANNEL + QLatin1String(".TargetHandleType"),
@@ -47,7 +47,7 @@ static Tp::RequestableChannelClassSpec gabbleVideoCallRCC()
     static Tp::RequestableChannelClassSpec spec;
 
     if (!spec.isValid()) {
-        Tp::RequestableChannelClass rcc;
+        TpDBus::RequestableChannelClass rcc;
         rcc.fixedProperties.insert(TP_QT_IFACE_CHANNEL + QLatin1String(".ChannelType"),
                 TP_QT_IFACE_CHANNEL_TYPE_CALL1);
         rcc.fixedProperties.insert(TP_QT_IFACE_CHANNEL + QLatin1String(".TargetHandleType"),
