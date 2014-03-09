@@ -17,7 +17,11 @@
 */
 #include "main-window.h"
 #include "debug-message-view.h"
+#include <KAction>
+#include <KIcon>
 #include <KStatusBar>
+#include <KToolBar>
+
 
 MainWindow::MainWindow(QWidget *parent)
     : KXmlGuiWindow(parent)
@@ -31,12 +35,17 @@ MainWindow::MainWindow(QWidget *parent)
     m_ui.hazeLogsView->setService(QLatin1String("org.freedesktop.Telepathy.ConnectionManager.haze"));
     m_ui.salutLogsView->setService(QLatin1String("org.freedesktop.Telepathy.ConnectionManager.salut"));
     m_ui.rakiaLogsView->setService(QLatin1String("org.freedesktop.Telepathy.ConnectionManager.rakia"));
+
+    KAction *saveLogAction = new KAction(KIcon(QLatin1String("document-save-as"), KIconLoader::global()), i18n("Save Log"), this);
+    saveLogAction->setToolTip(i18nc("Toolbar icon tooltip", "Save log of the current tab"));
+    toolBar()->addAction(saveLogAction);
+
     connect(m_ui.mcLogsView, SIGNAL(statusMessage(QString)), statusBar(), SLOT(showMessage(QString)));
     connect(m_ui.gabbleLogsView, SIGNAL(statusMessage(QString)), statusBar(), SLOT(showMessage(QString)));
     connect(m_ui.hazeLogsView, SIGNAL(statusMessage(QString)), statusBar(), SLOT(showMessage(QString)));
     connect(m_ui.salutLogsView, SIGNAL(statusMessage(QString)), statusBar(), SLOT(showMessage(QString)));
     connect(m_ui.rakiaLogsView, SIGNAL(statusMessage(QString)), statusBar(), SLOT(showMessage(QString)));
-    connect(m_ui.saveButton, SIGNAL(clicked()), this, SLOT(saveLogFile()));
+    connect(saveLogAction, SIGNAL(triggered(bool)), this, SLOT(saveLogFile()));
 }
 
 MainWindow::~MainWindow()
