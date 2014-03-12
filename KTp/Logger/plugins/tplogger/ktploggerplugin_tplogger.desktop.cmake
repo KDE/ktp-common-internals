@@ -1,6 +1,6 @@
 [Desktop Entry]
 Name=Telepathy Logger plugin
-Name[bs]=Telepathydnevnički priključak
+Name[bs]=Telepathy dnevnički dodatak
 Name[ca]=Connector de registre del Telepathy
 Name[ca@valencia]=Connector de registre del Telepathy
 Name[cs]=Modul záznamů Telepathy
@@ -14,6 +14,7 @@ Name[hu]=Telepathy naplózó bővítmény
 Name[ia]=Plugin de Telepathy Logger
 Name[it]=Estensione di Telepathy Logger
 Name[kk]=Telepathy журналын жүргізу плагині
+Name[ko]=Telepathy 기록 플러그인
 Name[nb]=Telepathy logger-modul
 Name[nl]=Telepathy Logger-plug-in
 Name[pl]=Wtyczka dziennika Telepathy
@@ -33,9 +34,9 @@ Name[x-test]=xxTelepathy Logger pluginxx
 Name[zh_CN]=Telepathy 日志插件
 Name[zh_TW]=Telepathy 紀錄器外掛程式
 Comment=Provides integration with Telepathy Logger
-Comment[bs]=Pruža intergraciju s Telepathy Logger
-Comment[ca]=Aquest connector proporciona integració amb l'enregistrador del Telepathy
-Comment[ca@valencia]=Este connector proporciona integració amb l'enregistrador del Telepathy
+Comment[bs]=Obavlja integraciju s Telepathy dnevnikom
+Comment[ca]=Proporciona integració amb l'enregistrador del Telepathy
+Comment[ca@valencia]=Proporciona integració amb l'enregistrador del Telepathy
 Comment[cs]=Poskytuje integraci se zaznamenáváním Telepathy
 Comment[da]=Giver integration med Telepathy Logger
 Comment[de]=Stellt Integration mit Telepathy-Protokollen zur Verfügung
@@ -47,6 +48,7 @@ Comment[hu]=Integrációt biztosít a Telepathy naplózóval
 Comment[ia]=Il provide integration con Telepathy Logger
 Comment[it]=Fornisce integrazione con Telepathy Logger
 Comment[kk]=Telepathy журнал жүргізумен біріктіруін қамтамасыз ету
+Comment[ko]=Telepathy 로거와 통합 제공
 Comment[nb]=Skaffer integrering med Telepathy logger
 Comment[nl]=Biedt integratie met Telepathy Logger
 Comment[pl]=Zapewnia integrację z dziennikiem Telepathy
@@ -64,7 +66,7 @@ Comment[tr]=Telephaty Günlükleme ile bütünleştirme sağlar
 Comment[uk]=Забезпечує інтеграцію з засобом ведення журналу Telepathy
 Comment[x-test]=xxProvides integration with Telepathy Loggerxx
 Comment[zh_CN]=提供与 Telepathy 日志的集成
-Comment[zh_TW]=提供 Telepathy 紀錄器的整合
+Comment[zh_TW]=提供與 Telepathy 紀錄器的整合
 
 ServiceTypes=KTpLogger/Plugin
 

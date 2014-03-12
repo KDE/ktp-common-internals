@@ -2,7 +2,7 @@
 Type=ServiceType
 X-KDE-ServiceType=KTpLogger/Plugin
 Comment=KTp Logger Plugin
-Comment[bs]=KTp dnevnički priključak
+Comment[bs]=KTp dnevnički dodatak
 Comment[ca]=Connector de registre del KTp
 Comment[ca@valencia]=Connector de registre del KTp
 Comment[cs]=Modul záznamů KTp
@@ -16,6 +16,7 @@ Comment[hu]=KTp naplózó bővítmény
 Comment[ia]=Plugin de KTp Logger
 Comment[it]=Estensione di registro di KTp
 Comment[kk]=KTp журналын жүргізу плагині
+Comment[ko]=KTp 기록 플러그인
 Comment[nb]=Programtillegg for KTp-logger
 Comment[nl]=KTp Logger-plug-in
 Comment[pl]=Wtyczka dziennika KTp
