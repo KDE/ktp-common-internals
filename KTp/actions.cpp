@@ -23,7 +23,6 @@
 #include <TelepathyQt/Contact>
 #include <TelepathyQt/PendingChannelRequest>
 #include <TelepathyQt/PendingFailure>
-#include <TelepathyQt/ReferencedHandles>
 
 #include <KMimeType>
 #include <KToolInvocation>
