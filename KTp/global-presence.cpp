@@ -24,6 +24,7 @@
 
 #include <TelepathyQt/AccountSet>
 #include <TelepathyQt/Account>
+#include <TelepathyQt/PendingReady>
 
 #include <KDebug>
 
@@ -63,6 +64,34 @@ void GlobalPresence::setAccountManager(const Tp::AccountManagerPtr &accountManag
     connect(m_enabledAccounts.data(), SIGNAL(accountAdded(Tp::AccountPtr)), SLOT(onAccountAdded(Tp::AccountPtr)));
 }
 
+void GlobalPresence::addAccountManager(const Tp::AccountManagerPtr &accountManager)
+{
+    m_accountManager = accountManager;
+    connect(m_accountManager->becomeReady(), SIGNAL(finished(Tp::PendingOperation*)),
+            this, SLOT(onAccountManagerReady(Tp::PendingOperation*)));
+}
+
+Tp::AccountManagerPtr GlobalPresence::accountManager() const
+{
+    return m_accountManager;
+}
+
+void GlobalPresence::onAccountManagerReady(Tp::PendingOperation* op)
+{
+    if (op->isError()) {
+        kDebug() << op->errorName();
+        kDebug() << op->errorMessage();
+
+        //TODO: Create signal to send to client
+        kDebug() << "Something unexpected happened to the core part of your Instant Messaging system "
+                 << "and it couldn't be initialized. Try restarting the client.";
+
+        return;
+    }
+
+    setAccountManager(m_accountManager);
+    Q_EMIT(accountManagerReady());
+}
 
 Tp::ConnectionStatus GlobalPresence::connectionStatus() const
 {
@@ -72,6 +101,33 @@ Tp::ConnectionStatus GlobalPresence::connectionStatus() const
 Presence GlobalPresence::currentPresence() const
 {
     return m_currentPresence;
+}
+
+QString GlobalPresence::currentPresenceMessage() const
+{
+    KTp::Presence p = currentPresence();
+    return p.statusMessage();
+}
+
+GlobalPresence::ConnectionPresenceType GlobalPresence::currentPresenceType() const
+{
+    KTp::Presence p = currentPresence();
+    switch(p.type()) {
+        case Tp::ConnectionPresenceTypeAvailable:
+            return GlobalPresence::Available;
+        case Tp::ConnectionPresenceTypeBusy:
+            return GlobalPresence::Busy;
+        case Tp::ConnectionPresenceTypeAway:
+            return GlobalPresence::Away;
+        case Tp::ConnectionPresenceTypeExtendedAway:
+            return GlobalPresence::ExtendedAway;
+        case Tp::ConnectionPresenceTypeHidden:
+            return GlobalPresence::Hidden;
+        case Tp::ConnectionPresenceTypeOffline:
+            return GlobalPresence::Offline;
+        default:
+            return GlobalPresence::Unknown;
+    }
 }
 
 Presence GlobalPresence::requestedPresence() const
@@ -93,6 +149,32 @@ void GlobalPresence::setPresence(const Tp::Presence &presence)
 
     Q_FOREACH(const Tp::AccountPtr &account, m_enabledAccounts->accounts()) {
         account->setRequestedPresence(presence);
+    }
+}
+
+void GlobalPresence::setPresence(GlobalPresence::ConnectionPresenceType p, QString message)
+{
+    switch (p) {
+    case GlobalPresence::Available:
+        setPresence(Tp::Presence::available(message));
+        break;
+    case GlobalPresence::Busy:
+        setPresence(Tp::Presence::busy(message));
+        break;
+    case GlobalPresence::Away:
+        setPresence(Tp::Presence::away(message));
+        break;
+    case GlobalPresence::ExtendedAway:
+        setPresence(Tp::Presence::xa(message));
+        break;
+    case GlobalPresence::Hidden:
+        setPresence(Tp::Presence::hidden(message));
+        break;
+    case GlobalPresence::Offline:
+        setPresence(Tp::Presence::offline(message));
+        break;
+    default:
+        kDebug() << "You should not be here!";
     }
 }
 

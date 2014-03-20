@@ -18,13 +18,11 @@
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-
 #include "qml-plugins.h"
 
 #include <QtDeclarative/QDeclarativeItem>
 #include <QtDeclarative/QDeclarativeEngine>
 #include <QtDeclarative/QDeclarativeContext>
-
 
 #include "conversation.h"
 #include "conversations-model.h"
@@ -36,6 +34,7 @@
 #include "telepathy-manager.h"
 
 #include "KTp/types.h"
+#include "KTp/global-presence.h"
 #include "KTp/Models/contacts-filter-model.h"
 #include "KTp/Models/contacts-model.h"
 #include "KTp/Models/accounts-list-model.h"
@@ -62,6 +61,8 @@ void QmlPlugins::registerTypes(const char *uri)
 
     qmlRegisterUncreatableType<MessagesModel> (uri, 0, 1, "MessagesModel",
         QLatin1String("It will be created once the conversation is created"));
+
+    qmlRegisterType<KTp::GlobalPresence> (uri, 0, 1, "PresenceManager");
 
     qmlRegisterType<TelepathyManager>();
     qmlRegisterType<ConversationsModel>();
