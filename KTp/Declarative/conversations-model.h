@@ -50,13 +50,14 @@ class ConversationsModel : public QAbstractListModel, public Tp::AbstractClientH
         ConversationRole = Qt::UserRole
     };
 
-    void handleChannels(const Tp::MethodInvocationContextPtr<> &context,
-                        const Tp::AccountPtr &account,
-                        const Tp::ConnectionPtr &connection,
-                        const QList<Tp::ChannelPtr> &channels,
-                        const QList<Tp::ChannelRequestPtr> &channelRequests,
-                        const QDateTime &userActionTime,
-                        const HandlerInfo &handlerInfo);
+    void handleChannel(const Tp::MethodInvocationContextPtr<> &context,
+                       const Tp::AccountPtr &account,
+                       const Tp::ConnectionPtr &connection,
+                       const Tp::ChannelPtr &channel,
+                       const QVariantMap &channelProperties,
+                       const QList<Tp::ChannelRequestPtr> &channelRequests,
+                       const QDateTime &userActionTime,
+                       const HandlerInfo &handlerInfo);
     bool bypassApproval() const;
 
   public Q_SLOTS:

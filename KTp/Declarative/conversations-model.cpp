@@ -76,29 +76,25 @@ int ConversationsModel::rowCount(const QModelIndex &parent) const
     return d->conversations.count();
 }
 
-void ConversationsModel::handleChannels(const Tp::MethodInvocationContextPtr<> &context,
-                                        const Tp::AccountPtr &account,
-                                        const Tp::ConnectionPtr &connection,
-                                        const QList<Tp::ChannelPtr> &channels,
-                                        const QList<Tp::ChannelRequestPtr> &channelRequests,
-                                        const QDateTime &userActionTime,
-                                        const HandlerInfo &handlerInfo)
+void ConversationsModel::handleChannel(const Tp::MethodInvocationContextPtr<> &context,
+                                       const Tp::AccountPtr &account,
+                                       const Tp::ConnectionPtr &connection,
+                                       const Tp::ChannelPtr &channel,
+                                       const QVariantMap &channelProperties,
+                                       const QList<Tp::ChannelRequestPtr> &channelRequests,
+                                       const QDateTime &userActionTime,
+                                       const HandlerInfo &handlerInfo)
 {
     Q_UNUSED(connection);
     Q_UNUSED(handlerInfo);
     Q_UNUSED(userActionTime);
+    Q_UNUSED(channelProperties);
 
     bool handled = false;
     bool shouldDelegate = false;
 
     //check that the channel is of type text
-    Tp::TextChannelPtr textChannel;
-    Q_FOREACH(const Tp::ChannelPtr &channel, channels) {
-        textChannel = Tp::TextChannelPtr::dynamicCast(channel);
-        if (textChannel) {
-            break;
-        }
-    }
+    Tp::TextChannelPtr textChannel = Tp::TextChannelPtr::dynamicCast(channel);
 
     Q_ASSERT(textChannel);
 
