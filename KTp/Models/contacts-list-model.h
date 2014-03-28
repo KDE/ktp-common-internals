@@ -41,7 +41,7 @@ public:
     QVariant data(const QModelIndex &index, int role) const;
 
 Q_SIGNALS:
-    void modelInitialized();
+    void modelInitialized(bool success);
 
 private Q_SLOTS:
     void onContactsChanged(const Tp::Contacts &added, const Tp::Contacts &removed);

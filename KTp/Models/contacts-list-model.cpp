@@ -66,7 +66,7 @@ void KTp::ContactsListModel::setAccountManager(const Tp::AccountManagerPtr &acco
     const QList<Tp::AccountPtr> accounts = accountManager->enabledAccounts()->accounts();
     if (accounts.isEmpty()) {
         d->initialized = true;
-        Q_EMIT modelInitialized();
+        Q_EMIT modelInitialized(true);
     } else {
         Q_FOREACH (const Tp::AccountPtr &account, accounts) {
             if (account->isOnline()) {
@@ -75,7 +75,7 @@ void KTp::ContactsListModel::setAccountManager(const Tp::AccountManagerPtr &acco
         }
 
         d->initialized = true;
-        Q_EMIT modelInitialized();
+        Q_EMIT modelInitialized(true);
     }
 }
 
@@ -225,7 +225,7 @@ void KTp::ContactsListModel::onContactsChanged(const Tp::Contacts &added, const 
     }
 
     if (!d->initialized) {
-        Q_EMIT modelInitialized();
+        Q_EMIT modelInitialized(true);
         d->initialized = true;
     }
 }

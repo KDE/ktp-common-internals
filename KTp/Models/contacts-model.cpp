@@ -64,8 +64,8 @@ KTp::ContactsModel::ContactsModel(QObject *parent)
         kDebug() << "Built with kpeople support, using kpeople model";
         KPeople::PersonsModel *personsModel = new KPeople::PersonsModel(this);
 
-        connect(personsModel, SIGNAL(modelInitialized()),
-                this, SIGNAL(modelInitialized()));
+        connect(personsModel, SIGNAL(modelInitialized(bool)),
+                this, SIGNAL(modelInitialized(bool)));
 
         d->source = new KPeopleTranslationProxy(this);
         qobject_cast<KPeopleTranslationProxy*>(d->source)->setSourceModel(personsModel);
@@ -75,8 +75,8 @@ KTp::ContactsModel::ContactsModel(QObject *parent)
     {
         kDebug() << "KPeople support not built-in, using normal model";
         d->source = new KTp::ContactsListModel(this);
-        connect(d->source, SIGNAL(modelInitialized()),
-                this, SIGNAL(modelInitialized()));
+        connect(d->source, SIGNAL(modelInitialized(bool)),
+                this, SIGNAL(modelInitialized(bool)));
     }
 
 }

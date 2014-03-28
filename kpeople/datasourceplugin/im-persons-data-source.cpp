@@ -88,7 +88,10 @@ void KTpAllContacts::loadCache()
 
     QSqlQuery query(QLatin1String("SELECT accountId, contactId, alias, avatarFileName FROM contacts"), db);
 
-    query.exec();
+    if (!query.exec()) {
+        emitInitialFetchComplete(false);
+        return;
+    }
 
     while (query.next()) {
         KABC::Addressee addressee;
@@ -112,7 +115,7 @@ void KTpAllContacts::loadCache()
     connect(KTp::accountManager()->becomeReady(), SIGNAL(finished(Tp::PendingOperation*)),
         this, SLOT(onAccountManagerReady(Tp::PendingOperation*)));
 
-    emitInitialFetchComplete();
+    emitInitialFetchComplete(true);
 }
 
 
