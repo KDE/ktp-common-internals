@@ -12,6 +12,7 @@ set (ktp_widgets_private_SRCS
     notification-config-dialog.cpp
     accounts-combo-box.cpp
     start-chat-dialog.cpp
+    settings-kcm-dialog.cpp
 )
 
 set (ktp_widgets_private_HDRS
@@ -23,6 +24,7 @@ set (ktp_widgets_private_HDRS
      notification-config-dialog.h
      accounts-combo-box.h
      start-chat-dialog.h
+     settings-kcm-dialog.h
 )
 
 kde4_add_ui_files (ktp_widgets_private_SRCS
@@ -46,6 +48,7 @@ target_link_libraries (ktpwidgetsprivate
                        ${TELEPATHY_QT4_LIBRARIES}
                        ${KDE4_KDEUI_LIBS}
                        ${KDE4_KNOTIFYCONFIG_LIBRARY}
+                       ${KDE4_KCMUTILS_LIBS}
                        ktpcommoninternalsprivate
                        ktpmodelsprivate
 )
