@@ -98,6 +98,9 @@ AddContactDialog::AddContactDialog(const Tp::AccountManagerPtr &accountManager, 
     Tp::AccountSetPtr accountSet = accountManager->filterAccounts(filter);
 
     d->ui->accountCombo->setAccountSet(accountSet);
+    updateSubscriptionMessageVisibility();
+
+    connect(d->ui->accountCombo, SIGNAL(currentIndexChanged(int)), SLOT(updateSubscriptionMessageVisibility()));
 
     //bodge.
     //Wtih KPeople support we don't enable FeatureRoster
@@ -175,7 +178,7 @@ void AddContactDialog::_k_onContactsForIdentifiersFinished(Tp::PendingOperation 
         kDebug() << "Requesting presence subscription";
 
         Tp::PendingContacts *pc = qobject_cast<Tp::PendingContacts*>(op);
-        connect(pc->manager()->requestPresenceSubscription(pc->contacts()),
+        connect(pc->manager()->requestPresenceSubscription(pc->contacts(), d->ui->messageLineEdit->text()),
                 SIGNAL(finished(Tp::PendingOperation*)),
                 SLOT(_k_onRequestPresenceSubscriptionFinished(Tp::PendingOperation*)));
     }
@@ -191,6 +194,18 @@ void AddContactDialog::_k_onRequestPresenceSubscriptionFinished(Tp::PendingOpera
         setInProgress(false);
     } else {
         QDialog::accept();
+    }
+}
+
+void AddContactDialog::updateSubscriptionMessageVisibility()
+{
+    Tp::AccountPtr account = d->ui->accountCombo->currentAccount();
+    if (account && account->connection()->contactManager()->subscriptionRequestHasMessage()) {
+        d->ui->messageLineEdit->show();
+        d->ui->messageLineLabel->show();
+    } else {
+        d->ui->messageLineEdit->hide();
+        d->ui->messageLineLabel->hide();
     }
 }
 

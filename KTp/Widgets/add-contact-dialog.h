@@ -51,6 +51,7 @@ private Q_SLOTS:
     KTP_NO_EXPORT void _k_onContactsForIdentifiersFinished(Tp::PendingOperation *op);
     KTP_NO_EXPORT void _k_onRequestPresenceSubscriptionFinished(Tp::PendingOperation *op);
     KTP_NO_EXPORT void _k_onAccountUpgraded(Tp::PendingOperation *op);
+    void updateSubscriptionMessageVisibility();
 
 private:
     KTP_NO_EXPORT void setInProgress(bool inProgress);
