@@ -52,6 +52,7 @@ class KTP_EXPORT ContactInfoDialog : public KDialog
     Q_PRIVATE_SLOT(d, void onChangeAvatarButtonClicked())
     Q_PRIVATE_SLOT(d, void onClearAvatarButtonClicked())
     Q_PRIVATE_SLOT(d, void onInfoDataChanged())
+    Q_PRIVATE_SLOT(d, void onFeatureRosterReady(Tp::PendingOperation *op))
 
 };
 

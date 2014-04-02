@@ -34,6 +34,7 @@
 #include <TelepathyQt/Connection>
 #include <TelepathyQt/Account>
 #include <TelepathyQt/PendingContacts>
+#include <TelepathyQt/PendingReady>
 
 #include <KDebug>
 #include <KTitleWidget>
@@ -93,9 +94,11 @@ class ContactInfoDialog::Private
     void onChangeAvatarButtonClicked();
     void onClearAvatarButtonClicked();
     void onInfoDataChanged();
+    void onFeatureRosterReady(Tp::PendingOperation *op);
 
     void addInfoRow(InfoRowIndex index, const QString &value);
     void addStateRow(const QString &description, Tp::Contact::PresenceState state);
+    void loadStateRows();
 
     Tp::AccountPtr account;
     KTp::ContactPtr contact;
@@ -168,6 +171,11 @@ void ContactInfoDialog::Private::onContactUpgraded(Tp::PendingOperation* op)
         connect(op, SIGNAL(finished(Tp::PendingOperation*)),
                 q, SLOT(onContactInfoReceived(Tp::PendingOperation*)));
     }
+}
+
+void ContactInfoDialog::Private::onFeatureRosterReady(Tp::PendingOperation *op)
+{
+    loadStateRows();
 }
 
 void ContactInfoDialog::Private::onContactInfoReceived(Tp::PendingOperation* op)
@@ -314,6 +322,15 @@ void ContactInfoDialog::Private::addStateRow(const QString& description, Tp::Con
     stateLayout->addRow(descriptionLabel, stateLabel);
 }
 
+void ContactInfoDialog::Private::loadStateRows()
+{
+    if(stateLayout) {
+        addStateRow(i18n("Contact can see when you are online:"), contact->publishState());
+        addStateRow(i18n("You can see when the contact is online:"), contact->subscriptionState());
+        addStateRow(i18n("Contact is blocked:"), contact->isBlocked() ? Tp::Contact::PresenceStateYes : Tp::Contact::PresenceStateNo);
+    }
+}
+
 ContactInfoDialog::ContactInfoDialog(const Tp::AccountPtr& account, const Tp::ContactPtr& contact, QWidget* parent)
     : KDialog(parent)
     , d(new Private(this))
@@ -364,9 +381,17 @@ ContactInfoDialog::ContactInfoDialog(const Tp::AccountPtr& account, const Tp::Co
         d->stateLayout = new QFormLayout();
         d->stateLayout->setSpacing(10);
         layout->addLayout(d->stateLayout);
-        d->addStateRow(i18n("Contact can see when you are online:"), contact->publishState());
-        d->addStateRow(i18n("You can see when the contact is online:"), contact->subscriptionState());
-        d->addStateRow(i18n("Contact is blocked:"), contact->isBlocked() ? Tp::Contact::PresenceStateYes : Tp::Contact::PresenceStateNo);
+
+        // Fetch roster feature, if it is supported, but not loaded
+        Tp::ConnectionPtr conn = contact->manager()->connection();
+        if(!conn->actualFeatures().contains(Tp::Connection::FeatureRoster) && !conn->missingFeatures().contains(Tp::Connection::FeatureRoster)) {
+            Tp::PendingReady *pr = conn->becomeReady(Tp::Features() << Tp::Connection::FeatureRoster);
+
+            connect(pr, SIGNAL(finished(Tp::PendingOperation*)),
+                    SLOT(onFeatureRosterReady(Tp::PendingOperation*)));
+        } else {
+            d->loadStateRows();
+        }
     }
 }
 
