@@ -76,12 +76,12 @@ void ScrollbackManager::setTextChannel(const Tp::AccountPtr &account, const Tp::
     }
 
     KTp::LogEntity contactEntity;
-    if (d->textChannel->targetHandleType() == Tp::HandleTypeContact) {
-        d->contactEntity = KTp::LogEntity(d->textChannel->targetHandleType(),
+    if (d->textChannel->targetEntityType() == Tp::EntityTypeContact) {
+        d->contactEntity = KTp::LogEntity(d->textChannel->targetEntityType(),
                                        d->textChannel->targetContact()->id(),
                                        d->textChannel->targetContact()->alias());
-    } else if (d->textChannel->targetHandleType() == Tp::HandleTypeRoom) {
-        d->contactEntity = KTp::LogEntity(d->textChannel->targetHandleType(),
+    } else if (d->textChannel->targetEntityType() == Tp::EntityTypeRoom) {
+        d->contactEntity = KTp::LogEntity(d->textChannel->targetEntityType(),
                                        d->textChannel->targetId());
     }
 }

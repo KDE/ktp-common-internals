@@ -51,7 +51,7 @@ class KTP_EXPORT LogEntity
      * @param id ID of the contact or chat room
      * @param alias Optional alias (username) of the contact or chat room
      */
-    LogEntity(Tp::HandleType entityType, const QString &id,
+    LogEntity(Tp::EntityType entityType, const QString &id,
               const QString &alias = QString());
 
     /**
@@ -99,7 +99,7 @@ class KTP_EXPORT LogEntity
     /**
      * Returns whether this entity represents a contact or a chat room.
      */
-    Tp::HandleType entityType() const;
+    Tp::EntityType entityType() const;
 
   private:
     class Private;

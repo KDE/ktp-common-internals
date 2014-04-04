@@ -22,7 +22,7 @@
 Tpl::EntityPtr Utils::toTplEntity(const KTp::LogEntity &entity)
 {
     return Tpl::Entity::create(entity.id().toLatin1().constData(),
-                               entity.entityType() == Tp::HandleTypeContact ?
+                               entity.entityType() == Tp::EntityTypeContact ?
                                     Tpl::EntityTypeContact : Tpl::EntityTypeRoom,
                                entity.alias().toLatin1().constData(),
                                0);
@@ -31,7 +31,7 @@ Tpl::EntityPtr Utils::toTplEntity(const KTp::LogEntity &entity)
 KTp::LogEntity Utils::fromTplEntity(const Tpl::EntityPtr& entity)
 {
     return KTp::LogEntity(entity->entityType() == Tpl::EntityTypeContact ?
-                            Tp::HandleTypeContact : Tp::HandleTypeRoom,
+                            Tp::EntityTypeContact : Tp::EntityTypeRoom,
                           entity->identifier(),
                           entity->alias());
 }

@@ -371,8 +371,8 @@ void KTp::JoinChatRoomDialog::getRoomList()
     QVariantMap request;
     request.insert(TP_QT_IFACE_CHANNEL + QLatin1String(".ChannelType"),
                    TP_QT_IFACE_CHANNEL_TYPE_ROOM_LIST1);
-    request.insert(TP_QT_IFACE_CHANNEL + QLatin1String(".TargetHandleType"),
-                   Tp::HandleTypeNone);
+    request.insert(TP_QT_IFACE_CHANNEL + QLatin1String(".TargetEntityType"),
+                   Tp::EntityTypeNone);
 
     // If the user provided a server use it, else use the standard server for the selected account
     if (!ui->serverLineEdit->text().isEmpty()) {

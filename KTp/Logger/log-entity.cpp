@@ -24,7 +24,7 @@ using namespace KTp;
 class LogEntity::Private: public QSharedData
 {
   public:
-    Private(Tp::HandleType entityType_, const QString &id_, const QString &alias_):
+    Private(Tp::EntityType entityType_, const QString &id_, const QString &alias_):
         QSharedData(),
         entityType(entityType_),
         id(id_),
@@ -34,7 +34,7 @@ class LogEntity::Private: public QSharedData
 
     Private():
         QSharedData(),
-        entityType(Tp::HandleTypeNone)
+        entityType(Tp::EntityTypeNone)
     {
     }
 
@@ -57,12 +57,12 @@ class LogEntity::Private: public QSharedData
                 && alias == other.alias;
     }
 
-    Tp::HandleType entityType;
+    Tp::EntityType entityType;
     QString id;
     QString alias;
 };
 
-LogEntity::LogEntity(Tp::HandleType entityType, const QString& id, const QString& alias):
+LogEntity::LogEntity(Tp::EntityType entityType, const QString& id, const QString& alias):
     d(new Private(entityType, id, alias))
 {
 }
@@ -102,12 +102,12 @@ bool LogEntity::operator!=(const LogEntity& other)
 
 bool LogEntity::isValid() const
 {
-    return d->entityType != Tp::HandleTypeNone
+    return d->entityType != Tp::EntityTypeNone
             && !d->id.isEmpty()
             && !d->alias.isEmpty();
 }
 
-Tp::HandleType LogEntity::entityType() const
+Tp::EntityType LogEntity::entityType() const
 {
     return d->entityType;
 }

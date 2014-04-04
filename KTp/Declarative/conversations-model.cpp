@@ -111,7 +111,7 @@ void ConversationsModel::handleChannel(const Tp::MethodInvocationContextPtr<> &c
     int i = 0;
     Q_FOREACH(Conversation *convo, d->conversations) {
         if (convo->textChannel()->targetId() == textChannel->targetId() &&
-                convo->textChannel()->targetHandleType() == textChannel->targetHandleType())
+                convo->textChannel()->targetEntityType() == textChannel->targetEntityType())
         {
             if (!shouldDelegate) {
                 convo->setTextChannel(textChannel);

@@ -285,8 +285,8 @@ Tp::PendingChannelRequest* Actions::startCollaborativeEditing(const Tp::AccountP
                                                               bool needOpenEditor)
 {
     QVariantMap request;
-    request.insert(TP_QT_IFACE_CHANNEL + QLatin1String(".TargetHandleType"),
-                (uint) Tp::HandleTypeContact);
+    request.insert(TP_QT_IFACE_CHANNEL + QLatin1String(".TargetEntityType"),
+                (uint) Tp::EntityTypeContact);
     request.insert(TP_QT_IFACE_CHANNEL + QLatin1String(".TargetHandle"),
                 contact->handle());
     return createCollabRequest(account, documents, request, needOpenEditor);
@@ -298,8 +298,8 @@ Tp::PendingChannelRequest* Actions::startCollaborativeEditing(const Tp::AccountP
                                                               bool needOpenEditor)
 {
     QVariantMap request;
-    request.insert(TP_QT_IFACE_CHANNEL + QLatin1String(".TargetHandleType"),
-                (uint) Tp::HandleTypeRoom);
+    request.insert(TP_QT_IFACE_CHANNEL + QLatin1String(".TargetEntityType"),
+                (uint) Tp::EntityTypeRoom);
     request.insert(TP_QT_IFACE_CHANNEL + QLatin1String(".TargetID"),
                 chatroom);
     return createCollabRequest(account, documents, request, needOpenEditor);
