@@ -133,7 +133,7 @@ KTp::TextChannelWatcherProxyModel::~TextChannelWatcherProxyModel()
     delete d;
 }
 
-void KTp::TextChannelWatcherProxyModel::observeChannels(const Tp::MethodInvocationContextPtr<> &context, const Tp::AccountPtr &account, const Tp::ConnectionPtr &connection, const QList<Tp::ChannelPtr> &channels, const Tp::ChannelDispatchOperationPtr &dispatchOperation, const QList<Tp::ChannelRequestPtr> &requestsSatisfied, const Tp::AbstractClientObserver::ObserverInfo &observerInfo)
+void KTp::TextChannelWatcherProxyModel::observeChannel(const Tp::MethodInvocationContextPtr<> &context, const Tp::AccountPtr &account, const Tp::ConnectionPtr &connection, const Tp::ChannelPtr &channel, const Tp::ChannelDispatchOperationPtr &dispatchOperation, const QList<Tp::ChannelRequestPtr> &requestsSatisfied, const Tp::AbstractClientObserver::ObserverInfo &observerInfo)
 {
     Q_UNUSED(context)
     Q_UNUSED(account)
@@ -146,29 +146,27 @@ void KTp::TextChannelWatcherProxyModel::observeChannels(const Tp::MethodInvocati
         return;
     }
 
-    Q_FOREACH(const Tp::ChannelPtr & channel, channels) {
-        Tp::TextChannelPtr textChannel = Tp::TextChannelPtr::dynamicCast(channel);
-        if (textChannel) {
-            KTp::ContactPtr targetContact = KTp::ContactPtr::qObjectCast(textChannel->targetContact());
+    Tp::TextChannelPtr textChannel = Tp::TextChannelPtr::dynamicCast(channel);
+    if (textChannel) {
+        KTp::ContactPtr targetContact = KTp::ContactPtr::qObjectCast(textChannel->targetContact());
 
-            //skip group chats and situations where we don't have a single contact to mark messages for
-            if (targetContact.isNull()) {
-                continue;
-            }
-
-            //if it's not in our source model, ignore the channel
-            QModelIndexList matchedContacts = sourceModel()->match(QModelIndex(sourceModel()->index(0,0)), KTp::ContactRole, QVariant::fromValue(targetContact));
-            if (matchedContacts.size() !=1) {
-                continue;
-            }
-
-            QPersistentModelIndex contactIndex(matchedContacts[0]);
-
-            ChannelWatcherPtr watcher = ChannelWatcherPtr(new ChannelWatcher(contactIndex, textChannel));
-            d->currentChannels[targetContact] = watcher;
-
-            connect(watcher.data(), SIGNAL(messagesChanged()), SLOT(onChannelMessagesChanged()));
+        //skip group chats and situations where we don't have a single contact to mark messages for
+        if (targetContact.isNull()) {
+            return;
         }
+
+        //if it's not in our source model, ignore the channel
+        QModelIndexList matchedContacts = sourceModel()->match(QModelIndex(sourceModel()->index(0,0)), KTp::ContactRole, QVariant::fromValue(targetContact));
+        if (matchedContacts.size() !=1) {
+            return;
+        }
+
+        QPersistentModelIndex contactIndex(matchedContacts[0]);
+
+        ChannelWatcherPtr watcher = ChannelWatcherPtr(new ChannelWatcher(contactIndex, textChannel));
+        d->currentChannels[targetContact] = watcher;
+
+        connect(watcher.data(), SIGNAL(messagesChanged()), SLOT(onChannelMessagesChanged()));
     }
 }
 
