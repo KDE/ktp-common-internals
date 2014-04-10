@@ -226,7 +226,10 @@ void KPeopleActionsPlugin::onActionTriggered()
             KTp::Actions::openLogViewer(action->uri());
             break;
         case CollabEditing: {
-            const KUrl file = KUrl(KFileDialog::getOpenFileName());
+            const KUrl file = KUrl(KFileDialog::getOpenFileName(KUrl("kfiledialog:///CollabEditingLastDirectory"),
+                                                                QString(),
+                                                                0,
+                                                                i18n("Choose a file to edit with %1", contact->alias())));
             KTp::Actions::startCollaborativeEditing(account, contact, QList<KUrl>() << file, true);
             break;
         }
