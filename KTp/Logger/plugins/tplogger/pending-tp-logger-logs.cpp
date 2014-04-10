@@ -28,6 +28,8 @@
 
 #include <KTp/message-processor.h>
 
+#include <KDebug>
+
 PendingTpLoggerLogs::PendingTpLoggerLogs(const Tp::AccountPtr &account,
                                          const KTp::LogEntity &entity,
                                          const QDate &date,
