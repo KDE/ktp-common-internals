@@ -164,13 +164,12 @@ QList<QAction*> KPeopleActionsPlugin::actionsForPerson(const KABC::Addressee &pe
     }
 
     if (contact->fileTransferCapability()) {
-        QAction *action = new IMAction(i18n("Send a File Using %1...", account->displayName()),
+        QAction *action = new IMAction(i18n("Send Files Using %1...", account->displayName()),
                                     KIcon(QLatin1String("mail-attachment")),
                                     contact,
                                     account,
                                     FileTransfer,
                                     parent);
-        action->setDisabled(true); //FIXME: we need to prompt for file
         connect (action, SIGNAL(triggered(bool)), SLOT(onActionTriggered()));
         actions << action;
     }
@@ -213,9 +212,16 @@ void KPeopleActionsPlugin::onActionTriggered()
         case VideoChannel:
             KTp::Actions::startAudioVideoCall(account, contact);
             break;
-        case FileTransfer:
-            //TODO: add filetransfer
+        case FileTransfer: {
+            const QStringList fileNames = KFileDialog::getOpenFileNames(KUrl("kfiledialog:///FileTransferLastDirectory"),
+                                                                        QString(),
+                                                                        0,
+                                                                        i18n("Choose files to send to %1", contact->alias()));
+            Q_FOREACH(const QString& file, fileNames) {
+                KTp::Actions::startFileTransfer(account, contact, file);
+            }
             break;
+        }
         case LogViewer:
             KTp::Actions::openLogViewer(action->uri());
             break;
