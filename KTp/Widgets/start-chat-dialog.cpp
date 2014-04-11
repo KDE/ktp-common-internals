@@ -38,6 +38,7 @@
 
 #include <KTp/actions.h>
 #include <KTp/contact.h>
+#include <KLocalizedString>
 
 namespace KTp {
 

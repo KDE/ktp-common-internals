@@ -24,6 +24,7 @@
 #include "KTp/contact.h"
 
 #include "ktp-export.h"
+#include <kdemacros.h>
 
 namespace KTp {
 

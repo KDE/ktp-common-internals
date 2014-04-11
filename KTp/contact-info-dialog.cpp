@@ -45,6 +45,8 @@
 #include <KFileDialog>
 #include <KImageFilePreview>
 #include <KMessageBox>
+#include <KIconLoader>
+#include <KMimeType>
 
 namespace KTp {
 
@@ -208,7 +210,7 @@ void ContactInfoDialog::Private::onContactInfoReceived(Tp::PendingOperation* op)
 
 void ContactInfoDialog::Private::onChangeAvatarButtonClicked()
 {
-    QPointer<KFileDialog> fileDialog = new KFileDialog(KUrl(), QString(), q);
+    QPointer<KFileDialog> fileDialog = new KFileDialog(QUrl(), QString(), q);
     fileDialog->setOperationMode(KFileDialog::Opening);
     fileDialog->setPreviewWidget(new KImageFilePreview(fileDialog));
     fileDialog->setMimeFilter(QStringList() << QLatin1String("image/*"));
@@ -302,7 +304,7 @@ void ContactInfoDialog::Private::addStateRow(const QString& description, Tp::Con
 {
     QLabel *descriptionLabel = new QLabel(description, q);
 
-    KIcon icon;
+    QIcon icon;
     switch (state) {
         case Tp::Contact::PresenceStateYes:
             icon = KIcon(QLatin1String("task-complete"));
@@ -454,4 +456,4 @@ void ContactInfoDialog::slotButtonClicked(int button)
 
 } /* namespace KTp */
 
-#include "contact-info-dialog.moc"
+#include "moc_contact-info-dialog.cpp"

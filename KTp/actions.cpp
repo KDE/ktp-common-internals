@@ -181,8 +181,7 @@ Tp::PendingChannelRequest* Actions::startFileTransfer(const Tp::AccountPtr &acco
         notification->setText(i18n("Transferring files with .exe or .ini extension is not allowed by Google Talk. It was sent with filename <i>%1</i>", fileName));
         notification->setTitle(i18n("Transferred file renamed"));
 
-        KAboutData aboutData("ktelepathy", 0, KLocalizedString(), 0);
-        notification->setComponentData(KComponentData(aboutData));
+        notification->setComponentName(QStringLiteral("ktelepathy"));
         notification->sendEvent();
 
     } else {

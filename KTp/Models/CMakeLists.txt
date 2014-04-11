@@ -30,8 +30,8 @@ set (ktp_models_private_HDRS
 )
 
 set (ktp_models_private_LIBS
-                       ${KDE4_KDECORE_LIBS}
-                       ${TELEPATHY_QT4_LIBRARIES}
+                       
+                       ${TELEPATHY_QT5_LIBRARIES}
                        ${KDE4_KDEUI_LIBS}
                        ktpcommoninternalsprivate
 )
@@ -49,9 +49,9 @@ if (KPEOPLE_FOUND)
          ${KPEOPLE_LIBS}
          ${KDEPIMLIBS_KABC_LIBS}
          )
-endif (KPEOPLE_FOUND)
+endif ()
 
-kde4_add_library (ktpmodelsprivate SHARED
+add_library (ktpmodelsprivate SHARED
                  ${ktp_models_private_SRCS}
 )
 

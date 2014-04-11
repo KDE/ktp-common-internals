@@ -24,10 +24,10 @@
 #include <KDE/KLineEdit>
 #include <KDE/KDebug>
 
-#include <QtGui/QApplication>
 #include <QtGui/QTextOption>
 #include <QtGui/QPainter>
-#include <QtGui/QVBoxLayout>
+#include <QtWidgets/QApplication>
+#include <QtWidgets/QVBoxLayout>
 
 #include "types.h"
 #include <KTp/Models/contacts-list-model.h>

@@ -21,8 +21,8 @@
 #ifndef CONTACT_VIEW_WIDGET_H
 #define CONTACT_VIEW_WIDGET_H
 
-#include <QtGui/QWidget>
-#include <QtGui/QListView>
+#include <QtWidgets/QWidget>
+#include <QtWidgets/QListView>
 
 #include <TelepathyQt/Types>
 

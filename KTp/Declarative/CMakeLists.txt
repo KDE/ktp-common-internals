@@ -16,18 +16,17 @@ set (ktp_qml_plugin_SRCS
     qml-plugins.cpp
 )
 
-kde4_add_library (ktpqmlplugin SHARED ${ktp_qml_plugin_SRCS})
+add_library (ktpqmlplugin SHARED ${ktp_qml_plugin_SRCS})
 
 target_link_libraries (ktpqmlplugin
-    ${QT_QTSCRIPT_LIBRARY}
-    ${QT_QTDECLARATIVE_LIBRARY}
-    ${KDE4_KDECORE_LIBS}
-    ${TELEPATHY_QT4_LIBRARIES}
-    ${KDE4_KDEUI_LIBS}
+    Qt5::Qml
+    
+    ${TELEPATHY_QT5_LIBRARIES}
+    KF5::KDE4Support
     ktpcommoninternalsprivate
     ktploggerprivate
     ktpmodelsprivate
 )
 
-install (TARGETS ktpqmlplugin DESTINATION ${IMPORTS_INSTALL_DIR}/org/kde/telepathy)
-install (FILES qmldir DESTINATION ${IMPORTS_INSTALL_DIR}/org/kde/telepathy)
+install (TARGETS ktpqmlplugin DESTINATION ${QML_INSTALL_DIR}/org/kde/telepathy)
+install (FILES qmldir DESTINATION ${QML_INSTALL_DIR}/org/kde/telepathy)

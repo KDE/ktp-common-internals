@@ -65,19 +65,19 @@ set (ktp_common_internals_private_HDRS
 )
 
 set (ktp_private_LIBS
-                       ${KDE4_KDECORE_LIBS}
-                       ${KDE4_KIO_LIBS}
-                       ${TELEPATHY_QT4_LIBRARIES}
-                       ${KDE4_KDEUI_LIBS}
+                       KF5::Wallet
+                       KF5::KIOWidgets
+                       KF5::KDE4Support
+                       ${TELEPATHY_QT5_LIBRARIES}
                        ${KDEPIMLIBS_KABC_LIBS}
 )
 
-if (TELEPATHY_LOGGER_QT4_FOUND)
+if (TELEPATHY_LOGGER_QT5_FOUND)
     set (ktp_private_LIBS
          ${ktp_private_LIBS}
-         ${TELEPATHY_LOGGER_QT4_LIBRARIES}
+         ${TELEPATHY_LOGGER_QT5_LIBRARIES}
          )
-endif (TELEPATHY_LOGGER_QT4_FOUND)
+endif ()
 
 if (KPEOPLE_FOUND)
     include_directories(${KPEOPLE_INCLUDES})
@@ -86,9 +86,9 @@ if (KPEOPLE_FOUND)
          ${ktp_private_LIBS}
          ${KPEOPLE_LIBS}
          )
-endif(KPEOPLE_FOUND)
+endif()
 
-kde4_add_library (ktpcommoninternalsprivate SHARED
+add_library (ktpcommoninternalsprivate
                  ${ktp_common_internals_private_SRCS}
 )
 
@@ -124,4 +124,4 @@ if(DOXYGEN_EXECUTABLE)
   add_custom_target(
     apidox
     COMMAND ${DOXYGEN_EXECUTABLE} Doxyfile)
-endif(DOXYGEN_EXECUTABLE)
+endif()

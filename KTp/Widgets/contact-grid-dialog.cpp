@@ -55,7 +55,7 @@ public:
     KTp::ContactsListModel *contactsModel;
     KTp::ContactGridWidget *contactGridWidget;
 
-public Q_SLOTS:
+public:
     void _k_onAccountManagerReady();
     void _k_onSelectionChanged();
 };
@@ -149,4 +149,4 @@ KTp::ContactsFilterModel* KTp::ContactGridDialog::filter() const
 }
 
 
-#include "contact-grid-dialog.moc"
+#include "moc_contact-grid-dialog.cpp"

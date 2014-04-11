@@ -22,6 +22,7 @@
 #include <KLocalizedString>
 #include <KDebug>
 #include <KStandardDirs>
+#include <KTimeZone>
 
 using namespace KTp;
 

@@ -37,7 +37,7 @@ set (ktp_logger_private_HDRS
     scrollback-manager.h
 )
 
-kde4_add_library (ktploggerprivate SHARED
+add_library (ktploggerprivate SHARED
                  ${ktp_logger_private_SRCS}
 )
 
@@ -47,8 +47,8 @@ set_target_properties(ktploggerprivate PROPERTIES
                                        DEFINE_SYMBOL MAKE_KTP_LIB)
 
 target_link_libraries (ktploggerprivate
-                       ${KDE4_KDECORE_LIBS}
-                       ${TELEPATHY_QT4_LIBRARIES}
+                       
+                       ${TELEPATHY_QT5_LIBRARIES}
                        ktpcommoninternalsprivate
 )
 

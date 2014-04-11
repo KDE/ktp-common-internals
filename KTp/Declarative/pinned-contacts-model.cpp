@@ -159,7 +159,7 @@ QVariant PinnedContactsModel::data(const QModelIndex &index, int role) const
             return found;
         }
         case Qt::DecorationRole: {
-            KIcon icon;
+            QIcon icon;
             if (p->contact()) {
                 QString file = p->contact()->avatarData().fileName;
                 if (!file.isEmpty()) {

@@ -29,6 +29,7 @@
 #include <KService>
 #include <KServiceTypeTrader>
 #include <KPluginFactory>
+#include <KGlobal>
 #include <KDE/KStandardDirs>
 
 using namespace KTp;

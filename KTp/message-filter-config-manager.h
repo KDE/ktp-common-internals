@@ -20,6 +20,7 @@
 #define MESSAGE_FILTER_CONFIG_MANAGER_H
 
 #include <KPluginInfo>
+#include <KSharedConfig>
 
 #include <KTp/ktp-export.h>
 

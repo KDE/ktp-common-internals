@@ -20,24 +20,28 @@
 #include "version.h"
 
 #include <KAboutData>
-#include <KCmdLineArgs>
-#include <KApplication>
+#include <KLocalizedString>
 #include <TelepathyQt/Debug>
 #include <TelepathyQt/Types>
 
 int main(int argc, char **argv)
 {
-    KAboutData aboutData("ktp-debugger", 0,
-            ki18n("KDE Telepathy Debug Tool"),
-            KTP_VERSION,
-            ki18n("Tool for inspecting logs of the various underlying telepathy components"),
+    KAboutData aboutData(QStringLiteral("ktp-debugger"), QString(),
+            i18n("KDE Telepathy Debug Tool"),
+            QStringLiteral(KTP_VERSION),
+            i18n("Tool for inspecting logs of the various underlying telepathy components"),
             KAboutData::License_LGPL,
-            ki18n("Copyright (C) 2011 Collabora Ltd."));
-    aboutData.addAuthor(ki18n("George Kiagiadakis"), ki18n("Developer"),
-                        "george.kiagiadakis@collabora.com");
+            i18n("Copyright (C) 2011 Collabora Ltd."));
+    aboutData.addAuthor(i18n("George Kiagiadakis"), i18n("Developer"),
+                        QStringLiteral("george.kiagiadakis@collabora.com"));
 
-    KCmdLineArgs::init(argc, argv, &aboutData);
-    KApplication app;
+    QApplication app(argc, argv);
+    {
+        QCommandLineParser parser;
+        aboutData.setupCommandLine(&parser);
+        parser.process(app);
+        aboutData.processCommandLine(&parser);
+    }
 
     Tp::registerTypes();
     Tp::enableDebug(true);

@@ -1,58 +1,69 @@
 project(ktp-common-internals)
 
-cmake_minimum_required (VERSION 2.6.3 FATAL_ERROR)
+cmake_minimum_required (VERSION 2.8.12 FATAL_ERROR)
 
+find_package(ECM 0.0.11 REQUIRED NO_MODULE)
 set (CMAKE_MODULE_PATH
      "${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules"
-     ${CMAKE_MODULE_PATH}
+     ${ECM_MODULE_PATH} ${ECM_KDE_MODULE_DIR}
 )
 cmake_policy(SET CMP0002 OLD)
 
 set (KTP_VERSION "0.7.80")
 # Bump for every 0.x release, or whenever BC changes
-set (KTP_SONUMBER 7)
-set (KTP_MESSAGE_FILTER_FRAMEWORK_VERSION "4")
+set (KTP_SONUMBER 9)
+set (KTP_MESSAGE_FILTER_FRAMEWORK_VERSION "5")
 
-find_package (KDE4 REQUIRED)
-find_package (TelepathyQt4 0.9.2.1 REQUIRED)
-find_package (TelepathyLoggerQt4)
-find_package (KPeople 0.2)
-find_package (KdepimLibs)
+find_package (Qt5 REQUIRED CONFIG COMPONENTS Qml Test)
+find_package (KF5 REQUIRED CONFIG COMPONENTS KCMUtils NotifyConfig TextEditor Wallet KDE4Support)
+find_package (TelepathyQt5 0.9.2.1 REQUIRED)
+find_package (TelepathyLoggerQt5 QUIET)
+find_package (KPeople 0.3 QUIET)
 
-# set some default settings
-include (KDE4Defaults)
+include(KDEInstallDirs)
+include(KDECMakeSettings)
+include(KDECompilerSettings)
+include(ECMPackageConfigHelpers)
+include(ECMMarkNonGuiExecutable)
+include(ECMPackageConfigHelpers)
+include(ECMInstallIcons)
+include(CMakePackageConfigHelpers)
+include(WriteBasicConfigVersionFile)
+include(CheckIncludeFiles)
+include(FeatureSummary)
 
-# make some more macros available
-include (MacroLibrary)
+set_package_properties(KPeople PROPERTIES DESCRIPTION "Support for KDE Contact Aggregation"
+                       URL "https://projects.kde.org/libkpeople"
+                       TYPE OPTIONAL
+                      )
+set_package_properties(TelepathyLoggerQt5 PROPERTIES DESCRIPTION "Qt bindings for TelepathyLogger. This is needed to provide access to chat logs. HIGHLY recommended"
+                       URL "http://projects.kde.org/telepathy-logger-qt"
+                       TYPE OPTIONAL
+                      )
 
-macro_log_feature(KPEOPLE_FOUND "KPeople" "Support for KDE Contact Aggregation" "https://projects.kde.org/libkpeople" FALSE "" "")
-macro_log_feature(KDEPIMLIBS_FOUND "KDE-PIM Libraries" "Support for Contact Aggregation" "https://projects.kde.org/kdepimlibs" FALSE "" "")
-macro_log_feature(TELEPATHY_LOGGER_QT4_FOUND "TelepatyLoggerQt4" "Qt bindings for TelepathyLogger. This is needed to provide access to chat logs. HIGHLY recommended" "http://projects.kde.org/telepathy-logger-qt" FALSE "" "")
-macro_display_feature_log()
 
-
-add_definitions (${KDE4_DEFINITIONS}
+add_definitions (
                  -DQT_NO_CAST_FROM_ASCII
                  -DQT_NO_KEYWORDS
 )
 
-include_directories (${KDE4_INCLUDES}
+include_directories (
                      ${CMAKE_CURRENT_BINARY_DIR}
                      ${CMAKE_CURRENT_SOURCE_DIR}
-                     ${TELEPATHY_QT4_INCLUDE_DIR}
+                     ${TELEPATHY_QT5_INCLUDE_DIR}
 )
 
-if (TELEPATHY_LOGGER_QT4_FOUND)
-    add_definitions(${TELEPATHY_LOGGER_QT4_DEFINITIONS}
+if (TELEPATHY_LOGGER_QT5_FOUND)
+    add_definitions(${TELEPATHY_LOGGER_QT5_DEFINITIONS}
                     -DHAVE_TPLOGGERQT)
-    include_directories(${TELEPATHY_LOGGER_QT4_INCLUDE_DIRS})
-endif (TELEPATHY_LOGGER_QT4_FOUND)
+    include_directories(${TELEPATHY_LOGGER_QT5_INCLUDE_DIRS})
+endif ()
 
 if (KPEOPLE_FOUND AND KDEPIMLIBS_FOUND)
     include_directories (${KDEPIMLIBS_INCLUDE_DIRS})
     add_definitions(-DHAVE_KPEOPLE)
     add_subdirectory(kpeople)
-endif (KPEOPLE_FOUND AND KDEPIMLIBS_FOUND)
+endif ()
 
 
 configure_file(version.h.in ${CMAKE_CURRENT_BINARY_DIR}/version.h @ONLY)
@@ -64,3 +75,4 @@ add_subdirectory(tools)
 add_subdirectory(data)
 add_subdirectory(tests)
 
+feature_summary(WHAT ALL FATAL_ON_MISSING_REQUIRED_PACKAGES)

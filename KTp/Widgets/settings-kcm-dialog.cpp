@@ -23,6 +23,8 @@
 
 #include <KNotifyConfigWidget>
 #include <KMessageBox>
+#include <KLocalizedString>
+#include <KIcon>
 
 namespace KTp
 {

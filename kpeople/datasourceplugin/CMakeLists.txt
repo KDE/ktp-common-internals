@@ -11,7 +11,7 @@ kde4_add_plugin (im_persons_data_source_plugin
 target_link_libraries (im_persons_data_source_plugin
     ${QT_LIBRARIES}
     ${QT_QTSQL_LIBRARIES}
-    ${TELEPATHY_QT4_LIBRARIES}
+    ${TELEPATHY_QT5_LIBRARIES}
     ${KDE4_KDEUI_LIBS}
     ${KPEOPLE_LIBS}
     ${KDEPIMLIBS_KABC_LIBS}

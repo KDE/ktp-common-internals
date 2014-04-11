@@ -1019,4 +1019,4 @@ QString ContactsFilterModel::sortRoleString() const
     return QString();
 }
 
-#include "contacts-filter-model.moc"
+#include "moc_contacts-filter-model.cpp"

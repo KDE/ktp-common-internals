@@ -1,9 +1,9 @@
 include_directories(${KPEOPLE_INCLUDES})
 
-kde4_add_plugin(imdetailswidgetplugin imdetailswidget.cpp)
-target_link_libraries(imdetailswidgetplugin ${QT_QTCORE_LIBRARY}
-    ${QT_QTGUI_LIBRARY}
-    ${TELEPATHY_QT4_LIBRARIES}
+add_library(imdetailswidgetplugin MODULE imdetailswidget.cpp)
+target_link_libraries(imdetailswidgetplugin Qt5::Core
+    Qt5::Gui
+    ${TELEPATHY_QT5_LIBRARIES}
     ${KDE4_KDECORE_LIBRARY}
     ${KDE4_KDEUI_LIBRARY}
     ${KPEOPLE_LIBS}

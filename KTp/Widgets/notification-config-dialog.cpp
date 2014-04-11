@@ -32,6 +32,7 @@
 #include <KAboutData>
 #include <KConfig>
 #include <KSharedConfig>
+#include <KLocalizedString>
 
 KTp::NotificationConfigDialog::NotificationConfigDialog(const Tp::ContactPtr &contact, QWidget *parent)
     : KDialog(parent)

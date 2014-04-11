@@ -77,7 +77,7 @@ QModelIndex RolesProxyModel::index(int row, int column, const QModelIndex &paren
     }
 
     // Return the index to the item.
-    return createIndex(row, column, 0);
+    return createIndex(row, column);
 }
 
 QModelIndex RolesProxyModel::parent(const QModelIndex &index) const

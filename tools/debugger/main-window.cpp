@@ -21,6 +21,8 @@
 #include <KIcon>
 #include <KStatusBar>
 #include <KToolBar>
+#include <KIconLoader>
+#include <KLocalizedString>
 
 
 MainWindow::MainWindow(QWidget *parent)

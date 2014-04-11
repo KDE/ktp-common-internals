@@ -22,6 +22,7 @@
 
 #include <KDebug>
 #include <KLocalizedString>
+#include <KConfig>
 
 #include <TelepathyQt/ReceivedMessage>
 #include <TelepathyQt/TextChannel>

@@ -164,19 +164,6 @@ TelepathyHandlerApplication::TelepathyHandlerApplication(bool GUIenabled,
     d->init(initialTimeout, timeout);
 }
 
-#ifndef Q_OS_WIN
-TelepathyHandlerApplication::TelepathyHandlerApplication(Display *display,
-                                                         Qt::HANDLE visual,
-                                                         Qt::HANDLE colormap,
-                                                         int initialTimeout,
-                                                         int timeout)
-    : KApplication(display, visual, colormap, Private::initHack()),
-      d(new Private(this))
-{
-    d->init(initialTimeout, timeout);
-}
-#endif
-
 TelepathyHandlerApplication::~TelepathyHandlerApplication()
 {
     delete d;
@@ -222,4 +209,4 @@ void TelepathyHandlerApplication::jobFinished()
 
 } // namespace KTp
 
-#include "telepathy-handler-application.moc"
+#include "moc_telepathy-handler-application.cpp"

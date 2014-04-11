@@ -26,7 +26,7 @@
 #include <TelepathyQt/AbstractClient>
 #include <TelepathyQt/TextChannel>
 
-#include <QDeclarativeEngine>
+#include <QQmlEngine>
 
 TelepathyManager::TelepathyManager(QObject *parent)
     : QObject(parent)
@@ -75,7 +75,7 @@ bool TelepathyManager::registerClient(QObject *client, const QString &name)
     }
 
     //the client registrar will delete the handler when the registrar is deleted.
-    QDeclarativeEngine::setObjectOwnership(client, QDeclarativeEngine::CppOwnership);
+    QQmlEngine::setObjectOwnership(client, QQmlEngine::CppOwnership);
 
     return m_clientRegistrar->registerClient(Tp::AbstractClientPtr(abstractClient), name);
 }

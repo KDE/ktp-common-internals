@@ -21,10 +21,8 @@
 
 #include "qml-plugins.h"
 
-#include <QtDeclarative/QDeclarativeItem>
-#include <QtDeclarative/QDeclarativeEngine>
-#include <QtDeclarative/QDeclarativeContext>
-
+#include <QQmlEngine>
+#include <QQmlContext>
 
 #include "conversation.h"
 #include "conversations-model.h"
@@ -40,8 +38,9 @@
 #include "KTp/Models/contacts-model.h"
 #include "KTp/Models/accounts-list-model.h"
 
+#include <QtQml>
 
-void QmlPlugins::initializeEngine(QDeclarativeEngine *engine, const char *uri)
+void QmlPlugins::initializeEngine(QQmlEngine *engine, const char *uri)
 {
     Q_UNUSED(uri)
 
@@ -70,4 +69,3 @@ void QmlPlugins::registerTypes(const char *uri)
     qRegisterMetaType<Tp::AccountPtr>();
 }
 
-Q_EXPORT_PLUGIN2(conversation, QmlPlugins);

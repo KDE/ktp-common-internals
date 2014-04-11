@@ -27,13 +27,13 @@ set (ktp_widgets_private_HDRS
      settings-kcm-dialog.h
 )
 
-kde4_add_ui_files (ktp_widgets_private_SRCS
+qt5_wrap_ui (ktp_widgets_private_SRCS
                    add-contact-dialog.ui
                    join-chat-room-dialog.ui
                    start-chat-dialog.ui
 )
 
-kde4_add_library (ktpwidgetsprivate SHARED
+add_library (ktpwidgetsprivate SHARED
                  ${ktp_widgets_private_SRCS}
 )
 
@@ -44,11 +44,11 @@ set_target_properties(ktpwidgetsprivate PROPERTIES
                                                 DEFINE_SYMBOL MAKE_KTP_LIB)
 
 target_link_libraries (ktpwidgetsprivate
-                       ${KDE4_KDECORE_LIBS}
-                       ${TELEPATHY_QT4_LIBRARIES}
-                       ${KDE4_KDEUI_LIBS}
-                       ${KDE4_KNOTIFYCONFIG_LIBRARY}
-                       ${KDE4_KCMUTILS_LIBS}
+                       
+                       ${TELEPATHY_QT5_LIBRARIES}
+                       KF5::KDE4Support
+                       KF5::NotifyConfig
+                       KF5::KCMUtils
                        ktpcommoninternalsprivate
                        ktpmodelsprivate
 )

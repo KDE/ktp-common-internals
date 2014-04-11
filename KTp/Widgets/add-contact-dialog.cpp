@@ -30,6 +30,7 @@
 #include <KMessageBox>
 #include <KPushButton>
 #include <KDebug>
+#include <KLocalizedString>
 
 #include <TelepathyQt/AccountManager>
 #include <TelepathyQt/Account>

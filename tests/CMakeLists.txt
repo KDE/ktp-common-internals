@@ -11,20 +11,20 @@ set(model_view_SRCS
     roles-proxy-model.cpp
 )
 
-kde4_add_ui_files(model_view_SRCS model-view.ui)
+qt5_wrap_ui(model_view_SRCS model-view.ui)
 
 ###
 
-kde4_add_executable(ktp_contact_list_model_view
+add_executable(ktp_contact_list_model_view
     ${model_view_SRCS}
     contact-list-model-view-main.cpp
 )
 
 target_link_libraries(ktp_contact_list_model_view
-  ${QT_QTTEST_LIBRARY}
-  ${KDE4_KDECORE_LIBS}
+  Qt5::Test
+  
   ${KDE4_KDEUI_LIBS}
-  ${TELEPATHY_QT4_LIBRARIES}
+  ${TELEPATHY_QT5_LIBRARIES}
   ktpcommoninternalsprivate
   ktpmodelsprivate
 )
@@ -34,21 +34,21 @@ if (KPEOPLE_FOUND)
 include_directories(${KPEOPLE_INCLUDES})
 
 
-kde4_add_executable(ktp_kpeople_list_model_view
+add_executable(ktp_kpeople_list_model_view
     ${model_view_SRCS}
     kpeople-model-view-main.cpp
 )
 
 target_link_libraries(ktp_kpeople_list_model_view
-  ${QT_QTTEST_LIBRARY}
-  ${KDE4_KDECORE_LIBS}
+  Qt5::Test
+  
   ${KDE4_KDEUI_LIBS}
-  ${TELEPATHY_QT4_LIBRARIES}
+  ${TELEPATHY_QT5_LIBRARIES}
   ${KPEOPLE_LIBS}
   ktpcommoninternalsprivate
   ktpmodelsprivate
 )
 
-endif (KPEOPLE_FOUND)
+endif ()
 
 

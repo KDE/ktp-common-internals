@@ -10,7 +10,7 @@ kde4_add_plugin (ktp_kpeople_plugin
 
 target_link_libraries (ktp_kpeople_plugin
     ${QT_LIBRARIES}
-    ${TELEPATHY_QT4_LIBRARIES}
+    ${TELEPATHY_QT5_LIBRARIES}
     ${KDE4_KDEUI_LIBS}
     ${KPEOPLE_LIBS}
     ${KDE4_KFILE_LIBS}

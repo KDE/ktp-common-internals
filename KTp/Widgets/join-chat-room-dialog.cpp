@@ -31,6 +31,9 @@
 #include <KNotification>
 #include <KPushButton>
 #include <KCompletionBox>
+#include <KIcon>
+#include <KGlobalSettings>
+
 
 #include <TelepathyQt/AccountSet>
 #include <TelepathyQt/AccountCapabilityFilter>
@@ -44,6 +47,7 @@
 #include <TelepathyQt/RoomListChannel>
 
 #include <QSortFilterProxyModel>
+#include <KLocalizedString>
 
 KTp::JoinChatRoomDialog::JoinChatRoomDialog(Tp::AccountManagerPtr accountManager, QWidget* parent)
     : KDialog(parent, Qt::Dialog)
@@ -93,7 +97,7 @@ KTp::JoinChatRoomDialog::JoinChatRoomDialog(Tp::AccountManagerPtr accountManager
     ui->listView->setModelColumn(FavoriteRoomsModel::NameColumn);
 
     // recentTab
-    m_recentComp->setCompletionMode(KGlobalSettings::CompletionPopup);
+    m_recentComp->setCompletionMode(KCompletion::CompletionPopup);
     m_recentComp->setIgnoreCase(true);
 
     ui->lineEdit->setCompletionObject(m_recentComp);
