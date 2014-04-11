@@ -157,7 +157,7 @@ void KTp::TextChannelWatcherProxyModel::observeChannels(const Tp::MethodInvocati
             }
 
             //if it's not in our source model, ignore the channel
-            QModelIndexList matchedContacts = sourceModel()->match(QModelIndex(sourceModel()->index(0,0)), KTp::ContactRole, QVariant::fromValue(targetContact));
+            QModelIndexList matchedContacts = sourceModel()->match(QModelIndex(sourceModel()->index(0,0)), KTp::IdRole, QVariant::fromValue(targetContact->id()));
             if (matchedContacts.size() !=1) {
                 continue;
             }
