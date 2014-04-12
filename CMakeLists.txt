@@ -8,7 +8,7 @@ set (CMAKE_MODULE_PATH
 )
 cmake_policy(SET CMP0002 OLD)
 
-set (KTP_VERSION "0.7.80")
+set (KTP_VERSION "0.8.0")
 # Bump for every 0.x release, or whenever BC changes
 set (KTP_SONUMBER 7)
 set (KTP_MESSAGE_FILTER_FRAMEWORK_VERSION "4")
@@ -16,7 +16,7 @@ set (KTP_MESSAGE_FILTER_FRAMEWORK_VERSION "4")
 find_package (KDE4 REQUIRED)
 find_package (TelepathyQt4 0.9.2.1 REQUIRED)
 find_package (TelepathyLoggerQt4)
-find_package (KPeople 0.2)
+find_package (KPeople 0.2.1)
 find_package (KdepimLibs)
 
 # set some default settings

@@ -62,6 +62,7 @@ CorePrivate::CorePrivate()
 
     m_connectionFactory = Tp::ConnectionFactory::create(QDBusConnection::sessionBus(),
                                                                                Tp::Features() << Tp::Connection::FeatureCore
+                                                                                              << Tp::Connection::FeatureConnected
                                                                                               << Tp::Connection::FeatureSelfContact);
 
     m_contactFactory = KTp::ContactFactory::create(Tp::Features()  << Tp::Contact::FeatureAlias
