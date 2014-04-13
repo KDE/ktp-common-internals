@@ -62,7 +62,7 @@ void QmlPlugins::registerTypes(const char *uri)
     qmlRegisterUncreatableType<MessagesModel> (uri, 0, 1, "MessagesModel",
         QLatin1String("It will be created once the conversation is created"));
 
-    qmlRegisterType<KTp::GlobalPresence> (uri, 0, 1, "PresenceManager");
+    qmlRegisterType<KTp::GlobalPresence> (uri, 0, 1, "GlobalPresence");
 
     qmlRegisterType<TelepathyManager>();
     qmlRegisterType<ConversationsModel>();

@@ -109,6 +109,11 @@ QString GlobalPresence::currentPresenceMessage() const
     return p.statusMessage();
 }
 
+QIcon GlobalPresence::currentPresenceIcon() const
+{
+    return currentPresence().icon();
+}
+
 GlobalPresence::ConnectionPresenceType GlobalPresence::currentPresenceType() const
 {
     KTp::Presence p = currentPresence();
