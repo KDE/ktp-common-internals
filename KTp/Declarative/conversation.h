@@ -79,9 +79,6 @@ private Q_SLOTS:
     void onAccountConnectionChanged(const Tp::ConnectionPtr &connection);
     void onCreateChannelFinished(Tp::PendingOperation *op);
     void onChatPausedTimerExpired();
-    void onTargetContactAvatarDataChanged();
-    void onTargetContactAliasChanged();
-    void onTargetContactPresenceChanged();
 
 private:
     class ConversationPrivate;
