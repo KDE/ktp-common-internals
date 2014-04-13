@@ -145,7 +145,7 @@ bool GlobalPresence::isChangingPresence() const
     return m_changingPresence;
 }
 
-void GlobalPresence::setPresence(const Tp::Presence &presence)
+void GlobalPresence::setPresence(const KTp::Presence &presence)
 {
     if (m_enabledAccounts.isNull()) {
         kWarning() << "Requested presence change on empty accounts set";
