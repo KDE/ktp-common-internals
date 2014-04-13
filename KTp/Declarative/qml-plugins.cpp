@@ -33,6 +33,7 @@
 #include "filtered-pinned-contacts-proxy-model.h"
 #include "telepathy-manager.h"
 
+#include <TelepathyQt/PendingChannelRequest>
 #include "KTp/types.h"
 #include "KTp/global-presence.h"
 #include "KTp/Models/presence-model.h"
