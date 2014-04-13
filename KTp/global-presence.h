@@ -42,9 +42,10 @@ class KTP_EXPORT GlobalPresence : public QObject
 {
     Q_OBJECT
     Q_ENUMS(ConnectionPresenceType)
-    Q_PROPERTY(QString presenceMessage READ currentPresenceMessage CONSTANT)
-    Q_PROPERTY(ConnectionPresenceType presenceType READ currentPresenceType CONSTANT)
+    Q_PROPERTY(QString presenceMessage READ currentPresenceMessage NOTIFY currentPresenceChanged)
+    Q_PROPERTY(ConnectionPresenceType presenceType READ currentPresenceType NOTIFY currentPresenceChanged)
     Q_PROPERTY(Tp::AccountManagerPtr accountManager READ accountManager WRITE addAccountManager)
+    Q_PROPERTY(QIcon currentPresenceIcon READ currentPresenceIcon NOTIFY currentPresenceChanged)
 public:
     explicit GlobalPresence(QObject *parent = 0);
 
@@ -87,6 +88,8 @@ public:
     bool hasEnabledAccounts() const;
 
     Tp::AccountSetPtr onlineAccounts() const;
+
+    QIcon currentPresenceIcon() const;
 
 Q_SIGNALS:
     void requestedPresenceChanged(const KTp::Presence &customPresence);
