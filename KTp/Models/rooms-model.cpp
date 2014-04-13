@@ -61,6 +61,7 @@ QVariant KTp::RoomsModel::data(const QModelIndex &index, int role) const
     // all columns get an empty space for the decoration
     if (index.column() == PasswordColumn) {
         switch (role) {
+        case Qt::DisplayRole:
         case Qt::DecorationRole:
             if (roomInfo.info.value(QLatin1String("password")).toBool()) {
                 return KIcon(QLatin1String("object-locked"));
@@ -79,8 +80,6 @@ QVariant KTp::RoomsModel::data(const QModelIndex &index, int role) const
     switch(role) {
     case Qt::DisplayRole:
         switch (index.column()) {
-        case PasswordColumn:
-            return QVariant();
         case NameColumn:
             return roomInfo.info.value(QLatin1String("name"));
         case DescriptionColumn:
@@ -186,19 +185,49 @@ QVariant KTp::FavoriteRoomsModel::data(const QModelIndex &index, int role) const
     case Qt::EditRole: // Return same values for both Display and Edit roles
     case Qt::DisplayRole:
         switch (index.column()) {
-        case NameColumn:
-            return room.value(QLatin1String("name"));
+        case BookmarkColumn :
+            return QVariant();
         case HandleNameColumn:
             return room.value(QLatin1String("handle-name"));
         case AccountIdentifierColumn:
             return room.value(QLatin1String("account-identifier"));
         }
     case Qt::ToolTipRole:
-        return room.value(QLatin1String("handle-name"));
+        switch (index.column()) {
+        case BookmarkColumn:
+            if (room.value(QLatin1String("is-bookmarked")).toBool()) {
+                return i18n("Room bookmarked");
+            } else {
+                return i18n("Room not bookmarked");
+            }
+        case HandleNameColumn:
+        case AccountIdentifierColumn:
+            return room.value(QLatin1String("handle-name"));
+        }
+    case Qt::DecorationRole:
+        switch (index.column()) {
+        case BookmarkColumn:
+            if (room.value(QLatin1String("is-bookmarked")).toBool()) {
+                return KIcon(QLatin1String("bookmarks"));
+            } else {
+                return KIcon(KIcon(QLatin1String("bookmarks")).pixmap(32, 32, QIcon::Disabled));
+            }
+        case HandleNameColumn:
+        case AccountIdentifierColumn:
+            return QVariant();
+        }
+    case Qt::CheckStateRole:
+        switch (index.column()) {
+        case BookmarkColumn:
+            return room.value(QLatin1String("is-bookmarked")).toBool() ? Qt::Checked : Qt::Unchecked;
+        case HandleNameColumn:
+        case AccountIdentifierColumn:
+            return QVariant();
+        }
+    case FavoriteRoomsModel::BookmarkRole:
+        room.value(QLatin1String("is-bookmarked")).toBool();
     case FavoriteRoomsModel::HandleNameRole:
         return room.value(QLatin1String("handle-name"));
-    case FavoriteRoomsModel::NameRole:
-        return room.value(QLatin1String("name"));
     case FavoriteRoomsModel::AccountRole:
         return room.value(QLatin1String("account-identifier"));
     case FavoriteRoomsModel::FavoriteRoomRole:
@@ -219,8 +248,8 @@ bool KTp::FavoriteRoomsModel::setData(const QModelIndex &index, const QVariant &
 
     if (role == Qt::EditRole) {
         switch (index.column()) {
-        case NameColumn:
-            room.insert(QLatin1String("name"), value);
+        case BookmarkColumn:
+            room.insert(QLatin1String("is-bookmarked"), value);
             break;
         case HandleNameColumn:
             room.insert(QLatin1String("handle-name"), value);
@@ -234,11 +263,22 @@ bool KTp::FavoriteRoomsModel::setData(const QModelIndex &index, const QVariant &
         Q_EMIT dataChanged(index, index);
         return true;
     }
+    if (role == Qt::CheckStateRole) {
+        switch (index.column()) {
+        case BookmarkColumn:
+            room.insert(QLatin1String("is-bookmarked"), value == Qt::Checked ? true : false);
+            break;
+        }
+        Q_EMIT dataChanged(index, index);
+        return true;
+    }
     return false;
 }
 
 Qt::ItemFlags KTp::FavoriteRoomsModel::flags(const QModelIndex &index) const {
-    Q_UNUSED(index);
+    if (index.column() == BookmarkColumn) {
+        return Qt::ItemIsUserCheckable | Qt::ItemIsEnabled | Qt::ItemIsSelectable;
+    }
     return Qt::ItemIsEditable | Qt::ItemIsEnabled | Qt::ItemIsSelectable;
 }
 
@@ -264,6 +304,13 @@ void KTp::FavoriteRoomsModel::removeRoom(const QVariantMap &room)
     beginRemoveRows(QModelIndex(), row, row);
     m_favoriteRoomsList.removeOne(room);
     endRemoveRows();
+}
+
+void KTp::FavoriteRoomsModel::clearRooms()
+{
+    beginResetModel();
+    m_favoriteRoomsList.clear();
+    endResetModel();
 }
 
 bool KTp::FavoriteRoomsModel::containsRoom(const QString &handle, const QString &account) const

@@ -30,7 +30,6 @@
 #include <KMessageBox>
 #include <KNotification>
 #include <KPushButton>
-#include <KCompletionBox>
 
 #include <TelepathyQt/Account>
 #include <TelepathyQt/AccountSet>
@@ -53,7 +52,6 @@ KTp::JoinChatRoomDialog::JoinChatRoomDialog(Tp::AccountManagerPtr accountManager
     , m_model(new RoomsModel(this))
     , m_favoritesModel(new FavoriteRoomsModel(this))
     , m_favoritesProxyModel(new QSortFilterProxyModel(this))
-    , m_recentComp(new KCompletion)
     , m_joinInProgress(false)
 {
     QWidget *joinChatRoomDialog = new QWidget(this);
@@ -61,49 +59,43 @@ KTp::JoinChatRoomDialog::JoinChatRoomDialog(Tp::AccountManagerPtr accountManager
     ui->feedbackWidget->hide();
 
     setMainWidget(joinChatRoomDialog);
-    setWindowIcon(KIcon(QLatin1String("telepathy-kde")));
+    setWindowIcon(KIcon(QLatin1String("im-irc")));
+    setWindowTitle(i18nc("Dialog title", "Join Chat Room"));
+
+    ui->filterPicture->clear();
+    ui->filterPicture->setPixmap(KIconLoader::global()->loadIcon(QLatin1String("view-filter"), KIconLoader::Small));
 
     // config
     KSharedConfigPtr commonConfig = KSharedConfig::openConfig(QLatin1String("ktelepathyrc"));
     m_favoriteRoomsGroup = commonConfig->group(QLatin1String("FavoriteRooms"));
     m_recentRoomsGroup = commonConfig->group(QLatin1String("RecentChatRooms"));
 
-    Q_FOREACH (const QString &key, m_recentRoomsGroup.keyList()) {
-        if (!m_recentRoomsGroup.readEntry(key, QStringList()).isEmpty()) {
-            m_recentRooms.insert(key, m_recentRoomsGroup.readEntry(key, QStringList()));
-        }
-    }
-
+    // load favorite and recent rooms
     loadFavoriteRooms();
 
     // disable OK button on start
     button(Ok)->setEnabled(false);
-
-    //set icons
-    ui->addFavoritePushButton->setIcon(KIcon(QLatin1String("list-add")));
-    ui->editFavoritePushButton->setIcon(KIcon(QLatin1String("list-edit")));
-    ui->removeFavoritePushButton->setIcon(KIcon(QLatin1String("list-remove")));
-    ui->removeRecentPushButton->setIcon(KIcon(QLatin1String("list-remove")));
-    ui->clearRecentPushButton->setIcon(KIcon(QLatin1String("edit-clear-list")));
-
+    button(Ok)->setText(i18nc("button", "Join/Create"));
+    button(Ok)->setIcon(KIcon(QLatin1String("im-irc")));
     connect(accountManager->becomeReady(), SIGNAL(finished(Tp::PendingOperation*)),
             this, SLOT(onAccountManagerReady(Tp::PendingOperation*)));
 
-    // favoritesTab
+    // Previous Tab
     m_favoritesProxyModel->setSourceModel(m_favoritesModel);
     m_favoritesProxyModel->setFilterKeyColumn(FavoriteRoomsModel::AccountIdentifierColumn);
+    m_favoritesProxyModel->setSortRole(Qt::CheckStateRole);
     m_favoritesProxyModel->setDynamicSortFilter(true);
 
-    ui->listView->setModel(m_favoritesProxyModel);
-    ui->listView->setModelColumn(FavoriteRoomsModel::NameColumn);
+    ui->previousView->setModel(m_favoritesProxyModel);
+    ui->previousView->setHeaderHidden(true);
+    ui->previousView->header()->setStretchLastSection(false);
+    ui->previousView->header()->setResizeMode(FavoriteRoomsModel::BookmarkColumn, QHeaderView::ResizeToContents);
+    ui->previousView->header()->setResizeMode(FavoriteRoomsModel::HandleNameColumn, QHeaderView::Stretch);
+    ui->previousView->setColumnHidden(FavoriteRoomsModel::AccountIdentifierColumn, true);
+    ui->previousView->sortByColumn(FavoriteRoomsModel::BookmarkColumn, Qt::DescendingOrder);
 
-    // recentTab
-    m_recentComp->setCompletionMode(KGlobalSettings::CompletionPopup);
-    m_recentComp->setIgnoreCase(true);
 
-    ui->lineEdit->setCompletionObject(m_recentComp);
-    ui->lineEdit->setAutoDeleteCompletionObject(true);
-
+    // Search Tab
     QSortFilterProxyModel *proxyModel = new QSortFilterProxyModel(this);
     proxyModel->setSourceModel(m_model);
     proxyModel->setSortLocaleAware(true);
@@ -111,30 +103,27 @@ KTp::JoinChatRoomDialog::JoinChatRoomDialog(Tp::AccountManagerPtr accountManager
     proxyModel->setFilterKeyColumn(RoomsModel::NameColumn);
     proxyModel->setDynamicSortFilter(true);
 
-    ui->treeView->setModel(proxyModel);
-    ui->treeView->header()->setResizeMode(QHeaderView::ResizeToContents);
-    ui->treeView->sortByColumn(RoomsModel::NameColumn, Qt::AscendingOrder);
+    ui->queryView->setModel(proxyModel);
+    ui->queryView->header()->setStretchLastSection(false);
+    ui->queryView->header()->setResizeMode(0, QHeaderView::Stretch);
+    ui->queryView->header()->setResizeMode(1, QHeaderView::Stretch);
+    ui->queryView->header()->setResizeMode(2, QHeaderView::ResizeToContents);
+    ui->queryView->header()->setResizeMode(3, QHeaderView::ResizeToContents);
+    ui->queryView->header()->setSortIndicatorShown(false);
+    ui->queryView->sortByColumn(RoomsModel::NameColumn, Qt::AscendingOrder);
 
     // connects
     connect(ui->lineEdit, SIGNAL(textChanged(QString)), this, SLOT(onTextChanged(QString)));
-    connect(ui->listView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(accept()));
-    connect(ui->listView->selectionModel(), SIGNAL(currentRowChanged(QModelIndex,QModelIndex)),
+    connect(ui->previousView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(accept()));
+    connect(ui->previousView->selectionModel(), SIGNAL(currentRowChanged(QModelIndex,QModelIndex)),
             this, SLOT(onFavoriteRoomSelectionChanged(QModelIndex,QModelIndex)));
     connect(m_favoritesModel, SIGNAL(dataChanged(QModelIndex,QModelIndex)),
             this, SLOT(onFavoriteRoomDataChanged(QModelIndex,QModelIndex)));
-    connect(ui->addFavoritePushButton, SIGNAL(clicked(bool)), this, SLOT(addFavorite()));
-    connect(ui->editFavoritePushButton, SIGNAL(clicked(bool)), this, SLOT(editFavorite()));
-    connect(ui->removeFavoritePushButton, SIGNAL(clicked(bool)), this, SLOT(removeFavorite()));
-    connect(ui->recentListWidget, SIGNAL(currentTextChanged(QString)), ui->lineEdit, SLOT(setText(QString)));
-    connect(ui->recentListWidget, SIGNAL(currentTextChanged(QString)), this, SLOT(onRecentRoomClicked()));
-    connect(ui->recentListWidget, SIGNAL(itemDoubleClicked(QListWidgetItem*)), this, SLOT(accept()));
-    connect(ui->removeRecentPushButton, SIGNAL(clicked(bool)), this , SLOT(removeRecentRoom()));
     connect(ui->clearRecentPushButton, SIGNAL(clicked(bool)), this, SLOT(clearRecentRooms()));
     connect(ui->serverLineEdit, SIGNAL(returnPressed()), this, SLOT(getRoomList()));
-    connect(ui->queryPushButton, SIGNAL(clicked(bool)), this, SLOT(getRoomList()));
-    connect(ui->stopPushButton, SIGNAL(clicked(bool)), this, SLOT(stopListing()));
-    connect(ui->treeView, SIGNAL(clicked(QModelIndex)), this, SLOT(onRoomClicked(QModelIndex)));
-    connect(ui->treeView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(accept()));
+    connect(ui->queryButton, SIGNAL(clicked(bool)), this, SLOT(getRoomList()));
+    connect(ui->queryView, SIGNAL(clicked(QModelIndex)), this, SLOT(onRoomClicked(QModelIndex)));
+    connect(ui->queryView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(accept()));
     connect(ui->filterBar, SIGNAL(textChanged(QString)), proxyModel, SLOT(setFilterFixedString(QString)));
     connect(ui->comboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(onAccountSelectionChanged(int)));
     connect(button(Ok), SIGNAL(clicked(bool)), this, SLOT(addRecentRoom()));
@@ -167,7 +156,7 @@ void KTp::JoinChatRoomDialog::onAccountManagerReady(Tp::PendingOperation* operat
 
     // queryTab
     if (ui->comboBox->count() > 0) {
-        ui->queryPushButton->setEnabled(true);
+        ui->queryButton->setEnabled(true);
     }
 
     // apply the filter after populating
@@ -210,177 +199,83 @@ void KTp::JoinChatRoomDialog::onAccountSelectionChanged(int newIndex)
     QString accountIdentifier = ui->comboBox->currentAccount()->uniqueIdentifier();
     m_favoritesProxyModel->setFilterFixedString(accountIdentifier);
 
-    // Provide only rooms recently used with the selected account for completion
-    m_recentComp->clear();
-
-    Q_FOREACH (const QString &room, m_recentRooms.value(accountIdentifier)) {
-        m_recentComp->addItem(room);
-    }
-
-    // Show only rooms recently used with the selected account in the list
-    ui->recentListWidget->clear();
-    ui->recentListWidget->addItems(m_recentRooms.value(accountIdentifier));
-
     // Enable/disable the buttons as appropriate
-    bool recentListNonEmpty = m_recentRooms.value(accountIdentifier).size() > 0;
-
-    ui->clearRecentPushButton->setEnabled(recentListNonEmpty);
-    ui->removeRecentPushButton->setEnabled(recentListNonEmpty);
-}
-
-void KTp::JoinChatRoomDialog::addFavorite()
-{
-    if (!ui->comboBox->currentAccount()) {
-        return;
-    }
-
-    bool ok = false;
-    QString favoriteHandle = ui->lineEdit->text();
-    QString favoriteAccount = ui->comboBox->currentAccount()->uniqueIdentifier();
-
-    if (m_favoritesModel->containsRoom(favoriteHandle, favoriteAccount)) {
-        KMessageBox::sorry(this, i18n("This room is already in your favorites."));
-    } else {
-        QString favoriteName = KInputDialog::getText(i18n("Add room"), i18n("Name"), QString(), &ok);
-
-        if (ok) {
-            QString key = favoriteHandle + favoriteAccount;
-
-            // Write it to the config file
-            QVariantList favorite;
-            favorite.append(favoriteName);
-            favorite.append(favoriteHandle);
-            favorite.append(favoriteAccount);
-            m_favoriteRoomsGroup.writeEntry(key, favorite);
-            m_favoriteRoomsGroup.sync();
-
-            // Insert it into the model
-            QVariantMap room;
-            room.insert(QLatin1String("name"), favoriteName);
-            room.insert(QLatin1String("handle-name"), favoriteHandle);
-            room.insert(QLatin1String("account-identifier"), favoriteAccount);
-            m_favoritesModel->addRoom(room);
-        }
-    }
-}
-
-void KTp::JoinChatRoomDialog::editFavorite()
-{
-    ui->listView->edit(ui->listView->currentIndex());
-}
-
-void KTp::JoinChatRoomDialog::removeFavorite()
-{
-    QString favoriteHandle = ui->listView->currentIndex().data(FavoriteRoomsModel::HandleNameRole).toString();
-    QString favoriteAccount = ui->comboBox->currentAccount()->uniqueIdentifier();
-    QVariantMap room = ui->listView->currentIndex().data(FavoriteRoomsModel::FavoriteRoomRole).value<QVariantMap>();
-
-    QString key = favoriteHandle + favoriteAccount;
-
-    if(m_favoriteRoomsGroup.keyList().contains(key)) {
-        m_favoriteRoomsGroup.deleteEntry(key);
-        m_favoriteRoomsGroup.sync();
-        m_favoritesModel->removeRoom(room);
-
-        if (m_favoritesModel->countForAccount(favoriteAccount) == 0) {
-            ui->removeFavoritePushButton->setEnabled(false);
-        }
-    }
+    ui->clearRecentPushButton->setEnabled(!m_recentRoomsGroup.keyList().empty());
 }
 
 void KTp::JoinChatRoomDialog::onFavoriteRoomDataChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight)
 {
-    // Because listView only allows editing of a single row, assume that topLeft points to the changed data.
+    // Because previousView only allows editing of a single row, assume that topLeft points to the changed data.
     Q_UNUSED(bottomRight);
 
+    bool bookmarked = topLeft.data(Qt::CheckStateRole) == Qt::Checked ? true : false;
     const QString &favoriteHandle = topLeft.data(FavoriteRoomsModel::HandleNameRole).toString();
-    const QString &favoriteName = topLeft.data(FavoriteRoomsModel::NameRole).toString();
     const QString &favoriteAccount = topLeft.data(FavoriteRoomsModel::AccountRole).toString();
 
     const QString &key = favoriteHandle + favoriteAccount;
 
     // Write the changed room to the config file
     QVariantList favorite;
-    favorite.append(favoriteName);
     favorite.append(favoriteHandle);
     favorite.append(favoriteAccount);
-    m_favoriteRoomsGroup.writeEntry(key, favorite);
-    m_favoriteRoomsGroup.sync();
+
+    if (bookmarked) {
+        if (m_recentRoomsGroup.keyList().contains(key)) {
+            m_recentRoomsGroup.deleteEntry(key);
+            m_recentRoomsGroup.sync();
+        }
+        m_favoriteRoomsGroup.writeEntry(key, favorite);
+        m_favoriteRoomsGroup.sync();
+    } else {
+        if (m_favoriteRoomsGroup.keyList().contains(key)) {
+            m_favoriteRoomsGroup.deleteEntry(key);
+            m_favoriteRoomsGroup.sync();
+        }
+        m_recentRoomsGroup.writeEntry(key, favorite);
+        m_recentRoomsGroup.sync();
+    }
+
+    onAccountSelectionChanged(ui->comboBox->currentIndex());
 }
 
 void KTp::JoinChatRoomDialog::addRecentRoom()
 {
     Tp::AccountPtr account = ui->comboBox->currentAccount();
-    if (!account) {
+    if (!account || ui->lineEdit->text().isEmpty()) {
         return;
     }
 
-    QString accountIdentifier = account->uniqueIdentifier();
-    QString handle = ui->lineEdit->text();
+    QString recentAccount = account->uniqueIdentifier();
+    QString recentHandle = ui->lineEdit->text();
+    const QString &key = recentHandle + recentAccount;
 
-    if (!handle.isEmpty()) {
-        if (m_recentRooms.contains(accountIdentifier)) {
-            QStringList currentList = m_recentRooms.take(accountIdentifier);
+    QVariantList recent;
+    recent.append(recentHandle);
+    recent.append(recentAccount);
 
-            // If the handle is already in the list move it at the first position
-            // because now it is the most recent
-            if (currentList.contains(handle)) {
-                currentList.move(currentList.indexOf(handle), 0);
-                m_recentRooms.insert(accountIdentifier, currentList);
-            // else just insert it at the first position and check for the size
-            } else {
-                currentList.insert(0, handle);
-
-                if (currentList.size() > 8) {
-                    currentList.removeLast();
-                }
-
-                m_recentRooms.insert(accountIdentifier, currentList);
-            }
-        } else {
-            m_recentRooms.insert(accountIdentifier, QStringList(handle));
-        }
-
-        // Write it to the config
-        m_recentRoomsGroup.writeEntry(accountIdentifier, m_recentRooms.value(accountIdentifier));
-        m_recentRoomsGroup.sync();
+    if(m_favoriteRoomsGroup.keyList().contains(key) || m_recentRoomsGroup.keyList().contains(key)) {
+        return;
     }
-}
 
-void KTp::JoinChatRoomDialog::removeRecentRoom()
-{
-    QString accountIdentifier = ui->comboBox->currentAccount()->uniqueIdentifier();
-    QString handle = ui->recentListWidget->currentItem()->text();
-
-    // Remove the entry
-    QStringList currentList = m_recentRooms.take(accountIdentifier);
-    currentList.removeOne(handle);
-    m_recentRooms.insert(accountIdentifier, currentList);
-
-    // Update the completion and list
-    onAccountSelectionChanged(ui->comboBox->currentIndex());
-
-    // Write it to the config
-    m_recentRoomsGroup.writeEntry(accountIdentifier, m_recentRooms.value(accountIdentifier));
+    m_recentRoomsGroup.writeEntry(key, recent);
     m_recentRoomsGroup.sync();
-
-    // Disable the button
-    ui->removeRecentPushButton->setEnabled(false);
 }
+
 
 void KTp::JoinChatRoomDialog::clearRecentRooms()
 {
     QString accountIdentifier = ui->comboBox->currentAccount()->uniqueIdentifier();
 
-    // Remove all entries for the current account
-    m_recentRooms.remove(accountIdentifier);
+    KSharedConfigPtr commonConfig = KSharedConfig::openConfig(QLatin1String("ktelepathyrc"));
+    commonConfig->deleteGroup(QLatin1String("RecentChatRooms"));
+    commonConfig->sync();
 
-    // Update the completion and list
+    // Reload the model
+    m_favoritesModel->clearRooms();
+    loadFavoriteRooms();
+
+    // Update the list
     onAccountSelectionChanged(ui->comboBox->currentIndex());
-
-    // Update the config
-    m_recentRoomsGroup.deleteEntry(accountIdentifier);
-    m_recentRoomsGroup.sync();
 }
 
 void KTp::JoinChatRoomDialog::getRoomList()
@@ -458,8 +353,12 @@ void KTp::JoinChatRoomDialog::onRoomListChannelClosed(Tp::PendingOperation *oper
         QString errorMsg(operation->errorName() + QLatin1String(": ") + operation->errorMessage());
         sendNotificationToUser(errorMsg);
     } else {
-        ui->queryPushButton->setEnabled(true);
-        ui->stopPushButton->setEnabled(false);
+        ui->queryButton->setEnabled(true);
+        ui->queryButton->setIcon(KIcon(QLatin1String("media-playback-start")));
+        ui->queryButton->setText(i18nc("Button text", "Query"));
+        ui->queryButton->setToolTip(i18nc("Tooltip text", "Start query"));
+        connect(ui->queryButton, SIGNAL(clicked(bool)), this, SLOT(getRoomList()));
+        disconnect(ui->queryButton, SIGNAL(clicked(bool)), this, SLOT(stopListing()));
     }
 }
 
@@ -467,8 +366,12 @@ void KTp::JoinChatRoomDialog::onListing(bool isListing)
 {
     if (isListing) {
         kDebug() << "listing";
-        ui->queryPushButton->setEnabled(false);
-        ui->stopPushButton->setEnabled(true);
+        ui->queryButton->setEnabled(true);
+        ui->queryButton->setIcon(KIcon(QLatin1String("media-playback-stop")));
+        ui->queryButton->setText(i18nc("Button text", "Stop"));
+        ui->queryButton->setToolTip(i18nc("Tooltip text", "Stop query"));
+        disconnect(ui->queryButton, SIGNAL(clicked(bool)), this, SLOT(getRoomList()));
+        connect(ui->queryButton, SIGNAL(clicked(bool)), this, SLOT(stopListing()));
     } else {
         kDebug() << "finished listing";
         Tp::PendingOperation *op =  m_roomListChannel->requestClose();
@@ -487,18 +390,8 @@ void KTp::JoinChatRoomDialog::onFavoriteRoomSelectionChanged(const QModelIndex &
 {
     Q_UNUSED(previous);
     if (current.isValid()) {
-        ui->editFavoritePushButton->setEnabled(true);
-        ui->removeFavoritePushButton->setEnabled(true);
         ui->lineEdit->setText(current.data(FavoriteRoomsModel::HandleNameRole).toString());
-    } else {
-        ui->editFavoritePushButton->setEnabled(false);
-        ui->removeFavoritePushButton->setEnabled(false);
     }
-}
-
-void KTp::JoinChatRoomDialog::onRecentRoomClicked()
-{
-    ui->removeRecentPushButton->setEnabled(true);
 }
 
 void KTp::JoinChatRoomDialog::onRoomClicked(const QModelIndex &index)
@@ -513,13 +406,7 @@ QString KTp::JoinChatRoomDialog::selectedChatRoom() const
 
 void KTp::JoinChatRoomDialog::onTextChanged(QString newText)
 {
-    if (newText.isEmpty()) {
-        button(Ok)->setEnabled(false);
-        ui->addFavoritePushButton->setEnabled(false);
-    } else {
-        button(Ok)->setEnabled(true);
-        ui->addFavoritePushButton->setEnabled(true);
-    }
+    button(Ok)->setEnabled(!newText.isEmpty());
 }
 
 void KTp::JoinChatRoomDialog::onStartChatFinished(Tp::PendingOperation *op)
@@ -562,14 +449,30 @@ void KTp::JoinChatRoomDialog::loadFavoriteRooms()
 
     Q_FOREACH(const QString &key, m_favoriteRoomsGroup.keyList()) {
         QVariantList favorite = m_favoriteRoomsGroup.readEntry(key, QVariantList());
-        QString favoriteName = favorite.at(0).toString();
-        QString favoriteHandle = favorite.at(1).toString();
-        QString favoriteAccount = favorite.at(2).toString();
-
+        // Keep compatibility with KTp 0.8 and previous
+        if(favorite.size() == 3) {
+            // Update the entry in the config file
+            favorite.removeFirst();
+            m_favoriteRoomsGroup.writeEntry(key, favorite);
+            m_favoriteRoomsGroup.sync();
+        }
+        QString favoriteHandle = favorite.at(0).toString();
+        QString favoriteAccount = favorite.at(1).toString();
         QVariantMap room;
-        room.insert(QLatin1String("name"), favoriteName);
+        room.insert(QLatin1String("is-bookmarked"), true);
         room.insert(QLatin1String("handle-name"), favoriteHandle);
         room.insert(QLatin1String("account-identifier"), favoriteAccount);
+        roomList.append(room);
+    }
+
+    Q_FOREACH (const QString &key, m_recentRoomsGroup.keyList()) {
+        QVariantList recent = m_recentRoomsGroup.readEntry(key, QVariantList());
+        QString recentHandle = recent.at(0).toString();
+        QString recentAccount = recent.at(1).toString();
+        QVariantMap room;
+        room.insert(QLatin1String("is-bookmarked"), false);
+        room.insert(QLatin1String("handle-name"), recentHandle);
+        room.insert(QLatin1String("account-identifier"), recentAccount);
         roomList.append(room);
     }
 

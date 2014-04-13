@@ -34,10 +34,10 @@ class KTP_EXPORT RoomsModel : public QAbstractListModel
 public:
     // TODO: find a suitable icon and add an invitation column
     enum Column {
-        PasswordColumn=0,
+        NameColumn=0,
+        DescriptionColumn,
         MembersColumn,
-        NameColumn,
-        DescriptionColumn
+        PasswordColumn,
     };
 
     enum Roles {
@@ -72,14 +72,14 @@ class KTP_EXPORT FavoriteRoomsModel : public QAbstractListModel
 
 public:
     enum Column {
-        NameColumn = 0,
+        BookmarkColumn = 0,
         HandleNameColumn,
         AccountIdentifierColumn
     };
 
     enum Roles {
         HandleNameRole = Qt::UserRole,
-        NameRole,
+        BookmarkRole,
         AccountRole,
         FavoriteRoomRole
     };
@@ -111,6 +111,11 @@ public:
      * \param room The room to remove.
      */
     void removeRoom(const QVariantMap &room);
+
+    /**
+     * \brief Remove all rooms from the list.
+     */
+    void clearRooms();
 
     /**
      * \brief Checks if it contains a room (identified by his handle-name).

@@ -34,7 +34,6 @@ class JoinChatRoomDialog;
 class RoomsModel;
 class FavoriteRoomsModel;
 class QSortFilterProxyModel;
-class KCompletion;
 
 namespace KTp {
 
@@ -56,11 +55,7 @@ protected:
 private Q_SLOTS:
     void onTextChanged(QString newText);
     void onAccountSelectionChanged(int newIndex);
-    void addFavorite();
-    void editFavorite();
-    void removeFavorite();
     void addRecentRoom();
-    void removeRecentRoom();
     void clearRecentRooms();
     void getRoomList();
     void stopListing();
@@ -71,7 +66,6 @@ private Q_SLOTS:
     void onGotRooms(Tp::RoomInfoList roomInfoList);
     void onFavoriteRoomSelectionChanged(const QModelIndex &current, const QModelIndex &previous);
     void onFavoriteRoomDataChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight);
-    void onRecentRoomClicked();
     void onRoomClicked(const QModelIndex &index);
     void onAccountManagerReady(Tp::PendingOperation*);
     void onStartChatFinished(Tp::PendingOperation *op);
@@ -93,12 +87,10 @@ private:
     QSortFilterProxyModel *m_favoritesProxyModel;
     KConfigGroup m_favoriteRoomsGroup;
     KConfigGroup m_recentRoomsGroup;
-    QHash <QString, QStringList> m_recentRooms;
-    KCompletion *m_recentComp;
     bool m_joinInProgress;
-
 };
 
 } //namespace KTp
+
 
 #endif  // JOINCHATROOMDIALOG_H
