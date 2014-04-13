@@ -38,6 +38,12 @@ class TelepathyManager : public QObject
     Q_OBJECT
     Q_PROPERTY(Tp::AccountManagerPtr accountManager READ accountManager CONSTANT)
 
+    /** @returns whether there's a ktp-dialout-ui executable */
+    Q_PROPERTY(bool canDial READ canDial)
+
+    /** @returns whether there's a ktp-send-file executable */
+    Q_PROPERTY(bool canSendFiles READ canSendFiles)
+
 public:
     TelepathyManager(QObject *parent=0);
     virtual ~TelepathyManager();
@@ -78,6 +84,27 @@ public:
     Q_INVOKABLE bool registerClient(QObject *client, const QString &clientName);
 
     Q_INVOKABLE bool unregisterClient(QObject* client);
+
+    bool canDial() const;
+    bool canSendFiles() const;
+
+    /** Opens UI to start an audio call */
+    Q_INVOKABLE void openDialUi() const;
+
+    /** Opens UI to send a file */
+    Q_INVOKABLE void openSendFileUi() const;
+
+    /** Opens UI to add a new contact */
+    Q_INVOKABLE void addContact();
+
+    /** Opens UI to join a chat room */
+    Q_INVOKABLE void joinChatRoom();
+
+    /** Opens UI to show the KDE Telepathy settings module */
+    Q_INVOKABLE void showSettingsKCM();
+
+    /** Toggles the visibility of the ktp-contact-list program */
+    Q_INVOKABLE void toggleContactList();
 
 public Q_SLOTS:
     /** Start a text chat using the default KTp text application
@@ -125,6 +152,10 @@ public Q_SLOTS:
         @arg contact the contact to start the channel with
     */
     void openLogViewer(const Tp::AccountPtr &account, const KTp::ContactPtr &contact);
+
+private Q_SLOTS:
+    void onJoinChatRoomSelected();
+    void contactlistDBusAccessed(QDBusPendingCallWatcher*);
 
 private:
     Tp::AccountManagerPtr m_accountManager;
