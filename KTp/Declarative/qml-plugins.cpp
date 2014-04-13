@@ -33,6 +33,7 @@
 #include "filtered-pinned-contacts-proxy-model.h"
 #include "telepathy-manager.h"
 
+#include <TelepathyQt/PendingChannelRequest>
 #include "KTp/types.h"
 #include "KTp/Models/contacts-filter-model.h"
 #include "KTp/Models/contacts-model.h"
@@ -64,6 +65,7 @@ void QmlPlugins::registerTypes(const char *uri)
 
     qmlRegisterType<TelepathyManager>();
     qmlRegisterType<ConversationsModel>();
+    qmlRegisterType<Tp::PendingChannelRequest>();
     qRegisterMetaType<Tp::AccountManagerPtr>();
     qRegisterMetaType<KTp::ContactPtr>();
     qRegisterMetaType<Tp::AccountPtr>();
