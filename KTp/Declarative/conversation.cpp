@@ -69,6 +69,12 @@ Conversation::Conversation(const Tp::TextChannelPtr &channel,
     } else {
         d->isGroupChat = false;
         d->targetContact = KTp::ContactPtr::qObjectCast(channel->targetContact());
+
+        connect(d->targetContact.constData(), SIGNAL(aliasChanged(QString)), SIGNAL(titleChanged()));
+        connect(d->targetContact.constData(), SIGNAL(presenceChanged(Tp::Presence)), SIGNAL(presenceIconChanged()));
+        connect(d->targetContact.constData(), SIGNAL(avatarDataChanged(Tp::AvatarData)), SIGNAL(avatarChanged()));
+
+
         connect(d->targetContact.constData(), SIGNAL(aliasChanged(QString)),
                 this, SLOT(onTargetContactAliasChanged(QString)));
         connect(d->targetContact.constData(), SIGNAL(avatarDataChanged(Tp::AvatarData)),
