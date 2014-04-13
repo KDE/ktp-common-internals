@@ -18,13 +18,19 @@
 */
 
 #include "telepathy-manager.h"
+#include <Widgets/join-chat-room-dialog.h>
+#include <Widgets/add-contact-dialog.h>
+#include <Widgets/settings-kcm-dialog.h>
 #include <KTp/actions.h>
+#include <kstandarddirs.h>
+#include <KToolInvocation>
 
 #include <TelepathyQt/Account>
 #include <TelepathyQt/AccountManager>
 #include <TelepathyQt/ClientRegistrar>
 #include <TelepathyQt/AbstractClient>
 #include <TelepathyQt/TextChannel>
+#include <TelepathyQt/PendingChannelRequest>
 
 #include <QQmlEngine>
 
@@ -156,6 +162,81 @@ Tp::PendingOperation* TelepathyManager::startFileTransfer(const Tp::AccountPtr &
     return KTp::Actions::startFileTransfer(account, contact, url);
 }
 
+bool TelepathyManager::canDial() const
+{
+    return !KStandardDirs::findExe(QLatin1String("ktp-dialout-ui")).isEmpty();
+}
 
+bool TelepathyManager::canSendFiles() const
+{
+    return !KStandardDirs::findExe(QLatin1String("ktp-send-file")).isEmpty();
+}
 
+void TelepathyManager::openDialUi() const
+{
+    KToolInvocation::kdeinitExec(QLatin1String("ktp-dialout-ui"));
+}
 
+void TelepathyManager::openSendFileUi() const
+{
+    KToolInvocation::kdeinitExec(QLatin1String("ktp-send-file"));
+}
+
+void TelepathyManager::addContact()
+{
+    KTp::AddContactDialog *dialog = new KTp::AddContactDialog(m_accountManager);
+    dialog->setAttribute(Qt::WA_DeleteOnClose);
+    dialog->show();
+}
+
+void TelepathyManager::joinChatRoom()
+{
+    KTp::JoinChatRoomDialog *dialog = new KTp::JoinChatRoomDialog(m_accountManager);
+    connect(dialog, SIGNAL(accepted()), this, SLOT(onJoinChatRoomSelected()));
+    dialog->setAttribute(Qt::WA_DeleteOnClose);
+    dialog->show();
+}
+
+void TelepathyManager::onJoinChatRoomSelected()
+{
+    KTp::JoinChatRoomDialog *dialog = qobject_cast<KTp::JoinChatRoomDialog*>(sender());
+    if (!dialog) {
+        return;
+    }
+
+    Tp::AccountPtr account = dialog->selectedAccount();
+    // check account validity. Should NEVER be invalid
+    if (!account.isNull()) {
+        Tp::PendingChannelRequest *channelRequest = KTp::Actions::startGroupChat(account, dialog->selectedChatRoom());
+
+        connect(channelRequest, SIGNAL(finished(Tp::PendingOperation*)), SLOT(onGenericOperationFinished(Tp::PendingOperation*)));
+    }
+}
+
+void TelepathyManager::toggleContactList()
+{
+    //contact list is registered, call toggleWindowVisibility in contact list
+    QDBusMessage methodCall = QDBusMessage::createMethodCall(QLatin1String("org.kde.ktp-contactlist"),
+                                                             QLatin1String("/ktp_contactlist/MainWindow"),
+                                                             QLatin1String("org.kde.KTp.ContactList"),
+                                                             QLatin1String("toggleWindowVisibility"));
+
+    QDBusPendingCall call = QDBusConnection::sessionBus().asyncCall(methodCall);
+    QDBusPendingCallWatcher* watch = new QDBusPendingCallWatcher(call, this);
+    connect(watch, SIGNAL(finished(QDBusPendingCallWatcher*)), SLOT(contactlistDBusAccessed(QDBusPendingCallWatcher*)));
+    connect(watch, SIGNAL(finished(QDBusPendingCallWatcher*)), watch, SLOT(deleteLater()));
+}
+
+void TelepathyManager::contactlistDBusAccessed(QDBusPendingCallWatcher* w)
+{
+    if(w->isError())
+        KToolInvocation::startServiceByDesktopName(QLatin1String("ktp-contactlist"));
+}
+
+void TelepathyManager::showSettingsKCM()
+{
+    KTp::SettingsKcmDialog *dialog = new KTp::SettingsKcmDialog();
+    dialog->addGeneralSettingsModule();
+    dialog->addNotificationsModule();
+    dialog->show();
+}

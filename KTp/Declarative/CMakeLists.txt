@@ -26,6 +26,7 @@ target_link_libraries (ktpqmlplugin
     ktpcommoninternalsprivate
     ktploggerprivate
     ktpmodelsprivate
+    ktpwidgetsprivate
 )
 
 install (TARGETS ktpqmlplugin DESTINATION ${QML_INSTALL_DIR}/org/kde/telepathy)
