@@ -28,6 +28,8 @@
 
 #include <KTp/message-processor.h>
 
+#include <KDebug>
+
 PendingTpLoggerLogs::PendingTpLoggerLogs(const Tp::AccountPtr &account,
                                          const KTp::LogEntity &entity,
                                          const QDate &date,
@@ -60,6 +62,11 @@ void PendingTpLoggerLogs::logsRetrieved(Tpl::PendingOperation *op)
     QList<KTp::LogMessage> logs;
     Q_FOREACH (const Tpl::EventPtr &event, events) {
         const Tpl::TextEventPtr textEvent = event.dynamicCast<Tpl::TextEvent>();
+        if (textEvent.isNull()) {
+            kDebug() << "Received a null TextEvent!";
+            continue;
+        }
+
         logs << KTp::LogMessage(Utils::fromTplEntity(event->sender()),
                                 account(), event->timestamp(), textEvent->message(),
                                 textEvent->messageToken());

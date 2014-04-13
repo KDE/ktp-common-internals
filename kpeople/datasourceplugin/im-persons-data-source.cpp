@@ -86,11 +86,18 @@ void KTpAllContacts::loadCache()
     db.setDatabaseName(KGlobal::dirs()->locateLocal("data", QLatin1String("ktp/cache.db")));
     db.open();
 
-    QSqlQuery query(QLatin1String("SELECT accountId, contactId, alias, avatarFileName FROM contacts"), db);
+    QSqlQuery query(db);
+    query.exec(QLatin1String("SELECT groupName FROM groups ORDER BY groupId;"));
 
-    if (!query.exec()) {
-        emitInitialFetchComplete(false);
-        return;
+    QStringList groupsList;
+    while (query.next()) {
+        groupsList.append(query.value(0).toString());
+    }
+
+    if (!groupsList.isEmpty()) {
+        query.exec(QLatin1String("SELECT accountId, contactId, alias, avatarFileName, groupsIds FROM contacts;"));
+    } else {
+        query.exec(QLatin1String("SELECT accountId, contactId, alias, avatarFileName FROM contacts;"));
     }
 
     while (query.next()) {
@@ -100,6 +107,21 @@ void KTpAllContacts::loadCache()
         const QString contactId =  query.value(1).toString();
         addressee.setFormattedName(query.value(2).toString());
         addressee.setPhoto(KABC::Picture(query.value(3).toString()));
+
+        if (!groupsList.isEmpty()) {
+            QStringList contactGroups;
+
+            Q_FOREACH (const QString &groupIdStr, query.value(4).toString().split(QLatin1String(","))) {
+                bool convSuccess;
+                int groupId = groupIdStr.toInt(&convSuccess);
+                if ((!convSuccess) || (groupId >= groupsList.count()))
+                    continue;
+
+                contactGroups.append(groupsList.at(groupId));
+            }
+
+            addressee.setCategories(contactGroups);
+        }
 
         addressee.insertCustom(QLatin1String("telepathy"), QLatin1String("contactId"), contactId);
         addressee.insertCustom(QLatin1String("telepathy"), QLatin1String("accountPath"), accountId);
@@ -117,7 +139,6 @@ void KTpAllContacts::loadCache()
 
     emitInitialFetchComplete(true);
 }
-
 
 QString KTpAllContacts::createUri(const KTp::ContactPtr &contact) const
 {

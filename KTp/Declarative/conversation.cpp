@@ -69,12 +69,10 @@ Conversation::Conversation(const Tp::TextChannelPtr &channel,
     } else {
         d->isGroupChat = false;
         d->targetContact = KTp::ContactPtr::qObjectCast(channel->targetContact());
-        connect(d->targetContact.constData(), SIGNAL(aliasChanged(QString)),
-                this, SLOT(onTargetContactAliasChanged(QString)));
-        connect(d->targetContact.constData(), SIGNAL(avatarDataChanged(Tp::AvatarData)),
-                this, SLOT(onTargetContactAvatarDataChanged()));
-        connect(d->targetContact.constData(), SIGNAL(presenceChanged(Tp::Presence)),
-                this, SLOT(onTargetContactPresenceChanged()));
+
+        connect(d->targetContact.constData(), SIGNAL(aliasChanged(QString)), SIGNAL(titleChanged()));
+        connect(d->targetContact.constData(), SIGNAL(presenceChanged(Tp::Presence)), SIGNAL(presenceIconChanged()));
+        connect(d->targetContact.constData(), SIGNAL(avatarDataChanged(Tp::AvatarData)), SIGNAL(avatarChanged()));
     }
 }
 
@@ -226,21 +224,6 @@ void Conversation::updateTextChanged(const QString &message)
 void Conversation::onChatPausedTimerExpired()
 {
     d->messages->textChannel()->requestChatState(Tp::ChannelChatStatePaused);
-}
-
-void Conversation::onTargetContactAvatarDataChanged()
-{
-    Q_EMIT avatarChanged(avatar());
-}
-
-void Conversation::onTargetContactAliasChanged()
-{
-    Q_EMIT titleChanged(title());
-}
-
-void Conversation::onTargetContactPresenceChanged()
-{
-    Q_EMIT presenceIconChanged(presenceIcon());
 }
 
 Conversation::~Conversation()

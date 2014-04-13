@@ -157,7 +157,7 @@ void KTp::TextChannelWatcherProxyModel::observeChannels(const Tp::MethodInvocati
             }
 
             //if it's not in our source model, ignore the channel
-            QModelIndexList matchedContacts = sourceModel()->match(QModelIndex(sourceModel()->index(0,0)), KTp::ContactRole, QVariant::fromValue(targetContact));
+            QModelIndexList matchedContacts = sourceModel()->match(QModelIndex(sourceModel()->index(0,0)), KTp::IdRole, QVariant::fromValue(targetContact->id()));
             if (matchedContacts.size() !=1) {
                 continue;
             }
@@ -174,7 +174,25 @@ void KTp::TextChannelWatcherProxyModel::observeChannels(const Tp::MethodInvocati
 
 QVariant KTp::TextChannelWatcherProxyModel::data(const QModelIndex &proxyIndex, int role) const
 {
+    // if we're processing a person and either of those two roles,
+    // we propagate the data from sub contacts
+    if (proxyIndex.model()->rowCount(proxyIndex) > 0
+        && (role == KTp::ContactHasTextChannelRole || role == KTp::ContactUnreadMessageCountRole)) {
+        QVariant personData;
+
+        for (int i = 0; i < proxyIndex.model()->rowCount(proxyIndex); i++) {
+            QVariant data = proxyIndex.child(i, 0).data(role);
+            if (!data.isNull()) {
+                personData = data;
+                break;
+            }
+        }
+
+        return personData;
+    }
+
     const QModelIndex sourceIndex = mapToSource(proxyIndex);
+
     if (role == KTp::ContactHasTextChannelRole) {
         KTp::ContactPtr contact = sourceIndex.data(KTp::ContactRole).value<KTp::ContactPtr>();
         if (contact) {
@@ -182,7 +200,7 @@ QVariant KTp::TextChannelWatcherProxyModel::data(const QModelIndex &proxyIndex, 
                 return true;
             }
         }
-        return false;
+        return QVariant();
     }
 
     if (role == KTp::ContactUnreadMessageCountRole) {
@@ -192,7 +210,7 @@ QVariant KTp::TextChannelWatcherProxyModel::data(const QModelIndex &proxyIndex, 
                 return d->currentChannels[contact]->unreadMessageCount();
             }
         }
-        return 0;
+        return QVariant();
     }
     if (role == KTp::ContactLastMessageRole) {
         KTp::ContactPtr contact = sourceIndex.data(KTp::ContactRole).value<KTp::ContactPtr>();

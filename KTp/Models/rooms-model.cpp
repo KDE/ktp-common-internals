@@ -183,6 +183,7 @@ QVariant KTp::FavoriteRoomsModel::data(const QModelIndex &index, int role) const
     const QVariantMap &room = m_favoriteRoomsList.at(row);
 
     switch(role) {
+    case Qt::EditRole: // Return same values for both Display and Edit roles
     case Qt::DisplayRole:
         switch (index.column()) {
         case NameColumn:

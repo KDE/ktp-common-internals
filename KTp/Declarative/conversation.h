@@ -35,9 +35,9 @@ class Conversation : public QObject
 
     Q_PROPERTY(MessagesModel *messages READ messages CONSTANT)
     Q_PROPERTY(bool valid READ isValid NOTIFY validityChanged)
-    Q_PROPERTY(QString title READ title CONSTANT)
-    Q_PROPERTY(QIcon presenceIcon READ presenceIcon CONSTANT)
-    Q_PROPERTY(QIcon avatar READ avatar CONSTANT)
+    Q_PROPERTY(QString title READ title NOTIFY titleChanged)
+    Q_PROPERTY(QIcon presenceIcon READ presenceIcon NOTIFY presenceIconChanged)
+    Q_PROPERTY(QIcon avatar READ avatar NOTIFY avatarChanged)
     Q_PROPERTY(Tp::AccountPtr account READ account CONSTANT)
     Q_PROPERTY(KTp::ContactPtr targetContact READ targetContact CONSTANT)
 
@@ -64,9 +64,9 @@ public:
 
 Q_SIGNALS:
     void validityChanged(bool isValid);
-    void avatarChanged(QIcon avatar);
-    void titleChanged(QString title);
-    void presenceIconChanged(QIcon icon);
+    void avatarChanged();
+    void titleChanged();
+    void presenceIconChanged();
     void conversationCloseRequested();
 
 public Q_SLOTS:
@@ -79,9 +79,6 @@ private Q_SLOTS:
     void onAccountConnectionChanged(const Tp::ConnectionPtr &connection);
     void onCreateChannelFinished(Tp::PendingOperation *op);
     void onChatPausedTimerExpired();
-    void onTargetContactAvatarDataChanged();
-    void onTargetContactAliasChanged();
-    void onTargetContactPresenceChanged();
 
 private:
     class ConversationPrivate;
