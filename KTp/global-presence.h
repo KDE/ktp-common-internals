@@ -46,6 +46,7 @@ class KTP_EXPORT GlobalPresence : public QObject
     Q_PROPERTY(ConnectionPresenceType presenceType READ currentPresenceType NOTIFY currentPresenceChanged)
     Q_PROPERTY(Tp::AccountManagerPtr accountManager READ accountManager WRITE addAccountManager)
     Q_PROPERTY(QIcon currentPresenceIcon READ currentPresenceIcon NOTIFY currentPresenceChanged)
+    Q_PROPERTY(KTp::Presence requestedPresence READ requestedPresence WRITE setPresence NOTIFY requestedPresenceChanged)
 public:
     explicit GlobalPresence(QObject *parent = 0);
 
@@ -100,7 +101,7 @@ Q_SIGNALS:
 
 public Q_SLOTS:
     /** Set all enabled accounts to the specified presence*/
-    void setPresence(const Tp::Presence &presence);
+    void setPresence(const KTp::Presence &presence);
     void setPresence(ConnectionPresenceType p, QString message);
 
     /**Saves the current presence to memory*/

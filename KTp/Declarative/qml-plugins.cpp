@@ -35,6 +35,7 @@
 #include <TelepathyQt/PendingChannelRequest>
 #include "KTp/types.h"
 #include "KTp/global-presence.h"
+#include "KTp/Models/presence-model.h"
 #include "KTp/Models/contacts-filter-model.h"
 #include "KTp/Models/contacts-model.h"
 #include "KTp/Models/accounts-list-model.h"
@@ -59,15 +60,17 @@ void QmlPlugins::registerTypes(const char *uri)
     qmlRegisterType<PinnedContactsModel>(uri, 0, 1, "PinnedContactsModel");
     qmlRegisterType<ContactPin>(uri, 0, 1, "ContactPin");
     qmlRegisterType<FilteredPinnedContactsProxyModel>(uri, 0, 1, "FilteredPinnedContactsProxyModel");
+    qmlRegisterType<KTp::GlobalPresence> (uri, 0, 1, "GlobalPresence");
+    qmlRegisterType<KTp::PresenceModel> (uri, 0, 1, "PresenceModel");
 
     qmlRegisterUncreatableType<MessagesModel> (uri, 0, 1, "MessagesModel",
         QLatin1String("It will be created once the conversation is created"));
 
-    qmlRegisterType<KTp::GlobalPresence> (uri, 0, 1, "GlobalPresence");
-
     qmlRegisterType<TelepathyManager>();
     qmlRegisterType<ConversationsModel>();
     qmlRegisterType<Tp::PendingChannelRequest>();
+    qRegisterMetaType<Tp::Presence>();
+    qRegisterMetaType<KTp::Presence>();
     qRegisterMetaType<Tp::AccountManagerPtr>();
     qRegisterMetaType<KTp::ContactPtr>();
     qRegisterMetaType<Tp::AccountPtr>();

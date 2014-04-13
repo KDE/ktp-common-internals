@@ -33,13 +33,15 @@ namespace KTp
 class KTP_EXPORT PresenceModel : public QAbstractListModel
 {
     Q_OBJECT
+    Q_PROPERTY(int count READ rowCount NOTIFY countChanged)
 public:
     explicit PresenceModel(QObject *parent = 0);
     ~PresenceModel();
 
     enum Roles {
         //Also supplies Qt::DisplayRole and Qt::DecorationRole
-        PresenceRole = Qt::UserRole
+        PresenceRole = Qt::UserRole,
+        IconNameRole
     };
 
     /** Adds a custom presence to the model, and write value to config file.
@@ -58,13 +60,16 @@ public:
     /** Updates context menu of presence applet */
     int updatePresenceApplet();
 
-    /** Returns the index of a given presence, adding it if needed */
-    QModelIndex indexOf(const KTp::Presence &presence);
+    Q_SCRIPTABLE QVariant get(int row, const QByteArray& role) const;
 
     //protected:
     virtual QVariant data(const QModelIndex &index, int role) const;
     virtual QVariant data(int index) const;
     virtual int rowCount(const QModelIndex &parent = QModelIndex()) const;
+    virtual QHash<int, QByteArray> roleNames() const;
+
+Q_SIGNALS:
+    void countChanged();
 
 private:
 

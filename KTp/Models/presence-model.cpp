@@ -99,9 +99,11 @@ QVariant PresenceModel::data(const QModelIndex &index, int role) const
             return QVariant();
         }
 
-    case PresenceModel::PresenceRole:
+    case PresenceRole:
         return QVariant::fromValue<KTp::Presence>(presence);
 
+    case IconNameRole:
+        return presence.iconName();
     }
 
     return QVariant();
@@ -170,6 +172,7 @@ QModelIndex PresenceModel::addPresence(const KTp::Presence &presence)
     //and using qLowerBound does seem a good approach
     beginInsertRows(QModelIndex(), index, index);
     endInsertRows();
+    Q_EMIT countChanged();
     return createIndex(index, 0);
 }
 
@@ -179,7 +182,7 @@ void PresenceModel::removePresence(const KTp::Presence &presence)
     beginRemoveRows(QModelIndex(), row, row);
     m_presences.removeOne(presence);
     endRemoveRows();
-    QString id = QString::number(presence.type()).append(presence.statusMessage());
+    Q_EMIT countChanged();
 }
 
 int PresenceModel::updatePresenceApplet()
@@ -195,6 +198,21 @@ int PresenceModel::updatePresenceApplet()
         return 0;
     }
     return 1;
+}
+
+QHash<int, QByteArray> PresenceModel::roleNames() const
+{
+    QHash<int, QByteArray> roles = QAbstractListModel::roleNames();
+    roles.insert(PresenceRole, "presence");
+    roles.insert(IconNameRole, "iconName");
+    return roles;
+}
+
+QVariant PresenceModel::get(int row, const QByteArray& role) const
+{
+    //TODO: cache roles?
+    QHash<int, QByteArray> roles = roleNames();
+    return index(row, 0).data(roles.key(role));
 }
 
 }
