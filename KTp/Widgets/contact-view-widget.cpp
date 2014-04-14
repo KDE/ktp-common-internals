@@ -77,7 +77,7 @@ void KTp::ContactViewDelegate::paint(QPainter *painter, const QStyleOptionViewIt
         avatar = KIcon(QLatin1String("im-user-online")).pixmap(option.decorationSize);
     } else if (avatar.width() > option.decorationSize.width() || avatar.height() > option.decorationSize.height()) {
         //resize larger avatars if required
-        avatar = avatar.scaled(option.decorationSize, Qt::KeepAspectRatio);
+        avatar = avatar.scaled(option.decorationSize, Qt::KeepAspectRatio, Qt::SmoothTransformation);
         //draw leaving paddings on smaller (or non square) avatars
     }
     style->drawItemPixmap(painter, avatarRect, Qt::AlignCenter, avatar);
