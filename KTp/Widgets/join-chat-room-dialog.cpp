@@ -32,6 +32,7 @@
 #include <KPushButton>
 #include <KCompletionBox>
 
+#include <TelepathyQt/Account>
 #include <TelepathyQt/AccountSet>
 #include <TelepathyQt/AccountCapabilityFilter>
 #include <TelepathyQt/AccountManager>
@@ -42,6 +43,7 @@
 #include <TelepathyQt/PendingReady>
 #include <TelepathyQt/RequestableChannelClassSpec>
 #include <TelepathyQt/RoomListChannel>
+#include <TelepathyQt/PendingChannelRequest>
 
 #include <QSortFilterProxyModel>
 
@@ -52,9 +54,12 @@ KTp::JoinChatRoomDialog::JoinChatRoomDialog(Tp::AccountManagerPtr accountManager
     , m_favoritesModel(new FavoriteRoomsModel(this))
     , m_favoritesProxyModel(new QSortFilterProxyModel(this))
     , m_recentComp(new KCompletion)
+    , m_joinInProgress(false)
 {
     QWidget *joinChatRoomDialog = new QWidget(this);
     ui->setupUi(joinChatRoomDialog);
+    ui->feedbackWidget->hide();
+
     setMainWidget(joinChatRoomDialog);
     setWindowIcon(KIcon(QLatin1String("telepathy-kde")));
 
@@ -135,6 +140,15 @@ KTp::JoinChatRoomDialog::JoinChatRoomDialog(Tp::AccountManagerPtr accountManager
     connect(button(Ok), SIGNAL(clicked(bool)), this, SLOT(addRecentRoom()));
 }
 
+void KTp::JoinChatRoomDialog::closeEvent(QCloseEvent* e)
+{
+    // ignore close event if we are in the middle of an operation
+    if (!m_joinInProgress) {
+        KDialog::closeEvent(e);
+    }
+}
+
+
 void KTp::JoinChatRoomDialog::onAccountManagerReady(Tp::PendingOperation* operation)
 {
     Tp::AccountManagerPtr accountManager = Tp::AccountManagerPtr::qObjectCast(
@@ -169,6 +183,18 @@ Tp::AccountPtr KTp::JoinChatRoomDialog::selectedAccount() const
 {
     return ui->comboBox->currentAccount();
 }
+
+void KTp::JoinChatRoomDialog::accept()
+{
+    ui->feedbackWidget->hide();
+    const Tp::AccountPtr account = selectedAccount();
+    if (account) {
+        setJoinInProgress(true);
+        Tp::PendingChannelRequest *request = account->ensureTextChatroom(selectedChatRoom());
+        connect(request, SIGNAL(finished(Tp::PendingOperation*)), SLOT(onStartChatFinished(Tp::PendingOperation*)));
+    }
+}
+
 
 void KTp::JoinChatRoomDialog::onAccountSelectionChanged(int newIndex)
 {
@@ -495,6 +521,30 @@ void KTp::JoinChatRoomDialog::onTextChanged(QString newText)
         ui->addFavoritePushButton->setEnabled(true);
     }
 }
+
+void KTp::JoinChatRoomDialog::onStartChatFinished(Tp::PendingOperation *op)
+{
+    setJoinInProgress(false);
+    if (op->isError()) {
+        kDebug() << "failed to join room";
+        kDebug() << op->errorName() << op->errorMessage();
+
+        ui->feedbackWidget->setMessageType(KMessageWidget::KMessageWidget::Error);
+        ui->feedbackWidget->setText(i18n("Could not join chatroom"));
+        ui->feedbackWidget->animatedShow();
+    } else {
+        close();
+    }
+}
+
+void KTp::JoinChatRoomDialog::setJoinInProgress(bool inProgress)
+{
+    m_joinInProgress = inProgress;
+    mainWidget()->setEnabled(!inProgress);
+    button(KDialog::Ok)->setEnabled(!inProgress);
+    button(KDialog::Cancel)->setEnabled(!inProgress);
+}
+
 
 void KTp::JoinChatRoomDialog::sendNotificationToUser(const QString& errorMsg)
 {

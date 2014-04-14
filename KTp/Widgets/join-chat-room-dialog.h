@@ -28,7 +28,7 @@
 #include <KTp/ktp-export.h>
 
 namespace Ui {
-    class JoinChatRoomDialog;
+class JoinChatRoomDialog;
 }
 
 class RoomsModel;
@@ -48,6 +48,10 @@ public:
 
     Tp::AccountPtr selectedAccount() const;     /** returns selected account */
     QString selectedChatRoom() const;           /** returns selected chat room */
+    virtual void accept();
+
+protected:
+    virtual void closeEvent(QCloseEvent *e);
 
 private Q_SLOTS:
     void onTextChanged(QString newText);
@@ -70,11 +74,15 @@ private Q_SLOTS:
     void onRecentRoomClicked();
     void onRoomClicked(const QModelIndex &index);
     void onAccountManagerReady(Tp::PendingOperation*);
+    void onStartChatFinished(Tp::PendingOperation *op);
+
 
 private:
     void sendNotificationToUser(const QString& errorMsg);
     void loadFavoriteRooms();
+    void setJoinInProgress(bool);
 
+    //TODO d pointer this
     QList<Tp::AccountPtr> m_accounts;
     Ui::JoinChatRoomDialog *ui;
     Tp::PendingChannel *m_pendingRoomListChannel;
@@ -87,6 +95,7 @@ private:
     KConfigGroup m_recentRoomsGroup;
     QHash <QString, QStringList> m_recentRooms;
     KCompletion *m_recentComp;
+    bool m_joinInProgress;
 
 };
 

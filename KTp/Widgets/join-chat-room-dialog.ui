@@ -21,6 +21,9 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
+    <widget class="KMessageWidget" name="feedbackWidget" native="true"/>
+   </item>
+   <item>
     <widget class="KTp::AccountsComboBox" name="comboBox"/>
    </item>
    <item>
@@ -247,6 +250,12 @@
    <class>KTp::AccountsComboBox</class>
    <extends>QComboBox</extends>
    <header>accounts-combo-box.h</header>
+  </customwidget>
+  <customwidget>
+   <class>KMessageWidget</class>
+   <extends>QWidget</extends>
+   <header location="global">kmessagewidget.h</header>
+   <container>1</container>
   </customwidget>
  </customwidgets>
  <resources/>

@@ -192,25 +192,8 @@ void TelepathyManager::addContact()
 void TelepathyManager::joinChatRoom()
 {
     KTp::JoinChatRoomDialog *dialog = new KTp::JoinChatRoomDialog(m_accountManager);
-    connect(dialog, SIGNAL(accepted()), this, SLOT(onJoinChatRoomSelected()));
     dialog->setAttribute(Qt::WA_DeleteOnClose);
     dialog->show();
-}
-
-void TelepathyManager::onJoinChatRoomSelected()
-{
-    KTp::JoinChatRoomDialog *dialog = qobject_cast<KTp::JoinChatRoomDialog*>(sender());
-    if (!dialog) {
-        return;
-    }
-
-    Tp::AccountPtr account = dialog->selectedAccount();
-    // check account validity. Should NEVER be invalid
-    if (!account.isNull()) {
-        Tp::PendingChannelRequest *channelRequest = KTp::Actions::startGroupChat(account, dialog->selectedChatRoom());
-
-        connect(channelRequest, SIGNAL(finished(Tp::PendingOperation*)), SLOT(onGenericOperationFinished(Tp::PendingOperation*)));
-    }
 }
 
 void TelepathyManager::toggleContactList()
