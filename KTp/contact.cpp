@@ -43,7 +43,7 @@ KTp::Contact::Contact(Tp::ContactManager *manager, const Tp::ReferencedHandles &
     connect(manager->connection().data(), SIGNAL(invalidated(Tp::DBusProxy*,QString,QString)), SIGNAL(invalidated()));
     connect(this, SIGNAL(avatarTokenChanged(QString)), SLOT(invalidateAvatarCache()));
     connect(this, SIGNAL(avatarDataChanged(Tp::AvatarData)), SLOT(invalidateAvatarCache()));
-    connect(this, SIGNAL(presenceChanged(Tp::Presence)), SIGNAL(onPresenceChanged(Tp::Presence)));
+    connect(this, SIGNAL(presenceChanged(Tp::Presence)), SLOT(onPresenceChanged(Tp::Presence)));
 }
 
 void KTp::Contact::onPresenceChanged(const Tp::Presence &presence)
