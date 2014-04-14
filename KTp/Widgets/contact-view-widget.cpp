@@ -245,6 +245,16 @@ KTp::ContactPtr KTp::ContactViewWidget::selectedContact() const
     return d->contactView->currentIndex().data(KTp::ContactRole).value<KTp::ContactPtr>();
 }
 
+QList<KTp::ContactPtr> KTp::ContactViewWidget::selectedContacts() const
+{
+    QList<KTp::ContactPtr> selected;
+
+    Q_FOREACH (const QModelIndex &index, d->contactView->selectionModel()->selectedIndexes()) {
+        selected << index.data(KTp::ContactRole).value<KTp::ContactPtr>();
+    }
+    return selected;
+}
+
 void KTp::ContactViewWidget::setViewMode(QListView::ViewMode mode)
 {
     d->contactView->setViewMode(mode);
@@ -253,6 +263,16 @@ void KTp::ContactViewWidget::setViewMode(QListView::ViewMode mode)
 QListView::ViewMode KTp::ContactViewWidget::viewMode() const
 {
     return d->contactView->viewMode();
+}
+
+QAbstractItemView::SelectionMode KTp::ContactViewWidget::selectionMode()
+{
+    return d->contactView->selectionMode();
+}
+
+void KTp::ContactViewWidget::setSelectionMode(QAbstractItemView::SelectionMode mode)
+{
+    d->contactView->setSelectionMode(mode);
 }
 
 KTp::ContactsFilterModel* KTp::ContactViewWidget::filter() const

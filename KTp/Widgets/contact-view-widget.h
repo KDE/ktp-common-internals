@@ -75,8 +75,13 @@ public:
     virtual Tp::AccountPtr selectedAccount() const;
     virtual KTp::ContactPtr selectedContact() const;
 
+    virtual QList<KTp::ContactPtr> selectedContacts() const;
+
     void setViewMode(QListView::ViewMode);
     QListView::ViewMode viewMode() const;
+
+    void setSelectionMode(QAbstractItemView::SelectionMode mode);
+    QAbstractItemView::SelectionMode selectionMode();
 
 Q_SIGNALS:
     void selectionChanged(const Tp::AccountPtr &selectedAccount, const KTp::ContactPtr &selectedContact);
