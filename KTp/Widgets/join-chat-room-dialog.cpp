@@ -77,6 +77,7 @@ KTp::JoinChatRoomDialog::JoinChatRoomDialog(Tp::AccountManagerPtr accountManager
     button(Ok)->setEnabled(false);
     button(Ok)->setText(i18nc("button", "Join/Create"));
     button(Ok)->setIcon(KIcon(QLatin1String("im-irc")));
+    onAccountSelectionChanged(ui->comboBox->currentIndex());
     connect(accountManager->becomeReady(), SIGNAL(finished(Tp::PendingOperation*)),
             this, SLOT(onAccountManagerReady(Tp::PendingOperation*)));
 
