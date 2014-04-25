@@ -8,7 +8,7 @@ set (CMAKE_MODULE_PATH
 )
 cmake_policy(SET CMP0002 OLD)
 
-set (KTP_VERSION "0.8.0")
+set (KTP_VERSION "0.8.1")
 # Bump for every 0.x release, or whenever BC changes
 set (KTP_SONUMBER 7)
 set (KTP_MESSAGE_FILTER_FRAMEWORK_VERSION "4")
