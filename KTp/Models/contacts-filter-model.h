@@ -306,9 +306,7 @@ private:
 
     Q_PRIVATE_SLOT(d, void sourceModelParentIndexChanged(const QModelIndex &sourceIndex))
     Q_PRIVATE_SLOT(d, void sourceModelIndexChanged(const QModelIndex &sourceIndex))
-    Q_PRIVATE_SLOT(d, void countContacts(const QModelIndex &index))
 };
-
 } //namespace
 
-#endif // ACCOUNTFILTERMODEL_H
+#endif // CONTACTSFILTERMODEL_H

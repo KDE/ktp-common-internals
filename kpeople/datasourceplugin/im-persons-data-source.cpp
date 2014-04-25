@@ -73,7 +73,7 @@ KTpAllContacts::KTpAllContacts()
 {
     Tp::registerTypes();
 
-    QTimer::singleShot(0, this, SLOT(loadCache()));
+    loadCache());
 }
 
 KTpAllContacts::~KTpAllContacts()
