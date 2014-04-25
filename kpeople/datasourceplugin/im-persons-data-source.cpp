@@ -73,7 +73,7 @@ KTpAllContacts::KTpAllContacts()
 {
     Tp::registerTypes();
 
-    loadCache());
+    loadCache();
 }
 
 KTpAllContacts::~KTpAllContacts()
