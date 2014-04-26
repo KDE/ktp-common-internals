@@ -26,46 +26,6 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="gabbleTab">
-      <attribute name="title">
-       <string notr="true">Gabble</string>
-      </attribute>
-      <layout class="QHBoxLayout" name="horizontalLayout_3">
-       <item>
-        <widget class="DebugMessageView" name="gabbleLogsView"/>
-       </item>
-      </layout>
-     </widget>
-     <widget class="QWidget" name="hazeTab">
-      <attribute name="title">
-       <string notr="true">Haze</string>
-      </attribute>
-      <layout class="QHBoxLayout" name="horizontalLayout_4">
-       <item>
-        <widget class="DebugMessageView" name="hazeLogsView"/>
-       </item>
-      </layout>
-     </widget>
-     <widget class="QWidget" name="salutTab">
-      <attribute name="title">
-       <string notr="true">Salut</string>
-      </attribute>
-      <layout class="QHBoxLayout" name="horizontalLayout_5">
-       <item>
-        <widget class="DebugMessageView" name="salutLogsView"/>
-       </item>
-      </layout>
-     </widget>
-     <widget class="QWidget" name="rakiaTab">
-      <attribute name="title">
-       <string notr="true">Rakia</string>
-      </attribute>
-      <layout class="QHBoxLayout" name="horizontalLayout_6">
-       <item>
-        <widget class="DebugMessageView" name="rakiaLogsView"/>
-       </item>
-      </layout>
-     </widget>
     </widget>
    </item>
   </layout>

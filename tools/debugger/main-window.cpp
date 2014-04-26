@@ -17,11 +17,17 @@
 */
 #include "main-window.h"
 #include "debug-message-view.h"
+
+#include <TelepathyQt/AccountManager>
+#include <TelepathyQt/AccountSet>
+#include <TelepathyQt/PendingReady>
+
+#include <QtAlgorithms>
+
 #include <KAction>
 #include <KIcon>
 #include <KStatusBar>
 #include <KToolBar>
-
 
 MainWindow::MainWindow(QWidget *parent)
     : KXmlGuiWindow(parent)
@@ -31,20 +37,16 @@ MainWindow::MainWindow(QWidget *parent)
     setupGUI();
 
     m_ui.mcLogsView->setService(QLatin1String("org.freedesktop.Telepathy.MissionControl5"));
-    m_ui.gabbleLogsView->setService(QLatin1String("org.freedesktop.Telepathy.ConnectionManager.gabble"));
-    m_ui.hazeLogsView->setService(QLatin1String("org.freedesktop.Telepathy.ConnectionManager.haze"));
-    m_ui.salutLogsView->setService(QLatin1String("org.freedesktop.Telepathy.ConnectionManager.salut"));
-    m_ui.rakiaLogsView->setService(QLatin1String("org.freedesktop.Telepathy.ConnectionManager.rakia"));
+
+    m_AccountManager = Tp::AccountManager::create();
+    Tp::PendingReady *pendingReady = m_AccountManager->becomeReady();
+    connect(pendingReady, SIGNAL(finished(Tp::PendingOperation*)), this, SLOT(onAccountManagerBecameReady(Tp::PendingOperation*)));
 
     KAction *saveLogAction = new KAction(KIcon(QLatin1String("document-save-as"), KIconLoader::global()), i18n("Save Log"), this);
     saveLogAction->setToolTip(i18nc("Toolbar icon tooltip", "Save log of the current tab"));
     toolBar()->addAction(saveLogAction);
 
     connect(m_ui.mcLogsView, SIGNAL(statusMessage(QString)), statusBar(), SLOT(showMessage(QString)));
-    connect(m_ui.gabbleLogsView, SIGNAL(statusMessage(QString)), statusBar(), SLOT(showMessage(QString)));
-    connect(m_ui.hazeLogsView, SIGNAL(statusMessage(QString)), statusBar(), SLOT(showMessage(QString)));
-    connect(m_ui.salutLogsView, SIGNAL(statusMessage(QString)), statusBar(), SLOT(showMessage(QString)));
-    connect(m_ui.rakiaLogsView, SIGNAL(statusMessage(QString)), statusBar(), SLOT(showMessage(QString)));
     connect(saveLogAction, SIGNAL(triggered(bool)), this, SLOT(saveLogFile()));
 }
 
@@ -56,4 +58,45 @@ MainWindow::~MainWindow()
 void MainWindow::saveLogFile()
 {
     m_ui.tabWidget->currentWidget()->findChild<DebugMessageView *>()->saveLogFile();
+}
+
+void MainWindow::onAccountManagerBecameReady(Tp::PendingOperation* op)
+{
+    if (op->isError()) {
+        kError() << "Failed to initialize Tp::AccountManager"
+                 << "Error was:" << op->errorName() << "-" << op->errorMessage();
+    } else {
+        QSet<QString> connectionManagers;
+
+        Tp::AccountSetPtr accountSetPtr = m_AccountManager->onlineAccounts();
+        QList<Tp::AccountPtr> accountList = accountSetPtr->accounts();
+
+        Q_FOREACH(Tp::AccountPtr account, accountList) {
+            connectionManagers.insert(account->cmName());
+        }
+
+        initConnectionManagerTabs(connectionManagers);
+    }
+}
+
+void MainWindow::initConnectionManagerTabs(const QSet<QString>& connectionManagerSet)
+{
+    QStringList connectionManagerStringList = connectionManagerSet.toList();
+    qSort(connectionManagerStringList);
+
+    Q_FOREACH(QString connectionManager, connectionManagerStringList) {
+        QWidget *cmTab = new QWidget();
+        QHBoxLayout *horizontalLayout = new QHBoxLayout(cmTab);
+        DebugMessageView *cmDebugMessageView = new DebugMessageView(cmTab);
+        cmDebugMessageView->setService(QString(QLatin1String("org.freedesktop.Telepathy.ConnectionManager.%1")).arg(connectionManager));
+
+        horizontalLayout->addWidget(cmDebugMessageView);
+
+        // Convert the connectionManager to title case. eg. haze to Haze
+        QString tabText = connectionManager;
+        tabText[0] = tabText[0].toTitleCase();
+        m_ui.tabWidget->addTab(cmTab, tabText);
+
+        connect(cmDebugMessageView, SIGNAL(statusMessage(QString)), statusBar(), SLOT(showMessage(QString)));
+    }
 }
