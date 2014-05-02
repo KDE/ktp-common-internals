@@ -65,6 +65,9 @@ private Q_SLOTS:
 private:
     QString createUri(const KTp::ContactPtr &contact) const;
     KABC::Addressee contactToAddressee(const Tp::ContactPtr &contact) const;
+
+    //presence names indexed by ConnectionPresenceType
+    QVector<QString> m_presenceStrings;
     QHash<QString, KTp::ContactPtr> m_contacts;
     KABC::Addressee::Map m_contactVCards;
 };
@@ -72,6 +75,17 @@ private:
 KTpAllContacts::KTpAllContacts()
 {
     Tp::registerTypes();
+
+    m_presenceStrings.reserve(9);
+    m_presenceStrings.insert(Tp::ConnectionPresenceTypeUnset, QString());
+    m_presenceStrings.insert(Tp::ConnectionPresenceTypeOffline, QString::fromLatin1("offline"));
+    m_presenceStrings.insert(Tp::ConnectionPresenceTypeAvailable, QString::fromLatin1("available"));
+    m_presenceStrings.insert(Tp::ConnectionPresenceTypeAway, QString::fromLatin1("away"));
+    m_presenceStrings.insert(Tp::ConnectionPresenceTypeExtendedAway, QString::fromLatin1("xa"));
+    m_presenceStrings.insert(Tp::ConnectionPresenceTypeHidden, QString::fromLatin1("hidden")); //of 'offline' ?
+    m_presenceStrings.insert(Tp::ConnectionPresenceTypeBusy, QString::fromLatin1("busy"));
+    m_presenceStrings.insert(Tp::ConnectionPresenceTypeUnknown, QString());
+    m_presenceStrings.insert(Tp::ConnectionPresenceTypeError, QString());
 
     loadCache();
 }
@@ -247,9 +261,11 @@ KABC::Addressee KTpAllContacts::contactToAddressee(const Tp::ContactPtr &contact
     if (contact && account) {
         vcard.setFormattedName(contact->alias());
         vcard.setCategories(contact->groups());
+
+        //TODO make "telepathy" a member variable string so that we ref count the same object instead of making new strings
         vcard.insertCustom(QLatin1String("telepathy"), QLatin1String("contactId"), contact->id());
         vcard.insertCustom(QLatin1String("telepathy"), QLatin1String("accountPath"), account->objectPath());
-        vcard.insertCustom(QLatin1String("telepathy"), QLatin1String("presence"), contact->presence().status());
+        vcard.insertCustom(QLatin1String("telepathy"), QLatin1String("presence"), m_presenceStrings.at(contact->presence().type()));
         if (!contact->avatarData().fileName.isEmpty()) {
             vcard.setPhoto(KABC::Picture(contact->avatarData().fileName));
         }
