@@ -65,13 +65,32 @@ private Q_SLOTS:
 private:
     QString createUri(const KTp::ContactPtr &contact) const;
     KABC::Addressee contactToAddressee(const Tp::ContactPtr &contact) const;
+
+    //presence names indexed by ConnectionPresenceType
+    QVector<QString> m_presenceStrings;
     QHash<QString, KTp::ContactPtr> m_contacts;
     KABC::Addressee::Map m_contactVCards;
 };
 
+static const QString S_KABC_PRODUCT = QString::fromLatin1("telepathy");
+static const QString S_KABC_FIELD_ACCOUNT_PATH = QString::fromLatin1("accountPath");
+static const QString S_KABC_FIELD_CONTACT_ID = QString::fromLatin1("contactId");
+static const QString S_KABC_FIELD_PRESENCE = QString::fromLatin1("presence");
+
 KTpAllContacts::KTpAllContacts()
 {
     Tp::registerTypes();
+
+    m_presenceStrings.reserve(9);
+    m_presenceStrings.insert(Tp::ConnectionPresenceTypeUnset, QString());
+    m_presenceStrings.insert(Tp::ConnectionPresenceTypeOffline, QString::fromLatin1("offline"));
+    m_presenceStrings.insert(Tp::ConnectionPresenceTypeAvailable, QString::fromLatin1("available"));
+    m_presenceStrings.insert(Tp::ConnectionPresenceTypeAway, QString::fromLatin1("away"));
+    m_presenceStrings.insert(Tp::ConnectionPresenceTypeExtendedAway, QString::fromLatin1("xa"));
+    m_presenceStrings.insert(Tp::ConnectionPresenceTypeHidden, QString::fromLatin1("hidden")); //of 'offline' ?
+    m_presenceStrings.insert(Tp::ConnectionPresenceTypeBusy, QString::fromLatin1("busy"));
+    m_presenceStrings.insert(Tp::ConnectionPresenceTypeUnknown, QString());
+    m_presenceStrings.insert(Tp::ConnectionPresenceTypeError, QString());
 
     loadCache();
 }
@@ -123,9 +142,9 @@ void KTpAllContacts::loadCache()
             addressee.setCategories(contactGroups);
         }
 
-        addressee.insertCustom(QLatin1String("telepathy"), QLatin1String("contactId"), contactId);
-        addressee.insertCustom(QLatin1String("telepathy"), QLatin1String("accountPath"), accountId);
-        addressee.insertCustom(QLatin1String("telepathy"), QLatin1String("presence"), QLatin1String("offline"));
+        addressee.insertCustom(S_KABC_PRODUCT, S_KABC_FIELD_CONTACT_ID, contactId);
+        addressee.insertCustom(S_KABC_PRODUCT, S_KABC_FIELD_ACCOUNT_PATH, accountId);
+        addressee.insertCustom(S_KABC_PRODUCT, S_KABC_FIELD_PRESENCE, m_presenceStrings.at(Tp::ConnectionPresenceTypeOffline));
 
         const QString uri = QLatin1String("ktp://") + accountId + QLatin1Char('?') + contactId;
 
@@ -231,7 +250,7 @@ void KTpAllContacts::onContactInvalidated()
 
     //set to offline and emit changed
     KABC::Addressee &vcard = m_contactVCards[uri];
-    vcard.insertCustom(QLatin1String("telepathy"), QLatin1String("presence"), QLatin1String("offline"));
+    vcard.insertCustom(S_KABC_PRODUCT, S_KABC_FIELD_PRESENCE, QLatin1String("offline"));
     Q_EMIT contactChanged(uri, vcard);
 }
 
@@ -247,9 +266,10 @@ KABC::Addressee KTpAllContacts::contactToAddressee(const Tp::ContactPtr &contact
     if (contact && account) {
         vcard.setFormattedName(contact->alias());
         vcard.setCategories(contact->groups());
-        vcard.insertCustom(QLatin1String("telepathy"), QLatin1String("contactId"), contact->id());
-        vcard.insertCustom(QLatin1String("telepathy"), QLatin1String("accountPath"), account->objectPath());
-        vcard.insertCustom(QLatin1String("telepathy"), QLatin1String("presence"), contact->presence().status());
+
+        vcard.insertCustom(S_KABC_PRODUCT, S_KABC_FIELD_CONTACT_ID, contact->id());
+        vcard.insertCustom(S_KABC_PRODUCT, S_KABC_FIELD_ACCOUNT_PATH, account->objectPath());
+        vcard.insertCustom(S_KABC_PRODUCT, S_KABC_FIELD_PRESENCE, m_presenceStrings.at(contact->presence().type()));
         if (!contact->avatarData().fileName.isEmpty()) {
             vcard.setPhoto(KABC::Picture(contact->avatarData().fileName));
         }
