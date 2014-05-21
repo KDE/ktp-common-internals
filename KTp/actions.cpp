@@ -221,15 +221,10 @@ void Actions::openLogViewer(const Tp::AccountPtr &account,
 {
     if (account.isNull() || contact.isNull()) {
         kWarning() << "Parameters invalid";
+        return;
     }
 
-    kDebug() << "Opening logviewer for" << contact->id();
-
-    QStringList arguments;
-    arguments << QLatin1String("--") << account->uniqueIdentifier() << contact->id();
-
-    /* Use "--" so that KCmdLineArgs does not parse UIDs starting with "-" as arguments */
-    KToolInvocation::kdeinitExec(QLatin1String("ktp-log-viewer"), arguments);
+    openLogViewer(account, contact->id());
 }
 
 void Actions::openLogViewer(const QUrl &uri)
@@ -241,6 +236,23 @@ void Actions::openLogViewer(const QUrl &uri)
 
     KToolInvocation::kdeinitExec(QLatin1String("ktp-log-viewer"), arguments);
 }
+
+void Actions::openLogViewer(const Tp::AccountPtr& account, const QString& targetId)
+{
+    if (account.isNull() || targetId.isEmpty()) {
+        kWarning() << " Parameters invalid";
+        return;
+    }
+
+    kDebug() << "Opening logviewer for" << targetId;
+
+    QStringList arguments;
+    arguments << QLatin1String("--") << account->uniqueIdentifier() << targetId;
+
+    /* Use "--" so that KCmdLineArgs does not parse UIDs starting with "-" as arguments */
+    KToolInvocation::kdeinitExec(QLatin1String("ktp-log-viewer"), arguments);
+}
+
 
 const QVariantMap createHintsForCollabRequest(const Actions::DocumentList& documents, bool needOpenEditor)
 {
