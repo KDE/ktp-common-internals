@@ -43,13 +43,13 @@
 int main(int argc, char *argv[])
 {
     KAboutData aboutData(QStringLiteral("telepathy-kde-models-test-ui"),
-                         QString(),
                          i18n("Telepathy KDE Models Test UI"),
                          QStringLiteral("0.1"),
                          i18n("Telepathy KDE Models Test UI"),
-                         KAboutData::License_LGPL,
+                         KAboutLicense::LGPL,
                          i18n("(C) 2011 Collabora Ltd"));
 
+    KAboutData::setApplicationData(aboutData);
     QApplication app(argc, argv);
 
     QCommandLineParser parser;

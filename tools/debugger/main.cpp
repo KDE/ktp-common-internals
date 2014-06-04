@@ -26,11 +26,11 @@
 
 int main(int argc, char **argv)
 {
-    KAboutData aboutData(QStringLiteral("ktp-debugger"), QString(),
+    KAboutData aboutData(QStringLiteral("ktp-debugger"),
             i18n("KDE Telepathy Debug Tool"),
             QStringLiteral(KTP_VERSION),
             i18n("Tool for inspecting logs of the various underlying telepathy components"),
-            KAboutData::License_LGPL,
+            KAboutLicense::LGPL,
             i18n("Copyright (C) 2011 Collabora Ltd."));
     aboutData.addAuthor(i18n("George Kiagiadakis"), i18n("Developer"),
                         QStringLiteral("george.kiagiadakis@collabora.com"));
