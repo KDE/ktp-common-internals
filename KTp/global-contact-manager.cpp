@@ -82,8 +82,10 @@ void GlobalContactManager::onAccountManagerReady(Tp::PendingOperation *op)
 
 void GlobalContactManager::onNewAccount(const Tp::AccountPtr &account)
 {
-    onConnectionChanged(account->connection());
-    connect(account.data(), SIGNAL(connectionChanged(Tp::ConnectionPtr)), SLOT(onConnectionChanged(Tp::ConnectionPtr)));
+    if (account->isValidAccount()) {
+        onConnectionChanged(account->connection());
+        connect(account.data(), SIGNAL(connectionChanged(Tp::ConnectionPtr)), SLOT(onConnectionChanged(Tp::ConnectionPtr)));
+    }
 }
 
 

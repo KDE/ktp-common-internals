@@ -114,6 +114,11 @@ QIcon GlobalPresence::currentPresenceIcon() const
     return currentPresence().icon();
 }
 
+QString GlobalPresence::currentPresenceIconName() const
+{
+    return currentPresence().iconName();
+}
+
 GlobalPresence::ConnectionPresenceType GlobalPresence::currentPresenceType() const
 {
     KTp::Presence p = currentPresence();

@@ -154,7 +154,6 @@ public Q_SLOTS:
     void openLogViewer(const Tp::AccountPtr &account, const KTp::ContactPtr &contact);
 
 private Q_SLOTS:
-    void onJoinChatRoomSelected();
     void contactlistDBusAccessed(QDBusPendingCallWatcher*);
 
 private:

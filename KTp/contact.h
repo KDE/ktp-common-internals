@@ -63,6 +63,7 @@ Q_SIGNALS:
 
 private Q_SLOTS:
     void invalidateAvatarCache();
+    void onPresenceChanged(const Tp::Presence &presence);
 
 private:
     static QStringList getCommonElements(const QStringList &list1, const QStringList &list2);

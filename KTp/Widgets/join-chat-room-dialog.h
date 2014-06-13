@@ -28,13 +28,12 @@
 #include <KTp/ktp-export.h>
 
 namespace Ui {
-    class JoinChatRoomDialog;
+class JoinChatRoomDialog;
 }
 
 class RoomsModel;
 class FavoriteRoomsModel;
 class QSortFilterProxyModel;
-class KCompletion;
 
 namespace KTp {
 
@@ -48,15 +47,15 @@ public:
 
     Tp::AccountPtr selectedAccount() const;     /** returns selected account */
     QString selectedChatRoom() const;           /** returns selected chat room */
+    virtual void accept();
+
+protected:
+    virtual void closeEvent(QCloseEvent *e);
 
 private Q_SLOTS:
     void onTextChanged(QString newText);
     void onAccountSelectionChanged(int newIndex);
-    void addFavorite();
-    void editFavorite();
-    void removeFavorite();
     void addRecentRoom();
-    void removeRecentRoom();
     void clearRecentRooms();
     void getRoomList();
     void stopListing();
@@ -67,14 +66,17 @@ private Q_SLOTS:
     void onGotRooms(Tp::RoomInfoList roomInfoList);
     void onFavoriteRoomSelectionChanged(const QModelIndex &current, const QModelIndex &previous);
     void onFavoriteRoomDataChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight);
-    void onRecentRoomClicked();
     void onRoomClicked(const QModelIndex &index);
     void onAccountManagerReady(Tp::PendingOperation*);
+    void onStartChatFinished(Tp::PendingOperation *op);
+
 
 private:
     void sendNotificationToUser(const QString& errorMsg);
     void loadFavoriteRooms();
+    void setJoinInProgress(bool);
 
+    //TODO d pointer this
     QList<Tp::AccountPtr> m_accounts;
     Ui::JoinChatRoomDialog *ui;
     Tp::PendingChannel *m_pendingRoomListChannel;
@@ -85,11 +87,10 @@ private:
     QSortFilterProxyModel *m_favoritesProxyModel;
     KConfigGroup m_favoriteRoomsGroup;
     KConfigGroup m_recentRoomsGroup;
-    QHash <QString, QStringList> m_recentRooms;
-    KCompletion *m_recentComp;
-
+    bool m_joinInProgress;
 };
 
 } //namespace KTp
+
 
 #endif  // JOINCHATROOMDIALOG_H

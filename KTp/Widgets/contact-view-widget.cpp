@@ -77,7 +77,7 @@ void KTp::ContactViewDelegate::paint(QPainter *painter, const QStyleOptionViewIt
         avatar = KIcon(QLatin1String("im-user-online")).pixmap(option.decorationSize);
     } else if (avatar.width() > option.decorationSize.width() || avatar.height() > option.decorationSize.height()) {
         //resize larger avatars if required
-        avatar = avatar.scaled(option.decorationSize, Qt::KeepAspectRatio);
+        avatar = avatar.scaled(option.decorationSize, Qt::KeepAspectRatio, Qt::SmoothTransformation);
         //draw leaving paddings on smaller (or non square) avatars
     }
     style->drawItemPixmap(painter, avatarRect, Qt::AlignCenter, avatar);
@@ -245,6 +245,16 @@ KTp::ContactPtr KTp::ContactViewWidget::selectedContact() const
     return d->contactView->currentIndex().data(KTp::ContactRole).value<KTp::ContactPtr>();
 }
 
+QList<KTp::ContactPtr> KTp::ContactViewWidget::selectedContacts() const
+{
+    QList<KTp::ContactPtr> selected;
+
+    Q_FOREACH (const QModelIndex &index, d->contactView->selectionModel()->selectedIndexes()) {
+        selected << index.data(KTp::ContactRole).value<KTp::ContactPtr>();
+    }
+    return selected;
+}
+
 void KTp::ContactViewWidget::setViewMode(QListView::ViewMode mode)
 {
     d->contactView->setViewMode(mode);
@@ -253,6 +263,16 @@ void KTp::ContactViewWidget::setViewMode(QListView::ViewMode mode)
 QListView::ViewMode KTp::ContactViewWidget::viewMode() const
 {
     return d->contactView->viewMode();
+}
+
+QAbstractItemView::SelectionMode KTp::ContactViewWidget::selectionMode()
+{
+    return d->contactView->selectionMode();
+}
+
+void KTp::ContactViewWidget::setSelectionMode(QAbstractItemView::SelectionMode mode)
+{
+    d->contactView->setSelectionMode(mode);
 }
 
 KTp::ContactsFilterModel* KTp::ContactViewWidget::filter() const
