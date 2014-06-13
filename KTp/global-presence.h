@@ -42,11 +42,17 @@ class KTP_EXPORT GlobalPresence : public QObject
 {
     Q_OBJECT
     Q_ENUMS(ConnectionPresenceType)
+    Q_PROPERTY(Tp::AccountManagerPtr accountManager READ accountManager WRITE addAccountManager)
+
     Q_PROPERTY(QString presenceMessage READ currentPresenceMessage NOTIFY currentPresenceChanged)
     Q_PROPERTY(ConnectionPresenceType presenceType READ currentPresenceType NOTIFY currentPresenceChanged)
-    Q_PROPERTY(Tp::AccountManagerPtr accountManager READ accountManager WRITE addAccountManager)
     Q_PROPERTY(QIcon currentPresenceIcon READ currentPresenceIcon NOTIFY currentPresenceChanged)
+    Q_PROPERTY(QString currentPresenceIconName READ currentPresenceIconName NOTIFY currentPresenceChanged)
+    Q_PROPERTY(KTp::Presence requestedPresence READ currentPresence NOTIFY currentPresenceChanged)
+
     Q_PROPERTY(KTp::Presence requestedPresence READ requestedPresence WRITE setPresence NOTIFY requestedPresenceChanged)
+
+
 public:
     explicit GlobalPresence(QObject *parent = 0);
 
@@ -76,6 +82,8 @@ public:
     /** The most online presence of any account*/
     Presence currentPresence() const;
     QString currentPresenceMessage() const;
+    QIcon currentPresenceIcon() const;
+    QString currentPresenceIconName() const;
     ConnectionPresenceType currentPresenceType() const;
 
     /** The most online presence requested for any account if any of the accounts are changing state.
@@ -90,7 +98,6 @@ public:
 
     Tp::AccountSetPtr onlineAccounts() const;
 
-    QIcon currentPresenceIcon() const;
 
 Q_SIGNALS:
     void requestedPresenceChanged(const KTp::Presence &customPresence);
