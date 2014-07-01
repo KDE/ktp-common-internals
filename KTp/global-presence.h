@@ -48,7 +48,7 @@ class KTP_EXPORT GlobalPresence : public QObject
     Q_PROPERTY(ConnectionPresenceType presenceType READ currentPresenceType NOTIFY currentPresenceChanged)
     Q_PROPERTY(QIcon currentPresenceIcon READ currentPresenceIcon NOTIFY currentPresenceChanged)
     Q_PROPERTY(QString currentPresenceIconName READ currentPresenceIconName NOTIFY currentPresenceChanged)
-    Q_PROPERTY(KTp::Presence requestedPresence READ currentPresence NOTIFY currentPresenceChanged)
+    Q_PROPERTY(KTp::Presence currentPresence READ currentPresence NOTIFY currentPresenceChanged)
 
     Q_PROPERTY(KTp::Presence requestedPresence READ requestedPresence WRITE setPresence NOTIFY requestedPresenceChanged)
 
@@ -67,6 +67,7 @@ public:
         Unknown = Tp::ConnectionPresenceTypeUnknown,
         Error = Tp::ConnectionPresenceTypeError
     };
+    Q_ENUMS(ConnectionPresenceType)
 
     /** Set the account manager to use
       * @param accountManager should be ready.
