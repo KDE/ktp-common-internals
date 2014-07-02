@@ -14,8 +14,17 @@ set (KTP_VERSION "0.8.0")
 set (KTP_SONUMBER 9)
 set (KTP_MESSAGE_FILTER_FRAMEWORK_VERSION "5")
 
-find_package (Qt5 REQUIRED CONFIG COMPONENTS Qml Test)
-find_package (KF5 REQUIRED CONFIG COMPONENTS KCMUtils NotifyConfig TextEditor Wallet KDE4Support)
+find_package (Qt5 REQUIRED CONFIG COMPONENTS
+              Qml
+              Test)
+
+find_package (KF5 REQUIRED COMPONENTS 
+              KCMUtils
+              NotifyConfig
+              TextEditor
+              Wallet
+              KDELibs4Support)
+
 find_package (TelepathyQt5 0.9.2.1 REQUIRED)
 find_package (TelepathyLoggerQt5 QUIET)
 find_package (KPeople 0.3 QUIET)

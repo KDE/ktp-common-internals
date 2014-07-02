@@ -22,7 +22,7 @@ target_link_libraries (ktpqmlplugin
     Qt5::Qml
     
     ${TELEPATHY_QT5_LIBRARIES}
-    KF5::KDE4Support
+    KF5::KDELibs4Support
     ktpcommoninternalsprivate
     ktploggerprivate
     ktpmodelsprivate

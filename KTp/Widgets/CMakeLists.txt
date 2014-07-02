@@ -46,7 +46,7 @@ set_target_properties(ktpwidgetsprivate PROPERTIES
 target_link_libraries (ktpwidgetsprivate
                        
                        ${TELEPATHY_QT5_LIBRARIES}
-                       KF5::KDE4Support
+                       KF5::KDELibs4Support
                        KF5::NotifyConfig
                        KF5::KCMUtils
                        ktpcommoninternalsprivate

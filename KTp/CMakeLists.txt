@@ -67,7 +67,7 @@ set (ktp_common_internals_private_HDRS
 set (ktp_private_LIBS
                        KF5::Wallet
                        KF5::KIOWidgets
-                       KF5::KDE4Support
+                       KF5::KDELibs4Support
                        ${TELEPATHY_QT5_LIBRARIES}
                        ${KDEPIMLIBS_KABC_LIBS}
 )
