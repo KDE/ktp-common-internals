@@ -73,7 +73,7 @@ QString Presence::iconName(bool useImIcons) const
     case Tp::ConnectionPresenceTypeOffline:
         return useImIcons ? QLatin1String("im-user-offline") : QLatin1String("user-offline");
     default:
-        return QString();
+        return useImIcons ? QLatin1String("im-user-offline") : QLatin1String("user-offline");
     }
 }
 
