@@ -1,0 +1,242 @@
+<?xml version="1.0" ?>
+<node name="/ChannelProxy_Interface_OTR" xmlns:tp="http://telepathy.freedesktop.org/wiki/DbusSpec#extensions-v0">
+  <tp:copyright>Copyright © 2014 Marcin Ziemiński zieminn@gmail.com</tp:copyright>
+  <tp:license xmlns="http://www.w3.org/1999/xhtml">
+    <p>This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Lesser General Public
+License as published by the Free Software Foundation; either
+version 2.1 of the License, or (at your option) any later version.</p>
+
+<p>This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+Lesser General Public License for more details.</p>
+
+<p>You should have received a copy of the GNU Lesser General Public
+License along with this library; if not, write to the Free Software
+Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.</p>
+  </tp:license>
+  <interface name="org.kde.TelepathyProxy.ChannelProxy.Interface.OTR">
+
+    <tp:simple-type name="Fingerprint" type="s"
+      array-name="Fingerprint_List">
+      <tp:docstring>
+        <p>Human readable string denoting fingerprint</p>
+      </tp:docstring>
+    </tp:simple-type>
+
+    <property name="WrappedChannel" tp:name-for-bindings="Wrapped_Channel"
+      type="o" access="read">
+      <tp:docstring xmlns="http://www.w3.org/1999/xhtml">
+        <p>Object path of the channel this proxy is created for.</p>
+      </tp:docstring>
+    </property>
+
+    <property name="Connected" tp:name-for-bindings="Connected"
+      type="b" access="read">
+      <tp:docstring xmlns="http://www.w3.org/1999/xhtml">
+        <p>TRUE if the proxy is connected</p>
+      </tp:docstring>
+    </property>
+
+    <method name="ConnectProxy"
+      tp:name-for-bindings="Connect_Proxy">
+      <tp:docstring>
+        <p>Connect to the otr proxy. From now on all data which is modified by it
+        should be acquired from the proxy, not from the underlying channel.</p>
+      </tp:docstring>
+    </method>
+
+    <method name="DisconnectProxy"
+      tp:name-for-bindings="Disconnect_Proxy">
+      <tp:docstring>
+        <p>Turns off proxy if one is connected.</p>
+      </tp:docstring>
+    </method>
+
+    <method name="SendMessage" tp:name-for-bindings="Send_Message">
+      <tp:docstring xmlns="http://www.w3.org/1999/xhtml">
+        <p>
+          The same as:
+          <tp:dbus-ref namespace="org.freedesktop.Telepathy.Channel.Interface.Messages">Sent</tp:dbus-ref>
+        </p>
+      </tp:docstring>
+      <arg direction="in" type="aa{sv}" tp:type="Message_Part[]"
+        name="Message">
+      </arg>
+      <arg direction="in" name="Flags" type="u"
+        tp:type="Message_Sending_Flags">
+      </arg>
+      <arg direction="out" type="s" tp:type="Protocol_Message_Token"
+        name="Token">
+      </arg>
+
+      <tp:possible-errors>
+        <tp:error name="org.freedesktop.Telepathy.Error.InvalidArgument">
+          <tp:docstring>
+            The requested message is malformed and cannot be sent.
+          </tp:docstring>
+        </tp:error>
+        <tp:error name="org.freedesktop.Telepathy.Error.NotAvailable"/>
+        <tp:error name="org.freedesktop.Telepathy.Error.PermissionDenied"/>
+        <tp:error name="org.freedesktop.Telepathy.Error.NetworkError"/>
+      </tp:possible-errors>
+    </method>
+
+    <signal name="MessageSent" tp:name-for-bindings="Message_Sent">
+      <tp:docstring xmlns="http://www.w3.org/1999/xhtml">
+        <p>
+          The same as:
+          <tp:dbus-ref namespace="org.freedesktop.Telepathy.Channel.Interface">Messages</tp:dbus-ref>
+        </p>
+      </tp:docstring>
+      <arg type="aa{sv}" tp:type="Message_Part[]" name="Content">
+      </arg>
+
+      <arg name="Flags" type="u" tp:type="Message_Sending_Flags">
+      </arg>
+
+      <arg name="Message_Token" type="s" tp:type="Protocol_Message_Token">
+      </arg>
+    </signal>
+
+    <signal name="MessageReceived" tp:name-for-bindings="Message_Received">
+      <tp:docstring xmlns="http://www.w3.org/1999/xhtml">
+        <p>
+          The same as:
+          <tp:dbus-ref namespace="org.freedesktop.Telepathy.Channel.Interface">Messages</tp:dbus-ref>
+        </p>
+      </tp:docstring>
+
+      <arg type="aa{sv}" tp:type="Message_Part[]" name="Message">
+      </arg>
+    </signal>
+
+    <property name="PendingMessages" type="aaa{sv}" access="read"
+      tp:type="Message_Part[][]" tp:name-for-bindings="Pending_Messages">
+      <tp:docstring xmlns="http://www.w3.org/1999/xhtml">
+        <p>
+          The same as:
+          <tp:dbus-ref namespace="org.freedesktop.Telepathy.Channel.Interface">Messages</tp:dbus-ref>
+        </p>
+      </tp:docstring>
+    </property>
+
+    <signal name="PendingMessagesRemoved"
+      tp:name-for-bindings="Pending_Messages_Removed">
+      <tp:docstring xmlns="http://www.w3.org/1999/xhtml">
+        <p>
+          The same as:
+          <tp:dbus-ref namespace="org.freedesktop.Telepathy.Channel.Interface">Messages</tp:dbus-ref>
+        </p>
+      </tp:docstring>
+      <arg name="Message_IDs" type="au" tp:type="Message_ID[]">
+      </arg>
+    </signal>
+
+    <method name="AcknowledgePendingMessages"
+      tp:name-for-bindings="Acknowledge_Pending_Messages">
+      <tp:docstring xmlns="http://www.w3.org/1999/xhtml">
+        <p>
+          The same as:
+          <tp:dbus-ref namespace="org.freedesktop.Telepathy.Channel.Type">Text</tp:dbus-ref>
+        </p>
+      </tp:docstring>
+      <arg direction="in" name="IDs" type="au" tp:type="Message_ID[]">
+      </arg>
+      <tp:possible-errors>
+        <tp:error name="org.freedesktop.Telepathy.Error.InvalidArgument">
+        </tp:error>
+      </tp:possible-errors>
+    </method>
+
+    <property name="TrustLevel"
+      tp:name-for-bindings="Trust_Level"
+      type="u" tp:type="OTR_Trust_Level" access="read">
+      <tp:docstring xmlns="http://www.w3.org/1999/xhtml">
+        <p>The current trust level of this channel:
+            0=TRUST_NOT_PRIVATE, 1=TRUST_UNVERIFIED, 2=TRUST_PRIVATE,
+            3=TRUST_FINISHED</p>
+        <p>Clients MUST listen to PropertiesChanged to update UI when trust
+        level changes.</p>
+      </tp:docstring>
+    </property>
+
+    <property name="LocalFingerprint"
+      tp:name-for-bindings="Local_Fingerprint"
+      type="s" tp:type="Fingerprint" access="read">
+      <tp:docstring xmlns="http://www.w3.org/1999/xhtml">
+        <p>User's current fingerprint. The first element is a human readable
+        fingerprint that can be displayed to the user so he can communicate it
+        to the other end by other means so he can trust it. The 2nd element is
+        the fingerprint raw data.</p>
+      </tp:docstring>
+    </property>
+
+    <property name="RemoteFingerprint"
+      tp:name-for-bindings="Remote_Fingerprint"
+      type="s" tp:type="Fingerprint" access="read">
+      <tp:docstring xmlns="http://www.w3.org/1999/xhtml">
+        <p>The current fingerprint of the remote contact. Should be displayed
+        to the user to update its trust level. The first element of the tuple
+        is the fingerprint formatted to be displayed. The 2nd element is the
+        fingerprint raw data that can be passed to TrustFingerprint</p>
+      </tp:docstring>
+    </property>
+
+    <method name="Initialize"
+      tp:name-for-bindings="Initialize">
+      <tp:docstring>
+        <p>Start an OTR session for this channel if the remote end supports it
+        has well.</p>
+      </tp:docstring>
+    </method>
+
+    <method name="Stop"
+      tp:name-for-bindings="Stop">
+      <tp:docstring>
+        <p>Stops the OTR session.</p>
+      </tp:docstring>
+    </method>
+
+    <signal name="SessionRefreshed" tp:name-for-bindings="Session_Refreshed">
+      <tp:docstring>
+        An AKE has been performed in an already established session.
+      </tp:docstring>
+    </signal>
+
+    <tp:enum name="OTR_Trust_Level" type="u">
+      <tp:docstring>
+        <p>Enumeration describing trust level of this conversation. The trust
+        level can only increase unless Initialize/Stop are called or
+        TrustFingerprint is called with trust=false.</p>
+      </tp:docstring>
+      <tp:enumvalue suffix="Not_Private" value="0">
+        <tp:docstring>
+          <p>The conversation is currently unencrypted</p>
+        </tp:docstring>
+      </tp:enumvalue>
+      <tp:enumvalue suffix="Unverified" value="1">
+        <tp:docstring>
+          <p>The conversation is currently encrypted but the remote end is not
+          verified</p>
+        </tp:docstring>
+      </tp:enumvalue>
+      <tp:enumvalue suffix="Private" value="2">
+        <tp:docstring>
+          <p>The conversation is currently encrypted and the remote end is
+          verified</p>
+        </tp:docstring>
+      </tp:enumvalue>
+      <tp:enumvalue suffix="Finished" value="3">
+        <tp:docstring>
+          <p>Remote end closed the OTR session, messages cannot be sent anymore.
+          Either call Stop to continue unencrypted or Initialize to send
+          encrypted messages again.</p>
+        </tp:docstring>
+      </tp:enumvalue>
+    </tp:enum>
+
+  </interface>
+</node>
+<!-- vim:set sw=2 sts=2 et ft=xml: -->
