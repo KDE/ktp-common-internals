@@ -7,6 +7,7 @@ set(ktp-proxy_SRCS
         svc-proxy-service.cpp
         otr-proxy-channel.cpp
         otr-proxy-channel-adaptee.cpp
+        pending-curry-operation.cpp
 )
 
 set(ktp-proxy_LIBS

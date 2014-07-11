@@ -20,6 +20,7 @@
 #include "otr-proxy-channel-adaptee.h"
 #include "otr-proxy-channel.h"
 #include "constants.h"
+#include "pending-curry-operation.h"
 
 #include <TelepathyQt/DBusObject>
 #include <TelepathyQt/TextChannel>
@@ -28,6 +29,39 @@
 
 // TODO
 // - add errors to spec
+
+class SendMessageExtractor : public Extractor
+{
+    public:
+        SendMessageExtractor()
+            : token(QString::fromLatin1(""))
+        { }
+
+        void setContext(const Tp::Service::ChannelProxyInterfaceOTRAdaptor::SendMessageContextPtr &context)
+        {
+            this->context = context;
+        }
+
+        Tp::Service::ChannelProxyInterfaceOTRAdaptor::SendMessageContextPtr& getContext()
+        {
+            return context;
+        }
+
+        const QString& getToken() const
+        {
+            return token;
+        }
+
+        virtual void operator()(Tp::PendingOperation *op)
+        {
+            token = dynamic_cast<Tp::PendingSendMessage*>(op)->sentMessageToken();
+        }
+
+    private:
+        QString token;
+        Tp::Service::ChannelProxyInterfaceOTRAdaptor::SendMessageContextPtr context;
+};
+
 
 OtrProxyChannel::Adaptee::Adaptee(OtrProxyChannel *pc, const QDBusConnection &dbusConnection, const Tp::TextChannelPtr &channel)
     : adaptor(new Tp::Service::ChannelProxyInterfaceOTRAdaptor(dbusConnection, this, pc->dbusObject())),
@@ -60,7 +94,7 @@ Tp::MessagePartListList OtrProxyChannel::Adaptee::pendingMessages() const
 
 uint OtrProxyChannel::Adaptee::trustLevel() const
 {
-    return 1;
+    return 0;
 }
 
 QString OtrProxyChannel::Adaptee::localFingerprint() const
@@ -114,7 +148,17 @@ void OtrProxyChannel::Adaptee::sendMessage(const Tp::MessagePartList &message, u
         context->setFinishedWithError(KTP_PROXY_ERROR_NOT_CONNECTED, QString::fromLatin1("Proxy is not connected"));
         return;
     }
-    context->setFinished();
+
+    SendMessageExtractor *mesEx = new SendMessageExtractor();
+    mesEx->setContext(context);
+    PendingCurryOperation *pending = new PendingCurryOperation(
+            chan->send(message, (Tp::MessageSendingFlags) flags),
+            mesEx,
+            Tp::SharedPtr<Tp::RefCounted>::dynamicCast(chan));
+
+    connect(pending,
+            SIGNAL(finished(Tp::PendingOperation*)),
+            SLOT(onPendingSendFinished(Tp::PendingOperation*)));
 }
 
 void OtrProxyChannel::Adaptee::acknowledgePendingMessages(const Tp::UIntList &ids,
@@ -155,4 +199,19 @@ void OtrProxyChannel::Adaptee::onPendingMessageRemoved(const Tp::ReceivedMessage
 {
     QDBusVariant variant = receivedMessage.header().value(QLatin1String("pending-message-id"));
     emit pendingMessagesRemoved(Tp::UIntList() << variant.variant().toUInt(NULL));
+}
+
+
+void OtrProxyChannel::Adaptee::onPendingSendFinished(Tp::PendingOperation *op)
+{
+    PendingCurryOperation *pendingSend = dynamic_cast<PendingCurryOperation*>(op);
+    SendMessageExtractor &ex = dynamic_cast<SendMessageExtractor&>(pendingSend->extractor());
+
+    Tp::Service::ChannelProxyInterfaceOTRAdaptor::SendMessageContextPtr ctx = ex.getContext();
+
+    if(op->isError()) {
+        ctx->setFinishedWithError(op->errorName(), op->errorMessage());
+    } else {
+        ctx->setFinished(ex.getToken());
+    }
 }

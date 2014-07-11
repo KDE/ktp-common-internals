@@ -64,6 +64,8 @@ class OtrProxyChannel::Adaptee : public QObject
         void onMessageReceived(const Tp::ReceivedMessage &receivedMessage);
         void onPendingMessageRemoved(const Tp::ReceivedMessage &receivedMessage);
 
+        void onPendingSendFinished(Tp::PendingOperation *pendingSend);
+
     Q_SIGNALS:
         void messageSent(const Tp::MessagePartList &content, uint flags, const QString &messageToken);
         void messageReceived(const Tp::MessagePartList &message);
