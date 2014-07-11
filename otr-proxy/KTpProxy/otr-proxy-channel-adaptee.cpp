@@ -30,11 +30,12 @@
 // TODO
 // - add errors to spec
 
-class SendMessageExtractor : public Extractor
+class PendingSendMessageResult : public PendingCurryOperation
 {
     public:
-        SendMessageExtractor()
-            : token(QString::fromLatin1(""))
+        PendingSendMessageResult(Tp::PendingOperation *op, const Tp::TextChannelPtr &chan)
+            : PendingCurryOperation(op, Tp::SharedPtr<Tp::RefCounted>::dynamicCast(chan)),
+            token(QString::fromLatin1(""))
         { }
 
         void setContext(const Tp::Service::ChannelProxyInterfaceOTRAdaptor::SendMessageContextPtr &context)
@@ -52,7 +53,7 @@ class SendMessageExtractor : public Extractor
             return token;
         }
 
-        virtual void operator()(Tp::PendingOperation *op)
+        virtual void extract(Tp::PendingOperation *op)
         {
             token = dynamic_cast<Tp::PendingSendMessage*>(op)->sentMessageToken();
         }
@@ -149,12 +150,10 @@ void OtrProxyChannel::Adaptee::sendMessage(const Tp::MessagePartList &message, u
         return;
     }
 
-    SendMessageExtractor *mesEx = new SendMessageExtractor();
-    mesEx->setContext(context);
-    PendingCurryOperation *pending = new PendingCurryOperation(
+    PendingSendMessageResult *pending = new PendingSendMessageResult(
             chan->send(message, (Tp::MessageSendingFlags) flags),
-            mesEx,
-            Tp::SharedPtr<Tp::RefCounted>::dynamicCast(chan));
+            chan);
+    pending->setContext(context);
 
     connect(pending,
             SIGNAL(finished(Tp::PendingOperation*)),
@@ -204,14 +203,13 @@ void OtrProxyChannel::Adaptee::onPendingMessageRemoved(const Tp::ReceivedMessage
 
 void OtrProxyChannel::Adaptee::onPendingSendFinished(Tp::PendingOperation *op)
 {
-    PendingCurryOperation *pendingSend = dynamic_cast<PendingCurryOperation*>(op);
-    SendMessageExtractor &ex = dynamic_cast<SendMessageExtractor&>(pendingSend->extractor());
+    PendingSendMessageResult *sendResult = dynamic_cast<PendingSendMessageResult*>(op);
 
-    Tp::Service::ChannelProxyInterfaceOTRAdaptor::SendMessageContextPtr ctx = ex.getContext();
+    Tp::Service::ChannelProxyInterfaceOTRAdaptor::SendMessageContextPtr ctx = sendResult->getContext();
 
     if(op->isError()) {
         ctx->setFinishedWithError(op->errorName(), op->errorMessage());
     } else {
-        ctx->setFinished(ex.getToken());
+        ctx->setFinished(sendResult->getToken());
     }
 }

@@ -17,27 +17,15 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA            *
  ***************************************************************************/
 
-
 #include "pending-curry-operation.h"
 
-Extractor::~Extractor() { }
-
-PendingCurryOperation::PendingCurryOperation(Tp::PendingOperation *op, Extractor *ex, const Tp::SharedPtr<Tp::RefCounted> &obj)
-: Tp::PendingOperation(obj),
-    ex(ex)
+PendingCurryOperation::PendingCurryOperation(Tp::PendingOperation *op, const Tp::SharedPtr<Tp::RefCounted> &obj)
+: Tp::PendingOperation(obj)
 {
     connect(op, SIGNAL(finished(Tp::PendingOperation*)), SLOT(onFinished(Tp::PendingOperation*)));
 }
 
-PendingCurryOperation::~PendingCurryOperation()
-{
-    delete ex;
-}
-
-Extractor& PendingCurryOperation::extractor()
-{
-    return *ex;
-}
+PendingCurryOperation::~PendingCurryOperation() { }
 
 void PendingCurryOperation::onFinished(Tp::PendingOperation *op)
 {
@@ -45,6 +33,6 @@ void PendingCurryOperation::onFinished(Tp::PendingOperation *op)
         setFinishedWithError(op->errorName(), op->errorMessage());
         return;
     }
-    (*ex)(op);
+    extract(op);
     setFinished();
 }

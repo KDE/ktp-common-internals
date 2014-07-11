@@ -22,32 +22,19 @@
 
 #include <TelepathyQt/PendingOperation>
 
-#include <QObject>
-
-
-class Extractor
-{
-    public:
-        virtual ~Extractor();
-        virtual void operator()(Tp::PendingOperation *op) = 0;
-};
-
 class PendingCurryOperation : public Tp::PendingOperation
 {
     Q_OBJECT
 
     public:
-        PendingCurryOperation(Tp::PendingOperation *op, Extractor *ex, const Tp::SharedPtr<Tp::RefCounted> &obj);
+        PendingCurryOperation(Tp::PendingOperation *op, const Tp::SharedPtr<Tp::RefCounted> &obj);
         ~PendingCurryOperation();
 
-        Extractor& extractor();
+    protected:
+        virtual void extract(Tp::PendingOperation *op) = 0;
 
     private Q_SLOTS:
         void onFinished(Tp::PendingOperation *op);
-
-    private:
-        Extractor *ex;
-
 };
 
 #endif
