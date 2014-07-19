@@ -33,19 +33,31 @@
 class PendingSendMessageResult : public PendingCurryOperation
 {
     public:
-        PendingSendMessageResult(Tp::PendingOperation *op, const Tp::TextChannelPtr &chan)
+        PendingSendMessageResult(Tp::PendingOperation *op,
+                const Tp::TextChannelPtr &chan,
+                const Tp::Service::ChannelProxyInterfaceOTRAdaptor::SendMessageContextPtr &context,
+                const Tp::MessagePartList &message,
+                uint flags)
             : PendingCurryOperation(op, Tp::SharedPtr<Tp::RefCounted>::dynamicCast(chan)),
-            token(QString::fromLatin1(""))
+            token(QString::fromLatin1("")),
+            context(context),
+            message(message),
+            flags(flags)
         { }
 
-        void setContext(const Tp::Service::ChannelProxyInterfaceOTRAdaptor::SendMessageContextPtr &context)
-        {
-            this->context = context;
-        }
-
-        Tp::Service::ChannelProxyInterfaceOTRAdaptor::SendMessageContextPtr& getContext()
+        Tp::Service::ChannelProxyInterfaceOTRAdaptor::SendMessageContextPtr getContext()
         {
             return context;
+        }
+
+        uint getFlags()
+        {
+            return flags;
+        }
+
+        Tp::MessagePartList getMessage()
+        {
+            return message;
         }
 
         const QString& getToken() const
@@ -61,6 +73,8 @@ class PendingSendMessageResult : public PendingCurryOperation
     private:
         QString token;
         Tp::Service::ChannelProxyInterfaceOTRAdaptor::SendMessageContextPtr context;
+        Tp::MessagePartList message;
+        uint flags;
 };
 
 
@@ -85,12 +99,12 @@ bool OtrProxyChannel::Adaptee::connected() const
 
 Tp::MessagePartListList OtrProxyChannel::Adaptee::pendingMessages() const
 {
-    Tp::MessagePartListList messages;
-    Q_FOREACH(const Tp::ReceivedMessage &mes, chan->messageQueue()) {
-        messages << mes.parts();
+    Tp::MessagePartListList pending;
+    for(const auto& mp: messages) {
+        pending << mp.parts();
     }
 
-    return messages;
+    return pending;
 }
 
 uint OtrProxyChannel::Adaptee::trustLevel() const
@@ -117,6 +131,7 @@ void OtrProxyChannel::Adaptee::connectProxy(
         const Tp::Service::ChannelProxyInterfaceOTRAdaptor::ConnectProxyContextPtr &context)
 {
     kDebug() << "Connecting proxy: " << pc->objectPath();
+
     connect(chan.data(),
             SIGNAL(messageReceived(const Tp::ReceivedMessage&)),
             SLOT(onMessageReceived(const Tp::ReceivedMessage&)));
@@ -124,6 +139,10 @@ void OtrProxyChannel::Adaptee::connectProxy(
     connect(chan.data(),
             SIGNAL(pendingMessageRemoved(const Tp::ReceivedMessage&)),
             SLOT(onPendingMessageRemoved(const Tp::ReceivedMessage&)));
+
+    for(const Tp::ReceivedMessage &m: chan->messageQueue()) {
+        onMessageReceived(m);
+    }
 
     isConnected = true;
     context->setFinished();
@@ -139,6 +158,7 @@ void OtrProxyChannel::Adaptee::disconnectProxy(
             this, SLOT(onPendingMessageRemoved(const Tp::ReceivedMessage&)));
 
     isConnected = false;
+    messages.clear();
     context->setFinished();
 }
 
@@ -150,10 +170,13 @@ void OtrProxyChannel::Adaptee::sendMessage(const Tp::MessagePartList &message, u
         return;
     }
 
+    kDebug();
     PendingSendMessageResult *pending = new PendingSendMessageResult(
             chan->send(message, (Tp::MessageSendingFlags) flags),
-            chan);
-    pending->setContext(context);
+            chan,
+            context,
+            message,
+            flags);
 
     connect(pending,
             SIGNAL(finished(Tp::PendingOperation*)),
@@ -167,6 +190,23 @@ void OtrProxyChannel::Adaptee::acknowledgePendingMessages(const Tp::UIntList &id
         context->setFinishedWithError(KTP_PROXY_ERROR_NOT_CONNECTED, QString::fromLatin1("Proxy is not connected"));
         return;
     }
+
+    kDebug() << "Message queue size: " << messages.size();
+    QList<Tp::ReceivedMessage> toAcknowledge;
+    for(uint id: ids) {
+        auto found = messages.find(id);
+        if(found == messages.end()) {
+            kDebug() << "Client trying to acknowledge non existing message with id" << id;
+            context->setFinishedWithError(TP_QT_ERROR_INVALID_ARGUMENT,
+                    QLatin1String("Message with given ID is not present in the message queue"));
+            return;
+        } else {
+            toAcknowledge << *found;
+        }
+    }
+
+    kDebug() << "Acknowledging " << toAcknowledge.count() << " messages";
+    chan->acknowledge(toAcknowledge);
     context->setFinished();
 }
 
@@ -190,16 +230,21 @@ void OtrProxyChannel::Adaptee::stop(const Tp::Service::ChannelProxyInterfaceOTRA
 
 void OtrProxyChannel::Adaptee::onMessageReceived(const Tp::ReceivedMessage &receivedMessage)
 {
-    kDebug() << "Received message: " << receivedMessage.text();
-    emit messageReceived(receivedMessage.parts());
+    const uint id = receivedMessage.header()[QLatin1String("pending-message-id")].variant().toUInt(NULL);
+    kDebug() << "Received message: " << receivedMessage.text() << " with id: " << id;
+    messages.insert(id, receivedMessage);
+    Q_EMIT messageReceived(receivedMessage.parts());
 }
 
 void OtrProxyChannel::Adaptee::onPendingMessageRemoved(const Tp::ReceivedMessage &receivedMessage)
 {
-    QDBusVariant variant = receivedMessage.header().value(QLatin1String("pending-message-id"));
-    emit pendingMessagesRemoved(Tp::UIntList() << variant.variant().toUInt(NULL));
+    const uint id = receivedMessage.header().value(QLatin1String("pending-message-id")).variant().toUInt(NULL);
+    if(messages.remove(id)) {
+        Q_EMIT pendingMessagesRemoved(Tp::UIntList() << id);
+    } else {
+        kDebug() << "Text channel removed missing pending message with id: " << id;
+    }
 }
-
 
 void OtrProxyChannel::Adaptee::onPendingSendFinished(Tp::PendingOperation *op)
 {
@@ -207,9 +252,11 @@ void OtrProxyChannel::Adaptee::onPendingSendFinished(Tp::PendingOperation *op)
 
     Tp::Service::ChannelProxyInterfaceOTRAdaptor::SendMessageContextPtr ctx = sendResult->getContext();
 
-    if(op->isError()) {
-        ctx->setFinishedWithError(op->errorName(), op->errorMessage());
+    if(sendResult->isError()) {
+        ctx->setFinishedWithError(sendResult->errorName(), sendResult->errorMessage());
     } else {
         ctx->setFinished(sendResult->getToken());
+        Q_EMIT messageSent(sendResult->getMessage(), sendResult->getFlags(), sendResult->getToken());
     }
 }
+

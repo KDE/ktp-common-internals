@@ -13,9 +13,11 @@ include_directories (${KDE4_INCLUDES}
 include (KDE4Defaults)
 
 add_definitions (${KDE4_DEFINITIONS})
+add_definitions (-std=c++11)
 
 configure_file(version.h.in ${CMAKE_CURRENT_BINARY_DIR}/version.h @ONLY)
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
 
 add_subdirectory(KTpProxy)
 add_subdirectory(data)
+add_subdirectory(test)

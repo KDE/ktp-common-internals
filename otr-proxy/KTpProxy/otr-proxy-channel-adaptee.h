@@ -79,6 +79,7 @@ class OtrProxyChannel::Adaptee : public QObject
         Tp::TextChannelPtr chan;
         bool isConnected;
 
+        QMap<uint, Tp::ReceivedMessage> messages; // queue
 };
 
 #endif

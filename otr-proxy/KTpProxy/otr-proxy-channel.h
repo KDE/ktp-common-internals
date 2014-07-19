@@ -57,11 +57,11 @@ class OtrProxyChannel : public Tp::DBusService
         void onClosed();
 
     private:
-            class Adaptee;
-            friend class Adaptee;
-            class Private;
-            friend class Private;
-            Private *d;
+        class Adaptee;
+        friend class Adaptee;
+        class Private;
+        friend class Private;
+        Private *d;
 };
 
 #endif /* KTP_PROXY_OTR_PROXY_CHANNEL_HEADER */
