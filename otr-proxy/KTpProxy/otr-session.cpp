@@ -17,58 +17,64 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA            *
  ***************************************************************************/
 
-#include "proxy-service.h"
-#include "version.h"
-
-#include <KAboutData>
-#include <KCmdLineArgs>
-#include <KApplication>
-#include <KDebug>
-
-#include <QDBusConnection>
-
-#include <TelepathyQt/AbstractAdaptor>
-#include <TelepathyQt/Channel>
-#include <TelepathyQt/Connection>
-#include <TelepathyQt/ClientRegistrar>
-#include <TelepathyQt/TextChannel>
+#include "otr-session.h"
 
 extern "C" {
+#include <libotr/privkey.h>
 #include <libotr/proto.h>
+#include <libotr/message.h>
+#include <libotr/userstate.h>
 }
 
-
-int main(int argc, char *argv[])
+namespace OTR
 {
-    KAboutData aboutData("ktp-proxy", 0,
-                         ki18n("Channel proxy service"),
-                         KTP_PROXY_VERSION);
-
-    aboutData.addAuthor(ki18n("Marcin Ziemiński"), ki18n("Developer"), "zieminn@gmail.com");
-    aboutData.setProductName("telepathy/ktp-proxy");
-    aboutData.setLicense(KAboutData::License_GPL_V2);
-    aboutData.setProgramIconName(QLatin1String("telepathy-kde"));
-
-    KCmdLineArgs::init(argc, argv, &aboutData);
-
-    KApplication app(false);
-
-    Tp::registerTypes();
-    OTRL_INIT;
-
-    Tp::DBusError error;
-    QDBusConnection dbusConnection = QDBusConnection::sessionBus();
-    ProxyService ps(dbusConnection);
-    ps.registerService(&error);
-
-    if(error.isValid())
+    UserStateBox::UserStateBox(OtrlUserState userState)
+        : us(userState)
     {
-        kError() << "Could not register ProxyService\n"
-            << "error name: " << error.name() << "\n"
-            << "error message: " << error.message();
-
-        return 1;
-    } else {
-        return app.exec();
+        uint interval = otrl_message_poll_get_default_interval(us);
+        QObject::connect(&periodicTimer, SIGNAL(timeout()), SLOT(otrlMessagePoll()));
+        periodicTimer.start(interval * 1000);
     }
-}
+
+    UserStateBox::~UserStateBox()
+    {
+        otrl_userstate_free(us);
+    }
+
+    void UserStateBox::setInterval(uint interval)
+    {
+        if(interval) {
+            periodicTimer.start(interval * 1000);
+        } else {
+            periodicTimer.stop();
+        }
+    }
+
+    void UserStateBox::otrlMessagePoll()
+    {
+        otrl_message_poll(us, 0, 0);
+    }
+
+    Session::Session(const HandlerPtr &handler, UserStateBox *userstate, Manager *parent)
+        : hd(handler),
+        userstate(userstate),
+        pr(parent)
+    {
+    }
+
+    const HandlerPtr& Session::handler()
+    {
+        return hd;
+    }
+
+    UserStateBox* Session::userState()
+    {
+        return userstate;
+    }
+
+    Manager* Session::parent()
+    {
+        return pr;
+    }
+
+} /* namespace OTR */

@@ -8,6 +8,8 @@ set(ktp-proxy_SRCS
         otr-proxy-channel.cpp
         otr-proxy-channel-adaptee.cpp
         pending-curry-operation.cpp
+        otr-session.cpp
+        otr-manager.cpp
 )
 
 set(ktp-proxy_LIBS
@@ -16,6 +18,7 @@ set(ktp-proxy_LIBS
         ${KDE4_KIO_LIBS}
         ${TELEPATHY_QT4_LIBRARIES}
         ${TELEPATHY_QT4_SERVICE_LIBRARIES}
+        ${LIBOTR_LIBRARY}
 )
 
 kde4_add_executable(ktp-proxy ${ktp-proxy_SRCS})

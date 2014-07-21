@@ -17,58 +17,19 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA            *
  ***************************************************************************/
 
-#include "proxy-service.h"
-#include "version.h"
+#ifndef KTP_PROXY_OTR_MESSAGE_HEADER
+#define KTP_PROXY_OTR_MESSAGE_HEADER
 
-#include <KAboutData>
-#include <KCmdLineArgs>
-#include <KApplication>
-#include <KDebug>
+#include <TelepathyQt/Message>
 
-#include <QDBusConnection>
-
-#include <TelepathyQt/AbstractAdaptor>
-#include <TelepathyQt/Channel>
-#include <TelepathyQt/Connection>
-#include <TelepathyQt/ClientRegistrar>
-#include <TelepathyQt/TextChannel>
-
-extern "C" {
-#include <libotr/proto.h>
-}
-
-
-int main(int argc, char *argv[])
+namespace OTR
 {
-    KAboutData aboutData("ktp-proxy", 0,
-                         ki18n("Channel proxy service"),
-                         KTP_PROXY_VERSION);
-
-    aboutData.addAuthor(ki18n("Marcin Ziemiński"), ki18n("Developer"), "zieminn@gmail.com");
-    aboutData.setProductName("telepathy/ktp-proxy");
-    aboutData.setLicense(KAboutData::License_GPL_V2);
-    aboutData.setProgramIconName(QLatin1String("telepathy-kde"));
-
-    KCmdLineArgs::init(argc, argv, &aboutData);
-
-    KApplication app(false);
-
-    Tp::registerTypes();
-    OTRL_INIT;
-
-    Tp::DBusError error;
-    QDBusConnection dbusConnection = QDBusConnection::sessionBus();
-    ProxyService ps(dbusConnection);
-    ps.registerService(&error);
-
-    if(error.isValid())
+    class Message
     {
-        kError() << "Could not register ProxyService\n"
-            << "error name: " << error.name() << "\n"
-            << "error message: " << error.message();
 
-        return 1;
-    } else {
-        return app.exec();
-    }
+        private:
+            Tp::MessagePartList message;
+    };
 }
+
+#endif

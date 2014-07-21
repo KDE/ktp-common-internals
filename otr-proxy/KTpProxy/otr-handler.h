@@ -17,58 +17,51 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA            *
  ***************************************************************************/
 
-#include "proxy-service.h"
-#include "version.h"
+#ifndef KTP_PROXY_OTR_HANDLER_HEADER
+#define KTP_PROXY_OTR_HANDLER_HEADER
 
-#include <KAboutData>
-#include <KCmdLineArgs>
-#include <KApplication>
-#include <KDebug>
+#include "otr-message.h"
 
-#include <QDBusConnection>
+#include <QSharedPointer>
 
-#include <TelepathyQt/AbstractAdaptor>
-#include <TelepathyQt/Channel>
-#include <TelepathyQt/Connection>
-#include <TelepathyQt/ClientRegistrar>
-#include <TelepathyQt/TextChannel>
-
-extern "C" {
-#include <libotr/proto.h>
-}
-
-
-int main(int argc, char *argv[])
+namespace OTR
 {
-    KAboutData aboutData("ktp-proxy", 0,
-                         ki18n("Channel proxy service"),
-                         KTP_PROXY_VERSION);
-
-    aboutData.addAuthor(ki18n("Marcin Ziemiński"), ki18n("Developer"), "zieminn@gmail.com");
-    aboutData.setProductName("telepathy/ktp-proxy");
-    aboutData.setLicense(KAboutData::License_GPL_V2);
-    aboutData.setProgramIconName(QLatin1String("telepathy-kde"));
-
-    KCmdLineArgs::init(argc, argv, &aboutData);
-
-    KApplication app(false);
-
-    Tp::registerTypes();
-    OTRL_INIT;
-
-    Tp::DBusError error;
-    QDBusConnection dbusConnection = QDBusConnection::sessionBus();
-    ProxyService ps(dbusConnection);
-    ps.registerService(&error);
-
-    if(error.isValid())
+    struct SessionContext
     {
-        kError() << "Could not register ProxyService\n"
-            << "error name: " << error.name() << "\n"
-            << "error message: " << error.message();
+        const QString accountId;
+        const QString accountName;
+        const QString recipientName;
+        const QString protocol;
+    };
 
-        return 1;
-    } else {
-        return app.exec();
-    }
+    class Handler : public QObject
+    {
+        Q_OBJECT
+
+        public:
+            virtual ~Handler();
+            virtual const SessionContext& context() const = 0;
+
+            virtual void injectMessage(const Message &message) = 0;
+            virtual void handleSmpEvent() = 0;
+            virtual void handleMsgEvent() = 0;
+            virtual void handleError() = 0;
+            /**
+             * State of the recipient
+             * 1 - logged in
+             * 0 - not logged in
+             * -1 - not sure if logged in
+             */
+            virtual int recipientStatus() = 0;
+            virtual void goneSecure() = 0;
+            virtual void goneInsecure() = 0;
+
+        Q_SIGNALS:
+            void invalidated(SessionContext *context);
+
+    };
+
+    typedef QSharedPointer<Handler> HandlerPtr;
 }
+
+#endif
