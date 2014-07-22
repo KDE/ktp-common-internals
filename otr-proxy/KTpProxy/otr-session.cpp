@@ -41,6 +41,11 @@ namespace OTR
         otrl_userstate_free(us);
     }
 
+    OtrlUserState UserStateBox::userState()
+    {
+        return us;
+    }
+
     void UserStateBox::setInterval(uint interval)
     {
         if(interval) {
@@ -67,7 +72,7 @@ namespace OTR
         return hd;
     }
 
-    UserStateBox* Session::userState()
+    UserStateBox* Session::userStateBox()
     {
         return userstate;
     }

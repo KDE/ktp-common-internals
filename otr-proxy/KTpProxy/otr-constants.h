@@ -17,19 +17,30 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA            *
  ***************************************************************************/
 
-#ifndef KTP_PROXY_OTR_MESSAGE_HEADER
-#define KTP_PROXY_OTR_MESSAGE_HEADER
-
-#include <TelepathyQt/Message>
+#ifndef KTP_PROXY_OTR_CONSTANTS_HEADER
+#define KTP_PROXY_OTR_CONSTANTS_HEADER
 
 namespace OTR
 {
-    class Message
+    enum class TrustLevel : unsigned int
     {
-
-        private:
-            Tp::MessagePartList message;
+        NOT_PRIVATE = 0,
+        UNVERIFIED  = 1,
+        VERIFIED    = 2,
+        FINISHED    = 3
     };
+
+    enum class MessageDirection : unsigned int
+    {
+        TO_PEER,
+        FROM_PEER,
+        INTERNAL
+    };
+
+    template <typename T> unsigned int toUInt(T &&t)
+    {
+        return static_cast<unsigned int>(t);
+    }
 }
 
 #endif

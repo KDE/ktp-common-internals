@@ -20,47 +20,41 @@
 #ifndef KTP_PROXY_OTR_HANDLER_HEADER
 #define KTP_PROXY_OTR_HANDLER_HEADER
 
-#include "otr-message.h"
+#include "otr-value-types.h"
 
 #include <QSharedPointer>
 
+extern "C" {
+#include <gcrypt.h>
+#include <libotr/privkey.h>
+#include <libotr/proto.h>
+#include <libotr/message.h>
+#include <libotr/userstate.h>
+}
+
 namespace OTR
 {
-    struct SessionContext
+    class Handler
     {
-        const QString accountId;
-        const QString accountName;
-        const QString recipientName;
-        const QString protocol;
-    };
-
-    class Handler : public QObject
-    {
-        Q_OBJECT
-
         public:
             virtual ~Handler();
             virtual const SessionContext& context() const = 0;
 
-            virtual void injectMessage(const Message &message) = 0;
-            virtual void handleSmpEvent() = 0;
-            virtual void handleMsgEvent() = 0;
-            virtual void handleError() = 0;
+            virtual void sendMessage(const Message &message) = 0;
+            virtual void handleSmpEvent(OtrlSMPEvent smpEvent) = 0;
             /**
              * State of the recipient
              * 1 - logged in
              * 0 - not logged in
              * -1 - not sure if logged in
              */
-            virtual int recipientStatus() = 0;
-            virtual void goneSecure() = 0;
-            virtual void goneInsecure() = 0;
+            virtual int recipientStatus() const = 0;
+            virtual unsigned int maxMessageSize() const = 0;
 
-        Q_SIGNALS:
-            void invalidated(SessionContext *context);
-
+            virtual void onTrustLevelChanged(TrustLevel trustLevel) = 0;
+            virtual void onSessionRefreshed() = 0;
+            virtual void onNewFingeprintReceived(const QString &fingeprint) = 0;
     };
-
     typedef QSharedPointer<Handler> HandlerPtr;
 }
 

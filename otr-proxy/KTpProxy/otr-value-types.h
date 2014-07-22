@@ -17,15 +17,14 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA            *
  ***************************************************************************/
 
-#ifndef KTP_PROXY_OTR_MANAGER_HEADER
-#define KTP_PROXY_OTR_MANAGER_HEADER
+#ifndef KTP_PROXY_OTR_VALUE_TYPES_HEADER
+#define KTP_PROXY_OTR_VALUE_TYPES_HEADER
 
-#include "otr-config.h"
-#include "otr-handler.h"
-#include "otr-session.h"
+#include "otr-constants.h"
+
+#include <TelepathyQt/Message>
 
 extern "C" {
-#include <gcrypt.h>
 #include <libotr/privkey.h>
 #include <libotr/proto.h>
 #include <libotr/message.h>
@@ -34,25 +33,41 @@ extern "C" {
 
 namespace OTR
 {
-    extern const OtrlMessageAppOps appOps;
+    struct SessionContext
+    {
+        const QString accountId;
+        const QString accountName;
+        const QString recipientName;
+        const QString protocol;
+    };
 
-    class Manager
+    class Message
     {
         public:
-            Manager(Config *otrConfig);
+            Message();
+            Message(const Tp::MessagePartList &message);
 
-            SessionPtr createSession(const HandlerPtr &handler);
+            const Tp::MessagePartList& parts() const;
 
-            OtrlPolicy getPolicy() const;
-            void setPolicy(OtrlPolicy policy);
+            QString text() const;
+            void setText(const QString &text);
 
-            void saveFingerprints(Session *session);
-            void createInstag(Session *session);
+            void setType(Tp::ChannelTextMessageType msgType);
+            Tp::ChannelTextMessageType type() const;
+
+            MessageDirection direction() const;
+            void setDirection(MessageDirection direction);
+
+            bool isOTRevent() const;
+            void setOTRevent(OtrlMessageEvent msgEvent);
+            OtrlMessageEvent messageEvent() const;
+
+            void setOTRHeader(const QString &header, const QString &text);
+            QString getOTRHeader(const QString &header);
 
         private:
-            Config *config;
-            // TODO - consider clearing states when not in use
-            QMap<QString, UserStateBoxPtr> userStates;
+            MessageDirection dir;
+            Tp::MessagePartList message;
     };
 
 } /* namespace OTR */

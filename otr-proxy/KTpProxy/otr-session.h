@@ -20,7 +20,8 @@
 #ifndef KTP_PROXY_OTR_SESSION_HEADER
 #define KTP_PROXY_OTR_SESSION_HEADER
 
-#include "otr-message.h"
+#include "otr-value-types.h"
+#include "otr-constants.h"
 #include "otr-handler.h"
 
 #include <QString>
@@ -45,6 +46,7 @@ namespace OTR
             OtrlUserState userState();
             /** if zero timer is stopped */
             void setInterval(uint interval);
+            QString remoteFingerprint() const;
 
         private Q_SLOTS:
             void otrlMessagePoll();
@@ -53,7 +55,6 @@ namespace OTR
             OtrlUserState us;
             QTimer periodicTimer;
     };
-
     typedef QSharedPointer<UserStateBox> UserStateBoxPtr;
 
     class Session : public QObject
@@ -64,13 +65,15 @@ namespace OTR
             Session(const HandlerPtr &handler, UserStateBox *userstate, Manager *parent);
 
             const HandlerPtr& handler();
-            UserStateBox* userState();
+            UserStateBox* userStateBox();
             Manager* parent();
+            TrustLevel trustLevel() const;
+            void setTrustLevel(TrustLevel level);
 
             void startSession();
             void stopSession();
-            void encrypt();
-            void decrypt();
+            void encrypt(Message &message);
+            void decrypt(Message &message);
             void verifyFingerprint();
             void initSMPQuery();
             void initSMPSecret();
@@ -80,7 +83,6 @@ namespace OTR
             UserStateBox *userstate;
             Manager *pr;
     };
-
     typedef QSharedPointer<Session> SessionPtr;
 
 } /* namespace OTR */

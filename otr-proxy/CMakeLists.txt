@@ -3,14 +3,13 @@ set(KTP_PROXY_VERSION "0.1.1")
 
 set(KDE_MIN_VERSION "4.13.1")
 
-set(CMAKE_MODULE_PATH 
+set(CMAKE_MODULE_PATH
     "${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules"
     ${CMAKE_MODULE_PATH}
 )
 
 find_package (KDE4 ${KDE_MIN_VERSION} REQUIRED)
 find_package (TelepathyQt4 0.9.1 REQUIRED)
-find_package (TelepathyQt4Service 0.9.2.1 REQUIRED)
 find_package (TelepathyQt4Service 0.9.2.1 REQUIRED)
 find_package (LibOTR 4.0.0 REQUIRED)
 
