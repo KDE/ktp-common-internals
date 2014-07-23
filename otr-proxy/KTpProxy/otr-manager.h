@@ -21,7 +21,6 @@
 #define KTP_PROXY_OTR_MANAGER_HEADER
 
 #include "otr-config.h"
-#include "otr-handler.h"
 #include "otr-session.h"
 
 extern "C" {
@@ -34,18 +33,22 @@ extern "C" {
 
 namespace OTR
 {
+namespace global 
+{
     extern const OtrlMessageAppOps appOps;
+}
 
     class Manager
     {
         public:
             Manager(Config *otrConfig);
 
-            SessionPtr createSession(const HandlerPtr &handler);
+            UserStateBox* getUserState(const SessionContext &ctx);
 
             OtrlPolicy getPolicy() const;
             void setPolicy(OtrlPolicy policy);
 
+            void createNewPrivateKey(Session *session);
             void saveFingerprints(Session *session);
             void createInstag(Session *session);
 

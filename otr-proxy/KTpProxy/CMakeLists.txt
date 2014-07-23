@@ -20,6 +20,7 @@ set(ktp-proxy_LIBS
         ${TELEPATHY_QT4_LIBRARIES}
         ${TELEPATHY_QT4_SERVICE_LIBRARIES}
         ${LIBOTR_LIBRARY}
+        ${LIBGCRYPT_LIBRARIES}
 )
 
 kde4_add_executable(ktp-proxy ${ktp-proxy_SRCS})

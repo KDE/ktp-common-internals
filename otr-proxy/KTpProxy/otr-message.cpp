@@ -57,6 +57,7 @@ namespace OTR
 
     void Message::setText(const QString &text)
     {
+        // FIXME - using only text/plan content-type, what about html?
         message[1].insert(QLatin1String("content-type"),
                 QDBusVariant(QLatin1String("text/plain")));
         message[1].insert(QLatin1String("content"), QDBusVariant(text));

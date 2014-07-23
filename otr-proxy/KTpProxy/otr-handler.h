@@ -48,7 +48,7 @@ namespace OTR
             virtual ~Handler();
             virtual const SessionContext& context() const = 0;
 
-            virtual void sendMessage(const Message &message) = 0;
+            virtual void handleMessage(const Message &message) = 0;
             virtual void handleSmpEvent(OtrlSMPEvent smpEvent) = 0;
             /**
              * State of the recipient

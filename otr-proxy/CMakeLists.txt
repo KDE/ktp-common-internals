@@ -11,11 +11,14 @@ set(CMAKE_MODULE_PATH
 find_package (KDE4 ${KDE_MIN_VERSION} REQUIRED)
 find_package (TelepathyQt4 0.9.1 REQUIRED)
 find_package (TelepathyQt4Service 0.9.2.1 REQUIRED)
-find_package (LibOTR 4.0.0 REQUIRED)
+find_package (Libgcrypt REQUIRED)
+
+FIND_LIBRARY (LIBGCRYPT_LIBS NAMES gcrypt)
 
 include_directories (${KDE4_INCLUDES}
                      ${TELEPATHY_QT4_INCLUDE_DIR}
                      ${LIBOTR_INCLUDE_DIR}
+                     ${LIBGCRYPT_INCLUDE_DIR}
 )
 
 include (KDE4Defaults)

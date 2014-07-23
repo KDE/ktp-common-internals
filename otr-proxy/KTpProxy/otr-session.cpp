@@ -18,6 +18,8 @@
  ***************************************************************************/
 
 #include "otr-session.h"
+#include "otr-manager.h"
+#include "otr-utils.h"
 
 extern "C" {
 #include <libotr/privkey.h>
@@ -60,16 +62,19 @@ namespace OTR
         otrl_message_poll(us, 0, 0);
     }
 
-    Session::Session(const HandlerPtr &handler, UserStateBox *userstate, Manager *parent)
-        : hd(handler),
-        userstate(userstate),
+
+    Session::Session(const SessionContext &ctx, Manager *parent)
+        : instance(OTRL_INSTAG_BEST),
+        ctx(ctx),
+        tlevel(TrustLevel::NOT_PRIVATE),
         pr(parent)
     {
+        userstate = pr->getUserState(ctx);
     }
 
-    const HandlerPtr& Session::handler()
+    TrustLevel Session::trustLevel() const
     {
-        return hd;
+        return tlevel;
     }
 
     UserStateBox* Session::userStateBox()
@@ -80,6 +85,164 @@ namespace OTR
     Manager* Session::parent()
     {
         return pr;
+    }
+
+    const SessionContext& Session::context() const
+    {
+        return ctx;
+    }
+
+    QString Session::remoteFingerprint() const
+    {
+        ConnContext *context = otrl_context_find(userstate->userState(), 
+                ctx.recipientName.toLocal8Bit(),
+                ctx.accountName.toLocal8Bit(), 
+                ctx.protocol.toLocal8Bit(),
+                instance, 0, NULL, NULL, NULL);
+
+        if(context && context->active_fingerprint) {
+            return utils::humanReadable(context->active_fingerprint->fingerprint);
+        } else {
+            return QLatin1String("");
+        }
+    }
+
+    Message Session::startSession()
+    {
+        Message msg;
+
+        char *message = otrl_proto_default_query_msg(ctx.accountName.toLocal8Bit(), pr->getPolicy());
+        msg.setText(QLatin1String(message));
+        msg.setType(Tp::ChannelTextMessageTypeNormal);
+        msg.setDirection(MessageDirection::TO_PEER);
+        otrl_message_free(message);
+
+        return msg;
+    }
+
+    Message Session::stopSession()
+    {
+        Message msg;
+
+        otrl_message_disconnect(
+                userstate->userState(),
+                &global::appOps,
+                this,
+                ctx.accountName.toLocal8Bit(),
+                ctx.protocol.toLocal8Bit(),
+                ctx.recipientName.toLocal8Bit(),
+                instance);
+
+        emit sessionStopped(); 
+        return msg;
+    }
+
+    CryptResult Session::encrypt(Message &message)
+    {
+        return CryptResult::UNCHANGED;
+
+        if(otrl_proto_message_type(message.text().toLocal8Bit()) == OTRL_MSGTYPE_NOTOTR) {
+
+            char *encMessage = 0;
+            ConnContext *context;
+
+            int err = otrl_message_sending(
+                    userstate->userState(),
+                    &global::appOps,
+                    this,
+                    ctx.accountName.toLocal8Bit(),
+                    ctx.protocol.toLocal8Bit(),
+                    ctx.recipientName.toLocal8Bit(),
+                    instance,
+                    message.text().toLocal8Bit(),
+                    NULL,
+                    &encMessage,
+                    OTRL_FRAGMENT_SEND_ALL_BUT_LAST,
+                    &context,
+                    NULL,
+                    NULL);
+
+            if(err) {
+                return CryptResult::ERROR;
+            } else if(encMessage != NULL) {
+
+                message.setText(QLatin1String(encMessage));
+                message.setType(Tp::ChannelTextMessageTypeNormal);
+                if(context->active_fingerprint != NULL) {
+                    const QString hrFingerprint = OTR::utils::humanReadable(context->active_fingerprint->fingerprint);
+                    message.setOTRHeader(QLatin1String("otr-remote-fingerprint"), hrFingerprint);
+                }
+                otrl_message_free(encMessage);
+
+                return CryptResult::CHANGED;
+            } 
+        }
+
+        return CryptResult::UNCHANGED;
+    }
+
+    CryptResult Session::decrypt(Message &message)
+    {
+        CryptResult result = CryptResult::INGORE;
+        char *decMsg = NULL;
+        OtrlTLV *tlvs = NULL;
+        ConnContext *context = NULL;
+
+        int ignore = otrl_message_receiving(
+                userstate->userState(),
+                &global::appOps,
+                this,
+                ctx.accountName.toLocal8Bit(),
+                ctx.protocol.toLocal8Bit(),
+                ctx.recipientName.toLocal8Bit(),
+                message.text().toLocal8Bit(),
+                &decMsg,
+                &tlvs, 
+                &context, NULL, NULL);
+
+		if(otrl_tlv_find(tlvs, OTRL_TLV_DISCONNECTED) != NULL) {
+            // TODO contact finished the conversation with us
+        }
+        otrl_tlv_free(tlvs);
+
+        if(!ignore && decMsg != NULL) {
+
+            message.setText(QLatin1String(decMsg));
+            if(context->active_fingerprint != NULL) {
+                const QString hrFingerprint = OTR::utils::humanReadable(context->active_fingerprint->fingerprint);
+                message.setOTRHeader(QLatin1String("otr-remote-fingerprint"), hrFingerprint);
+            }
+            result = CryptResult::CHANGED;
+        } else if(decMsg == NULL) {
+
+            result = CryptResult::UNCHANGED;
+        } else {
+
+            result = CryptResult::INGORE;
+        }
+
+        if(decMsg != NULL) {
+          otrl_message_free(decMsg);
+        }
+
+        return result;
+    }
+
+    void Session::onTrustLevelChanged(TrustLevel trustLevel, const ConnContext *context)
+    {
+        instance = context->their_instance;
+        tlevel = trustLevel;
+        emit trustLevelChanged(trustLevel);
+    }
+
+    void Session::onSessionRefreshed()
+    {
+        emit sessionRefreshed();
+    }
+
+    void Session::onNewFingerprintReceived(const QString &fingerprint)
+    {
+        emit newFingeprintReceived(fingerprint);
     }
 
 } /* namespace OTR */

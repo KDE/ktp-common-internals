@@ -17,38 +17,26 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA            *
  ***************************************************************************/
 
-#ifndef KTP_PROXY_OTR_CONSTANTS_HEADER
-#define KTP_PROXY_OTR_CONSTANTS_HEADER
+#ifndef KTP_PROXY_OTR_UTILS_HEADER
+#define KTP_PROXY_OTR_UTILS_HEADER
 
-namespace OTR
+#include <QString>
+
+extern "C" {
+#include <libotr/privkey.h>
+}
+
+namespace OTR {
+namespace utils 
 {
-    enum class TrustLevel : unsigned int
+    inline QString humanReadable(const unsigned char fingerprint[20])
     {
-        NOT_PRIVATE = 0,
-        UNVERIFIED  = 1,
-        VERIFIED    = 2,
-        FINISHED    = 3
-    };
+        char human[OTRL_PRIVKEY_FPRINT_HUMAN_LEN];
+        otrl_privkey_hash_to_human(human, fingerprint);
 
-    enum class MessageDirection : unsigned int
-    {
-        TO_PEER,
-        FROM_PEER,
-        INTERNAL
-    };
-
-    enum class CryptResult : unsigned int
-    {
-        UNCHANGED,
-        CHANGED,
-        INGORE,
-        ERROR
-    };
-
-    template <typename T> unsigned int toUInt(T &&t)
-    {
-        return static_cast<unsigned int>(t);
+        return QString::fromLocal8Bit(human, OTRL_PRIVKEY_FPRINT_HUMAN_LEN);
     }
+}
 }
 
 #endif

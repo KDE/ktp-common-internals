@@ -18,6 +18,7 @@
  ***************************************************************************/
 
 #include "otr-manager.h"
+#include "otr-utils.h"
 
 namespace OTR
 {
@@ -47,8 +48,7 @@ namespace {
                 break;
         }
 
-        session->setTrustLevel(level);
-        session->handler()->onTrustLevelChanged(level);
+        session->onTrustLevelChanged(level, context);
     }
 
     /** OTR ops functions ------------------------------------------------------------------------- */
@@ -62,7 +62,11 @@ namespace {
 
     void create_privkey(void *opdata, const char *accountname, const char *protocol)
     {
+        Q_UNUSED(accountname);
+        Q_UNUSED(protocol);
 
+        Session *session = reinterpret_cast<Session*>(opdata);
+        session->parent()->createNewPrivateKey(session);
     }
 
     int is_logged_in(void *opdata, const char *accountname, const char *protocol, const char *recipient)
@@ -72,7 +76,7 @@ namespace {
         Q_UNUSED(recipient);
 
         Session *session = reinterpret_cast<Session*>(opdata);
-        return session->handler()->recipientStatus();
+        return session->recipientStatus();
     }
 
     void inject_message(void *opdata, const char *accountname,
@@ -88,7 +92,7 @@ namespace {
         msg.setDirection(MessageDirection::TO_PEER);
 
         Session *session = reinterpret_cast<Session*>(opdata);
-        session->handler()->sendMessage(msg);
+        session->handleMessage(msg);
     }
 
     void update_context_list(void *opdata)
@@ -106,11 +110,8 @@ namespace {
         Q_UNUSED(protocol);
         Q_UNUSED(username);
 
-        char human[OTRL_PRIVKEY_FPRINT_HUMAN_LEN];
-        otrl_privkey_hash_to_human(human, fingerprint);
-
         Session *session = reinterpret_cast<Session*>(opdata);
-        session->handler()->onNewFingeprintReceived(QString::fromLocal8Bit(human, OTRL_PRIVKEY_FPRINT_HUMAN_LEN));
+        session->onNewFingerprintReceived(OTR::utils::humanReadable(fingerprint));
     }
 
     void write_fingerprints(void *opdata)
@@ -137,7 +138,7 @@ namespace {
         Q_UNUSED(is_reply);
 
         Session *session = reinterpret_cast<Session*>(opdata);
-        session->handler()->onSessionRefreshed();
+        session->onSessionRefreshed();
     }
 
     int max_message_size(void *opdata, ConnContext *context)
@@ -145,7 +146,7 @@ namespace {
         Q_UNUSED(context);
 
         Session *session = reinterpret_cast<Session*>(opdata);
-        return session->handler()->maxMessageSize();
+        return session->maxMessageSize();
     }
 
     const char* otr_error_message(void *opdata, ConnContext *context,
@@ -338,7 +339,7 @@ namespace {
         }
 
         Session *session = reinterpret_cast<Session*>(opdata);
-        session->handler()->sendMessage(msg);
+        session->handleMessage(msg);
     }
 
     void create_instag(void *opdata, const char *accountname,
@@ -357,7 +358,11 @@ namespace {
         session->userStateBox()->setInterval(interval);
     }
 
-    /** OTR ops struct ---------------------------------------------------------------------------- */
+} /* anonymous namespace */
+
+/** OTR ops struct ---------------------------------------------------------------------------- */
+namespace global 
+{
     const OtrlMessageAppOps appOps = {
         policy,
         create_privkey,
@@ -384,9 +389,7 @@ namespace {
         NULL,           /* convert_data_free */
         timer_control
     };
-
-} /* anonymous namespace */
-
+} /* global namespace */
 
 /** Manager implementation -------------------------------------------------------------------- */
 Manager::Manager(Config *otrConfig)
@@ -394,27 +397,27 @@ Manager::Manager(Config *otrConfig)
 {
 }
 
-SessionPtr Manager::createSession(const HandlerPtr &handler)
+UserStateBox* Manager::getUserState(const SessionContext &ctx)
 {
-    auto usIt = userStates.find(handler->context().accountId);
+    auto usIt = userStates.find(ctx.accountId);
     if(usIt == userStates.end()) {
         // initiate new userstate
         OtrlUserState userstate = otrl_userstate_create();
 
-        QString path = config->saveLocation() + handler->context().accountId + QLatin1String("_privkeys");
+        QString path = config->saveLocation() + ctx.accountId + QLatin1String("_privkeys");
         otrl_privkey_read(userstate, path.toLocal8Bit());
 
-        path = config->saveLocation() + handler->context().accountId + QLatin1String("_fingerprints");
+        path = config->saveLocation() + ctx.accountId + QLatin1String("_fingerprints");
         otrl_privkey_read_fingerprints(userstate, path.toLocal8Bit(), NULL, NULL);
 
-        path = config->saveLocation() + handler->context().accountId + QLatin1String("_instags");
+        path = config->saveLocation() + ctx.accountId + QLatin1String("_instags");
         otrl_instag_read(userstate, path.toLocal8Bit());
 
         UserStateBoxPtr usPtr(new UserStateBox(userstate));
-        userStates.insert(handler->context().accountId, usPtr);
-        return SessionPtr(new Session(handler, usPtr.data(), this));
+        userStates.insert(ctx.accountId, usPtr);
+        return usPtr.data();
     } else {
-        return SessionPtr(new Session(handler, usIt->data(), this));
+        return usIt->data();
     }
 }
 
@@ -428,19 +431,28 @@ void Manager::setPolicy(OtrlPolicy policy)
     config->setPolicy(policy);
 }
 
+void Manager::createNewPrivateKey(Session *session)
+{
+    const QString path = config->saveLocation() + session->context().accountId + QLatin1String("_privkeys");
+    otrl_privkey_generate(session->userStateBox()->userState(), 
+            path.toLocal8Bit(), 
+            session->context().accountName.toLocal8Bit(), 
+            session->context().protocol.toLocal8Bit());
+}
+
 void Manager::saveFingerprints(Session *session)
 {
-    const QString path = config->saveLocation() + session->handler()->context().accountId + QLatin1String("_fingerprints");
+    const QString path = config->saveLocation() + session->context().accountId + QLatin1String("_fingerprints");
 	otrl_privkey_write_fingerprints(session->userStateBox()->userState(), path.toLocal8Bit());
 }
 
 void Manager::createInstag(Session *session)
 {
-    const QString path = config->saveLocation() + session->handler()->context().accountId + QLatin1String("_instags");
+    const QString path = config->saveLocation() + session->context().accountId + QLatin1String("_instags");
 	otrl_instag_generate(session->userStateBox()->userState(), 
             path.toLocal8Bit(), 
-            session->handler()->context().accountName.toLocal8Bit(), 
-            session->handler()->context().protocol.toLocal8Bit());
+            session->context().accountName.toLocal8Bit(), 
+            session->context().protocol.toLocal8Bit());
 }
 
 } /* namespace OTR */

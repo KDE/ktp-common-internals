@@ -22,7 +22,6 @@
 
 #include "otr-message.h"
 #include "otr-constants.h"
-#include "otr-handler.h"
 
 #include <QString>
 #include <QTimer>
@@ -36,6 +35,14 @@ namespace OTR
 {
     class Manager;
 
+    struct SessionContext
+    {
+        const QString accountId;
+        const QString accountName;
+        const QString recipientName;
+        const QString protocol;
+    };
+
     class UserStateBox : public QObject
     {
         Q_OBJECT
@@ -46,7 +53,6 @@ namespace OTR
             OtrlUserState userState();
             /** if zero timer is stopped */
             void setInterval(uint interval);
-            QString remoteFingerprint() const;
 
         private Q_SLOTS:
             void otrlMessagePoll();
@@ -62,24 +68,43 @@ namespace OTR
         Q_OBJECT
 
         public:
-            Session(const HandlerPtr &handler, UserStateBox *userstate, Manager *parent);
+            Session(const SessionContext &context, Manager *parent);
 
-            const HandlerPtr& handler();
             UserStateBox* userStateBox();
             Manager* parent();
             TrustLevel trustLevel() const;
-            void setTrustLevel(TrustLevel level);
+            const SessionContext& context() const;
+            QString remoteFingerprint() const;
 
-            void startSession();
-            void stopSession();
-            void encrypt(Message &message);
-            void decrypt(Message &message);
+            /** Returns OTR init message */
+            Message startSession();
+            /** Returns OTR disconnect message */
+            Message stopSession();
+            CryptResult encrypt(Message &message);
+            CryptResult decrypt(Message &message);
             void verifyFingerprint();
             void initSMPQuery();
             void initSMPSecret();
 
+            // functions called by libotr
+            virtual void handleMessage(const Message &message) = 0;
+            virtual void handleSmpEvent(OtrlSMPEvent smpEvent) = 0;
+            virtual int recipientStatus() const = 0;
+            virtual unsigned int maxMessageSize() const = 0;
+            void onTrustLevelChanged(TrustLevel trustLevel, const ConnContext *context);
+            void onSessionRefreshed();
+            void onNewFingerprintReceived(const QString &fingeprint);
+
+        Q_SIGNALS:
+            void trustLevelChanged(TrustLevel trustLevel);
+            void sessionRefreshed();
+            void sessionStopped();
+            void newFingeprintReceived(const QString &fingeprint);
+
         private:
-            HandlerPtr hd;
+            otrl_instag_t instance;
+            SessionContext ctx;
+            TrustLevel tlevel;
             UserStateBox *userstate;
             Manager *pr;
     };
