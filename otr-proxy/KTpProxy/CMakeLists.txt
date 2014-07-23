@@ -10,6 +10,7 @@ set(ktp-proxy_SRCS
         pending-curry-operation.cpp
         otr-session.cpp
         otr-manager.cpp
+        otr-message.cpp
 )
 
 set(ktp-proxy_LIBS

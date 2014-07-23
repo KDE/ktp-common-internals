@@ -20,7 +20,7 @@
 #ifndef KTP_PROXY_OTR_HANDLER_HEADER
 #define KTP_PROXY_OTR_HANDLER_HEADER
 
-#include "otr-value-types.h"
+#include "otr-message.h"
 
 #include <QSharedPointer>
 
@@ -34,6 +34,14 @@ extern "C" {
 
 namespace OTR
 {
+    struct SessionContext
+    {
+        const QString accountId;
+        const QString accountName;
+        const QString recipientName;
+        const QString protocol;
+    };
+
     class Handler
     {
         public:

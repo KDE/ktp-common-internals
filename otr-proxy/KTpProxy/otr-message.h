@@ -33,13 +33,6 @@ extern "C" {
 
 namespace OTR
 {
-    struct SessionContext
-    {
-        const QString accountId;
-        const QString accountName;
-        const QString recipientName;
-        const QString protocol;
-    };
 
     class Message
     {
@@ -60,7 +53,7 @@ namespace OTR
 
             bool isOTRevent() const;
             void setOTRevent(OtrlMessageEvent msgEvent);
-            OtrlMessageEvent messageEvent() const;
+            OtrlMessageEvent getOTRevent() const;
 
             void setOTRHeader(const QString &header, const QString &text);
             QString getOTRHeader(const QString &header);

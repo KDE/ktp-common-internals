@@ -20,7 +20,7 @@
 #ifndef KTP_PROXY_OTR_SESSION_HEADER
 #define KTP_PROXY_OTR_SESSION_HEADER
 
-#include "otr-value-types.h"
+#include "otr-message.h"
 #include "otr-constants.h"
 #include "otr-handler.h"
 
