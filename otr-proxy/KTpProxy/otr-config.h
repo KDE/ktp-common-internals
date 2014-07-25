@@ -32,7 +32,7 @@ namespace OTR
     class Config
     {
         public:
-            virtual ~Config() = 0;
+            virtual ~Config() = default;
 
             virtual QString saveLocation() = 0;
             virtual OtrlPolicy getPolicy() const = 0;

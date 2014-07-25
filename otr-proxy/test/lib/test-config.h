@@ -17,38 +17,29 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA            *
  ***************************************************************************/
 
-#ifndef KTP_PROXY_OTR_CONSTANTS_HEADER
-#define KTP_PROXY_OTR_CONSTANTS_HEADER
+#ifndef KTP_PROXY_OTR_TEST_CONFIG_HEADER
+#define KTP_PROXY_OTR_TEST_CONFIG_HEADER
+
+#include <KTpProxy/otr-config.h>
 
 namespace OTR
 {
-    enum class TrustLevel : unsigned int
+
+    class TestConfig : public Config
     {
-        NOT_PRIVATE = 0,
-        UNVERIFIED  = 1,
-        VERIFIED    = 2,
-        FINISHED    = 3
+        public:
+            TestConfig();
+
+            virtual QString saveLocation();
+            void setSaveLocation(const QString &sloc);
+            virtual OtrlPolicy getPolicy() const;
+            virtual void setPolicy(OtrlPolicy policy);
+
+        private:
+            QString sloc;
+            OtrlPolicy policy;
     };
 
-    enum class MessageDirection : unsigned int
-    {
-        TO_PEER,
-        FROM_PEER,
-        INTERNAL
-    };
-
-    enum class CryptResult : unsigned int
-    {
-        UNCHANGED, // message was returned untouched
-        CHANGED,   // message was either encrypted or decrypted
-        OTR,       // message is an OTR specific message
-        ERROR      // error during encryption or decryption operation
-    };
-
-    template <typename T> unsigned int toUInt(T &&t)
-    {
-        return static_cast<unsigned int>(t);
-    }
-}
+} /* namespace OTR */
 
 #endif

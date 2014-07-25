@@ -17,38 +17,30 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA            *
  ***************************************************************************/
 
-#ifndef KTP_PROXY_OTR_CONSTANTS_HEADER
-#define KTP_PROXY_OTR_CONSTANTS_HEADER
+#ifndef KTP_PROXY_OTR_TEST_SESSION_HEADER
+#define KTP_PROXY_OTR_TEST_SESSION_HEADER
+
+#include <KTpProxy/otr-session.h>
+#include <KTpProxy/otr-message.h>
+
+#include <QList>
 
 namespace OTR
 {
-    enum class TrustLevel : unsigned int
+    class TestSession : public Session
     {
-        NOT_PRIVATE = 0,
-        UNVERIFIED  = 1,
-        VERIFIED    = 2,
-        FINISHED    = 3
-    };
+        public:
+            TestSession(const SessionContext &context, Manager *parent);
 
-    enum class MessageDirection : unsigned int
-    {
-        TO_PEER,
-        FROM_PEER,
-        INTERNAL
-    };
+            virtual void handleMessage(const Message &message);
+            virtual void handleSmpEvent(OtrlSMPEvent smpEvent);
+            virtual int recipientStatus() const;
+            virtual unsigned int maxMessageSize() const;
 
-    enum class CryptResult : unsigned int
-    {
-        UNCHANGED, // message was returned untouched
-        CHANGED,   // message was either encrypted or decrypted
-        OTR,       // message is an OTR specific message
-        ERROR      // error during encryption or decryption operation
+            uint maxSize = 1000000;
+            QList<Message> mesQueue;
+            QList<Message> eventQueue;
     };
-
-    template <typename T> unsigned int toUInt(T &&t)
-    {
-        return static_cast<unsigned int>(t);
-    }
 }
 
 #endif

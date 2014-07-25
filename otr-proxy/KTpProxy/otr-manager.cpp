@@ -29,7 +29,7 @@ namespace {
     {
         if(context == NULL) return;
 
-        TrustLevel level;
+        TrustLevel level = TrustLevel::NOT_PRIVATE;
         switch(context->msgstate) {
             case OTRL_MSGSTATE_PLAINTEXT:
                 level = TrustLevel::NOT_PRIVATE;
@@ -37,9 +37,9 @@ namespace {
             case OTRL_MSGSTATE_ENCRYPTED:
                 {
                     if(otrl_context_is_fingerprint_trusted(context->active_fingerprint)) {
-                        level = TrustLevel::UNVERIFIED;
-                    } else {
                         level = TrustLevel::VERIFIED;
+                    } else {
+                        level = TrustLevel::UNVERIFIED;
                     }
                     break;
                 }
@@ -157,9 +157,9 @@ namespace {
         char *err_msg = 0;
         switch (err_code)
         {
-            case OTRL_ERRCODE_NONE :
+            case OTRL_ERRCODE_NONE:
                 break;
-            case OTRL_ERRCODE_ENCRYPTION_ERROR : 
+            case OTRL_ERRCODE_ENCRYPTION_ERROR:
                 {
                     QString message = QLatin1String("Error occurred encrypting message.");
                     err_msg = new char[message.length() + 1];
@@ -167,7 +167,7 @@ namespace {
                     memcpy(err_msg, message.toUtf8().data(), message.length());
                     break;
                 }
-            case OTRL_ERRCODE_MSG_NOT_IN_PRIVATE :
+            case OTRL_ERRCODE_MSG_NOT_IN_PRIVATE:
                 if (context) {
                     QString message = QString::fromLatin1("You sent encrypted data to %1, who wasn't expecting it.").
                         arg(QLatin1String(context->accountname));
@@ -176,7 +176,7 @@ namespace {
                     memcpy(err_msg, message.toUtf8().data(), message.length());
                 }
                 break;
-            case OTRL_ERRCODE_MSG_UNREADABLE : 
+            case OTRL_ERRCODE_MSG_UNREADABLE:
                 {
                     QString message = QLatin1String("You transmitted an unreadable encrypted message.");
                     err_msg = new char[message.length() + 1];
@@ -184,7 +184,7 @@ namespace {
                     memcpy(err_msg, message.toUtf8().data(), message.length());
                     break;
                 }
-            case OTRL_ERRCODE_MSG_MALFORMED : 
+            case OTRL_ERRCODE_MSG_MALFORMED:
                 {
                     QString message = QLatin1String("You transmitted a malformed data message.");
                     err_msg = new char[message.length() + 1];
@@ -361,7 +361,7 @@ namespace {
 } /* anonymous namespace */
 
 /** OTR ops struct ---------------------------------------------------------------------------- */
-namespace global 
+namespace global
 {
     const OtrlMessageAppOps appOps = {
         policy,
@@ -434,9 +434,9 @@ void Manager::setPolicy(OtrlPolicy policy)
 void Manager::createNewPrivateKey(Session *session)
 {
     const QString path = config->saveLocation() + session->context().accountId + QLatin1String("_privkeys");
-    otrl_privkey_generate(session->userStateBox()->userState(), 
-            path.toLocal8Bit(), 
-            session->context().accountName.toLocal8Bit(), 
+    otrl_privkey_generate(session->userStateBox()->userState(),
+            path.toLocal8Bit(),
+            session->context().accountName.toLocal8Bit(),
             session->context().protocol.toLocal8Bit());
 }
 
@@ -449,9 +449,9 @@ void Manager::saveFingerprints(Session *session)
 void Manager::createInstag(Session *session)
 {
     const QString path = config->saveLocation() + session->context().accountId + QLatin1String("_instags");
-	otrl_instag_generate(session->userStateBox()->userState(), 
-            path.toLocal8Bit(), 
-            session->context().accountName.toLocal8Bit(), 
+	otrl_instag_generate(session->userStateBox()->userState(),
+            path.toLocal8Bit(),
+            session->context().accountName.toLocal8Bit(),
             session->context().protocol.toLocal8Bit());
 }
 

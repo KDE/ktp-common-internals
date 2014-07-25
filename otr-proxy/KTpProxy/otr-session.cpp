@@ -94,9 +94,9 @@ namespace OTR
 
     QString Session::remoteFingerprint() const
     {
-        ConnContext *context = otrl_context_find(userstate->userState(), 
+        ConnContext *context = otrl_context_find(userstate->userState(),
                 ctx.recipientName.toLocal8Bit(),
-                ctx.accountName.toLocal8Bit(), 
+                ctx.accountName.toLocal8Bit(),
                 ctx.protocol.toLocal8Bit(),
                 instance, 0, NULL, NULL, NULL);
 
@@ -120,10 +120,8 @@ namespace OTR
         return msg;
     }
 
-    Message Session::stopSession()
+    void Session::stopSession()
     {
-        Message msg;
-
         otrl_message_disconnect(
                 userstate->userState(),
                 &global::appOps,
@@ -133,14 +131,11 @@ namespace OTR
                 ctx.recipientName.toLocal8Bit(),
                 instance);
 
-        emit sessionStopped(); 
-        return msg;
+        onTrustLevelChanged(TrustLevel::NOT_PRIVATE, NULL);
     }
 
     CryptResult Session::encrypt(Message &message)
     {
-        return CryptResult::UNCHANGED;
-
         if(otrl_proto_message_type(message.text().toLocal8Bit()) == OTRL_MSGTYPE_NOTOTR) {
 
             char *encMessage = 0;
@@ -175,7 +170,7 @@ namespace OTR
                 otrl_message_free(encMessage);
 
                 return CryptResult::CHANGED;
-            } 
+            }
         }
 
         return CryptResult::UNCHANGED;
@@ -183,10 +178,12 @@ namespace OTR
 
     CryptResult Session::decrypt(Message &message)
     {
-        CryptResult result = CryptResult::INGORE;
+        CryptResult result = CryptResult::OTR;
         char *decMsg = NULL;
         OtrlTLV *tlvs = NULL;
         ConnContext *context = NULL;
+
+        bool isFinished = false;
 
         int ignore = otrl_message_receiving(
                 userstate->userState(),
@@ -197,32 +194,35 @@ namespace OTR
                 ctx.recipientName.toLocal8Bit(),
                 message.text().toLocal8Bit(),
                 &decMsg,
-                &tlvs, 
+                &tlvs,
                 &context, NULL, NULL);
 
 		if(otrl_tlv_find(tlvs, OTRL_TLV_DISCONNECTED) != NULL) {
-            // TODO contact finished the conversation with us
+            isFinished = true;
         }
         otrl_tlv_free(tlvs);
 
-        if(!ignore && decMsg != NULL) {
-
-            message.setText(QLatin1String(decMsg));
-            if(context->active_fingerprint != NULL) {
-                const QString hrFingerprint = OTR::utils::humanReadable(context->active_fingerprint->fingerprint);
-                message.setOTRHeader(QLatin1String("otr-remote-fingerprint"), hrFingerprint);
+        if(!ignore) {
+            if(decMsg != NULL) {
+                message.setText(QLatin1String(decMsg));
+                if(context->active_fingerprint != NULL) {
+                    const QString hrFingerprint = OTR::utils::humanReadable(context->active_fingerprint->fingerprint);
+                    message.setOTRHeader(QLatin1String("otr-remote-fingerprint"), hrFingerprint);
+                }
+                result = CryptResult::CHANGED;
+            } else {
+                result = CryptResult::UNCHANGED;
             }
-            result = CryptResult::CHANGED;
-        } else if(decMsg == NULL) {
-
-            result = CryptResult::UNCHANGED;
         } else {
-
-            result = CryptResult::INGORE;
+            result = CryptResult::OTR;
         }
 
         if(decMsg != NULL) {
-          otrl_message_free(decMsg);
+            otrl_message_free(decMsg);
+        }
+
+        if(isFinished) {
+            onTrustLevelChanged(TrustLevel::FINISHED, NULL);
         }
 
         return result;
@@ -230,7 +230,9 @@ namespace OTR
 
     void Session::onTrustLevelChanged(TrustLevel trustLevel, const ConnContext *context)
     {
-        instance = context->their_instance;
+        if(context != NULL) {
+            instance = context->their_instance;
+        }
         tlevel = trustLevel;
         emit trustLevelChanged(trustLevel);
     }
@@ -242,6 +244,7 @@ namespace OTR
 
     void Session::onNewFingerprintReceived(const QString &fingerprint)
     {
+        //qDebug() << "Received";
         emit newFingeprintReceived(fingerprint);
     }
 

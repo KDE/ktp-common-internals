@@ -69,6 +69,7 @@ namespace OTR
 
         public:
             Session(const SessionContext &context, Manager *parent);
+            virtual ~Session() = default;
 
             UserStateBox* userStateBox();
             Manager* parent();
@@ -78,8 +79,7 @@ namespace OTR
 
             /** Returns OTR init message */
             Message startSession();
-            /** Returns OTR disconnect message */
-            Message stopSession();
+            void stopSession();
             CryptResult encrypt(Message &message);
             CryptResult decrypt(Message &message);
             void verifyFingerprint();
@@ -98,7 +98,6 @@ namespace OTR
         Q_SIGNALS:
             void trustLevelChanged(TrustLevel trustLevel);
             void sessionRefreshed();
-            void sessionStopped();
             void newFingeprintReceived(const QString &fingeprint);
 
         private:

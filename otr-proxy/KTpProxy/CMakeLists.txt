@@ -1,5 +1,4 @@
 set(ktp-proxy_SRCS
-        main.cpp
         proxy-observer.cpp
         proxy-service-adaptee.cpp
         proxy-service.cpp
@@ -13,6 +12,8 @@ set(ktp-proxy_SRCS
         otr-message.cpp
 )
 
+kde4_add_library(ktp-proxy-lib STATIC ${ktp-proxy_SRCS})
+
 set(ktp-proxy_LIBS
         ${KDE4_KDECORE_LIBS}
         ${KDE4_KDEUI_LIBS}
@@ -23,7 +24,9 @@ set(ktp-proxy_LIBS
         ${LIBGCRYPT_LIBRARIES}
 )
 
-kde4_add_executable(ktp-proxy ${ktp-proxy_SRCS})
+target_link_libraries(ktp-proxy-lib ${ktp-proxy_LIBS})
 
-target_link_libraries(ktp-proxy ${ktp-proxy_LIBS})
+kde4_add_executable(ktp-proxy main.cpp)
+target_link_libraries(ktp-proxy ktp-proxy-lib)
+
 install(TARGETS ktp-proxy DESTINATION ${LIBEXEC_INSTALL_DIR})

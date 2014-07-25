@@ -33,7 +33,7 @@ extern "C" {
 
 namespace OTR
 {
-namespace global 
+namespace global
 {
     extern const OtrlMessageAppOps appOps;
 }

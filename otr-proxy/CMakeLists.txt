@@ -11,6 +11,7 @@ set(CMAKE_MODULE_PATH
 find_package (KDE4 ${KDE_MIN_VERSION} REQUIRED)
 find_package (TelepathyQt4 0.9.1 REQUIRED)
 find_package (TelepathyQt4Service 0.9.2.1 REQUIRED)
+find_package (LibOTR 4.0.0 REQUIRED)
 find_package (Libgcrypt REQUIRED)
 
 FIND_LIBRARY (LIBGCRYPT_LIBS NAMES gcrypt)
@@ -28,6 +29,7 @@ add_definitions (-std=c++11)
 
 configure_file(version.h.in ${CMAKE_CURRENT_BINARY_DIR}/version.h @ONLY)
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
+include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
 add_subdirectory(KTpProxy)
 add_subdirectory(data)
