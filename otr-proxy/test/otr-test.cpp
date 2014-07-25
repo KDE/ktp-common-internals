@@ -71,6 +71,8 @@ namespace tst {
                 lastFpRcv.clear();
                 sessionRefreshed = false;
                 lastTlevel = TrustLevel::NOT_PRIVATE;
+                ses.eventQueue.clear();
+                ses.mesQueue.clear();
             }
 
         public Q_SLOTS:
@@ -107,17 +109,29 @@ class OTRTest : public QObject
 
     private Q_SLOTS:
         void initTestCase();
+        void init();
+
         void testSimpleSession();
+        void testSessionPolicyNever();
+        void testSessionPolicyOpportunistic();
+        void testSessionPolicyAlways();
 
         void cleanup();
 
     private:
-        TestConfig config;
-        Manager manager;
+        TestConfig aliceConfig;
+        TestConfig bobConfig;
+        Manager *aliceMan;
+        Manager *bobMan;
+        tst::SessionEnv *aliceEnv;
+        tst::SessionEnv *bobEnv;
 };
 
 OTRTest::OTRTest()
-: manager(&config)
+: aliceMan(NULL),
+    bobMan(NULL),
+    aliceEnv(NULL),
+    bobEnv(NULL)
 {
 }
 
@@ -126,17 +140,25 @@ void OTRTest::initTestCase()
     OTRL_INIT;
 }
 
+void OTRTest::init()
+{
+    aliceMan = new Manager(&aliceConfig);
+    bobMan = new Manager(&bobConfig);
+    aliceEnv = new tst::SessionEnv(tst::aliceCtx, aliceMan);
+    bobEnv = new tst::SessionEnv(tst::bobCtx, bobMan);
+}
+
 void OTRTest::testSimpleSession()
 {
-    tst::SessionEnv aliceEnv(tst::aliceCtx, &manager);
-    tst::SessionEnv bobEnv(tst::bobCtx, &manager);
-    TestSession &alice = aliceEnv.ses;
-    TestSession &bob = bobEnv.ses;
+    aliceMan->setPolicy(OTRL_POLICY_MANUAL);
+    bobMan->setPolicy(OTRL_POLICY_MANUAL);
+    TestSession &alice = aliceEnv->ses;
+    TestSession &bob = bobEnv->ses;
 
     QVERIFY(connect(&alice, SIGNAL(newFingeprintReceived(const QString&)),
-                &aliceEnv, SLOT(onNewFingerprintReceived(const QString&))));
+                aliceEnv, SLOT(onNewFingerprintReceived(const QString&))));
     QVERIFY(connect(&bob, SIGNAL(newFingeprintReceived(const QString&)),
-                &bobEnv, SLOT(onNewFingerprintReceived(const QString&))));
+                bobEnv, SLOT(onNewFingerprintReceived(const QString&))));
 
     Message mes = alice.startSession();
     QCOMPARE(mes.direction(), MessageDirection::TO_PEER);
@@ -162,8 +184,8 @@ void OTRTest::testSimpleSession()
     QVERIFY(bob.mesQueue.empty());
     QVERIFY(bob.eventQueue.empty());
 
-    QVERIFY(!bobEnv.lastFpRcv.isEmpty());
-    QVERIFY(!aliceEnv.lastFpRcv.isEmpty());
+    QVERIFY(!bobEnv->lastFpRcv.isEmpty());
+    QVERIFY(!aliceEnv->lastFpRcv.isEmpty());
 
     QCOMPARE(bob.trustLevel(), TrustLevel::UNVERIFIED);
     QCOMPARE(alice.trustLevel(), TrustLevel::UNVERIFIED);
@@ -200,13 +222,127 @@ void OTRTest::testSimpleSession()
     QVERIFY(bob.eventQueue.empty());
 }
 
-void OTRTest::cleanup()
+void OTRTest::testSessionPolicyNever()
 {
-    QFile(config.saveLocation() + tst::aliceCtx.accountId + QLatin1String("_fingerprints")).remove();
-    QFile(config.saveLocation() + tst::bobCtx.accountId + QLatin1String("_fingerprints")).remove();
-    manager.setPolicy(OTRL_POLICY_MANUAL); // default policy
+    TestSession &alice = aliceEnv->ses;
+    TestSession &bob = bobEnv->ses;
+
+    bobMan->setPolicy(OTRL_POLICY_NEVER);
+
+    Message initMes = alice.startSession();
+    QCOMPARE(bob.decrypt(initMes), CryptResult::UNCHANGED);
+    QVERIFY(bob.mesQueue.empty());
+    QVERIFY(bob.eventQueue.empty());
+
+    Message helloMsg;
+    const QString heyText = QLatin1String("Hey Alice");
+    helloMsg.setText(heyText);
+    QCOMPARE(alice.decrypt(helloMsg), CryptResult::UNCHANGED);
+    QCOMPARE(helloMsg.text(), heyText);
+
+    QCOMPARE(alice.trustLevel(), TrustLevel::NOT_PRIVATE);
+    QCOMPARE(bob.trustLevel(), TrustLevel::NOT_PRIVATE);
 }
 
+void OTRTest::testSessionPolicyOpportunistic()
+{
+    TestSession &alice = aliceEnv->ses;
+    TestSession &bob = bobEnv->ses;
+
+    aliceMan->setPolicy(OTRL_POLICY_MANUAL);
+    bobMan->setPolicy(OTRL_POLICY_OPPORTUNISTIC);
+    Message helloMsg;
+    const QString heyText = QLatin1String("Hey Alice");
+    helloMsg.setText(heyText);
+    QCOMPARE(bob.encrypt(helloMsg), CryptResult::CHANGED);
+    QVERIFY(bob.mesQueue.empty());
+    QVERIFY(bob.eventQueue.empty());
+
+    QCOMPARE(alice.decrypt(helloMsg), CryptResult::CHANGED);
+    QVERIFY(alice.mesQueue.empty());
+    QVERIFY(alice.eventQueue.empty());
+
+    // now alice has also opportunistic policy
+    QCOMPARE(bob.encrypt(helloMsg), CryptResult::CHANGED);
+    aliceMan->setPolicy(OTRL_POLICY_OPPORTUNISTIC);
+    QCOMPARE(alice.decrypt(helloMsg), CryptResult::CHANGED);
+    QVERIFY(!alice.mesQueue.empty());
+    QVERIFY(alice.eventQueue.empty());
+
+    while(!bob.mesQueue.empty() || !alice.mesQueue.empty()) {
+        if(!alice.mesQueue.empty()) {
+            QCOMPARE(alice.mesQueue.back().direction(), MessageDirection::TO_PEER);
+            QCOMPARE(bob.decrypt(alice.mesQueue.back()), CryptResult::OTR);
+            alice.mesQueue.pop_back();
+        }
+        if(!bob.mesQueue.empty()) {
+            QCOMPARE(bob.mesQueue.back().direction(), MessageDirection::TO_PEER);
+            QCOMPARE(alice.decrypt(bob.mesQueue.back()), CryptResult::OTR);
+            bob.mesQueue.pop_back();
+        }
+    }
+
+    QCOMPARE(bob.trustLevel(), TrustLevel::UNVERIFIED);
+    QCOMPARE(alice.trustLevel(), TrustLevel::UNVERIFIED);
+}
+
+void OTRTest::testSessionPolicyAlways()
+{
+    TestSession &alice = aliceEnv->ses;
+    TestSession &bob = bobEnv->ses;
+
+    aliceMan->setPolicy(OTRL_POLICY_ALWAYS);
+    Message helloMsg;
+    const QString heyText = QLatin1String("Hey Alice");
+    helloMsg.setText(heyText);
+
+    QCOMPARE(alice.decrypt(helloMsg), CryptResult::OTR);
+    QVERIFY(alice.mesQueue.empty());
+    QVERIFY(!alice.eventQueue.empty());
+    QCOMPARE(alice.eventQueue.back().getOTRHeader("otr-unencrypted-message"), heyText);
+    QCOMPARE(alice.eventQueue.back().getOTRevent(), OTRL_MSGEVENT_RCVDMSG_UNENCRYPTED);
+
+    aliceEnv->reset();
+    bobEnv->reset();
+
+    bobMan->setPolicy(OTRL_POLICY_OPPORTUNISTIC);
+    helloMsg.setText(heyText);
+
+    // now the same as at opportunistic
+    Message initMsg = bob.startSession();
+
+    QCOMPARE(alice.decrypt(initMsg), CryptResult::OTR);
+    QVERIFY(!alice.mesQueue.empty());
+    QVERIFY(alice.eventQueue.empty());
+
+    while(!bob.mesQueue.empty() || !alice.mesQueue.empty()) {
+        if(!alice.mesQueue.empty()) {
+            QCOMPARE(alice.mesQueue.back().direction(), MessageDirection::TO_PEER);
+            QCOMPARE(bob.decrypt(alice.mesQueue.back()), CryptResult::OTR);
+            alice.mesQueue.pop_back();
+        }
+        if(!bob.mesQueue.empty()) {
+            QCOMPARE(bob.mesQueue.back().direction(), MessageDirection::TO_PEER);
+            QCOMPARE(alice.decrypt(bob.mesQueue.back()), CryptResult::OTR);
+            bob.mesQueue.pop_back();
+        }
+    }
+
+    QCOMPARE(bob.trustLevel(), TrustLevel::UNVERIFIED);
+    QCOMPARE(alice.trustLevel(), TrustLevel::UNVERIFIED);
+}
+
+void OTRTest::cleanup()
+{
+    delete aliceEnv;
+    delete bobEnv;
+    delete bobMan;
+    delete aliceMan;
+    QFile(aliceConfig.saveLocation() + tst::aliceCtx.accountId + QLatin1String("_fingerprints")).remove();
+    QFile(bobConfig.saveLocation() + tst::bobCtx.accountId + QLatin1String("_fingerprints")).remove();
+    aliceConfig.setPolicy(OTRL_POLICY_MANUAL);
+    bobConfig.setPolicy(OTRL_POLICY_MANUAL);
+}
 
 QTEST_MAIN(OTRTest)
 #include "otr-test.moc"
