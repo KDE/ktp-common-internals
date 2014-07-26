@@ -165,7 +165,7 @@ namespace OTR
                 message.setType(Tp::ChannelTextMessageTypeNormal);
                 if(context->active_fingerprint != NULL) {
                     const QString hrFingerprint = OTR::utils::humanReadable(context->active_fingerprint->fingerprint);
-                    message.setOTRHeader(QLatin1String("otr-remote-fingerprint"), hrFingerprint);
+                    message.setOTRheader(QLatin1String("otr-remote-fingerprint"), hrFingerprint);
                 }
                 otrl_message_free(encMessage);
 
@@ -207,7 +207,7 @@ namespace OTR
                 message.setText(QLatin1String(decMsg));
                 if(context->active_fingerprint != NULL) {
                     const QString hrFingerprint = OTR::utils::humanReadable(context->active_fingerprint->fingerprint);
-                    message.setOTRHeader(QLatin1String("otr-remote-fingerprint"), hrFingerprint);
+                    message.setOTRheader(QLatin1String("otr-remote-fingerprint"), hrFingerprint);
                 }
                 result = CryptResult::CHANGED;
             } else {

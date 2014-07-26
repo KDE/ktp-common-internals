@@ -56,6 +56,22 @@ namespace tst {
         QLatin1String("talk")
     };
 
+    const SessionContext aliceJCtx =
+    {
+        QLatin1String("alice_id"),
+        QLatin1String("Alice"),
+        QLatin1String("John"),
+        QLatin1String("talk")
+    };
+    const SessionContext johnCtx =
+    {
+        QLatin1String("john_id"),
+        QLatin1String("John"),
+        QLatin1String("Alice"),
+        QLatin1String("talk")
+    };
+
+
     class SessionEnv : public QObject
     {
         Q_OBJECT;
@@ -115,10 +131,15 @@ class OTRTest : public QObject
         void testSessionPolicyNever();
         void testSessionPolicyOpportunistic();
         void testSessionPolicyAlways();
+        void testEncUnencryptedErrors();
+        void testDoubleConversation();
 
         void cleanup();
 
     private:
+
+        void startSession(TestSession& alice, TestSession &bob);
+
         TestConfig aliceConfig;
         TestConfig bobConfig;
         Manager *aliceMan;
@@ -299,7 +320,7 @@ void OTRTest::testSessionPolicyAlways()
     QCOMPARE(alice.decrypt(helloMsg), CryptResult::OTR);
     QVERIFY(alice.mesQueue.empty());
     QVERIFY(!alice.eventQueue.empty());
-    QCOMPARE(alice.eventQueue.back().getOTRHeader("otr-unencrypted-message"), heyText);
+    QCOMPARE(alice.eventQueue.back().getOTRheader("otr-unencrypted-message"), heyText);
     QCOMPARE(alice.eventQueue.back().getOTRevent(), OTRL_MSGEVENT_RCVDMSG_UNENCRYPTED);
 
     aliceEnv->reset();
@@ -332,6 +353,119 @@ void OTRTest::testSessionPolicyAlways()
     QCOMPARE(alice.trustLevel(), TrustLevel::UNVERIFIED);
 }
 
+void OTRTest::startSession(TestSession& alice, TestSession &bob)
+{
+    Message mes = alice.startSession();
+    QCOMPARE(mes.direction(), MessageDirection::TO_PEER);
+    QVERIFY(alice.mesQueue.empty());
+
+    QCOMPARE(bob.decrypt(mes), CryptResult::OTR);
+    QVERIFY(!bob.mesQueue.empty());
+    while(!bob.mesQueue.empty() || !alice.mesQueue.empty()) {
+        if(!bob.mesQueue.empty()) {
+            QCOMPARE(bob.mesQueue.back().direction(), MessageDirection::TO_PEER);
+            QCOMPARE(alice.decrypt(bob.mesQueue.back()), CryptResult::OTR);
+            bob.mesQueue.pop_back();
+        }
+        if(!alice.mesQueue.empty()) {
+            QCOMPARE(alice.mesQueue.back().direction(), MessageDirection::TO_PEER);
+            QCOMPARE(bob.decrypt(alice.mesQueue.back()), CryptResult::OTR);
+            alice.mesQueue.pop_back();
+        }
+    }
+    QVERIFY(alice.mesQueue.empty());
+    QVERIFY(alice.eventQueue.empty());
+    QVERIFY(bob.mesQueue.empty());
+    QVERIFY(bob.eventQueue.empty());
+
+    QCOMPARE(bob.trustLevel(), TrustLevel::UNVERIFIED);
+    QCOMPARE(alice.trustLevel(), TrustLevel::UNVERIFIED);
+}
+
+void OTRTest::testEncUnencryptedErrors()
+{
+    TestSession &alice = aliceEnv->ses;
+    TestSession &bob = bobEnv->ses;
+    startSession(alice, bob);
+
+    Message mes;
+    const QString text = QLatin1String("Unencrypted text");
+    mes.setText(text);
+
+    QCOMPARE(alice.decrypt(mes), CryptResult::OTR);
+    QVERIFY(alice.mesQueue.empty());
+    QVERIFY(!alice.eventQueue.empty());
+
+    Message eventMsg = alice.eventQueue.back();
+    alice.eventQueue.clear();
+
+    QCOMPARE(eventMsg.getOTRevent(), OTRL_MSGEVENT_RCVDMSG_UNENCRYPTED);
+    QCOMPARE(eventMsg.getOTRheader(QLatin1String("otr-unencrypted-message")), text);
+
+    mes.setText(text);
+    QCOMPARE(bob.encrypt(mes), CryptResult::CHANGED);
+
+    alice.mesQueue.clear();
+    alice.stopSession();
+    QCOMPARE(alice.trustLevel(), TrustLevel::NOT_PRIVATE);
+    QCOMPARE(alice.decrypt(mes), CryptResult::OTR);
+    QVERIFY(!alice.eventQueue.empty());
+    QVERIFY(!alice.mesQueue.empty());
+
+    eventMsg = alice.eventQueue.back();
+    QCOMPARE(eventMsg.getOTRevent(), OTRL_MSGEVENT_RCVDMSG_NOT_IN_PRIVATE);
+
+    QCOMPARE(bob.decrypt(alice.mesQueue.back()), CryptResult::OTR);
+    QVERIFY(bob.mesQueue.empty());
+    QVERIFY(bob.eventQueue.empty());
+    QCOMPARE(bob.trustLevel(), TrustLevel::FINISHED);
+}
+
+void OTRTest::testDoubleConversation()
+{
+    tst::SessionEnv johnEnv(tst::johnCtx, bobMan);
+    tst::SessionEnv aliceJEnv(tst::aliceJCtx, aliceMan);
+
+    TestSession &alice = aliceEnv->ses;
+    TestSession &aliceJ = aliceJEnv.ses;
+    TestSession &bob = bobEnv->ses;
+    TestSession &john = johnEnv.ses;
+
+    startSession(alice, bob);
+    startSession(aliceJ, john);
+
+    Message aliceToBob;
+    const QString aliceToBobText = QLatin1String("Hey Bob");
+    aliceToBob.setText(aliceToBobText);
+    QCOMPARE(alice.encrypt(aliceToBob), CryptResult::CHANGED);
+
+    Message aliceToJohn;
+    const QString aliceToJohnText = QLatin1String("Hello John");
+    aliceToJohn.setText(aliceToJohnText);
+    QCOMPARE(aliceJ.encrypt(aliceToJohn), CryptResult::CHANGED);
+
+    QCOMPARE(bob.decrypt(aliceToBob), CryptResult::CHANGED);
+    QCOMPARE(aliceToBob.text(), aliceToBobText);
+    QCOMPARE(john.decrypt(aliceToJohn), CryptResult::CHANGED);
+    QCOMPARE(aliceToJohn.text(), aliceToJohnText);
+
+    bob.stopSession();
+    QCOMPARE(alice.decrypt(bob.mesQueue.back()), CryptResult::OTR);
+    // john with alice still should have encrypted conversation
+
+    Message johnToAlice;
+    const QString johnToAliceText = QLatin1String("Hi Alice!!!");
+    johnToAlice.setText(johnToAliceText);
+    QCOMPARE(john.encrypt(johnToAlice), CryptResult::CHANGED);
+    QCOMPARE(aliceJ.decrypt(johnToAlice), CryptResult::CHANGED);
+    QCOMPARE(johnToAlice.text(), johnToAliceText);
+
+    QCOMPARE(aliceJ.trustLevel(), TrustLevel::UNVERIFIED);
+    QCOMPARE(john.trustLevel(), TrustLevel::UNVERIFIED);
+    QCOMPARE(bob.trustLevel(), TrustLevel::NOT_PRIVATE);
+    QCOMPARE(alice.trustLevel(), TrustLevel::FINISHED);
+}
+
 void OTRTest::cleanup()
 {
     delete aliceEnv;
@@ -340,6 +474,7 @@ void OTRTest::cleanup()
     delete aliceMan;
     QFile(aliceConfig.saveLocation() + tst::aliceCtx.accountId + QLatin1String("_fingerprints")).remove();
     QFile(bobConfig.saveLocation() + tst::bobCtx.accountId + QLatin1String("_fingerprints")).remove();
+    QFile(bobConfig.saveLocation() + tst::johnCtx.accountId + QLatin1String("_fingerprints")).remove();
     aliceConfig.setPolicy(OTRL_POLICY_MANUAL);
     bobConfig.setPolicy(OTRL_POLICY_MANUAL);
 }

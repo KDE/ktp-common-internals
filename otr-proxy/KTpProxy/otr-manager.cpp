@@ -271,14 +271,14 @@ namespace {
                 {
                     case GPG_ERR_INV_VALUE:
                         {
-                            msg.setOTRHeader(QLatin1String("otr-error"), QLatin1String("Malformed message received"));
+                            msg.setOTRheader(QLatin1String("otr-error"), QLatin1String("Malformed message received"));
                             msg.setText(QLatin1String("Error setting up private conversation: "
                                         "Malformed message received"));
                             break;
                         }
                     default:
                         {
-                            msg.setOTRHeader(QLatin1String("otr-error"), QLatin1String(gcry_strerror(err)));
+                            msg.setOTRheader(QLatin1String("otr-error"), QLatin1String(gcry_strerror(err)));
                             msg.setText(QString::fromLatin1("Error setting up private conversation: %1")
                                     .arg(QLatin1String(gcry_strerror(err))));
                             break;
@@ -318,12 +318,12 @@ namespace {
             case OTRL_MSGEVENT_LOG_HEARTBEAT_SENT:
                 break;
             case OTRL_MSGEVENT_RCVDMSG_GENERAL_ERR:
-                msg.setOTRHeader(QLatin1String("otr-error"), QLatin1String(message));
+                msg.setOTRheader(QLatin1String("otr-error"), QLatin1String(message));
                 msg.setText(QString::fromLatin1("OTR error: %1").arg(QLatin1String(message)));
                 msg.setDirection(MessageDirection::INTERNAL);
                 break;
             case OTRL_MSGEVENT_RCVDMSG_UNENCRYPTED:
-                msg.setOTRHeader(QLatin1String("otr-unencrypted-message"), QLatin1String(message));
+                msg.setOTRheader(QLatin1String("otr-unencrypted-message"), QLatin1String(message));
                 msg.setText(QString::fromLatin1("The following message received from %1 was not encrypted: [%2]")
                         .arg(QLatin1String(context->username), QLatin1String(message)));
                 msg.setDirection(MessageDirection::FROM_PEER);

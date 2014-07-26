@@ -55,8 +55,8 @@ namespace OTR
             void setOTRevent(OtrlMessageEvent msgEvent);
             OtrlMessageEvent getOTRevent() const;
 
-            void setOTRHeader(const QString &header, const QString &text);
-            QString getOTRHeader(const QString &header);
+            void setOTRheader(const QString &header, const QString &text);
+            QString getOTRheader(const QString &header);
 
         private:
             MessageDirection dir;

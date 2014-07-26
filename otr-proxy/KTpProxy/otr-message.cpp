@@ -95,15 +95,15 @@ namespace OTR
 
     OtrlMessageEvent Message::getOTRevent() const
     {
-        return static_cast<OtrlMessageEvent>(message[0]["otr-message-event"].variant().toUInt(NULL));
+        return static_cast<OtrlMessageEvent>(message[0][QLatin1String("otr-message-event")].variant().toUInt(NULL));
     }
 
-    void Message::setOTRHeader(const QString &header, const QString &text)
+    void Message::setOTRheader(const QString &header, const QString &text)
     {
         message[0].insert(header, QDBusVariant(text));
     }
 
-    QString Message::getOTRHeader(const QString &header)
+    QString Message::getOTRheader(const QString &header)
     {
         auto it = message[0].find(header);
         if(it == message[0].end()) {
