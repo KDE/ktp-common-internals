@@ -82,9 +82,9 @@ namespace OTR
             void stopSession();
             CryptResult encrypt(Message &message);
             CryptResult decrypt(Message &message);
-            void verifyFingerprint();
             void initSMPQuery();
             void initSMPSecret();
+            TrustFpResult trustFingerprint(bool trust);
 
             // functions called by libotr
             virtual void handleMessage(const Message &message) = 0;
@@ -94,6 +94,9 @@ namespace OTR
             void onTrustLevelChanged(TrustLevel trustLevel, const ConnContext *context);
             void onSessionRefreshed();
             void onNewFingerprintReceived(const QString &fingeprint);
+
+        private:
+            Fingerprint* getFingerprint() const;
 
         Q_SIGNALS:
             void trustLevelChanged(TrustLevel trustLevel);

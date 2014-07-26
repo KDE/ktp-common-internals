@@ -48,8 +48,11 @@ namespace global
             OtrlPolicy getPolicy() const;
             void setPolicy(OtrlPolicy policy);
 
-            void createNewPrivateKey(Session *session);
             void saveFingerprints(Session *session);
+            TrustFpResult trustFingerprint(const SessionContext &ctx, const QString &fingerprint, bool trust);
+            TrustFpResult trustFingerprint(const SessionContext &ctx, Fingerprint *fingerprint, bool trust);
+
+            void createNewPrivateKey(Session *session);
             void createInstag(Session *session);
 
         private:

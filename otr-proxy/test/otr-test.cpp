@@ -133,6 +133,7 @@ class OTRTest : public QObject
         void testSessionPolicyAlways();
         void testEncUnencryptedErrors();
         void testDoubleConversation();
+        void testTrustDistrustFingerprint();
 
         void cleanup();
 
@@ -377,9 +378,6 @@ void OTRTest::startSession(TestSession& alice, TestSession &bob)
     QVERIFY(alice.eventQueue.empty());
     QVERIFY(bob.mesQueue.empty());
     QVERIFY(bob.eventQueue.empty());
-
-    QCOMPARE(bob.trustLevel(), TrustLevel::UNVERIFIED);
-    QCOMPARE(alice.trustLevel(), TrustLevel::UNVERIFIED);
 }
 
 void OTRTest::testEncUnencryptedErrors()
@@ -464,6 +462,50 @@ void OTRTest::testDoubleConversation()
     QCOMPARE(john.trustLevel(), TrustLevel::UNVERIFIED);
     QCOMPARE(bob.trustLevel(), TrustLevel::NOT_PRIVATE);
     QCOMPARE(alice.trustLevel(), TrustLevel::FINISHED);
+}
+
+void OTRTest::testTrustDistrustFingerprint()
+{
+    TestSession &alice = aliceEnv->ses;
+    TestSession &bob = bobEnv->ses;
+
+    QCOMPARE(TrustFpResult::NO_SUCH_FINGERPRINT, alice.trustFingerprint(true));
+
+    startSession(alice, bob);
+    QCOMPARE(alice.trustLevel(), TrustLevel::UNVERIFIED);
+    QCOMPARE(bob.trustLevel(), TrustLevel::UNVERIFIED);
+
+    QCOMPARE(TrustFpResult::OK, alice.trustFingerprint(true));
+    QCOMPARE(alice.trustLevel(), TrustLevel::VERIFIED);
+
+    delete aliceEnv;
+    delete bobEnv;
+    delete bobMan;
+    delete aliceMan;
+
+    init();
+
+    TestSession &alice2 = aliceEnv->ses;
+    TestSession &bob2 = bobEnv->ses;
+    startSession(alice2, bob2);
+    QCOMPARE(alice2.trustLevel(), TrustLevel::VERIFIED);
+    QCOMPARE(bob2.trustLevel(), TrustLevel::UNVERIFIED);
+
+    QCOMPARE(TrustFpResult::OK, alice2.trustFingerprint(false));
+    QCOMPARE(alice2.trustLevel(), TrustLevel::UNVERIFIED);
+    QCOMPARE(bob2.trustLevel(), TrustLevel::UNVERIFIED);
+
+    delete aliceEnv;
+    delete bobEnv;
+    delete bobMan;
+    delete aliceMan;
+    init();
+
+    TestSession &alice3 = aliceEnv->ses;
+    TestSession &bob3 = bobEnv->ses;
+    startSession(alice3, bob3);
+    QCOMPARE(alice3.trustLevel(), TrustLevel::UNVERIFIED);
+    QCOMPARE(bob3.trustLevel(), TrustLevel::UNVERIFIED);
 }
 
 void OTRTest::cleanup()

@@ -45,6 +45,13 @@ namespace OTR
         ERROR      // error during encryption or decryption operation
     };
 
+    enum class TrustFpResult : unsigned int
+    {
+        OK,
+        INVALID_FINGERPRINT, // when given fingerprint was in invalid format
+        NO_SUCH_FINGERPRINT  // when could not find such fingerprint
+    };
+
     template <typename T> unsigned int toUInt(T &&t)
     {
         return static_cast<unsigned int>(t);

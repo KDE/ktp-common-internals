@@ -92,7 +92,7 @@ namespace OTR
         return ctx;
     }
 
-    QString Session::remoteFingerprint() const
+    Fingerprint* Session::getFingerprint() const
     {
         ConnContext *context = otrl_context_find(userstate->userState(),
                 ctx.recipientName.toLocal8Bit(),
@@ -101,7 +101,17 @@ namespace OTR
                 instance, 0, NULL, NULL, NULL);
 
         if(context && context->active_fingerprint) {
-            return utils::humanReadable(context->active_fingerprint->fingerprint);
+            return context->active_fingerprint;
+        } else {
+            return nullptr;
+        }
+    }
+
+    QString Session::remoteFingerprint() const
+    {
+        Fingerprint *fp = getFingerprint();
+        if(fp) {
+            return utils::humanReadable(fp->fingerprint);
         } else {
             return QLatin1String("");
         }
@@ -131,7 +141,7 @@ namespace OTR
                 ctx.recipientName.toLocal8Bit(),
                 instance);
 
-        onTrustLevelChanged(TrustLevel::NOT_PRIVATE, NULL);
+        onTrustLevelChanged(TrustLevel::NOT_PRIVATE, nullptr);
     }
 
     CryptResult Session::encrypt(Message &message)
@@ -159,11 +169,11 @@ namespace OTR
 
             if(err) {
                 return CryptResult::ERROR;
-            } else if(encMessage != NULL) {
+            } else if(encMessage != nullptr) {
 
                 message.setText(QLatin1String(encMessage));
                 message.setType(Tp::ChannelTextMessageTypeNormal);
-                if(context->active_fingerprint != NULL) {
+                if(context->active_fingerprint != nullptr) {
                     const QString hrFingerprint = OTR::utils::humanReadable(context->active_fingerprint->fingerprint);
                     message.setOTRheader(QLatin1String("otr-remote-fingerprint"), hrFingerprint);
                 }
@@ -179,9 +189,9 @@ namespace OTR
     CryptResult Session::decrypt(Message &message)
     {
         CryptResult result = CryptResult::OTR;
-        char *decMsg = NULL;
-        OtrlTLV *tlvs = NULL;
-        ConnContext *context = NULL;
+        char *decMsg = nullptr;
+        OtrlTLV *tlvs = nullptr;
+        ConnContext *context = nullptr;
 
         bool isFinished = false;
 
@@ -197,15 +207,15 @@ namespace OTR
                 &tlvs,
                 &context, NULL, NULL);
 
-		if(otrl_tlv_find(tlvs, OTRL_TLV_DISCONNECTED) != NULL) {
+		if(otrl_tlv_find(tlvs, OTRL_TLV_DISCONNECTED) != nullptr) {
             isFinished = true;
         }
         otrl_tlv_free(tlvs);
 
         if(!ignore) {
-            if(decMsg != NULL) {
+            if(decMsg != nullptr) {
                 message.setText(QLatin1String(decMsg));
-                if(context->active_fingerprint != NULL) {
+                if(context->active_fingerprint != nullptr) {
                     const QString hrFingerprint = OTR::utils::humanReadable(context->active_fingerprint->fingerprint);
                     message.setOTRheader(QLatin1String("otr-remote-fingerprint"), hrFingerprint);
                 }
@@ -217,20 +227,40 @@ namespace OTR
             result = CryptResult::OTR;
         }
 
-        if(decMsg != NULL) {
+        if(decMsg != nullptr) {
             otrl_message_free(decMsg);
         }
 
         if(isFinished) {
-            onTrustLevelChanged(TrustLevel::FINISHED, NULL);
+            onTrustLevelChanged(TrustLevel::FINISHED, nullptr);
         }
 
         return result;
     }
 
+    TrustFpResult Session::trustFingerprint(bool trust)
+    {
+        Fingerprint* fp = getFingerprint();
+        if(fp != nullptr) {
+
+            TrustFpResult res = pr->trustFingerprint(ctx, fp, trust);
+            if(res == TrustFpResult::OK && trustLevel() != TrustLevel::FINISHED) {
+                if(trust) {
+                    onTrustLevelChanged(TrustLevel::VERIFIED, nullptr);
+                } else {
+                    onTrustLevelChanged(TrustLevel::UNVERIFIED, nullptr);
+                }
+            }
+            return res;
+        } else {
+
+            return TrustFpResult::NO_SUCH_FINGERPRINT;
+        }
+    }
+
     void Session::onTrustLevelChanged(TrustLevel trustLevel, const ConnContext *context)
     {
-        if(context != NULL) {
+        if(context != nullptr) {
             instance = context->their_instance;
         }
         tlevel = trustLevel;

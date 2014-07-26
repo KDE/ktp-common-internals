@@ -455,4 +455,34 @@ void Manager::createInstag(Session *session)
             session->context().protocol.toLocal8Bit());
 }
 
+TrustFpResult Manager::trustFingerprint(const SessionContext &ctx, const QString &fingerprint, bool trust)
+{
+    Q_UNUSED(ctx);
+    Q_UNUSED(fingerprint);
+    Q_UNUSED(trust);
+    // TODO
+    //UserStateBox *usBox = getUserState(ctx);
+    //OtrlUserState usersate = usBox->userState();
+    return TrustFpResult::OK;
+}
+
+TrustFpResult Manager::trustFingerprint(const SessionContext &ctx, Fingerprint *fingerprint, bool trust)
+{
+    if(fingerprint == nullptr) {
+        return TrustFpResult::NO_SUCH_FINGERPRINT;
+    }
+
+    UserStateBox* usBox = getUserState(ctx);
+    if(trust) {
+        otrl_context_set_trust(fingerprint, "VERIFIED");
+    } else {
+        otrl_context_set_trust(fingerprint, NULL);
+    }
+
+    const QString path = config->saveLocation() + ctx.accountId + QLatin1String("_fingerprints");
+	otrl_privkey_write_fingerprints(usBox->userState(), path.toLocal8Bit());
+
+    return TrustFpResult::OK;
+}
+
 } /* namespace OTR */
