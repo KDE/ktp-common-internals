@@ -150,10 +150,10 @@ class OTRTest : public QObject
 };
 
 OTRTest::OTRTest()
-: aliceMan(NULL),
-    bobMan(NULL),
-    aliceEnv(NULL),
-    bobEnv(NULL)
+: aliceMan(nullptr),
+    bobMan(nullptr),
+    aliceEnv(nullptr),
+    bobEnv(nullptr)
 {
 }
 

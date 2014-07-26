@@ -24,7 +24,7 @@ namespace OTR
     Message::Message()
         : dir(MessageDirection::TO_PEER)
     {
-        message << Tp::MessagePart() << Tp::MessagePart(); 
+        message << Tp::MessagePart() << Tp::MessagePart();
         setType(Tp::ChannelTextMessageTypeNormal);
     }
 
@@ -70,7 +70,7 @@ namespace OTR
 
     Tp::ChannelTextMessageType Message::type() const
     {
-        return static_cast<Tp::ChannelTextMessageType>(message[0]["message-type"].variant().toUInt(NULL));
+        return static_cast<Tp::ChannelTextMessageType>(message[0][QLatin1String("message-type")].variant().toUInt(nullptr));
     }
 
     MessageDirection Message::direction() const
@@ -95,7 +95,7 @@ namespace OTR
 
     OtrlMessageEvent Message::getOTRevent() const
     {
-        return static_cast<OtrlMessageEvent>(message[0][QLatin1String("otr-message-event")].variant().toUInt(NULL));
+        return static_cast<OtrlMessageEvent>(message[0][QLatin1String("otr-message-event")].variant().toUInt(nullptr));
     }
 
     void Message::setOTRheader(const QString &header, const QString &text)

@@ -230,7 +230,7 @@ void OtrProxyChannel::Adaptee::stop(const Tp::Service::ChannelProxyInterfaceOTRA
 
 void OtrProxyChannel::Adaptee::onMessageReceived(const Tp::ReceivedMessage &receivedMessage)
 {
-    const uint id = receivedMessage.header()[QLatin1String("pending-message-id")].variant().toUInt(NULL);
+    const uint id = receivedMessage.header()[QLatin1String("pending-message-id")].variant().toUInt(nullptr);
     kDebug() << "Received message: " << receivedMessage.text() << " with id: " << id;
     messages.insert(id, receivedMessage);
     Q_EMIT messageReceived(receivedMessage.parts());
@@ -238,7 +238,7 @@ void OtrProxyChannel::Adaptee::onMessageReceived(const Tp::ReceivedMessage &rece
 
 void OtrProxyChannel::Adaptee::onPendingMessageRemoved(const Tp::ReceivedMessage &receivedMessage)
 {
-    const uint id = receivedMessage.header().value(QLatin1String("pending-message-id")).variant().toUInt(NULL);
+    const uint id = receivedMessage.header().value(QLatin1String("pending-message-id")).variant().toUInt(nullptr);
     if(messages.remove(id)) {
         Q_EMIT pendingMessagesRemoved(Tp::UIntList() << id);
     } else {

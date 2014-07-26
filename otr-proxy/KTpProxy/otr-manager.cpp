@@ -27,7 +27,7 @@ namespace {
 
     void updateTrustLevel(Session *session, ConnContext *context)
     {
-        if(context == NULL) return;
+        if(context == nullptr) return;
 
         TrustLevel level = TrustLevel::NOT_PRIVATE;
         switch(context->msgstate) {
