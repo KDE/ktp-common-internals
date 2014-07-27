@@ -78,7 +78,9 @@ namespace tst {
 
         public:
             SessionEnv(const SessionContext &ctx, Manager *manager)
-                : ses(ctx, manager)
+                : ses(ctx, manager),
+                sessionRefreshed(false),
+                levelChanged(false)
             {
             }
 
@@ -86,6 +88,7 @@ namespace tst {
             {
                 lastFpRcv.clear();
                 sessionRefreshed = false;
+                levelChanged = false;
                 lastTlevel = TrustLevel::NOT_PRIVATE;
                 ses.eventQueue.clear();
                 ses.mesQueue.clear();
@@ -103,6 +106,7 @@ namespace tst {
 
             void onTrustLevelChanged(TrustLevel tlevel)
             {
+                levelChanged = true;
                 lastTlevel = tlevel;
             }
 
@@ -110,6 +114,7 @@ namespace tst {
             TestSession ses;
             QString lastFpRcv;
             bool sessionRefreshed;
+            bool levelChanged;
             TrustLevel lastTlevel;
     };
 
@@ -134,6 +139,7 @@ class OTRTest : public QObject
         void testEncUnencryptedErrors();
         void testDoubleConversation();
         void testTrustDistrustFingerprint();
+        void testSessionRefreshed();
 
         void cleanup();
 
@@ -506,6 +512,19 @@ void OTRTest::testTrustDistrustFingerprint()
     startSession(alice3, bob3);
     QCOMPARE(alice3.trustLevel(), TrustLevel::UNVERIFIED);
     QCOMPARE(bob3.trustLevel(), TrustLevel::UNVERIFIED);
+}
+
+void OTRTest::testSessionRefreshed()
+{
+    TestSession &alice = aliceEnv->ses;
+    TestSession &bob = bobEnv->ses;
+
+    startSession(alice, bob);
+    connect(&alice, SIGNAL(sessionRefreshed()), aliceEnv, SLOT(onSessionRefreshed()));
+    connect(&bob, SIGNAL(trustLevelChanged(TrustLevel)), bobEnv, SLOT(onTrustLevelChanged(TrustLevel)));
+    startSession(alice, bob);
+    QVERIFY(aliceEnv->sessionRefreshed);
+    QVERIFY(bobEnv->levelChanged);
 }
 
 void OTRTest::cleanup()
