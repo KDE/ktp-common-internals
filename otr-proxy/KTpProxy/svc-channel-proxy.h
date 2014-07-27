@@ -55,6 +55,10 @@ class TP_QT_EXPORT ChannelProxyInterfaceOTRAdaptor : public Tp::AbstractAdaptor
 "    </method>\n"
 "    <method name=\"Initialize\"/>\n"
 "    <method name=\"Stop\"/>\n"
+"    <method name=\"TrustFingerprint\">\n"
+"      <arg direction=\"in\" type=\"s\" name=\"fingerprint\"/>\n"
+"      <arg direction=\"in\" type=\"b\" name=\"trust\"/>\n"
+"    </method>\n"
 "    <signal name=\"MessageSent\">\n"
 "      <arg type=\"aa{sv}\" name=\"content\">\n"
 "        <annotation value=\"Tp::MessagePartList\" name=\"com.trolltech.QtDBus.QtTypeName.In0\"/>\n"
@@ -71,6 +75,9 @@ class TP_QT_EXPORT ChannelProxyInterfaceOTRAdaptor : public Tp::AbstractAdaptor
 "      <arg type=\"au\" name=\"messageIDs\"/>\n"
 "    </signal>\n"
 "    <signal name=\"SessionRefreshed\"/>\n"
+"    <signal name=\"TrustLevelChanged\">\n"
+"      <arg type=\"u\" name=\"trustLevel\"/>\n"
+"    </signal>\n"
 "  </interface>\n"
 "")
     Q_PROPERTY(QDBusObjectPath WrappedChannel READ WrappedChannel )
@@ -90,6 +97,7 @@ public:
     typedef Tp::MethodInvocationContextPtr<  > AcknowledgePendingMessagesContextPtr;
     typedef Tp::MethodInvocationContextPtr<  > InitializeContextPtr;
     typedef Tp::MethodInvocationContextPtr<  > StopContextPtr;
+    typedef Tp::MethodInvocationContextPtr<  > TrustFingerprintContextPtr;
 
 public: // PROPERTIES
     /**
@@ -181,9 +189,8 @@ public: // PROPERTIES
      * 
      * \htmlonly
      * <p>The current fingerprint of the remote contact. Should be displayed
-     * to the user to update its trust level. The first element of the tuple
-     * is the fingerprint formatted to be displayed. The 2nd element is the
-     * fingerprint raw data that can be passed to TrustFingerprint</p>
+     *   to the user to update its trust level. It is shown in human readable format i.e.
+     *   :e .</p>
      * \endhtmlonly
      *
      * \return The value of exported property \c RemoteFingerprint.
@@ -288,6 +295,28 @@ public Q_SLOTS: // METHODS
      *
      */
     void Stop(const QDBusMessage& dbusMessage);
+    /**
+     * Begins a call to the exported D-Bus method \c TrustFingerprint on this object.
+     *
+     * Adaptees should export this method as a Qt slot with the following signature:
+     * void trustFingerprint(const QString& fingerprint, bool trust, const Tp::Service::ChannelProxyInterfaceOTRAdaptor::TrustFingerprintContextPtr &context);
+     *
+     * Implementations should call MethodInvocationContext::setFinished (or setFinishedWithError
+     * accordingly) on the received \a context object once the method has finished processing.
+     *
+     * 
+     * Set whether or not the user trusts the given fingerprint. It has to be 
+     * the fingerprint the remote contact is currently using.
+     *
+     * \param fingerprint
+     *     
+     *     The fingerprint in format: &apos;12345678 12345678 12345678 
+     *     12345678 12345678&apos;
+     * \param trust
+     *     
+     *     %TRUE if trusted, %FALSE otherwise.
+     */
+    void TrustFingerprint(const QString& fingerprint, bool trust, const QDBusMessage& dbusMessage);
 
 Q_SIGNALS: // SIGNALS
     /**
@@ -330,9 +359,18 @@ Q_SIGNALS: // SIGNALS
      *
      */
     void SessionRefreshed();
+    /**
+     * Represents the exported D-Bus signal \c TrustLevelChanged on this object.
+     *
+     * Adaptees should export this signal as a Qt signal with the following signature:
+     * void trustLevelChanged(uint trustLevel);
+     *
+     * The adaptee signal will be automatically relayed as a D-Bus signal once emitted.
+     *
+     */
+    void TrustLevelChanged(uint trustLevel);
 };
 
 }
 }
-
 #endif

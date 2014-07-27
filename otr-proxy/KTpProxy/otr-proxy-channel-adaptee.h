@@ -60,6 +60,8 @@ class OtrProxyChannel::Adaptee : public QObject
 
         void initialize(const Tp::Service::ChannelProxyInterfaceOTRAdaptor::InitializeContextPtr &context);
         void stop(const Tp::Service::ChannelProxyInterfaceOTRAdaptor::StopContextPtr &context);
+        void trustFingerprint(const QString& fingerprint, bool trust,
+                const Tp::Service::ChannelProxyInterfaceOTRAdaptor::TrustFingerprintContextPtr &context);
 
         void onMessageReceived(const Tp::ReceivedMessage &receivedMessage);
         void onPendingMessageRemoved(const Tp::ReceivedMessage &receivedMessage);
@@ -72,6 +74,7 @@ class OtrProxyChannel::Adaptee : public QObject
         void pendingMessagesRemoved(const Tp::UIntList &ids);
         void sessionRefreshed();
         void closed();
+        void trustLevelChanged(uint trustLevel);
 
     private:
         Tp::Service::ChannelProxyInterfaceOTRAdaptor *adaptor;

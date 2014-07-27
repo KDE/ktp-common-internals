@@ -228,6 +228,16 @@ void OtrProxyChannel::Adaptee::stop(const Tp::Service::ChannelProxyInterfaceOTRA
     context->setFinished();
 }
 
+void OtrProxyChannel::Adaptee::trustFingerprint(const QString& fingerprint, bool trust,
+        const Tp::Service::ChannelProxyInterfaceOTRAdaptor::TrustFingerprintContextPtr &context)
+{
+    // TODO implement
+    Q_UNUSED(fingerprint);
+    Q_UNUSED(trust);
+
+    context->setFinished();
+}
+
 void OtrProxyChannel::Adaptee::onMessageReceived(const Tp::ReceivedMessage &receivedMessage)
 {
     const uint id = receivedMessage.header()[QLatin1String("pending-message-id")].variant().toUInt(nullptr);

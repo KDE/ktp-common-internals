@@ -15,6 +15,7 @@ ChannelProxyInterfaceOTRAdaptor::ChannelProxyInterfaceOTRAdaptor(const QDBusConn
     connect(adaptee, SIGNAL(messageReceived(const Tp::MessagePartList&)), SIGNAL(MessageReceived(const Tp::MessagePartList&)));
     connect(adaptee, SIGNAL(pendingMessagesRemoved(const Tp::UIntList&)), SIGNAL(PendingMessagesRemoved(const Tp::UIntList&)));
     connect(adaptee, SIGNAL(sessionRefreshed()), SIGNAL(SessionRefreshed()));
+    connect(adaptee, SIGNAL(trustLevelChanged(uint)), SIGNAL(TrustLevelChanged(uint)));
 }
 
 ChannelProxyInterfaceOTRAdaptor::~ChannelProxyInterfaceOTRAdaptor()
@@ -130,6 +131,20 @@ void ChannelProxyInterfaceOTRAdaptor::Stop(const QDBusMessage& dbusMessage)
             new Tp::MethodInvocationContext<  >(dbusConnection(), dbusMessage));
     QMetaObject::invokeMethod(adaptee(), "stop",
         Q_ARG(Tp::Service::ChannelProxyInterfaceOTRAdaptor::StopContextPtr, ctx));
+}
+
+void ChannelProxyInterfaceOTRAdaptor::TrustFingerprint(const QString& fingerprint, bool trust, const QDBusMessage& dbusMessage)
+{
+    if (!adaptee()->metaObject()->indexOfMethod("trustFingerprint(QString,bool,Tp::Service::ChannelProxyInterfaceOTRAdaptor::TrustFingerprintContextPtr)") == -1) {
+        dbusConnection().send(dbusMessage.createErrorReply(TP_QT_ERROR_NOT_IMPLEMENTED, QLatin1String("Not implemented")));
+        return;
+    }
+
+    TrustFingerprintContextPtr ctx = TrustFingerprintContextPtr(
+            new Tp::MethodInvocationContext<  >(dbusConnection(), dbusMessage));
+    QMetaObject::invokeMethod(adaptee(), "trustFingerprint",
+        Q_ARG(QString, fingerprint), Q_ARG(bool, trust),
+        Q_ARG(Tp::Service::ChannelProxyInterfaceOTRAdaptor::TrustFingerprintContextPtr, ctx));
 }
 
 }

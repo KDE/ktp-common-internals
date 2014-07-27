@@ -21,7 +21,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.</
     <tp:simple-type name="Fingerprint" type="s"
       array-name="Fingerprint_List">
       <tp:docstring>
-        <p>Human readable string denoting fingerprint</p>
+        <p>Human readable string denoting fingerprint.
+          i.e. '12345678 12345678 12345678 12345678 12345678' </p>
       </tp:docstring>
     </tp:simple-type>
 
@@ -80,6 +81,11 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.</
         <tp:error name="org.freedesktop.Telepathy.Error.NotAvailable"/>
         <tp:error name="org.freedesktop.Telepathy.Error.PermissionDenied"/>
         <tp:error name="org.freedesktop.Telepathy.Error.NetworkError"/>
+        <tp:error name="org.freedesktop.TelepathyProxy.Error.NotConnected">
+          <tp:docstring>
+            The proxy is not connected to the channel.
+          </tp:docstring>
+        </tp:error>
       </tp:possible-errors>
     </method>
 
@@ -105,6 +111,58 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.</
         <p>
           The same as:
           <tp:dbus-ref namespace="org.freedesktop.Telepathy.Channel.Interface">Messages</tp:dbus-ref>
+          Plus:
+          <p>The OTR interface adds some additional keys to message headers.
+            Messages sent during an encrypted OTR session have an additional
+            'otr-remote-fingerprint' header, whose string value is the
+            human-readable hex form of an OTR fingerprint:</p>
+
+          <code>
+            {
+            'message-type': Channel_Text_Message_Type_Normal,
+            'message-sender': 42,               # Contact_Handle of mercutio@example.com
+            'otr-remote-fingerprint': '12345678 12345678 12345678 12345678 12345678',
+            },
+            {
+            'content-type': 'text/plain',
+            'content': 'O, then, I see Queen Mab hath been with you.',
+            }
+          </code>
+
+          <p>Logging infrastructure MAY use these headers to associate
+            conversations with OTR users in a secure way, or to avoid
+            logging OTR conversations at all.</p>
+
+          <p>Messages generated internally by the OTR implementation have an
+            additional "otr-message-event" key in the header (0'th part) whose
+            value is the OtrlMessageEvent, and SHOULD be
+            of type Channel_Text_Message_Type_Notice. These messages do not have id
+            and should not be acknowledged:</p>
+
+          <code>
+            {
+            'message-type': Channel_Text_Message_Type_Notice,
+            'message-sender': 42,               # Contact_Handle of mercutio@example.com
+            'otr-message-event': OTRL_MSGEVENT_RCVDMSG_UNRECOGNIZED,
+            'otr-remote-fingerprint': '12345678 12345678 12345678 12345678 12345678',
+            },
+            {
+            'content-type': 'text/plain',
+            'content': 'Unrecognized OTR message received from mercutio@example.com',
+            }
+          </code>
+
+          <p>User interfaces that implement OTR MUST present these special
+            notices in a way that cannot be faked by the remote user
+            sending a crafted XMPP (or other protocol) notice.</p>
+
+          <p>For OTRL_MSGEVENT_SETUP_ERROR or OTRL_MSGEVENT_RCVDMSG_GENERAL_ERR
+            events, the header SHOULD additionally contain an "otr-error"
+            key whose string value is a debug message.</p>
+
+          <p>For OTRL_MSGEVENT_RCVDMSG_UNENCRYPTED events, the header
+            MUST additionally contain an "otr-unencrypted-message" key
+            whose string value is the unencrypted message.</p>
         </p>
       </tp:docstring>
 
@@ -147,6 +205,11 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.</
       <tp:possible-errors>
         <tp:error name="org.freedesktop.Telepathy.Error.InvalidArgument">
         </tp:error>
+        <tp:error name="org.freedesktop.TelepathyProxy.Error.NotConnected">
+          <tp:docstring>
+            The proxy is not connected to the channel.
+          </tp:docstring>
+        </tp:error>
       </tp:possible-errors>
     </method>
 
@@ -178,9 +241,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.</
       type="s" tp:type="Fingerprint" access="read">
       <tp:docstring xmlns="http://www.w3.org/1999/xhtml">
         <p>The current fingerprint of the remote contact. Should be displayed
-        to the user to update its trust level. The first element of the tuple
-        is the fingerprint formatted to be displayed. The 2nd element is the
-        fingerprint raw data that can be passed to TrustFingerprint</p>
+          to the user to update its trust level. It is shown in human readable format i.e.
+          :e .</p>
       </tp:docstring>
     </property>
 
@@ -190,6 +252,13 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.</
         <p>Start an OTR session for this channel if the remote end supports it
         has well.</p>
       </tp:docstring>
+      <tp:possible-errors>
+        <tp:error name="org.freedesktop.TelepathyProxy.Error.NotConnected">
+          <tp:docstring>
+            The proxy is not connected to the channel.
+          </tp:docstring>
+        </tp:error>
+      </tp:possible-errors>
     </method>
 
     <method name="Stop"
@@ -197,12 +266,61 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.</
       <tp:docstring>
         <p>Stops the OTR session.</p>
       </tp:docstring>
+      <tp:possible-errors>
+        <tp:error name="org.freedesktop.TelepathyProxy.Error.NotConnected">
+          <tp:docstring>
+            The proxy is not connected to the channel.
+          </tp:docstring>
+        </tp:error>
+      </tp:possible-errors>
+    </method>
+
+    <method name="TrustFingerprint"
+      tp:name-for-bindings="Trust_Fingerprint">
+      <tp:docstring>
+        <p>Set whether or not the user trusts the given fingerprint.
+          It has to be the fingerprint the remote contact is currently using.
+        </p>
+      </tp:docstring>
+
+      <arg direction="in" name="Fingerprint" type="s">
+        <tp:docstring>
+          The fingerprint in format: '12345678 12345678 12345678 12345678 12345678'
+        </tp:docstring>
+      </arg>
+
+      <arg direction="in" name="Trust" type="b">
+        <tp:docstring>
+          %TRUE if trusted, %FALSE otherwise.
+        </tp:docstring>
+      </arg>
+      <tp:possible-errors>
+        <tp:error name="org.freedesktop.TelepathyProxy.Error.NotConnected">
+          <tp:docstring>
+            The proxy is not connected to the channel.
+          </tp:docstring>
+        </tp:error>
+        <tp:error name="org.freedesktop.Telepathy.Error.InvalidArgument">
+          <tp:docstring>
+            The given fingerprint is not formatted properly or it is
+            not equal to the RemoteFingerprint property.
+          </tp:docstring>
+        </tp:error>
+      </tp:possible-errors>
     </method>
 
     <signal name="SessionRefreshed" tp:name-for-bindings="Session_Refreshed">
       <tp:docstring>
         An AKE has been performed in an already established session.
       </tp:docstring>
+    </signal>
+
+    <signal name="TrustLevelChanged" tp:name-for-bindings="Trust_Level_Changed">
+      <tp:docstring xmlns="http://www.w3.org/1999/xhtml">
+        OTR state of the connection has changed.
+      </tp:docstring>
+      <arg name="TrustLevel" type="u" tp:type="OTR_Trust_Level">
+      </arg>
     </signal>
 
     <tp:enum name="OTR_Trust_Level" type="u">
