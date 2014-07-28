@@ -86,6 +86,11 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.</
             The proxy is not connected to the channel.
           </tp:docstring>
         </tp:error>
+        <tp:error name="org.freedesktop.TelepathyProxy.Error.EncryptionError">
+          <tp:docstring>
+            Message could not be encrypted.
+          </tp:docstring>
+        </tp:error>
       </tp:possible-errors>
     </method>
 

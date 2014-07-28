@@ -45,9 +45,14 @@ void ProxyObserver::observeChannels(
         const Tp::AbstractClientObserver::ObserverInfo &observerInfo)
 {
 
+    Q_UNUSED(connection);
+    Q_UNUSED(dispatchOperation);
+    Q_UNUSED(requestsSatisfied);
+    Q_UNUSED(observerInfo);
+
     kDebug() << "Observed a channel";
     Q_FOREACH(const Tp::ChannelPtr &chan, channels) {
-        ps->addChannel(chan);
+        ps->addChannel(chan, account);
     }
     context->setFinished();
 }

@@ -27,7 +27,16 @@ extern "C" {
 }
 
 namespace OTR {
-namespace utils 
+
+    struct SessionContext
+    {
+        const QString accountId;
+        const QString accountName;
+        const QString recipientName;
+        const QString protocol;
+    };
+
+namespace utils
 {
     inline QString humanReadable(const unsigned char fingerprint[20])
     {

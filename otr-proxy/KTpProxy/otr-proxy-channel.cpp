@@ -31,17 +31,23 @@ class OtrProxyChannel::Private
     public:
         Private(const QDBusConnection &dbusConnection,
                 OtrProxyChannel *pc,
-                const Tp::TextChannelPtr &channel)
-            : adaptee(pc, dbusConnection, channel)
+                const Tp::TextChannelPtr &channel,
+                const OTR::SessionContext &context,
+                OTR::Manager *manager)
+            : adaptee(pc, dbusConnection, channel, context, manager)
         {
         }
 
         Adaptee adaptee;
 };
 
-OtrProxyChannel::OtrProxyChannel(const QDBusConnection &dbusConnection, const Tp::TextChannelPtr &channel)
+OtrProxyChannel::OtrProxyChannel(
+        const QDBusConnection &dbusConnection,
+        const Tp::TextChannelPtr &channel,
+        const OTR::SessionContext &context,
+        OTR::Manager *manager)
     : Tp::DBusService(dbusConnection),
-    d(new Private(dbusConnection, this, channel))
+    d(new Private(dbusConnection, this, channel, context, manager))
 {
     connect(&d->adaptee, SIGNAL(closed()), SLOT(onClosed()));
 }
@@ -51,9 +57,10 @@ OtrProxyChannel::~OtrProxyChannel()
     delete d;
 }
 
-OtrProxyChannelPtr OtrProxyChannel::create(const QDBusConnection &dbusConnection, const Tp::TextChannelPtr &channel)
+OtrProxyChannelPtr OtrProxyChannel::create(const QDBusConnection &dbusConnection, const Tp::TextChannelPtr &channel,
+                const OTR::SessionContext &context, OTR::Manager *manager)
 {
-    return OtrProxyChannelPtr(new OtrProxyChannel(dbusConnection, channel));
+    return OtrProxyChannelPtr(new OtrProxyChannel(dbusConnection, channel, context, manager));
 }
 
 void OtrProxyChannel::registerService(Tp::DBusError *error)

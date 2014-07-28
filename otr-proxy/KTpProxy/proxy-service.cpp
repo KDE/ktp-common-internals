@@ -20,6 +20,8 @@
 #include "proxy-service.h"
 #include "proxy-observer.h"
 #include "otr-proxy-channel.h"
+#include "otr-config.h"
+#include "pending-curry-operation.h"
 #include "constants.h"
 
 #include <TelepathyQt/ClientRegistrar>
@@ -29,11 +31,31 @@
 #include <KDebug>
 #include <KApplication>
 
-ProxyService::ProxyService(const QDBusConnection &dbusConnection)
+class PendingChannelReadyResult : public PendingCurryOperation
+{
+    public:
+        PendingChannelReadyResult(Tp::PendingOperation *op, const Tp::TextChannelPtr &chan, const Tp::AccountPtr &account)
+            : PendingCurryOperation(op, Tp::SharedPtr<Tp::RefCounted>::dynamicCast(chan)),
+            channel(chan),
+            account(account)
+        {
+        }
+
+        virtual void extract(Tp::PendingOperation *op)
+        {
+            Q_UNUSED(op);
+        }
+
+        Tp::TextChannelPtr channel;
+        Tp::AccountPtr account;
+};
+
+ProxyService::ProxyService(const QDBusConnection &dbusConnection, OTR::Config *config)
     : Tp::DBusService(dbusConnection),
     adaptee(this, dbusConnection),
     observer(new ProxyObserver(this)),
-    registrar(Tp::ClientRegistrar::create(dbusConnection))
+    registrar(Tp::ClientRegistrar::create(dbusConnection)),
+    manager(config)
 {
 }
 
@@ -42,17 +64,22 @@ ProxyService::~ProxyService()
     registrar->unregisterClients();
 }
 
-void ProxyService::addChannel(const Tp::ChannelPtr &channel)
+void ProxyService::addChannel(const Tp::ChannelPtr &channel, const Tp::AccountPtr &account)
 {
     Tp::TextChannelPtr textChannel = Tp::TextChannel::create(channel->connection(), channel->objectPath(), QVariantMap());
-    Tp::PendingReady *pendingReady =
-        textChannel->becomeReady(Tp::Features()
-            << Tp::TextChannel::FeatureCore
-            << Tp::TextChannel::FeatureMessageQueue
-            << Tp::TextChannel::FeatureMessageCapabilities
-            );
 
-    connect(pendingReady, SIGNAL(finished(Tp::PendingOperation*)), SLOT(onChannelReady(Tp::PendingOperation*)));
+    PendingChannelReadyResult *pending = new PendingChannelReadyResult(
+            textChannel->becomeReady(Tp::Features()
+                << Tp::TextChannel::FeatureCore
+                << Tp::TextChannel::FeatureMessageQueue
+                << Tp::TextChannel::FeatureMessageCapabilities
+                << Tp::TextChannel::FeatureChatState
+                ),
+            textChannel,
+            account);
+
+
+    connect(pending, SIGNAL(finished(Tp::PendingOperation*)), SLOT(onChannelReady(Tp::PendingOperation*)));
 }
 
 void ProxyService::registerService(Tp::DBusError *error)
@@ -90,12 +117,20 @@ void ProxyService::onChannelReady(Tp::PendingOperation *pendingChanReady)
             << pendingChanReady->errorName() << " - " << pendingChanReady->errorMessage();
         return;
     }
-    Tp::PendingReady *pendingReady = dynamic_cast<Tp::PendingReady*>(pendingChanReady);
-    Tp::TextChannelPtr textChannel = Tp::TextChannelPtr::dynamicCast(pendingReady->proxy());
+    PendingChannelReadyResult *pendingReady = dynamic_cast<PendingChannelReadyResult*>(pendingChanReady);
+    Tp::TextChannelPtr textChannel = pendingReady->channel;
     kDebug() << "Channel ready: " << textChannel->objectPath();
 
     Tp::DBusError error;
-    OtrProxyChannelPtr proxyChannel = OtrProxyChannel::create(dbusConnection(), textChannel);
+    OTR::SessionContext ctx =
+    {
+        pendingReady->account->uniqueIdentifier(),
+        pendingReady->account->normalizedName(),
+        textChannel->targetId(),
+        textChannel->connection()->protocolName()
+    };
+
+    OtrProxyChannelPtr proxyChannel = OtrProxyChannel::create(dbusConnection(), textChannel, ctx, &manager);
     proxyChannel->registerService(&error);
 
     if(error.isValid()) {

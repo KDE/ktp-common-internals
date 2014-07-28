@@ -34,9 +34,9 @@ namespace OTR
         public:
             virtual ~Config() = default;
 
-            virtual QString saveLocation() = 0;
-            virtual OtrlPolicy getPolicy() const = 0;
-            virtual void setPolicy(OtrlPolicy policy) = 0;
+            virtual QString saveLocation();
+            virtual OtrlPolicy getPolicy() const;
+            virtual void setPolicy(OtrlPolicy policy);
 
     };
 

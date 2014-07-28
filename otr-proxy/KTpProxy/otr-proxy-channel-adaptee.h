@@ -22,11 +22,20 @@
 
 #include "svc-channel-proxy.h"
 #include "otr-proxy-channel.h"
+#include "otr-session.h"
+#include "otr-message.h"
 
 #include <TelepathyQt/ReceivedMessage>
 
 #include <QDBusObjectPath>
 #include <QDBusConnection>
+
+using namespace OTR;
+
+namespace OTR
+{
+    class Manager;
+}
 
 class OtrProxyChannel::Adaptee : public QObject
 {
@@ -39,7 +48,11 @@ class OtrProxyChannel::Adaptee : public QObject
     Q_PROPERTY(QString remoteFingerprint READ remoteFingerprint)
 
     public:
-        Adaptee(OtrProxyChannel *pc, const QDBusConnection &dbusConnection, const Tp::TextChannelPtr &channel);
+        Adaptee(OtrProxyChannel *pc,
+                const QDBusConnection &dbusConnection,
+                const Tp::TextChannelPtr &channel,
+                const OTR::SessionContext &context,
+                OTR::Manager *manager);
 
         QDBusObjectPath wrappedChannel() const;
         bool connected() const;
@@ -49,6 +62,10 @@ class OtrProxyChannel::Adaptee : public QObject
         QString remoteFingerprint() const;
 
         Tp::TextChannelPtr channel() const;
+
+        void processOTRmessage(const OTR::Message &message);
+    private:
+        void sendOTRmessage(const OTR::Message &message);
 
     private Q_SLOTS:
         void connectProxy(const Tp::Service::ChannelProxyInterfaceOTRAdaptor::ConnectProxyContextPtr &context);
@@ -65,8 +82,9 @@ class OtrProxyChannel::Adaptee : public QObject
 
         void onMessageReceived(const Tp::ReceivedMessage &receivedMessage);
         void onPendingMessageRemoved(const Tp::ReceivedMessage &receivedMessage);
-
         void onPendingSendFinished(Tp::PendingOperation *pendingSend);
+
+        void onTrustLevelChanged(TrustLevel trustLevel);
 
     Q_SIGNALS:
         void messageSent(const Tp::MessagePartList &content, uint flags, const QString &messageToken);
@@ -81,6 +99,7 @@ class OtrProxyChannel::Adaptee : public QObject
         OtrProxyChannel *pc;
         Tp::TextChannelPtr chan;
         bool isConnected;
+        OTR::ProxySession otrSes;
 
         QMap<uint, Tp::ReceivedMessage> messages; // queue
 };

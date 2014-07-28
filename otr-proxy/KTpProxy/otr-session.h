@@ -22,6 +22,8 @@
 
 #include "otr-message.h"
 #include "otr-constants.h"
+#include "otr-proxy-channel.h"
+#include "otr-utils.h"
 
 #include <QString>
 #include <QTimer>
@@ -34,14 +36,6 @@ extern "C" {
 namespace OTR
 {
     class Manager;
-
-    struct SessionContext
-    {
-        const QString accountId;
-        const QString accountName;
-        const QString recipientName;
-        const QString protocol;
-    };
 
     class UserStateBox : public QObject
     {
@@ -71,8 +65,8 @@ namespace OTR
             Session(const SessionContext &context, Manager *parent);
             virtual ~Session() = default;
 
-            UserStateBox* userStateBox();
-            Manager* parent();
+            UserStateBox* userStateBox() const;
+            Manager* parent() const;
             TrustLevel trustLevel() const;
             const SessionContext& context() const;
             QString remoteFingerprint() const;
@@ -101,7 +95,7 @@ namespace OTR
         Q_SIGNALS:
             void trustLevelChanged(TrustLevel trustLevel);
             void sessionRefreshed();
-            void newFingeprintReceived(const QString &fingeprint);
+            void newFingerprintReceived(const QString &fingeprint);
 
         private:
             otrl_instag_t instance;
@@ -111,6 +105,20 @@ namespace OTR
             Manager *pr;
     };
     typedef QSharedPointer<Session> SessionPtr;
+
+    class ProxySession : public Session
+    {
+        public:
+            ProxySession(OtrProxyChannel::Adaptee *pca, const SessionContext &ctx, Manager *parent);
+
+            virtual void handleMessage(const Message &message) override;
+            virtual void handleSmpEvent(OtrlSMPEvent smpEvent) override;
+            virtual int recipientStatus() const override;
+            virtual unsigned int maxMessageSize() const override;
+
+        private:
+            OtrProxyChannel::Adaptee *pca;
+    };
 
 } /* namespace OTR */
 

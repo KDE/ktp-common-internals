@@ -21,11 +21,17 @@
 #define KTP_PROXY_OTR_PROXY_CHANNEL_HEADER
 
 #include "types.h"
+#include "otr-utils.h"
 
 #include <TelepathyQt/DBusService>
 #include <TelepathyQt/TextChannel>
 
 #include <QDBusObjectPath>
+
+namespace OTR
+{
+    class Manager;
+}
 
 class OtrProxyChannel : public Tp::DBusService
 {
@@ -34,11 +40,15 @@ class OtrProxyChannel : public Tp::DBusService
     Q_DISABLE_COPY(OtrProxyChannel)
 
     private:
-        OtrProxyChannel(const QDBusConnection &dbusConnection, const Tp::TextChannelPtr &channel);
+        OtrProxyChannel(const QDBusConnection &dbusConnection,
+                const Tp::TextChannelPtr &channel,
+                const OTR::SessionContext &context,
+                OTR::Manager *manager);
 
     public:
         ~OtrProxyChannel();
-        static OtrProxyChannelPtr create(const QDBusConnection &dbusConnection, const Tp::TextChannelPtr &channel);
+        static OtrProxyChannelPtr create(const QDBusConnection &dbusConnection, const Tp::TextChannelPtr &channel,
+                const OTR::SessionContext &context, OTR::Manager *manager);
 
         void registerService(Tp::DBusError *error);
 
@@ -47,6 +57,9 @@ class OtrProxyChannel : public Tp::DBusService
         bool isConnected() const;
 
         Tp::TextChannelPtr wrappedChannel() const;
+
+        class Adaptee;
+        friend class Adaptee;
 
     Q_SIGNALS:
         void connected(const QDBusObjectPath &proxyPath);
@@ -57,8 +70,6 @@ class OtrProxyChannel : public Tp::DBusService
         void onClosed();
 
     private:
-        class Adaptee;
-        friend class Adaptee;
         class Private;
         friend class Private;
         Private *d;

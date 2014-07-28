@@ -183,9 +183,9 @@ void OTRTest::testSimpleSession()
     TestSession &alice = aliceEnv->ses;
     TestSession &bob = bobEnv->ses;
 
-    QVERIFY(connect(&alice, SIGNAL(newFingeprintReceived(const QString&)),
+    QVERIFY(connect(&alice, SIGNAL(newFingerprintReceived(const QString&)),
                 aliceEnv, SLOT(onNewFingerprintReceived(const QString&))));
-    QVERIFY(connect(&bob, SIGNAL(newFingeprintReceived(const QString&)),
+    QVERIFY(connect(&bob, SIGNAL(newFingerprintReceived(const QString&)),
                 bobEnv, SLOT(onNewFingerprintReceived(const QString&))));
 
     Message mes = alice.startSession();

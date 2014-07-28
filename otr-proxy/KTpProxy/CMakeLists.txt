@@ -10,7 +10,11 @@ set(ktp-proxy_SRCS
         otr-session.cpp
         otr-manager.cpp
         otr-message.cpp
+        otr-config.cpp
 )
+
+kde4_add_kcfg_files(ktp-proxy_SRCS ktp-proxy-config.kcfgc)
+install(FILES ktp-proxy-config.kcfg DESTINATION ${KCFG_INSTALL_DIR})
 
 kde4_add_library(ktp-proxy-lib STATIC ${ktp-proxy_SRCS})
 

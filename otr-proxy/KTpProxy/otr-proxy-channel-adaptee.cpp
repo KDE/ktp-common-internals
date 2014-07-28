@@ -19,6 +19,8 @@
 
 #include "otr-proxy-channel-adaptee.h"
 #include "otr-proxy-channel.h"
+#include "otr-constants.h"
+#include "otr-manager.h"
 #include "constants.h"
 #include "pending-curry-operation.h"
 
@@ -27,8 +29,6 @@
 
 #include <KDebug>
 
-// TODO
-// - add errors to spec
 
 class PendingSendMessageResult : public PendingCurryOperation
 {
@@ -37,12 +37,14 @@ class PendingSendMessageResult : public PendingCurryOperation
                 const Tp::TextChannelPtr &chan,
                 const Tp::Service::ChannelProxyInterfaceOTRAdaptor::SendMessageContextPtr &context,
                 const Tp::MessagePartList &message,
-                uint flags)
+                uint flags,
+                bool isOTRmessage = false)
             : PendingCurryOperation(op, Tp::SharedPtr<Tp::RefCounted>::dynamicCast(chan)),
             token(QString::fromLatin1("")),
             context(context),
             message(message),
-            flags(flags)
+            flags(flags),
+            isOTRmessage(isOTRmessage)
         { }
 
         Tp::Service::ChannelProxyInterfaceOTRAdaptor::SendMessageContextPtr getContext()
@@ -75,16 +77,25 @@ class PendingSendMessageResult : public PendingCurryOperation
         Tp::Service::ChannelProxyInterfaceOTRAdaptor::SendMessageContextPtr context;
         Tp::MessagePartList message;
         uint flags;
+    public:
+        const bool isOTRmessage;
 };
 
 
-OtrProxyChannel::Adaptee::Adaptee(OtrProxyChannel *pc, const QDBusConnection &dbusConnection, const Tp::TextChannelPtr &channel)
+OtrProxyChannel::Adaptee::Adaptee(OtrProxyChannel *pc,
+        const QDBusConnection &dbusConnection,
+        const Tp::TextChannelPtr &channel,
+        const OTR::SessionContext &context,
+        OTR::Manager *manager)
     : adaptor(new Tp::Service::ChannelProxyInterfaceOTRAdaptor(dbusConnection, this, pc->dbusObject())),
     pc(pc),
     chan(channel),
-    isConnected(false)
+    isConnected(false),
+    otrSes(this, context, manager)
 {
     connect(chan.data(), SIGNAL(invalidated(Tp::DBusProxy*,const QString&,const QString&)), SIGNAL(closed()));
+    connect(&otrSes, SIGNAL(trustLevelChanged(TrustLevel)), SLOT(onTrustLevelChanged(TrustLevel)));
+    connect(&otrSes, SIGNAL(sessionRefreshed()), SIGNAL(sessionRefreshed()));
 }
 
 QDBusObjectPath OtrProxyChannel::Adaptee::wrappedChannel() const
@@ -109,7 +120,7 @@ Tp::MessagePartListList OtrProxyChannel::Adaptee::pendingMessages() const
 
 uint OtrProxyChannel::Adaptee::trustLevel() const
 {
-    return 0;
+    return static_cast<uint>(otrSes.trustLevel());
 }
 
 QString OtrProxyChannel::Adaptee::localFingerprint() const
@@ -150,6 +161,9 @@ void OtrProxyChannel::Adaptee::connectProxy(
 void OtrProxyChannel::Adaptee::disconnectProxy(
         const Tp::Service::ChannelProxyInterfaceOTRAdaptor::DisconnectProxyContextPtr &context)
 {
+    if(otrSes.trustLevel() != OTR::TrustLevel::NOT_PRIVATE) {
+        otrSes.stopSession();
+    }
     kDebug() << "Disconnecting proxy: " << pc->objectPath();
     disconnect(chan.data(), SIGNAL(messageReceived(const Tp::ReceivedMessage&)),
             this, SLOT(onMessageReceived(const Tp::ReceivedMessage&)));
@@ -162,6 +176,37 @@ void OtrProxyChannel::Adaptee::disconnectProxy(
     context->setFinished();
 }
 
+void OtrProxyChannel::Adaptee::processOTRmessage(const OTR::Message &message)
+{
+    kDebug();
+    switch(message.direction()) {
+        case OTR::MessageDirection::INTERNAL:
+        case OTR::MessageDirection::FROM_PEER:
+            Q_EMIT messageReceived(message.parts());
+            return;
+        case OTR::MessageDirection::TO_PEER:
+            sendOTRmessage(message);
+            return;
+    }
+}
+
+void OtrProxyChannel::Adaptee::sendOTRmessage(const OTR::Message &message)
+{
+    kDebug();
+    uint flags = 0;
+    PendingSendMessageResult *pending = new PendingSendMessageResult(
+            chan->send(message.parts(), (Tp::MessageSendingFlags) flags),
+            chan,
+            Tp::Service::ChannelProxyInterfaceOTRAdaptor::SendMessageContextPtr(),
+            message.parts(),
+            flags,
+            true);
+
+    connect(pending,
+            SIGNAL(finished(Tp::PendingOperation*)),
+            SLOT(onPendingSendFinished(Tp::PendingOperation*)));
+}
+
 void OtrProxyChannel::Adaptee::sendMessage(const Tp::MessagePartList &message, uint flags,
         const Tp::Service::ChannelProxyInterfaceOTRAdaptor::SendMessageContextPtr &context)
 {
@@ -170,12 +215,20 @@ void OtrProxyChannel::Adaptee::sendMessage(const Tp::MessagePartList &message, u
         return;
     }
 
+    OTR::Message otrMessage(message);
+    const OTR::CryptResult cres = otrSes.encrypt(otrMessage);
+    if(cres == OTR::CryptResult::ERROR) {
+        context->setFinishedWithError(KTP_PROXY_ERROR_ENCRYPTION_ERROR,
+                QLatin1String("Message could not be encrypted with OTR"));
+        return;
+    }
+
     kDebug();
     PendingSendMessageResult *pending = new PendingSendMessageResult(
-            chan->send(message, (Tp::MessageSendingFlags) flags),
+            chan->send(otrMessage.parts(), (Tp::MessageSendingFlags) flags),
             chan,
             context,
-            message,
+            otrMessage.parts(),
             flags);
 
     connect(pending,
@@ -212,10 +265,13 @@ void OtrProxyChannel::Adaptee::acknowledgePendingMessages(const Tp::UIntList &id
 
 void OtrProxyChannel::Adaptee::initialize(const Tp::Service::ChannelProxyInterfaceOTRAdaptor::InitializeContextPtr &context)
 {
+    kDebug();
     if(!connected()) {
         context->setFinishedWithError(KTP_PROXY_ERROR_NOT_CONNECTED, QString::fromLatin1("Proxy is not connected"));
         return;
     }
+
+    sendOTRmessage(otrSes.startSession());
     context->setFinished();
 }
 
@@ -225,16 +281,26 @@ void OtrProxyChannel::Adaptee::stop(const Tp::Service::ChannelProxyInterfaceOTRA
         context->setFinishedWithError(KTP_PROXY_ERROR_NOT_CONNECTED, QString::fromLatin1("Proxy is not connected"));
         return;
     }
+    otrSes.stopSession();
     context->setFinished();
 }
 
 void OtrProxyChannel::Adaptee::trustFingerprint(const QString& fingerprint, bool trust,
         const Tp::Service::ChannelProxyInterfaceOTRAdaptor::TrustFingerprintContextPtr &context)
 {
-    // TODO implement
-    Q_UNUSED(fingerprint);
-    Q_UNUSED(trust);
+    if(otrSes.remoteFingerprint().isEmpty() || fingerprint != otrSes.remoteFingerprint()) {
+        context->setFinishedWithError(TP_QT_ERROR_INVALID_ARGUMENT,
+                QLatin1String("No such fingerprint currently in use by remote contact"));
+        return;
+    }
 
+    OTR::TrustFpResult fpRes = otrSes.trustFingerprint(trust);
+    if(fpRes != OTR::TrustFpResult::OK) {
+        // should not happend, TODO clarify
+        context->setFinishedWithError(TP_QT_ERROR_INVALID_ARGUMENT,
+                QLatin1String("No such fingerprint currently in use by remote contact"));
+        return;
+    }
     context->setFinished();
 }
 
@@ -242,8 +308,20 @@ void OtrProxyChannel::Adaptee::onMessageReceived(const Tp::ReceivedMessage &rece
 {
     const uint id = receivedMessage.header()[QLatin1String("pending-message-id")].variant().toUInt(nullptr);
     kDebug() << "Received message: " << receivedMessage.text() << " with id: " << id;
-    messages.insert(id, receivedMessage);
-    Q_EMIT messageReceived(receivedMessage.parts());
+    OTR::Message otrMsg(receivedMessage.parts());
+    const OTR::CryptResult cres = otrSes.decrypt(otrMsg);
+
+    if(cres == OTR::CryptResult::CHANGED || cres == OTR::CryptResult::UNCHANGED) {
+        messages.insert(id, receivedMessage);
+
+        Q_EMIT messageReceived(otrMsg.parts());
+    } else {
+        // Error or OTR message - acknowledge right now
+        if(cres == OTR::CryptResult::ERROR) {
+            kWarning() << "Decryption error of the message: " << otrMsg.text();
+        }
+        chan->acknowledge(QList<Tp::ReceivedMessage>() << receivedMessage);
+    }
 }
 
 void OtrProxyChannel::Adaptee::onPendingMessageRemoved(const Tp::ReceivedMessage &receivedMessage)
@@ -252,7 +330,7 @@ void OtrProxyChannel::Adaptee::onPendingMessageRemoved(const Tp::ReceivedMessage
     if(messages.remove(id)) {
         Q_EMIT pendingMessagesRemoved(Tp::UIntList() << id);
     } else {
-        kDebug() << "Text channel removed missing pending message with id: " << id;
+        kDebug() << "Text channel removed missing pending message with id or an OTR message: " << id;
     }
 }
 
@@ -260,13 +338,24 @@ void OtrProxyChannel::Adaptee::onPendingSendFinished(Tp::PendingOperation *op)
 {
     PendingSendMessageResult *sendResult = dynamic_cast<PendingSendMessageResult*>(op);
 
-    Tp::Service::ChannelProxyInterfaceOTRAdaptor::SendMessageContextPtr ctx = sendResult->getContext();
-
-    if(sendResult->isError()) {
-        ctx->setFinishedWithError(sendResult->errorName(), sendResult->errorMessage());
+    if(sendResult->isOTRmessage) {
+        if(sendResult->isError()) {
+            // TODO check the message and provide information to the user
+        }
     } else {
-        ctx->setFinished(sendResult->getToken());
-        Q_EMIT messageSent(sendResult->getMessage(), sendResult->getFlags(), sendResult->getToken());
+        Tp::Service::ChannelProxyInterfaceOTRAdaptor::SendMessageContextPtr ctx = sendResult->getContext();
+
+        if(sendResult->isError()) {
+            ctx->setFinishedWithError(sendResult->errorName(), sendResult->errorMessage());
+        } else {
+            ctx->setFinished(sendResult->getToken());
+            Q_EMIT messageSent(sendResult->getMessage(), sendResult->getFlags(), sendResult->getToken());
+        }
     }
+}
+
+void OtrProxyChannel::Adaptee::onTrustLevelChanged(TrustLevel trustLevel)
+{
+    Q_EMIT trustLevelChanged(static_cast<uint>(trustLevel));
 }
 

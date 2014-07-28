@@ -18,6 +18,7 @@
  ***************************************************************************/
 
 #include "proxy-service.h"
+#include "otr-config.h"
 #include "version.h"
 
 #include <KAboutData>
@@ -56,9 +57,11 @@ int main(int argc, char *argv[])
     Tp::registerTypes();
     OTRL_INIT;
 
+    OTR::Config config;
+
     Tp::DBusError error;
     QDBusConnection dbusConnection = QDBusConnection::sessionBus();
-    ProxyService ps(dbusConnection);
+    ProxyService ps(dbusConnection, &config);
     ps.registerService(&error);
 
     if(error.isValid())

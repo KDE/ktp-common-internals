@@ -19,7 +19,9 @@
 
 #include "otr-session.h"
 #include "otr-manager.h"
+#include "otr-message.h"
 #include "otr-utils.h"
+#include "otr-proxy-channel-adaptee.h"
 
 extern "C" {
 #include <libotr/privkey.h>
@@ -30,6 +32,8 @@ extern "C" {
 
 namespace OTR
 {
+    // -------- UserStateBox --------------------------------------------
+
     UserStateBox::UserStateBox(OtrlUserState userState)
         : us(userState)
     {
@@ -62,6 +66,7 @@ namespace OTR
         otrl_message_poll(us, 0, 0);
     }
 
+    // -------- Session -------------------------------------------------
 
     Session::Session(const SessionContext &ctx, Manager *parent)
         : instance(OTRL_INSTAG_BEST),
@@ -77,12 +82,12 @@ namespace OTR
         return tlevel;
     }
 
-    UserStateBox* Session::userStateBox()
+    UserStateBox* Session::userStateBox() const
     {
         return userstate;
     }
 
-    Manager* Session::parent()
+    Manager* Session::parent() const
     {
         return pr;
     }
@@ -274,8 +279,45 @@ namespace OTR
 
     void Session::onNewFingerprintReceived(const QString &fingerprint)
     {
-        //qDebug() << "Received";
-        emit newFingeprintReceived(fingerprint);
+        emit newFingerprintReceived(fingerprint);
+    }
+
+    // -------- ProxySession --------------------------------------------
+    ProxySession::ProxySession(OtrProxyChannel::Adaptee *pca, const SessionContext &ctx, Manager *parent)
+        : Session(ctx, parent),
+        pca(pca)
+    {
+    }
+
+    void ProxySession::handleMessage(const Message &message)
+    {
+        pca->processOTRmessage(message);
+    }
+
+    void ProxySession::handleSmpEvent(OtrlSMPEvent smpEvent)
+    {
+        // TODO implement
+        Q_UNUSED(smpEvent);
+    }
+
+    int ProxySession::recipientStatus() const
+    {
+        if(pca->channel()->hasChatStateInterface()) {
+            switch(pca->channel()->chatState(pca->channel()->targetContact())) {
+                case Tp::ChannelChatStateGone:
+                    return 0;
+                default:
+                    return 1;
+            }
+        } else {
+            return -1;
+        }
+    }
+
+    unsigned int ProxySession::maxMessageSize() const
+    {
+        // FIXME cannot determine maximum message size with Telepathy
+        return 0;
     }
 
 } /* namespace OTR */

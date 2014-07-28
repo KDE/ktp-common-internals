@@ -23,6 +23,7 @@
 #include "proxy-service-adaptee.h"
 #include "proxy-observer.h"
 #include "types.h"
+#include "otr-manager.h"
 
 #include <TelepathyQt/AbstractClientObserver>
 #include <TelepathyQt/Types>
@@ -43,10 +44,10 @@ class ProxyService : public Tp::DBusService
     Q_DISABLE_COPY(ProxyService)
 
     public:
-        ProxyService(const QDBusConnection &dbusConnection);
+        ProxyService(const QDBusConnection &dbusConnection, OTR::Config *config);
         ~ProxyService();
 
-        void addChannel(const Tp::ChannelPtr &channel);
+        void addChannel(const Tp::ChannelPtr &channel, const Tp::AccountPtr &account);
 
         void registerService(Tp::DBusError *error);
 
@@ -63,6 +64,7 @@ class ProxyService : public Tp::DBusService
         QMap<OtrProxyChannel*, OtrProxyChannelPtr> channels;
         ProxyObserverPtr observer;
         Tp::ClientRegistrarPtr registrar;
+        OTR::Manager manager;
 };
 
 #endif

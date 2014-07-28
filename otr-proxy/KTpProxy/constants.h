@@ -25,5 +25,6 @@
 #define KTP_PROXY_CHANNEL_OBJECT_PATH_PREFIX (QString::fromLatin1("/org/freedesktop/TelepathyProxy/OtrChannelProxy/"))
 
 #define KTP_PROXY_ERROR_NOT_CONNECTED (QString::fromLatin1("org.freedesktop.TelepathyProxy.Error.NotConnected"))
+#define KTP_PROXY_ERROR_ENCRYPTION_ERROR (QString::fromLatin1("org.freedesktop.TelepathyProxy.Error.EncryptionError"))
 
 #endif

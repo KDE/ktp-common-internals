@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE kcfg SYSTEM "http://www.kde.org/standards/kcfg/1.0/kcfg.dtd">
+<kcfg>
+<kcfgfile name="ktp-proxy-config"/>
+	<group name="Policy">
+		<entry name="OTRPolicy" type="Enum">
+            <label> OTR policy to choose </label>
+            <choices>
+                <choice name="Always">
+                    <label>Always encrypt outgoing messages</label>
+                </choice>
+                <choice name="Opportunistic">
+                    <label>Automatically encrypt messages if the other side supports OTR</label>
+                </choice>
+                <choice name="Manual">
+                    <label>Encrypt messages if the other side requests an OTR connection</label>
+                </choice>
+                <choice name="Never">
+                    <label>Never encrypt outgoing messages</label>
+                </choice>
+            </choices>
+            <default>Manual</default>
+		</entry>
+	</group>
+</kcfg>
