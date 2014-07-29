@@ -20,6 +20,8 @@
 #include "otr-manager.h"
 #include "otr-utils.h"
 
+#include <KDebug>
+
 namespace OTR
 {
 
@@ -64,6 +66,7 @@ namespace {
     {
         Q_UNUSED(accountname);
         Q_UNUSED(protocol);
+        kDebug();
 
         Session *session = reinterpret_cast<Session*>(opdata);
         session->parent()->createNewPrivateKey(session);
@@ -85,9 +88,10 @@ namespace {
         Q_UNUSED(accountname);
         Q_UNUSED(protocol);
         Q_UNUSED(recipient);
+        kDebug() << "Injecting: " << message;
 
         Message msg;
-        msg.setText(QString::fromLocal8Bit(message));
+        msg.setText(QString(message));
         msg.setType(Tp::ChannelTextMessageTypeNormal);
         msg.setDirection(MessageDirection::TO_PEER);
 
@@ -319,7 +323,7 @@ namespace {
                 break;
             case OTRL_MSGEVENT_RCVDMSG_GENERAL_ERR:
                 msg.setOTRheader(QLatin1String("otr-error"), QLatin1String(message));
-                msg.setText(QString::fromLatin1("OTR error: %1").arg(QLatin1String(message)));
+                msg.setText(QLatin1String(message));
                 msg.setDirection(MessageDirection::INTERNAL);
                 break;
             case OTRL_MSGEVENT_RCVDMSG_UNENCRYPTED:

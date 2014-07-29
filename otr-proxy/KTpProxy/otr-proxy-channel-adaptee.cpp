@@ -93,6 +93,11 @@ OtrProxyChannel::Adaptee::Adaptee(OtrProxyChannel *pc,
     isConnected(false),
     otrSes(this, context, manager)
 {
+    kDebug() << "Created OTR session for context: "
+        << "Account id: " << context.accountId
+        << " Account name: " << context.accountName
+        << " recipient name: " << context.recipientName
+        << " protocol: " << context.protocol;
     connect(chan.data(), SIGNAL(invalidated(Tp::DBusProxy*,const QString&,const QString&)), SIGNAL(closed()));
     connect(&otrSes, SIGNAL(trustLevelChanged(TrustLevel)), SLOT(onTrustLevelChanged(TrustLevel)));
     connect(&otrSes, SIGNAL(sessionRefreshed()), SIGNAL(sessionRefreshed()));
@@ -130,7 +135,7 @@ QString OtrProxyChannel::Adaptee::localFingerprint() const
 
 QString OtrProxyChannel::Adaptee::remoteFingerprint() const
 {
-    return QString::fromLatin1("not implemented");
+    return otrSes.remoteFingerprint();
 }
 
 Tp::TextChannelPtr OtrProxyChannel::Adaptee::channel() const
@@ -228,7 +233,7 @@ void OtrProxyChannel::Adaptee::sendMessage(const Tp::MessagePartList &message, u
             chan->send(otrMessage.parts(), (Tp::MessageSendingFlags) flags),
             chan,
             context,
-            otrMessage.parts(),
+            message,
             flags);
 
     connect(pending,
@@ -307,7 +312,7 @@ void OtrProxyChannel::Adaptee::trustFingerprint(const QString& fingerprint, bool
 void OtrProxyChannel::Adaptee::onMessageReceived(const Tp::ReceivedMessage &receivedMessage)
 {
     const uint id = receivedMessage.header()[QLatin1String("pending-message-id")].variant().toUInt(nullptr);
-    kDebug() << "Received message: " << receivedMessage.text() << " with id: " << id;
+    kDebug() << "Received message with id: " << id;
     OTR::Message otrMsg(receivedMessage.parts());
     const OTR::CryptResult cres = otrSes.decrypt(otrMsg);
 

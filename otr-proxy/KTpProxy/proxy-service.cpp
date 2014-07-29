@@ -124,7 +124,7 @@ void ProxyService::onChannelReady(Tp::PendingOperation *pendingChanReady)
     Tp::DBusError error;
     OTR::SessionContext ctx =
     {
-        pendingReady->account->uniqueIdentifier(),
+        pendingReady->account->uniqueIdentifier().replace(QChar('/'), QChar('_')),
         pendingReady->account->normalizedName(),
         textChannel->targetId(),
         textChannel->connection()->protocolName()
