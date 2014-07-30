@@ -28,6 +28,8 @@
 
 #include <QDBusObjectPath>
 
+class ProxyService;
+
 namespace OTR
 {
     class Manager;
@@ -43,12 +45,11 @@ class OtrProxyChannel : public Tp::DBusService
         OtrProxyChannel(const QDBusConnection &dbusConnection,
                 const Tp::TextChannelPtr &channel,
                 const OTR::SessionContext &context,
-                OTR::Manager *manager);
+                ProxyService *ps);
 
     public:
-        ~OtrProxyChannel();
         static OtrProxyChannelPtr create(const QDBusConnection &dbusConnection, const Tp::TextChannelPtr &channel,
-                const OTR::SessionContext &context, OTR::Manager *manager);
+                const OTR::SessionContext &context, ProxyService *ps);
 
         void registerService(Tp::DBusError *error);
 
@@ -59,7 +60,6 @@ class OtrProxyChannel : public Tp::DBusService
         Tp::TextChannelPtr wrappedChannel() const;
 
         class Adaptee;
-        friend class Adaptee;
 
     Q_SIGNALS:
         void connected(const QDBusObjectPath &proxyPath);
@@ -70,9 +70,7 @@ class OtrProxyChannel : public Tp::DBusService
         void onClosed();
 
     private:
-        class Private;
-        friend class Private;
-        Private *d;
+        Adaptee *adaptee;
 };
 
 #endif /* KTP_PROXY_OTR_PROXY_CHANNEL_HEADER */

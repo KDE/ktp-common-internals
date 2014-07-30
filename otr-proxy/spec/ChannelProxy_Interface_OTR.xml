@@ -247,7 +247,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.</
       <tp:docstring xmlns="http://www.w3.org/1999/xhtml">
         <p>The current fingerprint of the remote contact. Should be displayed
           to the user to update its trust level. It is shown in human readable format i.e.
-          :e .</p>
+          :e '12345678 12345678 12345678 12345678 12345678'.</p>
       </tp:docstring>
     </property>
 

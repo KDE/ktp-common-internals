@@ -48,6 +48,9 @@ namespace OTR
             void setType(Tp::ChannelTextMessageType msgType);
             Tp::ChannelTextMessageType type() const;
 
+            /** returns true if it is OTR protocol specific message */
+            bool isOTRmessage() const;
+
             MessageDirection direction() const;
             void setDirection(MessageDirection direction);
 

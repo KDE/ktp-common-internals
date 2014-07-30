@@ -28,6 +28,7 @@
 #include <TelepathyQt/AbstractClientObserver>
 #include <TelepathyQt/Types>
 #include <TelepathyQt/DBusService>
+#include <TelepathyQt/AccountManager>
 
 #include <QDBusConnection>
 #include <QMap>
@@ -52,12 +53,23 @@ class ProxyService : public Tp::DBusService
         void registerService(Tp::DBusError *error);
 
         QVariantMap immutableProperties() const;
+        OtrlPolicy getPolicy() const;
+        void setPolicy(OtrlPolicy otrPolicy);
+
+        /** returns false if key cannot be generated - i.e. incorrect id */
+        bool createNewPrivateKey(const QString &accountId, const QString &accountName);
+
+        OTR::Manager* managerOTR();
+        Tp::AccountManagerPtr accountManager();
 
     private Q_SLOTS:
         void onChannelProxyClosed();
-
-    private Q_SLOTS:
         void onChannelReady(Tp::PendingOperation *pendingChanReady);
+        void onKeyGenerationThreadFinished();
+
+    Q_SIGNALS:
+        void keyGenerationStarted(const QString &accountId);
+        void keyGenerationFinished(const QString &accountId, bool error);
 
     private:
         ProxyServiceAdaptee adaptee;
@@ -65,6 +77,7 @@ class ProxyService : public Tp::DBusService
         ProxyObserverPtr observer;
         Tp::ClientRegistrarPtr registrar;
         OTR::Manager manager;
+        Tp::AccountManagerPtr am;
 };
 
 #endif

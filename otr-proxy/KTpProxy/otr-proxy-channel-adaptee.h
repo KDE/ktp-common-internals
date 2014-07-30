@@ -32,10 +32,7 @@
 
 using namespace OTR;
 
-namespace OTR
-{
-    class Manager;
-}
+class ProxyService;
 
 class OtrProxyChannel::Adaptee : public QObject
 {
@@ -52,7 +49,7 @@ class OtrProxyChannel::Adaptee : public QObject
                 const QDBusConnection &dbusConnection,
                 const Tp::TextChannelPtr &channel,
                 const OTR::SessionContext &context,
-                OTR::Manager *manager);
+                ProxyService *ps);
 
         QDBusObjectPath wrappedChannel() const;
         bool connected() const;
@@ -66,6 +63,7 @@ class OtrProxyChannel::Adaptee : public QObject
         void processOTRmessage(const OTR::Message &message);
     private:
         void sendOTRmessage(const OTR::Message &message);
+        void acquirePrivateKey();
 
     private Q_SLOTS:
         void connectProxy(const Tp::Service::ChannelProxyInterfaceOTRAdaptor::ConnectProxyContextPtr &context);
@@ -85,6 +83,7 @@ class OtrProxyChannel::Adaptee : public QObject
         void onPendingSendFinished(Tp::PendingOperation *pendingSend);
 
         void onTrustLevelChanged(TrustLevel trustLevel);
+        void onKeyGenerationFinished(const QString &accountId, bool error);
 
     Q_SIGNALS:
         void messageSent(const Tp::MessagePartList &content, uint flags, const QString &messageToken);
@@ -100,8 +99,11 @@ class OtrProxyChannel::Adaptee : public QObject
         Tp::TextChannelPtr chan;
         bool isConnected;
         OTR::ProxySession otrSes;
+        ProxyService *ps;
 
         QMap<uint, Tp::ReceivedMessage> messages; // queue
+        QList<Tp::ReceivedMessage> enqueuedMessages; // when there is now private key generated
+        bool aboutToInit; // user wanted to start the OTR session but no private key was available
 };
 
 #endif

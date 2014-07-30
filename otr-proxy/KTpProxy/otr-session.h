@@ -70,6 +70,7 @@ namespace OTR
             TrustLevel trustLevel() const;
             const SessionContext& context() const;
             QString remoteFingerprint() const;
+            QString localFingerprint() const;
 
             /** Returns OTR init message */
             Message startSession();

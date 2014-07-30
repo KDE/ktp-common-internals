@@ -23,6 +23,8 @@
 #include <QDBusObjectPath>
 #include <QDBusConnection>
 
+#include "svc-proxy-service.h"
+
 namespace Tp
 {
 namespace Service
@@ -36,20 +38,33 @@ class ProxyServiceAdaptee : public QObject
 {
     Q_OBJECT
 
+        Q_PROPERTY(uint policySettings READ policy WRITE setPolicy)
+
     public:
         ProxyServiceAdaptee(ProxyService *ps, const QDBusConnection &dbusConnection);
         ~ProxyServiceAdaptee();
 
+        uint policy() const;
+        void setPolicy(uint otrPolicy);
+
     Q_SIGNALS:
-        void proxyconnected(const QDBusObjectPath &proxyPath);
-        void proxydisconnected(const QDBusObjectPath &proxyPath);
+        void proxyConnected(const QDBusObjectPath &proxyPath);
+        void proxyDisconnected(const QDBusObjectPath &proxyPath);
+        void keyGenerationStarted(const QDBusObjectPath &accountPath);
+        void keyGenerationFinished(const QDBusObjectPath &accountPath, bool error);
 
     public Q_SLOTS:
         void onProxyConnected(const QDBusObjectPath &proxyPath);
         void onProxyDisconnected(const QDBusObjectPath &proxyPath);
+        void generatePrivateKey(const QDBusObjectPath &accountPath,
+                const Tp::Service::ProxyServiceAdaptor::GeneratePrivateKeyContextPtr &context);
+    private Q_SLOTS:
+        void onKeyGenerationStarted(const QString &accountId);
+        void onKeyGenerationFinished(const QString &accountId, bool error);
 
     private:
         Tp::Service::ProxyServiceAdaptor *adaptor;
+        ProxyService *ps;
 };
 
 #endif

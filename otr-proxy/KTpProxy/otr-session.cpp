@@ -74,7 +74,7 @@ namespace OTR
         tlevel(TrustLevel::NOT_PRIVATE),
         pr(parent)
     {
-        userstate = pr->getUserState(ctx);
+        userstate = pr->getUserState(ctx.accountId);
     }
 
     TrustLevel Session::trustLevel() const
@@ -119,6 +119,22 @@ namespace OTR
             return utils::humanReadable(fp->fingerprint);
         } else {
             return QLatin1String("");
+        }
+    }
+
+    QString Session::localFingerprint() const
+    {
+        unsigned char ourRawHash[20];
+        unsigned char *res = otrl_privkey_fingerprint_raw(
+                userstate->userState(),
+                ourRawHash,
+                ctx.accountName.toLocal8Bit(),
+                ctx.protocol.toLocal8Bit());
+
+        if(res == nullptr) {
+            return QLatin1String("");
+        } else {
+            return utils::humanReadable(ourRawHash);
         }
     }
 

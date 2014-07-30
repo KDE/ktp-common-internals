@@ -88,10 +88,9 @@ namespace {
         Q_UNUSED(accountname);
         Q_UNUSED(protocol);
         Q_UNUSED(recipient);
-        kDebug() << "Injecting: " << message;
 
         Message msg;
-        msg.setText(QString(message));
+        msg.setText(QLatin1String(message));
         msg.setType(Tp::ChannelTextMessageTypeNormal);
         msg.setDirection(MessageDirection::TO_PEER);
 
@@ -401,24 +400,24 @@ Manager::Manager(Config *otrConfig)
 {
 }
 
-UserStateBox* Manager::getUserState(const SessionContext &ctx)
+UserStateBox* Manager::getUserState(const QString &accountId)
 {
-    auto usIt = userStates.find(ctx.accountId);
+    auto usIt = userStates.find(accountId);
     if(usIt == userStates.end()) {
         // initiate new userstate
         OtrlUserState userstate = otrl_userstate_create();
 
-        QString path = config->saveLocation() + ctx.accountId + QLatin1String("_privkeys");
+        QString path = config->saveLocation() + accountId + QLatin1String(".privkeys");
         otrl_privkey_read(userstate, path.toLocal8Bit());
 
-        path = config->saveLocation() + ctx.accountId + QLatin1String("_fingerprints");
+        path = config->saveLocation() + accountId + QLatin1String(".fingerprints");
         otrl_privkey_read_fingerprints(userstate, path.toLocal8Bit(), NULL, NULL);
 
-        path = config->saveLocation() + ctx.accountId + QLatin1String("_instags");
+        path = config->saveLocation() + accountId + QLatin1String(".instags");
         otrl_instag_read(userstate, path.toLocal8Bit());
 
         UserStateBoxPtr usPtr(new UserStateBox(userstate));
-        userStates.insert(ctx.accountId, usPtr);
+        userStates.insert(accountId, usPtr);
         return usPtr.data();
     } else {
         return usIt->data();
@@ -437,22 +436,33 @@ void Manager::setPolicy(OtrlPolicy policy)
 
 void Manager::createNewPrivateKey(Session *session)
 {
-    const QString path = config->saveLocation() + session->context().accountId + QLatin1String("_privkeys");
+    const QString path = config->saveLocation() + session->context().accountId + QLatin1String(".privkeys");
     otrl_privkey_generate(session->userStateBox()->userState(),
             path.toLocal8Bit(),
             session->context().accountName.toLocal8Bit(),
             session->context().protocol.toLocal8Bit());
 }
 
+KeyGenerationThread* Manager::createNewPrivateKey(const QString &accountId, const QString &accountName)
+{
+    const QString path = config->saveLocation() + accountId + QLatin1String(".privkeys");
+    return new KeyGenerationThread(
+            accountId,
+            accountName,
+            utils::protocolFromAccountId(accountId),
+            path,
+            getUserState(accountId)->userState());
+}
+
 void Manager::saveFingerprints(Session *session)
 {
-    const QString path = config->saveLocation() + session->context().accountId + QLatin1String("_fingerprints");
+    const QString path = config->saveLocation() + session->context().accountId + QLatin1String(".fingerprints");
 	otrl_privkey_write_fingerprints(session->userStateBox()->userState(), path.toLocal8Bit());
 }
 
 void Manager::createInstag(Session *session)
 {
-    const QString path = config->saveLocation() + session->context().accountId + QLatin1String("_instags");
+    const QString path = config->saveLocation() + session->context().accountId + QLatin1String(".instags");
 	otrl_instag_generate(session->userStateBox()->userState(),
             path.toLocal8Bit(),
             session->context().accountName.toLocal8Bit(),
@@ -476,17 +486,59 @@ TrustFpResult Manager::trustFingerprint(const SessionContext &ctx, Fingerprint *
         return TrustFpResult::NO_SUCH_FINGERPRINT;
     }
 
-    UserStateBox* usBox = getUserState(ctx);
+    UserStateBox* usBox = getUserState(ctx.accountId);
     if(trust) {
         otrl_context_set_trust(fingerprint, "VERIFIED");
     } else {
         otrl_context_set_trust(fingerprint, NULL);
     }
 
-    const QString path = config->saveLocation() + ctx.accountId + QLatin1String("_fingerprints");
+    const QString path = config->saveLocation() + ctx.accountId + QLatin1String(".fingerprints");
 	otrl_privkey_write_fingerprints(usBox->userState(), path.toLocal8Bit());
 
     return TrustFpResult::OK;
+}
+
+
+KeyGenerationThread::KeyGenerationThread(
+        const QString &accountId,
+        const QString &accountName,
+        const QString &protocol,
+        const QString &path,
+        OtrlUserState userState)
+    : accountId(accountId),
+    accountName(accountName),
+    protocol(protocol),
+    path(path),
+    userState(userState),
+    err(0)
+{
+}
+
+gcry_error_t KeyGenerationThread::prepareCreation()
+{
+    return err = otrl_privkey_generate_start(userState, accountName.toLocal8Bit(), protocol.toLocal8Bit(), &newKey);
+}
+
+void KeyGenerationThread::run()
+{
+    if(!err) {
+        err = otrl_privkey_generate_calculate(newKey);
+    }
+}
+
+gcry_error_t KeyGenerationThread::error() const
+{
+    return err;
+}
+
+gcry_error_t KeyGenerationThread::finalizeCreation()
+{
+    if(!err) {
+        return err = otrl_privkey_generate_finish(userState, newKey, path.toLocal8Bit());
+    } else {
+        return err;
+    }
 }
 
 } /* namespace OTR */

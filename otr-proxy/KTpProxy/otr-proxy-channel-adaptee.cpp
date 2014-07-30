@@ -19,6 +19,7 @@
 
 #include "otr-proxy-channel-adaptee.h"
 #include "otr-proxy-channel.h"
+#include "proxy-service.h"
 #include "otr-constants.h"
 #include "otr-manager.h"
 #include "constants.h"
@@ -86,12 +87,15 @@ OtrProxyChannel::Adaptee::Adaptee(OtrProxyChannel *pc,
         const QDBusConnection &dbusConnection,
         const Tp::TextChannelPtr &channel,
         const OTR::SessionContext &context,
-        OTR::Manager *manager)
-    : adaptor(new Tp::Service::ChannelProxyInterfaceOTRAdaptor(dbusConnection, this, pc->dbusObject())),
+        ProxyService *ps)
+    : QObject(pc),
+    adaptor(new Tp::Service::ChannelProxyInterfaceOTRAdaptor(dbusConnection, this, pc->dbusObject())),
     pc(pc),
     chan(channel),
     isConnected(false),
-    otrSes(this, context, manager)
+    otrSes(this, context, ps->managerOTR()),
+    ps(ps),
+    aboutToInit(false)
 {
     kDebug() << "Created OTR session for context: "
         << "Account id: " << context.accountId
@@ -130,7 +134,7 @@ uint OtrProxyChannel::Adaptee::trustLevel() const
 
 QString OtrProxyChannel::Adaptee::localFingerprint() const
 {
-    return QString::fromLatin1("not implemented");
+    return otrSes.localFingerprint();
 }
 
 QString OtrProxyChannel::Adaptee::remoteFingerprint() const
@@ -276,7 +280,14 @@ void OtrProxyChannel::Adaptee::initialize(const Tp::Service::ChannelProxyInterfa
         return;
     }
 
-    sendOTRmessage(otrSes.startSession());
+    // create private key if necessary - to avoid blocking
+    if(otrSes.localFingerprint().isEmpty() && ps->getPolicy() != OTRL_POLICY_NEVER) {
+        aboutToInit = true;
+        acquirePrivateKey();
+    } else {
+        sendOTRmessage(otrSes.startSession());
+    }
+
     context->setFinished();
 }
 
@@ -312,8 +323,14 @@ void OtrProxyChannel::Adaptee::trustFingerprint(const QString& fingerprint, bool
 void OtrProxyChannel::Adaptee::onMessageReceived(const Tp::ReceivedMessage &receivedMessage)
 {
     const uint id = receivedMessage.header()[QLatin1String("pending-message-id")].variant().toUInt(nullptr);
-    kDebug() << "Received message with id: " << id;
     OTR::Message otrMsg(receivedMessage.parts());
+    if(otrMsg.isOTRmessage() && otrSes.localFingerprint().isEmpty() && ps->getPolicy() != OTRL_POLICY_NEVER) {
+        enqueuedMessages << receivedMessage;
+        acquirePrivateKey();
+        return;
+    }
+
+    kDebug() << "Received message with id: " << id;
     const OTR::CryptResult cres = otrSes.decrypt(otrMsg);
 
     if(cres == OTR::CryptResult::CHANGED || cres == OTR::CryptResult::UNCHANGED) {
@@ -364,3 +381,36 @@ void OtrProxyChannel::Adaptee::onTrustLevelChanged(TrustLevel trustLevel)
     Q_EMIT trustLevelChanged(static_cast<uint>(trustLevel));
 }
 
+void OtrProxyChannel::Adaptee::acquirePrivateKey()
+{
+    connect(ps, SIGNAL(keyGenerationFinished(const QString&, bool)), SLOT(onKeyGenerationFinished(const QString&, bool)));
+    if(!ps->createNewPrivateKey(otrSes.context().accountId, otrSes.context().accountName)) {
+        disconnect(ps, SIGNAL(keyGenerationFinished(const QString&, bool)),
+                this, SLOT(onKeyGenerationFinished(const QString&, bool)));
+    }
+}
+
+void OtrProxyChannel::Adaptee::onKeyGenerationFinished(const QString &accountId, bool error)
+{
+    if(accountId != otrSes.context().accountId) {
+        return;
+    }
+    kDebug() << "Finished key generation for: " << accountId;
+    disconnect(ps, SIGNAL(keyGenerationFinished(const QString&, bool)),
+            this, SLOT(onKeyGenerationFinished(const QString&, bool)));
+
+    if(error) {
+        kWarning() << "Could not generate private key for " << accountId;
+        return;
+    }
+    if(!enqueuedMessages.isEmpty()) {
+        for(auto &&mes: enqueuedMessages) {
+            onMessageReceived(mes);
+        }
+        enqueuedMessages.clear();
+    } else if(aboutToInit) {
+        sendOTRmessage(otrSes.startSession());
+    }
+
+    aboutToInit = false;
+}

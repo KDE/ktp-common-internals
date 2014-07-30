@@ -21,6 +21,8 @@
 #define KTP_PROXY_OTR_UTILS_HEADER
 
 #include <QString>
+#include <QStringList>
+#include <QDBusObjectPath>
 
 extern "C" {
 #include <libotr/privkey.h>
@@ -44,6 +46,41 @@ namespace utils
         otrl_privkey_hash_to_human(human, fingerprint);
 
         return QString::fromLocal8Bit(human, OTRL_PRIVKEY_FPRINT_HUMAN_LEN);
+    }
+
+    inline QString accountIdFor(const QDBusObjectPath &objectPath)
+    {
+        QStringList elems = objectPath.path().split(QLatin1Char('/'));
+        return QStringList(elems.mid(elems.size()-3)).join(QLatin1String("."));
+    }
+
+    inline QString accountIdFor(const QString &cmName, const QString &protocol, const QString &acc)
+    {
+        return cmName + QLatin1Char('.') + protocol + QLatin1Char('.') + acc;
+    }
+
+    inline QString cmNameFromAccountId(const QString &accountId)
+    {
+        return accountId.split(QLatin1Char('.'))[0];
+    }
+
+    inline QString protocolFromAccountId(const QString &accountId)
+    {
+        return accountId.split(QLatin1Char('.'))[1];
+    }
+
+    inline QString accFromAccountId(const QString &accountId)
+    {
+        return accountId.split(QLatin1Char('.'))[2];
+    }
+
+    inline QDBusObjectPath objectPathFor(const QString &accountId)
+    {
+        return QDBusObjectPath(
+                QLatin1String("/org/freedesktop/Telepathy/Account/") +
+                cmNameFromAccountId(accountId) + QLatin1Char('/') +
+                protocolFromAccountId(accountId) + QLatin1Char('/') +
+                accFromAccountId(accountId));
     }
 }
 }

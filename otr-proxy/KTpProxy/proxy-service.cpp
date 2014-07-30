@@ -21,6 +21,7 @@
 #include "proxy-observer.h"
 #include "otr-proxy-channel.h"
 #include "otr-config.h"
+#include "otr-utils.h"
 #include "pending-curry-operation.h"
 #include "constants.h"
 
@@ -55,13 +56,24 @@ ProxyService::ProxyService(const QDBusConnection &dbusConnection, OTR::Config *c
     adaptee(this, dbusConnection),
     observer(new ProxyObserver(this)),
     registrar(Tp::ClientRegistrar::create(dbusConnection)),
-    manager(config)
+    manager(config),
+    am(Tp::AccountManager::create(dbusConnection))
 {
 }
 
 ProxyService::~ProxyService()
 {
     registrar->unregisterClients();
+}
+
+OTR::Manager* ProxyService::managerOTR()
+{
+    return &manager;
+}
+
+Tp::AccountManagerPtr ProxyService::accountManager()
+{
+    return am;
 }
 
 void ProxyService::addChannel(const Tp::ChannelPtr &channel, const Tp::AccountPtr &account)
@@ -101,6 +113,16 @@ QVariantMap ProxyService::immutableProperties() const
     return QVariantMap();
 }
 
+OtrlPolicy ProxyService::getPolicy() const
+{
+    return manager.getPolicy();
+}
+
+void ProxyService::setPolicy(OtrlPolicy otrPolicy)
+{
+    manager.setPolicy(otrPolicy);
+}
+
 void ProxyService::onChannelProxyClosed()
 {
     OtrProxyChannel *proxyChannel = dynamic_cast<OtrProxyChannel*>(QObject::sender());
@@ -124,13 +146,13 @@ void ProxyService::onChannelReady(Tp::PendingOperation *pendingChanReady)
     Tp::DBusError error;
     OTR::SessionContext ctx =
     {
-        pendingReady->account->uniqueIdentifier().replace(QChar('/'), QChar('_')),
+        OTR::utils::accountIdFor(QDBusObjectPath(pendingReady->account->objectPath())),
         pendingReady->account->normalizedName(),
         textChannel->targetId(),
         textChannel->connection()->protocolName()
     };
 
-    OtrProxyChannelPtr proxyChannel = OtrProxyChannel::create(dbusConnection(), textChannel, ctx, &manager);
+    OtrProxyChannelPtr proxyChannel = OtrProxyChannel::create(dbusConnection(), textChannel, ctx, this);
     proxyChannel->registerService(&error);
 
     if(error.isValid()) {
@@ -153,4 +175,38 @@ void ProxyService::onChannelReady(Tp::PendingOperation *pendingChanReady)
 
     kDebug() << "Installed proxy: " << proxyChannel->objectPath() << "\n"
         << " for the channel: " << textChannel->objectPath();
+}
+
+bool ProxyService::createNewPrivateKey(const QString &accountId, const QString &accountName)
+{
+    kDebug() << "Generating new private key for " << accountId;
+    OTR::KeyGenerationThread *keyThread = manager.createNewPrivateKey(accountId, accountName);
+    if(keyThread) {
+        if(keyThread->prepareCreation()) {
+            // alredy started creation for this account
+            kDebug() << "Cannot prepare key generation for " << accountId;
+            return false;
+        }
+        connect(keyThread, SIGNAL(finished()), SLOT(onKeyGenerationThreadFinished()));
+        keyThread->start();
+        Q_EMIT keyGenerationStarted(accountId);
+        return true;
+    } else {
+        return false;
+    }
+}
+
+void ProxyService::onKeyGenerationThreadFinished()
+{
+    OTR::KeyGenerationThread *thread = dynamic_cast<OTR::KeyGenerationThread*>(QObject::sender());
+    kDebug() << "Finished generating a new private key for " << thread->accountId;
+
+    if(thread->error() || thread->finalizeCreation()) {
+        kDebug() << "Error generating private key for " << thread->accountId;
+        Q_EMIT keyGenerationFinished(thread->accountId, true);
+    } else{
+        Q_EMIT keyGenerationFinished(thread->accountId, false);
+    }
+
+    thread->deleteLater();
 }

@@ -23,6 +23,8 @@
 #include "otr-config.h"
 #include "otr-session.h"
 
+#include <QThread>
+
 extern "C" {
 #include <gcrypt.h>
 #include <libotr/privkey.h>
@@ -33,17 +35,19 @@ extern "C" {
 
 namespace OTR
 {
-namespace global
-{
-    extern const OtrlMessageAppOps appOps;
-}
+    namespace global
+    {
+        extern const OtrlMessageAppOps appOps;
+    }
+
+    class KeyGenerationThread;
 
     class Manager
     {
         public:
             Manager(Config *otrConfig);
 
-            UserStateBox* getUserState(const SessionContext &ctx);
+            UserStateBox* getUserState(const QString &accountId);
 
             OtrlPolicy getPolicy() const;
             void setPolicy(OtrlPolicy policy);
@@ -53,12 +57,43 @@ namespace global
             TrustFpResult trustFingerprint(const SessionContext &ctx, Fingerprint *fingerprint, bool trust);
 
             void createNewPrivateKey(Session *session);
+            /** return nullptr if thread could not be craeted
+              otherwise returns thread which generates a new private key upon calling start method */
+            KeyGenerationThread* createNewPrivateKey(const QString &accountId, const QString &accountName);
             void createInstag(Session *session);
 
         private:
             Config *config;
             // TODO - consider clearing states when not in use
             QMap<QString, UserStateBoxPtr> userStates;
+    };
+
+    class KeyGenerationThread : public QThread
+    {
+        public:
+            KeyGenerationThread(
+                    const QString &accountId,
+                    const QString &accountName,
+                    const QString &protocol,
+                    const QString &path,
+                    OtrlUserState userState);
+
+            virtual void run();
+            gcry_error_t error() const;
+            /* has to called before the thread starts*/
+            gcry_error_t prepareCreation();
+            /* has to called after the finished() signal is emitted */
+            gcry_error_t finalizeCreation();
+
+            const QString &accountId;
+            const QString accountName;
+            const QString protocol;
+            const QString path;
+
+        private:
+            OtrlUserState userState;
+            gcry_error_t err;
+            void *newKey;
     };
 
 } /* namespace OTR */

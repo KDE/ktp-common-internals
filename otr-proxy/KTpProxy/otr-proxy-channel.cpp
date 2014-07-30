@@ -19,6 +19,7 @@
 
 #include "otr-proxy-channel.h"
 #include "otr-proxy-channel-adaptee.h"
+#include "proxy-service.h"
 #include "constants.h"
 
 #include <TelepathyQt/Channel>
@@ -26,51 +27,31 @@
 #include <TelepathyQt/DBusError>
 #include <TelepathyQt/Connection>
 
-class OtrProxyChannel::Private
-{
-    public:
-        Private(const QDBusConnection &dbusConnection,
-                OtrProxyChannel *pc,
-                const Tp::TextChannelPtr &channel,
-                const OTR::SessionContext &context,
-                OTR::Manager *manager)
-            : adaptee(pc, dbusConnection, channel, context, manager)
-        {
-        }
-
-        Adaptee adaptee;
-};
-
 OtrProxyChannel::OtrProxyChannel(
         const QDBusConnection &dbusConnection,
         const Tp::TextChannelPtr &channel,
         const OTR::SessionContext &context,
-        OTR::Manager *manager)
+        ProxyService *ps)
     : Tp::DBusService(dbusConnection),
-    d(new Private(dbusConnection, this, channel, context, manager))
+    adaptee(new Adaptee(this, dbusConnection, channel, context, ps))
 {
-    connect(&d->adaptee, SIGNAL(closed()), SLOT(onClosed()));
-}
-
-OtrProxyChannel::~OtrProxyChannel()
-{
-    delete d;
+    connect(adaptee, SIGNAL(closed()), SLOT(onClosed()));
 }
 
 OtrProxyChannelPtr OtrProxyChannel::create(const QDBusConnection &dbusConnection, const Tp::TextChannelPtr &channel,
-                const OTR::SessionContext &context, OTR::Manager *manager)
+                const OTR::SessionContext &context, ProxyService *ps)
 {
-    return OtrProxyChannelPtr(new OtrProxyChannel(dbusConnection, channel, context, manager));
+    return OtrProxyChannelPtr(new OtrProxyChannel(dbusConnection, channel, context, ps));
 }
 
 void OtrProxyChannel::registerService(Tp::DBusError *error)
 {
     int index;
-    QString connectionId = d->adaptee.channel()->connection()->objectPath();
+    QString connectionId = adaptee->channel()->connection()->objectPath();
     index = connectionId.lastIndexOf(QChar::fromLatin1('/'));
     connectionId = connectionId.mid(index+1);
 
-    QString channelId = d->adaptee.channel()->objectPath();
+    QString channelId = adaptee->channel()->objectPath();
     index = channelId.lastIndexOf(QChar::fromLatin1('/'));
     channelId = channelId.mid(index+1);
 
@@ -86,11 +67,11 @@ QVariantMap OtrProxyChannel::immutableProperties() const
 
 Tp::TextChannelPtr OtrProxyChannel::wrappedChannel() const
 {
-    return d->adaptee.channel();
+    return adaptee->channel();
 }
 
 void OtrProxyChannel::onClosed()
 {
-    emit closed();
+    Q_EMIT closed();
 }
 

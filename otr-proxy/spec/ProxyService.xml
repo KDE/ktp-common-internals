@@ -18,7 +18,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.</
   </tp:license>
   <interface name="org.kde.TelepathyProxy.ProxyService">
 
-    <signal name="ProxyConnected" tp:name-for-bindings="ProxyConnected">
+    <signal name="ProxyConnected" tp:name-for-bindings="Proxy_Connected">
       <tp:docstring>
         <p>Signals that a proxy has been connected</p>
       </tp:docstring>
@@ -30,7 +30,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.</
       </arg>
     </signal>
 
-    <signal name="ProxyDisconnected" tp:name-for-bindings="ProxyDisconnected">
+    <signal name="ProxyDisconnected" tp:name-for-bindings="Proxy_Disconnected">
       <tp:docstring>
         <p>Signals that a proxy has been disconnected</p>
       </tp:docstring>
@@ -41,6 +41,82 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.</
         </tp:docstring>
       </arg>
     </signal>
+
+    <method name="GeneratePrivateKey" tp:name-for-bindings="Generate_Private_Key">
+      <tp:docstring xmlns="http://www.w3.org/1999/xhtml">
+        <p> Generate new private key for given account. </p>
+      </tp:docstring>
+      <arg direction="in" type="o"
+        name="Account">
+      </arg>
+      <tp:possible-errors>
+        <tp:error name="org.freedesktop.Telepathy.Error.InvalidArgument"/>
+      </tp:possible-errors>
+    </method>
+
+    <signal name="KeyGenerationStarted" tp:name-for-bindings="Key_Generation_Started">
+      <tp:docstring>
+        <p>Signals that a new private key is being generated for account</p>
+      </tp:docstring>
+
+      <arg name="Account" type="o">
+        <tp:docstring>
+          <p>The account the new key is generated for</p>
+        </tp:docstring>
+      </arg>
+    </signal>
+
+    <signal name="KeyGenerationFinished" tp:name-for-bindings="Key_Generation_Finished">
+      <tp:docstring>
+        <p>Signals that a new private key has just been generated for account</p>
+      </tp:docstring>
+
+      <arg name="Account" type="o">
+        <tp:docstring>
+          <p>The account the new key has been generated for</p>
+        </tp:docstring>
+      </arg>
+
+      <arg name="error" type="b">
+        <tp:docstring>
+          <p>%TRUE if error occured during generation</p>
+        </tp:docstring>
+      </arg>
+    </signal>
+
+    <property name="PolicySettings"
+      tp:name-for-bindings="Policy_Settings"
+      type="u" tp:type="OTR_Policy" access="readwrite">
+      <tp:docstring xmlns="http://www.w3.org/1999/xhtml">
+        <p>Set the OTR policy how you like it</p>
+      </tp:docstring>
+    </property>
+
+    <tp:enum name="OTR_Policy" type="u">
+      <tp:docstring>
+        <p>Enumeration describing OTR policy settings.</p>
+      </tp:docstring>
+      <tp:enumvalue suffix="Always" value="0">
+        <tp:docstring>
+          <p>Always encrypt outgoing messages</p>
+        </tp:docstring>
+      </tp:enumvalue>
+      <tp:enumvalue suffix="Opportunistic" value="1">
+        <tp:docstring>
+          <p>Automatically encrypt messages if the other side supports OTR</p>
+        </tp:docstring>
+      </tp:enumvalue>
+      <tp:enumvalue suffix="Manual" value="2">
+        <tp:docstring>
+          <p>Encrypt messages if the other side requests an OTR connection</p>
+        </tp:docstring>
+      </tp:enumvalue>
+      <tp:enumvalue suffix="Never" value="3">
+        <tp:docstring>
+          <p>Never encrypt outgoing messages</p>
+        </tp:docstring>
+      </tp:enumvalue>
+    </tp:enum>
 
   </interface>
 </node>

@@ -533,9 +533,9 @@ void OTRTest::cleanup()
     delete bobEnv;
     delete bobMan;
     delete aliceMan;
-    QFile(aliceConfig.saveLocation() + tst::aliceCtx.accountId + QLatin1String("_fingerprints")).remove();
-    QFile(bobConfig.saveLocation() + tst::bobCtx.accountId + QLatin1String("_fingerprints")).remove();
-    QFile(bobConfig.saveLocation() + tst::johnCtx.accountId + QLatin1String("_fingerprints")).remove();
+    QFile(aliceConfig.saveLocation() + tst::aliceCtx.accountId + QLatin1String(".fingerprints")).remove();
+    QFile(bobConfig.saveLocation() + tst::bobCtx.accountId + QLatin1String(".fingerprints")).remove();
+    QFile(bobConfig.saveLocation() + tst::johnCtx.accountId + QLatin1String(".fingerprints")).remove();
     aliceConfig.setPolicy(OTRL_POLICY_MANUAL);
     bobConfig.setPolicy(OTRL_POLICY_MANUAL);
 }

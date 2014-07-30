@@ -73,6 +73,11 @@ namespace OTR
         return static_cast<Tp::ChannelTextMessageType>(message[0][QLatin1String("message-type")].variant().toUInt(nullptr));
     }
 
+    bool Message::isOTRmessage() const
+    {
+        return otrl_proto_message_type(text().toLocal8Bit()) != OTRL_MSGTYPE_NOTOTR;
+    }
+
     MessageDirection Message::direction() const
     {
         return dir;
