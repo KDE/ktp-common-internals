@@ -304,6 +304,8 @@ void OtrProxyChannel::Adaptee::stop(const Tp::Service::ChannelProxyInterfaceOTRA
 void OtrProxyChannel::Adaptee::trustFingerprint(const QString& fingerprint, bool trust,
         const Tp::Service::ChannelProxyInterfaceOTRAdaptor::TrustFingerprintContextPtr &context)
 {
+    kDebug() << "TrustFingeprint - " << trust << ": " << fingerprint << " when remote is: " << otrSes.remoteFingerprint();
+
     if(otrSes.remoteFingerprint().isEmpty() || fingerprint != otrSes.remoteFingerprint()) {
         context->setFinishedWithError(TP_QT_ERROR_INVALID_ARGUMENT,
                 QLatin1String("No such fingerprint currently in use by remote contact"));
@@ -313,6 +315,7 @@ void OtrProxyChannel::Adaptee::trustFingerprint(const QString& fingerprint, bool
     OTR::TrustFpResult fpRes = otrSes.trustFingerprint(trust);
     if(fpRes != OTR::TrustFpResult::OK) {
         // should not happend, TODO clarify
+        kDebug() << "Trust error";
         context->setFinishedWithError(TP_QT_ERROR_INVALID_ARGUMENT,
                 QLatin1String("No such fingerprint currently in use by remote contact"));
         return;

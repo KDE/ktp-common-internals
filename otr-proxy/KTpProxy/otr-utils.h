@@ -24,6 +24,8 @@
 #include <QStringList>
 #include <QDBusObjectPath>
 
+#include <KDebug>
+
 extern "C" {
 #include <libotr/privkey.h>
 }
@@ -44,8 +46,7 @@ namespace utils
     {
         char human[OTRL_PRIVKEY_FPRINT_HUMAN_LEN];
         otrl_privkey_hash_to_human(human, fingerprint);
-
-        return QString::fromLocal8Bit(human, OTRL_PRIVKEY_FPRINT_HUMAN_LEN);
+        return QString::fromLocal8Bit(human, OTRL_PRIVKEY_FPRINT_HUMAN_LEN-1);
     }
 
     inline QString accountIdFor(const QDBusObjectPath &objectPath)
