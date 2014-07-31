@@ -60,6 +60,7 @@ namespace OTR
             /** return nullptr if thread could not be craeted
               otherwise returns thread which generates a new private key upon calling start method */
             KeyGenerationThread* createNewPrivateKey(const QString &accountId, const QString &accountName);
+            QString getFingerprintFor(const QString &accountId, const QString &accountName);
             void createInstag(Session *session);
 
         private:

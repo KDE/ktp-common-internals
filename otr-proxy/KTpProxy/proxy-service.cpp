@@ -196,6 +196,11 @@ bool ProxyService::createNewPrivateKey(const QString &accountId, const QString &
     }
 }
 
+QString ProxyService::getFingerprintFor(const QString &accountId, const QString &accountName)
+{
+    return manager.getFingerprintFor(accountId, accountName);
+}
+
 void ProxyService::onKeyGenerationThreadFinished()
 {
     OTR::KeyGenerationThread *thread = dynamic_cast<OTR::KeyGenerationThread*>(QObject::sender());

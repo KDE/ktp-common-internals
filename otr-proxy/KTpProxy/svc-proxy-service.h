@@ -15,7 +15,6 @@
 #include <QObject>
 #include <QtDBus>
 
-
 namespace Tp
 {
 namespace Service
@@ -37,6 +36,10 @@ class TP_QT_EXPORT ProxyServiceAdaptor : public Tp::AbstractAdaptor
 "    <property access=\"readwrite\" type=\"u\" name=\"PolicySettings\"/>\n"
 "    <method name=\"GeneratePrivateKey\">\n"
 "      <arg direction=\"in\" type=\"o\" name=\"account\"/>\n"
+"    </method>\n"
+"    <method name=\"GetFingerprintForAccount\">\n"
+"      <arg direction=\"in\" type=\"o\" name=\"account\"/>\n"
+"      <arg direction=\"out\" type=\"s\" name=\"fingerprint\"/>\n"
 "    </method>\n"
 "    <signal name=\"ProxyConnected\">\n"
 "      <arg type=\"o\" name=\"proxy\"/>\n"
@@ -60,6 +63,7 @@ public:
     virtual ~ProxyServiceAdaptor();
 
     typedef Tp::MethodInvocationContextPtr<  > GeneratePrivateKeyContextPtr;
+    typedef Tp::MethodInvocationContextPtr< QString > GetFingerprintForAccountContextPtr;
 
 public: // PROPERTIES
     /**
@@ -68,7 +72,7 @@ public: // PROPERTIES
      * Adaptees should export this property as a Qt property named
      * 'policySettings' with type uint.
      *
-     *
+     * 
      * \htmlonly
      * <p>Set the OTR policy how you like it</p>
      * \endhtmlonly
@@ -82,7 +86,7 @@ public: // PROPERTIES
      * Adaptees should export this property as a writable Qt property named
      * 'policySettings' with type uint.
      *
-     *
+     * 
      * \htmlonly
      * <p>Set the OTR policy how you like it</p>
      * \endhtmlonly
@@ -99,13 +103,34 @@ public Q_SLOTS: // METHODS
      * Implementations should call MethodInvocationContext::setFinished (or setFinishedWithError
      * accordingly) on the received \a context object once the method has finished processing.
      *
-     *
+     * 
      * \htmlonly
      * <p> Generate new private key for given account. </p>
      * \endhtmlonly
      *
      */
     void GeneratePrivateKey(const QDBusObjectPath& account, const QDBusMessage& dbusMessage);
+    /**
+     * Begins a call to the exported D-Bus method \c GetFingerprintForAccount on this object.
+     *
+     * Adaptees should export this method as a Qt slot with the following signature:
+     * void getFingerprintForAccount(const QDBusObjectPath& account, const Tp::Service::ProxyServiceAdaptor::GetFingerprintForAccountContextPtr &context);
+     *
+     * Implementations should call MethodInvocationContext::setFinished (or setFinishedWithError
+     * accordingly) on the received \a context object once the method has finished processing.
+     *
+     * 
+     * Get private key fingerprint associated with given account
+     *
+     * \param account
+     *     
+     *     The account the new key is generated for
+     * \return
+     *     
+     *     Fingerprint of given account&apos;s private key or an empty string 
+     *     if none exists
+     */
+    QString GetFingerprintForAccount(const QDBusObjectPath& account, const QDBusMessage& dbusMessage);
 
 Q_SIGNALS: // SIGNALS
     /**
@@ -117,7 +142,7 @@ Q_SIGNALS: // SIGNALS
      * The adaptee signal will be automatically relayed as a D-Bus signal once emitted.
      *
      * \param proxy
-     *
+     *     
      *     The object path of the connected proxy
      */
     void ProxyConnected(const QDBusObjectPath& proxy);
@@ -130,7 +155,7 @@ Q_SIGNALS: // SIGNALS
      * The adaptee signal will be automatically relayed as a D-Bus signal once emitted.
      *
      * \param proxy
-     *
+     *     
      *     The object path of the disconnectd proxy type
      */
     void ProxyDisconnected(const QDBusObjectPath& proxy);
@@ -143,7 +168,7 @@ Q_SIGNALS: // SIGNALS
      * The adaptee signal will be automatically relayed as a D-Bus signal once emitted.
      *
      * \param account
-     *
+     *     
      *     The account the new key is generated for
      */
     void KeyGenerationStarted(const QDBusObjectPath& account);
@@ -156,10 +181,10 @@ Q_SIGNALS: // SIGNALS
      * The adaptee signal will be automatically relayed as a D-Bus signal once emitted.
      *
      * \param account
-     *
+     *     
      *     The account the new key has been generated for
      * \param error
-     *
+     *     
      *     %TRUE if error occured during generation
      */
     void KeyGenerationFinished(const QDBusObjectPath& account, bool error);

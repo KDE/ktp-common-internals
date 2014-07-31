@@ -88,12 +88,23 @@ void ProxyServiceAdaptee::generatePrivateKey(const QDBusObjectPath &accountPath,
         const Tp::Service::ProxyServiceAdaptor::GeneratePrivateKeyContextPtr &context)
 {
     Tp::AccountPtr ac = ps->accountManager()->accountForObjectPath(accountPath.path());
-    if(ac->isValidAccount() &&
+    if(ac && ac->isValidAccount() &&
             ps->createNewPrivateKey(OTR::utils::accountIdFor(accountPath), ac->normalizedName())) {
         context->setFinished();
     } else {
         // TODO better errors
         context->setFinishedWithError(TP_QT_ERROR_INVALID_ARGUMENT,
                 QLatin1String("Could not generate private key for given account"));
+    }
+}
+
+void ProxyServiceAdaptee::getFingerprintForAccount(QDBusObjectPath accountPath,
+        const Tp::Service::ProxyServiceAdaptor::GetFingerprintForAccountContextPtr &context)
+{
+    Tp::AccountPtr ac = ps->accountManager()->accountForObjectPath(accountPath.path());
+    if(ac && ac->isValidAccount()) {
+        context->setFinished(ps->getFingerprintFor(OTR::utils::accountIdFor(accountPath), ac->normalizedName()));
+    } else {
+        context->setFinishedWithError(TP_QT_ERROR_INVALID_ARGUMENT, QLatin1String("No such valid account"));
     }
 }

@@ -45,5 +45,20 @@ void ProxyServiceAdaptor::GeneratePrivateKey(const QDBusObjectPath& account, con
         Q_ARG(Tp::Service::ProxyServiceAdaptor::GeneratePrivateKeyContextPtr, ctx));
 }
 
+QString ProxyServiceAdaptor::GetFingerprintForAccount(const QDBusObjectPath& account, const QDBusMessage& dbusMessage)
+{
+    if (!adaptee()->metaObject()->indexOfMethod("getFingerprintForAccount(QDBusObjectPath,Tp::Service::ProxyServiceAdaptor::GetFingerprintForAccountContextPtr)") == -1) {
+        dbusConnection().send(dbusMessage.createErrorReply(TP_QT_ERROR_NOT_IMPLEMENTED, QLatin1String("Not implemented")));
+        return QString();
+    }
+
+    GetFingerprintForAccountContextPtr ctx = GetFingerprintForAccountContextPtr(
+            new Tp::MethodInvocationContext< QString >(dbusConnection(), dbusMessage));
+    QMetaObject::invokeMethod(adaptee(), "getFingerprintForAccount",
+        Q_ARG(QDBusObjectPath, account),
+        Q_ARG(Tp::Service::ProxyServiceAdaptor::GetFingerprintForAccountContextPtr, ctx));
+    return QString();
+}
+
 }
 }

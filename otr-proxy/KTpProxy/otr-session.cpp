@@ -124,18 +124,7 @@ namespace OTR
 
     QString Session::localFingerprint() const
     {
-        unsigned char ourRawHash[20];
-        unsigned char *res = otrl_privkey_fingerprint_raw(
-                userstate->userState(),
-                ourRawHash,
-                ctx.accountName.toLocal8Bit(),
-                ctx.protocol.toLocal8Bit());
-
-        if(res == nullptr) {
-            return QLatin1String("");
-        } else {
-            return utils::humanReadable(ourRawHash);
-        }
+        return parent()->getFingerprintFor(ctx.accountId, ctx.accountName);
     }
 
     Message Session::startSession()

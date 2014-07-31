@@ -454,6 +454,23 @@ KeyGenerationThread* Manager::createNewPrivateKey(const QString &accountId, cons
             getUserState(accountId)->userState());
 }
 
+QString Manager::getFingerprintFor(const QString &accountId, const QString &accountName)
+{
+    OtrlUserState userState = getUserState(accountId)->userState();
+    unsigned char ourRawHash[20];
+    unsigned char *res = otrl_privkey_fingerprint_raw(
+            userState,
+            ourRawHash,
+            accountName.toLocal8Bit(),
+            OTR::utils::protocolFromAccountId(accountId).toLocal8Bit());
+
+    if(res == nullptr) {
+        return QLatin1String("");
+    } else {
+        return utils::humanReadable(ourRawHash);
+    }
+}
+
 void Manager::saveFingerprints(Session *session)
 {
     const QString path = config->saveLocation() + session->context().accountId + QLatin1String(".fingerprints");

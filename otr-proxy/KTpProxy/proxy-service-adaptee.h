@@ -58,6 +58,8 @@ class ProxyServiceAdaptee : public QObject
         void onProxyDisconnected(const QDBusObjectPath &proxyPath);
         void generatePrivateKey(const QDBusObjectPath &accountPath,
                 const Tp::Service::ProxyServiceAdaptor::GeneratePrivateKeyContextPtr &context);
+        void getFingerprintForAccount(QDBusObjectPath accountPath,
+                const Tp::Service::ProxyServiceAdaptor::GetFingerprintForAccountContextPtr &context);
     private Q_SLOTS:
         void onKeyGenerationStarted(const QString &accountId);
         void onKeyGenerationFinished(const QString &accountId, bool error);

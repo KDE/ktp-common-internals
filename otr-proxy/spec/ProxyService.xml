@@ -84,6 +84,27 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.</
       </arg>
     </signal>
 
+    <method name="GetFingerprintForAccount" tp:name-for-bindings="Get_Fingerprint_For_Account">
+      <tp:docstring>
+        <p>Get private key fingerprint associated with given account</p>
+      </tp:docstring>
+
+      <arg direction="in" name="Account" type="o">
+        <tp:docstring>
+          <p>The account the new key is generated for</p>
+        </tp:docstring>
+      </arg>
+      <arg direction="out" name="Fingerprint" type="s">
+        <tp:docstring>
+          <p>Fingerprint of given account's private key or an empty string if none exists</p>
+        </tp:docstring>
+      </arg>
+
+      <tp:possible-errors>
+        <tp:error name="org.freedesktop.Telepathy.Error.InvalidArgument"/>
+      </tp:possible-errors>
+    </method>
+
     <property name="PolicySettings"
       tp:name-for-bindings="Policy_Settings"
       type="u" tp:type="OTR_Policy" access="readwrite">
