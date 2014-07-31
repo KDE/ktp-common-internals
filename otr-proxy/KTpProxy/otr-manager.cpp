@@ -27,32 +27,6 @@ namespace OTR
 
 namespace {
 
-    void updateTrustLevel(Session *session, ConnContext *context)
-    {
-        if(context == nullptr) return;
-
-        TrustLevel level = TrustLevel::NOT_PRIVATE;
-        switch(context->msgstate) {
-            case OTRL_MSGSTATE_PLAINTEXT:
-                level = TrustLevel::NOT_PRIVATE;
-                break;
-            case OTRL_MSGSTATE_ENCRYPTED:
-                {
-                    if(otrl_context_is_fingerprint_trusted(context->active_fingerprint)) {
-                        level = TrustLevel::VERIFIED;
-                    } else {
-                        level = TrustLevel::UNVERIFIED;
-                    }
-                    break;
-                }
-            case OTRL_MSGSTATE_FINISHED:
-                level = TrustLevel::FINISHED;
-                break;
-        }
-
-        session->onTrustLevelChanged(level, context);
-    }
-
     /** OTR ops functions ------------------------------------------------------------------------- */
     OtrlPolicy policy(void *opdata, ConnContext *context)
     {
@@ -126,13 +100,17 @@ namespace {
     void gone_secure(void *opdata, ConnContext *context)
     {
         Session *session = reinterpret_cast<Session*>(opdata);
-        updateTrustLevel(session, context);
+        session->onTrustLevelChanged(
+                OTR::utils::getTrustLevel(session->context(), session->userStateBox()->userState(), context->their_instance),
+                context);
     }
 
     void gone_insecure(void *opdata, ConnContext *context)
     {
         Session *session = reinterpret_cast<Session*>(opdata);
-        updateTrustLevel(session, context);
+        session->onTrustLevelChanged(
+                OTR::utils::getTrustLevel(session->context(), session->userStateBox()->userState(), context->their_instance),
+                context);
     }
 
     void still_secure(void *opdata, ConnContext *context, int is_reply)

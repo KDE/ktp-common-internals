@@ -71,7 +71,6 @@ namespace OTR
     Session::Session(const SessionContext &ctx, Manager *parent)
         : instance(OTRL_INSTAG_BEST),
         ctx(ctx),
-        tlevel(TrustLevel::NOT_PRIVATE),
         pr(parent)
     {
         userstate = pr->getUserState(ctx.accountId);
@@ -79,7 +78,7 @@ namespace OTR
 
     TrustLevel Session::trustLevel() const
     {
-        return tlevel;
+        return OTR::utils::getTrustLevel(ctx, userstate->userState(), instance);
     }
 
     UserStateBox* Session::userStateBox() const
@@ -273,7 +272,6 @@ namespace OTR
         if(context != nullptr) {
             instance = context->their_instance;
         }
-        tlevel = trustLevel;
         emit trustLevelChanged(trustLevel);
     }
 

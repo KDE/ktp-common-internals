@@ -101,7 +101,6 @@ namespace OTR
         private:
             otrl_instag_t instance;
             SessionContext ctx;
-            TrustLevel tlevel;
             UserStateBox *userstate;
             Manager *pr;
     };

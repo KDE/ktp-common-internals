@@ -20,6 +20,8 @@
 #ifndef KTP_PROXY_OTR_UTILS_HEADER
 #define KTP_PROXY_OTR_UTILS_HEADER
 
+#include "otr-constants.h"
+
 #include <QString>
 #include <QStringList>
 #include <QDBusObjectPath>
@@ -82,6 +84,37 @@ namespace utils
                 cmNameFromAccountId(accountId) + QLatin1Char('/') +
                 protocolFromAccountId(accountId) + QLatin1Char('/') +
                 accFromAccountId(accountId));
+    }
+
+    inline TrustLevel getTrustLevel(const SessionContext &ctx, OtrlUserState userState, otrl_instag_t instance)
+    {
+        ConnContext *context = otrl_context_find(
+                userState,
+                ctx.recipientName.toLocal8Bit(),
+                ctx.accountName.toLocal8Bit(),
+                ctx.protocol.toLocal8Bit(),
+                instance, 0, NULL, NULL, NULL);
+
+        if(context == nullptr) {
+            kWarning() << "Could not get trust level";
+            return TrustLevel::NOT_PRIVATE;
+        }
+
+        switch(context->msgstate) {
+            case OTRL_MSGSTATE_PLAINTEXT:
+                return TrustLevel::NOT_PRIVATE;
+            case OTRL_MSGSTATE_ENCRYPTED:
+                {
+                    if(otrl_context_is_fingerprint_trusted(context->active_fingerprint)) {
+                        return TrustLevel::VERIFIED;
+                    } else {
+                        return TrustLevel::UNVERIFIED;
+                    }
+                }
+            case OTRL_MSGSTATE_FINISHED:
+                return TrustLevel::FINISHED;
+        }
+        return TrustLevel::NOT_PRIVATE;
     }
 }
 }
