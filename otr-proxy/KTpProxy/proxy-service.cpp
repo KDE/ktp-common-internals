@@ -97,7 +97,7 @@ void ProxyService::addChannel(const Tp::ChannelPtr &channel, const Tp::AccountPt
 void ProxyService::registerService(Tp::DBusError *error)
 {
     Tp::AbstractClientPtr baseObserverPtr = Tp::AbstractClientPtr::dynamicCast(observer);
-    const bool isRegistered = registrar->registerClient(baseObserverPtr, QString::fromLatin1("ProxyObserver"));
+    const bool isRegistered = registrar->registerClient(baseObserverPtr, QString::fromLatin1("KTp.Proxy"));
     if(!isRegistered) {
         error->set(
                 QString::fromLatin1("Client registering error"),
