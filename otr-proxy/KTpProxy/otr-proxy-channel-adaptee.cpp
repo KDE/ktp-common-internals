@@ -22,11 +22,15 @@
 #include "proxy-service.h"
 #include "otr-constants.h"
 #include "otr-manager.h"
+#include "otr-utils.h"
 #include "constants.h"
 #include "pending-curry-operation.h"
 
 #include <TelepathyQt/DBusObject>
 #include <TelepathyQt/TextChannel>
+#include <TelepathyQt/Contact>
+
+#include <QDateTime>
 
 #include <KDebug>
 
@@ -105,6 +109,8 @@ OtrProxyChannel::Adaptee::Adaptee(OtrProxyChannel *pc,
     connect(chan.data(), SIGNAL(invalidated(Tp::DBusProxy*,const QString&,const QString&)), SIGNAL(closed()));
     connect(&otrSes, SIGNAL(trustLevelChanged(TrustLevel)), SLOT(onTrustLevelChanged(TrustLevel)));
     connect(&otrSes, SIGNAL(sessionRefreshed()), SIGNAL(sessionRefreshed()));
+
+    sender = channel->connection()->selfHandle();
 }
 
 QDBusObjectPath OtrProxyChannel::Adaptee::wrappedChannel() const
@@ -374,7 +380,17 @@ void OtrProxyChannel::Adaptee::onPendingSendFinished(Tp::PendingOperation *op)
             ctx->setFinishedWithError(sendResult->errorName(), sendResult->errorMessage());
         } else {
             ctx->setFinished(sendResult->getToken());
-            Q_EMIT messageSent(sendResult->getMessage(), sendResult->getFlags(), sendResult->getToken());
+
+            OTR::Message message = sendResult->getMessage();
+            message.setToken(sendResult->getToken());
+            message.setTimestamp(QDateTime::currentDateTime().toTime_t());
+            message.setSender(sender);
+            message.setSenderId(otrSes.context().accountName);
+            if(!otrSes.remoteFingerprint().isEmpty()) {
+                message.setOTRheader(QLatin1String("otr-remote-fingerprint"), otrSes.remoteFingerprint());
+            }
+
+            Q_EMIT messageSent(message.parts(), sendResult->getFlags(), sendResult->getToken());
         }
     }
 }

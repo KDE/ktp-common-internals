@@ -118,4 +118,64 @@ namespace OTR
         }
     }
 
+    void Message::setTimestamp(qint64 timestamp)
+    {
+        message[0].insert(QLatin1String("message-sent"), QDBusVariant(timestamp));
+    }
+
+    qint64 Message::getTimestamp() const
+    {
+        auto it = message[0].find(QLatin1String("message-sent"));
+        if(it == message[0].end()) {
+            return 0;
+        } else {
+            return it->variant().toLongLong(NULL);
+        }
+    }
+
+    void Message::setSenderId(const QString &senderId)
+    {
+        message[0].insert(QLatin1String("message-sender-id"), QDBusVariant(senderId));
+    }
+
+    QString Message::getSenderId() const
+    {
+        auto it = message[0].find(QLatin1String("message-sender-id"));
+        if(it == message[0].end()) {
+            return QLatin1String("");
+        } else {
+            return it->variant().toString();
+        }
+    }
+
+    void Message::setSender(uint sender)
+    {
+        message[0].insert(QLatin1String("message-sender"), QDBusVariant(sender));
+    }
+
+    uint Message::getSender() const
+    {
+        auto it = message[0].find(QLatin1String("message-sender"));
+        if(it == message[0].end()) {
+            return 0;
+        } else {
+            return it->variant().toUInt(NULL);
+        }
+    }
+
+    void Message::setToken(const QString &token)
+    {
+        message[0].insert(QLatin1String("message-token"), QDBusVariant(token));
+    }
+
+    QString Message::getToken() const
+    {
+        auto it = message[0].find(QLatin1String("message-sender"));
+        if(it == message[0].end()) {
+            return QLatin1String("");
+        } else {
+            return it->variant().toString();
+        }
+    }
+
 } /* namespace OTR */

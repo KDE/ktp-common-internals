@@ -130,6 +130,11 @@ void ProxyService::onChannelProxyClosed()
         << " for the channel: " << proxyChannel->wrappedChannel()->objectPath();
 
     channels.remove(proxyChannel);
+
+    // stop the application when not needed anymore
+    if(channels.isEmpty()) {
+        KApplication::kApplication()->quit();
+    }
 }
 
 void ProxyService::onChannelReady(Tp::PendingOperation *pendingChanReady)

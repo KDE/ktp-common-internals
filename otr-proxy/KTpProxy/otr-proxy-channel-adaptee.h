@@ -100,6 +100,7 @@ class OtrProxyChannel::Adaptee : public QObject
         bool isConnected;
         OTR::ProxySession otrSes;
         ProxyService *ps;
+        uint sender;
 
         QMap<uint, Tp::ReceivedMessage> messages; // queue
         QList<Tp::ReceivedMessage> enqueuedMessages; // when there is now private key generated

@@ -61,6 +61,18 @@ namespace OTR
             void setOTRheader(const QString &header, const QString &text);
             QString getOTRheader(const QString &header);
 
+            void setTimestamp(qint64 timestamp);
+            qint64 getTimestamp() const;
+
+            void setSenderId(const QString &senderId);
+            QString getSenderId() const;
+
+            void setSender(uint sender);
+            uint getSender() const;
+
+            void setToken(const QString &token);
+            QString getToken() const;
+
         private:
             MessageDirection dir;
             Tp::MessagePartList message;
