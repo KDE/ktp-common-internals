@@ -129,6 +129,7 @@ void ProxyService::onChannelProxyClosed()
     kDebug() << "Removing proxy: " << proxyChannel->objectPath()
         << " for the channel: " << proxyChannel->wrappedChannel()->objectPath();
 
+    proxyChannel->dbusConnection().unregisterObject(proxyChannel->objectPath());
     channels.remove(proxyChannel);
 
     // stop the application when not needed anymore
