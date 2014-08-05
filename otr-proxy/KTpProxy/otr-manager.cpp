@@ -421,10 +421,10 @@ void Manager::createNewPrivateKey(Session *session)
             session->context().protocol.toLocal8Bit());
 }
 
-KeyGenerationThread* Manager::createNewPrivateKey(const QString &accountId, const QString &accountName)
+KeyGenerationWorker* Manager::createNewPrivateKey(const QString &accountId, const QString &accountName)
 {
     const QString path = config->saveLocation() + accountId + QLatin1String(".privkeys");
-    return new KeyGenerationThread(
+    return new KeyGenerationWorker(
             accountId,
             accountName,
             utils::protocolFromAccountId(accountId),
@@ -495,7 +495,7 @@ TrustFpResult Manager::trustFingerprint(const SessionContext &ctx, Fingerprint *
 }
 
 
-KeyGenerationThread::KeyGenerationThread(
+KeyGenerationWorker::KeyGenerationWorker(
         const QString &accountId,
         const QString &accountName,
         const QString &protocol,
@@ -510,24 +510,25 @@ KeyGenerationThread::KeyGenerationThread(
 {
 }
 
-gcry_error_t KeyGenerationThread::prepareCreation()
+gcry_error_t KeyGenerationWorker::prepareCreation()
 {
     return err = otrl_privkey_generate_start(userState, accountName.toLocal8Bit(), protocol.toLocal8Bit(), &newKey);
 }
 
-void KeyGenerationThread::run()
+void KeyGenerationWorker::calculate()
 {
     if(!err) {
         err = otrl_privkey_generate_calculate(newKey);
     }
+    Q_EMIT finished();
 }
 
-gcry_error_t KeyGenerationThread::error() const
+gcry_error_t KeyGenerationWorker::error() const
 {
     return err;
 }
 
-gcry_error_t KeyGenerationThread::finalizeCreation()
+gcry_error_t KeyGenerationWorker::finalizeCreation()
 {
     if(!err) {
         return err = otrl_privkey_generate_finish(userState, newKey, path.toLocal8Bit());
@@ -535,5 +536,6 @@ gcry_error_t KeyGenerationThread::finalizeCreation()
         return err;
     }
 }
+
 
 } /* namespace OTR */

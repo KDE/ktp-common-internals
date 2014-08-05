@@ -186,15 +186,22 @@ void ProxyService::onChannelReady(Tp::PendingOperation *pendingChanReady)
 bool ProxyService::createNewPrivateKey(const QString &accountId, const QString &accountName)
 {
     kDebug() << "Generating new private key for " << accountId;
-    OTR::KeyGenerationThread *keyThread = manager.createNewPrivateKey(accountId, accountName);
-    if(keyThread) {
-        if(keyThread->prepareCreation()) {
+    OTR::KeyGenerationWorker *keyWorker = manager.createNewPrivateKey(accountId, accountName);
+    if(keyWorker) {
+        if(keyWorker->prepareCreation()) {
             // alredy started creation for this account
             kDebug() << "Cannot prepare key generation for " << accountId;
+            keyWorker->deleteLater();
             return false;
         }
-        connect(keyThread, SIGNAL(finished()), SLOT(onKeyGenerationThreadFinished()));
-        keyThread->start();
+        QThread *thread = new QThread();
+        keyWorker->moveToThread(thread);
+        connect(thread, SIGNAL(started()), keyWorker, SLOT(calculate()));
+        connect(keyWorker, SIGNAL(finished()), thread, SLOT(quit()));
+        connect(thread, SIGNAL(finished()), thread, SLOT(deleteLater()));
+        connect(keyWorker, SIGNAL(finished()), SLOT(onKeyGenerationThreadFinished()));
+
+        thread->start();
         Q_EMIT keyGenerationStarted(accountId);
         return true;
     } else {
@@ -209,15 +216,15 @@ QString ProxyService::getFingerprintFor(const QString &accountId, const QString 
 
 void ProxyService::onKeyGenerationThreadFinished()
 {
-    OTR::KeyGenerationThread *thread = dynamic_cast<OTR::KeyGenerationThread*>(QObject::sender());
-    kDebug() << "Finished generating a new private key for " << thread->accountId;
+    OTR::KeyGenerationWorker *worker = qobject_cast<OTR::KeyGenerationWorker*>(QObject::sender());
+    kDebug() << "Finished generating a new private key for " << worker->accountId;
 
-    if(thread->error() || thread->finalizeCreation()) {
-        kDebug() << "Error generating private key for " << thread->accountId;
-        Q_EMIT keyGenerationFinished(thread->accountId, true);
+    if(worker->error() || worker->finalizeCreation()) {
+        kDebug() << "Error generating private key for " << worker->accountId;
+        Q_EMIT keyGenerationFinished(worker->accountId, true);
     } else{
-        Q_EMIT keyGenerationFinished(thread->accountId, false);
+        Q_EMIT keyGenerationFinished(worker->accountId, false);
     }
 
-    thread->deleteLater();
+    worker->deleteLater();
 }

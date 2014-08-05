@@ -40,7 +40,7 @@ namespace OTR
         extern const OtrlMessageAppOps appOps;
     }
 
-    class KeyGenerationThread;
+    class KeyGenerationWorker;
 
     class Manager
     {
@@ -59,34 +59,41 @@ namespace OTR
             void createNewPrivateKey(Session *session);
             /** return nullptr if thread could not be craeted
               otherwise returns thread which generates a new private key upon calling start method */
-            KeyGenerationThread* createNewPrivateKey(const QString &accountId, const QString &accountName);
+            KeyGenerationWorker* createNewPrivateKey(const QString &accountId, const QString &accountName);
             QString getFingerprintFor(const QString &accountId, const QString &accountName);
             void createInstag(Session *session);
-
-        private:
+private:
             Config *config;
             // TODO - consider clearing states when not in use
             QMap<QString, UserStateBoxPtr> userStates;
     };
 
-    class KeyGenerationThread : public QThread
+    class KeyGenerationWorker : public QObject
     {
+        Q_OBJECT
+
         public:
-            KeyGenerationThread(
+            KeyGenerationWorker(
                     const QString &accountId,
                     const QString &accountName,
                     const QString &protocol,
                     const QString &path,
                     OtrlUserState userState);
 
-            virtual void run();
             gcry_error_t error() const;
             /* has to called before the thread starts*/
             gcry_error_t prepareCreation();
             /* has to called after the finished() signal is emitted */
             gcry_error_t finalizeCreation();
 
-            const QString &accountId;
+        public Q_SLOTS:
+            void calculate();
+
+        Q_SIGNALS:
+            void finished();
+
+        public:
+            const QString accountId;
             const QString accountName;
             const QString protocol;
             const QString path;
