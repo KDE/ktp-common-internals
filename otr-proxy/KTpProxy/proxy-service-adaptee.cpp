@@ -53,12 +53,16 @@ void ProxyServiceAdaptee::setPolicy(uint otrPolicy)
     switch(otrPolicy) {
         case 0:
             ps->setPolicy(OTRL_POLICY_ALWAYS);
+            return;
         case 1:
             ps->setPolicy(OTRL_POLICY_OPPORTUNISTIC);
+            return;
         case 2:
             ps->setPolicy(OTRL_POLICY_MANUAL);
+            return;
         case 3:
             ps->setPolicy(OTRL_POLICY_NEVER);
+            return;
         default:
             // nos uch policy
             return;
