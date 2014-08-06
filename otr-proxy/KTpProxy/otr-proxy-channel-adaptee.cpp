@@ -99,6 +99,7 @@ OtrProxyChannel::Adaptee::Adaptee(OtrProxyChannel *pc,
     isConnected(false),
     otrSes(this, context, ps->managerOTR()),
     ps(ps),
+    isGenerating(false),
     aboutToInit(false)
 {
     kDebug() << "Created OTR session for context: "
@@ -165,6 +166,9 @@ void OtrProxyChannel::Adaptee::connectProxy(
     connect(chan.data(),
             SIGNAL(pendingMessageRemoved(const Tp::ReceivedMessage&)),
             SLOT(onPendingMessageRemoved(const Tp::ReceivedMessage&)));
+
+    connect(ps, SIGNAL(keyGenerationStarted(const QString&)), SLOT(onKeyGenerationStarted(const QString&)));
+    connect(ps, SIGNAL(keyGenerationFinished(const QString&, bool)), SLOT(onKeyGenerationFinished(const QString&, bool)));
 
     for(const Tp::ReceivedMessage &m: chan->messageQueue()) {
         onMessageReceived(m);
@@ -290,6 +294,8 @@ void OtrProxyChannel::Adaptee::initialize(const Tp::Service::ChannelProxyInterfa
     if(otrSes.localFingerprint().isEmpty() && ps->getPolicy() != OTRL_POLICY_NEVER) {
         aboutToInit = true;
         acquirePrivateKey();
+    } else if(isGenerating) {
+        aboutToInit = true;
     } else {
         sendOTRmessage(otrSes.startSession());
     }
@@ -336,6 +342,9 @@ void OtrProxyChannel::Adaptee::onMessageReceived(const Tp::ReceivedMessage &rece
     if(otrMsg.isOTRmessage() && otrSes.localFingerprint().isEmpty() && ps->getPolicy() != OTRL_POLICY_NEVER) {
         enqueuedMessages << receivedMessage;
         acquirePrivateKey();
+        return;
+    } else if(isGenerating) {
+        enqueuedMessages << receivedMessage;
         return;
     }
 
@@ -402,10 +411,17 @@ void OtrProxyChannel::Adaptee::onTrustLevelChanged(TrustLevel trustLevel)
 
 void OtrProxyChannel::Adaptee::acquirePrivateKey()
 {
-    connect(ps, SIGNAL(keyGenerationFinished(const QString&, bool)), SLOT(onKeyGenerationFinished(const QString&, bool)));
     if(!ps->createNewPrivateKey(otrSes.context().accountId, otrSes.context().accountName)) {
         kDebug() << "Probably ongoing key generation for another session";
     }
+}
+
+void OtrProxyChannel::Adaptee::onKeyGenerationStarted(const QString &accountId)
+{
+    if(accountId != otrSes.context().accountId) {
+        return;
+    }
+    isGenerating = true;
 }
 
 void OtrProxyChannel::Adaptee::onKeyGenerationFinished(const QString &accountId, bool error)
@@ -414,8 +430,7 @@ void OtrProxyChannel::Adaptee::onKeyGenerationFinished(const QString &accountId,
         return;
     }
     kDebug() << "Finished key generation for: " << accountId;
-    disconnect(ps, SIGNAL(keyGenerationFinished(const QString&, bool)),
-            this, SLOT(onKeyGenerationFinished(const QString&, bool)));
+    isGenerating = false;
 
     if(error) {
         kWarning() << "Could not generate private key for " << accountId;
