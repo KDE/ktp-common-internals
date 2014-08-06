@@ -153,7 +153,7 @@ void ProxyService::onChannelReady(Tp::PendingOperation *pendingChanReady)
     OTR::SessionContext ctx =
     {
         OTR::utils::accountIdFor(QDBusObjectPath(pendingReady->account->objectPath())),
-        pendingReady->account->normalizedName(),
+        pendingReady->account->displayName(),
         textChannel->targetId(),
         textChannel->connection()->protocolName()
     };
@@ -180,7 +180,12 @@ void ProxyService::onChannelReady(Tp::PendingOperation *pendingChanReady)
             &adaptee, SLOT(onProxyDisconnected(const QDBusObjectPath&)));
 
     kDebug() << "Installed proxy: " << proxyChannel->objectPath() << "\n"
-        << " for the channel: " << textChannel->objectPath();
+        << " for the channel: " << textChannel->objectPath() << "\n"
+        << "Context: " << "\n"
+        << "\t id: " << ctx.accountId << "\n"
+        << "\t name: " << ctx.accountName << "\n"
+        << "\t protocol: " << ctx.protocol << "\n"
+        << "\t recipient: " << ctx.recipientName;
 }
 
 bool ProxyService::createNewPrivateKey(const QString &accountId, const QString &accountName)

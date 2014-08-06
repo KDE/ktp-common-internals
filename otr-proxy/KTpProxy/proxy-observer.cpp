@@ -19,12 +19,50 @@
 
 #include "proxy-observer.h"
 #include "proxy-service.h"
+#include "pending-curry-operation.h"
 
 #include <TelepathyQt/ChannelClassSpecList>
 #include <TelepathyQt/Channel>
+#include <TelepathyQt/PendingReady>
 
 #include <KDebug>
 
+// class to wait for all account fields to be ready
+// (displayName is not properly initializted sometimes)
+// and magic things happen
+class PendingAccountReady : public PendingCurryOperation
+{
+    public:
+        PendingAccountReady(
+                Tp::PendingOperation *op,
+                const Tp::AccountPtr &account,
+                const QList<Tp::ChannelPtr> &channels,
+                const Tp::MethodInvocationContextPtr<> &context,
+                ProxyService *ps)
+            : PendingCurryOperation(op, Tp::SharedPtr<Tp::RefCounted>::dynamicCast(account)),
+            account(account),
+            channels(channels),
+            context(context),
+            ps(ps)
+        {
+        }
+
+        virtual void extract(Tp::PendingOperation *op)
+        {
+            Q_UNUSED(op);
+
+            Q_FOREACH(const Tp::ChannelPtr &chan, channels) {
+                ps->addChannel(chan, account);
+            }
+            context->setFinished();
+        }
+
+    private:
+        Tp::AccountPtr account;
+        QList<Tp::ChannelPtr> channels;
+        Tp::MethodInvocationContextPtr<> context;
+        ProxyService *ps;
+};
 
 ProxyObserver::ProxyObserver(ProxyService *ps)
     : Tp::AbstractClientObserver(Tp::ChannelClassSpecList() << Tp::ChannelClassSpec::textChat()),
@@ -49,10 +87,11 @@ void ProxyObserver::observeChannels(
     Q_UNUSED(dispatchOperation);
     Q_UNUSED(requestsSatisfied);
     Q_UNUSED(observerInfo);
-
     kDebug() << "Observed a channel";
-    Q_FOREACH(const Tp::ChannelPtr &chan, channels) {
-        ps->addChannel(chan, account);
-    }
-    context->setFinished();
+
+    PendingAccountReady *ready = new PendingAccountReady(
+            account->becomeReady(Tp::Features() << Tp::Account::FeatureCore),
+            account, channels, context, ps);
+
+    QObject::connect(ready, SIGNAL(finished(Tp::PendingOperation*)), ready, SLOT(deleteLater()));
 }
