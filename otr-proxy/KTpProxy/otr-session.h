@@ -71,6 +71,8 @@ namespace OTR
             const SessionContext& context() const;
             QString remoteFingerprint() const;
             QString localFingerprint() const;
+            /** forces OTR session into plain text state */
+            void forceUnencrypted();
 
             /** Returns OTR init message */
             Message startSession();

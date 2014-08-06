@@ -106,7 +106,7 @@ OtrProxyChannel::Adaptee::Adaptee(OtrProxyChannel *pc,
         << " Account name: " << context.accountName
         << " recipient name: " << context.recipientName
         << " protocol: " << context.protocol;
-    connect(chan.data(), SIGNAL(invalidated(Tp::DBusProxy*,const QString&,const QString&)), SIGNAL(closed()));
+    connect(chan.data(), SIGNAL(invalidated(Tp::DBusProxy*,const QString&,const QString&)), SLOT(onChannelClosed()));
     connect(&otrSes, SIGNAL(trustLevelChanged(TrustLevel)), SLOT(onTrustLevelChanged(TrustLevel)));
     connect(&otrSes, SIGNAL(sessionRefreshed()), SIGNAL(sessionRefreshed()));
 
@@ -431,4 +431,14 @@ void OtrProxyChannel::Adaptee::onKeyGenerationFinished(const QString &accountId,
     }
 
     aboutToInit = false;
+}
+
+void OtrProxyChannel::Adaptee::onChannelClosed()
+{
+    kDebug();
+    // we will not be able to send disconnect message so we just finish our own OTR session
+    if(isConnected) {
+        otrSes.forceUnencrypted();
+    }
+    Q_EMIT closed();
 }

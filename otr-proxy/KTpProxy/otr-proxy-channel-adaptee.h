@@ -85,6 +85,8 @@ class OtrProxyChannel::Adaptee : public QObject
         void onTrustLevelChanged(TrustLevel trustLevel);
         void onKeyGenerationFinished(const QString &accountId, bool error);
 
+        void onChannelClosed();
+
     Q_SIGNALS:
         void messageSent(const Tp::MessagePartList &content, uint flags, const QString &messageToken);
         void messageReceived(const Tp::MessagePartList &message);

@@ -140,6 +140,7 @@ class OTRTest : public QObject
         void testDoubleConversation();
         void testTrustDistrustFingerprint();
         void testSessionRefreshed();
+        void testForceUnencrypted();
 
         void cleanup();
 
@@ -525,6 +526,16 @@ void OTRTest::testSessionRefreshed()
     startSession(alice, bob);
     QVERIFY(aliceEnv->sessionRefreshed);
     QVERIFY(bobEnv->levelChanged);
+}
+
+void OTRTest::testForceUnencrypted()
+{
+    TestSession &alice = aliceEnv->ses;
+    TestSession &bob = bobEnv->ses;
+
+    startSession(alice, bob);
+    alice.forceUnencrypted();
+    QCOMPARE(alice.trustLevel(), TrustLevel::NOT_PRIVATE);
 }
 
 void OTRTest::cleanup()

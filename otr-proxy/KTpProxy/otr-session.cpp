@@ -126,6 +126,21 @@ namespace OTR
         return parent()->getFingerprintFor(ctx.accountId, ctx.accountName);
     }
 
+    void Session::forceUnencrypted()
+    {
+        if(trustLevel() == TrustLevel::NOT_PRIVATE) {
+            return;
+        }
+
+        ConnContext *context = otrl_context_find(userstate->userState(),
+                ctx.recipientName.toLocal8Bit(),
+                ctx.accountName.toLocal8Bit(),
+                ctx.protocol.toLocal8Bit(),
+                instance, 0, NULL, NULL, NULL);
+
+        otrl_context_force_plaintext(context);
+    }
+
     Message Session::startSession()
     {
         Message msg;
