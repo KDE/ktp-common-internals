@@ -404,8 +404,7 @@ void OtrProxyChannel::Adaptee::acquirePrivateKey()
 {
     connect(ps, SIGNAL(keyGenerationFinished(const QString&, bool)), SLOT(onKeyGenerationFinished(const QString&, bool)));
     if(!ps->createNewPrivateKey(otrSes.context().accountId, otrSes.context().accountName)) {
-        disconnect(ps, SIGNAL(keyGenerationFinished(const QString&, bool)),
-                this, SLOT(onKeyGenerationFinished(const QString&, bool)));
+        kDebug() << "Probably ongoing key generation for another session";
     }
 }
 
