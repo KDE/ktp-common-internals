@@ -80,8 +80,18 @@ namespace tst {
             SessionEnv(const SessionContext &ctx, Manager *manager)
                 : ses(ctx, manager),
                 sessionRefreshed(false),
-                levelChanged(false)
+                levelChanged(false),
+                smpAborted(false),
+                smpFinished(false),
+                smpSuccess(false),
+                smpQuery(false),
+                question(QLatin1String(""))
             {
+                QVERIFY(connect(&ses, SIGNAL(sessionRefreshed()), SLOT(onSessionRefreshed())));
+                QVERIFY(connect(&ses, SIGNAL(trustLevelChanged(TrustLevel)), SLOT(onTrustLevelChanged(TrustLevel))));
+                QVERIFY(connect(&ses, SIGNAL(authenticationFinished(bool)), SLOT(onSMPFinished(bool))));
+                QVERIFY(connect(&ses, SIGNAL(authenticationAborted()), SLOT(onSMPAborted())));
+                QVERIFY(connect(&ses, SIGNAL(authenticationRequested(const QString&)), SLOT(onSMPQuery(const QString&))));
             }
 
             void reset()
@@ -90,6 +100,13 @@ namespace tst {
                 sessionRefreshed = false;
                 levelChanged = false;
                 lastTlevel = TrustLevel::NOT_PRIVATE;
+
+                smpAborted = false;
+                smpFinished = false;
+                smpSuccess = false;
+                smpQuery = false;
+                question.clear();
+
                 ses.eventQueue.clear();
                 ses.mesQueue.clear();
             }
@@ -110,12 +127,35 @@ namespace tst {
                 lastTlevel = tlevel;
             }
 
+            void onSMPFinished(bool success)
+            {
+                smpFinished = true;
+                smpSuccess = success;
+            }
+
+            void onSMPAborted()
+            {
+                smpAborted = true;
+            }
+
+            void onSMPQuery(const QString &question)
+            {
+                smpQuery = true;
+                this->question = question;
+            }
+
         public:
             TestSession ses;
             QString lastFpRcv;
             bool sessionRefreshed;
             bool levelChanged;
             TrustLevel lastTlevel;
+
+            bool smpAborted;
+            bool smpFinished;
+            bool smpSuccess;
+            bool smpQuery;
+            QString question;
     };
 
 } /* namespace tst */
@@ -141,6 +181,12 @@ class OTRTest : public QObject
         void testTrustDistrustFingerprint();
         void testSessionRefreshed();
         void testForceUnencrypted();
+        void testSMPQuerySuccess();
+        void testSMPSecretSuccess();
+        void testSMPQueryFail();
+        void testSMPQueryFailDistrust();
+        void testSMPSecretFailDistrust();
+        void testSMPQueryAborted();
 
         void cleanup();
 
@@ -521,8 +567,6 @@ void OTRTest::testSessionRefreshed()
     TestSession &bob = bobEnv->ses;
 
     startSession(alice, bob);
-    connect(&alice, SIGNAL(sessionRefreshed()), aliceEnv, SLOT(onSessionRefreshed()));
-    connect(&bob, SIGNAL(trustLevelChanged(TrustLevel)), bobEnv, SLOT(onTrustLevelChanged(TrustLevel)));
     startSession(alice, bob);
     QVERIFY(aliceEnv->sessionRefreshed);
     QVERIFY(bobEnv->levelChanged);
@@ -536,6 +580,228 @@ void OTRTest::testForceUnencrypted()
     startSession(alice, bob);
     alice.forceUnencrypted();
     QCOMPARE(alice.trustLevel(), TrustLevel::NOT_PRIVATE);
+}
+
+void OTRTest::testSMPQuerySuccess()
+{
+    TestSession &alice = aliceEnv->ses;
+    TestSession &bob = bobEnv->ses;
+
+    startSession(alice, bob);
+
+    QVERIFY(alice.mesQueue.isEmpty());
+    QVERIFY(bob.mesQueue.isEmpty());
+
+    const QString question = QLatin1String("Best polish grindcore band?");
+    const QString answer = QLatin1String("Antigama");
+    alice.initSMPQuery(question, answer);
+    QVERIFY(!alice.mesQueue.isEmpty());
+
+    QCOMPARE(bob.decrypt(alice.mesQueue.back()), CryptResult::OTR);
+    alice.mesQueue.clear();
+    QVERIFY(bobEnv->smpQuery);
+    QVERIFY(bob.mesQueue.empty());
+
+    QCOMPARE(bobEnv->question, question);
+
+    bob.respondSMPAuthentication(answer);
+    QVERIFY(!bob.mesQueue.isEmpty());
+
+    QCOMPARE(alice.decrypt(bob.mesQueue.back()), CryptResult::OTR);
+    bob.mesQueue.clear();
+    QVERIFY(!alice.mesQueue.empty());
+    QCOMPARE(bob.decrypt(alice.mesQueue.back()), CryptResult::OTR);
+    alice.mesQueue.clear();
+
+    QVERIFY(!bob.mesQueue.isEmpty());
+    QCOMPARE(alice.decrypt(bob.mesQueue.back()), CryptResult::OTR);
+    QVERIFY(aliceEnv->smpFinished);
+    QVERIFY(bobEnv->smpFinished);
+    QVERIFY(aliceEnv->smpSuccess);
+    QVERIFY(bobEnv->smpSuccess);
+    QVERIFY(alice.mesQueue.empty());
+
+    QCOMPARE(alice.trustLevel(), TrustLevel::VERIFIED);
+    QCOMPARE(bob.trustLevel(), TrustLevel::UNVERIFIED);
+    QVERIFY(aliceEnv->levelChanged);
+}
+
+void OTRTest::testSMPSecretSuccess()
+{
+    TestSession &alice = aliceEnv->ses;
+    TestSession &bob = bobEnv->ses;
+
+    startSession(alice, bob);
+
+    QVERIFY(alice.mesQueue.isEmpty());
+    QVERIFY(bob.mesQueue.isEmpty());
+
+    const QString answer = QLatin1String("Bigos");
+    alice.initSMPSecret(answer);
+    QVERIFY(!alice.mesQueue.isEmpty());
+
+    QCOMPARE(bob.decrypt(alice.mesQueue.back()), CryptResult::OTR);
+    alice.mesQueue.clear();
+    QVERIFY(bobEnv->smpQuery);
+    QVERIFY(bob.mesQueue.empty());
+
+    QVERIFY(bobEnv->question.isEmpty());
+
+    bob.respondSMPAuthentication(answer);
+    QVERIFY(!bob.mesQueue.isEmpty());
+
+    QCOMPARE(alice.decrypt(bob.mesQueue.back()), CryptResult::OTR);
+    bob.mesQueue.clear();
+    QVERIFY(!alice.mesQueue.empty());
+    QCOMPARE(bob.decrypt(alice.mesQueue.back()), CryptResult::OTR);
+    alice.mesQueue.clear();
+
+    QVERIFY(!bob.mesQueue.isEmpty());
+    QCOMPARE(alice.decrypt(bob.mesQueue.back()), CryptResult::OTR);
+    QVERIFY(aliceEnv->smpFinished);
+    QVERIFY(bobEnv->smpFinished);
+    QVERIFY(aliceEnv->smpSuccess);
+    QVERIFY(bobEnv->smpSuccess);
+    QVERIFY(alice.mesQueue.empty());
+
+    QCOMPARE(alice.trustLevel(), TrustLevel::VERIFIED);
+    QCOMPARE(bob.trustLevel(), TrustLevel::VERIFIED);
+    QVERIFY(aliceEnv->levelChanged);
+    QVERIFY(bobEnv->levelChanged);
+}
+
+void OTRTest::testSMPQueryFail()
+{
+    TestSession &alice = aliceEnv->ses;
+    TestSession &bob = bobEnv->ses;
+
+    startSession(alice, bob);
+
+    const QString question = QLatin1String("Best polish grindcore band?");
+    const QString answer = QLatin1String("Antigama");
+    alice.initSMPQuery(question, answer);
+    QVERIFY(!alice.mesQueue.isEmpty());
+
+    QCOMPARE(bob.decrypt(alice.mesQueue.back()), CryptResult::OTR);
+    alice.mesQueue.clear();
+    QVERIFY(bobEnv->smpQuery);
+    QVERIFY(bob.mesQueue.empty());
+
+    QCOMPARE(bobEnv->question, question);
+
+    bob.respondSMPAuthentication(QLatin1String("Doda"));
+    QVERIFY(!bob.mesQueue.isEmpty());
+
+    QCOMPARE(alice.decrypt(bob.mesQueue.back()), CryptResult::OTR);
+    bob.mesQueue.clear();
+    QVERIFY(!alice.mesQueue.empty());
+    QCOMPARE(bob.decrypt(alice.mesQueue.back()), CryptResult::OTR);
+    alice.mesQueue.clear();
+
+    QVERIFY(!bob.mesQueue.isEmpty());
+    QCOMPARE(alice.decrypt(bob.mesQueue.back()), CryptResult::OTR);
+    QVERIFY(aliceEnv->smpFinished);
+    QVERIFY(bobEnv->smpFinished);
+    QVERIFY(!aliceEnv->smpSuccess);
+    QVERIFY(!bobEnv->smpSuccess);
+    QVERIFY(alice.mesQueue.empty());
+
+    QCOMPARE(alice.trustLevel(), TrustLevel::UNVERIFIED);
+    QCOMPARE(bob.trustLevel(), TrustLevel::UNVERIFIED);
+    QVERIFY(aliceEnv->levelChanged);
+    QVERIFY(bobEnv->levelChanged);
+}
+
+void OTRTest::testSMPQueryFailDistrust()
+{
+    TestSession &alice = aliceEnv->ses;
+    TestSession &bob = bobEnv->ses;
+
+    startSession(alice, bob);
+
+    alice.trustFingerprint(true);
+    QCOMPARE(alice.trustLevel(), TrustLevel::VERIFIED);
+    testSMPQueryFail();
+}
+
+void OTRTest::testSMPSecretFailDistrust()
+{
+    TestSession &alice = aliceEnv->ses;
+    TestSession &bob = bobEnv->ses;
+
+    startSession(alice, bob);
+
+    alice.trustFingerprint(true);
+    bob.trustFingerprint(true);
+    QCOMPARE(alice.trustLevel(), TrustLevel::VERIFIED);
+    QCOMPARE(bob.trustLevel(), TrustLevel::VERIFIED);
+
+    QVERIFY(alice.mesQueue.isEmpty());
+    QVERIFY(bob.mesQueue.isEmpty());
+
+    const QString answer = QLatin1String("Bigos");
+    alice.initSMPSecret(answer);
+    QVERIFY(!alice.mesQueue.isEmpty());
+
+    QCOMPARE(bob.decrypt(alice.mesQueue.back()), CryptResult::OTR);
+    alice.mesQueue.clear();
+    QVERIFY(bobEnv->smpQuery);
+    QVERIFY(bob.mesQueue.empty());
+
+    QVERIFY(bobEnv->question.isEmpty());
+
+    bob.respondSMPAuthentication(QLatin1String("Pierogi"));
+    QVERIFY(!bob.mesQueue.isEmpty());
+
+    QCOMPARE(alice.decrypt(bob.mesQueue.back()), CryptResult::OTR);
+    bob.mesQueue.clear();
+    QVERIFY(!alice.mesQueue.empty());
+    QCOMPARE(bob.decrypt(alice.mesQueue.back()), CryptResult::OTR);
+    alice.mesQueue.clear();
+
+    QVERIFY(!bob.mesQueue.isEmpty());
+    QCOMPARE(alice.decrypt(bob.mesQueue.back()), CryptResult::OTR);
+    QVERIFY(aliceEnv->smpFinished);
+    QVERIFY(bobEnv->smpFinished);
+    QVERIFY(!aliceEnv->smpSuccess);
+    QVERIFY(!bobEnv->smpSuccess);
+    QVERIFY(alice.mesQueue.empty());
+
+    QCOMPARE(alice.trustLevel(), TrustLevel::UNVERIFIED);
+    QCOMPARE(bob.trustLevel(), TrustLevel::UNVERIFIED);
+    QVERIFY(aliceEnv->levelChanged);
+    QVERIFY(bobEnv->levelChanged);
+}
+
+void OTRTest::testSMPQueryAborted()
+{
+    TestSession &alice = aliceEnv->ses;
+    TestSession &bob = bobEnv->ses;
+
+    startSession(alice, bob);
+
+    QVERIFY(alice.mesQueue.isEmpty());
+    QVERIFY(bob.mesQueue.isEmpty());
+
+    const QString question = QLatin1String("Best polish grindcore band?");
+    const QString answer = QLatin1String("Antigama");
+    alice.initSMPQuery(question, answer);
+    QVERIFY(!alice.mesQueue.isEmpty());
+
+    QCOMPARE(bob.decrypt(alice.mesQueue.back()), CryptResult::OTR);
+    alice.mesQueue.clear();
+    QVERIFY(bobEnv->smpQuery);
+    QVERIFY(bob.mesQueue.empty());
+
+    QCOMPARE(bobEnv->question, question);
+
+    bob.abortSMPAuthentiaction();
+    QVERIFY(!bob.mesQueue.empty());
+    QCOMPARE(alice.decrypt(bob.mesQueue.back()), CryptResult::OTR);
+    QVERIFY(aliceEnv->smpAborted);
+    QVERIFY(!alice.mesQueue.empty());
+    QCOMPARE(bob.decrypt(alice.mesQueue.back()), CryptResult::OTR);
+    QVERIFY(bobEnv->smpAborted);
 }
 
 void OTRTest::cleanup()

@@ -33,7 +33,6 @@ namespace OTR
             TestSession(const SessionContext &context, Manager *parent);
 
             virtual void handleMessage(const Message &message);
-            virtual void handleSmpEvent(OtrlSMPEvent smpEvent);
             virtual int recipientStatus() const;
             virtual unsigned int maxMessageSize() const;
 

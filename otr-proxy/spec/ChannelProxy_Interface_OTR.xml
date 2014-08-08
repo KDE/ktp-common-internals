@@ -314,6 +314,91 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.</
       </tp:possible-errors>
     </method>
 
+    <method name="StartPeerAuthentication"
+      tp:name-for-bindings="Start_Peer_Authentication">
+      <arg name="Question" type="s" direction="in">
+        <tp:docstring>The question to be used for peer authentication. It is
+          used by the remote peer as a hint for the shared secret. If an empty
+          string is passed only the shared secret will be used on the peer
+          authentication process.</tp:docstring>
+      </arg>
+      <arg name="Secret" type="s" direction="in">
+        <tp:docstring>The shared secret to be used for peer authentication. If
+          the Question parameter is not empty, this should be the answer to it.
+        </tp:docstring>
+      </arg>
+      <tp:docstring xmlns="http://www.w3.org/1999/xhtml">
+        <p>This method starts peer authentication using the Socialist
+          Millionaire protocol.</p>
+      </tp:docstring>
+    </method>
+
+    <method name="RespondPeerAuthentication"
+      tp:name-for-bindings="Respond_Peer_Authentication">
+      <arg name="Secret" type="s" direction="in">
+        <tp:docstring>The shared secret to be used for peer authentication.
+        </tp:docstring>
+      </arg>
+      <tp:docstring xmlns="http://www.w3.org/1999/xhtml">
+        <p>This method continues the peer authentication started by the remote
+          peer.</p>
+      </tp:docstring>
+    </method>
+
+    <method name="AbortPeerAuthentication"
+      tp:name-for-bindings="Abort_Peer_Authentication">
+      <tp:docstring xmlns="http://www.w3.org/1999/xhtml">
+        <p>This method aborts the peer authentication process.</p>
+      </tp:docstring>
+    </method>
+
+    <signal name="PeerAuthenticationRequested"
+      tp:name-for-bindings="Peer_Authentication_Requested">
+      <arg name="Question" type="s">
+        <tp:docstring>The question the remote peer is using for peer
+          authentication. If an empty string is passed only the shared secret
+          will be used on the peer authentication process.</tp:docstring>
+      </arg>
+      <tp:docstring>
+        Emitted when peer authentication has been requested by the remote peer.
+      </tp:docstring>
+    </signal>
+
+    <signal name="PeerAuthenticationConcluded"
+      tp:name-for-bindings="Peer_Authentication_Concluded">
+      <arg name="Authenticated" type="b">
+        <tp:docstring>True if peer identity could be authenticated, false
+          otherwise.</tp:docstring>
+      </arg>
+      <tp:docstring>
+        Emitted when the peer authentication process finishes normally.
+      </tp:docstring>
+    </signal>
+
+    <signal name="PeerAuthenticationAborted"
+      tp:name-for-bindings="Peer_Authentication_Aborted">
+      <tp:docstring>
+        Emitted when the peer authentication process has been aborted by the
+        remote peer.
+      </tp:docstring>
+    </signal>
+
+    <signal name="PeerAuthenticationError"
+      tp:name-for-bindings="Peer_Authentication_Error">
+      <tp:docstring>
+        Emitted when the peer authentication process has been aborted because
+        a protocol error has occured.
+      </tp:docstring>
+    </signal>
+
+    <signal name="PeerAuthenticationCheated"
+      tp:name-for-bindings="Peer_Authentication_Cheated">
+      <tp:docstring>
+        Emitted when the peer authentication process has been aborted because
+        cheating was discovered.
+      </tp:docstring>
+    </signal>
+
     <signal name="SessionRefreshed" tp:name-for-bindings="Session_Refreshed">
       <tp:docstring>
         An AKE has been performed in an already established session.

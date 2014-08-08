@@ -36,12 +36,6 @@ namespace OTR
         }
     }
 
-    void TestSession::handleSmpEvent(OtrlSMPEvent smpEvent)
-    {
-        // NOT implemented yet
-        Q_UNUSED(smpEvent);
-    }
-
     int TestSession::recipientStatus() const
     {
         // user is online

@@ -98,17 +98,22 @@ namespace OTR
 
     Fingerprint* Session::getFingerprint() const
     {
-        ConnContext *context = otrl_context_find(userstate->userState(),
-                ctx.recipientName.toLocal8Bit(),
-                ctx.accountName.toLocal8Bit(),
-                ctx.protocol.toLocal8Bit(),
-                instance, 0, NULL, NULL, NULL);
+        ConnContext *context = findContext();
 
         if(context && context->active_fingerprint) {
             return context->active_fingerprint;
         } else {
             return nullptr;
         }
+    }
+
+    ConnContext* Session::findContext() const
+    {
+        return otrl_context_find(userstate->userState(),
+                ctx.recipientName.toLocal8Bit(),
+                ctx.accountName.toLocal8Bit(),
+                ctx.protocol.toLocal8Bit(),
+                instance, 0, NULL, NULL, NULL);
     }
 
     QString Session::remoteFingerprint() const
@@ -132,12 +137,7 @@ namespace OTR
             return;
         }
 
-        ConnContext *context = otrl_context_find(userstate->userState(),
-                ctx.recipientName.toLocal8Bit(),
-                ctx.accountName.toLocal8Bit(),
-                ctx.protocol.toLocal8Bit(),
-                instance, 0, NULL, NULL, NULL);
-
+        ConnContext *context = findContext();
         otrl_context_force_plaintext(context);
     }
 
@@ -262,6 +262,45 @@ namespace OTR
         return result;
     }
 
+    void Session::initSMPQuery(const QString &question, const QString &secret)
+    {
+        otrl_message_initiate_smp_q(userstate->userState(),
+                &global::appOps,
+                this,
+                findContext(),
+                (const char*)question.toLocal8Bit().data(),
+                (unsigned char*)secret.toLocal8Bit().data(),
+                secret.length());
+    }
+
+    void Session::initSMPSecret(const QString &secret)
+    {
+        otrl_message_initiate_smp(userstate->userState(),
+                &global::appOps,
+                this,
+                findContext(),
+                (unsigned char*)secret.toLocal8Bit().data(),
+                secret.length());
+    }
+
+    void Session::abortSMPAuthentiaction(ConnContext *context)
+    {
+        if(context == NULL) {
+            context = findContext();
+        }
+        otrl_message_abort_smp(userstate->userState(), &global::appOps, this, context);
+    }
+
+    void Session::respondSMPAuthentication(const QString &answer)
+    {
+        otrl_message_respond_smp(userstate->userState(),
+                &global::appOps,
+                this,
+                findContext(),
+                (unsigned char*)answer.toLocal8Bit().data(),
+                answer.length());
+    }
+
     TrustFpResult Session::trustFingerprint(bool trust)
     {
         Fingerprint* fp = getFingerprint();
@@ -287,17 +326,42 @@ namespace OTR
         if(context != nullptr) {
             instance = context->their_instance;
         }
-        emit trustLevelChanged(trustLevel);
+        Q_EMIT trustLevelChanged(trustLevel);
     }
 
     void Session::onSessionRefreshed()
     {
-        emit sessionRefreshed();
+        Q_EMIT sessionRefreshed();
     }
 
     void Session::onNewFingerprintReceived(const QString &fingerprint)
     {
-        emit newFingerprintReceived(fingerprint);
+        Q_EMIT newFingerprintReceived(fingerprint);
+    }
+
+    void Session::onSMPFinished(bool success)
+    {
+        Q_EMIT authenticationFinished(success);
+    }
+
+    void Session::onSMPError()
+    {
+        Q_EMIT authenticationError();
+    }
+
+    void Session::onSMPAborted()
+    {
+        Q_EMIT authenticationAborted();
+    }
+
+    void Session::onSMPCheated()
+    {
+        Q_EMIT authenticationCheated();
+    }
+
+    void Session::onSMPQuery(const QString &question)
+    {
+        Q_EMIT authenticationRequested(question);
     }
 
     // -------- ProxySession --------------------------------------------
@@ -310,12 +374,6 @@ namespace OTR
     void ProxySession::handleMessage(const Message &message)
     {
         pca->processOTRmessage(message);
-    }
-
-    void ProxySession::handleSmpEvent(OtrlSMPEvent smpEvent)
-    {
-        // TODO implement
-        Q_UNUSED(smpEvent);
     }
 
     int ProxySession::recipientStatus() const

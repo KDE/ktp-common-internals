@@ -78,6 +78,12 @@ class OtrProxyChannel::Adaptee : public QObject
         void trustFingerprint(const QString& fingerprint, bool trust,
                 const Tp::Service::ChannelProxyInterfaceOTRAdaptor::TrustFingerprintContextPtr &context);
 
+        void startPeerAuthentication(const QString &question, const QString &secret,
+                const Tp::Service::ChannelProxyInterfaceOTRAdaptor::StartPeerAuthenticationContextPtr &ctx);
+        void respondPeerAuthentication(const QString &secret,
+                const Tp::Service::ChannelProxyInterfaceOTRAdaptor::RespondPeerAuthenticationContextPtr &ctx);
+        void abortPeerAuthentication(const Tp::Service::ChannelProxyInterfaceOTRAdaptor::AbortPeerAuthenticationContextPtr &ctx);
+
         void onMessageReceived(const Tp::ReceivedMessage &receivedMessage);
         void onPendingMessageRemoved(const Tp::ReceivedMessage &receivedMessage);
         void onPendingSendFinished(Tp::PendingOperation *pendingSend);
@@ -95,6 +101,11 @@ class OtrProxyChannel::Adaptee : public QObject
         void sessionRefreshed();
         void closed();
         void trustLevelChanged(uint trustLevel);
+        void peerAuthenticationRequested(const QString&);
+        void peerAuthenticationConcluded(bool);
+        void peerAuthenticationAborted();
+        void peerAuthenticationError();
+        void peerAuthenticationCheated();
 
     private:
         Tp::Service::ChannelProxyInterfaceOTRAdaptor *adaptor;

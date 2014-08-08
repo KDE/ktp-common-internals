@@ -14,6 +14,11 @@ ChannelProxyInterfaceOTRAdaptor::ChannelProxyInterfaceOTRAdaptor(const QDBusConn
     connect(adaptee, SIGNAL(messageSent(const Tp::MessagePartList&, uint, const QString&)), SIGNAL(MessageSent(const Tp::MessagePartList&, uint, const QString&)));
     connect(adaptee, SIGNAL(messageReceived(const Tp::MessagePartList&)), SIGNAL(MessageReceived(const Tp::MessagePartList&)));
     connect(adaptee, SIGNAL(pendingMessagesRemoved(const Tp::UIntList&)), SIGNAL(PendingMessagesRemoved(const Tp::UIntList&)));
+    connect(adaptee, SIGNAL(peerAuthenticationRequested(const QString&)), SIGNAL(PeerAuthenticationRequested(const QString&)));
+    connect(adaptee, SIGNAL(peerAuthenticationConcluded(bool)), SIGNAL(PeerAuthenticationConcluded(bool)));
+    connect(adaptee, SIGNAL(peerAuthenticationAborted()), SIGNAL(PeerAuthenticationAborted()));
+    connect(adaptee, SIGNAL(peerAuthenticationError()), SIGNAL(PeerAuthenticationError()));
+    connect(adaptee, SIGNAL(peerAuthenticationCheated()), SIGNAL(PeerAuthenticationCheated()));
     connect(adaptee, SIGNAL(sessionRefreshed()), SIGNAL(SessionRefreshed()));
     connect(adaptee, SIGNAL(trustLevelChanged(uint)), SIGNAL(TrustLevelChanged(uint)));
 }
@@ -145,6 +150,47 @@ void ChannelProxyInterfaceOTRAdaptor::TrustFingerprint(const QString& fingerprin
     QMetaObject::invokeMethod(adaptee(), "trustFingerprint",
         Q_ARG(QString, fingerprint), Q_ARG(bool, trust),
         Q_ARG(Tp::Service::ChannelProxyInterfaceOTRAdaptor::TrustFingerprintContextPtr, ctx));
+}
+
+void ChannelProxyInterfaceOTRAdaptor::StartPeerAuthentication(const QString& question, const QString& secret, const QDBusMessage& dbusMessage)
+{
+    if (!adaptee()->metaObject()->indexOfMethod("startPeerAuthentication(QString,QString,Tp::Service::ChannelProxyInterfaceOTRAdaptor::StartPeerAuthenticationContextPtr)") == -1) {
+        dbusConnection().send(dbusMessage.createErrorReply(TP_QT_ERROR_NOT_IMPLEMENTED, QLatin1String("Not implemented")));
+        return;
+    }
+
+    StartPeerAuthenticationContextPtr ctx = StartPeerAuthenticationContextPtr(
+            new Tp::MethodInvocationContext<  >(dbusConnection(), dbusMessage));
+    QMetaObject::invokeMethod(adaptee(), "startPeerAuthentication",
+        Q_ARG(QString, question), Q_ARG(QString, secret),
+        Q_ARG(Tp::Service::ChannelProxyInterfaceOTRAdaptor::StartPeerAuthenticationContextPtr, ctx));
+}
+
+void ChannelProxyInterfaceOTRAdaptor::RespondPeerAuthentication(const QString& secret, const QDBusMessage& dbusMessage)
+{
+    if (!adaptee()->metaObject()->indexOfMethod("respondPeerAuthentication(QString,Tp::Service::ChannelProxyInterfaceOTRAdaptor::RespondPeerAuthenticationContextPtr)") == -1) {
+        dbusConnection().send(dbusMessage.createErrorReply(TP_QT_ERROR_NOT_IMPLEMENTED, QLatin1String("Not implemented")));
+        return;
+    }
+
+    RespondPeerAuthenticationContextPtr ctx = RespondPeerAuthenticationContextPtr(
+            new Tp::MethodInvocationContext<  >(dbusConnection(), dbusMessage));
+    QMetaObject::invokeMethod(adaptee(), "respondPeerAuthentication",
+        Q_ARG(QString, secret),
+        Q_ARG(Tp::Service::ChannelProxyInterfaceOTRAdaptor::RespondPeerAuthenticationContextPtr, ctx));
+}
+
+void ChannelProxyInterfaceOTRAdaptor::AbortPeerAuthentication(const QDBusMessage& dbusMessage)
+{
+    if (!adaptee()->metaObject()->indexOfMethod("abortPeerAuthentication(Tp::Service::ChannelProxyInterfaceOTRAdaptor::AbortPeerAuthenticationContextPtr)") == -1) {
+        dbusConnection().send(dbusMessage.createErrorReply(TP_QT_ERROR_NOT_IMPLEMENTED, QLatin1String("Not implemented")));
+        return;
+    }
+
+    AbortPeerAuthenticationContextPtr ctx = AbortPeerAuthenticationContextPtr(
+            new Tp::MethodInvocationContext<  >(dbusConnection(), dbusMessage));
+    QMetaObject::invokeMethod(adaptee(), "abortPeerAuthentication",
+        Q_ARG(Tp::Service::ChannelProxyInterfaceOTRAdaptor::AbortPeerAuthenticationContextPtr, ctx));
 }
 
 }

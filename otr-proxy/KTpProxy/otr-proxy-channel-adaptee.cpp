@@ -110,6 +110,11 @@ OtrProxyChannel::Adaptee::Adaptee(OtrProxyChannel *pc,
     connect(chan.data(), SIGNAL(invalidated(Tp::DBusProxy*,const QString&,const QString&)), SLOT(onChannelClosed()));
     connect(&otrSes, SIGNAL(trustLevelChanged(TrustLevel)), SLOT(onTrustLevelChanged(TrustLevel)));
     connect(&otrSes, SIGNAL(sessionRefreshed()), SIGNAL(sessionRefreshed()));
+    connect(&otrSes, SIGNAL(peerAuthenticationRequested(const QString&)), SIGNAL(peerAuthenticationRequested(const QString&)));
+    connect(&otrSes, SIGNAL(peerAuthenticationConcluded(bool)), SIGNAL(peerAuthenticationConcluded(bool)));
+    connect(&otrSes, SIGNAL(peerAuthenticationAborted()), SIGNAL(peerAuthenticationAborted()));
+    connect(&otrSes, SIGNAL(peerAuthenticationError()), SIGNAL(peerAuthenticationError()));
+    connect(&otrSes, SIGNAL(peerAuthenticationCheated()), SIGNAL(peerAuthenticationCheated()));
 
     sender = channel->connection()->selfHandle();
 }
@@ -189,6 +194,11 @@ void OtrProxyChannel::Adaptee::disconnectProxy(
 
     disconnect(chan.data(), SIGNAL(pendingMessageRemoved(const Tp::ReceivedMessage&)),
             this, SLOT(onPendingMessageRemoved(const Tp::ReceivedMessage&)));
+
+    disconnect(ps, SIGNAL(keyGenerationStarted(const QString&)),
+            this, SLOT(onKeyGenerationStarted(const QString&)));
+    disconnect(ps, SIGNAL(keyGenerationFinished(const QString&, bool)), this,
+            SLOT(onKeyGenerationFinished(const QString&, bool)));
 
     isConnected = false;
     messages.clear();
@@ -333,6 +343,31 @@ void OtrProxyChannel::Adaptee::trustFingerprint(const QString& fingerprint, bool
         return;
     }
     context->setFinished();
+}
+
+void OtrProxyChannel::Adaptee::startPeerAuthentication(const QString &question, const QString &secret,
+        const Tp::Service::ChannelProxyInterfaceOTRAdaptor::StartPeerAuthenticationContextPtr &ctx)
+{
+    if(question.isEmpty()) {
+        otrSes.initSMPSecret(secret);
+    } else {
+        otrSes.initSMPQuery(question, secret);
+    }
+    ctx->setFinished();
+}
+
+void OtrProxyChannel::Adaptee::respondPeerAuthentication(const QString &secret,
+        const Tp::Service::ChannelProxyInterfaceOTRAdaptor::RespondPeerAuthenticationContextPtr &ctx)
+{
+    otrSes.respondSMPAuthentication(secret);
+    ctx->setFinished();
+}
+
+void OtrProxyChannel::Adaptee::abortPeerAuthentication(
+        const Tp::Service::ChannelProxyInterfaceOTRAdaptor::AbortPeerAuthenticationContextPtr &ctx)
+{
+    otrSes.abortSMPAuthentiaction();
+    ctx->setFinished();
 }
 
 void OtrProxyChannel::Adaptee::onMessageReceived(const Tp::ReceivedMessage &receivedMessage)

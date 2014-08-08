@@ -79,26 +79,44 @@ namespace OTR
             void stopSession();
             CryptResult encrypt(Message &message);
             CryptResult decrypt(Message &message);
-            void initSMPQuery();
-            void initSMPSecret();
+
+            void initSMPQuery(const QString &question, const QString &secret);
+            void initSMPSecret(const QString &secret);
+            void abortSMPAuthentiaction(ConnContext *context = NULL);
+            void respondSMPAuthentication(const QString &answer);
+
             TrustFpResult trustFingerprint(bool trust);
 
-            // functions called by libotr
+            // functions called by libotr ---------------------------------------
             virtual void handleMessage(const Message &message) = 0;
-            virtual void handleSmpEvent(OtrlSMPEvent smpEvent) = 0;
             virtual int recipientStatus() const = 0;
             virtual unsigned int maxMessageSize() const = 0;
+
             void onTrustLevelChanged(TrustLevel trustLevel, const ConnContext *context);
             void onSessionRefreshed();
             void onNewFingerprintReceived(const QString &fingeprint);
 
+            void onSMPFinished(bool success);
+            void onSMPError();
+            void onSMPAborted();
+            void onSMPCheated();
+            void onSMPQuery(const QString &question);
+
         private:
             Fingerprint* getFingerprint() const;
+            ConnContext* findContext() const;
 
         Q_SIGNALS:
             void trustLevelChanged(TrustLevel trustLevel);
             void sessionRefreshed();
             void newFingerprintReceived(const QString &fingeprint);
+
+            void authenticationFinished(bool success);
+            void authenticationError();
+            void authenticationAborted();
+            void authenticationCheated();
+            /** empty string if secret */
+            void authenticationRequested(const QString &question);
 
         private:
             otrl_instag_t instance;
@@ -114,7 +132,6 @@ namespace OTR
             ProxySession(OtrProxyChannel::Adaptee *pca, const SessionContext &ctx, Manager *parent);
 
             virtual void handleMessage(const Message &message) override;
-            virtual void handleSmpEvent(OtrlSMPEvent smpEvent) override;
             virtual int recipientStatus() const override;
             virtual unsigned int maxMessageSize() const override;
 

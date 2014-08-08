@@ -59,6 +59,14 @@ class TP_QT_EXPORT ChannelProxyInterfaceOTRAdaptor : public Tp::AbstractAdaptor
 "      <arg direction=\"in\" type=\"s\" name=\"fingerprint\"/>\n"
 "      <arg direction=\"in\" type=\"b\" name=\"trust\"/>\n"
 "    </method>\n"
+"    <method name=\"StartPeerAuthentication\">\n"
+"      <arg direction=\"in\" type=\"s\" name=\"question\"/>\n"
+"      <arg direction=\"in\" type=\"s\" name=\"secret\"/>\n"
+"    </method>\n"
+"    <method name=\"RespondPeerAuthentication\">\n"
+"      <arg direction=\"in\" type=\"s\" name=\"secret\"/>\n"
+"    </method>\n"
+"    <method name=\"AbortPeerAuthentication\"/>\n"
 "    <signal name=\"MessageSent\">\n"
 "      <arg type=\"aa{sv}\" name=\"content\">\n"
 "        <annotation value=\"Tp::MessagePartList\" name=\"com.trolltech.QtDBus.QtTypeName.In0\"/>\n"
@@ -74,6 +82,15 @@ class TP_QT_EXPORT ChannelProxyInterfaceOTRAdaptor : public Tp::AbstractAdaptor
 "    <signal name=\"PendingMessagesRemoved\">\n"
 "      <arg type=\"au\" name=\"messageIDs\"/>\n"
 "    </signal>\n"
+"    <signal name=\"PeerAuthenticationRequested\">\n"
+"      <arg type=\"s\" name=\"question\"/>\n"
+"    </signal>\n"
+"    <signal name=\"PeerAuthenticationConcluded\">\n"
+"      <arg type=\"b\" name=\"authenticated\"/>\n"
+"    </signal>\n"
+"    <signal name=\"PeerAuthenticationAborted\"/>\n"
+"    <signal name=\"PeerAuthenticationError\"/>\n"
+"    <signal name=\"PeerAuthenticationCheated\"/>\n"
 "    <signal name=\"SessionRefreshed\"/>\n"
 "    <signal name=\"TrustLevelChanged\">\n"
 "      <arg type=\"u\" name=\"trustLevel\"/>\n"
@@ -98,6 +115,9 @@ public:
     typedef Tp::MethodInvocationContextPtr<  > InitializeContextPtr;
     typedef Tp::MethodInvocationContextPtr<  > StopContextPtr;
     typedef Tp::MethodInvocationContextPtr<  > TrustFingerprintContextPtr;
+    typedef Tp::MethodInvocationContextPtr<  > StartPeerAuthenticationContextPtr;
+    typedef Tp::MethodInvocationContextPtr<  > RespondPeerAuthenticationContextPtr;
+    typedef Tp::MethodInvocationContextPtr<  > AbortPeerAuthenticationContextPtr;
 
 public: // PROPERTIES
     /**
@@ -106,7 +126,7 @@ public: // PROPERTIES
      * Adaptees should export this property as a Qt property named
      * 'wrappedChannel' with type QDBusObjectPath.
      *
-     * 
+     *
      * \htmlonly
      * <p>Object path of the channel this proxy is created for.</p>
      * \endhtmlonly
@@ -120,7 +140,7 @@ public: // PROPERTIES
      * Adaptees should export this property as a Qt property named
      * 'connected' with type bool.
      *
-     * 
+     *
      * \htmlonly
      * <p>TRUE if the proxy is connected</p>
      * \endhtmlonly
@@ -134,11 +154,11 @@ public: // PROPERTIES
      * Adaptees should export this property as a Qt property named
      * 'pendingMessages' with type Tp::MessagePartListList.
      *
-     * 
+     *
      * \htmlonly
      * <p>
      *   The same as:
-     *    \endhtmlonly ChannelInterfaceMessagesInterface \htmlonly 
+     *    \endhtmlonly ChannelInterfaceMessagesInterface \htmlonly
      * </p>
      * \endhtmlonly
      *
@@ -151,7 +171,7 @@ public: // PROPERTIES
      * Adaptees should export this property as a Qt property named
      * 'trustLevel' with type uint.
      *
-     * 
+     *
      * \htmlonly
      * <p>The current trust level of this channel:
      *     0=TRUST_NOT_PRIVATE, 1=TRUST_UNVERIFIED, 2=TRUST_PRIVATE,
@@ -169,7 +189,7 @@ public: // PROPERTIES
      * Adaptees should export this property as a Qt property named
      * 'localFingerprint' with type QString.
      *
-     * 
+     *
      * \htmlonly
      * <p>User's current fingerprint. The first element is a human readable
      * fingerprint that can be displayed to the user so he can communicate it
@@ -186,11 +206,11 @@ public: // PROPERTIES
      * Adaptees should export this property as a Qt property named
      * 'remoteFingerprint' with type QString.
      *
-     * 
+     *
      * \htmlonly
      * <p>The current fingerprint of the remote contact. Should be displayed
      *   to the user to update its trust level. It is shown in human readable format i.e.
-     *   :e .</p>
+     *   :e '12345678 12345678 12345678 12345678 12345678'.</p>
      * \endhtmlonly
      *
      * \return The value of exported property \c RemoteFingerprint.
@@ -207,8 +227,8 @@ public Q_SLOTS: // METHODS
      * Implementations should call MethodInvocationContext::setFinished (or setFinishedWithError
      * accordingly) on the received \a context object once the method has finished processing.
      *
-     * 
-     * Connect to the otr proxy. From now on all data which is modified by it 
+     *
+     * Connect to the otr proxy. From now on all data which is modified by it
      * should be acquired from the proxy, not from the underlying channel.
      *
      */
@@ -222,7 +242,7 @@ public Q_SLOTS: // METHODS
      * Implementations should call MethodInvocationContext::setFinished (or setFinishedWithError
      * accordingly) on the received \a context object once the method has finished processing.
      *
-     * 
+     *
      * Turns off proxy if one is connected.
      *
      */
@@ -236,11 +256,11 @@ public Q_SLOTS: // METHODS
      * Implementations should call MethodInvocationContext::setFinished (or setFinishedWithError
      * accordingly) on the received \a context object once the method has finished processing.
      *
-     * 
+     *
      * \htmlonly
      * <p>
      *   The same as:
-     *    \endhtmlonly org.freedesktop.Telepathy.Channel.Interface.Messages.Sent \htmlonly 
+     *    \endhtmlonly org.freedesktop.Telepathy.Channel.Interface.Messages.Sent \htmlonly
      * </p>
      * \endhtmlonly
      *
@@ -256,11 +276,11 @@ public Q_SLOTS: // METHODS
      * Implementations should call MethodInvocationContext::setFinished (or setFinishedWithError
      * accordingly) on the received \a context object once the method has finished processing.
      *
-     * 
+     *
      * \htmlonly
      * <p>
      *   The same as:
-     *    \endhtmlonly ChannelTypeTextInterface \htmlonly 
+     *    \endhtmlonly ChannelTypeTextInterface \htmlonly
      * </p>
      * \endhtmlonly
      *
@@ -275,8 +295,8 @@ public Q_SLOTS: // METHODS
      * Implementations should call MethodInvocationContext::setFinished (or setFinishedWithError
      * accordingly) on the received \a context object once the method has finished processing.
      *
-     * 
-     * Start an OTR session for this channel if the remote end supports it has 
+     *
+     * Start an OTR session for this channel if the remote end supports it has
      * well.
      *
      */
@@ -290,7 +310,7 @@ public Q_SLOTS: // METHODS
      * Implementations should call MethodInvocationContext::setFinished (or setFinishedWithError
      * accordingly) on the received \a context object once the method has finished processing.
      *
-     * 
+     *
      * Stops the OTR session.
      *
      */
@@ -304,19 +324,82 @@ public Q_SLOTS: // METHODS
      * Implementations should call MethodInvocationContext::setFinished (or setFinishedWithError
      * accordingly) on the received \a context object once the method has finished processing.
      *
-     * 
-     * Set whether or not the user trusts the given fingerprint. It has to be 
+     *
+     * Set whether or not the user trusts the given fingerprint. It has to be
      * the fingerprint the remote contact is currently using.
      *
      * \param fingerprint
-     *     
-     *     The fingerprint in format: &apos;12345678 12345678 12345678 
+     *
+     *     The fingerprint in format: &apos;12345678 12345678 12345678
      *     12345678 12345678&apos;
      * \param trust
-     *     
+     *
      *     %TRUE if trusted, %FALSE otherwise.
      */
     void TrustFingerprint(const QString& fingerprint, bool trust, const QDBusMessage& dbusMessage);
+    /**
+     * Begins a call to the exported D-Bus method \c StartPeerAuthentication on this object.
+     *
+     * Adaptees should export this method as a Qt slot with the following signature:
+     * void startPeerAuthentication(const QString& question, const QString& secret, const Tp::Service::ChannelProxyInterfaceOTRAdaptor::StartPeerAuthenticationContextPtr &context);
+     *
+     * Implementations should call MethodInvocationContext::setFinished (or setFinishedWithError
+     * accordingly) on the received \a context object once the method has finished processing.
+     *
+     *
+     * \htmlonly
+     * <p>This method starts peer authentication using the Socialist
+     *   Millionaire protocol.</p>
+     * \endhtmlonly
+     *
+     * \param question
+     *
+     *     The question to be used for peer authentication. It is used by the
+     *     remote peer as a hint for the shared secret. If an empty string is
+     *     passed only the shared secret will be used on the peer
+     *     authentication process.
+     * \param secret
+     *
+     *     The shared secret to be used for peer authentication. If the
+     *     Question parameter is not empty, this should be the answer to it.
+     */
+    void StartPeerAuthentication(const QString& question, const QString& secret, const QDBusMessage& dbusMessage);
+    /**
+     * Begins a call to the exported D-Bus method \c RespondPeerAuthentication on this object.
+     *
+     * Adaptees should export this method as a Qt slot with the following signature:
+     * void respondPeerAuthentication(const QString& secret, const Tp::Service::ChannelProxyInterfaceOTRAdaptor::RespondPeerAuthenticationContextPtr &context);
+     *
+     * Implementations should call MethodInvocationContext::setFinished (or setFinishedWithError
+     * accordingly) on the received \a context object once the method has finished processing.
+     *
+     *
+     * \htmlonly
+     * <p>This method continues the peer authentication started by the remote
+     *   peer.</p>
+     * \endhtmlonly
+     *
+     * \param secret
+     *
+     *     The shared secret to be used for peer authentication.
+     */
+    void RespondPeerAuthentication(const QString& secret, const QDBusMessage& dbusMessage);
+    /**
+     * Begins a call to the exported D-Bus method \c AbortPeerAuthentication on this object.
+     *
+     * Adaptees should export this method as a Qt slot with the following signature:
+     * void abortPeerAuthentication(const Tp::Service::ChannelProxyInterfaceOTRAdaptor::AbortPeerAuthenticationContextPtr &context);
+     *
+     * Implementations should call MethodInvocationContext::setFinished (or setFinishedWithError
+     * accordingly) on the received \a context object once the method has finished processing.
+     *
+     *
+     * \htmlonly
+     * <p>This method aborts the peer authentication process.</p>
+     * \endhtmlonly
+     *
+     */
+    void AbortPeerAuthentication(const QDBusMessage& dbusMessage);
 
 Q_SIGNALS: // SIGNALS
     /**
@@ -349,6 +432,64 @@ Q_SIGNALS: // SIGNALS
      *
      */
     void PendingMessagesRemoved(const Tp::UIntList& messageIDs);
+    /**
+     * Represents the exported D-Bus signal \c PeerAuthenticationRequested on this object.
+     *
+     * Adaptees should export this signal as a Qt signal with the following signature:
+     * void peerAuthenticationRequested(const QString& question);
+     *
+     * The adaptee signal will be automatically relayed as a D-Bus signal once emitted.
+     *
+     * \param question
+     *
+     *     The question the remote peer is using for peer authentication. If
+     *     an empty string is passed only the shared secret will be used on
+     *     the peer authentication process.
+     */
+    void PeerAuthenticationRequested(const QString& question);
+    /**
+     * Represents the exported D-Bus signal \c PeerAuthenticationConcluded on this object.
+     *
+     * Adaptees should export this signal as a Qt signal with the following signature:
+     * void peerAuthenticationConcluded(bool authenticated);
+     *
+     * The adaptee signal will be automatically relayed as a D-Bus signal once emitted.
+     *
+     * \param authenticated
+     *
+     *     True if peer identity could be authenticated, false otherwise.
+     */
+    void PeerAuthenticationConcluded(bool authenticated);
+    /**
+     * Represents the exported D-Bus signal \c PeerAuthenticationAborted on this object.
+     *
+     * Adaptees should export this signal as a Qt signal with the following signature:
+     * void peerAuthenticationAborted();
+     *
+     * The adaptee signal will be automatically relayed as a D-Bus signal once emitted.
+     *
+     */
+    void PeerAuthenticationAborted();
+    /**
+     * Represents the exported D-Bus signal \c PeerAuthenticationError on this object.
+     *
+     * Adaptees should export this signal as a Qt signal with the following signature:
+     * void peerAuthenticationError();
+     *
+     * The adaptee signal will be automatically relayed as a D-Bus signal once emitted.
+     *
+     */
+    void PeerAuthenticationError();
+    /**
+     * Represents the exported D-Bus signal \c PeerAuthenticationCheated on this object.
+     *
+     * Adaptees should export this signal as a Qt signal with the following signature:
+     * void peerAuthenticationCheated();
+     *
+     * The adaptee signal will be automatically relayed as a D-Bus signal once emitted.
+     *
+     */
+    void PeerAuthenticationCheated();
     /**
      * Represents the exported D-Bus signal \c SessionRefreshed on this object.
      *

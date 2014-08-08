@@ -207,12 +207,41 @@ namespace {
             ConnContext *context, unsigned short progress_percent,
             char *question)
     {
-        Q_UNUSED(opdata);
-        Q_UNUSED(smp_event);
-        Q_UNUSED(context);
         Q_UNUSED(progress_percent);
-        Q_UNUSED(question);
-        // TODO
+
+        Session *session = reinterpret_cast<Session*>(opdata);
+        kDebug() << session->context().accountName;
+
+        switch (smp_event) {
+            case OTRL_SMPEVENT_NONE:
+                break;
+            case OTRL_SMPEVENT_ASK_FOR_SECRET:
+                session->onSMPQuery(QLatin1String(""));
+                break;
+            case OTRL_SMPEVENT_ASK_FOR_ANSWER:
+                session->onSMPQuery(QLatin1String(question));
+                break;
+            case OTRL_SMPEVENT_IN_PROGRESS:
+                break;
+            case OTRL_SMPEVENT_SUCCESS:
+                session->onSMPFinished(true);
+                break;
+            case OTRL_SMPEVENT_FAILURE:
+                session->onSMPFinished(false);
+                break;
+            case OTRL_SMPEVENT_ABORT:
+                session->abortSMPAuthentiaction(context);
+                session->onSMPAborted();
+                break;
+            case OTRL_SMPEVENT_CHEATED:
+                session->abortSMPAuthentiaction(context);
+                session->onSMPCheated();
+                break;
+            case OTRL_SMPEVENT_ERROR:
+                session->abortSMPAuthentiaction(context);
+                session->onSMPError();
+                break;
+        }
     }
 
     void handle_msg_event(void *opdata, OtrlMessageEvent msg_event,
