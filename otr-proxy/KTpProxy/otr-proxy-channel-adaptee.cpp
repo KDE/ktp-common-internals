@@ -110,11 +110,12 @@ OtrProxyChannel::Adaptee::Adaptee(OtrProxyChannel *pc,
     connect(chan.data(), SIGNAL(invalidated(Tp::DBusProxy*,const QString&,const QString&)), SLOT(onChannelClosed()));
     connect(&otrSes, SIGNAL(trustLevelChanged(TrustLevel)), SLOT(onTrustLevelChanged(TrustLevel)));
     connect(&otrSes, SIGNAL(sessionRefreshed()), SIGNAL(sessionRefreshed()));
-    connect(&otrSes, SIGNAL(peerAuthenticationRequested(const QString&)), SIGNAL(peerAuthenticationRequested(const QString&)));
-    connect(&otrSes, SIGNAL(peerAuthenticationConcluded(bool)), SIGNAL(peerAuthenticationConcluded(bool)));
-    connect(&otrSes, SIGNAL(peerAuthenticationAborted()), SIGNAL(peerAuthenticationAborted()));
-    connect(&otrSes, SIGNAL(peerAuthenticationError()), SIGNAL(peerAuthenticationError()));
-    connect(&otrSes, SIGNAL(peerAuthenticationCheated()), SIGNAL(peerAuthenticationCheated()));
+    connect(&otrSes, SIGNAL(authenticationRequested(const QString&)), SIGNAL(peerAuthenticationRequested(const QString&)));
+    connect(&otrSes, SIGNAL(authenticationInProgress()), SIGNAL(peerAuthenticationInProgress()));
+    connect(&otrSes, SIGNAL(authenticationConcluded(bool)), SIGNAL(peerAuthenticationConcluded(bool)));
+    connect(&otrSes, SIGNAL(authenticationAborted()), SIGNAL(peerAuthenticationAborted()));
+    connect(&otrSes, SIGNAL(authenticationError()), SIGNAL(peerAuthenticationError()));
+    connect(&otrSes, SIGNAL(authenticationCheated()), SIGNAL(peerAuthenticationCheated()));
 
     sender = channel->connection()->selfHandle();
 }

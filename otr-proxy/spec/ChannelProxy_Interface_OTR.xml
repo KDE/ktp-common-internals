@@ -375,6 +375,13 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.</
       </tp:docstring>
     </signal>
 
+    <signal name="PeerAuthenticationInProgress"
+      tp:name-for-bindings="Peer_Authentication_Aborted">
+      <tp:docstring>
+        Emitted when the peer authentication process has entered next stage.
+      </tp:docstring>
+    </signal>
+
     <signal name="PeerAuthenticationAborted"
       tp:name-for-bindings="Peer_Authentication_Aborted">
       <tp:docstring>

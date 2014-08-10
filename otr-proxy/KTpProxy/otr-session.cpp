@@ -165,7 +165,7 @@ namespace OTR
                 ctx.recipientName.toLocal8Bit(),
                 instance);
 
-        onTrustLevelChanged(TrustLevel::NOT_PRIVATE, nullptr);
+        onTrustLevelChanged(nullptr);
     }
 
     CryptResult Session::encrypt(Message &message)
@@ -256,7 +256,7 @@ namespace OTR
         }
 
         if(isFinished) {
-            onTrustLevelChanged(TrustLevel::FINISHED, nullptr);
+            onTrustLevelChanged(nullptr);
         }
 
         return result;
@@ -308,11 +308,7 @@ namespace OTR
 
             TrustFpResult res = pr->trustFingerprint(ctx, fp, trust);
             if(res == TrustFpResult::OK && trustLevel() != TrustLevel::FINISHED) {
-                if(trust) {
-                    onTrustLevelChanged(TrustLevel::VERIFIED, nullptr);
-                } else {
-                    onTrustLevelChanged(TrustLevel::UNVERIFIED, nullptr);
-                }
+                    onTrustLevelChanged(nullptr);
             }
             return res;
         } else {
@@ -321,12 +317,12 @@ namespace OTR
         }
     }
 
-    void Session::onTrustLevelChanged(TrustLevel trustLevel, const ConnContext *context)
+    void Session::onTrustLevelChanged(const ConnContext *context)
     {
         if(context != nullptr) {
             instance = context->their_instance;
         }
-        Q_EMIT trustLevelChanged(trustLevel);
+        Q_EMIT trustLevelChanged(trustLevel());
     }
 
     void Session::onSessionRefreshed()
@@ -341,7 +337,12 @@ namespace OTR
 
     void Session::onSMPFinished(bool success)
     {
-        Q_EMIT authenticationFinished(success);
+        Q_EMIT authenticationConcluded(success);
+    }
+
+    void Session::onSMPInProgress()
+    {
+        Q_EMIT authenticationInProgress();
     }
 
     void Session::onSMPError()

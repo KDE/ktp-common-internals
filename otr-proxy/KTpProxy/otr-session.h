@@ -92,11 +92,12 @@ namespace OTR
             virtual int recipientStatus() const = 0;
             virtual unsigned int maxMessageSize() const = 0;
 
-            void onTrustLevelChanged(TrustLevel trustLevel, const ConnContext *context);
+            void onTrustLevelChanged(const ConnContext *context = nullptr);
             void onSessionRefreshed();
             void onNewFingerprintReceived(const QString &fingeprint);
 
             void onSMPFinished(bool success);
+            void onSMPInProgress();
             void onSMPError();
             void onSMPAborted();
             void onSMPCheated();
@@ -111,12 +112,13 @@ namespace OTR
             void sessionRefreshed();
             void newFingerprintReceived(const QString &fingeprint);
 
-            void authenticationFinished(bool success);
+            void authenticationConcluded(bool success);
             void authenticationError();
             void authenticationAborted();
             void authenticationCheated();
             /** empty string if secret */
             void authenticationRequested(const QString &question);
+            void authenticationInProgress();
 
         private:
             otrl_instag_t instance;

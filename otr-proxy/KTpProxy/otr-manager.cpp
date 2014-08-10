@@ -100,17 +100,13 @@ namespace {
     void gone_secure(void *opdata, ConnContext *context)
     {
         Session *session = reinterpret_cast<Session*>(opdata);
-        session->onTrustLevelChanged(
-                OTR::utils::getTrustLevel(session->context(), session->userStateBox()->userState(), context->their_instance),
-                context);
+        session->onTrustLevelChanged(context);
     }
 
     void gone_insecure(void *opdata, ConnContext *context)
     {
         Session *session = reinterpret_cast<Session*>(opdata);
-        session->onTrustLevelChanged(
-                OTR::utils::getTrustLevel(session->context(), session->userStateBox()->userState(), context->their_instance),
-                context);
+        session->onTrustLevelChanged(context);
     }
 
     void still_secure(void *opdata, ConnContext *context, int is_reply)
@@ -222,12 +218,15 @@ namespace {
                 session->onSMPQuery(QLatin1String(question));
                 break;
             case OTRL_SMPEVENT_IN_PROGRESS:
+                session->onSMPInProgress();
                 break;
             case OTRL_SMPEVENT_SUCCESS:
                 session->onSMPFinished(true);
+                session->onTrustLevelChanged();
                 break;
             case OTRL_SMPEVENT_FAILURE:
                 session->onSMPFinished(false);
+                session->onTrustLevelChanged();
                 break;
             case OTRL_SMPEVENT_ABORT:
                 session->abortSMPAuthentiaction(context);

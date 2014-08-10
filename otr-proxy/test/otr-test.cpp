@@ -89,7 +89,7 @@ namespace tst {
             {
                 QVERIFY(connect(&ses, SIGNAL(sessionRefreshed()), SLOT(onSessionRefreshed())));
                 QVERIFY(connect(&ses, SIGNAL(trustLevelChanged(TrustLevel)), SLOT(onTrustLevelChanged(TrustLevel))));
-                QVERIFY(connect(&ses, SIGNAL(authenticationFinished(bool)), SLOT(onSMPFinished(bool))));
+                QVERIFY(connect(&ses, SIGNAL(authenticationConcluded(bool)), SLOT(onSMPConcluded(bool))));
                 QVERIFY(connect(&ses, SIGNAL(authenticationAborted()), SLOT(onSMPAborted())));
                 QVERIFY(connect(&ses, SIGNAL(authenticationRequested(const QString&)), SLOT(onSMPQuery(const QString&))));
             }
@@ -127,7 +127,7 @@ namespace tst {
                 lastTlevel = tlevel;
             }
 
-            void onSMPFinished(bool success)
+            void onSMPConcluded(bool success)
             {
                 smpFinished = true;
                 smpSuccess = success;

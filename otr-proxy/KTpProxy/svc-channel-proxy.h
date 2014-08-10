@@ -88,6 +88,7 @@ class TP_QT_EXPORT ChannelProxyInterfaceOTRAdaptor : public Tp::AbstractAdaptor
 "    <signal name=\"PeerAuthenticationConcluded\">\n"
 "      <arg type=\"b\" name=\"authenticated\"/>\n"
 "    </signal>\n"
+"    <signal name=\"PeerAuthenticationInProgress\"/>\n"
 "    <signal name=\"PeerAuthenticationAborted\"/>\n"
 "    <signal name=\"PeerAuthenticationError\"/>\n"
 "    <signal name=\"PeerAuthenticationCheated\"/>\n"
@@ -461,6 +462,16 @@ Q_SIGNALS: // SIGNALS
      */
     void PeerAuthenticationConcluded(bool authenticated);
     /**
+     * Represents the exported D-Bus signal \c PeerAuthenticationInProgress on this object.
+     *
+     * Adaptees should export this signal as a Qt signal with the following signature:
+     * void peerAuthenticationAborted();
+     *
+     * The adaptee signal will be automatically relayed as a D-Bus signal once emitted.
+     *
+     */
+    void PeerAuthenticationInProgress();
+    /**
      * Represents the exported D-Bus signal \c PeerAuthenticationAborted on this object.
      *
      * Adaptees should export this signal as a Qt signal with the following signature:
@@ -514,4 +525,5 @@ Q_SIGNALS: // SIGNALS
 
 }
 }
+
 #endif

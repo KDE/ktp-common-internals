@@ -102,6 +102,7 @@ class OtrProxyChannel::Adaptee : public QObject
         void closed();
         void trustLevelChanged(uint trustLevel);
         void peerAuthenticationRequested(const QString&);
+        void peerAuthenticationInProgress();
         void peerAuthenticationConcluded(bool);
         void peerAuthenticationAborted();
         void peerAuthenticationError();

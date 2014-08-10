@@ -16,6 +16,7 @@ ChannelProxyInterfaceOTRAdaptor::ChannelProxyInterfaceOTRAdaptor(const QDBusConn
     connect(adaptee, SIGNAL(pendingMessagesRemoved(const Tp::UIntList&)), SIGNAL(PendingMessagesRemoved(const Tp::UIntList&)));
     connect(adaptee, SIGNAL(peerAuthenticationRequested(const QString&)), SIGNAL(PeerAuthenticationRequested(const QString&)));
     connect(adaptee, SIGNAL(peerAuthenticationConcluded(bool)), SIGNAL(PeerAuthenticationConcluded(bool)));
+    connect(adaptee, SIGNAL(peerAuthenticationInProgress()), SIGNAL(PeerAuthenticationInProgress()));
     connect(adaptee, SIGNAL(peerAuthenticationAborted()), SIGNAL(PeerAuthenticationAborted()));
     connect(adaptee, SIGNAL(peerAuthenticationError()), SIGNAL(PeerAuthenticationError()));
     connect(adaptee, SIGNAL(peerAuthenticationCheated()), SIGNAL(PeerAuthenticationCheated()));
