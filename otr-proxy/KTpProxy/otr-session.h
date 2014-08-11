@@ -107,6 +107,9 @@ namespace OTR
             Fingerprint* getFingerprint() const;
             ConnContext* findContext() const;
 
+        private Q_SLOTS:
+            void onFingerprintTrusted(const QString &accountId, const QString &fingerprint, bool trusted);
+
         Q_SIGNALS:
             void trustLevelChanged(TrustLevel trustLevel);
             void sessionRefreshed();

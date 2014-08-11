@@ -8,6 +8,8 @@
  * which it was generated.
  */
 
+#include "types.h"
+
 #include <TelepathyQt/AbstractAdaptor>
 #include <TelepathyQt/Global>
 #include <TelepathyQt/Types>
@@ -41,6 +43,24 @@ class TP_QT_EXPORT ProxyServiceAdaptor : public Tp::AbstractAdaptor
 "      <arg direction=\"in\" type=\"o\" name=\"account\"/>\n"
 "      <arg direction=\"out\" type=\"s\" name=\"fingerprint\"/>\n"
 "    </method>\n"
+"    <method name=\"GetKnownFingerprints\">\n"
+"      <arg direction=\"in\" type=\"o\" name=\"account\"/>\n"
+"      <arg direction=\"out\" type=\"a(ssb)\" name=\"fingerprints\">\n"
+"        <annotation value=\"Tp::FingerprintInfoList\" name=\"com.trolltech.QtDBus.QtTypeName.Out0\"/>\n"
+"      </arg>\n"
+"    </method>\n"
+"    <method name=\"TrustFingerprint\">\n"
+"      <arg direction=\"in\" type=\"o\" name=\"account\"/>\n"
+"      <arg direction=\"in\" type=\"(ssb)\" name=\"fingerprint\">\n"
+"        <annotation value=\"Tp::FingerprintInfo\" name=\"com.trolltech.QtDBus.QtTypeName.In1\"/>\n"
+"      </arg>\n"
+"    </method>\n"
+"    <method name=\"ForgetFingerprint\">\n"
+"      <arg direction=\"in\" type=\"o\" name=\"account\"/>\n"
+"      <arg direction=\"in\" type=\"(ssb)\" name=\"fingerprint\">\n"
+"        <annotation value=\"Tp::FingerprintInfo\" name=\"com.trolltech.QtDBus.QtTypeName.In1\"/>\n"
+"      </arg>\n"
+"    </method>\n"
 "    <signal name=\"ProxyConnected\">\n"
 "      <arg type=\"o\" name=\"proxy\"/>\n"
 "    </signal>\n"
@@ -64,6 +84,9 @@ public:
 
     typedef Tp::MethodInvocationContextPtr<  > GeneratePrivateKeyContextPtr;
     typedef Tp::MethodInvocationContextPtr< QString > GetFingerprintForAccountContextPtr;
+    typedef Tp::MethodInvocationContextPtr< Tp::FingerprintInfoList > GetKnownFingerprintsContextPtr;
+    typedef Tp::MethodInvocationContextPtr<  > TrustFingerprintContextPtr;
+    typedef Tp::MethodInvocationContextPtr<  > ForgetFingerprintContextPtr;
 
 public: // PROPERTIES
     /**
@@ -72,7 +95,7 @@ public: // PROPERTIES
      * Adaptees should export this property as a Qt property named
      * 'policySettings' with type uint.
      *
-     * 
+     *
      * \htmlonly
      * <p>Set the OTR policy how you like it</p>
      * \endhtmlonly
@@ -86,7 +109,7 @@ public: // PROPERTIES
      * Adaptees should export this property as a writable Qt property named
      * 'policySettings' with type uint.
      *
-     * 
+     *
      * \htmlonly
      * <p>Set the OTR policy how you like it</p>
      * \endhtmlonly
@@ -103,7 +126,7 @@ public Q_SLOTS: // METHODS
      * Implementations should call MethodInvocationContext::setFinished (or setFinishedWithError
      * accordingly) on the received \a context object once the method has finished processing.
      *
-     * 
+     *
      * \htmlonly
      * <p> Generate new private key for given account. </p>
      * \endhtmlonly
@@ -119,18 +142,63 @@ public Q_SLOTS: // METHODS
      * Implementations should call MethodInvocationContext::setFinished (or setFinishedWithError
      * accordingly) on the received \a context object once the method has finished processing.
      *
-     * 
+     *
      * Get private key fingerprint associated with given account
      *
      * \param account
-     *     
+     *
      *     The account the new key is generated for
      * \return
-     *     
-     *     Fingerprint of given account&apos;s private key or an empty string 
+     *
+     *     Fingerprint of given account&apos;s private key or an empty string
      *     if none exists
      */
     QString GetFingerprintForAccount(const QDBusObjectPath& account, const QDBusMessage& dbusMessage);
+    /**
+     * Begins a call to the exported D-Bus method \c GetKnownFingerprints on this object.
+     *
+     * Adaptees should export this method as a Qt slot with the following signature:
+     * void getKnownFingerprints(const QDBusObjectPath& account, const Tp::Service::ProxyServiceAdaptor::GetKnownFingerprintsContextPtr &context);
+     *
+     * Implementations should call MethodInvocationContext::setFinished (or setFinishedWithError
+     * accordingly) on the received \a context object once the method has finished processing.
+     *
+     *
+     * Get private key fingerprint associated with given account
+     *
+     * \return
+     */
+    Tp::FingerprintInfoList GetKnownFingerprints(const QDBusObjectPath& account, const QDBusMessage& dbusMessage);
+    /**
+     * Begins a call to the exported D-Bus method \c TrustFingerprint on this object.
+     *
+     * Adaptees should export this method as a Qt slot with the following signature:
+     * void trustFingerprint(const QDBusObjectPath& account, const Tp::FingerprintInfo& fingerprint, const Tp::Service::ProxyServiceAdaptor::TrustFingerprintContextPtr &context);
+     *
+     * Implementations should call MethodInvocationContext::setFinished (or setFinishedWithError
+     * accordingly) on the received \a context object once the method has finished processing.
+     *
+     *
+     * Trust or distrust given fingerprint for account by settings
+     * Is_Verfified to %TRUE or %FALSE
+     *
+     */
+    void TrustFingerprint(const QDBusObjectPath& account, const Tp::FingerprintInfo& fingerprint, const QDBusMessage& dbusMessage);
+    /**
+     * Begins a call to the exported D-Bus method \c ForgetFingerprint on this object.
+     *
+     * Adaptees should export this method as a Qt slot with the following signature:
+     * void forgetFingerprint(const QDBusObjectPath& account, const Tp::FingerprintInfo& fingerprint, const Tp::Service::ProxyServiceAdaptor::ForgetFingerprintContextPtr &context);
+     *
+     * Implementations should call MethodInvocationContext::setFinished (or setFinishedWithError
+     * accordingly) on the received \a context object once the method has finished processing.
+     *
+     *
+     * Trust or distrust given fingerprint for account by settings
+     * Is_Verfified to %TRUE or %FALSE
+     *
+     */
+    void ForgetFingerprint(const QDBusObjectPath& account, const Tp::FingerprintInfo& fingerprint, const QDBusMessage& dbusMessage);
 
 Q_SIGNALS: // SIGNALS
     /**
@@ -142,7 +210,7 @@ Q_SIGNALS: // SIGNALS
      * The adaptee signal will be automatically relayed as a D-Bus signal once emitted.
      *
      * \param proxy
-     *     
+     *
      *     The object path of the connected proxy
      */
     void ProxyConnected(const QDBusObjectPath& proxy);
@@ -155,7 +223,7 @@ Q_SIGNALS: // SIGNALS
      * The adaptee signal will be automatically relayed as a D-Bus signal once emitted.
      *
      * \param proxy
-     *     
+     *
      *     The object path of the disconnectd proxy type
      */
     void ProxyDisconnected(const QDBusObjectPath& proxy);
@@ -168,7 +236,7 @@ Q_SIGNALS: // SIGNALS
      * The adaptee signal will be automatically relayed as a D-Bus signal once emitted.
      *
      * \param account
-     *     
+     *
      *     The account the new key is generated for
      */
     void KeyGenerationStarted(const QDBusObjectPath& account);
@@ -181,10 +249,10 @@ Q_SIGNALS: // SIGNALS
      * The adaptee signal will be automatically relayed as a D-Bus signal once emitted.
      *
      * \param account
-     *     
+     *
      *     The account the new key has been generated for
      * \param error
-     *     
+     *
      *     %TRUE if error occured during generation
      */
     void KeyGenerationFinished(const QDBusObjectPath& account, bool error);

@@ -59,6 +59,9 @@ class ProxyService : public Tp::DBusService
         /** returns false if key cannot be generated - i.e. incorrect id */
         bool createNewPrivateKey(const QString &accountId, const QString &accountName);
         QString getFingerprintFor(const QString &accountId, const QString &accountName);
+        Tp::FingerprintInfoList getKnownFingerprints(const QString &accountId);
+        bool trustFingerprint(const QString &accountId, const Tp::FingerprintInfo &fingerprint);
+        bool forgetFingerprint(const QString &accountId, const Tp::FingerprintInfo &fingerprint);
 
         OTR::Manager* managerOTR();
         Tp::AccountManagerPtr accountManager();

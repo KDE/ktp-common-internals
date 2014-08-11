@@ -17,61 +17,48 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA            *
  ***************************************************************************/
 
-#ifndef KTP_PROXY_TYPES_HEADER
-#define KTP_PROXY_TYPES_HEADER
+#include "types.h"
 
-#include <TelepathyQt/SharedPtr>
 #include <QDBusArgument>
-
-class OtrProxyChannel;
-class ProxyService;
-class ProxyObserver;
-
-typedef Tp::SharedPtr<OtrProxyChannel> OtrProxyChannelPtr;
-typedef Tp::SharedPtr<ProxyService> ProxyServicePtr;
-typedef Tp::SharedPtr<ProxyObserver> ProxyObserverPtr;
+#include <QDBusMetaType>
 
 namespace Tp
 {
 
-/**
- * \struct FingerprintInfo
- * \ingroup struct
- * \headerfile TelepathyQt/types.h <TelepathyQt/Types>
- *
- * Structure type generated from the specification.
- *
- * A struct (Contact_Name, Fingerprint, Is_Verified) representing remote
- * contact&apos;s fingerprint, as returned by Get_Known_Fingerprints
- */
-struct TP_QT_EXPORT FingerprintInfo
+TP_QT_EXPORT bool operator==(const FingerprintInfo& v1, const FingerprintInfo& v2)
 {
-    QString contactName;
-    QString fingerprint;
-    bool isVerified;
-};
-
-TP_QT_EXPORT bool operator==(const FingerprintInfo& v1, const FingerprintInfo& v2);
-inline bool operator!=(const FingerprintInfo& v1, const FingerprintInfo& v2)
-{
-    return !operator==(v1, v2);
-}
-TP_QT_EXPORT QDBusArgument& operator<<(QDBusArgument& arg, const FingerprintInfo& val);
-TP_QT_EXPORT const QDBusArgument& operator>>(const QDBusArgument& arg, FingerprintInfo& val);
-
-/**
- * \ingroup list
- * \headerfile TelepathyQt/types.h <TelepathyQt/Types>
- *
- * Array of FingerprintInfo values.
- */
-typedef QList<FingerprintInfo> FingerprintInfoList;
-
-void registerProxyTypes();
-
+    return ((v1.contactName == v2.contactName)
+            && (v1.fingerprint == v2.fingerprint)
+            && (v1.isVerified == v2.isVerified)
+            );
 }
 
-Q_DECLARE_METATYPE(Tp::FingerprintInfo)
-Q_DECLARE_METATYPE(Tp::FingerprintInfoList)
+TP_QT_EXPORT QDBusArgument& operator<<(QDBusArgument& arg, const FingerprintInfo& val)
+{
+    arg.beginStructure();
+    arg << val.contactName << val.fingerprint << val.isVerified;
+    arg.endStructure();
+    return arg;
+}
 
-#endif
+TP_QT_EXPORT const QDBusArgument& operator>>(const QDBusArgument& arg, FingerprintInfo& val)
+{
+    arg.beginStructure();
+    arg >> val.contactName >> val.fingerprint >> val.isVerified;
+    arg.endStructure();
+    return arg;
+}
+
+void registerProxyTypes()
+{
+    static bool registered = false;
+    if(registered) {
+        return;
+    }
+    registered = true;
+
+    qDBusRegisterMetaType<Tp::FingerprintInfo>();
+    qDBusRegisterMetaType<Tp::FingerprintInfoList>();
+}
+
+}

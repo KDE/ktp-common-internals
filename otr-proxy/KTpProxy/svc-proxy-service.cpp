@@ -60,5 +60,48 @@ QString ProxyServiceAdaptor::GetFingerprintForAccount(const QDBusObjectPath& acc
     return QString();
 }
 
+Tp::FingerprintInfoList ProxyServiceAdaptor::GetKnownFingerprints(const QDBusObjectPath& account, const QDBusMessage& dbusMessage)
+{
+    if (!adaptee()->metaObject()->indexOfMethod("getKnownFingerprints(QDBusObjectPath,Tp::Service::ProxyServiceAdaptor::GetKnownFingerprintsContextPtr)") == -1) {
+        dbusConnection().send(dbusMessage.createErrorReply(TP_QT_ERROR_NOT_IMPLEMENTED, QLatin1String("Not implemented")));
+        return Tp::FingerprintInfoList();
+    }
+
+    GetKnownFingerprintsContextPtr ctx = GetKnownFingerprintsContextPtr(
+            new Tp::MethodInvocationContext< Tp::FingerprintInfoList >(dbusConnection(), dbusMessage));
+    QMetaObject::invokeMethod(adaptee(), "getKnownFingerprints",
+        Q_ARG(QDBusObjectPath, account),
+        Q_ARG(Tp::Service::ProxyServiceAdaptor::GetKnownFingerprintsContextPtr, ctx));
+    return Tp::FingerprintInfoList();
+}
+
+void ProxyServiceAdaptor::TrustFingerprint(const QDBusObjectPath& account, const Tp::FingerprintInfo& fingerprint, const QDBusMessage& dbusMessage)
+{
+    if (!adaptee()->metaObject()->indexOfMethod("trustFingerprint(QDBusObjectPath,Tp::FingerprintInfo,Tp::Service::ProxyServiceAdaptor::TrustFingerprintContextPtr)") == -1) {
+        dbusConnection().send(dbusMessage.createErrorReply(TP_QT_ERROR_NOT_IMPLEMENTED, QLatin1String("Not implemented")));
+        return;
+    }
+
+    TrustFingerprintContextPtr ctx = TrustFingerprintContextPtr(
+            new Tp::MethodInvocationContext<  >(dbusConnection(), dbusMessage));
+    QMetaObject::invokeMethod(adaptee(), "trustFingerprint",
+        Q_ARG(QDBusObjectPath, account), Q_ARG(Tp::FingerprintInfo, fingerprint),
+        Q_ARG(Tp::Service::ProxyServiceAdaptor::TrustFingerprintContextPtr, ctx));
+}
+
+void ProxyServiceAdaptor::ForgetFingerprint(const QDBusObjectPath& account, const Tp::FingerprintInfo& fingerprint, const QDBusMessage& dbusMessage)
+{
+    if (!adaptee()->metaObject()->indexOfMethod("forgetFingerprint(QDBusObjectPath,Tp::FingerprintInfo,Tp::Service::ProxyServiceAdaptor::ForgetFingerprintContextPtr)") == -1) {
+        dbusConnection().send(dbusMessage.createErrorReply(TP_QT_ERROR_NOT_IMPLEMENTED, QLatin1String("Not implemented")));
+        return;
+    }
+
+    ForgetFingerprintContextPtr ctx = ForgetFingerprintContextPtr(
+            new Tp::MethodInvocationContext<  >(dbusConnection(), dbusMessage));
+    QMetaObject::invokeMethod(adaptee(), "forgetFingerprint",
+        Q_ARG(QDBusObjectPath, account), Q_ARG(Tp::FingerprintInfo, fingerprint),
+        Q_ARG(Tp::Service::ProxyServiceAdaptor::ForgetFingerprintContextPtr, ctx));
+}
+
 }
 }

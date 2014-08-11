@@ -22,6 +22,7 @@
 
 #include "otr-config.h"
 #include "otr-session.h"
+#include "types.h"
 
 #include <QThread>
 
@@ -42,8 +43,10 @@ namespace OTR
 
     class KeyGenerationWorker;
 
-    class Manager
+    class Manager : public QObject
     {
+        Q_OBJECT
+
         public:
             Manager(Config *otrConfig);
 
@@ -52,8 +55,8 @@ namespace OTR
             OtrlPolicy getPolicy() const;
             void setPolicy(OtrlPolicy policy);
 
+            void saveFingerprints(const QString &accountId);
             void saveFingerprints(Session *session);
-            TrustFpResult trustFingerprint(const SessionContext &ctx, const QString &fingerprint, bool trust);
             TrustFpResult trustFingerprint(const SessionContext &ctx, Fingerprint *fingerprint, bool trust);
 
             void createNewPrivateKey(Session *session);
@@ -61,8 +64,16 @@ namespace OTR
               otherwise returns thread which generates a new private key upon calling start method */
             KeyGenerationWorker* createNewPrivateKey(const QString &accountId, const QString &accountName);
             QString getFingerprintFor(const QString &accountId, const QString &accountName);
+            Tp::FingerprintInfoList getKnownFingerprints(const QString &accountId);
+            bool trustFingerprint(const QString &accountId, const Tp::FingerprintInfo &fingerprint);
+            bool forgetFingerprint(const QString &accountId, const Tp::FingerprintInfo &fingerprint);
+
             void createInstag(Session *session);
-private:
+
+        Q_SIGNALS:
+            void fingerprintTrusted(const QString &accountId, const QString &fingerprint, bool trusted);
+
+        private:
             Config *config;
             // TODO - consider clearing states when not in use
             QMap<QString, UserStateBoxPtr> userStates;

@@ -20,6 +20,7 @@
 #include "proxy-service.h"
 #include "otr-config.h"
 #include "version.h"
+#include "types.h"
 
 #include <KAboutData>
 #include <KCmdLineArgs>
@@ -55,6 +56,7 @@ int main(int argc, char *argv[])
     KApplication app(false);
 
     Tp::registerTypes();
+    Tp::registerProxyTypes();
     OTRL_INIT;
 
     OTR::Config config;

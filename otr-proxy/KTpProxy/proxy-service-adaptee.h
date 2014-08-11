@@ -60,6 +60,13 @@ class ProxyServiceAdaptee : public QObject
                 const Tp::Service::ProxyServiceAdaptor::GeneratePrivateKeyContextPtr &context);
         void getFingerprintForAccount(QDBusObjectPath accountPath,
                 const Tp::Service::ProxyServiceAdaptor::GetFingerprintForAccountContextPtr &context);
+        void getKnownFingerprints(const QDBusObjectPath &account,
+                const Tp::Service::ProxyServiceAdaptor::GetKnownFingerprintsContextPtr &context);
+        void trustFingerprint(const QDBusObjectPath &account, const Tp::FingerprintInfo &fingerprintInfo,
+                const Tp::Service::ProxyServiceAdaptor::TrustFingerprintContextPtr &context);
+        void forgetFingerprint(const QDBusObjectPath &account, const Tp::FingerprintInfo &fingerprintInfo,
+                const Tp::Service::ProxyServiceAdaptor::ForgetFingerprintContextPtr &context);
+
     private Q_SLOTS:
         void onKeyGenerationStarted(const QString &accountId);
         void onKeyGenerationFinished(const QString &accountId, bool error);

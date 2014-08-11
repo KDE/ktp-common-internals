@@ -219,6 +219,21 @@ QString ProxyService::getFingerprintFor(const QString &accountId, const QString 
     return manager.getFingerprintFor(accountId, accountName);
 }
 
+Tp::FingerprintInfoList ProxyService::getKnownFingerprints(const QString &accountId)
+{
+    return manager.getKnownFingerprints(accountId);
+}
+
+bool ProxyService::trustFingerprint(const QString &accountId, const Tp::FingerprintInfo &fingerprint)
+{
+    return manager.trustFingerprint(accountId, fingerprint);
+}
+
+bool ProxyService::forgetFingerprint(const QString &accountId, const Tp::FingerprintInfo &fingerprint)
+{
+    return manager.forgetFingerprint(accountId, fingerprint);
+}
+
 void ProxyService::onKeyGenerationThreadFinished()
 {
     OTR::KeyGenerationWorker *worker = qobject_cast<OTR::KeyGenerationWorker*>(QObject::sender());

@@ -51,6 +51,8 @@ namespace utils
         return QString::fromLocal8Bit(human, OTRL_PRIVKEY_FPRINT_HUMAN_LEN-1);
     }
 
+    Fingerprint* findFingerprint(OtrlUserState userState, const QString &fp, const QString &user);
+
     inline QString accountIdFor(const QDBusObjectPath &objectPath)
     {
         QStringList elems = objectPath.path().split(QLatin1Char('/'));
@@ -86,36 +88,7 @@ namespace utils
                 accFromAccountId(accountId));
     }
 
-    inline TrustLevel getTrustLevel(const SessionContext &ctx, OtrlUserState userState, otrl_instag_t instance)
-    {
-        ConnContext *context = otrl_context_find(
-                userState,
-                ctx.recipientName.toLocal8Bit(),
-                ctx.accountName.toLocal8Bit(),
-                ctx.protocol.toLocal8Bit(),
-                instance, 0, NULL, NULL, NULL);
-
-        if(context == nullptr) {
-            kWarning() << "Could not get trust level";
-            return TrustLevel::NOT_PRIVATE;
-        }
-
-        switch(context->msgstate) {
-            case OTRL_MSGSTATE_PLAINTEXT:
-                return TrustLevel::NOT_PRIVATE;
-            case OTRL_MSGSTATE_ENCRYPTED:
-                {
-                    if(otrl_context_is_fingerprint_trusted(context->active_fingerprint)) {
-                        return TrustLevel::VERIFIED;
-                    } else {
-                        return TrustLevel::UNVERIFIED;
-                    }
-                }
-            case OTRL_MSGSTATE_FINISHED:
-                return TrustLevel::FINISHED;
-        }
-        return TrustLevel::NOT_PRIVATE;
-    }
+    TrustLevel getTrustLevel(const SessionContext &ctx, OtrlUserState userState, otrl_instag_t instance);
 }
 }
 

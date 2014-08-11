@@ -105,6 +105,63 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.</
       </tp:possible-errors>
     </method>
 
+    <tp:struct name="Fingerprint_Info" array-name="Fingerprint_Info_List">
+      <tp:docstring>A struct (Contact_Name, Fingerprint, Is_Verified)
+        representing remote contact's fingerprint, as returned by
+        <tp:member-ref>Get_Known_Fingerprints</tp:member-ref>
+      </tp:docstring>
+      <tp:member type="s" name="Contact_Name"/>
+      <tp:member type="s" name="Fingerprint"/>
+      <tp:member type="b" name="Is_Verified"/>
+    </tp:struct>
+
+    <method name="GetKnownFingerprints" tp:name-for-bindings="Get_Known_Fingerprints">
+      <tp:docstring>
+        <p>Get private key fingerprint associated with given account</p>
+      </tp:docstring>
+
+      <arg direction="in" name="Account" type="o">
+      </arg>
+      <arg direction="out" name="Fingerprints" type="a(ssb)" tp:type="Fingerprint_Info_List">
+      </arg>
+
+      <tp:possible-errors>
+        <tp:error name="org.freedesktop.Telepathy.Error.InvalidArgument"/>
+      </tp:possible-errors>
+    </method>
+
+    <method name="TrustFingerprint" tp:name-for-bindings="Trust_Fingerprint">
+      <tp:docstring>
+        <p>Trust or distrust given fingerprint for account
+          by settings Is_Verfified to %TRUE or %FALSE</p>
+      </tp:docstring>
+
+      <arg direction="in" name="Account" type="o">
+      </arg>
+      <arg direction="in" name="Fingerprint" type="(ssb)" tp:type="Fingerprint_Info">
+      </arg>
+
+      <tp:possible-errors>
+        <tp:error name="org.freedesktop.Telepathy.Error.InvalidArgument"/>
+      </tp:possible-errors>
+    </method>
+
+    <method name="ForgetFingerprint" tp:name-for-bindings="Forget_Fingerprint">
+      <tp:docstring>
+        <p>Trust or distrust given fingerprint for account
+          by settings Is_Verfified to %TRUE or %FALSE</p>
+      </tp:docstring>
+
+      <arg direction="in" name="Account" type="o">
+      </arg>
+      <arg direction="in" name="Fingerprint" type="(ssb)" tp:type="Fingerprint_Info">
+      </arg>
+
+      <tp:possible-errors>
+        <tp:error name="org.freedesktop.Telepathy.Error.InvalidArgument"/>
+      </tp:possible-errors>
+    </method>
+
     <property name="PolicySettings"
       tp:name-for-bindings="Policy_Settings"
       type="u" tp:type="OTR_Policy" access="readwrite">

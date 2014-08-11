@@ -74,6 +74,8 @@ namespace OTR
         pr(parent)
     {
         userstate = pr->getUserState(ctx.accountId);
+        connect(parent, SIGNAL(fingerprintTrusted(const QString&, const QString&, bool)),
+                SLOT(onFingerprintTrusted(const QString&, const QString&, bool)));
     }
 
     TrustLevel Session::trustLevel() const
@@ -114,6 +116,14 @@ namespace OTR
                 ctx.accountName.toLocal8Bit(),
                 ctx.protocol.toLocal8Bit(),
                 instance, 0, NULL, NULL, NULL);
+    }
+
+    void Session::onFingerprintTrusted(const QString &accountId, const QString &fingerprint, bool trusted)
+    {
+        Q_UNUSED(trusted);
+        if(accountId == ctx.accountId && fingerprint == remoteFingerprint()) {
+            onTrustLevelChanged();
+        }
     }
 
     QString Session::remoteFingerprint() const

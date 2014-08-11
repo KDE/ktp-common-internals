@@ -477,6 +477,13 @@ QString Manager::getFingerprintFor(const QString &accountId, const QString &acco
     }
 }
 
+void Manager::saveFingerprints(const QString &accountId)
+{
+    OtrlUserState userState = getUserState(accountId)->userState();
+    const QString path = config->saveLocation() + accountId + QLatin1String(".fingerprints");
+	otrl_privkey_write_fingerprints(userState, path.toLocal8Bit());
+}
+
 void Manager::saveFingerprints(Session *session)
 {
     const QString path = config->saveLocation() + session->context().accountId + QLatin1String(".fingerprints");
@@ -490,17 +497,6 @@ void Manager::createInstag(Session *session)
             path.toLocal8Bit(),
             session->context().accountName.toLocal8Bit(),
             session->context().protocol.toLocal8Bit());
-}
-
-TrustFpResult Manager::trustFingerprint(const SessionContext &ctx, const QString &fingerprint, bool trust)
-{
-    Q_UNUSED(ctx);
-    Q_UNUSED(fingerprint);
-    Q_UNUSED(trust);
-    // TODO
-    //UserStateBox *usBox = getUserState(ctx);
-    //OtrlUserState usersate = usBox->userState();
-    return TrustFpResult::OK;
 }
 
 TrustFpResult Manager::trustFingerprint(const SessionContext &ctx, Fingerprint *fingerprint, bool trust)
@@ -522,6 +518,60 @@ TrustFpResult Manager::trustFingerprint(const SessionContext &ctx, Fingerprint *
     return TrustFpResult::OK;
 }
 
+Tp::FingerprintInfoList Manager::getKnownFingerprints(const QString &accountId)
+{
+    Tp::FingerprintInfoList fingerprints;
+
+    for(ConnContext *context = getUserState(accountId)->userState()->context_root;
+            context != nullptr; context = context->next)
+    {
+        for(Fingerprint *fingerprint = context->fingerprint_root.next;
+                fingerprint != nullptr; fingerprint = fingerprint->next)
+        {
+            const QString username = QLatin1String(context->username);
+            const QString hrFp = utils::humanReadable(fingerprint->fingerprint);
+            const bool trusted = otrl_context_is_fingerprint_trusted(fingerprint);
+
+            fingerprints << Tp::FingerprintInfo { username, hrFp, trusted };
+        }
+    }
+
+    return fingerprints;
+}
+
+bool Manager::trustFingerprint(const QString &accountId, const Tp::FingerprintInfo &fingerprintInfo)
+{
+    Fingerprint *fingerprint = utils::findFingerprint(
+            getUserState(accountId)->userState(), fingerprintInfo.fingerprint, fingerprintInfo.contactName);
+
+    if(fingerprint != nullptr) {
+        if(fingerprintInfo.isVerified) {
+            otrl_context_set_trust(fingerprint, "VERIFIED");
+        } else {
+            otrl_context_set_trust(fingerprint, NULL);
+        }
+
+        Q_EMIT fingerprintTrusted(accountId, fingerprintInfo.fingerprint, fingerprintInfo.isVerified);
+        return true;
+    }
+
+    return false;
+}
+
+bool Manager::forgetFingerprint(const QString &accountId, const Tp::FingerprintInfo &fingerprintInfo)
+{
+    Fingerprint *fingerprint = utils::findFingerprint(
+            getUserState(accountId)->userState(), fingerprintInfo.fingerprint, fingerprintInfo.contactName);
+
+    if(fingerprint != nullptr) {
+        otrl_context_forget_fingerprint(fingerprint, 1);
+        saveFingerprints(accountId);
+
+        return true;
+    }
+
+    return false;
+}
 
 KeyGenerationWorker::KeyGenerationWorker(
         const QString &accountId,

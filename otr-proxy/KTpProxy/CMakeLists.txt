@@ -11,6 +11,8 @@ set(ktp-proxy_SRCS
         otr-manager.cpp
         otr-message.cpp
         otr-config.cpp
+        otr-utils.cpp
+        types.cpp
 )
 
 kde4_add_kcfg_files(ktp-proxy_SRCS ktp-proxy-config.kcfgc)
