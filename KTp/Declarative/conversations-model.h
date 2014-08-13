@@ -50,7 +50,7 @@ class ConversationsModel : public QAbstractListModel, public Tp::AbstractClientH
         ConversationRole = Qt::UserRole
     };
 
-    Q_INVOKABLE void clearConversations();
+    Q_INVOKABLE void closeAllConversations();
 
     void handleChannels(const Tp::MethodInvocationContextPtr<> &context,
                         const Tp::AccountPtr &account,

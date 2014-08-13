@@ -207,7 +207,7 @@ int ConversationsModel::activeChatIndex() const
     return d->activeChatIndex;
 }
 
-void ConversationsModel::clearConversations()
+void ConversationsModel::closeAllConversations()
 {
     Q_FOREACH(Conversation *c, d->conversations) {
         c->requestClose();
