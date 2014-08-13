@@ -206,3 +206,10 @@ int ConversationsModel::activeChatIndex() const
 {
     return d->activeChatIndex;
 }
+
+void ConversationsModel::clearConversations()
+{
+    Q_FOREACH(Conversation *c, d->conversations) {
+        c->requestClose();
+    }
+}
