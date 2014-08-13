@@ -60,8 +60,8 @@ class ProxyService : public Tp::DBusService
         bool createNewPrivateKey(const QString &accountId, const QString &accountName);
         QString getFingerprintFor(const QString &accountId, const QString &accountName);
         Tp::FingerprintInfoList getKnownFingerprints(const QString &accountId);
-        bool trustFingerprint(const QString &accountId, const Tp::FingerprintInfo &fingerprint);
-        bool forgetFingerprint(const QString &accountId, const Tp::FingerprintInfo &fingerprint);
+        bool trustFingerprint(const QString &accountId, const QString &contactName, const QString &fingerprint, bool trust);
+        bool forgetFingerprint(const QString &accountId, const QString &contactName, const QString &fingerprint);
 
         OTR::Manager* managerOTR();
         Tp::AccountManagerPtr accountManager();

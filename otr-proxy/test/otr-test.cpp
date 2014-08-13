@@ -195,6 +195,7 @@ class OTRTest : public QObject
     private:
 
         void startSession(TestSession& alice, TestSession &bob);
+        void stopSession(TestSession& alice, TestSession &bob);
 
         TestConfig aliceConfig;
         TestConfig bobConfig;
@@ -409,7 +410,7 @@ void OTRTest::testSessionPolicyAlways()
     QCOMPARE(alice.trustLevel(), TrustLevel::UNVERIFIED);
 }
 
-void OTRTest::startSession(TestSession& alice, TestSession &bob)
+void OTRTest::startSession(TestSession &alice, TestSession &bob)
 {
     Message mes = alice.startSession();
     QCOMPARE(mes.direction(), MessageDirection::TO_PEER);
@@ -427,6 +428,29 @@ void OTRTest::startSession(TestSession& alice, TestSession &bob)
             QCOMPARE(alice.mesQueue.back().direction(), MessageDirection::TO_PEER);
             QCOMPARE(bob.decrypt(alice.mesQueue.back()), CryptResult::OTR);
             alice.mesQueue.pop_back();
+        }
+    }
+    QVERIFY(alice.mesQueue.empty());
+    QVERIFY(alice.eventQueue.empty());
+    QVERIFY(bob.mesQueue.empty());
+    QVERIFY(bob.eventQueue.empty());
+}
+
+void OTRTest::stopSession(TestSession &alice, TestSession &bob)
+{
+    alice.stopSession();
+    QVERIFY(!alice.mesQueue.empty());
+
+    while(!bob.mesQueue.empty() || !alice.mesQueue.empty()) {
+        if(!alice.mesQueue.empty()) {
+            QCOMPARE(alice.mesQueue.back().direction(), MessageDirection::TO_PEER);
+            QCOMPARE(bob.decrypt(alice.mesQueue.back()), CryptResult::OTR);
+            alice.mesQueue.pop_back();
+        }
+        if(!bob.mesQueue.empty()) {
+            QCOMPARE(bob.mesQueue.back().direction(), MessageDirection::TO_PEER);
+            QCOMPARE(alice.decrypt(bob.mesQueue.back()), CryptResult::OTR);
+            bob.mesQueue.pop_back();
         }
     }
     QVERIFY(alice.mesQueue.empty());
@@ -819,11 +843,14 @@ void OTRTest::testFingerprintManagement()
 
     startSession(alice, bob);
     startSession(aliceJ, john);
+    kDebug() << (int)alice.trustLevel();
+    kDebug() << (int)bob.trustLevel();
 
     Tp::FingerprintInfoList infoList = aliceMan->getKnownFingerprints(tst::aliceCtx.accountId);
     QCOMPARE(infoList.size(), 2);
     for(const auto &fpInfo: infoList) {
         QVERIFY(!fpInfo.isVerified);
+        QVERIFY(fpInfo.inUse);
         if(fpInfo.contactName == alice.context().recipientName) {
             QCOMPARE(fpInfo.fingerprint, alice.remoteFingerprint());
         }
@@ -833,39 +860,58 @@ void OTRTest::testFingerprintManagement()
     }
 
     QVERIFY(aliceMan->trustFingerprint(alice.context().accountId,
-               Tp::FingerprintInfo{ alice.context().recipientName, alice.remoteFingerprint(), true }));
+                alice.context().recipientName, alice.remoteFingerprint(), true));
     QVERIFY(aliceMan->trustFingerprint(aliceJ.context().accountId,
-               Tp::FingerprintInfo{ aliceJ.context().recipientName, aliceJ.remoteFingerprint(), true }));
+                aliceJ.context().recipientName, aliceJ.remoteFingerprint(), true));
 
     infoList = aliceMan->getKnownFingerprints(tst::aliceCtx.accountId);
     QCOMPARE(infoList.size(), 2);
     for(const auto &fpInfo: infoList) {
         QVERIFY(fpInfo.isVerified);
+        QVERIFY(fpInfo.inUse);
     }
 
     QVERIFY(aliceMan->trustFingerprint(alice.context().accountId,
-               Tp::FingerprintInfo{ alice.context().recipientName, alice.remoteFingerprint(), false }));
+               alice.context().recipientName, alice.remoteFingerprint(), false));
     QVERIFY(aliceMan->trustFingerprint(aliceJ.context().accountId,
-               Tp::FingerprintInfo{ aliceJ.context().recipientName, aliceJ.remoteFingerprint(), false }));
+               aliceJ.context().recipientName, aliceJ.remoteFingerprint(), false));
 
     infoList = aliceMan->getKnownFingerprints(tst::aliceCtx.accountId);
     QCOMPARE(infoList.size(), 2);
     for(const auto &fpInfo: infoList) {
         QVERIFY(!fpInfo.isVerified);
+        QVERIFY(fpInfo.inUse);
     }
 
+    stopSession(alice, bob);
+    stopSession(aliceJ, john);
+
+    infoList = aliceMan->getKnownFingerprints(tst::aliceCtx.accountId);
+    QCOMPARE(infoList.size(), 2);
+    for(const auto &fpInfo: infoList) {
+        QVERIFY(!fpInfo.inUse);
+    }
+
+    startSession(alice, bob);
+    startSession(aliceJ, john);
     // forget fingerprints
 
     // fingerprint is in use
-    QVERIFY(aliceMan->forgetFingerprint(alice.context().accountId,
-               Tp::FingerprintInfo{ alice.context().recipientName, alice.remoteFingerprint(), true }));
-    QVERIFY(aliceMan->forgetFingerprint(aliceJ.context().accountId,
-               Tp::FingerprintInfo{ aliceJ.context().recipientName, aliceJ.remoteFingerprint(), false }));
+    QVERIFY(!aliceMan->forgetFingerprint(alice.context().accountId,alice.context().recipientName, alice.remoteFingerprint()));
+    QVERIFY(!aliceMan->forgetFingerprint(aliceJ.context().accountId, aliceJ.context().recipientName, aliceJ.remoteFingerprint()));
 
-    QVERIFY(!aliceMan->forgetFingerprint(alice.context().accountId,
-               Tp::FingerprintInfo{ alice.context().recipientName, alice.remoteFingerprint(), true }));
-    QVERIFY(!aliceMan->forgetFingerprint(aliceJ.context().accountId,
-               Tp::FingerprintInfo{ aliceJ.context().recipientName, aliceJ.remoteFingerprint(), false }));
+    const QString bobFp = alice.remoteFingerprint();
+    const QString johnFp = aliceJ.remoteFingerprint();
+
+    stopSession(alice, bob);
+    stopSession(aliceJ, john);
+
+    QVERIFY(aliceMan->forgetFingerprint(alice.context().accountId,alice.context().recipientName, bobFp));
+    QVERIFY(aliceMan->forgetFingerprint(aliceJ.context().accountId, aliceJ.context().recipientName, johnFp));
+
+    // nothing to forget
+    QVERIFY(!aliceMan->forgetFingerprint(alice.context().accountId,alice.context().recipientName, bobFp));
+    QVERIFY(!aliceMan->forgetFingerprint(aliceJ.context().accountId, aliceJ.context().recipientName, johnFp));
 
     infoList = aliceMan->getKnownFingerprints(tst::aliceCtx.accountId);
     QVERIFY(infoList.isEmpty());

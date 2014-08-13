@@ -53,6 +53,8 @@ namespace utils
 
     Fingerprint* findFingerprint(OtrlUserState userState, const QString &fp, const QString &user);
 
+    bool isFingerprintInUse(Fingerprint *fingerprint);
+
     inline QString accountIdFor(const QDBusObjectPath &objectPath)
     {
         QStringList elems = objectPath.path().split(QLatin1Char('/'));

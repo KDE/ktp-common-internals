@@ -37,13 +37,28 @@ namespace utils
             for(fingerprint = context->fingerprint_root.next;
                     fingerprint != nullptr; fingerprint = fingerprint->next)
             {
-                if(utils::humanReadable(fingerprint->fingerprint) == fp) {
+                if(humanReadable(fingerprint->fingerprint) == fp) {
                     return fingerprint;
                 }
             }
         }
 
         return fingerprint;
+    }
+
+    bool isFingerprintInUse(Fingerprint *fingerprint)
+    {
+        // check if used in all parent contexts
+        for(ConnContext *ctx_iter = fingerprint->context->m_context;
+                ctx_iter != nullptr && ctx_iter->m_context == fingerprint->context->m_context;
+                ctx_iter = ctx_iter->next)
+        {
+            if(ctx_iter->active_fingerprint == fingerprint) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     TrustLevel getTrustLevel(const SessionContext &ctx, OtrlUserState userState, otrl_instag_t instance)

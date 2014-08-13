@@ -75,9 +75,9 @@ Tp::FingerprintInfoList ProxyServiceAdaptor::GetKnownFingerprints(const QDBusObj
     return Tp::FingerprintInfoList();
 }
 
-void ProxyServiceAdaptor::TrustFingerprint(const QDBusObjectPath& account, const Tp::FingerprintInfo& fingerprint, const QDBusMessage& dbusMessage)
+void ProxyServiceAdaptor::TrustFingerprint(const QDBusObjectPath& account, const QString& contactName, const QString& fingerprint, bool trust, const QDBusMessage& dbusMessage)
 {
-    if (!adaptee()->metaObject()->indexOfMethod("trustFingerprint(QDBusObjectPath,Tp::FingerprintInfo,Tp::Service::ProxyServiceAdaptor::TrustFingerprintContextPtr)") == -1) {
+    if (!adaptee()->metaObject()->indexOfMethod("trustFingerprint(QDBusObjectPath,QString,QString,bool,Tp::Service::ProxyServiceAdaptor::TrustFingerprintContextPtr)") == -1) {
         dbusConnection().send(dbusMessage.createErrorReply(TP_QT_ERROR_NOT_IMPLEMENTED, QLatin1String("Not implemented")));
         return;
     }
@@ -85,13 +85,13 @@ void ProxyServiceAdaptor::TrustFingerprint(const QDBusObjectPath& account, const
     TrustFingerprintContextPtr ctx = TrustFingerprintContextPtr(
             new Tp::MethodInvocationContext<  >(dbusConnection(), dbusMessage));
     QMetaObject::invokeMethod(adaptee(), "trustFingerprint",
-        Q_ARG(QDBusObjectPath, account), Q_ARG(Tp::FingerprintInfo, fingerprint),
+        Q_ARG(QDBusObjectPath, account), Q_ARG(QString, contactName), Q_ARG(QString, fingerprint), Q_ARG(bool, trust),
         Q_ARG(Tp::Service::ProxyServiceAdaptor::TrustFingerprintContextPtr, ctx));
 }
 
-void ProxyServiceAdaptor::ForgetFingerprint(const QDBusObjectPath& account, const Tp::FingerprintInfo& fingerprint, const QDBusMessage& dbusMessage)
+void ProxyServiceAdaptor::ForgetFingerprint(const QDBusObjectPath& account, const QString& contactName, const QString& fingerprint, const QDBusMessage& dbusMessage)
 {
-    if (!adaptee()->metaObject()->indexOfMethod("forgetFingerprint(QDBusObjectPath,Tp::FingerprintInfo,Tp::Service::ProxyServiceAdaptor::ForgetFingerprintContextPtr)") == -1) {
+    if (!adaptee()->metaObject()->indexOfMethod("forgetFingerprint(QDBusObjectPath,QString,QString,Tp::Service::ProxyServiceAdaptor::ForgetFingerprintContextPtr)") == -1) {
         dbusConnection().send(dbusMessage.createErrorReply(TP_QT_ERROR_NOT_IMPLEMENTED, QLatin1String("Not implemented")));
         return;
     }
@@ -99,7 +99,7 @@ void ProxyServiceAdaptor::ForgetFingerprint(const QDBusObjectPath& account, cons
     ForgetFingerprintContextPtr ctx = ForgetFingerprintContextPtr(
             new Tp::MethodInvocationContext<  >(dbusConnection(), dbusMessage));
     QMetaObject::invokeMethod(adaptee(), "forgetFingerprint",
-        Q_ARG(QDBusObjectPath, account), Q_ARG(Tp::FingerprintInfo, fingerprint),
+        Q_ARG(QDBusObjectPath, account), Q_ARG(QString, contactName), Q_ARG(QString, fingerprint),
         Q_ARG(Tp::Service::ProxyServiceAdaptor::ForgetFingerprintContextPtr, ctx));
 }
 

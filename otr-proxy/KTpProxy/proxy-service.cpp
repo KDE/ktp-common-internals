@@ -224,14 +224,14 @@ Tp::FingerprintInfoList ProxyService::getKnownFingerprints(const QString &accoun
     return manager.getKnownFingerprints(accountId);
 }
 
-bool ProxyService::trustFingerprint(const QString &accountId, const Tp::FingerprintInfo &fingerprint)
+bool ProxyService::trustFingerprint(const QString &accountId, const QString &contactName, const QString &fingerprint, bool trust)
 {
-    return manager.trustFingerprint(accountId, fingerprint);
+    return manager.trustFingerprint(accountId, contactName, fingerprint, trust);
 }
 
-bool ProxyService::forgetFingerprint(const QString &accountId, const Tp::FingerprintInfo &fingerprint)
+bool ProxyService::forgetFingerprint(const QString &accountId, const QString &contactName, const QString &fingerprint)
 {
-    return manager.forgetFingerprint(accountId, fingerprint);
+    return manager.forgetFingerprint(accountId, contactName, fingerprint);
 }
 
 void ProxyService::onKeyGenerationThreadFinished()

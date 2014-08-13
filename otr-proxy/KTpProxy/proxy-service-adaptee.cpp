@@ -92,7 +92,7 @@ void ProxyServiceAdaptee::generatePrivateKey(const QDBusObjectPath &accountPath,
         const Tp::Service::ProxyServiceAdaptor::GeneratePrivateKeyContextPtr &context)
 {
     Tp::AccountPtr ac = ps->accountManager()->accountForObjectPath(accountPath.path());
-    if(ac && ac->isValidAccount() &&
+    if(ac && ac->isValid() &&
             ps->createNewPrivateKey(OTR::utils::accountIdFor(accountPath), ac->displayName())) {
         context->setFinished();
     } else {
@@ -106,10 +106,10 @@ void ProxyServiceAdaptee::getFingerprintForAccount(QDBusObjectPath accountPath,
         const Tp::Service::ProxyServiceAdaptor::GetFingerprintForAccountContextPtr &context)
 {
     Tp::AccountPtr ac = ps->accountManager()->accountForObjectPath(accountPath.path());
-    if(ac && ac->isValidAccount()) {
+    if(ac && ac->isValid()) {
         context->setFinished(ps->getFingerprintFor(OTR::utils::accountIdFor(accountPath), ac->displayName()));
     } else {
-        context->setFinishedWithError(TP_QT_ERROR_INVALID_ARGUMENT, QLatin1String("No such valid account"));
+        context->setFinishedWithError(TP_QT_ERROR_INVALID_ARGUMENT, QLatin1String("No such account"));
     }
 }
 
@@ -117,40 +117,40 @@ void ProxyServiceAdaptee::getKnownFingerprints(const QDBusObjectPath &accountPat
         const Tp::Service::ProxyServiceAdaptor::GetKnownFingerprintsContextPtr &context)
 {
     Tp::AccountPtr ac = ps->accountManager()->accountForObjectPath(accountPath.path());
-    if(ac && ac->isValidAccount()) {
+    if(ac && ac->isValid()) {
         context->setFinished(ps->getKnownFingerprints(OTR::utils::accountIdFor(accountPath)));
     } else {
-        context->setFinishedWithError(TP_QT_ERROR_INVALID_ARGUMENT, QLatin1String("No such valid account"));
+        context->setFinishedWithError(TP_QT_ERROR_INVALID_ARGUMENT, QLatin1String("No such account"));
     }
 }
 
-void ProxyServiceAdaptee::trustFingerprint(const QDBusObjectPath &accountPath, const Tp::FingerprintInfo &fingerprintInfo,
-        const Tp::Service::ProxyServiceAdaptor::TrustFingerprintContextPtr &context)
+void ProxyServiceAdaptee::trustFingerprint(const QDBusObjectPath &accountPath, const QString &contactName,
+        const QString &fingerprint, bool trust, const Tp::Service::ProxyServiceAdaptor::TrustFingerprintContextPtr &context)
 {
     Tp::AccountPtr ac = ps->accountManager()->accountForObjectPath(accountPath.path());
-    if(ac && ac->isValidAccount()) {
-        if(ps->trustFingerprint(OTR::utils::accountIdFor(accountPath), fingerprintInfo)) {
+    if(ac && ac->isValid()) {
+        if(ps->trustFingerprint(OTR::utils::accountIdFor(accountPath), contactName, fingerprint, trust)) {
             context->setFinished();
         } else {
             context->setFinishedWithError(TP_QT_ERROR_INVALID_ARGUMENT, QLatin1String("Invalid finerprint info"));
         }
     } else {
-        context->setFinishedWithError(TP_QT_ERROR_INVALID_ARGUMENT, QLatin1String("No such valid account"));
+        context->setFinishedWithError(TP_QT_ERROR_INVALID_ARGUMENT, QLatin1String("No such account"));
     }
 }
 
-void ProxyServiceAdaptee::forgetFingerprint(const QDBusObjectPath &accountPath, const Tp::FingerprintInfo &fingerprintInfo,
-        const Tp::Service::ProxyServiceAdaptor::ForgetFingerprintContextPtr &context)
+void ProxyServiceAdaptee::forgetFingerprint(const QDBusObjectPath &accountPath, const QString &contactName,
+        const QString &fingerprint, const Tp::Service::ProxyServiceAdaptor::ForgetFingerprintContextPtr &context)
 {
     Tp::AccountPtr ac = ps->accountManager()->accountForObjectPath(accountPath.path());
-    if(ac && ac->isValidAccount()) {
-        if(ps->forgetFingerprint(OTR::utils::accountIdFor(accountPath), fingerprintInfo)) {
+    if(ac && ac->isValid()) {
+        if(ps->forgetFingerprint(OTR::utils::accountIdFor(accountPath), contactName, fingerprint)) {
             context->setFinished();
         } else {
             context->setFinishedWithError(TP_QT_ERROR_INVALID_ARGUMENT,
-                   QLatin1String("Invalid finerprint info"));
+                   QLatin1String("Invalid finerprint info or fingerpirnt is in use"));
         }
     } else {
-        context->setFinishedWithError(TP_QT_ERROR_INVALID_ARGUMENT, QLatin1String("No such valid account"));
+        context->setFinishedWithError(TP_QT_ERROR_INVALID_ARGUMENT, QLatin1String("No such account"));
     }
 }

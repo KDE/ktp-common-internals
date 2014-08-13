@@ -113,6 +113,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.</
       <tp:member type="s" name="Contact_Name"/>
       <tp:member type="s" name="Fingerprint"/>
       <tp:member type="b" name="Is_Verified"/>
+      <tp:member type="b" name="In_Use"/>
     </tp:struct>
 
     <method name="GetKnownFingerprints" tp:name-for-bindings="Get_Known_Fingerprints">
@@ -122,7 +123,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.</
 
       <arg direction="in" name="Account" type="o">
       </arg>
-      <arg direction="out" name="Fingerprints" type="a(ssb)" tp:type="Fingerprint_Info_List">
+      <arg direction="out" name="Fingerprints" type="a(ssbb)" tp:type="Fingerprint_Info_List">
       </arg>
 
       <tp:possible-errors>
@@ -138,7 +139,11 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.</
 
       <arg direction="in" name="Account" type="o">
       </arg>
-      <arg direction="in" name="Fingerprint" type="(ssb)" tp:type="Fingerprint_Info">
+      <arg direction="in" name="ContactName" type="s">
+      </arg>
+      <arg direction="in" name="Fingerprint" type="s">
+      </arg>
+      <arg direction="in" name="Trust" type="b">
       </arg>
 
       <tp:possible-errors>
@@ -148,13 +153,14 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.</
 
     <method name="ForgetFingerprint" tp:name-for-bindings="Forget_Fingerprint">
       <tp:docstring>
-        <p>Trust or distrust given fingerprint for account
-          by settings Is_Verfified to %TRUE or %FALSE</p>
+        <p>Forget fingerprint romoving it from the list of known fingerprints</p>
       </tp:docstring>
 
       <arg direction="in" name="Account" type="o">
       </arg>
-      <arg direction="in" name="Fingerprint" type="(ssb)" tp:type="Fingerprint_Info">
+      <arg direction="in" name="Contact_Name" type="s">
+      </arg>
+      <arg direction="in" name="Fingerprint" type="s">
       </arg>
 
       <tp:possible-errors>

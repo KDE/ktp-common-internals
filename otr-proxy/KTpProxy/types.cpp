@@ -30,13 +30,14 @@ TP_QT_EXPORT bool operator==(const FingerprintInfo& v1, const FingerprintInfo& v
     return ((v1.contactName == v2.contactName)
             && (v1.fingerprint == v2.fingerprint)
             && (v1.isVerified == v2.isVerified)
+            && (v1.inUse == v2.inUse)
             );
 }
 
 TP_QT_EXPORT QDBusArgument& operator<<(QDBusArgument& arg, const FingerprintInfo& val)
 {
     arg.beginStructure();
-    arg << val.contactName << val.fingerprint << val.isVerified;
+    arg << val.contactName << val.fingerprint << val.isVerified << val.inUse;
     arg.endStructure();
     return arg;
 }
@@ -44,7 +45,7 @@ TP_QT_EXPORT QDBusArgument& operator<<(QDBusArgument& arg, const FingerprintInfo
 TP_QT_EXPORT const QDBusArgument& operator>>(const QDBusArgument& arg, FingerprintInfo& val)
 {
     arg.beginStructure();
-    arg >> val.contactName >> val.fingerprint >> val.isVerified;
+    arg >> val.contactName >> val.fingerprint >> val.isVerified >> val.inUse;
     arg.endStructure();
     return arg;
 }

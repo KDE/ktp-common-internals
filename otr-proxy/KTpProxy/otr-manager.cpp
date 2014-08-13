@@ -531,40 +531,41 @@ Tp::FingerprintInfoList Manager::getKnownFingerprints(const QString &accountId)
             const QString username = QLatin1String(context->username);
             const QString hrFp = utils::humanReadable(fingerprint->fingerprint);
             const bool trusted = otrl_context_is_fingerprint_trusted(fingerprint);
+            const bool used = utils::isFingerprintInUse(fingerprint);
 
-            fingerprints << Tp::FingerprintInfo { username, hrFp, trusted };
+            fingerprints << Tp::FingerprintInfo { username, hrFp, trusted, used };
         }
     }
 
     return fingerprints;
 }
 
-bool Manager::trustFingerprint(const QString &accountId, const Tp::FingerprintInfo &fingerprintInfo)
+bool Manager::trustFingerprint(const QString &accountId, const QString &contactName, const QString &fp, bool trust)
 {
     Fingerprint *fingerprint = utils::findFingerprint(
-            getUserState(accountId)->userState(), fingerprintInfo.fingerprint, fingerprintInfo.contactName);
+            getUserState(accountId)->userState(), fp, contactName);
 
     if(fingerprint != nullptr) {
-        if(fingerprintInfo.isVerified) {
+        if(trust) {
             otrl_context_set_trust(fingerprint, "VERIFIED");
         } else {
             otrl_context_set_trust(fingerprint, NULL);
         }
 
-        Q_EMIT fingerprintTrusted(accountId, fingerprintInfo.fingerprint, fingerprintInfo.isVerified);
+        Q_EMIT fingerprintTrusted(accountId, fp, trust);
         return true;
     }
 
     return false;
 }
 
-bool Manager::forgetFingerprint(const QString &accountId, const Tp::FingerprintInfo &fingerprintInfo)
+bool Manager::forgetFingerprint(const QString &accountId, const QString &contactName, const QString &fingerprint)
 {
-    Fingerprint *fingerprint = utils::findFingerprint(
-            getUserState(accountId)->userState(), fingerprintInfo.fingerprint, fingerprintInfo.contactName);
+    Fingerprint *fp = utils::findFingerprint(
+            getUserState(accountId)->userState(), fingerprint, contactName);
 
-    if(fingerprint != nullptr) {
-        otrl_context_forget_fingerprint(fingerprint, 1);
+    if(fp != nullptr && !utils::isFingerprintInUse(fp)) {
+        otrl_context_forget_fingerprint(fp, 1);
         saveFingerprints(accountId);
 
         return true;

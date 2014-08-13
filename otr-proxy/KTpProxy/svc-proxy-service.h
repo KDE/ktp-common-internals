@@ -45,21 +45,20 @@ class TP_QT_EXPORT ProxyServiceAdaptor : public Tp::AbstractAdaptor
 "    </method>\n"
 "    <method name=\"GetKnownFingerprints\">\n"
 "      <arg direction=\"in\" type=\"o\" name=\"account\"/>\n"
-"      <arg direction=\"out\" type=\"a(ssb)\" name=\"fingerprints\">\n"
+"      <arg direction=\"out\" type=\"a(ssbb)\" name=\"fingerprints\">\n"
 "        <annotation value=\"Tp::FingerprintInfoList\" name=\"com.trolltech.QtDBus.QtTypeName.Out0\"/>\n"
 "      </arg>\n"
 "    </method>\n"
 "    <method name=\"TrustFingerprint\">\n"
 "      <arg direction=\"in\" type=\"o\" name=\"account\"/>\n"
-"      <arg direction=\"in\" type=\"(ssb)\" name=\"fingerprint\">\n"
-"        <annotation value=\"Tp::FingerprintInfo\" name=\"com.trolltech.QtDBus.QtTypeName.In1\"/>\n"
-"      </arg>\n"
+"      <arg direction=\"in\" type=\"s\" name=\"contactName\"/>\n"
+"      <arg direction=\"in\" type=\"s\" name=\"fingerprint\"/>\n"
+"      <arg direction=\"in\" type=\"b\" name=\"trust\"/>\n"
 "    </method>\n"
 "    <method name=\"ForgetFingerprint\">\n"
 "      <arg direction=\"in\" type=\"o\" name=\"account\"/>\n"
-"      <arg direction=\"in\" type=\"(ssb)\" name=\"fingerprint\">\n"
-"        <annotation value=\"Tp::FingerprintInfo\" name=\"com.trolltech.QtDBus.QtTypeName.In1\"/>\n"
-"      </arg>\n"
+"      <arg direction=\"in\" type=\"s\" name=\"contactName\"/>\n"
+"      <arg direction=\"in\" type=\"s\" name=\"fingerprint\"/>\n"
 "    </method>\n"
 "    <signal name=\"ProxyConnected\">\n"
 "      <arg type=\"o\" name=\"proxy\"/>\n"
@@ -173,7 +172,7 @@ public Q_SLOTS: // METHODS
      * Begins a call to the exported D-Bus method \c TrustFingerprint on this object.
      *
      * Adaptees should export this method as a Qt slot with the following signature:
-     * void trustFingerprint(const QDBusObjectPath& account, const Tp::FingerprintInfo& fingerprint, const Tp::Service::ProxyServiceAdaptor::TrustFingerprintContextPtr &context);
+     * void trustFingerprint(const QDBusObjectPath& account, const QString& contactName, const QString& fingerprint, bool trust, const Tp::Service::ProxyServiceAdaptor::TrustFingerprintContextPtr &context);
      *
      * Implementations should call MethodInvocationContext::setFinished (or setFinishedWithError
      * accordingly) on the received \a context object once the method has finished processing.
@@ -183,22 +182,21 @@ public Q_SLOTS: // METHODS
      * Is_Verfified to %TRUE or %FALSE
      *
      */
-    void TrustFingerprint(const QDBusObjectPath& account, const Tp::FingerprintInfo& fingerprint, const QDBusMessage& dbusMessage);
+    void TrustFingerprint(const QDBusObjectPath& account, const QString& contactName, const QString& fingerprint, bool trust, const QDBusMessage& dbusMessage);
     /**
      * Begins a call to the exported D-Bus method \c ForgetFingerprint on this object.
      *
      * Adaptees should export this method as a Qt slot with the following signature:
-     * void forgetFingerprint(const QDBusObjectPath& account, const Tp::FingerprintInfo& fingerprint, const Tp::Service::ProxyServiceAdaptor::ForgetFingerprintContextPtr &context);
+     * void forgetFingerprint(const QDBusObjectPath& account, const QString& contactName, const QString& fingerprint, const Tp::Service::ProxyServiceAdaptor::ForgetFingerprintContextPtr &context);
      *
      * Implementations should call MethodInvocationContext::setFinished (or setFinishedWithError
      * accordingly) on the received \a context object once the method has finished processing.
      *
      *
-     * Trust or distrust given fingerprint for account by settings
-     * Is_Verfified to %TRUE or %FALSE
+     * Forget fingerprint romoving it from the list of known fingerprints
      *
      */
-    void ForgetFingerprint(const QDBusObjectPath& account, const Tp::FingerprintInfo& fingerprint, const QDBusMessage& dbusMessage);
+    void ForgetFingerprint(const QDBusObjectPath& account, const QString& contactName, const QString& fingerprint, const QDBusMessage& dbusMessage);
 
 Q_SIGNALS: // SIGNALS
     /**

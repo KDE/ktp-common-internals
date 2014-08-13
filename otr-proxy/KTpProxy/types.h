@@ -49,6 +49,7 @@ struct TP_QT_EXPORT FingerprintInfo
     QString contactName;
     QString fingerprint;
     bool isVerified;
+    bool inUse;
 };
 
 TP_QT_EXPORT bool operator==(const FingerprintInfo& v1, const FingerprintInfo& v2);
