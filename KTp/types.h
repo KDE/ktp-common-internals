@@ -39,7 +39,9 @@ namespace KTp
         PersonRowType,
         AccountRowType,
         GroupRowType,
-        UserRowType
+        RoomRowType,
+        MergeRowType,
+        UserRowType = 1000
     };
 
     enum ContactsModelRole {
@@ -51,6 +53,7 @@ namespace KTp
         //telepathy roles
         ContactRole = Qt::UserRole + 1000,  ///<return Tp::ContactPtr
         AccountRole, ///< return Tp::AccountPtr
+        ChannelRole, ///< return Tp::ChannelPtr
 
         //contact/person roles
         ContactClientTypesRole = Qt::UserRole + 2000, ///< stringlist. See Tp::Contact::ClientTypes
@@ -93,6 +96,7 @@ Q_DECLARE_METATYPE(KTp::ContactPtr)
 Q_DECLARE_METATYPE(Tp::AccountManagerPtr);
 Q_DECLARE_METATYPE(Tp::ConnectionPtr);
 Q_DECLARE_METATYPE(Tp::TextChannelPtr);
+Q_DECLARE_METATYPE(Tp::ChannelPtr);
 
 
 #endif // KTP_TYPES_H
