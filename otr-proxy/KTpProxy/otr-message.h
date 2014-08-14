@@ -43,7 +43,8 @@ namespace OTR
             const Tp::MessagePartList& parts() const;
 
             QString text() const;
-            void setText(const QString &text);
+            void setText(const QString &text, const QString &contentType = QLatin1String("text/plain"));
+            QString contentType() const;
 
             void setType(Tp::ChannelTextMessageType msgType);
             Tp::ChannelTextMessageType type() const;

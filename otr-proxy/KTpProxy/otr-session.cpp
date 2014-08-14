@@ -205,7 +205,11 @@ namespace OTR
                 return CryptResult::ERROR;
             } else if(encMessage != nullptr) {
 
-                message.setText(QString(encMessage));
+                if(message.contentType().isEmpty()) {
+                    message.setText(QLatin1String(encMessage));
+                } else {
+                    message.setText(QLatin1String(encMessage), message.contentType());
+                }
                 message.setType(Tp::ChannelTextMessageTypeNormal);
                 if(context->active_fingerprint != nullptr) {
                     const QString hrFingerprint = OTR::utils::humanReadable(context->active_fingerprint->fingerprint);
@@ -248,7 +252,11 @@ namespace OTR
 
         if(!ignore) {
             if(decMsg != nullptr) {
-                message.setText(QString(decMsg));
+                if(message.contentType().isEmpty()) {
+                    message.setText(QLatin1String(decMsg));
+                } else {
+                    message.setText(QLatin1String(decMsg), message.contentType());
+                }
                 if(context->active_fingerprint != nullptr) {
                     const QString hrFingerprint = OTR::utils::humanReadable(context->active_fingerprint->fingerprint);
                     message.setOTRheader(QLatin1String("otr-remote-fingerprint"), hrFingerprint);

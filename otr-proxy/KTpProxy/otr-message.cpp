@@ -55,12 +55,21 @@ namespace OTR
         }
     }
 
-    void Message::setText(const QString &text)
+    void Message::setText(const QString &text, const QString &contentType)
     {
-        // FIXME - using only text/plan content-type, what about html?
         message[1].insert(QLatin1String("content-type"),
-                QDBusVariant(QLatin1String("text/plain")));
+                QDBusVariant(contentType));
         message[1].insert(QLatin1String("content"), QDBusVariant(text));
+    }
+
+    QString Message::contentType() const
+    {
+        auto it = message[1].find(QLatin1String("content-type"));
+        if(it == message[1].end()) {
+            return QLatin1String("");
+        } else {
+            return it->variant().toString();
+        }
     }
 
     void Message::setType(Tp::ChannelTextMessageType msgType)

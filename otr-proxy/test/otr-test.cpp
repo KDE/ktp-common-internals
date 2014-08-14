@@ -189,6 +189,7 @@ class OTRTest : public QObject
         void testSMPSecretFailDistrust();
         void testSMPQueryAborted();
         void testFingerprintManagement();
+        void testDiffrentContentTypes();
 
         void cleanup();
 
@@ -915,6 +916,26 @@ void OTRTest::testFingerprintManagement()
 
     infoList = aliceMan->getKnownFingerprints(tst::aliceCtx.accountId);
     QVERIFY(infoList.isEmpty());
+}
+
+void OTRTest::testDiffrentContentTypes()
+{
+    TestSession &alice = aliceEnv->ses;
+    TestSession &bob = bobEnv->ses;
+
+    startSession(alice, bob);
+
+    Message helloMsg;
+    const QString helloText = QLatin1String("No witej chopie!");
+    const QString contentType = QLatin1String("text/html");
+    helloMsg.setText(helloText, contentType);
+    QCOMPARE(bob.encrypt(helloMsg), CryptResult::CHANGED);
+    QVERIFY(bob.eventQueue.empty());
+
+    QCOMPARE(alice.decrypt(helloMsg), CryptResult::CHANGED);
+    QVERIFY(alice.eventQueue.empty());
+    QCOMPARE(helloMsg.text(), helloText);
+    QCOMPARE(helloMsg.contentType(), contentType);
 }
 
 void OTRTest::cleanup()
