@@ -129,7 +129,7 @@ public: // PROPERTIES
      *
      *
      * \htmlonly
-     * <p>Object path of the channel this proxy is created for.</p>
+     * <p>Object path of the channel this proxy is created for</p>
      * \endhtmlonly
      *
      * \return The value of exported property \c WrappedChannel.
@@ -143,7 +143,7 @@ public: // PROPERTIES
      *
      *
      * \htmlonly
-     * <p>TRUE if the proxy is connected</p>
+     * <p>%TRUE if the proxy is connected</p>
      * \endhtmlonly
      *
      * \return The value of exported property \c Connected.
@@ -175,9 +175,9 @@ public: // PROPERTIES
      *
      * \htmlonly
      * <p>The current trust level of this channel:
-     *     0=TRUST_NOT_PRIVATE, 1=TRUST_UNVERIFIED, 2=TRUST_PRIVATE,
-     *     3=TRUST_FINISHED</p>
-     * <p>Clients MUST listen to PropertiesChanged to update UI when trust
+     *     0=Not_Private, 1=Unverified, 2=Private,
+     *     3=Finished</p>
+     * <p>Clients MUST listen to TrustLevelChanged to update UI when trust
      * level changes.</p>
      * \endhtmlonly
      *
@@ -192,10 +192,9 @@ public: // PROPERTIES
      *
      *
      * \htmlonly
-     * <p>User's current fingerprint. The first element is a human readable
+     * <p>User's current fingerprint - a human readable
      * fingerprint that can be displayed to the user so he can communicate it
-     * to the other end by other means so he can trust it. The 2nd element is
-     * the fingerprint raw data.</p>
+     * to the other end by other means so he can trust it.</p>
      * \endhtmlonly
      *
      * \return The value of exported property \c LocalFingerprint.
@@ -229,7 +228,7 @@ public Q_SLOTS: // METHODS
      * accordingly) on the received \a context object once the method has finished processing.
      *
      *
-     * Connect to the otr proxy. From now on all data which is modified by it
+     * Connect to the OTR proxy. From now on all data, which is modified by it
      * should be acquired from the proxy, not from the underlying channel.
      *
      */
@@ -244,7 +243,7 @@ public Q_SLOTS: // METHODS
      * accordingly) on the received \a context object once the method has finished processing.
      *
      *
-     * Turns off proxy if one is connected.
+     * Turns off the proxy if currenlty connected
      *
      */
     void DisconnectProxy(const QDBusMessage& dbusMessage);
@@ -297,7 +296,7 @@ public Q_SLOTS: // METHODS
      * accordingly) on the received \a context object once the method has finished processing.
      *
      *
-     * Start an OTR session for this channel if the remote end supports it has
+     * Start an OTR session for this channel if the remote end supports it as
      * well.
      *
      */

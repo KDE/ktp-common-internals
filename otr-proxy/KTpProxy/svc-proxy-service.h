@@ -17,6 +17,7 @@
 #include <QObject>
 #include <QtDBus>
 
+
 namespace Tp
 {
 namespace Service
@@ -96,7 +97,7 @@ public: // PROPERTIES
      *
      *
      * \htmlonly
-     * <p>Set the OTR policy how you like it</p>
+     * <p>Read-write property representing global OTR policy settings</p>
      * \endhtmlonly
      *
      * \return The value of exported property \c PolicySettings.
@@ -110,7 +111,7 @@ public: // PROPERTIES
      *
      *
      * \htmlonly
-     * <p>Set the OTR policy how you like it</p>
+     * <p>Read-write property representing global OTR policy settings</p>
      * \endhtmlonly
      */
     void SetPolicySettings(const uint &newValue);
@@ -130,6 +131,9 @@ public Q_SLOTS: // METHODS
      * <p> Generate new private key for given account. </p>
      * \endhtmlonly
      *
+     * \param account
+     *
+     *     The account the new key is to be generated for
      */
     void GeneratePrivateKey(const QDBusObjectPath& account, const QDBusMessage& dbusMessage);
     /**
@@ -142,11 +146,8 @@ public Q_SLOTS: // METHODS
      * accordingly) on the received \a context object once the method has finished processing.
      *
      *
-     * Get private key fingerprint associated with given account
+     * Get private key&apos;s fingerprint associated with given account
      *
-     * \param account
-     *
-     *     The account the new key is generated for
      * \return
      *
      *     Fingerprint of given account&apos;s private key or an empty string
@@ -166,6 +167,8 @@ public Q_SLOTS: // METHODS
      * Get private key fingerprint associated with given account
      *
      * \return
+     *
+     *     An array of known fingerprints represented by Fingerprint_Info_List
      */
     Tp::FingerprintInfoList GetKnownFingerprints(const QDBusObjectPath& account, const QDBusMessage& dbusMessage);
     /**
@@ -178,9 +181,18 @@ public Q_SLOTS: // METHODS
      * accordingly) on the received \a context object once the method has finished processing.
      *
      *
-     * Trust or distrust given fingerprint for account by settings
-     * Is_Verfified to %TRUE or %FALSE
+     * Trust or distrust given fingerprint for account
      *
+     * \param contactName
+     *
+     *     Contact&apos;s display name as returned by Get_Known_Fingerprints
+     * \param fingerprint
+     *
+     *     Contact&apos;s fingerprint i.e. &apos;12345678 12345678 12345678
+     *     12345678 12345678&apos;
+     * \param trust
+     *
+     *     %TRUE if you trust this fingerprint, %FALSE otherwise
      */
     void TrustFingerprint(const QDBusObjectPath& account, const QString& contactName, const QString& fingerprint, bool trust, const QDBusMessage& dbusMessage);
     /**
@@ -195,6 +207,13 @@ public Q_SLOTS: // METHODS
      *
      * Forget fingerprint romoving it from the list of known fingerprints
      *
+     * \param contactName
+     *
+     *     Contact&apos;s display name as returned by Get_Known_Fingerprints
+     * \param fingerprint
+     *
+     *     Contact&apos;s fingerprint i.e. &apos;12345678 12345678 12345678
+     *     12345678 12345678&apos;
      */
     void ForgetFingerprint(const QDBusObjectPath& account, const QString& contactName, const QString& fingerprint, const QDBusMessage& dbusMessage);
 
@@ -222,7 +241,7 @@ Q_SIGNALS: // SIGNALS
      *
      * \param proxy
      *
-     *     The object path of the disconnectd proxy type
+     *     The object path of the disconnected proxy type
      */
     void ProxyDisconnected(const QDBusObjectPath& proxy);
     /**
@@ -258,5 +277,4 @@ Q_SIGNALS: // SIGNALS
 
 }
 }
-
 #endif

@@ -327,6 +327,11 @@ void OtrProxyChannel::Adaptee::stop(const Tp::Service::ChannelProxyInterfaceOTRA
 void OtrProxyChannel::Adaptee::trustFingerprint(const QString& fingerprint, bool trust,
         const Tp::Service::ChannelProxyInterfaceOTRAdaptor::TrustFingerprintContextPtr &context)
 {
+    if(!connected()) {
+        context->setFinishedWithError(KTP_PROXY_ERROR_NOT_CONNECTED, QString::fromLatin1("Proxy is not connected"));
+        return;
+    }
+
     kDebug() << "TrustFingeprint - " << trust << ": " << fingerprint << " when remote is: " << otrSes.remoteFingerprint();
 
     if(otrSes.remoteFingerprint().isEmpty() || fingerprint != otrSes.remoteFingerprint()) {
@@ -349,6 +354,11 @@ void OtrProxyChannel::Adaptee::trustFingerprint(const QString& fingerprint, bool
 void OtrProxyChannel::Adaptee::startPeerAuthentication(const QString &question, const QString &secret,
         const Tp::Service::ChannelProxyInterfaceOTRAdaptor::StartPeerAuthenticationContextPtr &ctx)
 {
+    if(!connected()) {
+        ctx->setFinishedWithError(KTP_PROXY_ERROR_NOT_CONNECTED, QString::fromLatin1("Proxy is not connected"));
+        return;
+    }
+
     if(question.isEmpty()) {
         otrSes.initSMPSecret(secret);
     } else {
@@ -360,6 +370,11 @@ void OtrProxyChannel::Adaptee::startPeerAuthentication(const QString &question, 
 void OtrProxyChannel::Adaptee::respondPeerAuthentication(const QString &secret,
         const Tp::Service::ChannelProxyInterfaceOTRAdaptor::RespondPeerAuthenticationContextPtr &ctx)
 {
+    if(!connected()) {
+        ctx->setFinishedWithError(KTP_PROXY_ERROR_NOT_CONNECTED, QString::fromLatin1("Proxy is not connected"));
+        return;
+    }
+
     otrSes.respondSMPAuthentication(secret);
     ctx->setFinished();
 }
@@ -367,6 +382,11 @@ void OtrProxyChannel::Adaptee::respondPeerAuthentication(const QString &secret,
 void OtrProxyChannel::Adaptee::abortPeerAuthentication(
         const Tp::Service::ChannelProxyInterfaceOTRAdaptor::AbortPeerAuthenticationContextPtr &ctx)
 {
+    if(!connected()) {
+        ctx->setFinishedWithError(KTP_PROXY_ERROR_NOT_CONNECTED, QString::fromLatin1("Proxy is not connected"));
+        return;
+    }
+
     otrSes.abortSMPAuthentiaction();
     ctx->setFinished();
 }
