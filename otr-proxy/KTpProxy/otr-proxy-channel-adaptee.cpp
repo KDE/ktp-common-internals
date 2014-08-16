@@ -395,10 +395,12 @@ void OtrProxyChannel::Adaptee::onMessageReceived(const Tp::ReceivedMessage &rece
 {
     const uint id = receivedMessage.header()[QLatin1String("pending-message-id")].variant().toUInt(nullptr);
     OTR::Message otrMsg(receivedMessage.parts());
+    // no private key - should generate on now
     if(otrMsg.isOTRmessage() && otrSes.localFingerprint().isEmpty() && ps->getPolicy() != OTRL_POLICY_NEVER) {
         enqueuedMessages << receivedMessage;
         acquirePrivateKey();
         return;
+    // private key is currently being generated
     } else if(isGenerating) {
         enqueuedMessages << receivedMessage;
         return;

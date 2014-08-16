@@ -175,7 +175,7 @@ namespace OTR
                 ctx.recipientName.toLocal8Bit(),
                 instance);
 
-        onTrustLevelChanged(nullptr);
+        onTrustLevelChanged();
     }
 
     CryptResult Session::encrypt(Message &message)
@@ -274,7 +274,7 @@ namespace OTR
         }
 
         if(isFinished) {
-            onTrustLevelChanged(nullptr);
+            onTrustLevelChanged();
         }
 
         return result;
@@ -326,7 +326,7 @@ namespace OTR
 
             TrustFpResult res = pr->trustFingerprint(ctx, fp, trust);
             if(res == TrustFpResult::OK && trustLevel() != TrustLevel::FINISHED) {
-                    onTrustLevelChanged(nullptr);
+                onTrustLevelChanged();
             }
             return res;
         } else {

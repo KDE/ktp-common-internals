@@ -119,7 +119,7 @@ class OtrProxyChannel::Adaptee : public QObject
 
         QMap<uint, Tp::ReceivedMessage> messages; // queue
         QList<Tp::ReceivedMessage> enqueuedMessages; // when there is now private key generated
-        bool isGenerating; // is a new private key for this account being generated
+        bool isGenerating; // is the new private key for this account being generated
         bool aboutToInit; // user wanted to start the OTR session but no private key was available
 };
 

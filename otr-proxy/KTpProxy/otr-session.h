@@ -89,6 +89,9 @@ namespace OTR
 
             // functions called by libotr ---------------------------------------
             virtual void handleMessage(const Message &message) = 0;
+
+            /** Report whether you think the given user is online.  Return 1 if
+              you think he is, 0 if you think he isn't, -1 if you're not sure. */
             virtual int recipientStatus() const = 0;
             virtual unsigned int maxMessageSize() const = 0;
 
