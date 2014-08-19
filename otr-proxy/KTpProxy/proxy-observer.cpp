@@ -28,7 +28,7 @@
 #include <KDebug>
 
 ProxyObserver::ProxyObserver(ProxyService *ps)
-    : Tp::AbstractClientObserver(Tp::ChannelClassSpecList() << Tp::ChannelClassSpec::textChat()),
+    : Tp::AbstractClientObserver(Tp::ChannelClassSpecList() << Tp::ChannelClassSpec::textChat(), true),
     ps(ps)
 {
 
