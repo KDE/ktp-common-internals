@@ -22,14 +22,12 @@
 #include "version.h"
 #include "types.h"
 
-#include <KAboutData>
-#include <KCmdLineArgs>
-#include <KApplication>
 #include <KDebug>
 
 #include <KTp/core.h>
 
 #include <QDBusConnection>
+#include <QCoreApplication>
 
 #include <TelepathyQt/AbstractAdaptor>
 #include <TelepathyQt/Connection>
@@ -57,18 +55,7 @@ Tp::ChannelFactoryPtr getChannelFactory()
 
 int main(int argc, char *argv[])
 {
-    KAboutData aboutData("ktp-proxy", 0,
-                         ki18n("Channel proxy service"),
-                         KTP_PROXY_VERSION);
-
-    aboutData.addAuthor(ki18n("Marcin Ziemiński"), ki18n("Developer"), "zieminn@gmail.com");
-    aboutData.setProductName("telepathy/ktp-proxy");
-    aboutData.setLicense(KAboutData::License_GPL_V2);
-    aboutData.setProgramIconName(QLatin1String("telepathy-kde"));
-
-    KCmdLineArgs::init(argc, argv, &aboutData);
-
-    KApplication app(false);
+    QCoreApplication app(argc, argv);
 
     Tp::registerTypes();
     Tp::registerProxyTypes();
