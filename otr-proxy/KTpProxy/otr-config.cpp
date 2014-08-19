@@ -29,7 +29,7 @@ namespace OTR
 {
     QString Config::saveLocation()
     {
-        return KGlobal::dirs()->saveLocation("data", QLatin1String("ktp_proxy/"), true);
+        return KGlobal::dirs()->saveLocation("data", QLatin1String("ktelepathy/ktp-proxy/"), true);
     }
 
     OtrlPolicy Config::getPolicy() const
