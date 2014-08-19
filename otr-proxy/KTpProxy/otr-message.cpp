@@ -109,7 +109,11 @@ namespace OTR
 
     OtrlMessageEvent Message::getOTRevent() const
     {
-        return static_cast<OtrlMessageEvent>(message[0][QLatin1String("otr-message-event")].variant().toUInt(nullptr));
+        if(isOTRevent()) {
+            return static_cast<OtrlMessageEvent>(message[0][QLatin1String("otr-message-event")].variant().toUInt(nullptr));
+        } else {
+            return OTRL_MSGEVENT_NONE;
+        }
     }
 
     void Message::setOTRheader(const QString &header, const QString &text)
