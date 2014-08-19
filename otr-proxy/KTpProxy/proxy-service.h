@@ -45,10 +45,10 @@ class ProxyService : public Tp::DBusService
     Q_DISABLE_COPY(ProxyService)
 
     public:
-        ProxyService(const QDBusConnection &dbusConnection, OTR::Config *config);
+        ProxyService(const QDBusConnection &dbusConnection, OTR::Config *config, const Tp::ClientRegistrarPtr &registrar);
         ~ProxyService();
 
-        void addChannel(const Tp::ChannelPtr &channel, const Tp::AccountPtr &account);
+        void addChannel(const Tp::TextChannelPtr &channel, const Tp::AccountPtr &account);
 
         void registerService(Tp::DBusError *error);
 
@@ -68,7 +68,6 @@ class ProxyService : public Tp::DBusService
 
     private Q_SLOTS:
         void onChannelProxyClosed();
-        void onChannelReady(Tp::PendingOperation *pendingChanReady);
         void onKeyGenerationThreadFinished();
 
     Q_SIGNALS:

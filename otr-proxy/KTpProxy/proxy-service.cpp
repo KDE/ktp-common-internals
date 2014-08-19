@@ -32,30 +32,12 @@
 #include <KDebug>
 #include <KApplication>
 
-class PendingChannelReadyResult : public PendingCurryOperation
-{
-    public:
-        PendingChannelReadyResult(Tp::PendingOperation *op, const Tp::TextChannelPtr &chan, const Tp::AccountPtr &account)
-            : PendingCurryOperation(op, Tp::SharedPtr<Tp::RefCounted>::dynamicCast(chan)),
-            channel(chan),
-            account(account)
-        {
-        }
 
-        virtual void extract(Tp::PendingOperation *op)
-        {
-            Q_UNUSED(op);
-        }
-
-        Tp::TextChannelPtr channel;
-        Tp::AccountPtr account;
-};
-
-ProxyService::ProxyService(const QDBusConnection &dbusConnection, OTR::Config *config)
+ProxyService::ProxyService(const QDBusConnection &dbusConnection, OTR::Config *config, const Tp::ClientRegistrarPtr &registrar)
     : Tp::DBusService(dbusConnection),
     adaptee(this, dbusConnection),
     observer(new ProxyObserver(this)),
-    registrar(Tp::ClientRegistrar::create(dbusConnection)),
+    registrar(registrar),
     manager(config),
     am(Tp::AccountManager::create(dbusConnection))
 {
@@ -76,22 +58,45 @@ Tp::AccountManagerPtr ProxyService::accountManager()
     return am;
 }
 
-void ProxyService::addChannel(const Tp::ChannelPtr &channel, const Tp::AccountPtr &account)
+void ProxyService::addChannel(const Tp::TextChannelPtr &channel, const Tp::AccountPtr &account)
 {
-    Tp::TextChannelPtr textChannel = Tp::TextChannel::create(channel->connection(), channel->objectPath(), QVariantMap());
+    Tp::DBusError error;
+    OTR::SessionContext ctx =
+    {
+        OTR::utils::accountIdFor(QDBusObjectPath(account->objectPath())),
+        account->displayName(),
+        channel->targetId(),
+        channel->connection()->protocolName()
+    };
 
-    PendingChannelReadyResult *pending = new PendingChannelReadyResult(
-            textChannel->becomeReady(Tp::Features()
-                << Tp::TextChannel::FeatureCore
-                << Tp::TextChannel::FeatureMessageQueue
-                << Tp::TextChannel::FeatureMessageCapabilities
-                << Tp::TextChannel::FeatureChatState
-                ),
-            textChannel,
-            account);
+    OtrProxyChannelPtr proxyChannel = OtrProxyChannel::create(dbusConnection(), channel, ctx, this);
+    proxyChannel->registerService(&error);
 
+    if(error.isValid()) {
+        kError() << "Couldn't install proxy for the channel: " << channel->objectPath() << "\n"
+            << "error name: " << error.name() << "\n"
+            << "error message: " << error.message();
 
-    connect(pending, SIGNAL(finished(Tp::PendingOperation*)), SLOT(onChannelReady(Tp::PendingOperation*)));
+        return;
+    }
+
+    channels.insert(proxyChannel.data(), proxyChannel);
+
+    connect(proxyChannel.data(), SIGNAL(closed()), SLOT(onChannelProxyClosed()));
+    QObject::connect(
+            proxyChannel.data(), SIGNAL(connected(const QDBusObjectPath&)),
+            &adaptee, SLOT(onProxyConnected(const QDBusObjectPath&)));
+    QObject::connect(
+            proxyChannel.data(), SIGNAL(disconnected(const QDBusObjectPath&)),
+            &adaptee, SLOT(onProxyDisconnected(const QDBusObjectPath&)));
+
+    kDebug() << "Installed proxy: " << proxyChannel->objectPath() << "\n"
+        << " for the channel: " << channel->objectPath() << "\n"
+        << "Context: " << "\n"
+        << "\t id: " << ctx.accountId << "\n"
+        << "\t name: " << ctx.accountName << "\n"
+        << "\t protocol: " << ctx.protocol << "\n"
+        << "\t recipient: " << ctx.recipientName;
 }
 
 void ProxyService::registerService(Tp::DBusError *error)
@@ -136,56 +141,6 @@ void ProxyService::onChannelProxyClosed()
     if(channels.isEmpty()) {
         KApplication::kApplication()->quit();
     }
-}
-
-void ProxyService::onChannelReady(Tp::PendingOperation *pendingChanReady)
-{
-    if(pendingChanReady->isError()) {
-        kWarning() << "Channel couldn't become ready due to: "
-            << pendingChanReady->errorName() << " - " << pendingChanReady->errorMessage();
-        return;
-    }
-    PendingChannelReadyResult *pendingReady = dynamic_cast<PendingChannelReadyResult*>(pendingChanReady);
-    Tp::TextChannelPtr textChannel = pendingReady->channel;
-    kDebug() << "Channel ready: " << textChannel->objectPath();
-
-    Tp::DBusError error;
-    OTR::SessionContext ctx =
-    {
-        OTR::utils::accountIdFor(QDBusObjectPath(pendingReady->account->objectPath())),
-        pendingReady->account->displayName(),
-        textChannel->targetId(),
-        textChannel->connection()->protocolName()
-    };
-
-    OtrProxyChannelPtr proxyChannel = OtrProxyChannel::create(dbusConnection(), textChannel, ctx, this);
-    proxyChannel->registerService(&error);
-
-    if(error.isValid()) {
-        kError() << "Couldn't install proxy for the channel: " << textChannel->objectPath() << "\n"
-            << "error name: " << error.name() << "\n"
-            << "error message: " << error.message();
-
-        return;
-    }
-
-    channels.insert(proxyChannel.data(), proxyChannel);
-
-    connect(proxyChannel.data(), SIGNAL(closed()), SLOT(onChannelProxyClosed()));
-    QObject::connect(
-            proxyChannel.data(), SIGNAL(connected(const QDBusObjectPath&)),
-            &adaptee, SLOT(onProxyConnected(const QDBusObjectPath&)));
-    QObject::connect(
-            proxyChannel.data(), SIGNAL(disconnected(const QDBusObjectPath&)),
-            &adaptee, SLOT(onProxyDisconnected(const QDBusObjectPath&)));
-
-    kDebug() << "Installed proxy: " << proxyChannel->objectPath() << "\n"
-        << " for the channel: " << textChannel->objectPath() << "\n"
-        << "Context: " << "\n"
-        << "\t id: " << ctx.accountId << "\n"
-        << "\t name: " << ctx.accountName << "\n"
-        << "\t protocol: " << ctx.protocol << "\n"
-        << "\t recipient: " << ctx.recipientName;
 }
 
 bool ProxyService::createNewPrivateKey(const QString &accountId, const QString &accountName)

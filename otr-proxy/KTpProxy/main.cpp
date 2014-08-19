@@ -27,10 +27,11 @@
 #include <KApplication>
 #include <KDebug>
 
+#include <KTp/core.h>
+
 #include <QDBusConnection>
 
 #include <TelepathyQt/AbstractAdaptor>
-#include <TelepathyQt/Channel>
 #include <TelepathyQt/Connection>
 #include <TelepathyQt/ClientRegistrar>
 #include <TelepathyQt/TextChannel>
@@ -39,6 +40,20 @@ extern "C" {
 #include <libotr/proto.h>
 }
 
+
+Tp::ChannelFactoryPtr getChannelFactory()
+{
+    Tp::ChannelFactoryPtr channelFactory = Tp::ChannelFactory::create(QDBusConnection::sessionBus());
+    channelFactory->addCommonFeatures(Tp::Channel::FeatureCore);
+
+    Tp::Features textFeatures = Tp::Features() << Tp::TextChannel::FeatureMessageQueue
+                                               << Tp::TextChannel::FeatureMessageSentSignal
+                                               << Tp::TextChannel::FeatureChatState
+                                               << Tp::TextChannel::FeatureMessageCapabilities;
+    channelFactory->addFeaturesForTextChats(textFeatures);
+
+    return channelFactory;
+}
 
 int main(int argc, char *argv[])
 {
@@ -62,8 +77,15 @@ int main(int argc, char *argv[])
     OTR::Config config;
 
     Tp::DBusError error;
+
     QDBusConnection dbusConnection = QDBusConnection::sessionBus();
-    ProxyService ps(dbusConnection, &config);
+    Tp::ClientRegistrarPtr registrar = Tp::ClientRegistrar::create(
+            KTp::accountFactory(),
+            KTp::connectionFactory(),
+            getChannelFactory(),
+            KTp::contactFactory());
+
+    ProxyService ps(dbusConnection, &config, registrar);
     ps.registerService(&error);
 
     if(error.isValid())
