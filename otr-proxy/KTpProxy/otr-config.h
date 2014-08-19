@@ -32,6 +32,7 @@ namespace OTR
     class Config
     {
         public:
+            Config();
             virtual ~Config() = default;
 
             virtual QString saveLocation();

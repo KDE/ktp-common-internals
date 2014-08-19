@@ -27,6 +27,11 @@
 
 namespace OTR
 {
+    Config::Config()
+    {
+        KTpProxyConfig::self()->readConfig();
+    }
+
     QString Config::saveLocation()
     {
         return KGlobal::dirs()->saveLocation("data", QLatin1String("ktelepathy/ktp-proxy/"), true);
@@ -55,16 +60,17 @@ namespace OTR
         switch(policy) {
             case OTRL_POLICY_ALWAYS:
                 KTpProxyConfig::setOTRPolicy(KTpProxyConfig::Always);
-                return;
+                break;
             case OTRL_POLICY_OPPORTUNISTIC:
                 KTpProxyConfig::setOTRPolicy(KTpProxyConfig::Opportunistic);
-                return;
+                break;
             case OTRL_POLICY_MANUAL:
                 KTpProxyConfig::setOTRPolicy(KTpProxyConfig::Manual);
-                return;
+                break;
             case OTRL_POLICY_NEVER:
                 KTpProxyConfig::setOTRPolicy(KTpProxyConfig::Never);
-                return;
+                break;
         }
+        KTpProxyConfig::self()->writeConfig();
     }
 }
