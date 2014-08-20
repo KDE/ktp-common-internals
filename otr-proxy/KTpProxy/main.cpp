@@ -25,6 +25,7 @@
 #include <KDebug>
 
 #include <KTp/core.h>
+#include <KTp/debug.h>
 
 #include <QDBusConnection>
 #include <QCoreApplication>
@@ -56,6 +57,10 @@ Tp::ChannelFactoryPtr getChannelFactory()
 int main(int argc, char *argv[])
 {
     QCoreApplication app(argc, argv);
+
+    if(QCoreApplication::arguments().contains(QLatin1String("--debug"))) {
+        KTp::Debug::installCallback(true, true);
+    }
 
     Tp::registerTypes();
     Tp::registerProxyTypes();
