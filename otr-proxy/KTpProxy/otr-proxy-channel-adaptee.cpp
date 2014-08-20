@@ -240,6 +240,8 @@ void OtrProxyChannel::Adaptee::sendOTRmessage(const OTR::Message &message)
 void OtrProxyChannel::Adaptee::sendMessage(const Tp::MessagePartList &message, uint flags,
         const Tp::Service::ChannelProxyInterfaceOTRAdaptor::SendMessageContextPtr &context)
 {
+    kDebug();
+
     if(!connected()) {
         context->setFinishedWithError(KTP_PROXY_ERROR_NOT_CONNECTED, QString::fromLatin1("Proxy is not connected"));
         return;
@@ -248,22 +250,28 @@ void OtrProxyChannel::Adaptee::sendMessage(const Tp::MessagePartList &message, u
     OTR::Message otrMessage(message);
     const OTR::CryptResult cres = otrSes.encrypt(otrMessage);
     if(cres == OTR::CryptResult::ERROR) {
+        kDebug() << "Sending error";
         context->setFinishedWithError(KTP_PROXY_ERROR_ENCRYPTION_ERROR,
                 QLatin1String("Message could not be encrypted with OTR"));
         return;
     }
 
-    kDebug();
-    PendingSendMessageResult *pending = new PendingSendMessageResult(
-            chan->send(otrMessage.parts(), (Tp::MessageSendingFlags) flags),
-            chan,
-            context,
-            message,
-            flags);
+    // we are starting an AKE - do not show it to the user
+    // policy is probably set to ALWAYS in this case
+    if(otrl_proto_message_type(otrMessage.text().toLocal8Bit()) == OTRL_MSGTYPE_QUERY) {
+        sendOTRmessage(otrMessage);
+    } else {
+        PendingSendMessageResult *pending = new PendingSendMessageResult(
+                chan->send(otrMessage.parts(), (Tp::MessageSendingFlags) flags),
+                chan,
+                context,
+                message,
+                flags);
 
-    connect(pending,
-            SIGNAL(finished(Tp::PendingOperation*)),
-            SLOT(onPendingSendFinished(Tp::PendingOperation*)));
+        connect(pending,
+                SIGNAL(finished(Tp::PendingOperation*)),
+                SLOT(onPendingSendFinished(Tp::PendingOperation*)));
+    }
 }
 
 void OtrProxyChannel::Adaptee::acknowledgePendingMessages(const Tp::UIntList &ids,
