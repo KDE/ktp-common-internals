@@ -1,36 +1,3 @@
-project(ktp-proxy)
-set(KTP_PROXY_VERSION "0.1.1")
-set(KDE_MIN_VERSION "4.13.1")
-
-set(IS_KTP_INTERNAL_MODULE TRUE)
-
-set(CMAKE_MODULE_PATH
-    "${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules"
-    ${CMAKE_MODULE_PATH}
-)
-
-find_package (KDE4 ${KDE_MIN_VERSION} REQUIRED)
-find_package (KTp REQUIRED) # TODO - remove this after merging
-find_package (TelepathyQt4 0.9.1 REQUIRED)
-find_package (TelepathyQt4Service 0.9.2.1 REQUIRED)
-find_package (LibOTR 4.0.0 REQUIRED)
-find_package (Libgcrypt REQUIRED)
-
-FIND_LIBRARY (LIBGCRYPT_LIBS NAMES gcrypt)
-
-include_directories (${KDE4_INCLUDES}
-                     ${KTP_INCLUDE_DIR} # TODO - remove this after merging
-                     ${TELEPATHY_QT4_INCLUDE_DIR}
-                     ${LIBOTR_INCLUDE_DIR}
-                     ${LIBGCRYPT_INCLUDE_DIR}
-)
-
-include (KDE4Defaults)
-
-add_definitions (${KDE4_DEFINITIONS})
-add_definitions (-std=c++11)
-
-configure_file(version.h.in ${CMAKE_CURRENT_BINARY_DIR}/version.h @ONLY)
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 

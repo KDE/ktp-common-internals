@@ -19,6 +19,8 @@
 
 #include "otr-message.h"
 
+#include "KTp/OTR/constants.h"
+
 namespace OTR
 {
     Message::Message()
@@ -99,18 +101,18 @@ namespace OTR
 
     bool Message::isOTRevent() const
     {
-        return message[0].contains(QLatin1String("otr-message-event"));
+        return message[0].contains(OTR_MESSAGE_EVENT_HEADER);
     }
 
     void Message::setOTRevent(OtrlMessageEvent msgEvent)
     {
-        message[0].insert(QLatin1String("otr-message-event"), QDBusVariant(static_cast<uint>(msgEvent)));
+        message[0].insert(OTR_MESSAGE_EVENT_HEADER, QDBusVariant(static_cast<uint>(msgEvent)));
     }
 
     OtrlMessageEvent Message::getOTRevent() const
     {
         if(isOTRevent()) {
-            return static_cast<OtrlMessageEvent>(message[0][QLatin1String("otr-message-event")].variant().toUInt(nullptr));
+            return static_cast<OtrlMessageEvent>(message[0][OTR_MESSAGE_EVENT_HEADER].variant().toUInt(nullptr));
         } else {
             return OTRL_MSGEVENT_NONE;
         }

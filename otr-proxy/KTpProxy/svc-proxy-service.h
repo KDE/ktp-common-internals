@@ -8,7 +8,7 @@
  * which it was generated.
  */
 
-#include "types.h"
+#include "KTp/OTR/types.h"
 
 #include <TelepathyQt/AbstractAdaptor>
 #include <TelepathyQt/Global>
@@ -47,7 +47,7 @@ class TP_QT_EXPORT ProxyServiceAdaptor : public Tp::AbstractAdaptor
 "    <method name=\"GetKnownFingerprints\">\n"
 "      <arg direction=\"in\" type=\"o\" name=\"account\"/>\n"
 "      <arg direction=\"out\" type=\"a(ssbb)\" name=\"fingerprints\">\n"
-"        <annotation value=\"Tp::FingerprintInfoList\" name=\"com.trolltech.QtDBus.QtTypeName.Out0\"/>\n"
+"        <annotation value=\"KTp::FingerprintInfoList\" name=\"com.trolltech.QtDBus.QtTypeName.Out0\"/>\n"
 "      </arg>\n"
 "    </method>\n"
 "    <method name=\"TrustFingerprint\">\n"
@@ -84,7 +84,7 @@ public:
 
     typedef Tp::MethodInvocationContextPtr<  > GeneratePrivateKeyContextPtr;
     typedef Tp::MethodInvocationContextPtr< QString > GetFingerprintForAccountContextPtr;
-    typedef Tp::MethodInvocationContextPtr< Tp::FingerprintInfoList > GetKnownFingerprintsContextPtr;
+    typedef Tp::MethodInvocationContextPtr< KTp::FingerprintInfoList > GetKnownFingerprintsContextPtr;
     typedef Tp::MethodInvocationContextPtr<  > TrustFingerprintContextPtr;
     typedef Tp::MethodInvocationContextPtr<  > ForgetFingerprintContextPtr;
 
@@ -170,7 +170,7 @@ public Q_SLOTS: // METHODS
      *
      *     An array of known fingerprints represented by Fingerprint_Info_List
      */
-    Tp::FingerprintInfoList GetKnownFingerprints(const QDBusObjectPath& account, const QDBusMessage& dbusMessage);
+    KTp::FingerprintInfoList GetKnownFingerprints(const QDBusObjectPath& account, const QDBusMessage& dbusMessage);
     /**
      * Begins a call to the exported D-Bus method \c TrustFingerprint on this object.
      *

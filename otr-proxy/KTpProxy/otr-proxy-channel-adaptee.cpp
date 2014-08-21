@@ -23,8 +23,9 @@
 #include "otr-constants.h"
 #include "otr-manager.h"
 #include "otr-utils.h"
-#include "constants.h"
 #include "pending-curry-operation.h"
+
+#include "KTp/OTR/constants.h"
 
 #include <TelepathyQt/DBusObject>
 #include <TelepathyQt/TextChannel>
@@ -462,7 +463,7 @@ void OtrProxyChannel::Adaptee::onPendingSendFinished(Tp::PendingOperation *op)
             message.setSender(sender);
             message.setSenderId(otrSes.context().accountName);
             if(!otrSes.remoteFingerprint().isEmpty()) {
-                message.setOTRheader(QLatin1String("otr-remote-fingerprint"), otrSes.remoteFingerprint());
+                message.setOTRheader(OTR_REMOTE_FINGERPRINT_HEADER, otrSes.remoteFingerprint());
             }
 
             Q_EMIT messageSent(message.parts(), sendResult->getFlags(), sendResult->getToken());

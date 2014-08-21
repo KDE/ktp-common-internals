@@ -22,7 +22,8 @@
 
 #include "otr-config.h"
 #include "otr-session.h"
-#include "types.h"
+
+#include "KTp/OTR/types.h"
 
 #include <QThread>
 
@@ -64,7 +65,7 @@ namespace OTR
               otherwise returns thread which generates a new private key upon calling start method */
             KeyGenerationWorker* createNewPrivateKey(const QString &accountId, const QString &accountName);
             QString getFingerprintFor(const QString &accountId, const QString &accountName);
-            Tp::FingerprintInfoList getKnownFingerprints(const QString &accountId);
+            KTp::FingerprintInfoList getKnownFingerprints(const QString &accountId);
             bool trustFingerprint(const QString &accountId, const QString &contactName, const QString &fingerprint, bool trust);
             bool forgetFingerprint(const QString &accountId, const QString &contactName, const QString &fingerprint);
 

@@ -23,6 +23,8 @@
 #include "otr-utils.h"
 #include "otr-proxy-channel-adaptee.h"
 
+#include "KTp/OTR/constants.h"
+
 extern "C" {
 #include <libotr/privkey.h>
 #include <libotr/proto.h>
@@ -213,7 +215,7 @@ namespace OTR
                 message.setType(Tp::ChannelTextMessageTypeNormal);
                 if(context->active_fingerprint != nullptr) {
                     const QString hrFingerprint = OTR::utils::humanReadable(context->active_fingerprint->fingerprint);
-                    message.setOTRheader(QLatin1String("otr-remote-fingerprint"), hrFingerprint);
+                    message.setOTRheader(OTR_REMOTE_FINGERPRINT_HEADER, hrFingerprint);
                 }
                 otrl_message_free(encMessage);
 
@@ -259,7 +261,7 @@ namespace OTR
                 }
                 if(context->active_fingerprint != nullptr) {
                     const QString hrFingerprint = OTR::utils::humanReadable(context->active_fingerprint->fingerprint);
-                    message.setOTRheader(QLatin1String("otr-remote-fingerprint"), hrFingerprint);
+                    message.setOTRheader(OTR_REMOTE_FINGERPRINT_HEADER, hrFingerprint);
                 }
                 result = CryptResult::CHANGED;
             } else {

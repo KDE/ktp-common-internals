@@ -20,7 +20,8 @@
 #include "lib/test-config.h"
 #include "lib/test-session.h"
 
-#include <KTpProxy/types.h>
+#include "KTp/OTR/types.h"
+
 #include <KTpProxy/otr-manager.h>
 
 #include <QtCore>
@@ -378,7 +379,7 @@ void OTRTest::testSessionPolicyAlways()
     QCOMPARE(alice.decrypt(helloMsg), CryptResult::OTR);
     QVERIFY(alice.mesQueue.empty());
     QVERIFY(!alice.eventQueue.empty());
-    QCOMPARE(alice.eventQueue.back().getOTRheader("otr-unencrypted-message"), heyText);
+    QCOMPARE(alice.eventQueue.back().getOTRheader(QLatin1String("otr-unencrypted-message")), heyText);
     QCOMPARE(alice.eventQueue.back().getOTRevent(), OTRL_MSGEVENT_RCVDMSG_UNENCRYPTED);
 
     aliceEnv->reset();
@@ -847,7 +848,7 @@ void OTRTest::testFingerprintManagement()
     kDebug() << (int)alice.trustLevel();
     kDebug() << (int)bob.trustLevel();
 
-    Tp::FingerprintInfoList infoList = aliceMan->getKnownFingerprints(tst::aliceCtx.accountId);
+    KTp::FingerprintInfoList infoList = aliceMan->getKnownFingerprints(tst::aliceCtx.accountId);
     QCOMPARE(infoList.size(), 2);
     for(const auto &fpInfo: infoList) {
         QVERIFY(!fpInfo.isVerified);

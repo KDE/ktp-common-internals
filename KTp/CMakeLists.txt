@@ -114,6 +114,7 @@ add_subdirectory(Declarative)
 add_subdirectory(Models)
 add_subdirectory(Widgets)
 add_subdirectory(Logger)
+add_subdirectory(OTR)
 
 # API docs
 find_package(Doxygen)

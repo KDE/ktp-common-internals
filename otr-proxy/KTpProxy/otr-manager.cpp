@@ -19,6 +19,9 @@
 
 #include "otr-manager.h"
 #include "otr-utils.h"
+#include "otr-constants.h"
+
+#include "KTp/OTR/constants.h"
 
 #include <KDebug>
 
@@ -280,14 +283,14 @@ namespace {
                 {
                     case GPG_ERR_INV_VALUE:
                         {
-                            msg.setOTRheader(QLatin1String("otr-error"), QLatin1String("Malformed message received"));
+                            msg.setOTRheader(OTR_ERROR_HEADER, QLatin1String("Malformed message received"));
                             msg.setText(QLatin1String("Error setting up private conversation: "
                                         "Malformed message received"));
                             break;
                         }
                     default:
                         {
-                            msg.setOTRheader(QLatin1String("otr-error"), QLatin1String(gcry_strerror(err)));
+                            msg.setOTRheader(OTR_ERROR_HEADER, QLatin1String(gcry_strerror(err)));
                             msg.setText(QString::fromLatin1("Error setting up private conversation: %1")
                                     .arg(QLatin1String(gcry_strerror(err))));
                             break;
@@ -327,12 +330,12 @@ namespace {
             case OTRL_MSGEVENT_LOG_HEARTBEAT_SENT:
                 break;
             case OTRL_MSGEVENT_RCVDMSG_GENERAL_ERR:
-                msg.setOTRheader(QLatin1String("otr-error"), QLatin1String(message));
+                msg.setOTRheader(OTR_ERROR_HEADER, QLatin1String(message));
                 msg.setText(QLatin1String(message));
                 msg.setDirection(MessageDirection::INTERNAL);
                 break;
             case OTRL_MSGEVENT_RCVDMSG_UNENCRYPTED:
-                msg.setOTRheader(QLatin1String("otr-unencrypted-message"), QLatin1String(message));
+                msg.setOTRheader(OTR_UNENCRYPTED_MESSAGE_HEADER, QLatin1String(message));
                 msg.setText(QString::fromLatin1("The following message received from %1 was not encrypted: [%2]")
                         .arg(QLatin1String(context->username), QLatin1String(message)));
                 msg.setDirection(MessageDirection::FROM_PEER);
@@ -518,9 +521,9 @@ TrustFpResult Manager::trustFingerprint(const SessionContext &ctx, Fingerprint *
     return TrustFpResult::OK;
 }
 
-Tp::FingerprintInfoList Manager::getKnownFingerprints(const QString &accountId)
+KTp::FingerprintInfoList Manager::getKnownFingerprints(const QString &accountId)
 {
-    Tp::FingerprintInfoList fingerprints;
+    KTp::FingerprintInfoList fingerprints;
 
     for(ConnContext *context = getUserState(accountId)->userState()->context_root;
             context != nullptr; context = context->next)
@@ -533,7 +536,7 @@ Tp::FingerprintInfoList Manager::getKnownFingerprints(const QString &accountId)
             const bool trusted = otrl_context_is_fingerprint_trusted(fingerprint);
             const bool used = utils::isFingerprintInUse(fingerprint);
 
-            fingerprints << Tp::FingerprintInfo { username, hrFp, trusted, used };
+            fingerprints << KTp::FingerprintInfo { username, hrFp, trusted, used };
         }
     }
 

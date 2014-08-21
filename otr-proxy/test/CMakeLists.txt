@@ -8,6 +8,7 @@ set(ktp-proxy-test_LIBS
         ${TELEPATHY_QT4_LIBRARIES}
         ${TELEPATHY_QT4_SERVICE_LIBRARIES}
         ktp-proxy-test-lib
+        ktpotrprivate
 )
 
 message("-- Adding test files:")

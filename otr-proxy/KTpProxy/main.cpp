@@ -20,12 +20,13 @@
 #include "proxy-service.h"
 #include "otr-config.h"
 #include "version.h"
-#include "types.h"
+
+#include <KTp/OTR/types.h>
 
 #include <KDebug>
 
-#include <KTp/core.h>
-#include <KTp/debug.h>
+#include "KTp/core.h"
+#include "KTp/debug.h"
 
 #include <QDBusConnection>
 #include <QCoreApplication>
@@ -63,7 +64,7 @@ int main(int argc, char *argv[])
     }
 
     Tp::registerTypes();
-    Tp::registerProxyTypes();
+    KTp::registerOtrTypes();
     OTRL_INIT;
 
     OTR::Config config;

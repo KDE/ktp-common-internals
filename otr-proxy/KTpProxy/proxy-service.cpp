@@ -23,7 +23,8 @@
 #include "otr-config.h"
 #include "otr-utils.h"
 #include "pending-curry-operation.h"
-#include "constants.h"
+
+#include "KTp/OTR/constants.h"
 
 #include <TelepathyQt/ClientRegistrar>
 #include <TelepathyQt/TextChannel>
@@ -174,7 +175,7 @@ QString ProxyService::getFingerprintFor(const QString &accountId, const QString 
     return manager.getFingerprintFor(accountId, accountName);
 }
 
-Tp::FingerprintInfoList ProxyService::getKnownFingerprints(const QString &accountId)
+KTp::FingerprintInfoList ProxyService::getKnownFingerprints(const QString &accountId)
 {
     return manager.getKnownFingerprints(accountId);
 }

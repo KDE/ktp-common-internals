@@ -20,7 +20,8 @@
 #include "otr-proxy-channel.h"
 #include "otr-proxy-channel-adaptee.h"
 #include "proxy-service.h"
-#include "constants.h"
+
+#include "KTp/OTR/constants.h"
 
 #include <TelepathyQt/Channel>
 #include <TelepathyQt/TextChannel>

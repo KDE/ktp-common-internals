@@ -60,19 +60,19 @@ QString ProxyServiceAdaptor::GetFingerprintForAccount(const QDBusObjectPath& acc
     return QString();
 }
 
-Tp::FingerprintInfoList ProxyServiceAdaptor::GetKnownFingerprints(const QDBusObjectPath& account, const QDBusMessage& dbusMessage)
+KTp::FingerprintInfoList ProxyServiceAdaptor::GetKnownFingerprints(const QDBusObjectPath& account, const QDBusMessage& dbusMessage)
 {
     if (!adaptee()->metaObject()->indexOfMethod("getKnownFingerprints(QDBusObjectPath,Tp::Service::ProxyServiceAdaptor::GetKnownFingerprintsContextPtr)") == -1) {
         dbusConnection().send(dbusMessage.createErrorReply(TP_QT_ERROR_NOT_IMPLEMENTED, QLatin1String("Not implemented")));
-        return Tp::FingerprintInfoList();
+        return KTp::FingerprintInfoList();
     }
 
     GetKnownFingerprintsContextPtr ctx = GetKnownFingerprintsContextPtr(
-            new Tp::MethodInvocationContext< Tp::FingerprintInfoList >(dbusConnection(), dbusMessage));
+            new Tp::MethodInvocationContext< KTp::FingerprintInfoList >(dbusConnection(), dbusMessage));
     QMetaObject::invokeMethod(adaptee(), "getKnownFingerprints",
         Q_ARG(QDBusObjectPath, account),
         Q_ARG(Tp::Service::ProxyServiceAdaptor::GetKnownFingerprintsContextPtr, ctx));
-    return Tp::FingerprintInfoList();
+    return KTp::FingerprintInfoList();
 }
 
 void ProxyServiceAdaptor::TrustFingerprint(const QDBusObjectPath& account, const QString& contactName, const QString& fingerprint, bool trust, const QDBusMessage& dbusMessage)
