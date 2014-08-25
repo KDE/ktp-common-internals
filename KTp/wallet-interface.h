@@ -24,7 +24,7 @@
 #include <TelepathyQt/Account>
 #include <TelepathyQt/PendingOperation>
 
-#include <KWallet/Wallet>
+#include <KWallet/KWallet>
 
 #include <QScopedPointer>
 
