@@ -208,9 +208,9 @@ namespace OTR
             } else if(encMessage != nullptr) {
 
                 if(message.contentType().isEmpty()) {
-                    message.setText(QLatin1String(encMessage));
+                    message.setText(QString::fromLocal8Bit(encMessage));
                 } else {
-                    message.setText(QLatin1String(encMessage), message.contentType());
+                    message.setText(QString::fromLocal8Bit(encMessage), message.contentType());
                 }
                 message.setType(Tp::ChannelTextMessageTypeNormal);
                 if(context->active_fingerprint != nullptr) {
@@ -255,9 +255,9 @@ namespace OTR
         if(!ignore) {
             if(decMsg != nullptr) {
                 if(message.contentType().isEmpty()) {
-                    message.setText(QLatin1String(decMsg));
+                    message.setText(QString::fromLocal8Bit(decMsg));
                 } else {
-                    message.setText(QLatin1String(decMsg), message.contentType());
+                    message.setText(QString::fromLocal8Bit(decMsg), message.contentType());
                 }
                 if(context->active_fingerprint != nullptr) {
                     const QString hrFingerprint = OTR::utils::humanReadable(context->active_fingerprint->fingerprint);
