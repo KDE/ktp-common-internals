@@ -19,6 +19,12 @@ find_package (TelepathyQt4Service 0.9.2.1 REQUIRED)
 find_package (TelepathyLoggerQt4)
 find_package (KPeople 0.2.1)
 find_package (KdepimLibs)
+find_package (LibOTR 4.0.0)
+find_package (Libgcrypt)
+
+if (LIBOTR_FOUND AND LIBGCRYPT_FOUND)
+    set(OTR_LIBS_FOUND TRUE)
+endif (LIBOTR_FOUND AND LIBGCRYPT_FOUND)
 
 # set some default settings
 include (KDE4Defaults)
@@ -29,7 +35,7 @@ include (MacroLibrary)
 macro_log_feature(KPEOPLE_FOUND "KPeople" "Support for KDE Contact Aggregation" "https://projects.kde.org/libkpeople" FALSE "" "")
 macro_log_feature(KDEPIMLIBS_FOUND "KDE-PIM Libraries" "Support for Contact Aggregation" "https://projects.kde.org/kdepimlibs" FALSE "" "")
 macro_log_feature(TELEPATHY_LOGGER_QT4_FOUND "TelepatyLoggerQt4" "Qt bindings for TelepathyLogger. This is needed to provide access to chat logs. HIGHLY recommended" "http://projects.kde.org/telepathy-logger-qt" FALSE "" "")
-macro_log_feature(ENABLE_OTR_PROXY "KTpProxy" "DBus service responsible for OTR encryption of text channels" "" FALSE "" "")
+macro_log_feature(OTR_LIBS_FOUND "KTpProxy" "DBus service responsible for OTR encryption of text channels" "" FALSE "" "")
 macro_display_feature_log()
 
 
@@ -66,16 +72,10 @@ add_subdirectory(tools)
 add_subdirectory(data)
 add_subdirectory(tests)
 
-if (ENABLE_OTR_PROXY)
-    find_package (LibOTR 4.0.0 REQUIRED)
-    find_package (Libgcrypt REQUIRED)
-    FIND_LIBRARY (LIBGCRYPT_LIBS NAMES gcrypt)
-
+if (OTR_LIBS_FOUND)
     include_directories (${LIBOTR_INCLUDE_DIR}
                          ${LIBGCRYPT_INCLUDE_DIR}
     )
 
     add_subdirectory(otr-proxy)
-endif (ENABLE_OTR_PROXY)
-
-
+endif (OTR_LIBS_FOUND)
