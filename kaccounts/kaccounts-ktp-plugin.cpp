@@ -41,6 +41,8 @@ KAccountsKTpPlugin::KAccountsKTpPlugin(QObject *parent)
                                                                        Tp::Features() << Tp::Account::FeatureCore);
 
     d->accountManager = Tp::AccountManager::create(accountFactory);
+    // There should be well enough time between AM finishes getting ready and before it's needed,
+    // so there's no slot watching "finished"
     d->accountManager->becomeReady();
 }
 
@@ -82,6 +84,8 @@ void KAccountsKTpPlugin::onAccountRemoved(const Accounts::AccountId accountId)
         KTp::LogManager *logManager = KTp::LogManager::instance();
         logManager->clearAccountLogs(account);
     }
+
+    qDebug() << "Removing Telepathy account with object path" << account->displayName();
     account->remove();
 
     // Delete the entry from config file
