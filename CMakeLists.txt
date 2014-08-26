@@ -23,11 +23,15 @@ find_package (KF5 REQUIRED COMPONENTS
               NotifyConfig
               TextEditor
               Wallet
+              Config
               KDELibs4Support)
 
 find_package (TelepathyQt5 0.9.2.1 REQUIRED)
 find_package (TelepathyLoggerQt5 QUIET)
 find_package (KPeople 0.3 QUIET)
+
+find_package (KAccounts)
+find_package(AccountsQt5 1.10 CONFIG)
 
 include(KDEInstallDirs)
 include(KDECMakeSettings)
@@ -74,6 +78,12 @@ if (KPEOPLE_FOUND AND KDEPIMLIBS_FOUND)
     add_subdirectory(kpeople)
 endif ()
 
+#If we find KAccounts library, build the plugin for it
+if (KACCOUNTS_FOUND AND AccountsQt5_FOUND)
+    include_directories(${KACCOUNTS_INCLUDE_DIRS} ${ACCOUNTSQT_INCLUDE_DIRS})
+    add_subdirectory(kaccounts)
+endif ()
+
 
 configure_file(version.h.in ${CMAKE_CURRENT_BINARY_DIR}/version.h @ONLY)
 
@@ -83,5 +93,6 @@ add_subdirectory(KTp)
 add_subdirectory(tools)
 add_subdirectory(data)
 add_subdirectory(tests)
+
 
 feature_summary(WHAT ALL FATAL_ON_MISSING_REQUIRED_PACKAGES)
