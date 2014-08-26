@@ -83,6 +83,14 @@ void KAccountsKTpPlugin::onAccountRemoved(const Accounts::AccountId accountId)
         logManager->clearAccountLogs(account);
     }
     account->remove();
+
+    // Delete the entry from config file
+    ktpKaccountsGroup.deleteEntry(QString::number(accountId));
+
+    // As the config file contains mapping both ways (ktp id -> accounts id; accounts id -> ktp id)
+    // we also need to remove the other entry
+    ktpKaccountsGroup = kaccountsConfig->group(QStringLiteral("ktp-kaccounts"));
+    ktpKaccountsGroup.deleteEntry(accountUid);
 }
 
 void KAccountsKTpPlugin::onServiceEnabled(const Accounts::AccountId accountId, const Accounts::Service& service)
@@ -94,4 +102,3 @@ void KAccountsKTpPlugin::onServiceDisabled(const Accounts::AccountId accountId, 
 {
 
 }
-
