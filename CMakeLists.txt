@@ -32,10 +32,11 @@ include (KDE4Defaults)
 # make some more macros available
 include (MacroLibrary)
 
+macro_log_feature(TELEPATHY_LOGGER_QT4_FOUND "TelepatyLoggerQt4" "Qt bindings for TelepathyLogger. This is needed to provide access to chat logs. HIGHLY recommended" "http://projects.kde.org/telepathy-logger-qt" FALSE "" "")
 macro_log_feature(KPEOPLE_FOUND "KPeople" "Support for KDE Contact Aggregation" "https://projects.kde.org/libkpeople" FALSE "" "")
 macro_log_feature(KDEPIMLIBS_FOUND "KDE-PIM Libraries" "Support for Contact Aggregation" "https://projects.kde.org/kdepimlibs" FALSE "" "")
-macro_log_feature(TELEPATHY_LOGGER_QT4_FOUND "TelepatyLoggerQt4" "Qt bindings for TelepathyLogger. This is needed to provide access to chat logs. HIGHLY recommended" "http://projects.kde.org/telepathy-logger-qt" FALSE "" "")
-macro_log_feature(OTR_LIBS_FOUND "KTpProxy" "DBus service responsible for OTR encryption of text channels" "" FALSE "" "")
+macro_log_feature(LIBOTR_FOUND "LibOtr" "Required for OTR support" "" FALSE "" "")
+macro_log_feature(LIBGCRYPT_FOUND "LibGCrypt" "Required for OTR support" "" FALSE "" "")
 macro_display_feature_log()
 
 
