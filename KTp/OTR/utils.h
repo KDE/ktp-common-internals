@@ -40,6 +40,9 @@ namespace Utils {
     /** Returns true if message is generated internally by OTR implementation */
     KTP_EXPORT bool isOtrEvent(const Tp::ReceivedMessage &message);
 
+    /** Returns true if text is an OTR protocol message */
+    KTP_EXPORT bool isOtrMessage(const QString &text);
+
     /** Returns notification for a user assuming that the message is an otr event */
     KTP_EXPORT QString processOtrMessage(const Tp::ReceivedMessage &message);
 }

@@ -53,6 +53,11 @@ namespace Utils {
         return QString::fromLatin1("%1%2/%3").arg(KTP_PROXY_CHANNEL_OBJECT_PATH_PREFIX, connectionId, channelId);
     }
 
+    bool isOtrMessage(const QString &text)
+    {
+        return text.startsWith(QLatin1String("?OTR"));
+    }
+
     bool isOtrEvent(const Tp::ReceivedMessage &message)
     {
         return message.part(0).contains(OTR_MESSAGE_EVENT_HEADER);
