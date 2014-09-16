@@ -71,7 +71,9 @@ set(KTP_GLOBAL_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/global.cpp)
 add_subdirectory(KTp)
 add_subdirectory(tools)
 add_subdirectory(data)
+if (KDE4_BUILD_TESTS)
 add_subdirectory(tests)
+endif ()
 
 if (OTR_LIBS_FOUND)
     include_directories (${LIBOTR_INCLUDE_DIR}
