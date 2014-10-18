@@ -468,13 +468,17 @@ void KTp::JoinChatRoomDialog::loadFavoriteRooms()
 
     Q_FOREACH (const QString &key, m_recentRoomsGroup.keyList()) {
         QVariantList recent = m_recentRoomsGroup.readEntry(key, QVariantList());
-        QString recentHandle = recent.at(0).toString();
-        QString recentAccount = recent.at(1).toString();
-        QVariantMap room;
-        room.insert(QLatin1String("is-bookmarked"), false);
-        room.insert(QLatin1String("handle-name"), recentHandle);
-        room.insert(QLatin1String("account-identifier"), recentAccount);
-        roomList.append(room);
+        if (recent.length() > 1) {
+            QString recentHandle = recent.at(0).toString();
+            QString recentAccount = recent.at(1).toString();
+            QVariantMap room;
+            room.insert(QLatin1String("is-bookmarked"), false);
+            room.insert(QLatin1String("handle-name"), recentHandle);
+            room.insert(QLatin1String("account-identifier"), recentAccount);
+            roomList.append(room);
+        } else {
+            kDebug() << "Invalid recent rooms group:" << key;
+        }
     }
 
     m_favoritesModel->addRooms(roomList);
