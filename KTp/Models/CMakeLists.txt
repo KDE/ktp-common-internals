@@ -1,5 +1,4 @@
 set (ktp_models_private_SRCS
-    ${KTP_GLOBAL_SOURCES}
     abstract-grouping-proxy-model.cpp
     accounts-list-model.cpp
     accounts-tree-proxy-model.cpp

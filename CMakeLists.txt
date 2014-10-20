@@ -55,6 +55,7 @@ set_package_properties(TelepathyLoggerQt5 PROPERTIES DESCRIPTION "Qt bindings fo
                       )
 
 
+add_definitions(-DTRANSLATION_DOMAIN=\"ktp-common-internals\")
 add_definitions (
                  -DQT_NO_CAST_FROM_ASCII
                  -DQT_NO_KEYWORDS
@@ -85,8 +86,6 @@ endif ()
 
 
 configure_file(version.h.in ${CMAKE_CURRENT_BINARY_DIR}/version.h @ONLY)
-
-set(KTP_GLOBAL_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/global.cpp)
 
 add_subdirectory(KTp)
 add_subdirectory(tools)

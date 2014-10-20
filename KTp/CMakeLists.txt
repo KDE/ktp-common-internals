@@ -2,7 +2,6 @@ include_directories (${CMAKE_CURRENT_BINARY_DIR}
                      ${CMAKE_CURRENT_SOURCE_DIR})
 
 set (ktp_common_internals_private_SRCS
-     ${KTP_GLOBAL_SOURCES}
      abstract-message-filter.cpp
      account-factory.cpp
      actions.cpp
@@ -67,9 +66,8 @@ set (ktp_common_internals_private_HDRS
 set (ktp_private_LIBS
                        KF5::Wallet
                        KF5::KIOWidgets
-                       KF5::KDELibs4Support
                        ${TELEPATHY_QT5_LIBRARIES}
-                       ${KDEPIMLIBS_KABC_LIBS}
+                       KF5::KDELibs4Support
 )
 
 if (TELEPATHY_LOGGER_QT5_FOUND)
