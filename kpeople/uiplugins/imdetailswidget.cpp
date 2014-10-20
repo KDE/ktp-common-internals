@@ -84,3 +84,4 @@ QWidget* ImDetailsWidget::createDetailsWidget(const KABC::Addressee& person, con
     }
 }
 
+#include "imdetailswidget.moc"

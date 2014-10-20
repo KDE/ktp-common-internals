@@ -1,7 +1,3 @@
-include_directories (${CMAKE_CURRENT_BINARY_DIR}
-                     ${CMAKE_CURRENT_SOURCE_DIR}
-)
-
 set (ktp_models_private_SRCS
     ${KTP_GLOBAL_SOURCES}
     abstract-grouping-proxy-model.cpp
@@ -36,7 +32,7 @@ set (ktp_models_private_LIBS
                        ktpcommoninternalsprivate
 )
 
-if (KPEOPLE_FOUND)
+if (KF5People_FOUND)
     add_definitions(-DHAVE_KPEOPLE)
 
     set (ktp_models_private_SRCS
@@ -46,7 +42,7 @@ if (KPEOPLE_FOUND)
 
     set (ktp_models_private_LIBS
          ${ktp_models_private_LIBS}
-         ${KPEOPLE_LIBS}
+         KF5::People
          ${KDEPIMLIBS_KABC_LIBS}
          )
 endif ()

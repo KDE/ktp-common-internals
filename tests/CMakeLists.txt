@@ -29,7 +29,7 @@ target_link_libraries(ktp_contact_list_model_view
   ktpmodelsprivate
 )
 
-if (KPEOPLE_FOUND)
+if (KF5People_FOUND)
 
 include_directories(${KPEOPLE_INCLUDES})
 
@@ -42,9 +42,9 @@ add_executable(ktp_kpeople_list_model_view
 target_link_libraries(ktp_kpeople_list_model_view
   Qt5::Test
   
-  ${KDE4_KDEUI_LIBS}
+  KF5::KDELibs4Support
   ${TELEPATHY_QT5_LIBRARIES}
-  ${KPEOPLE_LIBS}
+  KF5::People
   ktpcommoninternalsprivate
   ktpmodelsprivate
 )

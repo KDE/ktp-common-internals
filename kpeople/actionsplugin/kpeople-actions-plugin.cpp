@@ -236,9 +236,7 @@ void KPeopleActionsPlugin::onActionTriggered()
     }
 }
 
-#include "kpeople-actions-plugin.moc"
-#include "moc_kpeople-actions-plugin.cpp"
-
-
 K_PLUGIN_FACTORY( KPeopleActionsPluginFactory, registerPlugin<KPeopleActionsPlugin>(); )
 K_EXPORT_PLUGIN( KPeopleActionsPluginFactory("ktp_kpeople_plugin", "ktp-common-internals") )
+
+#include "kpeople-actions-plugin.moc"

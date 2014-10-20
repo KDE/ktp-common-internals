@@ -7,13 +7,14 @@ set (ktploggerplugin_tplogger_SRCS
      utils.cpp
 )
 
-kde4_add_plugin (ktploggerplugin_tplogger
+add_library (ktploggerplugin_tplogger MODULE
                  ${ktploggerplugin_tplogger_SRCS}
 )
 
 target_link_libraries (ktploggerplugin_tplogger
     ktpcommoninternalsprivate
     ktploggerprivate
+    
     ${QT_LIBRARIES}
     
     ${TELEPATHY_QT5_LIBRARIES}

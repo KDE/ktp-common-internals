@@ -20,7 +20,7 @@
 
 #include "model-view.h"
 
-#include <KAboutData>
+#include <K4AboutData>
 #include <KCmdLineArgs>
 #include <KDebug>
 #include <KApplication>
@@ -43,12 +43,12 @@
 
 int main(int argc, char *argv[])
 {
-    KAboutData aboutData("telepathy-kde-models-test-ui",
+    K4AboutData aboutData("telepathy-kde-models-test-ui",
                          0,
                          ki18n("Telepathy KDE Models Test UI"),
                          "0.1",
                          ki18n("Telepathy KDE Models Test UI"),
-                         KAboutData::License_LGPL,
+                         K4AboutData::License_LGPL,
                          ki18n("(C) 2011 Collabora Ltd"));
 
     KCmdLineArgs::init(argc, argv, &aboutData);

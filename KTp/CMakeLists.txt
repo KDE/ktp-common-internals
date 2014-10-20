@@ -79,12 +79,12 @@ if (TELEPATHY_LOGGER_QT5_FOUND)
          )
 endif ()
 
-if (KPEOPLE_FOUND)
+if (KF5People_FOUND)
     include_directories(${KPEOPLE_INCLUDES})
 
     set (ktp_private_LIBS
          ${ktp_private_LIBS}
-         ${KPEOPLE_LIBS}
+         KF5::People
          )
 endif()
 

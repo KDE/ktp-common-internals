@@ -28,7 +28,7 @@ find_package (KF5 REQUIRED COMPONENTS
 
 find_package (TelepathyQt5 0.9.2.1 REQUIRED)
 find_package (TelepathyLoggerQt5 QUIET)
-find_package (KPeople 0.3 QUIET)
+find_package (KF5People 0.5)
 
 find_package (KAccounts)
 find_package(AccountsQt5 1.10 CONFIG)
@@ -45,7 +45,7 @@ include(WriteBasicConfigVersionFile)
 include(CheckIncludeFiles)
 include(FeatureSummary)
 
-set_package_properties(KPeople PROPERTIES DESCRIPTION "Support for KDE Contact Aggregation"
+set_package_properties(KF5People PROPERTIES DESCRIPTION "Support for KDE Contact Aggregation"
                        URL "https://projects.kde.org/libkpeople"
                        TYPE OPTIONAL
                       )
@@ -72,8 +72,7 @@ if (TELEPATHY_LOGGER_QT5_FOUND)
     include_directories(${TELEPATHY_LOGGER_QT5_INCLUDE_DIRS})
 endif ()
 
-if (KPEOPLE_FOUND AND KDEPIMLIBS_FOUND)
-    include_directories (${KDEPIMLIBS_INCLUDE_DIRS})
+if (KF5People_FOUND)
     add_definitions(-DHAVE_KPEOPLE)
     add_subdirectory(kpeople)
 endif ()

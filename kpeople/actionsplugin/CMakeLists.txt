@@ -4,7 +4,7 @@ set (ktp_kpeople_plugin_SRCS
      kpeople-actions-plugin.cpp
 )
 
-kde4_add_plugin (ktp_kpeople_plugin
+add_library (ktp_kpeople_plugin MODULE
                  ${ktp_kpeople_plugin_SRCS}
 )
 
@@ -12,7 +12,7 @@ target_link_libraries (ktp_kpeople_plugin
     ${QT_LIBRARIES}
     ${TELEPATHY_QT5_LIBRARIES}
     ${KDE4_KDEUI_LIBS}
-    ${KPEOPLE_LIBS}
+    KF5::People
     ${KDE4_KFILE_LIBS}
     ktpcommoninternalsprivate
     ${KDEPIMLIBS_KABC_LIBS}
