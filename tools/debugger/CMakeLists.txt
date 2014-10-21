@@ -3,7 +3,6 @@ project(ktp-debugger)
 include_directories(
     ${CMAKE_CURRENT_BINARY_DIR}
     ${TELEPATHY_QT5_INCLUDE_DIR}
-    ${KDE4_INCLUDES}
 )
 
 set(ktp-debugger_SRCS

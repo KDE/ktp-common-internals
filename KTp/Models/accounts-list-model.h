@@ -26,7 +26,7 @@
 
 #include <TelepathyQt/Account>
 
-#include <KTp/ktp-export.h>
+#include <KTp/Models/ktpmodels_export.h>
 #include <KTp/types.h>
 
 class KIcon;
@@ -34,7 +34,7 @@ class KIcon;
 namespace KTp
 {
 
-class KTP_EXPORT AccountsListModel : public QAbstractListModel
+class KTPMODELS_EXPORT AccountsListModel : public QAbstractListModel
 {
     Q_OBJECT
     Q_DISABLE_COPY(AccountsListModel);

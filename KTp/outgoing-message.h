@@ -20,7 +20,7 @@
 #ifndef KTP_OUTGOING_MESSAGE_H
 #define KTP_OUTGOING_MESSAGE_H
 
-#include <KTp/ktp-export.h>
+#include <KTp/ktpcommoninternals_export.h>
 #include <KTp/message-context.h>
 
 #include <TelepathyQt/Types>
@@ -37,7 +37,7 @@ namespace KTp
  *
  * \author David Edmundson <kde@davidedmundson.co.uk>
  */
-class KTP_EXPORT OutgoingMessage
+class KTPCOMMONINTERNALS_EXPORT OutgoingMessage
 {
   public:
     OutgoingMessage(const KTp::OutgoingMessage &other);

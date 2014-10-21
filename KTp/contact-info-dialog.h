@@ -21,7 +21,7 @@
 
 #include <KDialog>
 
-#include <KTp/ktp-export.h>
+#include <KTp/ktpcommoninternals_export.h>
 
 #include <TelepathyQt/Types>
 
@@ -31,7 +31,7 @@ class PendingOperation;
 
 namespace KTp {
 
-class KTP_EXPORT ContactInfoDialog : public KDialog
+class KTPCOMMONINTERNALS_EXPORT ContactInfoDialog : public KDialog
 {
 
     Q_OBJECT

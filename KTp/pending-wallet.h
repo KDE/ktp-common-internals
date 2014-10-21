@@ -23,13 +23,13 @@
 #include <TelepathyQt/PendingOperation>
 
 #include "wallet-interface.h"
-#include <KTp/ktp-export.h>
+#include <KTp/ktpcommoninternals_export.h>
 
 namespace KTp
 {
 class PendingWalletPrivate;
 
-class KTP_EXPORT PendingWallet : public Tp::PendingOperation
+class KTPCOMMONINTERNALS_EXPORT PendingWallet : public Tp::PendingOperation
 {
     Q_OBJECT
 public:

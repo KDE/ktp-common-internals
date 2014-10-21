@@ -9,13 +9,9 @@ add_library (ktp_kpeople_plugin MODULE
 )
 
 target_link_libraries (ktp_kpeople_plugin
-    ${QT_LIBRARIES}
-    ${TELEPATHY_QT5_LIBRARIES}
-    ${KDE4_KDEUI_LIBS}
     KF5::People
-    ${KDE4_KFILE_LIBS}
-    ktpcommoninternalsprivate
-    ${KDEPIMLIBS_KABC_LIBS}
+    KTp::CommonInternals
+    KF5::KDELibs4Support
 )
 
 # Install:

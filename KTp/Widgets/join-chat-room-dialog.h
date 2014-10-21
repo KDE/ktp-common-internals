@@ -25,7 +25,7 @@
 #include <KDialog>
 #include <KTp/Models/rooms-model.h>
 
-#include <KTp/ktp-export.h>
+#include <KTp/ktpcommoninternals_export.h>
 
 namespace Ui {
 class JoinChatRoomDialog;
@@ -37,7 +37,7 @@ class QSortFilterProxyModel;
 
 namespace KTp {
 
-class KTP_EXPORT JoinChatRoomDialog : public KDialog
+class KTPCOMMONINTERNALS_EXPORT JoinChatRoomDialog : public KDialog
 {
     Q_OBJECT
 

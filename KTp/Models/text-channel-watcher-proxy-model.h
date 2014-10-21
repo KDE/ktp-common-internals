@@ -24,13 +24,13 @@
 
 #include <QIdentityProxyModel>
 
-#include <ktp-export.h>
+#include <ktpmodels_export.h>
 
 namespace KTp
 {
 
 /** This class proxies the ContactsListModel, adding a role for ongoing chats*/
-class KTP_EXPORT TextChannelWatcherProxyModel : public QIdentityProxyModel, public Tp::AbstractClientObserver
+class KTPMODELS_EXPORT TextChannelWatcherProxyModel : public QIdentityProxyModel, public Tp::AbstractClientObserver
 {
     Q_OBJECT
 public:

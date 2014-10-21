@@ -28,7 +28,7 @@
 
 #include <QScopedPointer>
 
-#include <KTp/ktp-export.h>
+#include <KTp/ktpcommoninternals_export.h>
 
 namespace KTp
 {
@@ -40,7 +40,7 @@ class PendingWallet;
 /** Class wraps interface around KWallet. A singleton is used to make sure that the wallet is only even opened once if multiple instances of
     this class are used throughout the application*/
 
-class KTP_EXPORT WalletInterface
+class KTPCOMMONINTERNALS_EXPORT WalletInterface
 {
     friend class WalletInterfacePrivate;
 public:

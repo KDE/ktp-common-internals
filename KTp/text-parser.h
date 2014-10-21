@@ -26,7 +26,7 @@
 #include <QPair>
 #include <QStringList>
 
-#include <KTp/ktp-export.h>
+#include <KTp/ktpcommoninternals_export.h>
 
 namespace KTp
 {
@@ -37,7 +37,7 @@ namespace KTp
  * @var QList urlRanges
  * @var QStringList fixedUrls
  */
-struct KTP_EXPORT TextUrlData
+struct KTPCOMMONINTERNALS_EXPORT TextUrlData
 {
     QList<QPair<int, int> > urlRanges;
     QStringList fixedUrls;
@@ -47,7 +47,7 @@ struct KTP_EXPORT TextUrlData
  * TextParser
  *
  */
-class KTP_EXPORT TextParser : public QObject
+class KTPCOMMONINTERNALS_EXPORT TextParser : public QObject
 {
 
 public:

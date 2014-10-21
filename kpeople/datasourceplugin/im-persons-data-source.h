@@ -24,9 +24,7 @@
 
 #include <TelepathyQt/Types>
 
-#include "KTp/ktp-export.h"
-
-class KTP_EXPORT IMPersonsDataSource : public KPeople::BasePersonsDataSource
+class IMPersonsDataSource : public KPeople::BasePersonsDataSource
 {
 public:
     IMPersonsDataSource(QObject *parent, const QVariantList &data);

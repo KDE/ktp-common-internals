@@ -60,14 +60,7 @@ set (ktp_common_internals_private_HDRS
      wallet-interface.h
      wallet-utils.h
      types.h
-     ktp-export.h
-)
-
-set (ktp_private_LIBS
-                       KF5::Wallet
-                       KF5::KIOWidgets
-                       ${TELEPATHY_QT5_LIBRARIES}
-                       KF5::KDELibs4Support
+     ${CMAKE_CURRENT_BINARY_DIR}/ktpcommoninternals_export.h
 )
 
 if (TELEPATHY_LOGGER_QT5_FOUND)
@@ -78,30 +71,39 @@ if (TELEPATHY_LOGGER_QT5_FOUND)
 endif ()
 
 if (KF5People_FOUND)
-    include_directories(${KPEOPLE_INCLUDES})
-
     set (ktp_private_LIBS
          ${ktp_private_LIBS}
          KF5::People
          )
 endif()
 
-add_library (ktpcommoninternalsprivate
+add_library (KTpCommonInternals
                  ${ktp_common_internals_private_SRCS}
 )
+add_library (KTp::CommonInternals ALIAS KTpCommonInternals)
+
+generate_export_header(KTpCommonInternals BASE_NAME KTpCommonInternals)
 
 #Raise SOVERSION for every 0.x cycle
-set_target_properties(ktpcommoninternalsprivate PROPERTIES
-                                                         VERSION ${KTP_VERSION}
-                                                         SOVERSION ${KTP_SONUMBER}
-                                                         DEFINE_SYMBOL MAKE_KTP_LIB)
+set_target_properties(KTpCommonInternals PROPERTIES
+                                        VERSION ${KTP_VERSION}
+                                        SOVERSION ${KTP_SONUMBER}
+                                        EXPORT_NAME CommonInternals
+                                        DEFINE_SYMBOL MAKE_KTP_LIB)
 
-target_link_libraries (ktpcommoninternalsprivate
-                      ${ktp_private_LIBS}
+target_link_libraries (KTpCommonInternals
+                PUBLIC
+                    KF5::Wallet #included from wallet-interface.h
+                    ${TELEPATHY_QT5_LIBRARIES}
+                PRIVATE
+                    ${ktp_private_LIBS}
+                    KF5::KIOWidgets
+                    KF5::KDELibs4Support
 )
 
-install (TARGETS ktpcommoninternalsprivate
-         DESTINATION ${LIB_INSTALL_DIR}
+install (TARGETS KTpCommonInternals
+         EXPORT KTpTargets
+         ${INSTALL_TARGETS_DEFAULT_ARGS}
 )
 
 install (FILES ${ktp_common_internals_private_HDRS}

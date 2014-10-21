@@ -42,7 +42,7 @@
 
 namespace KTp {
 
-struct KTP_NO_EXPORT StartChatDialog::Private
+struct KTPCOMMONINTERNALS_NO_EXPORT StartChatDialog::Private
 {
     Private() :
         ui(new Ui::StartChatDialog),

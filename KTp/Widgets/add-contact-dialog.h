@@ -26,7 +26,7 @@
 
 #include <TelepathyQt/Types>
 
-#include <KTp/ktp-export.h>
+#include <KTp/ktpcommoninternals_export.h>
 
 namespace Tp {
     class PendingOperation;
@@ -34,7 +34,7 @@ namespace Tp {
 
 namespace KTp
 {
-class KTP_EXPORT AddContactDialog : public KDialog
+class KTPCOMMONINTERNALS_EXPORT AddContactDialog : public KDialog
 {
     Q_OBJECT
 
@@ -48,13 +48,13 @@ protected:
     virtual void closeEvent(QCloseEvent *e);
 
 private Q_SLOTS:
-    KTP_NO_EXPORT void _k_onContactsForIdentifiersFinished(Tp::PendingOperation *op);
-    KTP_NO_EXPORT void _k_onRequestPresenceSubscriptionFinished(Tp::PendingOperation *op);
-    KTP_NO_EXPORT void _k_onAccountUpgraded(Tp::PendingOperation *op);
+    KTPCOMMONINTERNALS_NO_EXPORT void _k_onContactsForIdentifiersFinished(Tp::PendingOperation *op);
+    KTPCOMMONINTERNALS_NO_EXPORT void _k_onRequestPresenceSubscriptionFinished(Tp::PendingOperation *op);
+    KTPCOMMONINTERNALS_NO_EXPORT void _k_onAccountUpgraded(Tp::PendingOperation *op);
     void updateSubscriptionMessageVisibility();
 
 private:
-    KTP_NO_EXPORT void setInProgress(bool inProgress);
+    KTPCOMMONINTERNALS_NO_EXPORT void setInProgress(bool inProgress);
 
     struct Private;
     Private * const d;

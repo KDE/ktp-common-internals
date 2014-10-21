@@ -22,12 +22,12 @@
 
 #include <QWidget>
 
-#include <KTp/ktp-export.h>
+#include <KTp/ktpcommoninternals_export.h>
 
 namespace KTp
 {
 
-class KTP_EXPORT CircularCountdown : public QWidget
+class KTPCOMMONINTERNALS_EXPORT CircularCountdown : public QWidget
 {
     Q_OBJECT
 

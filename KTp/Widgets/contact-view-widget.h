@@ -27,7 +27,7 @@
 #include <TelepathyQt/Types>
 
 #include <KTp/contact.h>
-#include <KTp/ktp-export.h>
+#include <KTp/ktpcommoninternals_export.h>
 
 class KLineEdit;
 class QItemSelection;
@@ -38,7 +38,7 @@ namespace KTp
 class ContactsFilterModel;
 class ContactsListModel;
 
-class KTP_EXPORT ContactViewWidget : public QWidget
+class KTPCOMMONINTERNALS_EXPORT ContactViewWidget : public QWidget
 {
     Q_OBJECT
     Q_DISABLE_COPY(ContactViewWidget)

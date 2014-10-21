@@ -22,7 +22,7 @@
 
 #include <TelepathyQt/Message>
 
-#include <KTp/ktp-export.h>
+#include <KTp/ktpcommoninternals_export.h>
 #include <KTp/types.h>
 
 #include <KTp/message-context.h>
@@ -48,7 +48,7 @@ namespace KTp
  *
  * \author Lasath Fernando <kde@lasath.org>
  */
-class KTP_EXPORT Message
+class KTPCOMMONINTERNALS_EXPORT Message
 {
 public:
     enum MessageDirection {

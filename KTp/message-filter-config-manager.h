@@ -22,12 +22,12 @@
 #include <KPluginInfo>
 #include <KSharedConfig>
 
-#include <KTp/ktp-export.h>
+#include <KTp/ktpcommoninternals_export.h>
 
 namespace KTp
 {
 
-class KTP_EXPORT MessageFilterConfigManager
+class KTPCOMMONINTERNALS_EXPORT MessageFilterConfigManager
 {
   public:
     static MessageFilterConfigManager* self();

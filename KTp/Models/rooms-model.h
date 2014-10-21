@@ -23,11 +23,11 @@
 #include <QtCore/QAbstractListModel>
 #include <TelepathyQt/Types>
 
-#include <KTp/ktp-export.h>
+#include <KTp/Models/ktpmodels_export.h>
 
 namespace KTp {
 
-class KTP_EXPORT RoomsModel : public QAbstractListModel
+class KTPMODELS_EXPORT RoomsModel : public QAbstractListModel
 {
     Q_OBJECT
 
@@ -66,7 +66,7 @@ private:
     Tp::RoomInfoList m_roomInfoList;
 };
 
-class KTP_EXPORT FavoriteRoomsModel : public QAbstractListModel
+class KTPMODELS_EXPORT FavoriteRoomsModel : public QAbstractListModel
 {
     Q_OBJECT
 

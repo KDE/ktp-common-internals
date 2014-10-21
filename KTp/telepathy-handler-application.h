@@ -21,7 +21,7 @@
 
 #include <QApplication>
 
-#include <KTp/ktp-export.h>
+#include <KTp/ktpcommoninternals_export.h>
 
 namespace KTp
 {
@@ -38,7 +38,7 @@ namespace KTp
  * - Use Tp-Qt4 callback for redirecting debug output into KDebug
  * - Sets the KDE_FULL_SESSION environment variable to workaround dbus activation issues.
  */
-class KTP_EXPORT TelepathyHandlerApplication : public QApplication
+class KTPCOMMONINTERNALS_EXPORT TelepathyHandlerApplication : public QApplication
 {
     Q_OBJECT
 

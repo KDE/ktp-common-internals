@@ -9,11 +9,6 @@ set (CMAKE_MODULE_PATH
 )
 cmake_policy(SET CMP0002 OLD)
 
-set (KTP_VERSION "0.8.0")
-# Bump for every 0.x release, or whenever BC changes
-set (KTP_SONUMBER 9)
-set (KTP_MESSAGE_FILTER_FRAMEWORK_VERSION "5")
-
 find_package (Qt5 REQUIRED CONFIG COMPONENTS
               Qml
               Test)
@@ -26,7 +21,9 @@ find_package (KF5 REQUIRED COMPONENTS
               Config
               KDELibs4Support)
 
-find_package (TelepathyQt5 0.9.2.1 REQUIRED)
+set(REQUIRED_TPQT_VERSION 0.9.2.1)
+
+find_package (TelepathyQt5 ${REQUIRED_TPQT_VERSION} REQUIRED)
 find_package (TelepathyLoggerQt5 QUIET)
 find_package (KF5People 0.5)
 
@@ -40,6 +37,7 @@ include(ECMPackageConfigHelpers)
 include(ECMMarkNonGuiExecutable)
 include(ECMPackageConfigHelpers)
 include(ECMInstallIcons)
+include(ECMSetupVersion)
 include(CMakePackageConfigHelpers)
 include(WriteBasicConfigVersionFile)
 include(CheckIncludeFiles)
@@ -54,6 +52,10 @@ set_package_properties(TelepathyLoggerQt5 PROPERTIES DESCRIPTION "Qt bindings fo
                        TYPE OPTIONAL
                       )
 
+# Bump for every 0.x release, or whenever BC changes
+set (KTP_SONUMBER 9)
+set (KTP_VERSION "0.${KTP_SONUMBER}.0")
+set (KTP_MESSAGE_FILTER_FRAMEWORK_VERSION "5")
 
 add_definitions(-DTRANSLATION_DOMAIN=\"ktp-common-internals\")
 add_definitions (
@@ -84,13 +86,29 @@ if (KACCOUNTS_FOUND AND AccountsQt5_FOUND)
     add_subdirectory(kaccounts)
 endif ()
 
-
-configure_file(version.h.in ${CMAKE_CURRENT_BINARY_DIR}/version.h @ONLY)
+ecm_setup_version(${KTP_VERSION} VARIABLE_PREFIX KTP
+                        VERSION_HEADER "${CMAKE_CURRENT_BINARY_DIR}/ktp_version.h"
+                        PACKAGE_VERSION_FILE "${CMAKE_CURRENT_BINARY_DIR}/KTpConfigVersion.cmake"
+                        SOVERSION ${KTP_SONUMBER})
 
 add_subdirectory(KTp)
 add_subdirectory(tools)
 add_subdirectory(data)
 add_subdirectory(tests)
 
+set(CMAKECONFIG_INSTALL_DIR "${CMAKECONFIG_INSTALL_PREFIX}/KTp")
+
+ecm_configure_package_config_file("${CMAKE_CURRENT_SOURCE_DIR}/KTpConfig.cmake.in"
+                              "${CMAKE_CURRENT_BINARY_DIR}/KTpConfig.cmake"
+                              INSTALL_DESTINATION  ${CMAKECONFIG_INSTALL_DIR}
+                              )
+
+install(FILES  "${CMAKE_CURRENT_BINARY_DIR}/KTpConfig.cmake"
+               "${CMAKE_CURRENT_BINARY_DIR}/KTpConfigVersion.cmake"
+        DESTINATION "${CMAKECONFIG_INSTALL_DIR}"
+        COMPONENT Devel )
+
+install(EXPORT KTpTargets DESTINATION "${CMAKECONFIG_INSTALL_DIR}"
+        FILE KTpTargets.cmake NAMESPACE KTp:: COMPONENT Devel)
 
 feature_summary(WHAT ALL FATAL_ON_MISSING_REQUIRED_PACKAGES)

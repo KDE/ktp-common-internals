@@ -20,13 +20,13 @@
 
 #include <TelepathyQt/Types>
 
-#include <KTp/ktp-export.h>
+#include <KTp/ktpcommoninternals_export.h>
 
 namespace KTp
 {
 class GlobalContactManager;
 
-    KTP_EXPORT bool kpeopleEnabled();
+    KTPCOMMONINTERNALS_EXPORT bool kpeopleEnabled();
 
     /**
      * Returns an accountFactory with the following features set:
@@ -37,7 +37,7 @@ class GlobalContactManager;
      *
      */
 
-    KTP_EXPORT Tp::AccountFactoryConstPtr accountFactory();
+    KTPCOMMONINTERNALS_EXPORT Tp::AccountFactoryConstPtr accountFactory();
 
     /**
      * Returns a connectionFactory with the following features set:
@@ -48,13 +48,13 @@ class GlobalContactManager;
      *
      */
 
-    KTP_EXPORT Tp::ConnectionFactoryConstPtr connectionFactory();
+    KTPCOMMONINTERNALS_EXPORT Tp::ConnectionFactoryConstPtr connectionFactory();
 
     /**
      * Returns a default channelFactory with no special features.
      * Applications are expected to create a custom channel factories for their clientRegistrars
      */
-    KTP_EXPORT Tp::ChannelFactoryConstPtr channelFactory();
+    KTPCOMMONINTERNALS_EXPORT Tp::ChannelFactoryConstPtr channelFactory();
 
     /**
      * Returns a contactFactory with the following features set:
@@ -63,8 +63,8 @@ class GlobalContactManager;
      *  - FeatureClientTypes
      *  - FeatureAvatarData
      */
-    KTP_EXPORT Tp::ContactFactoryConstPtr contactFactory();
+    KTPCOMMONINTERNALS_EXPORT Tp::ContactFactoryConstPtr contactFactory();
 
-    KTP_EXPORT Tp::AccountManagerPtr accountManager();
-    KTP_EXPORT KTp::GlobalContactManager* contactManager();
+    KTPCOMMONINTERNALS_EXPORT Tp::AccountManagerPtr accountManager();
+    KTPCOMMONINTERNALS_EXPORT KTp::GlobalContactManager* contactManager();
 }

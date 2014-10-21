@@ -24,7 +24,7 @@
 #include <QString>
 #include <QMetaType>
 
-#include <KTp/ktp-export.h>
+#include <KTp/ktpcommoninternals_export.h>
 
 #include <TelepathyQt/Constants>
 
@@ -36,7 +36,7 @@ namespace KTp {
  * @since 0.7
  * @author Daniel Vrátil <dvratil@redhat.com>
  */
-class KTP_EXPORT LogEntity
+class KTPCOMMONINTERNALS_EXPORT LogEntity
 {
   public:
     /**

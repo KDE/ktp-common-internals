@@ -22,10 +22,10 @@
 #include <TelepathyQt/ContactFactory>
 #include <TelepathyQt/Types>
 
-#include <KTp/ktp-export.h>
+#include <KTp/ktpcommoninternals_export.h>
 
 namespace KTp {
-class KTP_EXPORT ContactFactory : public Tp::ContactFactory
+class KTPCOMMONINTERNALS_EXPORT ContactFactory : public Tp::ContactFactory
 {
 public:
     static Tp::ContactFactoryPtr create(const Tp::Features &features=Tp::Features());

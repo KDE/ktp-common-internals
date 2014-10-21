@@ -24,14 +24,14 @@
 
 #include <TelepathyQt/Presence>
 
-#include <KIcon>
+#include <KTp/ktpcommoninternals_export.h>
 
-#include <KTp/ktp-export.h>
+class KIcon;
 
 namespace KTp
 {
 
-class KTP_EXPORT Presence : public Tp::Presence
+class KTPCOMMONINTERNALS_EXPORT Presence : public Tp::Presence
 {
 public:
     Presence();

@@ -23,6 +23,7 @@
 
 #include <KLocalizedString>
 #include <KIconLoader>
+#include <KIcon>
 
 namespace KTp
 {

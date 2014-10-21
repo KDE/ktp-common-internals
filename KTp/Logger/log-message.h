@@ -22,7 +22,7 @@
 
 #include <KTp/message.h>
 #include <KTp/Logger/log-entity.h>
-#include <KTp/ktp-export.h>
+#include <KTp/ktpcommoninternals_export.h>
 
 namespace KTp {
 
@@ -37,7 +37,7 @@ namespace KTp {
  * @since 0.7
  * @author Daniel Vrátil <dvratil@redhat.com>
  */
-class KTP_EXPORT LogMessage : public KTp::Message
+class KTPCOMMONINTERNALS_EXPORT LogMessage : public KTp::Message
 {
   public:
     explicit LogMessage(const KTp::LogEntity &from, const Tp::AccountPtr &account,

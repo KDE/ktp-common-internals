@@ -22,13 +22,7 @@ set (ktp_models_private_HDRS
     presence-model.h
     text-channel-watcher-proxy-model.h
     rooms-model.h
-)
-
-set (ktp_models_private_LIBS
-                       
-                       ${TELEPATHY_QT5_LIBRARIES}
-                       ${KDE4_KDEUI_LIBS}
-                       ktpcommoninternalsprivate
+    ${CMAKE_CURRENT_BINARY_DIR}/ktpmodels_export.h
 )
 
 if (KF5People_FOUND)
@@ -42,28 +36,39 @@ if (KF5People_FOUND)
     set (ktp_models_private_LIBS
          ${ktp_models_private_LIBS}
          KF5::People
-         ${KDEPIMLIBS_KABC_LIBS}
-         )
+        )
 endif ()
 
-add_library (ktpmodelsprivate SHARED
+add_library (KTpModels
                  ${ktp_models_private_SRCS}
 )
+add_library (KTp::Models ALIAS KTpModels)
+
+target_include_directories(KTpModels PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>)
+
+generate_export_header(KTpModels)
 
 #Raise SOVERSION for every 0.x cycle
-set_target_properties(ktpmodelsprivate PROPERTIES
-                                                VERSION ${KTP_VERSION}
-                                                SOVERSION ${KTP_SONUMBER}
-                                                DEFINE_SYMBOL MAKE_KTP_LIB)
+set_target_properties(KTpModels PROPERTIES
+                                VERSION ${KTP_VERSION}
+                                SOVERSION ${KTP_SONUMBER}
+                                DEFINE_SYMBOL MAKE_KTP_LIB
+                                EXPORT_NAME Models
+)
 
-target_link_libraries (ktpmodelsprivate
-                       ${ktp_models_private_LIBS}
+target_link_libraries (KTpModels
+    PUBLIC
+        KTp::CommonInternals
+    PRIVATE
+        KF5::KDELibs4Support
+        ${ktp_models_private_LIBS}
 )
 
 
 
-install (TARGETS ktpmodelsprivate
-         DESTINATION ${LIB_INSTALL_DIR}
+install (TARGETS KTpModels
+         EXPORT KTpTargets
+         ${INSTALL_TARGETS_DEFAULT_ARGS}
 )
 
 install (FILES ${ktp_models_private_HDRS}

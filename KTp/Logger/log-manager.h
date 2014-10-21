@@ -21,7 +21,7 @@
 #define KTP_LOGMANAGER_H
 
 #include <KTp/Logger/abstract-logger-plugin.h>
-#include <KTp/ktp-export.h>
+#include <KTp/ktpcommoninternals_export.h>
 
 #include <TelepathyQt/Types>
 
@@ -40,7 +40,7 @@ class PendingLoggerEntities;
  * @since 0.7
  * @author Daniel Vrátil <dvratil@redhat.com>
  */
-class KTP_EXPORT LogManager : public AbstractLoggerPlugin
+class KTPCOMMONINTERNALS_EXPORT LogManager : public AbstractLoggerPlugin
 {
     Q_OBJECT
 

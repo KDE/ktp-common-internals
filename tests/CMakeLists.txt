@@ -23,10 +23,9 @@ add_executable(ktp_contact_list_model_view
 target_link_libraries(ktp_contact_list_model_view
   Qt5::Test
   
-  ${KDE4_KDEUI_LIBS}
-  ${TELEPATHY_QT5_LIBRARIES}
-  ktpcommoninternalsprivate
-  ktpmodelsprivate
+  KTp::CommonInternals
+  KTp::Models
+  KF5::KDELibs4Support
 )
 
 if (KF5People_FOUND)
@@ -43,10 +42,9 @@ target_link_libraries(ktp_kpeople_list_model_view
   Qt5::Test
   
   KF5::KDELibs4Support
-  ${TELEPATHY_QT5_LIBRARIES}
   KF5::People
-  ktpcommoninternalsprivate
-  ktpmodelsprivate
+  KTp::CommonInternals
+  KTp::Models
 )
 
 endif ()

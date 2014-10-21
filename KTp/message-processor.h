@@ -27,7 +27,7 @@
 #include <KTp/message.h>
 #include <KTp/outgoing-message.h>
 
-#include <KTp/ktp-export.h>
+#include <KTp/ktpcommoninternals_export.h>
 #include <KTp/abstract-message-filter.h>
 
 namespace Tp
@@ -43,7 +43,7 @@ namespace KTp
 class AbstractMessageFilter;
 
 //each thing that displays message will have an instance of this
-class KTP_EXPORT MessageProcessor : public QObject
+class KTPCOMMONINTERNALS_EXPORT MessageProcessor : public QObject
 {
     Q_OBJECT
 

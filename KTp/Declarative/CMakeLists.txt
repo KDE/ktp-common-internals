@@ -20,12 +20,11 @@ add_library (ktpqmlplugin SHARED ${ktp_qml_plugin_SRCS})
 target_link_libraries (ktpqmlplugin
     Qt5::Qml
     
-    ${TELEPATHY_QT5_LIBRARIES}
     KF5::KDELibs4Support
-    ktpcommoninternalsprivate
-    ktploggerprivate
-    ktpmodelsprivate
-    ktpwidgetsprivate
+    KTp::CommonInternals
+    KTp::Logger
+    KTp::Models
+    KTp::Widgets
 )
 
 install (TARGETS ktpqmlplugin DESTINATION ${QML_INSTALL_DIR}/org/kde/telepathy)

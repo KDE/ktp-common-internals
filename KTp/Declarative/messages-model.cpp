@@ -20,6 +20,8 @@
 
 #include "messages-model.h"
 
+#include <QPixmap>
+
 #include <KDebug>
 #include <KLocalizedString>
 #include <KConfig>

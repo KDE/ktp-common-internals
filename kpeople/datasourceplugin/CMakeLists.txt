@@ -6,8 +6,8 @@ target_link_libraries (im_persons_data_source_plugin
     Qt5::Sql
     KF5::People
     KF5::Abc
-    ${TELEPATHY_QT5_LIBRARIES}
-    ktpcommoninternalsprivate
+    KF5::KDELibs4Support
+    KTp::CommonInternals
 )
 
 # Install:

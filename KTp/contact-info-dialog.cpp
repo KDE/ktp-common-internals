@@ -47,6 +47,7 @@
 #include <KMessageBox>
 #include <KIconLoader>
 #include <KMimeType>
+#include <KIcon>
 
 namespace KTp {
 

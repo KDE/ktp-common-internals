@@ -12,13 +12,8 @@ add_library (ktploggerplugin_tplogger MODULE
 )
 
 target_link_libraries (ktploggerplugin_tplogger
-    ktpcommoninternalsprivate
-    ktploggerprivate
-    
-    ${QT_LIBRARIES}
-    
-    ${TELEPATHY_QT5_LIBRARIES}
-    ${TELEPATHY_LOGGER_QT5_LIBRARIES}
+    KTp::CommonInternals
+    KTp::Logger
 )
 
 # Install:

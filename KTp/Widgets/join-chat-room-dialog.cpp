@@ -25,6 +25,7 @@
 #include <KTp/Models/rooms-model.h>
 
 #include <KConfig>
+#include <KSharedConfig>
 #include <KDebug>
 #include <KInputDialog>
 #include <KMessageBox>

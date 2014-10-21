@@ -23,12 +23,12 @@
 #include <TelepathyQt/Types>
 
 #include <KTp/global-contact-manager.h>
-#include <KTp/ktp-export.h>
+#include <KTp/Models/ktpmodels_export.h>
 
 namespace KTp
 {
 
-class KTP_EXPORT ContactsListModel : public QAbstractListModel
+class KTPMODELS_EXPORT ContactsListModel : public QAbstractListModel
 {
     Q_OBJECT
 public:
