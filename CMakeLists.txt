@@ -66,7 +66,6 @@ add_definitions (
 include_directories (
                      ${CMAKE_CURRENT_BINARY_DIR}
                      ${CMAKE_CURRENT_SOURCE_DIR}
-                     ${TELEPATHY_QT5_INCLUDE_DIR}
 )
 
 if (TELEPATHY_LOGGER_QT5_FOUND)
