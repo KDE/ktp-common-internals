@@ -57,6 +57,7 @@ set (KTP_SONUMBER 9)
 set (KTP_VERSION "0.${KTP_SONUMBER}.0")
 set (KTP_MESSAGE_FILTER_FRAMEWORK_VERSION "5")
 
+add_definitions(-DKTP_MESSAGE_FILTER_FRAMEWORK_VERSION=\"${KTP_MESSAGE_FILTER_FRAMEWORK_VERSION}\")
 add_definitions(-DTRANSLATION_DOMAIN=\"ktp-common-internals\")
 add_definitions (
                  -DQT_NO_CAST_FROM_ASCII

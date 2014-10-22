@@ -18,7 +18,6 @@
 
 #include "message-filter-config-manager.h"
 #include "message-processor-private.h"
-#include "version.h"
 
 #include <QMutex>
 #include <QSet>

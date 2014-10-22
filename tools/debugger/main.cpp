@@ -17,7 +17,8 @@
 */
 
 #include "main-window.h"
-#include "version.h"
+
+#include "ktp_version.h"
 
 #include <KAboutData>
 #include <KLocalizedString>
@@ -28,7 +29,7 @@ int main(int argc, char **argv)
 {
     KAboutData aboutData(QStringLiteral("ktp-debugger"),
             i18n("KDE Telepathy Debug Tool"),
-            QStringLiteral(KTP_VERSION),
+            QStringLiteral(KTP_VERSION_STRING),
             i18n("Tool for inspecting logs of the various underlying telepathy components"),
             KAboutLicense::LGPL,
             i18n("Copyright (C) 2011 Collabora Ltd."));
