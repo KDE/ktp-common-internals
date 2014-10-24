@@ -18,7 +18,7 @@
 #ifndef OTR_UTILS_HEADER
 #define OTR_UTILS_HEADER
 
-#include "KTp/ktp-export.h"
+#include "ktpotr_export.h"
 
 #include <TelepathyQt/PendingVariant>
 #include <TelepathyQt/Types>
@@ -29,22 +29,22 @@ namespace KTp {
 namespace Utils {
 
     /** Extracts pending-messages-ids from message list */
-    KTP_EXPORT Tp::UIntList getPendingMessagesIDs(const QList<Tp::ReceivedMessage> &messageQueue);
+    KTPOTR_EXPORT Tp::UIntList getPendingMessagesIDs(const QList<Tp::ReceivedMessage> &messageQueue);
 
     /** Extracts pending-mesage-id from message */
-    KTP_EXPORT uint getId(const Tp::MessagePartList &message);
+    KTPOTR_EXPORT uint getId(const Tp::MessagePartList &message);
 
     /** Returns an object path for the otr proxy channel given a text channel it corresponds to */
-    KTP_EXPORT QString getOtrProxyObjectPathFor(const Tp::TextChannelPtr &textChannel);
+    KTPOTR_EXPORT QString getOtrProxyObjectPathFor(const Tp::TextChannelPtr &textChannel);
 
     /** Returns true if message is generated internally by OTR implementation */
-    KTP_EXPORT bool isOtrEvent(const Tp::ReceivedMessage &message);
+    KTPOTR_EXPORT bool isOtrEvent(const Tp::ReceivedMessage &message);
 
     /** Returns true if text is an OTR protocol message */
-    KTP_EXPORT bool isOtrMessage(const QString &text);
+    KTPOTR_EXPORT bool isOtrMessage(const QString &text);
 
     /** Returns notification for a user assuming that the message is an otr event */
-    KTP_EXPORT QString processOtrMessage(const Tp::ReceivedMessage &message);
+    KTPOTR_EXPORT QString processOtrMessage(const Tp::ReceivedMessage &message);
 }
 }
 

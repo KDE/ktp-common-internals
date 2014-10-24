@@ -10,7 +10,7 @@
 
 #include "types.h"
 
-#include <KTp/ktp-export.h>
+#include "ktpotr_export.h"
 
 #include <TelepathyQt/Types>
 
@@ -45,7 +45,7 @@ namespace Client
  *
  * Proxy class providing a 1:1 mapping of the D-Bus interface "org.kde.TelepathyProxy.ProxyService".
  */
-class KTP_EXPORT ProxyServiceInterface : public Tp::AbstractInterface
+class KTPOTR_EXPORT ProxyServiceInterface : public Tp::AbstractInterface
 {
     Q_OBJECT
 

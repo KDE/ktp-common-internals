@@ -8,7 +8,7 @@
 #ifndef OTR_CHANNEL_PROXY_HEADER
 #define OTR_CHANNEL_PROXY_HEADER
 
-#include "KTp/ktp-export.h"
+#include "ktpotr_export.h"
 
 #include <QtGlobal>
 
@@ -41,7 +41,7 @@ namespace Client
  *
  * Proxy class providing a 1:1 mapping of the D-Bus interface "org.kde.TelepathyProxy.ChannelProxy.Interface.OTR".
  */
-class KTP_EXPORT ChannelProxyInterfaceOTRInterface : public Tp::AbstractInterface
+class KTPOTR_EXPORT ChannelProxyInterfaceOTRInterface : public Tp::AbstractInterface
 {
     Q_OBJECT
 

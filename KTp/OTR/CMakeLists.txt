@@ -1,3 +1,5 @@
+include_directories(${CMAKE_CURRENT_BINARY_DIR})
+
 set (ktp_otr_private_HDRS
     channel-adapter.h
     channel-proxy-interface.h
@@ -5,6 +7,7 @@ set (ktp_otr_private_HDRS
     proxy-service-interface.h
     types.h
     utils.h
+    ${CMAKE_CURRENT_BINARY_DIR}/ktpotr_export.h
 )
 
 add_library (KTpOTR SHARED
@@ -20,6 +23,7 @@ set_target_properties(KTpOTR PROPERTIES
                                        SOVERSION ${KTP_SONUMBER}
                                        EXPORT_NAME OTR
                                        DEFINE_SYMBOL MAKE_KTP_LIB)
+generate_export_header(KTpOTR)
 
 target_link_libraries (KTpOTR
                         PUBLIC
