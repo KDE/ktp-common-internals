@@ -24,8 +24,8 @@
 #include <KDE/KLineEdit>
 #include <KDE/KDebug>
 
-#include <QtGui/QTextOption>
-#include <QtGui/QPainter>
+#include <QTextOption>
+#include <QPainter>
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QVBoxLayout>
 

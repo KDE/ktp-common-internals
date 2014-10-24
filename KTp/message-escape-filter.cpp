@@ -18,7 +18,7 @@
 
 #include "message-filters-private.h"
 
-#include <QtGui/QTextDocument> //needed for Qt::escape
+#include <QTextDocument> //needed for Qt::escape
 
 #include <KTp/text-parser.h>
 #include <KUrl>

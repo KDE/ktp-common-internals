@@ -21,7 +21,7 @@
 #include "presence-model.h"
 
 #include <QString>
-#include <QtGui/QFont>
+#include <QFont>
 #include <QtDBus/QtDBus>
 
 #include <KDE/KIcon>

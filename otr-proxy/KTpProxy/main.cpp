@@ -19,7 +19,7 @@
 
 #include "proxy-service.h"
 #include "otr-config.h"
-#include "version.h"
+#include "../ktptextui_version.h"
 
 #include <KTp/OTR/types.h>
 
