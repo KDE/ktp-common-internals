@@ -1,14 +1,10 @@
-set (ktploggerplugin_tplogger_SRCS
+add_library (ktploggerplugin_tplogger MODULE
      tp-logger-plugin.cpp
      pending-tp-logger-dates.cpp
      pending-tp-logger-entities.cpp
      pending-tp-logger-logs.cpp
      pending-tp-logger-search.cpp
      utils.cpp
-)
-
-add_library (ktploggerplugin_tplogger MODULE
-                 ${ktploggerplugin_tplogger_SRCS}
 )
 
 target_link_libraries (ktploggerplugin_tplogger
