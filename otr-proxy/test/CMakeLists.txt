@@ -1,14 +1,11 @@
 add_subdirectory(lib)
 
 set(ktp-proxy-test_LIBS
-        ${KDE4_KDECORE_LIBS}
-        ${KDE4_KDEUI_LIBS}
-        ${KDE4_KIO_LIBS}
-        ${QT_QTTEST_LIBRARY}
-        ${TELEPATHY_QT4_LIBRARIES}
-        ${TELEPATHY_QT4_SERVICE_LIBRARIES}
+        Qt5::Test
+        ${TELEPATHY_QT5_LIBRARIES}
+        ${TELEPATHY_QT5_SERVICE_LIBRARIES}
         ktp-proxy-test-lib
-        ktpotrprivate
+        KTp::OTR
 )
 
 message("-- Adding test files:")

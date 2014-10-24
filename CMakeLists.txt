@@ -24,6 +24,7 @@ find_package (KF5 REQUIRED COMPONENTS
 set(REQUIRED_TPQT_VERSION 0.9.2.1)
 
 find_package (TelepathyQt5 ${REQUIRED_TPQT_VERSION} REQUIRED)
+find_package (TelepathyQt5Service ${REQUIRED_TPQT_VERSION} REQUIRED) #used for the otr-proxy
 find_package (TelepathyLoggerQt5 QUIET)
 find_package (KF5People 0.5)
 
