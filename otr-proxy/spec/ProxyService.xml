@@ -1,0 +1,258 @@
+<?xml version="1.0" ?>
+<node name="/ProxyService" xmlns:tp="http://telepathy.freedesktop.org/wiki/DbusSpec#extensions-v0">
+  <tp:copyright>Copyright © 2014 Marcin Ziemiński zieminn@gmail.com</tp:copyright>
+  <tp:license xmlns="http://www.w3.org/1999/xhtml">
+    <p>This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Lesser General Public
+License as published by the Free Software Foundation; either
+version 2.1 of the License, or (at your option) any later version.</p>
+
+<p>This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+Lesser General Public License for more details.</p>
+
+<p>You should have received a copy of the GNU Lesser General Public
+License along with this library; if not, write to the Free Software
+Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.</p>
+  </tp:license>
+  <interface name="org.kde.TelepathyProxy.ProxyService">
+
+    <signal name="ProxyConnected" tp:name-for-bindings="Proxy_Connected">
+      <tp:docstring>
+        <p>Signals that a proxy has been connected</p>
+      </tp:docstring>
+
+      <arg name="Proxy" type="o">
+        <tp:docstring>
+          <p>The object path of the connected proxy</p>
+        </tp:docstring>
+      </arg>
+    </signal>
+
+
+    <signal name="ProxyDisconnected" tp:name-for-bindings="Proxy_Disconnected">
+      <tp:docstring>
+        <p>Signals that a proxy has been disconnected</p>
+      </tp:docstring>
+
+      <arg name="Proxy" type="o">
+        <tp:docstring>
+          <p>The object path of the disconnected proxy type</p>
+        </tp:docstring>
+      </arg>
+    </signal>
+
+
+    <method name="GeneratePrivateKey" tp:name-for-bindings="Generate_Private_Key">
+      <tp:docstring xmlns="http://www.w3.org/1999/xhtml">
+        <p> Generate new private key for given account. </p>
+      </tp:docstring>
+
+      <arg direction="in" type="o"
+        name="Account">
+        <tp:docstring>
+          <p>The account the new key is to be generated for</p>
+        </tp:docstring>
+      </arg>
+
+      <tp:possible-errors>
+        <tp:error name="org.freedesktop.Telepathy.Error.InvalidArgument"/>
+      </tp:possible-errors>
+    </method>
+
+
+    <signal name="KeyGenerationStarted" tp:name-for-bindings="Key_Generation_Started">
+      <tp:docstring>
+        <p>Signals that a new private key is being generated for account</p>
+      </tp:docstring>
+
+      <arg name="Account" type="o">
+        <tp:docstring>
+          <p>The account the new key is generated for</p>
+        </tp:docstring>
+      </arg>
+    </signal>
+
+
+    <signal name="KeyGenerationFinished" tp:name-for-bindings="Key_Generation_Finished">
+      <tp:docstring>
+        <p>Signals that a new private key has just been generated for account</p>
+      </tp:docstring>
+
+      <arg name="Account" type="o">
+        <tp:docstring>
+          <p>The account the new key has been generated for</p>
+        </tp:docstring>
+      </arg>
+
+      <arg name="error" type="b">
+        <tp:docstring>
+          <p>%TRUE if error occured during generation</p>
+        </tp:docstring>
+      </arg>
+    </signal>
+
+
+    <method name="GetFingerprintForAccount" tp:name-for-bindings="Get_Fingerprint_For_Account">
+      <tp:docstring>
+        <p>Get private key's fingerprint associated with given account</p>
+      </tp:docstring>
+
+      <arg direction="in" name="Account" type="o"/>
+      <arg direction="out" name="Fingerprint" type="s">
+        <tp:docstring>
+          <p>Fingerprint of given account's private key or an empty string if none exists</p>
+        </tp:docstring>
+      </arg>
+
+      <tp:possible-errors>
+        <tp:error name="org.freedesktop.Telepathy.Error.InvalidArgument"/>
+      </tp:possible-errors>
+    </method>
+
+
+    <tp:struct name="Fingerprint_Info" array-name="Fingerprint_Info_List">
+      <tp:docstring>A struct (Contact_Name, Fingerprint, Is_Verified, In_Use)
+        representing remote contact's fingerprint, as returned by
+        <tp:member-ref>Get_Known_Fingerprints</tp:member-ref>
+      </tp:docstring>
+
+      <tp:member type="s" name="Contact_Name">
+        <tp:docstring>
+          Contact's display name
+        </tp:docstring>
+      </tp:member>
+      <tp:member type="s" name="Fingerprint">
+        <tp:docstring>
+          Contact's fingerprint i.e. '12345678 12345678 12345678 12345678 12345678'
+        </tp:docstring>
+      </tp:member>
+      <tp:member type="b" name="Is_Verified">
+        <tp:docstring>
+          %TRUE if this fingerprint is trusted
+        </tp:docstring>
+      </tp:member>
+      <tp:member type="b" name="In_Use">
+        <tp:docstring>
+          %TRUE if this fingerprint denotes a private key currently used by
+          some encrypted session.
+        </tp:docstring>
+      </tp:member>
+    </tp:struct>
+
+
+    <method name="GetKnownFingerprints" tp:name-for-bindings="Get_Known_Fingerprints">
+      <tp:docstring>
+        <p>Get private key fingerprint associated with given account</p>
+      </tp:docstring>
+
+      <arg direction="in" name="Account" type="o"/>
+      <arg direction="out" name="Fingerprints" type="a(ssbb)" tp:type="Fingerprint_Info_List">
+        <tp:docstring>
+          An array of known fingerprints represented by
+          <tp:member-ref>Fingerprint_Info_List</tp:member-ref>
+        </tp:docstring>
+      </arg>
+
+      <tp:possible-errors>
+        <tp:error name="org.freedesktop.Telepathy.Error.InvalidArgument"/>
+      </tp:possible-errors>
+    </method>
+
+
+    <method name="TrustFingerprint" tp:name-for-bindings="Trust_Fingerprint">
+      <tp:docstring>
+        <p>Trust or distrust given fingerprint for account</p>
+      </tp:docstring>
+
+      <arg direction="in" name="Account" type="o"/>
+      <arg direction="in" name="ContactName" type="s">
+        <tp:docstring>
+          <p>
+            Contact's display name as returned by
+            <tp:member-ref>Get_Known_Fingerprints</tp:member-ref>
+          </p>
+        </tp:docstring>
+      </arg>
+      <arg direction="in" name="Fingerprint" type="s">
+        <tp:docstring>
+          Contact's fingerprint i.e. '12345678 12345678 12345678 12345678 12345678'
+        </tp:docstring>
+      </arg>
+      <arg direction="in" name="Trust" type="b">
+        <tp:docstring>
+          %TRUE if you trust this fingerprint, %FALSE otherwise
+        </tp:docstring>
+      </arg>
+
+      <tp:possible-errors>
+        <tp:error name="org.freedesktop.Telepathy.Error.InvalidArgument"/>
+      </tp:possible-errors>
+    </method>
+
+
+    <method name="ForgetFingerprint" tp:name-for-bindings="Forget_Fingerprint">
+      <tp:docstring>
+        <p>Forget fingerprint romoving it from the list of known fingerprints</p>
+      </tp:docstring>
+
+      <arg direction="in" name="Account" type="o"/>
+      <arg direction="in" name="Contact_Name" type="s">
+        <tp:docstring>
+          <p>
+            Contact's display name as returned by
+            <tp:member-ref>Get_Known_Fingerprints</tp:member-ref>
+          </p>
+        </tp:docstring>
+      </arg>
+      <arg direction="in" name="Fingerprint" type="s">
+        <tp:docstring>
+          Contact's fingerprint i.e. '12345678 12345678 12345678 12345678 12345678'
+        </tp:docstring>
+      </arg>
+
+      <tp:possible-errors>
+        <tp:error name="org.freedesktop.Telepathy.Error.InvalidArgument"/>
+      </tp:possible-errors>
+    </method>
+
+
+    <property name="PolicySettings"
+      tp:name-for-bindings="Policy_Settings"
+      type="u" tp:type="OTR_Policy" access="readwrite">
+      <tp:docstring xmlns="http://www.w3.org/1999/xhtml">
+        <p>Read-write property representing global OTR policy settings</p>
+      </tp:docstring>
+    </property>
+
+    <tp:enum name="OTR_Policy" type="u">
+      <tp:docstring>
+        <p>Enumeration describing OTR policy settings.</p>
+      </tp:docstring>
+      <tp:enumvalue suffix="Always" value="0">
+        <tp:docstring>
+          <p>Always encrypt outgoing messages
+            and expect encrypted incoming messages</p>
+        </tp:docstring>
+      </tp:enumvalue>
+      <tp:enumvalue suffix="Opportunistic" value="1">
+        <tp:docstring>
+          <p>Automatically encrypt messages if the other side supports OTR</p>
+        </tp:docstring>
+      </tp:enumvalue>
+      <tp:enumvalue suffix="Manual" value="2">
+        <tp:docstring>
+          <p>Encrypt messages if the other side requests an OTR connection</p>
+        </tp:docstring>
+      </tp:enumvalue>
+      <tp:enumvalue suffix="Never" value="3">
+        <tp:docstring>
+          <p>Never encrypt outgoing messages</p>
+        </tp:docstring>
+      </tp:enumvalue>
+    </tp:enum>
+
+  </interface>
+</node>
+<!-- vim:set sw=2 sts=2 et ft=xml: -->

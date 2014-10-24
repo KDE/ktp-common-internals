@@ -28,7 +28,13 @@ find_package (TelepathyLoggerQt5 QUIET)
 find_package (KF5People 0.5)
 
 find_package (KAccounts)
-find_package(AccountsQt5 1.10 CONFIG)
+find_package (AccountsQt5 1.10 CONFIG)
+find_package (LibOTR 4.0.0)
+find_package (Libgcrypt)
+
+if (LIBOTR_FOUND AND LIBGCRYPT_FOUND)
+    set(OTR_LIBS_FOUND TRUE)
+endif (LIBOTR_FOUND AND LIBGCRYPT_FOUND)
 
 include(KDEInstallDirs)
 include(KDECMakeSettings)
@@ -51,6 +57,8 @@ set_package_properties(TelepathyLoggerQt5 PROPERTIES DESCRIPTION "Qt bindings fo
                        URL "http://projects.kde.org/telepathy-logger-qt"
                        TYPE OPTIONAL
                       )
+set_package_properties(LibOTR PROPERTIES DESCRIPTION "Required for OTR support" TYPE OPTIONAL)
+set_package_properties(Libgcrypt PROPERTIES DESCRIPTION "Required for OTR support" TYPE OPTIONAL)
 
 # Bump for every 0.x release, or whenever BC changes
 set (KTP_SONUMBER 9)
@@ -62,6 +70,7 @@ add_definitions(-DTRANSLATION_DOMAIN=\"ktp-common-internals\")
 add_definitions (
                  -DQT_NO_CAST_FROM_ASCII
                  -DQT_NO_KEYWORDS
+                 -std=c++11
 )
 
 include_directories (
@@ -94,7 +103,16 @@ ecm_setup_version(${KTP_VERSION} VARIABLE_PREFIX KTP
 add_subdirectory(KTp)
 add_subdirectory(tools)
 add_subdirectory(data)
+if (KDE4_BUILD_TESTS)
 add_subdirectory(tests)
+endif ()
+
+if (OTR_LIBS_FOUND)
+    include_directories (${LIBOTR_INCLUDE_DIR}
+                         ${LIBGCRYPT_INCLUDE_DIR}
+    )
+    add_subdirectory(otr-proxy)
+endif (OTR_LIBS_FOUND)
 
 set(CMAKECONFIG_INSTALL_DIR "${CMAKECONFIG_INSTALL_PREFIX}/KTp")
 
