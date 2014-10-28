@@ -23,4 +23,4 @@ target_link_libraries(ktp-debugger
 )
 
 install(TARGETS ktp-debugger DESTINATION ${BIN_INSTALL_DIR})
-install(FILES ktpdebugoutput.xml DESTINATION ${DATA_INSTALL_DIR}/katepart/syntax)
+install(FILES ktpdebugoutput.xml DESTINATION ${DATA_INSTALL_DIR}/katepart5/syntax)
