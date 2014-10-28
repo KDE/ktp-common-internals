@@ -24,9 +24,6 @@
 #include <TelepathyQt/AccountManager>
 #include <TelepathyQt/AccountSet>
 
-#include <KIcon>
-
-
 class KTp::AccountsTreeProxyModel::Private
 {
 public:
@@ -77,7 +74,7 @@ QVariant KTp::AccountsTreeProxyModel::dataForGroup(const QString &group, int rol
     case Qt::DecorationRole:
         account = d->accountManager->accountForObjectPath(group);
         if (account) {
-            return KIcon(account->iconName());
+            return QIcon::fromTheme(account->iconName());
         }
         break;
     case KTp::AccountRole:

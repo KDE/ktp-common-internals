@@ -74,7 +74,7 @@ void KTp::ContactViewDelegate::paint(QPainter *painter, const QStyleOptionViewIt
     QPixmap avatar;
     avatar.load(index.data(KTp::ContactAvatarPathRole).toString());
     if (avatar.isNull()) {
-        avatar = KIcon(QLatin1String("im-user-online")).pixmap(option.decorationSize);
+        avatar = QIcon::fromTheme(QStringLiteral("im-user-online")).pixmap(option.decorationSize);
     } else if (avatar.width() > option.decorationSize.width() || avatar.height() > option.decorationSize.height()) {
         //resize larger avatars if required
         avatar = avatar.scaled(option.decorationSize, Qt::KeepAspectRatio, Qt::SmoothTransformation);

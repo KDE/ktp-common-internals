@@ -25,7 +25,6 @@
 #include <QtAlgorithms>
 
 #include <KAction>
-#include <KIcon>
 #include <KStatusBar>
 #include <KToolBar>
 #include <KLocalizedString>

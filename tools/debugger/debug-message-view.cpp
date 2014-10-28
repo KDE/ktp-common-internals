@@ -23,7 +23,6 @@
 #include <TelepathyQt/PendingDebugMessageList>
 
 #include <KDebug>
-#include <KIcon>
 #include <KColorScheme>
 #include <KStandardAction>
 #include <KAction>

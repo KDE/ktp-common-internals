@@ -47,7 +47,6 @@
 #include <KMessageBox>
 #include <KIconLoader>
 #include <KMimeType>
-#include <KIcon>
 
 namespace KTp {
 
@@ -308,14 +307,14 @@ void ContactInfoDialog::Private::addStateRow(const QString& description, Tp::Con
     QIcon icon;
     switch (state) {
         case Tp::Contact::PresenceStateYes:
-            icon = KIcon(QLatin1String("task-complete"));
+            icon = QIcon::fromTheme(QStringLiteral("task-complete"));
             break;
         case Tp::Contact::PresenceStateNo:
-            icon = KIcon(QLatin1String("task-reject"));
+            icon = QIcon::fromTheme(QStringLiteral("task-reject"));
             break;
         case Tp::Contact::PresenceStateAsk:
         default:
-            icon = KIcon(QLatin1String("task-attempt"));
+            icon = QIcon::fromTheme(QStringLiteral("task-attempt"));
             break;
     }
 

@@ -29,8 +29,6 @@
 #include <KTp/Models/ktpmodels_export.h>
 #include <KTp/types.h>
 
-class KIcon;
-
 namespace KTp
 {
 
@@ -71,7 +69,7 @@ private:
     Private * const d;
 
     const QString connectionStateString(const Tp::AccountPtr &account) const;
-    const KIcon connectionStateIcon(const Tp::AccountPtr &account) const;
+    const QIcon connectionStateIcon(const Tp::AccountPtr &account) const;
     const QString connectionStatusReason(const Tp::AccountPtr &account) const;
 };
 

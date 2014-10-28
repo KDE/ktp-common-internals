@@ -24,7 +24,6 @@
 #include <KNotifyConfigWidget>
 #include <KMessageBox>
 #include <KLocalizedString>
-#include <KIcon>
 
 namespace KTp
 {
@@ -64,7 +63,7 @@ void SettingsKcmDialog::addNotificationsModule()
             notificationWidget, SLOT(save()));
 
     KPageWidgetItem *notificationPage = new KPageWidgetItem(notificationWidget, i18n("Notifications"));
-    notificationPage->setIcon(KIcon(QLatin1String("preferences-desktop-notification")));
+    notificationPage->setIcon(QIcon::fromTheme(QStringLiteral("preferences-desktop-notification")));
     addPage(notificationPage);
 }
 

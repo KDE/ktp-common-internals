@@ -27,7 +27,6 @@
 #include <TelepathyQt/PendingReady>
 
 #include <KDebug>
-#include <KIcon>
 
 namespace KTp
 {
