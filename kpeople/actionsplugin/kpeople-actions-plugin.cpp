@@ -213,7 +213,7 @@ void KPeopleActionsPlugin::onActionTriggered()
             KTp::Actions::startAudioVideoCall(account, contact);
             break;
         case FileTransfer: {
-            const QStringList fileNames = KFileDialog::getOpenFileNames(KUrl("kfiledialog:///FileTransferLastDirectory"),
+            const QStringList fileNames = KFileDialog::getOpenFileNames(QUrl(QStringLiteral("kfiledialog:///FileTransferLastDirectory")),
                                                                         QString(),
                                                                         0,
                                                                         i18n("Choose files to send to %1", contact->alias()));
@@ -226,11 +226,11 @@ void KPeopleActionsPlugin::onActionTriggered()
             KTp::Actions::openLogViewer(action->uri());
             break;
         case CollabEditing: {
-            const KUrl file = KUrl(KFileDialog::getOpenFileName(KUrl("kfiledialog:///CollabEditingLastDirectory"),
+            const QUrl file = KFileDialog::getOpenFileName(QUrl(QStringLiteral("kfiledialog:///CollabEditingLastDirectory")),
                                                                 QString(),
                                                                 0,
-                                                                i18n("Choose a file to edit with %1", contact->alias())));
-            KTp::Actions::startCollaborativeEditing(account, contact, QList<KUrl>() << file, true);
+                                                                i18n("Choose a file to edit with %1", contact->alias()));
+            KTp::Actions::startCollaborativeEditing(account, contact, QList<QUrl>() << file, true);
             break;
         }
     }

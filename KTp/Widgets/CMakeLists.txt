@@ -49,6 +49,7 @@ target_link_libraries (KTpWidgets
                     PUBLIC
                        KTp::CommonInternals
                        KF5::KCMUtils # used in settings-kcm-dialog.h
+                       Qt5::Widgets
                     PRIVATE
                        KF5::KDELibs4Support
                        KF5::NotifyConfig

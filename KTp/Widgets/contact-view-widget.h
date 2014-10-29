@@ -29,7 +29,7 @@
 #include <KTp/contact.h>
 #include <KTp/ktpcommoninternals_export.h>
 
-class KLineEdit;
+class QLineEdit;
 class QItemSelection;
 class QListView;
 
@@ -69,7 +69,7 @@ public:
     Q_SIGNAL void iconSizeChanged(const QSize &iconSize);
 
     virtual KTp::ContactsFilterModel* filter() const;
-    virtual KLineEdit* contactFilterLineEdit() const;
+    virtual QLineEdit* contactFilterLineEdit() const;
 
     virtual bool hasSelection() const;
     virtual Tp::AccountPtr selectedAccount() const;

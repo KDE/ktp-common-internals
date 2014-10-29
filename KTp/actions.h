@@ -20,7 +20,6 @@
 #define KTP_ACTIONS_H
 
 #include <TelepathyQt/Types>
-#include <KUrl>
 
 #include <KTp/ktpcommoninternals_export.h>
 
@@ -33,7 +32,7 @@ namespace KTp {
 
 namespace Actions {
 
-    typedef QList<KUrl> DocumentList;
+    typedef QList<QUrl> DocumentList;
 
     KTPCOMMONINTERNALS_EXPORT Tp::PendingChannelRequest* startChat(const Tp::AccountPtr &account,
                                                     const QString &contactIdentifier,

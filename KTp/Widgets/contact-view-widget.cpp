@@ -279,7 +279,7 @@ KTp::ContactsFilterModel* KTp::ContactViewWidget::filter() const
     return d->filterModel;
 }
 
-KLineEdit* KTp::ContactViewWidget::contactFilterLineEdit() const
+QLineEdit* KTp::ContactViewWidget::contactFilterLineEdit() const
 {
     return d->contactFilterLineEdit;
 }

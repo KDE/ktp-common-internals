@@ -111,7 +111,7 @@ KTp::ContactGridDialog::ContactGridDialog(QWidget *parent) :
 
 
     d->contactGridWidget = new KTp::ContactGridWidget(d->contactsModel, this);
-    d->contactGridWidget->contactFilterLineEdit()->setClickMessage(i18n("Search in Contacts..."));
+    d->contactGridWidget->contactFilterLineEdit()->setPlaceholderText(i18n("Search in Contacts..."));
     d->contactGridWidget->filter()->setPresenceTypeFilterFlags(KTp::ContactsFilterModel::ShowOnlyConnected);
 
     setMainWidget(d->contactGridWidget);
