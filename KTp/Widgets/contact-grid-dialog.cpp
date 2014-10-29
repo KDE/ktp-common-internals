@@ -22,10 +22,10 @@
 
 #include "contact-grid-dialog.h"
 
-#include <KDE/KLineEdit>
-#include <KDE/KPushButton>
-#include <KDE/KLocalizedString>
-#include <KDE/KDebug>
+#include <KLineEdit>
+#include <KPushButton>
+#include <KLocalizedString>
+#include <KDebug>
 
 #include <TelepathyQt/AccountManager>
 #include <TelepathyQt/AccountFactory>

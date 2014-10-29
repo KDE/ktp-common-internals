@@ -23,13 +23,13 @@
 #include <QString>
 #include <QFont>
 #include <QFontDatabase>
+#include <QIcon>
 #include <QtDBus/QtDBus>
 
-#include <KDE/KIcon>
-#include <KDE/KLocalizedString>
-#include <KDE/KConfig>
-#include <KDE/KConfigGroup>
-#include <KDE/KDebug>
+#include <KLocalizedString>
+#include <KConfig>
+#include <KConfigGroup>
+#include <KDebug>
 
 namespace KTp
 {

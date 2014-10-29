@@ -20,9 +20,8 @@
 
 #include "contact-view-widget.h"
 
-#include <KDE/KIcon>
-#include <KDE/KLineEdit>
-#include <KDE/KDebug>
+#include <KLineEdit>
+#include <KDebug>
 
 #include <QTextOption>
 #include <QPainter>

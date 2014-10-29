@@ -18,7 +18,7 @@
 
 #include "debug.h"
 
-#include <KDE/KDebug>
+#include <KDebug>
 #include <TelepathyQt/Debug>
 
 
