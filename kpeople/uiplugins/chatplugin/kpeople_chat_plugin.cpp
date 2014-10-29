@@ -26,10 +26,9 @@
 #include <QVBoxLayout>
 #include <QScrollArea>
 #include <KLocalizedString>
-#include <KGlobal>
 #include <KABC/Addressee>
 #include <KPluginFactory>
-#include <KLocale>
+#include <KLocalizedString>
 
 #include <KTp/core.h>
 #include <KTp/Logger/log-manager.h>
@@ -141,13 +140,13 @@ void ChatWidgetFactory::onEventsFinished(KTp::PendingLoggerOperation *pendingOpe
             QStandardItem *messageRow = new QStandardItem();
             messageRow->setData(message.senderAlias(), ChatListviewDelegate::senderAliasRole);
             messageRow->setData(message.mainMessagePart(), ChatListviewDelegate::messageRole);
-            messageRow->setData(KGlobal::locale()->formatDateTime(message.time(), KLocale::FancyShortDate), ChatListviewDelegate::messageTimeRole);
+            messageRow->setData(QLocale().toString(message.time(), QLocale::ShortFormat), ChatListviewDelegate::messageTimeRole);
             m_model->appendRow(messageRow);
         } else {
             QStandardItem *messageRow = new QStandardItem();
             messageRow->setData(QLatin1String("Me"), ChatListviewDelegate::senderAliasRole);
             messageRow->setData(message.mainMessagePart(), ChatListviewDelegate::messageRole);
-            messageRow->setData(KGlobal::locale()->formatDateTime(message.time(), KLocale::FancyShortDate), ChatListviewDelegate::messageTimeRole);
+            messageRow->setData(QLocale().toString(message.time(), QLocale::ShortFormat), ChatListviewDelegate::messageTimeRole);
             m_model->appendRow(messageRow);
         }
     }

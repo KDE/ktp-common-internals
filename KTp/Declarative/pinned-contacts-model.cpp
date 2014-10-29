@@ -29,10 +29,8 @@
 #include <TelepathyQt/ContactManager>
 #include <TelepathyQt/PendingContacts>
 
-#include <KGlobal>
 #include <KComponentData>
 #include <KConfigGroup>
-#include <KStandardDirs>
 #include <KDebug>
 
 #include "KTp/presence.h"

@@ -20,10 +20,9 @@
 #include "otr-config.h"
 #include "ktp-proxy-config.h"
 
-#include <KGlobal>
-#include <KStandardDirs>
-
+#include <QStandardPaths>
 #include <QLatin1String>
+#include <QDir>
 
 namespace OTR
 {
@@ -34,7 +33,9 @@ namespace OTR
 
     QString Config::saveLocation()
     {
-        return KGlobal::dirs()->saveLocation("data", QLatin1String("ktelepathy/ktp-proxy/"), true);
+        QString path = QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation) + QStringLiteral("/ktelepathy/ktp-proxy/");
+        QDir().mkpath(path);
+        return path;
     }
 
     OtrlPolicy Config::getPolicy() const

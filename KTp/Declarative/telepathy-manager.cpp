@@ -164,12 +164,12 @@ Tp::PendingOperation* TelepathyManager::startFileTransfer(const Tp::AccountPtr &
 
 bool TelepathyManager::canDial() const
 {
-    return !KStandardDirs::findExe(QLatin1String("ktp-dialout-ui")).isEmpty();
+    return !QStandardPaths::findExecutable(QLatin1String("ktp-dialout-ui")).isEmpty();
 }
 
 bool TelepathyManager::canSendFiles() const
 {
-    return !KStandardDirs::findExe(QLatin1String("ktp-send-file")).isEmpty();
+    return !QStandardPaths::findExecutable(QLatin1String("ktp-send-file")).isEmpty();
 }
 
 void TelepathyManager::openDialUi() const

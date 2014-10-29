@@ -36,8 +36,6 @@
 #include <KDE/KABC/Addressee>
 
 #include <KDebug>
-#include <KGlobal>
-#include <KStandardDirs>
 #include <KPluginFactory>
 #include <KPluginLoader>
 
@@ -102,8 +100,12 @@ KTpAllContacts::~KTpAllContacts()
 void KTpAllContacts::loadCache()
 {
     QSqlDatabase db = QSqlDatabase::addDatabase(QLatin1String("QSQLITE"), QLatin1String("ktpCache"));
-    db.setDatabaseName(KGlobal::dirs()->locateLocal("data", QLatin1String("ktp/cache.db")));
-    db.open();
+    QString path = QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation) + QLatin1String("/ktp");
+    QDir().mkpath(path);
+    db.setDatabaseName(path+QStringLiteral("/cache.db"));
+    if (!db.open()) {
+        qWarning() << "couldn't open database" << db.databaseName();
+    }
 
     QSqlQuery query(db);
     query.exec(QLatin1String("SELECT groupName FROM groups ORDER BY groupId;"));

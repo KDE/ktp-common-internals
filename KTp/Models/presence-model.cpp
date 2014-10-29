@@ -22,13 +22,13 @@
 
 #include <QString>
 #include <QFont>
+#include <QFontDatabase>
 #include <QtDBus/QtDBus>
 
 #include <KDE/KIcon>
 #include <KDE/KLocalizedString>
 #include <KDE/KConfig>
 #include <KDE/KConfigGroup>
-#include <KDE/KGlobalSettings>
 #include <KDE/KDebug>
 
 namespace KTp
@@ -92,7 +92,7 @@ QVariant PresenceModel::data(const QModelIndex &index, int role) const
 
     case Qt::FontRole:
         if (presence.statusMessage().isEmpty()) {
-            QFont font = KGlobalSettings::generalFont();
+            QFont font = QFontDatabase::systemFont(QFontDatabase::GeneralFont);
             font.setBold(true);
             return font;
         } else {

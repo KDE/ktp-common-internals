@@ -29,8 +29,6 @@
 #include <KService>
 #include <KServiceTypeTrader>
 #include <KPluginFactory>
-#include <KGlobal>
-#include <KDE/KStandardDirs>
 
 using namespace KTp;
 
@@ -167,12 +165,12 @@ QString MessageProcessor::header()
     QString out(QLatin1String("\n    <!-- The following scripts and stylesheets are injected here by the plugins -->\n"));
     Q_FOREACH(const QString &script, scripts) {
         out = out % QLatin1String("    <script type=\"text/javascript\" src=\"")
-                  % KGlobal::dirs()->findResource("data", script)
+                  % QStandardPaths::locate(QStandardPaths::GenericDataLocation, script)
                   % QLatin1String("\"></script>\n");
     }
     Q_FOREACH(const QString &stylesheet, stylesheets) {
         out = out % QLatin1String("    <link rel=\"stylesheet\" type=\"text/css\" href=\"")
-                  % KGlobal::dirs()->findResource("data", stylesheet)
+                  % QStandardPaths::locate(QStandardPaths::GenericDataLocation, stylesheet)
                   % QLatin1String("\" />\n");
     }
 

@@ -25,8 +25,7 @@
 #include <QDBusReply>
 #endif
 
-#include <KGlobal>
-
+#include <QtGlobal>
 #include <TelepathyQt/AccountManager>
 #include <KTp/global-contact-manager.h>
 #include "contact-factory.h"
@@ -74,7 +73,7 @@ CorePrivate::CorePrivate()
     m_channelFactory = Tp::ChannelFactory::create(QDBusConnection::sessionBus());
 }
 
-K_GLOBAL_STATIC(CorePrivate, s_instance)
+Q_GLOBAL_STATIC(CorePrivate, s_instance)
 
 bool KTp::kpeopleEnabled()
 {

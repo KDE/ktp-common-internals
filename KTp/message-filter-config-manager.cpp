@@ -22,7 +22,6 @@
 #include <QMutex>
 #include <QSet>
 
-#include <KGlobal>
 #include <KDebug>
 #include <KServiceTypeTrader>
 
