@@ -33,7 +33,7 @@
 #include "KTp/types.h"
 
 #include <KPeople/AllContactsMonitor>
-#include <KABC/Addressee>
+#include <KContacts/Addressee>
 
 #include <KDebug>
 #include <KPluginFactory>
@@ -51,7 +51,7 @@ class KTpAllContacts : public AllContactsMonitor
 public:
     KTpAllContacts();
     ~KTpAllContacts();
-    virtual KABC::Addressee::Map contacts();
+    virtual KContacts::Addressee::Map contacts();
 
 private Q_SLOTS:
     void loadCache();
@@ -62,12 +62,12 @@ private Q_SLOTS:
 
 private:
     QString createUri(const KTp::ContactPtr &contact) const;
-    KABC::Addressee contactToAddressee(const Tp::ContactPtr &contact) const;
+    KContacts::Addressee contactToAddressee(const Tp::ContactPtr &contact) const;
 
     //presence names indexed by ConnectionPresenceType
     QVector<QString> m_presenceStrings;
     QHash<QString, KTp::ContactPtr> m_contacts;
-    KABC::Addressee::Map m_contactVCards;
+    KContacts::Addressee::Map m_contactVCards;
 };
 
 static const QString S_KABC_PRODUCT = QString::fromLatin1("telepathy");
@@ -122,12 +122,12 @@ void KTpAllContacts::loadCache()
     }
 
     while (query.next()) {
-        KABC::Addressee addressee;
+        KContacts::Addressee addressee;
 
         const QString accountId =  query.value(0).toString();
         const QString contactId =  query.value(1).toString();
         addressee.setFormattedName(query.value(2).toString());
-        addressee.setPhoto(KABC::Picture(query.value(3).toString()));
+        addressee.setPhoto(KContacts::Picture(query.value(3).toString()));
 
         if (!groupsList.isEmpty()) {
             QStringList contactGroups;
@@ -202,7 +202,7 @@ void KTpAllContacts::onAllKnownContactsChanged(const Tp::Contacts &contactsAdded
         KTp::ContactPtr ktpContact = KTp::ContactPtr::qObjectCast(contact);
         const QString uri = createUri(ktpContact);
 
-        const KABC::Addressee vcard = contactToAddressee(contact);
+        const KContacts::Addressee vcard = contactToAddressee(contact);
 
         m_contacts.insert(uri, ktpContact);
 
@@ -251,19 +251,19 @@ void KTpAllContacts::onContactInvalidated()
     m_contacts.remove(uri);
 
     //set to offline and emit changed
-    KABC::Addressee &vcard = m_contactVCards[uri];
+    KContacts::Addressee &vcard = m_contactVCards[uri];
     vcard.insertCustom(S_KABC_PRODUCT, S_KABC_FIELD_PRESENCE, QLatin1String("offline"));
     Q_EMIT contactChanged(uri, vcard);
 }
 
-KABC::Addressee::Map KTpAllContacts::contacts()
+KContacts::Addressee::Map KTpAllContacts::contacts()
 {
     return m_contactVCards;
 }
 
-KABC::Addressee KTpAllContacts::contactToAddressee(const Tp::ContactPtr &contact) const
+KContacts::Addressee KTpAllContacts::contactToAddressee(const Tp::ContactPtr &contact) const
 {
-    KABC::Addressee vcard;
+    KContacts::Addressee vcard;
     Tp::AccountPtr account = KTp::contactManager()->accountForContact(contact);
     if (contact && account) {
         vcard.setFormattedName(contact->alias());
@@ -273,7 +273,7 @@ KABC::Addressee KTpAllContacts::contactToAddressee(const Tp::ContactPtr &contact
         vcard.insertCustom(S_KABC_PRODUCT, S_KABC_FIELD_ACCOUNT_PATH, account->objectPath());
         vcard.insertCustom(S_KABC_PRODUCT, S_KABC_FIELD_PRESENCE, m_presenceStrings.at(contact->presence().type()));
         if (!contact->avatarData().fileName.isEmpty()) {
-            vcard.setPhoto(KABC::Picture(contact->avatarData().fileName));
+            vcard.setPhoto(KContacts::Picture(contact->avatarData().fileName));
         }
     }
     return vcard;

@@ -26,7 +26,7 @@
 #include <QVBoxLayout>
 #include <QScrollArea>
 #include <KLocalizedString>
-#include <KABC/Addressee>
+#include <KContacts/Addressee>
 #include <KPluginFactory>
 #include <KLocalizedString>
 
@@ -51,7 +51,7 @@ ChatWidgetFactory::ChatWidgetFactory(QObject *parent, const QVariantList &args):
     m_model = new QStandardItemModel();
 }
 
-QWidget *ChatWidgetFactory::createDetailsWidget(const KABC::Addressee &person, const KABC::AddresseeList &contacts, QWidget *parent) const
+QWidget *ChatWidgetFactory::createDetailsWidget(const KContacts::Addressee &person, const KContacts::AddresseeList &contacts, QWidget *parent) const
 {
     Q_UNUSED(contacts);
     QWidget *widget = new QWidget(parent);

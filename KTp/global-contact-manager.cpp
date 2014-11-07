@@ -186,11 +186,17 @@ Tp::AccountPtr GlobalContactManager::accountForAccountPath(const QString &accoun
 
 KTp::ContactPtr GlobalContactManager::contactForContactId(const QString &accountPath, const QString &contactId)
 {
+    Q_ASSERT(!accountPath.isEmpty());
     if (!d->accountManager || accountPath.isEmpty()) {
+        qWarning() << "Account manager unavailable";
         return KTp::ContactPtr();
     }
 
     Tp::AccountPtr account = d->accountManager->accountForObjectPath(accountPath);
+    if (!account) {
+        qWarning() << "account not found" << accountPath;
+    }
+
     if (account && account->connection() && account->connection()->contactManager()) {
         Tp::Contacts contactSet = account->connection()->contactManager()->allKnownContacts();
         Q_FOREACH (const Tp::ContactPtr &contact, contactSet) {
@@ -199,6 +205,7 @@ KTp::ContactPtr GlobalContactManager::contactForContactId(const QString &account
             }
         }
     }
+    qWarning() << "Couldn't find a contact for" << contactId;
 
     return KTp::ContactPtr();
 }
