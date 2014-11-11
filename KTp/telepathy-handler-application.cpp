@@ -73,7 +73,7 @@ void TelepathyHandlerApplication::Private::_k_onInitialTimeout()
 {
     if (jobCount.load() == 0 && jobCount.fetchAndAddOrdered(-1) == 0) {
         // m_jobCount is now -1
-        kDebug() << "No job received. Exiting";
+        qDebug() << "No job received. Exiting";
         QCoreApplication::quit();
     }
 }
@@ -82,7 +82,7 @@ void TelepathyHandlerApplication::Private::_k_onTimeout()
 {
     if (jobCount.load() == 0 && jobCount.fetchAndAddOrdered(-1) == 0) {
         // m_jobCount is now -1
-        kDebug() << "Timeout. Exiting";
+        qDebug() << "Timeout. Exiting";
         QCoreApplication::quit();
     }
 }
@@ -171,7 +171,7 @@ int TelepathyHandlerApplication::newJob()
             d->firstJobStarted = true;
         }
     }
-    kDebug() << "New job started." << d->jobCount.load() << "jobs currently running";
+    qDebug() << "New job started." << d->jobCount.load() << "jobs currently running";
     return ret;
 }
 
@@ -182,11 +182,11 @@ void TelepathyHandlerApplication::jobFinished()
 
     if (d->jobCount.fetchAndAddOrdered(-1) <= 1) {
         if (!Private::s_persist && d->timeout >= 0) {
-            kDebug() << "No other jobs at the moment. Starting timer.";
+            qDebug() << "No other jobs at the moment. Starting timer.";
             d->timer->start(d->timeout);
         }
     }
-    kDebug() << "Job finished." << d->jobCount.load() << "jobs currently running";
+    qDebug() << "Job finished." << d->jobCount.load() << "jobs currently running";
 }
 
 } // namespace KTp
