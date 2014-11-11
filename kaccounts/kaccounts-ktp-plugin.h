@@ -21,6 +21,14 @@
 
 #include <KAccounts/kaccountsdplugin.h>
 
+namespace Tp {
+    class PendingOperation;
+}
+
+namespace Accounts {
+    class Manager;
+}
+
 class KAccountsKTpPlugin : public KAccountsDPlugin
 {
     Q_OBJECT
@@ -36,6 +44,10 @@ public Q_SLOTS:
     void onAccountRemoved(const Accounts::AccountId accountId);
     void onServiceEnabled(const Accounts::AccountId accountId, const Accounts::Service &service);
     void onServiceDisabled(const Accounts::AccountId accountId, const Accounts::Service &service);
+
+private Q_SLOTS:
+    void onConnectionManagerReady(Tp::PendingOperation *op);
+    void onAccountManagerReady(Tp::PendingOperation *op);
 
 private:
     class Private;
