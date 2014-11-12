@@ -13,6 +13,7 @@ add_library(kaccounts_ktp_plugin MODULE ${kaccounts_ktp_plugin_SRCS})
 target_link_libraries(kaccounts_ktp_plugin
                       Qt5::Core
                       KF5::ConfigCore
+                      KF5::CoreAddons
                       KTp::Logger
                       ${KACCOUNTS_LIBRARIES}
                       ${ACCOUNTSQT_LIBRARIES}

@@ -14,6 +14,7 @@ find_package (Qt5 REQUIRED CONFIG COMPONENTS
               Test)
 
 find_package (KF5 REQUIRED COMPONENTS 
+              CoreAddons
               KCMUtils
               NotifyConfig
               TextEditor
