@@ -21,15 +21,15 @@
 #include "presence-model.h"
 
 #include <QString>
-#include <QtGui/QFont>
+#include <QFont>
+#include <QFontDatabase>
+#include <QIcon>
 #include <QtDBus/QtDBus>
 
-#include <KDE/KIcon>
-#include <KDE/KLocalizedString>
-#include <KDE/KConfig>
-#include <KDE/KConfigGroup>
-#include <KDE/KGlobalSettings>
-#include <KDE/KDebug>
+#include <KLocalizedString>
+#include <KConfig>
+#include <KConfigGroup>
+#include <KDebug>
 
 namespace KTp
 {
@@ -92,7 +92,7 @@ QVariant PresenceModel::data(const QModelIndex &index, int role) const
 
     case Qt::FontRole:
         if (presence.statusMessage().isEmpty()) {
-            QFont font = KGlobalSettings::generalFont();
+            QFont font = QFontDatabase::systemFont(QFontDatabase::GeneralFont);
             font.setBold(true);
             return font;
         } else {

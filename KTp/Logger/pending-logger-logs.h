@@ -22,7 +22,7 @@
 
 #include <KTp/Logger/pending-logger-operation.h>
 #include <KTp/Logger/log-message.h>
-#include <KTp/ktp-export.h>
+#include <KTp/ktpcommoninternals_export.h>
 
 #include <TelepathyQt/Types>
 
@@ -39,7 +39,7 @@ namespace KTp {
  * @since 0.7
  * @author Daniel Vrátil <dvratil@redhat.com>
  */
-class KTP_EXPORT PendingLoggerLogs : public KTp::PendingLoggerOperation
+class KTPCOMMONINTERNALS_EXPORT PendingLoggerLogs : public KTp::PendingLoggerOperation
 {
     Q_OBJECT
 

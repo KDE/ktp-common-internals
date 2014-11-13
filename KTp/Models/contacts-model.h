@@ -23,7 +23,7 @@
 
 #include <KTp/Models/contacts-filter-model.h>
 #include <KTp/types.h>
-#include <KTp/ktp-export.h>
+#include <KTp/Models/ktpmodels_export.h>
 
 namespace KTp
 {
@@ -32,7 +32,7 @@ namespace KTp
     In most cases you should use this as the entry point to the models in your application
  */
 
-class KTP_EXPORT ContactsModel : public KTp::ContactsFilterModel
+class KTPMODELS_EXPORT ContactsModel : public KTp::ContactsFilterModel
 {
     Q_OBJECT
     Q_PROPERTY(GroupMode groupMode READ groupMode WRITE setGroupMode NOTIFY groupModeChanged)

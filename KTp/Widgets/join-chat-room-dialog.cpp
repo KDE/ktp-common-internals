@@ -25,11 +25,14 @@
 #include <KTp/Models/rooms-model.h>
 
 #include <KConfig>
+#include <KSharedConfig>
 #include <KDebug>
 #include <KInputDialog>
 #include <KMessageBox>
+#include <KLocalizedString>
 #include <KNotification>
 #include <KPushButton>
+#include <KIconLoader>
 
 #include <TelepathyQt/Account>
 #include <TelepathyQt/AccountSet>
@@ -59,7 +62,7 @@ KTp::JoinChatRoomDialog::JoinChatRoomDialog(Tp::AccountManagerPtr accountManager
     ui->feedbackWidget->hide();
 
     setMainWidget(joinChatRoomDialog);
-    setWindowIcon(KIcon(QLatin1String("im-irc")));
+    setWindowIcon(QIcon::fromTheme(QLatin1String("im-irc")));
     setWindowTitle(i18nc("Dialog title", "Join Chat Room"));
 
     ui->filterPicture->clear();
@@ -76,7 +79,7 @@ KTp::JoinChatRoomDialog::JoinChatRoomDialog(Tp::AccountManagerPtr accountManager
     // disable OK button on start
     button(Ok)->setEnabled(false);
     button(Ok)->setText(i18nc("button", "Join/Create"));
-    button(Ok)->setIcon(KIcon(QLatin1String("im-irc")));
+    button(Ok)->setIcon(QIcon::fromTheme(QLatin1String("im-irc")));
     onAccountSelectionChanged(ui->comboBox->currentIndex());
     connect(accountManager->becomeReady(), SIGNAL(finished(Tp::PendingOperation*)),
             this, SLOT(onAccountManagerReady(Tp::PendingOperation*)));
@@ -355,7 +358,7 @@ void KTp::JoinChatRoomDialog::onRoomListChannelClosed(Tp::PendingOperation *oper
         sendNotificationToUser(errorMsg);
     } else {
         ui->queryButton->setEnabled(true);
-        ui->queryButton->setIcon(KIcon(QLatin1String("media-playback-start")));
+        ui->queryButton->setIcon(QIcon::fromTheme(QLatin1String("media-playback-start")));
         ui->queryButton->setText(i18nc("Button text", "Query"));
         ui->queryButton->setToolTip(i18nc("Tooltip text", "Start query"));
         connect(ui->queryButton, SIGNAL(clicked(bool)), this, SLOT(getRoomList()));
@@ -368,7 +371,7 @@ void KTp::JoinChatRoomDialog::onListing(bool isListing)
     if (isListing) {
         kDebug() << "listing";
         ui->queryButton->setEnabled(true);
-        ui->queryButton->setIcon(KIcon(QLatin1String("media-playback-stop")));
+        ui->queryButton->setIcon(QIcon::fromTheme(QLatin1String("media-playback-stop")));
         ui->queryButton->setText(i18nc("Button text", "Stop"));
         ui->queryButton->setToolTip(i18nc("Tooltip text", "Stop query"));
         disconnect(ui->queryButton, SIGNAL(clicked(bool)), this, SLOT(getRoomList()));

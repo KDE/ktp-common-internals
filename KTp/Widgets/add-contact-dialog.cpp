@@ -30,6 +30,7 @@
 #include <KMessageBox>
 #include <KPushButton>
 #include <KDebug>
+#include <KLocalizedString>
 
 #include <TelepathyQt/AccountManager>
 #include <TelepathyQt/Account>
@@ -42,7 +43,7 @@
 
 namespace KTp {
 
-class KTP_NO_EXPORT SubscribableAccountFilter : public Tp::AccountFilter
+class KTPCOMMONINTERNALS_NO_EXPORT SubscribableAccountFilter : public Tp::AccountFilter
 {
 public:
     SubscribableAccountFilter() : Tp::AccountFilter()
@@ -71,7 +72,7 @@ public:
 };
 
 
-struct KTP_NO_EXPORT AddContactDialog::Private
+struct KTPCOMMONINTERNALS_NO_EXPORT AddContactDialog::Private
 {
     Private() :
         ui(new Ui::AddContactDialog),

@@ -21,7 +21,7 @@
 #ifndef NOTIFICATIONCONFIGDIALOG_H
 #define NOTIFICATIONCONFIGDIALOG_H
 
-#include <KTp/ktp-export.h>
+#include <KTp/ktpcommoninternals_export.h>
 
 #include <KDialog>
 #include <TelepathyQt/Types>
@@ -30,7 +30,7 @@ class KNotifyConfigWidget;
 
 namespace KTp {
 
-class KTP_EXPORT NotificationConfigDialog : public KDialog
+class KTPCOMMONINTERNALS_EXPORT NotificationConfigDialog : public KDialog
 {
     Q_OBJECT
 public:

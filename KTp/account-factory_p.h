@@ -24,7 +24,7 @@
 
 #include <TelepathyQt/Types>
 
-#include <KTp/ktp-export.h>
+#include <KTp/ktpcommoninternals_export.h>
 
 /*
  * This class is part of a hack that fixes the following problem:

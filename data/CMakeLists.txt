@@ -1,2 +1,2 @@
-install(FILES ktelepathy.notifyrc DESTINATION ${DATA_INSTALL_DIR}/ktelepathy)
+install(FILES ktelepathy.notifyrc DESTINATION ${KNOTIFYRC_INSTALL_DIR})
 add_subdirectory(icons)

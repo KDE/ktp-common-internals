@@ -25,7 +25,7 @@
 #include <QSortFilterProxyModel>
 
 #include <KTp/types.h>
-#include <KTp/ktp-export.h>
+#include <KTp/Models/ktpmodels_export.h>
 
 namespace KTp
 
@@ -34,7 +34,7 @@ namespace KTp
 /**
   * \brief Class used to sort and filter the contacts.
   */
-class KTP_EXPORT ContactsFilterModel : public QSortFilterProxyModel
+class KTPMODELS_EXPORT ContactsFilterModel : public QSortFilterProxyModel
 {
     Q_OBJECT
     Q_DISABLE_COPY(ContactsFilterModel)
@@ -290,8 +290,6 @@ public:
 
     QString sortRoleString() const;
     Q_SLOT void setSortRoleString(const QString &role);
-
-    Q_SLOT void delayedSortFix();
 
 protected:
     bool filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent) const;

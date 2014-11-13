@@ -22,7 +22,6 @@
 #include "pending-wallet.h"
 
 #include <KDebug>
-#include <KGlobal>
 
 
 class KTp::WalletInterfacePrivate : public QObject
@@ -73,10 +72,10 @@ WalletInterfacePrivate::WalletInterfacePrivate() :
 
 KTp::PendingWallet* WalletInterface::openWallet()
 {
-    K_GLOBAL_STATIC(KTp::WalletInterface, s_instance);
+    static KTp::WalletInterface s_instance;
 
-    s_instance->d->ensureWalletIsReady();
-    return new PendingWallet(s_instance);
+    s_instance.d->ensureWalletIsReady();
+    return new PendingWallet(&s_instance);
 }
 
 void WalletInterfacePrivate::onWalletOpened(bool success)

@@ -22,12 +22,12 @@
 #include <TelepathyQt/Account>
 #include <TelepathyQt/TextChannel>
 
-#include "ktp-export.h"
+#include "ktpcommoninternals_export.h"
 
 namespace KTp
 {
 
-class KTP_EXPORT MessageContext
+class KTPCOMMONINTERNALS_EXPORT MessageContext
 {
 public:
     MessageContext(const Tp::AccountPtr &account, const Tp::TextChannelPtr &channel);

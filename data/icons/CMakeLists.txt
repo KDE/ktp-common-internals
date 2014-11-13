@@ -1,1 +1,55 @@
-kde4_install_icons( ${ICON_INSTALL_DIR} )
+ecm_install_icons(
+    ICONS
+        hi128-apps-telepathy-kde.png
+        hi16-actions-im-groupwise.png
+        hi16-actions-im-irc.png
+        hi16-actions-im-local-xmpp.png
+        hi16-apps-telepathy-kde.png
+        hi22-actions-im-aim.png
+        hi22-actions-im-facebook.png
+        hi22-actions-im-gadugadu.png
+        hi22-actions-im-google-talk.png
+        hi22-actions-im-groupwise.png
+        hi22-actions-im-icq.png
+        hi22-actions-im-jabber.png
+        hi22-actions-im-local-xmpp.png
+        hi22-actions-im-msn.png
+        hi22-actions-im-qq.png
+        hi22-actions-im-skype.png
+        hi22-actions-im-yahoo.png
+        hi22-actions-show-offline.png
+        hi22-actions-sort-name.png
+        hi22-actions-sort-presence.png
+        hi22-apps-telepathy-kde.png
+        hi32-actions-im-aim.png
+        hi32-actions-im-facebook.png
+        hi32-actions-im-gadugadu.png
+        hi32-actions-im-google-talk.png
+        hi32-actions-im-groupwise.png
+        hi32-actions-im-icq.png
+        hi32-actions-im-irc.png
+        hi32-actions-im-jabber.png
+        hi32-actions-im-local-xmpp.png
+        hi32-actions-im-msn.png
+        hi32-actions-im-qq.png
+        hi32-actions-im-skype.png
+        hi32-actions-im-yahoo.png
+        hi32-apps-telepathy-kde.png
+        hi48-actions-im-aim.png
+        hi48-actions-im-facebook.png
+        hi48-actions-im-gadugadu.png
+        hi48-actions-im-google-talk.png
+        hi48-actions-im-groupwise.png
+        hi48-actions-im-icq.png
+        hi48-actions-im-jabber.png
+        hi48-actions-im-local-xmpp.png
+        hi48-actions-im-msn.png
+        hi48-actions-im-qq.png
+        hi48-actions-im-skype.png
+        hi48-actions-im-yahoo.png
+        hi48-apps-telepathy-kde.png
+        hi64-apps-telepathy-kde.png
+        hisc-apps-telepathy-kde.svgz
+    THEME hicolor
+    DESTINATION ${ICON_INSTALL_DIR}
+)

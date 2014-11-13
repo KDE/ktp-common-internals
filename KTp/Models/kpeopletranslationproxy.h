@@ -23,9 +23,9 @@
 // #include <QIdentityProxyModel>
 #include <QSortFilterProxyModel>
 
-#include <KTp/ktp-export.h>
+#include <KTp/Models/ktpmodels_export.h>
 
-class KTP_EXPORT KPeopleTranslationProxy : public QSortFilterProxyModel
+class KTPMODELS_EXPORT KPeopleTranslationProxy : public QSortFilterProxyModel
 {
     Q_OBJECT
 

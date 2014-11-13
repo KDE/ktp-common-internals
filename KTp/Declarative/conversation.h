@@ -21,10 +21,9 @@
 #define CONVERSATION_H
 
 #include <QObject>
+#include <QIcon>
 #include <TelepathyQt/Account>
 #include <TelepathyQt/TextChannel>
-
-#include <KIcon>
 
 #include "messages-model.h"
 

@@ -23,7 +23,6 @@
 #include <TelepathyQt/PendingDebugMessageList>
 
 #include <KDebug>
-#include <KIcon>
 #include <KColorScheme>
 #include <KStandardAction>
 #include <KAction>
@@ -33,6 +32,7 @@
 #include <KTextEditor/View>
 #include <kfind.h>
 #include <KFileDialog>
+#include <KTextEditor/Document>
 
 #include <ctime>
 #include <QDate>
@@ -60,8 +60,8 @@ DebugMessageView::DebugMessageView(QWidget *parent)
     layout()->addWidget(view);
     m_editor->setHighlightingMode(QString::fromLatin1("KTp"));
 
-    m_editor->activeView()->setContextMenu(new QMenu());
-    m_editor->activeView()->contextMenu()->addAction(KStandardAction::clear(this, SLOT(clear()), this));
+    view->setContextMenu(new QMenu());
+    view->contextMenu()->addAction(KStandardAction::clear(this, SLOT(clear()), this));
 }
 
 void DebugMessageView::clear()
@@ -79,11 +79,10 @@ void DebugMessageView::showEvent(QShowEvent* event)
 
 void DebugMessageView::addDelayedMessages()
 {
-    m_editor->startEditing();
+    KTextEditor::Document::EditingTransaction transaction(m_editor);
     Q_FOREACH(const Tp::DebugMessage &msg, m_tmpCache) {
         appendMessage(msg);
     }
-    m_editor->endEditing();
     m_tmpCache.clear();
 }
 
@@ -174,11 +173,12 @@ void DebugMessageView::onFetchMessagesFinished(Tp::PendingOperation* op)
         messages.append(m_tmpCache); //append any messages that were received from onNewDebugMessage()
         m_tmpCache.clear();
 
-        m_editor->startEditing();
-        Q_FOREACH(const Tp::DebugMessage &msg, messages) {
-            appendMessage(msg);
+        {
+            KTextEditor::Document::EditingTransaction transaction(m_editor);
+            Q_FOREACH(const Tp::DebugMessage &msg, messages) {
+                appendMessage(msg);
+            }
         }
-        m_editor->endEditing();
 
         //TODO limit m_messages size
 
@@ -238,7 +238,7 @@ void DebugMessageView::appendMessage(const Tp::DebugMessage &msg)
 
 void DebugMessageView::saveLogFile()
 {
-    KUrl savedFile = KFileDialog::getSaveFileName(KUrl(), QString(), 0, i18n("Save Log"));
+    QUrl savedFile = KFileDialog::getSaveFileName(QUrl(), QString(), 0, i18n("Save Log"));
     m_editor->saveAs(savedFile);
 }
 

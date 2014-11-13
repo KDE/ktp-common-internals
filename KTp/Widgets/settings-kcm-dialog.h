@@ -23,12 +23,12 @@
 #define SETTINGS_KCM_DIALOG_H
 
 #include <KSettings/Dialog>
-#include <KTp/ktp-export.h>
+#include <KTp/ktpcommoninternals_export.h>
 
 namespace KTp
 {
 
-class KTP_EXPORT SettingsKcmDialog : public KSettings::Dialog
+class KTPCOMMONINTERNALS_EXPORT SettingsKcmDialog : public KSettings::Dialog
 {
     Q_OBJECT
 public:

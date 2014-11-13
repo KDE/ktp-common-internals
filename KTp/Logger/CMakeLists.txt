@@ -1,11 +1,6 @@
 set(KTP_LOGGER_PLUGIN_VERSION "1")
 
-include_directories (${CMAKE_CURRENT_BINARY_DIR}
-                     ${CMAKE_CURRENT_SOURCE_DIR}
-)
-
 set (ktp_logger_private_SRCS
-    ${KTP_GLOBAL_SOURCES}
     abstract-logger-plugin.cpp
     log-entity.cpp
     log-manager.cpp
@@ -35,25 +30,33 @@ set (ktp_logger_private_HDRS
     pending-logger-operation.h
     pending-logger-search.h
     scrollback-manager.h
+    ${CMAKE_CURRENT_BINARY_DIR}/ktplogger_export.h
 )
 
-kde4_add_library (ktploggerprivate SHARED
-                 ${ktp_logger_private_SRCS}
+add_library (KTpLogger ${ktp_logger_private_SRCS})
+add_library (KTp::Logger ALIAS KTpLogger)
+
+generate_export_header(KTpLogger)
+
+set_target_properties(KTpLogger PROPERTIES
+                                VERSION ${KTP_VERSION}
+                                SOVERSION ${KTP_SONUMBER}
+                                EXPORT_NAME Logger
+                                DEFINE_SYMBOL MAKE_KTP_LIB)
+
+target_include_directories(KTpLogger PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>)
+
+target_link_libraries (KTpLogger
+                PUBLIC
+                       KTp::CommonInternals
+                       ${TELEPATHY_LOGGER_QT5_LIBRARIES}
+                PRIVATE
+                       KF5::KDELibs4Support
 )
 
-set_target_properties(ktploggerprivate PROPERTIES
-                                       VERSION ${KTP_VERSION}
-                                       SOVERSION ${KTP_SONUMBER}
-                                       DEFINE_SYMBOL MAKE_KTP_LIB)
-
-target_link_libraries (ktploggerprivate
-                       ${KDE4_KDECORE_LIBS}
-                       ${TELEPATHY_QT4_LIBRARIES}
-                       ktpcommoninternalsprivate
-)
-
-install (TARGETS ktploggerprivate
-         DESTINATION ${LIB_INSTALL_DIR}
+install (TARGETS KTpLogger
+         EXPORT KTpTargets
+         ${INSTALL_TARGETS_DEFAULT_ARGS}
 )
 
 install (FILES ${ktp_logger_private_HDRS}

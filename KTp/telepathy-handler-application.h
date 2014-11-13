@@ -19,9 +19,9 @@
 #ifndef TELEPATHY_HANDLER_APPLICATION_H
 #define TELEPATHY_HANDLER_APPLICATION_H
 
-#include <KApplication>
+#include <QApplication>
 
-#include <KTp/ktp-export.h>
+#include <KTp/ktpcommoninternals_export.h>
 
 namespace KTp
 {
@@ -38,7 +38,7 @@ namespace KTp
  * - Use Tp-Qt4 callback for redirecting debug output into KDebug
  * - Sets the KDE_FULL_SESSION environment variable to workaround dbus activation issues.
  */
-class KTP_EXPORT TelepathyHandlerApplication : public KApplication
+class KTPCOMMONINTERNALS_EXPORT TelepathyHandlerApplication : public QApplication
 {
     Q_OBJECT
 
@@ -47,17 +47,9 @@ public:
      * \p initialTimeout Initial timeout time (in msec) after which application exits if no jobs are received.
      * \p timeout Timeout time (in msec) after which application exits after the last job is finished.
      */
-    explicit TelepathyHandlerApplication(bool GUIenabled = true,
+    explicit TelepathyHandlerApplication(int &argc, char *argv[],
                                          int initialTimeout = 15000,
                                          int timeout = 2000);
-
-#ifndef Q_OS_WIN
-    explicit TelepathyHandlerApplication(Display *display,
-                                         Qt::HANDLE visual = 0,
-                                         Qt::HANDLE colormap = 0,
-                                         int initialTimeout = 15000,
-                                         int timeout = 2000);
-#endif
 
     virtual ~TelepathyHandlerApplication();
 

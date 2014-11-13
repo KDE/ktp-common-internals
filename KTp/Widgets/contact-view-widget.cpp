@@ -20,14 +20,13 @@
 
 #include "contact-view-widget.h"
 
-#include <KDE/KIcon>
-#include <KDE/KLineEdit>
-#include <KDE/KDebug>
+#include <KLineEdit>
+#include <KDebug>
 
-#include <QtGui/QApplication>
-#include <QtGui/QTextOption>
-#include <QtGui/QPainter>
-#include <QtGui/QVBoxLayout>
+#include <QTextOption>
+#include <QPainter>
+#include <QtWidgets/QApplication>
+#include <QtWidgets/QVBoxLayout>
 
 #include "types.h"
 #include <KTp/Models/contacts-list-model.h>
@@ -74,7 +73,7 @@ void KTp::ContactViewDelegate::paint(QPainter *painter, const QStyleOptionViewIt
     QPixmap avatar;
     avatar.load(index.data(KTp::ContactAvatarPathRole).toString());
     if (avatar.isNull()) {
-        avatar = KIcon(QLatin1String("im-user-online")).pixmap(option.decorationSize);
+        avatar = QIcon::fromTheme(QStringLiteral("im-user-online")).pixmap(option.decorationSize);
     } else if (avatar.width() > option.decorationSize.width() || avatar.height() > option.decorationSize.height()) {
         //resize larger avatars if required
         avatar = avatar.scaled(option.decorationSize, Qt::KeepAspectRatio, Qt::SmoothTransformation);
@@ -280,7 +279,7 @@ KTp::ContactsFilterModel* KTp::ContactViewWidget::filter() const
     return d->filterModel;
 }
 
-KLineEdit* KTp::ContactViewWidget::contactFilterLineEdit() const
+QLineEdit* KTp::ContactViewWidget::contactFilterLineEdit() const
 {
     return d->contactFilterLineEdit;
 }

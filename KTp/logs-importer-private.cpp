@@ -21,7 +21,8 @@
 
 #include <KLocalizedString>
 #include <KDebug>
-#include <KStandardDirs>
+#include <KTimeZone>
+#include <QStandardPaths>
 
 using namespace KTp;
 
@@ -133,8 +134,8 @@ QStringList LogsImporter::Private::findKopeteLogs(const QString &accountId) cons
         return files;
     }
 
-    QDir dir(KStandardDirs::locateLocal("data", QLatin1String("kopete/logs/") +
-             protocol + QDir::separator() + kopeteAccountId));
+    QDir dir(QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation) + QLatin1String("/kopete/logs/") +
+             protocol + QLatin1Char('/') + kopeteAccountId);
 
     if (dir.exists()) {
         QFileInfoList entries = dir.entryInfoList(QStringList() << QLatin1String("*.xml"), QDir::Files | QDir::NoDotAndDotDot | QDir::Readable);
@@ -170,8 +171,7 @@ void LogsImporter::Private::saveKTpDocument()
         .arg(m_month, 2, 10, QLatin1Char('0'))
         .arg(m_day, 2, 10, QLatin1Char('0'));
 
-    KStandardDirs dirs;
-    QString path = dirs.localxdgdatadir() + QDir::separator() + QLatin1String("TpLogger") + QDir::separator() + QLatin1String("logs");
+    QString path = QStandardPaths::writableLocation(QStandardPaths::DataLocation) + QLatin1String("/TpLogger/logs");
 
     if (m_isMUCLog) {
         path += QDir::separator() + QLatin1String("chatrooms");

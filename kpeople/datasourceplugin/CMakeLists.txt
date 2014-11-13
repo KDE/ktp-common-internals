@@ -1,21 +1,13 @@
-include_directories(${KPEOPLE_INCLUDES})
+find_package(Qt5Sql REQUIRED)
 
-set (im_persons_data_source_SRCS
-     im-persons-data-source.cpp
-)
-
-kde4_add_plugin (im_persons_data_source_plugin
-                 ${im_persons_data_source_SRCS}
-)
+add_library (im_persons_data_source_plugin MODULE im-persons-data-source.cpp)
 
 target_link_libraries (im_persons_data_source_plugin
-    ${QT_LIBRARIES}
-    ${QT_QTSQL_LIBRARIES}
-    ${TELEPATHY_QT4_LIBRARIES}
-    ${KDE4_KDEUI_LIBS}
-    ${KPEOPLE_LIBS}
-    ${KDEPIMLIBS_KABC_LIBS}
-    ktpcommoninternalsprivate
+    Qt5::Sql
+    KF5::People
+    KF5::Contacts
+    KF5::KDELibs4Support
+    KTp::CommonInternals
 )
 
 # Install:

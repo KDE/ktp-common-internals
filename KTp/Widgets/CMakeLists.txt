@@ -3,7 +3,6 @@ include_directories (${CMAKE_CURRENT_BINARY_DIR}
 )
 
 set (ktp_widgets_private_SRCS
-    ${KTP_GLOBAL_SOURCES}
     contact-view-widget.cpp
     contact-grid-widget.cpp
     contact-grid-dialog.cpp
@@ -27,34 +26,39 @@ set (ktp_widgets_private_HDRS
      settings-kcm-dialog.h
 )
 
-kde4_add_ui_files (ktp_widgets_private_SRCS
+qt5_wrap_ui (ktp_widgets_private_SRCS
                    add-contact-dialog.ui
                    join-chat-room-dialog.ui
                    start-chat-dialog.ui
 )
 
-kde4_add_library (ktpwidgetsprivate SHARED
+add_library (KTpWidgets
                  ${ktp_widgets_private_SRCS}
 )
+add_library (KTp::Widgets ALIAS KTpWidgets)
 
 #Raise SOVERSION for every 0.x cycle
-set_target_properties(ktpwidgetsprivate PROPERTIES
-                                                VERSION ${KTP_VERSION}
-                                                SOVERSION ${KTP_SONUMBER}
-                                                DEFINE_SYMBOL MAKE_KTP_LIB)
+set_target_properties(KTpWidgets PROPERTIES
+                                    VERSION ${KTP_VERSION}
+                                    SOVERSION ${KTP_SONUMBER}
+                                    EXPORT_NAME Widgets
+                                    DEFINE_SYMBOL MAKE_KTP_LIB)
+target_include_directories(KTpWidgets PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>)
 
-target_link_libraries (ktpwidgetsprivate
-                       ${KDE4_KDECORE_LIBS}
-                       ${TELEPATHY_QT4_LIBRARIES}
-                       ${KDE4_KDEUI_LIBS}
-                       ${KDE4_KNOTIFYCONFIG_LIBRARY}
-                       ${KDE4_KCMUTILS_LIBS}
-                       ktpcommoninternalsprivate
-                       ktpmodelsprivate
+target_link_libraries (KTpWidgets
+                    PUBLIC
+                       KTp::CommonInternals
+                       KF5::KCMUtils # used in settings-kcm-dialog.h
+                       Qt5::Widgets
+                    PRIVATE
+                       KF5::KDELibs4Support
+                       KF5::NotifyConfig
+                       KTp::Models
 )
 
-install (TARGETS ktpwidgetsprivate
-         DESTINATION ${LIB_INSTALL_DIR}
+install (TARGETS KTpWidgets
+         EXPORT KTpTargets
+         ${INSTALL_TARGETS_DEFAULT_ARGS}
 )
 
 install (FILES ${ktp_widgets_private_HDRS}

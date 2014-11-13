@@ -29,11 +29,8 @@
 #include <TelepathyQt/ContactManager>
 #include <TelepathyQt/PendingContacts>
 
-#include <KIcon>
-#include <KGlobal>
 #include <KComponentData>
 #include <KConfigGroup>
-#include <KStandardDirs>
 #include <KDebug>
 
 #include "KTp/presence.h"
@@ -159,15 +156,15 @@ QVariant PinnedContactsModel::data(const QModelIndex &index, int role) const
             return found;
         }
         case Qt::DecorationRole: {
-            KIcon icon;
+            QIcon icon;
             if (p->contact()) {
                 QString file = p->contact()->avatarData().fileName;
                 if (!file.isEmpty()) {
-                    icon = KIcon(file);
+                    icon = QIcon::fromTheme(file);
                 }
             }
             if (icon.isNull()) {
-                icon = KIcon(QLatin1String("im-user"));
+                icon = QIcon::fromTheme(QStringLiteral("im-user"));
             }
             return icon;
         }

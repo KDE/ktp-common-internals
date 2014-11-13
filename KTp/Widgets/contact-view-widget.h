@@ -21,15 +21,15 @@
 #ifndef CONTACT_VIEW_WIDGET_H
 #define CONTACT_VIEW_WIDGET_H
 
-#include <QtGui/QWidget>
-#include <QtGui/QListView>
+#include <QtWidgets/QWidget>
+#include <QtWidgets/QListView>
 
 #include <TelepathyQt/Types>
 
 #include <KTp/contact.h>
-#include <KTp/ktp-export.h>
+#include <KTp/ktpcommoninternals_export.h>
 
-class KLineEdit;
+class QLineEdit;
 class QItemSelection;
 class QListView;
 
@@ -38,7 +38,7 @@ namespace KTp
 class ContactsFilterModel;
 class ContactsListModel;
 
-class KTP_EXPORT ContactViewWidget : public QWidget
+class KTPCOMMONINTERNALS_EXPORT ContactViewWidget : public QWidget
 {
     Q_OBJECT
     Q_DISABLE_COPY(ContactViewWidget)
@@ -69,7 +69,7 @@ public:
     Q_SIGNAL void iconSizeChanged(const QSize &iconSize);
 
     virtual KTp::ContactsFilterModel* filter() const;
-    virtual KLineEdit* contactFilterLineEdit() const;
+    virtual QLineEdit* contactFilterLineEdit() const;
 
     virtual bool hasSelection() const;
     virtual Tp::AccountPtr selectedAccount() const;

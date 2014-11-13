@@ -44,7 +44,6 @@ public:
     void _k_onInitialTimeout();
     void _k_onTimeout();
 
-    static KComponentData initHack();
     void init(int initialTimeout, int timeout);
 
     TelepathyHandlerApplication *q;
@@ -72,52 +71,20 @@ TelepathyHandlerApplication::Private::~Private()
 
 void TelepathyHandlerApplication::Private::_k_onInitialTimeout()
 {
-    if (jobCount == 0 && jobCount.fetchAndAddOrdered(-1) == 0) {
+    if (jobCount.load() == 0 && jobCount.fetchAndAddOrdered(-1) == 0) {
         // m_jobCount is now -1
-        kDebug() << "No job received. Exiting";
+        qDebug() << "No job received. Exiting";
         QCoreApplication::quit();
     }
 }
 
 void TelepathyHandlerApplication::Private::_k_onTimeout()
 {
-    if (jobCount == 0 && jobCount.fetchAndAddOrdered(-1) == 0) {
+    if (jobCount.load() == 0 && jobCount.fetchAndAddOrdered(-1) == 0) {
         // m_jobCount is now -1
-        kDebug() << "Timeout. Exiting";
+        qDebug() << "Timeout. Exiting";
         QCoreApplication::quit();
     }
-}
-
-// this gets called before even entering QApplication::QApplication()
-KComponentData TelepathyHandlerApplication::Private::initHack()
-{
-    // This is a very very very ugly hack that attempts to solve the following problem:
-    // D-Bus service activated applications inherit the environment of dbus-daemon.
-    // Normally, in KDE, startkde sets these environment variables. However, the session's
-    // dbus-daemon is started before this happens, which means that dbus-daemon does NOT
-    // have these variables in its environment and therefore all service-activated UIs
-    // think that they are not running in KDE. This causes Qt not to load the KDE platform
-    // plugin, which leaves the UI in a sorry state, using a completely wrong theme,
-    // wrong colors, etc...
-    // See also:
-    // - https://bugs.kde.org/show_bug.cgi?id=269861
-    // - https://bugs.kde.org/show_bug.cgi?id=267770
-    // - https://git.reviewboard.kde.org/r/102194/
-    // Here we are just going to assume that kde-telepathy is always used in KDE and
-    // not anywhere else. This is probably the best that we can do.
-    setenv("KDE_FULL_SESSION", "true", 0);
-    setenv("KDE_SESSION_VERSION", "4", 0);
-
-    KComponentData cData(KCmdLineArgs::aboutData());
-    KCmdLineOptions handler_options;
-    handler_options.add("persist", ki18n("Persistent mode (do not exit on timeout)"));
-    handler_options.add("debug", ki18n("Show Telepathy debugging information"));
-    KCmdLineArgs::addCmdLineOptions(handler_options, ki18n("KDE Telepathy"), "kde-telepathy", "kde");
-    KCmdLineArgs *args = KCmdLineArgs::parsedArgs("kde-telepathy");
-    Private::s_persist = args->isSet("persist");
-    Private::s_debug = args->isSet("debug");
-
-    return cData;
 }
 
 void TelepathyHandlerApplication::Private::init(int initialTimeout, int timeout)
@@ -155,27 +122,29 @@ bool TelepathyHandlerApplication::Private::s_persist = false;
 bool TelepathyHandlerApplication::Private::s_debug = false;
 
 
-TelepathyHandlerApplication::TelepathyHandlerApplication(bool GUIenabled,
+TelepathyHandlerApplication::TelepathyHandlerApplication(int &argc, char *argv[],
                                                          int initialTimeout,
                                                          int timeout)
-    : KApplication(GUIenabled, Private::initHack()),
+    : QApplication(argc, argv),
       d(new Private(this))
 {
-    d->init(initialTimeout, timeout);
-}
+    QCoreApplication::setApplicationName(i18n("KDE Telepathy"));
 
-#ifndef Q_OS_WIN
-TelepathyHandlerApplication::TelepathyHandlerApplication(Display *display,
-                                                         Qt::HANDLE visual,
-                                                         Qt::HANDLE colormap,
-                                                         int initialTimeout,
-                                                         int timeout)
-    : KApplication(display, visual, colormap, Private::initHack()),
-      d(new Private(this))
-{
+    QCommandLineOption persistOption(QStringLiteral("persist"), i18n("Persistent mode (do not exit on timeout)"));
+    QCommandLineOption debugOption(QStringLiteral("debug"), i18n("Show Telepathy debugging information"));
+
+    QCommandLineParser cmdParser;
+    cmdParser.addHelpOption();
+    cmdParser.addOption(persistOption);
+    cmdParser.addOption(debugOption);
+    cmdParser.process(qApp->arguments());
+
+    Private::s_persist = cmdParser.isSet(QStringLiteral("persist"));
+    Private::s_debug = cmdParser.isSet(QStringLiteral("debug"));
+
+
     d->init(initialTimeout, timeout);
 }
-#endif
 
 TelepathyHandlerApplication::~TelepathyHandlerApplication()
 {
@@ -184,7 +153,7 @@ TelepathyHandlerApplication::~TelepathyHandlerApplication()
 
 int TelepathyHandlerApplication::newJob()
 {
-    TelepathyHandlerApplication *app = qobject_cast<TelepathyHandlerApplication*>(KApplication::kApplication());
+    TelepathyHandlerApplication *app = qobject_cast<TelepathyHandlerApplication*>(qApp);
     TelepathyHandlerApplication::Private *d = app->d;
 
     int ret = d->jobCount.fetchAndAddOrdered(1);
@@ -202,24 +171,24 @@ int TelepathyHandlerApplication::newJob()
             d->firstJobStarted = true;
         }
     }
-    kDebug() << "New job started." << d->jobCount << "jobs currently running";
+    qDebug() << "New job started." << d->jobCount.load() << "jobs currently running";
     return ret;
 }
 
 void TelepathyHandlerApplication::jobFinished()
 {
-    TelepathyHandlerApplication *app = qobject_cast<TelepathyHandlerApplication*>(KApplication::kApplication());
+    TelepathyHandlerApplication *app = qobject_cast<TelepathyHandlerApplication*>(qApp);
     TelepathyHandlerApplication::Private *d = app->d;
 
     if (d->jobCount.fetchAndAddOrdered(-1) <= 1) {
         if (!Private::s_persist && d->timeout >= 0) {
-            kDebug() << "No other jobs at the moment. Starting timer.";
+            qDebug() << "No other jobs at the moment. Starting timer.";
             d->timer->start(d->timeout);
         }
     }
-    kDebug() << "Job finished." << d->jobCount << "jobs currently running";
+    qDebug() << "Job finished." << d->jobCount.load() << "jobs currently running";
 }
 
 } // namespace KTp
 
-#include "telepathy-handler-application.moc"
+#include "moc_telepathy-handler-application.cpp"

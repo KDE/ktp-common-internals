@@ -1,16 +1,9 @@
-include_directories(${KPEOPLE_INCLUDES})
-
-kde4_add_plugin(kpeople_chat_plugin chatlistviewdelegate.cpp kpeople_chat_plugin.cpp)
+add_library(kpeople_chat_plugin MODULE chatlistviewdelegate.cpp kpeople_chat_plugin.cpp)
 target_link_libraries(kpeople_chat_plugin ${QT_QTCORE_LIBRARY}
-    ${QT_QTGUI_LIBRARY}
-    ${TELEPATHY_QT4_LIBRARIES}
-    ${KDE4_KDECORE_LIBRARY}
-    ${KDE4_KDEUI_LIBRARY}
-    ${KPEOPLE_LIBS}
-    ${KDEPIMLIBS_KABC_LIBS}
-    kpeoplewidgets
-    ktploggerprivate
-    ktpcommoninternalsprivate
+    KF5::PeopleWidgets
+    KTp::Logger
+    KTp::CommonInternals
+    KF5::KDELibs4Support
 )
 
 install(TARGETS kpeople_chat_plugin DESTINATION ${PLUGIN_INSTALL_DIR})

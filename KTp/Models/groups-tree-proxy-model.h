@@ -23,12 +23,12 @@
 
 #include <TelepathyQt/AccountManager>
 
-#include <KTp/ktp-export.h>
+#include <KTp/Models/ktpmodels_export.h>
 
 namespace KTp
 {
 
-class KTP_EXPORT GroupsTreeProxyModel : public KTp::AbstractGroupingProxyModel
+class KTPMODELS_EXPORT GroupsTreeProxyModel : public KTp::AbstractGroupingProxyModel
 {
     Q_OBJECT
 public:

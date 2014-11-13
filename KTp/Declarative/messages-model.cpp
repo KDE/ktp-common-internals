@@ -20,8 +20,11 @@
 
 #include "messages-model.h"
 
+#include <QPixmap>
+
 #include <KDebug>
 #include <KLocalizedString>
+#include <KConfig>
 
 #include <TelepathyQt/ReceivedMessage>
 #include <TelepathyQt/TextChannel>

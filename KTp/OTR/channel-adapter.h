@@ -21,7 +21,7 @@
 #include "types.h"
 #include "constants.h"
 
-#include "KTp/ktp-export.h"
+#include "ktpotr_export.h"
 
 #include <QObject>
 
@@ -32,7 +32,7 @@
 
 namespace KTp {
 
-class KTP_EXPORT ChannelAdapter : public QObject, public Tp::RefCounted
+class KTPOTR_EXPORT ChannelAdapter : public QObject, public Tp::RefCounted
 {
     Q_OBJECT
 

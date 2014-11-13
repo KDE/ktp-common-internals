@@ -27,7 +27,7 @@ namespace KTp {
 class PendingLoggerOperation;
 }
 
-class KTP_EXPORT ScrollbackManager : public QObject
+class KTPCOMMONINTERNALS_EXPORT ScrollbackManager : public QObject
 {
     Q_OBJECT
 

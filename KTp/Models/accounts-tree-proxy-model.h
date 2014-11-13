@@ -21,13 +21,13 @@
 
 #include "abstract-grouping-proxy-model.h"
 
-#include <KTp/ktp-export.h>
+#include <KTp/Models/ktpmodels_export.h>
 
 #include <TelepathyQt/Types>
 
 namespace KTp {
 
-class KTP_EXPORT AccountsTreeProxyModel : public KTp::AbstractGroupingProxyModel
+class KTPMODELS_EXPORT AccountsTreeProxyModel : public KTp::AbstractGroupingProxyModel
 {
     Q_OBJECT
 public:

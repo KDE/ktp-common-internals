@@ -23,11 +23,11 @@
 #include <QComboBox>
 #include <TelepathyQt/Types>
 
-#include <KTp/ktp-export.h>
+#include <KTp/ktpcommoninternals_export.h>
 
 namespace KTp {
 
-class KTP_EXPORT AccountsComboBox : public QComboBox
+class KTPCOMMONINTERNALS_EXPORT AccountsComboBox : public QComboBox
 {
     Q_OBJECT
     Q_DISABLE_COPY(AccountsComboBox)

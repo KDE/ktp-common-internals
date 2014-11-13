@@ -23,7 +23,7 @@
 
 #include <QString>
 
-#include <KTp/ktp-export.h>
+#include <KTp/ktpcommoninternals_export.h>
 
 namespace KTp
 {
@@ -36,12 +36,12 @@ namespace ErrorDictionary
     /**Returns a verbose error message suitable for displaying to the user
         @param dbusErrorName The Telepathy error as specified in http://telepathy.freedesktop.org/spec/errors.html
      */
-    KTP_EXPORT QString displayVerboseErrorMessage(const QString &dbusErrorName);
+    KTPCOMMONINTERNALS_EXPORT QString displayVerboseErrorMessage(const QString &dbusErrorName);
 
     /**Returns a short error message suitable when there is little space
         @param dbusErrorName The Telepathy error as specified in http://telepathy.freedesktop.org/spec/errors.html
      */
-    KTP_EXPORT QString displayShortErrorMessage(const QString &dbusErrorName);
+    KTPCOMMONINTERNALS_EXPORT QString displayShortErrorMessage(const QString &dbusErrorName);
 }
 }
 

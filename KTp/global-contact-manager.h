@@ -26,14 +26,14 @@
 #include <TelepathyQt/Types>
 #include <TelepathyQt/ContactManager>
 
-#include <KTp/ktp-export.h>
+#include <KTp/ktpcommoninternals_export.h>
 #include <KTp/contact.h>
 
 namespace KTp {
 
 class GlobalContactManagerPrivate;
 
-class KTP_EXPORT GlobalContactManager : public QObject
+class KTPCOMMONINTERNALS_EXPORT GlobalContactManager : public QObject
 {
     Q_OBJECT
 public:

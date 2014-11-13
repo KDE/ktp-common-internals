@@ -26,7 +26,7 @@
 
 #include <KLocalizedString>
 #include <KPluginFactory>
-#include <KABC/Addressee>
+#include <KContacts/Addressee>
 
 #include <KPeople/PersonData>
 #include <TelepathyQt/AccountManager>
@@ -48,7 +48,7 @@ QString ImDetailsWidget::label() const
     return i18n("IM");
 }
 
-QWidget* ImDetailsWidget::createDetailsWidget(const KABC::Addressee& person, const KABC::AddresseeList &contacts, QWidget* parent) const
+QWidget* ImDetailsWidget::createDetailsWidget(const KContacts::Addressee& person, const KContacts::AddresseeList &contacts, QWidget* parent) const
 {
     Q_UNUSED(person);
     QWidget *root = new QWidget(parent);
@@ -56,7 +56,7 @@ QWidget* ImDetailsWidget::createDetailsWidget(const KABC::Addressee& person, con
     root->setLayout(layout);
 
     int row = 0;
-    Q_FOREACH(const KABC::Addressee &contact, contacts) {
+    Q_FOREACH(const KContacts::Addressee &contact, contacts) {
         const QString contactId = contact.custom(QLatin1String("telepathy"), QLatin1String("contactId"));
         const QString accountPath = contact.custom(QLatin1String("telepathy"), QLatin1String("accountPath")); //probably unused till we fix everything properly
 
@@ -84,3 +84,4 @@ QWidget* ImDetailsWidget::createDetailsWidget(const KABC::Addressee& person, con
     }
 }
 
+#include "imdetailswidget.moc"

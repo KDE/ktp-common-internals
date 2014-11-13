@@ -25,9 +25,9 @@
 #include <QtAlgorithms>
 
 #include <KAction>
-#include <KIcon>
 #include <KStatusBar>
 #include <KToolBar>
+#include <KLocalizedString>
 
 MainWindow::MainWindow(QWidget *parent)
     : KXmlGuiWindow(parent)
@@ -42,7 +42,7 @@ MainWindow::MainWindow(QWidget *parent)
     Tp::PendingReady *pendingReady = m_AccountManager->becomeReady();
     connect(pendingReady, SIGNAL(finished(Tp::PendingOperation*)), this, SLOT(onAccountManagerBecameReady(Tp::PendingOperation*)));
 
-    KAction *saveLogAction = new KAction(KIcon(QLatin1String("document-save-as"), KIconLoader::global()), i18n("Save Log"), this);
+    KAction *saveLogAction = new KAction(QIcon::fromTheme(QLatin1String("document-save-as")), i18n("Save Log"), this);
     saveLogAction->setToolTip(i18nc("Toolbar icon tooltip", "Save log of the current tab"));
     toolBar()->addAction(saveLogAction);
 
@@ -63,7 +63,7 @@ void MainWindow::saveLogFile()
 void MainWindow::onAccountManagerBecameReady(Tp::PendingOperation* op)
 {
     if (op->isError()) {
-        kError() << "Failed to initialize Tp::AccountManager"
+        qCritical() << "Failed to initialize Tp::AccountManager"
                  << "Error was:" << op->errorName() << "-" << op->errorMessage();
     } else {
         QSet<QString> connectionManagers;

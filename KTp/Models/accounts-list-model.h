@@ -26,15 +26,13 @@
 
 #include <TelepathyQt/Account>
 
-#include <KTp/ktp-export.h>
+#include <KTp/Models/ktpmodels_export.h>
 #include <KTp/types.h>
-
-class KIcon;
 
 namespace KTp
 {
 
-class KTP_EXPORT AccountsListModel : public QAbstractListModel
+class KTPMODELS_EXPORT AccountsListModel : public QAbstractListModel
 {
     Q_OBJECT
     Q_DISABLE_COPY(AccountsListModel);
@@ -71,7 +69,7 @@ private:
     Private * const d;
 
     const QString connectionStateString(const Tp::AccountPtr &account) const;
-    const KIcon connectionStateIcon(const Tp::AccountPtr &account) const;
+    const QIcon connectionStateIcon(const Tp::AccountPtr &account) const;
     const QString connectionStatusReason(const Tp::AccountPtr &account) const;
 };
 

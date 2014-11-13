@@ -20,9 +20,8 @@
 #define KTP_ACTIONS_H
 
 #include <TelepathyQt/Types>
-#include <KUrl>
 
-#include <KTp/ktp-export.h>
+#include <KTp/ktpcommoninternals_export.h>
 
 namespace Tp {
 class PendingChannelRequest;
@@ -33,54 +32,54 @@ namespace KTp {
 
 namespace Actions {
 
-    typedef QList<KUrl> DocumentList;
+    typedef QList<QUrl> DocumentList;
 
-    KTP_EXPORT Tp::PendingChannelRequest* startChat(const Tp::AccountPtr &account,
+    KTPCOMMONINTERNALS_EXPORT Tp::PendingChannelRequest* startChat(const Tp::AccountPtr &account,
                                                     const QString &contactIdentifier,
                                                     bool delegateToPreferredHandler = true);
 
-    KTP_EXPORT Tp::PendingChannelRequest* startChat(const Tp::AccountPtr &account,
+    KTPCOMMONINTERNALS_EXPORT Tp::PendingChannelRequest* startChat(const Tp::AccountPtr &account,
                                                     const Tp::ContactPtr &contact,
                                                     bool delegateToPreferredHandler = true);
 
-    KTP_EXPORT Tp::PendingChannelRequest* startGroupChat(const Tp::AccountPtr &account,
+    KTPCOMMONINTERNALS_EXPORT Tp::PendingChannelRequest* startGroupChat(const Tp::AccountPtr &account,
                                                          const QString &roomName);
 
-    KTP_EXPORT Tp::PendingChannelRequest* startAudioCall(const Tp::AccountPtr &account,
+    KTPCOMMONINTERNALS_EXPORT Tp::PendingChannelRequest* startAudioCall(const Tp::AccountPtr &account,
                                                          const Tp::ContactPtr &contact);
 
-    KTP_EXPORT Tp::PendingChannelRequest* startAudioVideoCall(const Tp::AccountPtr &account,
+    KTPCOMMONINTERNALS_EXPORT Tp::PendingChannelRequest* startAudioVideoCall(const Tp::AccountPtr &account,
                                                               const Tp::ContactPtr &contact);
 
-    KTP_EXPORT Tp::PendingChannelRequest* startDesktopSharing(const Tp::AccountPtr &account,
+    KTPCOMMONINTERNALS_EXPORT Tp::PendingChannelRequest* startDesktopSharing(const Tp::AccountPtr &account,
                                                               const Tp::ContactPtr &contact);
 
-    KTP_EXPORT Tp::PendingChannelRequest* startFileTransfer(const Tp::AccountPtr &account,
+    KTPCOMMONINTERNALS_EXPORT Tp::PendingChannelRequest* startFileTransfer(const Tp::AccountPtr &account,
                                                             const Tp::ContactPtr &contact,
                                                             const QString &filePath);
 
-    KTP_EXPORT Tp::PendingOperation* startFileTransfer(const Tp::AccountPtr &account,
+    KTPCOMMONINTERNALS_EXPORT Tp::PendingOperation* startFileTransfer(const Tp::AccountPtr &account,
                                                        const Tp::ContactPtr &contact,
                                                        const QUrl &url);
 
-    KTP_EXPORT Tp::PendingChannelRequest* startCollaborativeEditing(const Tp::AccountPtr& account,
+    KTPCOMMONINTERNALS_EXPORT Tp::PendingChannelRequest* startCollaborativeEditing(const Tp::AccountPtr& account,
                                                                     const Tp::ContactPtr& contact,
                                                                     const DocumentList& documents,
                                                                     bool needOpenEditor=false);
 
 
-    KTP_EXPORT Tp::PendingChannelRequest* startCollaborativeEditing(const Tp::AccountPtr& account,
+    KTPCOMMONINTERNALS_EXPORT Tp::PendingChannelRequest* startCollaborativeEditing(const Tp::AccountPtr& account,
                                                                     const QString& chatroom,
                                                                     const DocumentList& documents,
                                                                     bool needOpenEditor=false);
 
-    KTP_EXPORT void openLogViewer(const Tp::AccountPtr &account,
+    KTPCOMMONINTERNALS_EXPORT void openLogViewer(const Tp::AccountPtr &account,
                                   const Tp::ContactPtr &contact);
 
-    KTP_EXPORT void openLogViewer(const Tp::AccountPtr &account,
+    KTPCOMMONINTERNALS_EXPORT void openLogViewer(const Tp::AccountPtr &account,
                                   const QString &targetId);
 
-    KTP_EXPORT void openLogViewer(const QUrl &uri);
+    KTPCOMMONINTERNALS_EXPORT void openLogViewer(const QUrl &uri);
 
 
 } /* namespace Actions */

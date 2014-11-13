@@ -22,14 +22,14 @@
 #include <TelepathyQt/PendingOperation>
 #include <TelepathyQt/Account>
 
-#include <KTp/ktp-export.h>
+#include <KTp/ktpcommoninternals_export.h>
 
 namespace KTp
 {
 namespace WalletUtils
 {
-    KTP_EXPORT Tp::PendingOperation * setAccountPassword(const Tp::AccountPtr &account, const QString &password);
-    KTP_EXPORT Tp::PendingOperation * removeAccountPassword(const Tp::AccountPtr &account);
+    KTPCOMMONINTERNALS_EXPORT Tp::PendingOperation * setAccountPassword(const Tp::AccountPtr &account, const QString &password);
+    KTPCOMMONINTERNALS_EXPORT Tp::PendingOperation * removeAccountPassword(const Tp::AccountPtr &account);
 }
 }
 

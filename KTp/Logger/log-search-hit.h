@@ -21,7 +21,7 @@
 #define KTP_LOGSEARCHHIT_H
 
 #include <TelepathyQt/Types>
-#include <KTp/ktp-export.h>
+#include <KTp/ktpcommoninternals_export.h>
 
 namespace KTp {
 
@@ -36,7 +36,7 @@ class LogEntity;
  * @since 0.7
  * @author Daniel Vrátil <dvratil@redhat.com>
  */
-class KTP_EXPORT LogSearchHit
+class KTPCOMMONINTERNALS_EXPORT LogSearchHit
 {
   public:
     /**

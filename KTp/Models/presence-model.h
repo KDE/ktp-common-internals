@@ -26,11 +26,12 @@
 #include <KConfigGroup>
 
 #include <KTp/presence.h>
+#include "ktpmodels_export.h"
 
 namespace KTp
 {
 
-class KTP_EXPORT PresenceModel : public QAbstractListModel
+class KTPMODELS_EXPORT PresenceModel : public QAbstractListModel
 {
     Q_OBJECT
     Q_PROPERTY(int count READ rowCount NOTIFY countChanged)

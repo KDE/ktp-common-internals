@@ -1,24 +1,36 @@
 project(ktp-common-internals)
 
-cmake_minimum_required (VERSION 2.6.3 FATAL_ERROR)
+cmake_minimum_required (VERSION 2.8.12 FATAL_ERROR)
 
+find_package(ECM 0.0.11 REQUIRED NO_MODULE)
 set (CMAKE_MODULE_PATH
      "${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules"
-     ${CMAKE_MODULE_PATH}
+     ${ECM_MODULE_PATH} ${ECM_KDE_MODULE_DIR}
 )
 cmake_policy(SET CMP0002 OLD)
 
-set (KTP_VERSION "0.8.80")
-# Bump for every 0.x release, or whenever BC changes
-set (KTP_SONUMBER 8) # Bumped for 0.9
-set (KTP_MESSAGE_FILTER_FRAMEWORK_VERSION "4")
+find_package (Qt5 REQUIRED CONFIG COMPONENTS
+              Qml
+              Test)
 
-find_package (KDE4 REQUIRED)
-find_package (TelepathyQt4 0.9.5 REQUIRED)
-find_package (TelepathyQt4Service 0.9.5 REQUIRED)
-find_package (TelepathyLoggerQt4)
-find_package (KPeople 0.2.1)
-find_package (KdepimLibs)
+find_package (KF5 REQUIRED COMPONENTS 
+              CoreAddons
+              KCMUtils
+              NotifyConfig
+              TextEditor
+              Wallet
+              Config
+              KDELibs4Support)
+
+set(REQUIRED_TPQT_VERSION 0.9.2.1)
+
+find_package (TelepathyQt5 ${REQUIRED_TPQT_VERSION} REQUIRED)
+find_package (TelepathyQt5Service ${REQUIRED_TPQT_VERSION} REQUIRED) #used for the otr-proxy
+find_package (TelepathyLoggerQt5 QUIET)
+find_package (KF5People 0.5)
+
+find_package (KAccounts)
+find_package (AccountsQt5 1.10 CONFIG)
 find_package (LibOTR 4.0.0)
 find_package (Libgcrypt)
 
@@ -26,47 +38,69 @@ if (LIBOTR_FOUND AND LIBGCRYPT_FOUND)
     set(OTR_LIBS_FOUND TRUE)
 endif (LIBOTR_FOUND AND LIBGCRYPT_FOUND)
 
-# set some default settings
-include (KDE4Defaults)
+include(KDEInstallDirs)
+include(KDECMakeSettings)
+include(KDECompilerSettings)
+include(ECMPackageConfigHelpers)
+include(ECMMarkNonGuiExecutable)
+include(ECMPackageConfigHelpers)
+include(ECMInstallIcons)
+include(ECMSetupVersion)
+include(CMakePackageConfigHelpers)
+include(WriteBasicConfigVersionFile)
+include(CheckIncludeFiles)
+include(FeatureSummary)
 
-# make some more macros available
-include (MacroLibrary)
+set_package_properties(KF5People PROPERTIES DESCRIPTION "Support for KDE Contact Aggregation"
+                       URL "https://projects.kde.org/libkpeople"
+                       TYPE OPTIONAL
+                      )
+set_package_properties(TelepathyLoggerQt5 PROPERTIES DESCRIPTION "Qt bindings for TelepathyLogger. This is needed to provide access to chat logs. HIGHLY recommended"
+                       URL "http://projects.kde.org/telepathy-logger-qt"
+                       TYPE OPTIONAL
+                      )
+set_package_properties(LibOTR PROPERTIES DESCRIPTION "Required for OTR support" TYPE OPTIONAL)
+set_package_properties(Libgcrypt PROPERTIES DESCRIPTION "Required for OTR support" TYPE OPTIONAL)
 
-macro_log_feature(TELEPATHY_LOGGER_QT4_FOUND "TelepatyLoggerQt4" "Qt bindings for TelepathyLogger. This is needed to provide access to chat logs. HIGHLY recommended" "http://projects.kde.org/telepathy-logger-qt" FALSE "" "")
-macro_log_feature(KPEOPLE_FOUND "KPeople" "Support for KDE Contact Aggregation" "https://projects.kde.org/libkpeople" FALSE "" "")
-macro_log_feature(KDEPIMLIBS_FOUND "KDE-PIM Libraries" "Support for Contact Aggregation" "https://projects.kde.org/kdepimlibs" FALSE "" "")
-macro_log_feature(LIBOTR_FOUND "LibOtr" "Required for OTR support" "" FALSE "" "")
-macro_log_feature(LIBGCRYPT_FOUND "LibGCrypt" "Required for OTR support" "" FALSE "" "")
-macro_display_feature_log()
+# Bump for every 0.x release, or whenever BC changes
+set (KTP_SONUMBER 9)
+set (KTP_VERSION "0.${KTP_SONUMBER}.0")
+set (KTP_MESSAGE_FILTER_FRAMEWORK_VERSION "5")
 
-
-add_definitions (${KDE4_DEFINITIONS}
+add_definitions(-DKTP_MESSAGE_FILTER_FRAMEWORK_VERSION=\"${KTP_MESSAGE_FILTER_FRAMEWORK_VERSION}\")
+add_definitions(-DTRANSLATION_DOMAIN=\"ktp-common-internals\")
+add_definitions (
                  -DQT_NO_CAST_FROM_ASCII
                  -DQT_NO_KEYWORDS
                  -std=c++11
 )
 
-include_directories (${KDE4_INCLUDES}
+include_directories (
                      ${CMAKE_CURRENT_BINARY_DIR}
                      ${CMAKE_CURRENT_SOURCE_DIR}
-                     ${TELEPATHY_QT4_INCLUDE_DIR}
 )
 
-if (TELEPATHY_LOGGER_QT4_FOUND)
-    add_definitions(${TELEPATHY_LOGGER_QT4_DEFINITIONS}
+if (TELEPATHY_LOGGER_QT5_FOUND)
+    add_definitions(${TELEPATHY_LOGGER_QT5_DEFINITIONS}
                     -DHAVE_TPLOGGERQT)
-    include_directories(${TELEPATHY_LOGGER_QT4_INCLUDE_DIRS})
-endif (TELEPATHY_LOGGER_QT4_FOUND)
+    include_directories(${TELEPATHY_LOGGER_QT5_INCLUDE_DIRS})
+endif ()
 
-if (KPEOPLE_FOUND AND KDEPIMLIBS_FOUND)
-    include_directories (${KDEPIMLIBS_INCLUDE_DIRS})
+if (KF5People_FOUND)
     add_definitions(-DHAVE_KPEOPLE)
     add_subdirectory(kpeople)
-endif (KPEOPLE_FOUND AND KDEPIMLIBS_FOUND)
+endif ()
 
-configure_file(version.h.in ${CMAKE_CURRENT_BINARY_DIR}/version.h @ONLY)
+#If we find KAccounts library, build the plugin for it
+if (KACCOUNTS_FOUND AND AccountsQt5_FOUND)
+    include_directories(${KACCOUNTS_INCLUDE_DIRS} ${ACCOUNTSQT_INCLUDE_DIRS})
+    add_subdirectory(kaccounts)
+endif ()
 
-set(KTP_GLOBAL_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/global.cpp)
+ecm_setup_version(${KTP_VERSION} VARIABLE_PREFIX KTP
+                        VERSION_HEADER "${CMAKE_CURRENT_BINARY_DIR}/ktp_version.h"
+                        PACKAGE_VERSION_FILE "${CMAKE_CURRENT_BINARY_DIR}/KTpConfigVersion.cmake"
+                        SOVERSION ${KTP_SONUMBER})
 
 add_subdirectory(KTp)
 add_subdirectory(tools)
@@ -79,6 +113,22 @@ if (OTR_LIBS_FOUND)
     include_directories (${LIBOTR_INCLUDE_DIR}
                          ${LIBGCRYPT_INCLUDE_DIR}
     )
-
     add_subdirectory(otr-proxy)
 endif (OTR_LIBS_FOUND)
+
+set(CMAKECONFIG_INSTALL_DIR "${CMAKECONFIG_INSTALL_PREFIX}/KTp")
+
+ecm_configure_package_config_file("${CMAKE_CURRENT_SOURCE_DIR}/KTpConfig.cmake.in"
+                              "${CMAKE_CURRENT_BINARY_DIR}/KTpConfig.cmake"
+                              INSTALL_DESTINATION  ${CMAKECONFIG_INSTALL_DIR}
+                              )
+
+install(FILES  "${CMAKE_CURRENT_BINARY_DIR}/KTpConfig.cmake"
+               "${CMAKE_CURRENT_BINARY_DIR}/KTpConfigVersion.cmake"
+        DESTINATION "${CMAKECONFIG_INSTALL_DIR}"
+        COMPONENT Devel )
+
+install(EXPORT KTpTargets DESTINATION "${CMAKECONFIG_INSTALL_DIR}"
+        FILE KTpTargets.cmake NAMESPACE KTp:: COMPONENT Devel)
+
+feature_summary(WHAT ALL FATAL_ON_MISSING_REQUIRED_PACKAGES)

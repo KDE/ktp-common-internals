@@ -32,7 +32,7 @@
 #include <TelepathyQt/TextChannel>
 #include <TelepathyQt/PendingChannelRequest>
 
-#include <QDeclarativeEngine>
+#include <QQmlEngine>
 
 TelepathyManager::TelepathyManager(QObject *parent)
     : QObject(parent)
@@ -81,7 +81,7 @@ bool TelepathyManager::registerClient(QObject *client, const QString &name)
     }
 
     //the client registrar will delete the handler when the registrar is deleted.
-    QDeclarativeEngine::setObjectOwnership(client, QDeclarativeEngine::CppOwnership);
+    QQmlEngine::setObjectOwnership(client, QQmlEngine::CppOwnership);
 
     return m_clientRegistrar->registerClient(Tp::AbstractClientPtr(abstractClient), name);
 }
@@ -164,12 +164,12 @@ Tp::PendingOperation* TelepathyManager::startFileTransfer(const Tp::AccountPtr &
 
 bool TelepathyManager::canDial() const
 {
-    return !KStandardDirs::findExe(QLatin1String("ktp-dialout-ui")).isEmpty();
+    return !QStandardPaths::findExecutable(QLatin1String("ktp-dialout-ui")).isEmpty();
 }
 
 bool TelepathyManager::canSendFiles() const
 {
-    return !KStandardDirs::findExe(QLatin1String("ktp-send-file")).isEmpty();
+    return !QStandardPaths::findExecutable(QLatin1String("ktp-send-file")).isEmpty();
 }
 
 void TelepathyManager::openDialUi() const

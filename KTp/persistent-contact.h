@@ -23,14 +23,14 @@
 
 #include "KTp/contact.h"
 
-#include "ktp-export.h"
+#include <KTp/ktpcommoninternals_export.h>
 
 namespace KTp {
 
 /** Object monitors a specific account/contact identifier and will populate it with the most up-to-date contact as connections get destroyed/created
  *
  */
-class KTP_EXPORT PersistentContact : public QObject, public Tp::RefCounted
+class KTPCOMMONINTERNALS_EXPORT PersistentContact : public QObject, public Tp::RefCounted
 {
     Q_OBJECT
 public:
@@ -43,7 +43,7 @@ public:
     /**
      * This does nothing. Do not use
      */
-    void KDE_DEPRECATED setAccountManager(const Tp::AccountManagerPtr &accountManager);
+    void KTPCOMMONINTERNALS_DEPRECATED setAccountManager(const Tp::AccountManagerPtr &accountManager);
 
     /** The contact object for these ID
       @warning This may be null whilst loading or if you are offline

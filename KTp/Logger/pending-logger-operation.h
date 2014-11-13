@@ -21,14 +21,14 @@
 #define KTP_PENDINGLOGGEROPERATION_H
 
 #include <QtCore/QObject>
-#include <KTp/ktp-export.h>
+#include <KTp/ktpcommoninternals_export.h>
 
 namespace KTp {
 
 class AbstractLoggerPlugin;
 class LogManager;
 
-class KTP_EXPORT PendingLoggerOperation : public QObject
+class KTPCOMMONINTERNALS_EXPORT PendingLoggerOperation : public QObject
 {
     Q_OBJECT
 

@@ -21,7 +21,7 @@
 #define KTP_PENDINGLOGGERDATES_H
 
 #include <KTp/Logger/pending-logger-operation.h>
-#include <KTp/ktp-export.h>
+#include <KTp/ktpcommoninternals_export.h>
 
 #include <TelepathyQt/Types>
 
@@ -40,7 +40,7 @@ class LogEntity;
  * @since 0.7
  * @author Daniel Vrátil <dvratil@redhat.com>
  */
-class KTP_EXPORT PendingLoggerDates : public KTp::PendingLoggerOperation
+class KTPCOMMONINTERNALS_EXPORT PendingLoggerDates : public KTp::PendingLoggerOperation
 {
     Q_OBJECT
 

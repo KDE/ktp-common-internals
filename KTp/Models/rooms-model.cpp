@@ -18,8 +18,8 @@
  */
 
 #include "rooms-model.h"
-#include <KIcon>
 #include <KLocale>
+#include <QIcon>
 
 // RoomsModel
 KTp::RoomsModel::RoomsModel(QObject *parent): QAbstractListModel(parent)
@@ -64,7 +64,7 @@ QVariant KTp::RoomsModel::data(const QModelIndex &index, int role) const
         case Qt::DisplayRole:
         case Qt::DecorationRole:
             if (roomInfo.info.value(QLatin1String("password")).toBool()) {
-                return KIcon(QLatin1String("object-locked"));
+                return QIcon::fromTheme(QStringLiteral("object-locked"));
             } else {
                 return QVariant();
             }
@@ -117,9 +117,9 @@ QVariant KTp::RoomsModel::headerData(int section, Qt::Orientation orientation, i
         case Qt::DecorationRole:
             switch (section) {
             case PasswordColumn:
-                return KIcon(QLatin1String("object-locked"));
+                return QIcon::fromTheme(QStringLiteral("object-locked"));
             case MembersColumn:
-                return KIcon(QLatin1String("meeting-participant"));
+                return QIcon::fromTheme(QStringLiteral("meeting-participant"));
             }
         }
     }
@@ -208,9 +208,9 @@ QVariant KTp::FavoriteRoomsModel::data(const QModelIndex &index, int role) const
         switch (index.column()) {
         case BookmarkColumn:
             if (room.value(QLatin1String("is-bookmarked")).toBool()) {
-                return KIcon(QLatin1String("bookmarks"));
+                return QIcon::fromTheme(QStringLiteral("bookmarks"));
             } else {
-                return KIcon(KIcon(QLatin1String("bookmarks")).pixmap(32, 32, QIcon::Disabled));
+                return QIcon(QIcon::fromTheme(QStringLiteral("bookmarks")).pixmap(32, 32, QIcon::Disabled));
             }
         case HandleNameColumn:
         case AccountIdentifierColumn:

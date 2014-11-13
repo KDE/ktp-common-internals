@@ -23,6 +23,7 @@
 
 #include <KLocalizedString>
 #include <KIconLoader>
+#include <QIcon>
 
 namespace KTp
 {
@@ -37,23 +38,21 @@ Presence::Presence(const Tp::Presence &presence) :
 {
 }
 
-KIcon Presence::icon(bool useImIcons) const
+QIcon Presence::icon(bool useImIcons) const
 {
     const QString &name(iconName(useImIcons));
     if (!name.isEmpty()) {
-        return KIcon(name);
+        return QIcon::fromTheme(name);
     }
-    return KIcon();
+    return QIcon();
 }
-KIcon Presence::icon(QStringList overlays, bool useImIcons) const
+QIcon Presence::icon(QStringList overlays, bool useImIcons) const
 {
     const QString &name(iconName(useImIcons));
     if (!name.isEmpty()) {
-        return KIcon(name,
-                     KIconLoader::global(),
-                     overlays);
+        return KIconLoader::global()->loadIcon(name, KIconLoader::NoGroup, 0, KIconLoader::DefaultState, overlays);
     }
-    return KIcon();
+    return QIcon();
 }
 
 QString Presence::iconName(bool useImIcons) const

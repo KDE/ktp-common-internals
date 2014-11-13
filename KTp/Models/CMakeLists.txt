@@ -1,9 +1,4 @@
-include_directories (${CMAKE_CURRENT_BINARY_DIR}
-                     ${CMAKE_CURRENT_SOURCE_DIR}
-)
-
 set (ktp_models_private_SRCS
-    ${KTP_GLOBAL_SOURCES}
     abstract-grouping-proxy-model.cpp
     accounts-list-model.cpp
     accounts-tree-proxy-model.cpp
@@ -27,16 +22,10 @@ set (ktp_models_private_HDRS
     presence-model.h
     text-channel-watcher-proxy-model.h
     rooms-model.h
+    ${CMAKE_CURRENT_BINARY_DIR}/ktpmodels_export.h
 )
 
-set (ktp_models_private_LIBS
-                       ${KDE4_KDECORE_LIBS}
-                       ${TELEPATHY_QT4_LIBRARIES}
-                       ${KDE4_KDEUI_LIBS}
-                       ktpcommoninternalsprivate
-)
-
-if (KPEOPLE_FOUND)
+if (KF5People_FOUND)
     add_definitions(-DHAVE_KPEOPLE)
 
     set (ktp_models_private_SRCS
@@ -46,29 +35,40 @@ if (KPEOPLE_FOUND)
 
     set (ktp_models_private_LIBS
          ${ktp_models_private_LIBS}
-         ${KPEOPLE_LIBS}
-         ${KDEPIMLIBS_KABC_LIBS}
-         )
-endif (KPEOPLE_FOUND)
+         KF5::People
+        )
+endif ()
 
-kde4_add_library (ktpmodelsprivate SHARED
+add_library (KTpModels
                  ${ktp_models_private_SRCS}
 )
+add_library (KTp::Models ALIAS KTpModels)
+
+target_include_directories(KTpModels PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>)
+
+generate_export_header(KTpModels)
 
 #Raise SOVERSION for every 0.x cycle
-set_target_properties(ktpmodelsprivate PROPERTIES
-                                                VERSION ${KTP_VERSION}
-                                                SOVERSION ${KTP_SONUMBER}
-                                                DEFINE_SYMBOL MAKE_KTP_LIB)
+set_target_properties(KTpModels PROPERTIES
+                                VERSION ${KTP_VERSION}
+                                SOVERSION ${KTP_SONUMBER}
+                                DEFINE_SYMBOL MAKE_KTP_LIB
+                                EXPORT_NAME Models
+)
 
-target_link_libraries (ktpmodelsprivate
-                       ${ktp_models_private_LIBS}
+target_link_libraries (KTpModels
+    PUBLIC
+        KTp::CommonInternals
+    PRIVATE
+        KF5::KDELibs4Support
+        ${ktp_models_private_LIBS}
 )
 
 
 
-install (TARGETS ktpmodelsprivate
-         DESTINATION ${LIB_INSTALL_DIR}
+install (TARGETS KTpModels
+         EXPORT KTpTargets
+         ${INSTALL_TARGETS_DEFAULT_ARGS}
 )
 
 install (FILES ${ktp_models_private_HDRS}

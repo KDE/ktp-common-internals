@@ -27,7 +27,6 @@
 #include "pending-logger-entities-impl.h"
 #include "pending-logger-search-impl.h"
 
-#include <KGlobal>
 #include <KService>
 #include <KServiceTypeTrader>
 #include <KPluginInfo>

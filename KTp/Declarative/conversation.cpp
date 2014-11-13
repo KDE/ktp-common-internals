@@ -127,11 +127,13 @@ QIcon Conversation::avatar() const
     if (d->isGroupChat) {
         return QIcon();
     } else {
-        QString path = d->targetContact->avatarData().fileName;
+        const QString path = d->targetContact->avatarData().fileName;
+        QIcon icon;
         if (path.isEmpty()) {
-            path = QLatin1String("im-user");
-        }
-        return KIcon(path);
+            icon = QIcon::fromTheme(QStringLiteral("im-user"));
+        } else
+            icon = QIcon(path);
+        return icon;
     }
 }
 

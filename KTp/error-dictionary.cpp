@@ -24,7 +24,6 @@
 #include <TelepathyQt/Constants>
 
 #include <KLocalizedString>
-#include <KGlobal>
 #include <KLocale>
 #include <KDebug>
 

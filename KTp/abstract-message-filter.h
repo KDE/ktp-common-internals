@@ -23,7 +23,7 @@
 #include <KTp/outgoing-message.h>
 
 #include <KTp/message-context.h>
-#include <KTp/ktp-export.h>
+#include <KTp/ktpcommoninternals_export.h>
 
 #include <TelepathyQt/Account>
 #include <TelepathyQt/TextChannel>
@@ -31,7 +31,7 @@
 namespace KTp
 {
 
-class KTP_EXPORT AbstractMessageFilter : public QObject
+class KTPCOMMONINTERNALS_EXPORT AbstractMessageFilter : public QObject
 {
     Q_OBJECT
 

@@ -25,7 +25,7 @@
 namespace KTp
 {
 
-class KTP_EXPORT ContactGridWidget : public ContactViewWidget
+class KTPCOMMONINTERNALS_EXPORT ContactGridWidget : public ContactViewWidget
 {
     Q_OBJECT
     Q_DISABLE_COPY(ContactGridWidget)

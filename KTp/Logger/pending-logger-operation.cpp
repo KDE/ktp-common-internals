@@ -82,4 +82,4 @@ QList<AbstractLoggerPlugin*> PendingLoggerOperation::plugins() const
     return LogManager::instance()->d->plugins;
 }
 
-#include "pending-logger-operation.moc"
+#include "moc_pending-logger-operation.cpp"

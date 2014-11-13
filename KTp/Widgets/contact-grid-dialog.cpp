@@ -22,10 +22,10 @@
 
 #include "contact-grid-dialog.h"
 
-#include <KDE/KLineEdit>
-#include <KDE/KPushButton>
-#include <KDE/KLocalizedString>
-#include <KDE/KDebug>
+#include <KLineEdit>
+#include <KPushButton>
+#include <KLocalizedString>
+#include <KDebug>
 
 #include <TelepathyQt/AccountManager>
 #include <TelepathyQt/AccountFactory>
@@ -55,7 +55,7 @@ public:
     KTp::ContactsListModel *contactsModel;
     KTp::ContactGridWidget *contactGridWidget;
 
-public Q_SLOTS:
+public:
     void _k_onAccountManagerReady();
     void _k_onSelectionChanged();
 };
@@ -111,7 +111,7 @@ KTp::ContactGridDialog::ContactGridDialog(QWidget *parent) :
 
 
     d->contactGridWidget = new KTp::ContactGridWidget(d->contactsModel, this);
-    d->contactGridWidget->contactFilterLineEdit()->setClickMessage(i18n("Search in Contacts..."));
+    d->contactGridWidget->contactFilterLineEdit()->setPlaceholderText(i18n("Search in Contacts..."));
     d->contactGridWidget->filter()->setPresenceTypeFilterFlags(KTp::ContactsFilterModel::ShowOnlyConnected);
 
     setMainWidget(d->contactGridWidget);
@@ -149,4 +149,4 @@ KTp::ContactsFilterModel* KTp::ContactGridDialog::filter() const
 }
 
 
-#include "contact-grid-dialog.moc"
+#include "moc_contact-grid-dialog.cpp"

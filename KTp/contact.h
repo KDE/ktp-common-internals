@@ -22,11 +22,11 @@
 #include <QVariant>
 #include <TelepathyQt/Contact>
 #include <KTp/presence.h>
-#include <KTp/ktp-export.h>
+#include <KTp/ktpcommoninternals_export.h>
 
 
 namespace KTp{
-class KTP_EXPORT Contact : public Tp::Contact
+class KTPCOMMONINTERNALS_EXPORT Contact : public Tp::Contact
 {
     Q_OBJECT
 public:

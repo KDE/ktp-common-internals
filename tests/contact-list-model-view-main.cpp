@@ -22,9 +22,7 @@
 #include "model-view.h"
 
 #include <KAboutData>
-#include <KCmdLineArgs>
-#include <KDebug>
-#include <KApplication>
+#include <KLocalizedString>
 
 #include <TelepathyQt/Types>
 #include <TelepathyQt/Debug>
@@ -35,6 +33,7 @@
 #include <TelepathyQt/TextChannel>
 
 #include <QDBusConnection>
+#include <QApplication>
 
 #include "KTp/Models/contacts-list-model.h"
 #include "KTp/contact-factory.h"
@@ -43,17 +42,20 @@
 
 int main(int argc, char *argv[])
 {
-    KAboutData aboutData("telepathy-kde-models-test-ui",
-                         0,
-                         ki18n("Telepathy KDE Models Test UI"),
-                         "0.1",
-                         ki18n("Telepathy KDE Models Test UI"),
-                         KAboutData::License_LGPL,
-                         ki18n("(C) 2011 Collabora Ltd"));
+    KAboutData aboutData(QStringLiteral("telepathy-kde-models-test-ui"),
+                         i18n("Telepathy KDE Models Test UI"),
+                         QStringLiteral("0.1"),
+                         i18n("Telepathy KDE Models Test UI"),
+                         KAboutLicense::LGPL,
+                         i18n("(C) 2011 Collabora Ltd"));
 
-    KCmdLineArgs::init(argc, argv, &aboutData);
+    KAboutData::setApplicationData(aboutData);
+    QApplication app(argc, argv);
 
-    KApplication app;
+    QCommandLineParser parser;
+    aboutData.setupCommandLine(&parser);
+    parser.process(app);
+    aboutData.processCommandLine(&parser);
 
     Tp::registerTypes();
     Tp::enableDebug(false);

@@ -1,4 +1,4 @@
-set (ktploggerplugin_tplogger_SRCS
+add_library (ktploggerplugin_tplogger MODULE
      tp-logger-plugin.cpp
      pending-tp-logger-dates.cpp
      pending-tp-logger-entities.cpp
@@ -7,17 +7,9 @@ set (ktploggerplugin_tplogger_SRCS
      utils.cpp
 )
 
-kde4_add_plugin (ktploggerplugin_tplogger
-                 ${ktploggerplugin_tplogger_SRCS}
-)
-
 target_link_libraries (ktploggerplugin_tplogger
-    ktpcommoninternalsprivate
-    ktploggerprivate
-    ${QT_LIBRARIES}
-    ${KDE4_KDECORE_LIBS}
-    ${TELEPATHY_QT4_LIBRARIES}
-    ${TELEPATHY_LOGGER_QT4_LIBRARIES}
+    KTp::CommonInternals
+    KTp::Logger
 )
 
 # Install:

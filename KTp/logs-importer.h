@@ -22,7 +22,7 @@
 #include <QtCore/QObject>
 #include <TelepathyQt/Types>
 
-#include <KTp/ktp-export.h>
+#include <KTp/ktpcommoninternals_export.h>
 
 namespace KTp
 {
@@ -34,7 +34,7 @@ namespace KTp
  *
  * Currently the importer supports AIM, WML, ICQ, Jabber, GaduGadu and Yahoo logs.
  */
-class KTP_EXPORT LogsImporter : public QObject
+class KTPCOMMONINTERNALS_EXPORT LogsImporter : public QObject
 {
   Q_OBJECT
 

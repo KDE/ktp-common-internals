@@ -22,7 +22,7 @@
 
 #include <QtCore/QObject>
 
-#include <KTp/ktp-export.h>
+#include <KTp/ktpcommoninternals_export.h>
 
 #include <TelepathyQt/Types>
 
@@ -40,7 +40,7 @@ class LogEntity;
  * @since 0.7
  * @author Daniel Vrátil <dvratil@redhat.com>
  */
-class KTP_EXPORT AbstractLoggerPlugin : public QObject
+class KTPCOMMONINTERNALS_EXPORT AbstractLoggerPlugin : public QObject
 {
     Q_OBJECT
 

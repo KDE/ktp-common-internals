@@ -18,7 +18,7 @@
 #ifndef CAPABILITIES_HACK_PRIVATE_H
 #define CAPABILITIES_HACK_PRIVATE_H
 
-#include <KTp/ktp-export.h>
+#include <KTp/ktpcommoninternals_export.h>
 #include <TelepathyQt/CapabilitiesBase>
 
 /*
@@ -29,10 +29,10 @@
 namespace CapabilitiesHackPrivate {
 
 /* Equivalent to caps.audioCalls() */
-KTP_NO_EXPORT bool audioCalls(const Tp::CapabilitiesBase &caps, const QString &cmName);
+KTPCOMMONINTERNALS_NO_EXPORT bool audioCalls(const Tp::CapabilitiesBase &caps, const QString &cmName);
 
 /* Equivalent to caps.videoCalls() */
-KTP_NO_EXPORT bool videoCalls(const Tp::CapabilitiesBase &caps, const QString &cmName);
+KTPCOMMONINTERNALS_NO_EXPORT bool videoCalls(const Tp::CapabilitiesBase &caps, const QString &cmName);
 
 }
 

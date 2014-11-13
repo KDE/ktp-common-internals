@@ -28,7 +28,7 @@
 
 #include <KDebug>
 #include <KIconLoader>
-#include <KABC/Addressee>
+#include <KContacts/Addressee>
 
 #include <QPixmapCache>
 
@@ -58,7 +58,7 @@ QVariant KPeopleTranslationProxy::data(const QModelIndex &proxyIndex, int role) 
 //         return QVariant();
 //     }
 //
-    const KABC::Addressee &contact = mapToSource(proxyIndex).data(KPeople::PersonsModel::PersonVCardRole).value<KABC::Addressee>();
+    const KContacts::Addressee &contact = mapToSource(proxyIndex).data(KPeople::PersonsModel::PersonVCardRole).value<KContacts::Addressee>();
 
     switch (role) {
         case KTp::ContactPresenceTypeRole:
@@ -97,7 +97,7 @@ QVariant KPeopleTranslationProxy::data(const QModelIndex &proxyIndex, int role) 
             return mapToSource(proxyIndex).data(KPeople::PersonsModel::PersonVCardRole);
     }
 
-    const KABC::AddresseeList &contacts = mapToSource(proxyIndex).data(PersonsModel::ContactsVCardRole).value<KABC::AddresseeList>();
+    const KContacts::AddresseeList &contacts = mapToSource(proxyIndex).data(PersonsModel::ContactsVCardRole).value<KContacts::AddresseeList>();
 
     int mostOnlineIndex = 0;
 
@@ -130,13 +130,13 @@ QVariant KPeopleTranslationProxy::data(const QModelIndex &proxyIndex, int role) 
 
 QVariant KPeopleTranslationProxy::dataForKTpContact(const QString &accountPath, const QString &contactId, int role) const
 {
-    KTp::ContactPtr ktpContact = KTp::contactManager()->contactForContactId(accountPath, contactId);
+    if (role == KTp::AccountRole) {
+        return QVariant::fromValue<Tp::AccountPtr>(KTp::contactManager()->accountForAccountPath(accountPath));
+    }
 
+    KTp::ContactPtr ktpContact = KTp::contactManager()->contactForContactId(accountPath, contactId);
     if (!ktpContact.isNull()) {
         switch (role) {
-        case KTp::AccountRole:
-            return QVariant::fromValue<Tp::AccountPtr>(KTp::contactManager()->accountForContact(ktpContact));
-            break;
         case KTp::ContactRole:
             return QVariant::fromValue<KTp::ContactPtr>(ktpContact);
             break;
@@ -163,15 +163,7 @@ QVariant KPeopleTranslationProxy::dataForKTpContact(const QString &accountPath, 
             break;
         }
     }
-    //     } else if (ktpContact.isNull() && role == KTp::AccountRole) {
-    //         QVariant accountPath = mapToSource(proxyIndex).data(PersonsModel::UserRole);
-    //         if (accountPath.type() == QVariant::List) {
-    //             return QVariant::fromValue<Tp::AccountPtr>(imPlugin->accountManager()->accountForObjectPath(accountPath.toList().first().toString()));
-    //         } else {
-    //             return QVariant::fromValue<Tp::AccountPtr>(imPlugin->accountManager()->accountForObjectPath(accountPath.toString()));
-    //         }
-    //     }
-    // //     }
+
     return QVariant();
 }
 
@@ -180,7 +172,7 @@ bool KPeopleTranslationProxy::filterAcceptsRow(int source_row, const QModelIndex
     QModelIndex sourceIndex = sourceModel()->index(source_row, 0, source_parent);
 
     //if no valid presence (not even "offline") .. reject the contact
-    return !sourceIndex.data(KPeople::PersonsModel::PersonVCardRole).value<KABC::Addressee>().custom(QLatin1String("telepathy"), QLatin1String("presence")).isEmpty();
+    return !sourceIndex.data(KPeople::PersonsModel::PersonVCardRole).value<KContacts::Addressee>().custom(QLatin1String("telepathy"), QLatin1String("presence")).isEmpty();
 }
 
 QVariant KPeopleTranslationProxy::translatePresence(const QVariant &presenceName) const

@@ -24,14 +24,12 @@
 
 #include <TelepathyQt/Presence>
 
-#include <KIcon>
-
-#include <KTp/ktp-export.h>
+#include <KTp/ktpcommoninternals_export.h>
 
 namespace KTp
 {
 
-class KTP_EXPORT Presence : public Tp::Presence
+class KTPCOMMONINTERNALS_EXPORT Presence : public Tp::Presence
 {
 public:
     Presence();
@@ -43,7 +41,7 @@ public:
      * \param useImIcons Use im-user-* icons instead of the user-* (i.e. the "pawn" icons instead of the "circles").
      * \return The icon for the current presence.
      */
-    KIcon icon(bool useImIcons = false) const;
+    QIcon icon(bool useImIcons = false) const;
 
     /**
      * \brief Get the icon for the presence with the specified overlays.
@@ -52,7 +50,7 @@ public:
      * \param useImIcons Use im-user-* icons instead of the user-* (i.e. the "pawn" icons instead of the "circles").
      * \return The icon for the current presence.
      */
-    KIcon icon(QStringList overlays, bool useImIcons = false) const;
+    QIcon icon(QStringList overlays, bool useImIcons = false) const;
 
     /**
      * \brief Get the name of the icon for the presence.

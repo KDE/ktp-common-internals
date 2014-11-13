@@ -20,7 +20,7 @@
 
 #include <QAction>
 
-#include <KIcon>
+#include <QIcon>
 #include <KLocalizedString>
 #include <KPluginFactory>
 #include <KFileDialog>
@@ -48,9 +48,9 @@ enum IMActionType {
 class IMAction : public QAction {
     Q_OBJECT
 public:
-    IMAction(const QString &text, const KIcon &icon, const KTp::ContactPtr &contact,
+    IMAction(const QString &text, const QIcon &icon, const KTp::ContactPtr &contact,
              const Tp::AccountPtr &account, IMActionType type, QObject *parent);
-    IMAction(const QString &text, const KIcon &icon, const QUrl &uri,
+    IMAction(const QString &text, const QIcon &icon, const QUrl &uri,
              IMActionType type, QObject *parent);
     KTp::ContactPtr contact() const;
     Tp::AccountPtr account() const;
@@ -63,7 +63,7 @@ private:
     IMActionType m_type;
 };
 
-IMAction::IMAction(const QString &text, const KIcon &icon, const KTp::ContactPtr &contact,
+IMAction::IMAction(const QString &text, const QIcon &icon, const KTp::ContactPtr &contact,
                    const Tp::AccountPtr &account, IMActionType type, QObject *parent):
     QAction(icon, text, parent),
     m_contact(contact),
@@ -72,7 +72,7 @@ IMAction::IMAction(const QString &text, const KIcon &icon, const KTp::ContactPtr
 {
 }
 
-IMAction::IMAction(const QString &text, const KIcon &icon, const QUrl &uri,
+IMAction::IMAction(const QString &text, const QIcon &icon, const QUrl &uri,
                    IMActionType type, QObject *parent):
     QAction(icon, text, parent),
     m_uri(uri),
@@ -106,8 +106,8 @@ KPeopleActionsPlugin::KPeopleActionsPlugin(QObject *parent, const QVariantList &
     Q_UNUSED(args);
 }
 
-QList<QAction*> KPeopleActionsPlugin::actionsForPerson(const KABC::Addressee &person,
-                                                       const KABC::AddresseeList &contacts,
+QList<QAction*> KPeopleActionsPlugin::actionsForPerson(const KContacts::Addressee &person,
+                                                       const KContacts::AddresseeList &contacts,
                                                        QObject *parent) const
 {
     QList<QAction*> actions;
@@ -134,7 +134,7 @@ QList<QAction*> KPeopleActionsPlugin::actionsForPerson(const KABC::Addressee &pe
 
     if (contact->textChatCapability()) {
         QAction *action = new IMAction(i18n("Start Chat Using %1...", account->displayName()),
-                            KIcon(QLatin1String("text-x-generic")),
+                            QIcon::fromTheme(QStringLiteral("text-x-generic")),
                             contact,
                             account,
                             TextChannel,
@@ -144,7 +144,7 @@ QList<QAction*> KPeopleActionsPlugin::actionsForPerson(const KABC::Addressee &pe
     }
     if (contact->audioCallCapability()) {
         QAction *action = new IMAction(i18n("Start Audio Call Using %1...", account->displayName()),
-                            KIcon(QLatin1String("audio-headset")),
+                            QIcon::fromTheme(QStringLiteral("audio-headset")),
                             contact,
                             account,
                             AudioChannel,
@@ -154,7 +154,7 @@ QList<QAction*> KPeopleActionsPlugin::actionsForPerson(const KABC::Addressee &pe
     }
     if (contact->videoCallCapability()) {
         QAction *action = new IMAction(i18n("Start Video Call Using %1...", account->displayName()),
-                            KIcon(QLatin1String("camera-web")),
+                            QIcon::fromTheme(QStringLiteral("camera-web")),
                             contact,
                             account,
                             VideoChannel,
@@ -165,7 +165,7 @@ QList<QAction*> KPeopleActionsPlugin::actionsForPerson(const KABC::Addressee &pe
 
     if (contact->fileTransferCapability()) {
         QAction *action = new IMAction(i18n("Send Files Using %1...", account->displayName()),
-                                    KIcon(QLatin1String("mail-attachment")),
+                                    QIcon::fromTheme(QStringLiteral("mail-attachment")),
                                     contact,
                                     account,
                                     FileTransfer,
@@ -175,7 +175,7 @@ QList<QAction*> KPeopleActionsPlugin::actionsForPerson(const KABC::Addressee &pe
     }
     if (contact->collaborativeEditingCapability()) {
         QAction *action = new IMAction(i18n("Collaboratively edit a document Using %1...", account->displayName()),
-                                    KIcon(QLatin1String("document-edit")),
+                                    QIcon::fromTheme(QStringLiteral("document-edit")),
                                     contact,
                                     account,
                                     CollabEditing,
@@ -186,7 +186,7 @@ QList<QAction*> KPeopleActionsPlugin::actionsForPerson(const KABC::Addressee &pe
 
     //FIXME-KPEOPLE
 //     QAction *action = new IMAction(i18n("Open Log Viewer..."),
-//                                    KIcon(QLatin1String("documentation")),
+//                                    QIcon::fromTheme(QStringLiteral("documentation")),
 //                                    personData->uri(),
 //                                    LogViewer,
 //                                    parent);
@@ -213,7 +213,7 @@ void KPeopleActionsPlugin::onActionTriggered()
             KTp::Actions::startAudioVideoCall(account, contact);
             break;
         case FileTransfer: {
-            const QStringList fileNames = KFileDialog::getOpenFileNames(KUrl("kfiledialog:///FileTransferLastDirectory"),
+            const QStringList fileNames = KFileDialog::getOpenFileNames(QUrl(QStringLiteral("kfiledialog:///FileTransferLastDirectory")),
                                                                         QString(),
                                                                         0,
                                                                         i18n("Choose files to send to %1", contact->alias()));
@@ -226,19 +226,17 @@ void KPeopleActionsPlugin::onActionTriggered()
             KTp::Actions::openLogViewer(action->uri());
             break;
         case CollabEditing: {
-            const KUrl file = KUrl(KFileDialog::getOpenFileName(KUrl("kfiledialog:///CollabEditingLastDirectory"),
+            const QUrl file = KFileDialog::getOpenFileName(QUrl(QStringLiteral("kfiledialog:///CollabEditingLastDirectory")),
                                                                 QString(),
                                                                 0,
-                                                                i18n("Choose a file to edit with %1", contact->alias())));
-            KTp::Actions::startCollaborativeEditing(account, contact, QList<KUrl>() << file, true);
+                                                                i18n("Choose a file to edit with %1", contact->alias()));
+            KTp::Actions::startCollaborativeEditing(account, contact, QList<QUrl>() << file, true);
             break;
         }
     }
 }
 
-#include "kpeople-actions-plugin.moc"
-#include "moc_kpeople-actions-plugin.cpp"
-
-
 K_PLUGIN_FACTORY( KPeopleActionsPluginFactory, registerPlugin<KPeopleActionsPlugin>(); )
 K_EXPORT_PLUGIN( KPeopleActionsPluginFactory("ktp_kpeople_plugin", "ktp-common-internals") )
+
+#include "kpeople-actions-plugin.moc"

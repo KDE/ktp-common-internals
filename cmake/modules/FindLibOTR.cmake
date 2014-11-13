@@ -5,13 +5,12 @@
 # Redistribution and use is allowed according to the terms of the BSD license.
 # For details see the accompanying COPYING-CMAKE-SCRIPTS file.
 
-INCLUDE(MacroEnsureVersion)
 INCLUDE(FindPackageHandleStandardArgs)
 
 IF (LIBOTR_INCLUDE_DIR AND LIBOTR_LIBRARY)
     # Already in cache, be silent
     SET(LIBOTR_FIND_QUIETLY TRUE)
-ENDIF (LIBOTR_INCLUDE_DIR AND LIBOTR_LIBRARY)
+ENDIF ()
 
 FIND_PATH(LIBOTR_INCLUDE_DIR libotr/version.h)
 
@@ -23,7 +22,11 @@ IF( LIBOTR_INCLUDE_DIR AND LIBOTR_LIBRARY )
   STRING(REGEX MATCH "OTRL_VERSION \"[0-9]+\\.[0-9]+\\.[0-9]+" LIBOTR_VERSION "${output}")
   STRING(REGEX REPLACE "^OTRL_VERSION \"" "" LIBOTR_VERSION "${LIBOTR_VERSION}")
   # Check if version is at least 4.0.0
-  MACRO_ENSURE_VERSION("4.0.0" ${LIBOTR_VERSION} LIBOTR_FOUND)
+  if(${LIBOTR_VERSION} VERSION_LESS ${LibOTR_FIND_VERSION})
+    set(LIBOTR_FOUND FALSE)
+  else()
+    set(LIBOTR_FOUND TRUE)
+  endif()
 
   IF( LIBOTR_FOUND )
     IF( NOT LIBOTR_FIND_QUIETLY )
@@ -33,4 +36,4 @@ IF( LIBOTR_INCLUDE_DIR AND LIBOTR_LIBRARY )
     MESSAGE(STATUS "libotr version 4.0.0 or greater required but found ${LIBOTR_VERSION}.")
   ENDIF( LIBOTR_FOUND )
 
-ENDIF( LIBOTR_INCLUDE_DIR AND LIBOTR_LIBRARY )
+ENDIF()

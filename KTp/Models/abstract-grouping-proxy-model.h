@@ -24,7 +24,7 @@
 
 #include <QStandardItemModel>
 
-#include <KTp/ktp-export.h>
+#include <KTp/Models/ktpmodels_export.h>
 
 class ProxyNode;
 class GroupNode;
@@ -32,7 +32,7 @@ class GroupNode;
 namespace KTp
 {
 
-class KTP_EXPORT AbstractGroupingProxyModel : public QStandardItemModel
+class KTPMODELS_EXPORT AbstractGroupingProxyModel : public QStandardItemModel
 {
     Q_OBJECT
 public:
