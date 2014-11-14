@@ -36,7 +36,7 @@ find_package (Libgcrypt)
 
 if (LIBOTR_FOUND AND LIBGCRYPT_FOUND)
     set(OTR_LIBS_FOUND TRUE)
-endif (LIBOTR_FOUND AND LIBGCRYPT_FOUND)
+endif ()
 
 include(KDEInstallDirs)
 include(KDECMakeSettings)

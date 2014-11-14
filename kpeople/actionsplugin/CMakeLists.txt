@@ -1,11 +1,5 @@
-include_directories(${KPEOPLE_INCLUDES})
-
-set (ktp_kpeople_plugin_SRCS
-     kpeople-actions-plugin.cpp
-)
-
 add_library (ktp_kpeople_plugin MODULE
-                 ${ktp_kpeople_plugin_SRCS}
+                 kpeople-actions-plugin.cpp
 )
 
 target_link_libraries (ktp_kpeople_plugin
