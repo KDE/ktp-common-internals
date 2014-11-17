@@ -15,7 +15,7 @@ target_link_libraries(kaccounts_ktp_plugin
                       KF5::ConfigCore
                       KF5::CoreAddons
                       KTp::Logger
-                      ${KACCOUNTS_LIBRARIES}
+                      KAccounts
                       ${ACCOUNTSQT_LIBRARIES}
 )
 
