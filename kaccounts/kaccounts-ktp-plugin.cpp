@@ -115,6 +115,7 @@ void KAccountsKTpPlugin::onAccountCreated(const Accounts::AccountId accountId, c
     }
 
     if (!containsImService) {
+        qDebug() << "No IM service found, ignoring...";
         return;
     }
 
@@ -127,6 +128,8 @@ void KAccountsKTpPlugin::onAccountCreated(const Accounts::AccountId accountId, c
     if (providerName.contains(QLatin1String("google"))) {
         providerName = QStringLiteral("google-talk");
     }
+
+    qDebug() << "Creating new Tp account for AccountId" << accountId;
 
     // Sometimes it can happen that the database is not yet synced with signond
     // and requesting data from it (GetCredentialsJob in onConnectionManagerReady)
@@ -190,6 +193,8 @@ void KAccountsKTpPlugin::onConnectionManagerReady(Tp::PendingOperation *op)
         if (d->accountManager->supportedAccountProperties().contains(QLatin1String("org.freedesktop.Telepathy.Account.Enabled"))) {
             properties.insert(QLatin1String("org.freedesktop.Telepathy.Account.Enabled"), true);
         }
+
+        qDebug() << "Sending account manager request to create new account";
 
         Tp::PendingAccount *pa = d->accountManager->createAccount(d->profile->cmName(),
                                                                   d->profile->protocolName(),
