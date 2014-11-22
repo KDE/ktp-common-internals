@@ -92,7 +92,7 @@ endif ()
 
 #If we find KAccounts library, build the plugin for it
 if (KAccounts_FOUND AND AccountsQt5_FOUND)
-    include_directories(${KACCOUNTS_INCLUDE_DIRS} ${ACCOUNTSQT_INCLUDE_DIRS})
+    include_directories(${ACCOUNTSQT_INCLUDE_DIRS})
     add_subdirectory(kaccounts)
 endif ()
 
