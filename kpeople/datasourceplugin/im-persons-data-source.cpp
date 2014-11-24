@@ -145,7 +145,7 @@ void KTpAllContacts::loadCache()
         }
 
         addressee.insertCustom(S_KABC_PRODUCT, S_KABC_FIELD_CONTACT_ID, contactId);
-        addressee.insertCustom(S_KABC_PRODUCT, S_KABC_FIELD_ACCOUNT_PATH, accountId);
+        addressee.insertCustom(S_KABC_PRODUCT, S_KABC_FIELD_ACCOUNT_PATH, TP_QT_ACCOUNT_OBJECT_PATH_BASE + QLatin1Char('/') + accountId);
         addressee.insertCustom(S_KABC_PRODUCT, S_KABC_FIELD_PRESENCE, m_presenceStrings.at(Tp::ConnectionPresenceTypeOffline));
 
         const QString uri = QLatin1String("ktp://") + accountId + QLatin1Char('?') + contactId;
