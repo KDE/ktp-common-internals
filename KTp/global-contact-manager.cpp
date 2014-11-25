@@ -197,7 +197,7 @@ KTp::ContactPtr GlobalContactManager::contactForContactId(const QString &account
         qWarning() << "account not found" << accountPath;
     }
 
-    if (account && account->connection() && account->connection()->contactManager()) {
+    if (account && account->connection() && account->connection()->contactManager() && account->connection()->isReady(Tp::Connection::FeatureRoster)) {
         Tp::Contacts contactSet = account->connection()->contactManager()->allKnownContacts();
         Q_FOREACH (const Tp::ContactPtr &contact, contactSet) {
             if (contact->id() == contactId) {
@@ -205,7 +205,7 @@ KTp::ContactPtr GlobalContactManager::contactForContactId(const QString &account
             }
         }
     }
-    qWarning() << "Couldn't find a contact for" << contactId;
+//     qDebug() << "Couldn't find a contact for" << contactId;
 
     return KTp::ContactPtr();
 }
