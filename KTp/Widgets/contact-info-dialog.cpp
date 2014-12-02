@@ -39,12 +39,12 @@
 #include <QDebug>
 #include <QPushButton>
 #include <QLineEdit>
-#include <QMessageBox>
 #include <QFileDialog>
 #include <QMimeType>
 #include <QMimeDatabase>
 #include <QDialogButtonBox>
 
+#include <KMessageBox>
 #include <KTitleWidget>
 #include <KLocalizedString>
 #include <KDateComboBox>
@@ -225,7 +225,7 @@ void ContactInfoDialog::Private::onChangeAvatarButtonClicked()
 
         QPixmap avatar(newAvatarFile);
         if (avatar.isNull()) {
-            QMessageBox::critical(q, QString(), i18n("Failed to load the new avatar image"));
+            KMessageBox::error(q, i18n("Failed to load the new avatar image"));
             newAvatarFile.clear();
             delete fileDialog;
             return;
