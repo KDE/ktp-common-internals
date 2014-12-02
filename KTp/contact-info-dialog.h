@@ -19,29 +19,31 @@
 #ifndef KTP_CONTACTINFODIALOG_H
 #define KTP_CONTACTINFODIALOG_H
 
-#include <KDialog>
+#include <QDialog>
 
 #include <KTp/ktpcommoninternals_export.h>
 
 #include <TelepathyQt/Types>
 
+
+class QAbstractButton;
 namespace Tp {
 class PendingOperation;
 }
 
 namespace KTp {
 
-class KTPCOMMONINTERNALS_EXPORT ContactInfoDialog : public KDialog
+class KTPCOMMONINTERNALS_EXPORT ContactInfoDialog : public QDialog
 {
 
     Q_OBJECT
 
   public:
-    explicit ContactInfoDialog(const Tp::AccountPtr &account, const Tp::ContactPtr &contact, QWidget* parent = 0);
+    explicit ContactInfoDialog(const Tp::AccountPtr &account, const Tp::ContactPtr &contact, QWidget *parent = 0);
     virtual ~ContactInfoDialog();
 
   protected:
-    virtual void slotButtonClicked(int button);
+    virtual void slotButtonClicked(QAbstractButton *button);
 
   private:
     class Private;

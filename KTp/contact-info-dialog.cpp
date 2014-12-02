@@ -36,17 +36,20 @@
 #include <TelepathyQt/PendingContacts>
 #include <TelepathyQt/PendingReady>
 
-#include <KDebug>
+#include <QDebug>
+#include <QPushButton>
+#include <QLineEdit>
+#include <QMessageBox>
+#include <QFileDialog>
+#include <QMimeType>
+#include <QMimeDatabase>
+#include <QDialogButtonBox>
+
 #include <KTitleWidget>
 #include <KLocalizedString>
-#include <KPushButton>
-#include <KLineEdit>
 #include <KDateComboBox>
-#include <KFileDialog>
 #include <KImageFilePreview>
-#include <KMessageBox>
 #include <KIconLoader>
-#include <KMimeType>
 
 namespace KTp {
 
@@ -115,9 +118,10 @@ class ContactInfoDialog::Private
     QHBoxLayout *columnsLayout;
     QFormLayout *infoLayout;
     QFormLayout *stateLayout;
-    KPushButton *changeAvatarButton;
-    KPushButton *clearAvatarButton;
+    QPushButton *changeAvatarButton;
+    QPushButton *clearAvatarButton;
     QLabel *avatarLabel;
+    QDialogButtonBox *buttonBox;
 
   private:
     ContactInfoDialog *q;
@@ -146,12 +150,12 @@ void ContactInfoDialog::Private::onContactUpgraded(Tp::PendingOperation* op)
         avatarLayout->addWidget(avatarLabel, 0, Qt::AlignTop);
 
         if (editable) {
-            changeAvatarButton = new KPushButton(i18n("Change Avatar"), q);
+            changeAvatarButton = new QPushButton(i18n("Change Avatar"), q);
             connect(changeAvatarButton, SIGNAL(clicked(bool)),
                     q, SLOT(onChangeAvatarButtonClicked()));
             avatarLayout->addWidget(changeAvatarButton);
 
-            clearAvatarButton = new KPushButton(i18n("Clear Avatar"), q);
+            clearAvatarButton = new QPushButton(i18n("Clear Avatar"), q);
             connect(clearAvatarButton, SIGNAL(clicked(bool)),
                     q, SLOT(onClearAvatarButtonClicked()));
             avatarLayout->addWidget(clearAvatarButton);
@@ -210,18 +214,18 @@ void ContactInfoDialog::Private::onContactInfoReceived(Tp::PendingOperation* op)
 
 void ContactInfoDialog::Private::onChangeAvatarButtonClicked()
 {
-    QPointer<KFileDialog> fileDialog = new KFileDialog(QUrl(), QString(), q);
-    fileDialog->setOperationMode(KFileDialog::Opening);
-    fileDialog->setPreviewWidget(new KImageFilePreview(fileDialog));
-    fileDialog->setMimeFilter(QStringList() << QLatin1String("image/*"));
+    QPointer<QFileDialog> fileDialog = new QFileDialog(q);
+//     fileDialog->setPreviewWidget(new KImageFilePreview(fileDialog)); //TODO KF5 - is there a replacement?
+    fileDialog->setMimeTypeFilters(QStringList() << QStringLiteral("image/*"));
+    fileDialog->setFileMode(QFileDialog::ExistingFile);
 
     int c = fileDialog->exec();
-    if (fileDialog && c) {
-        newAvatarFile = fileDialog->selectedFile();
+    if (fileDialog && c && !fileDialog->selectedFiles().isEmpty()) {
+        newAvatarFile = fileDialog->selectedFiles().first();
 
         QPixmap avatar(newAvatarFile);
         if (avatar.isNull()) {
-            KMessageBox::error(q, i18n("Failed to load the new avatar image"));
+            QMessageBox::critical(q, QString(), i18n("Failed to load the new avatar image"));
             newAvatarFile.clear();
             delete fileDialog;
             return;
@@ -269,7 +273,7 @@ void ContactInfoDialog::Private::addInfoRow(InfoRowIndex index, const QString &v
 
             infoValueWidgets.insert(index, combo);
         } else {
-            KLineEdit *edit = new KLineEdit(q);
+            QLineEdit *edit = new QLineEdit(q);
             edit->setMinimumWidth(200);
             edit->setText(value);
             connect(edit, SIGNAL(textChanged(QString)), q, SLOT(onInfoDataChanged()));
@@ -333,8 +337,8 @@ void ContactInfoDialog::Private::loadStateRows()
     }
 }
 
-ContactInfoDialog::ContactInfoDialog(const Tp::AccountPtr& account, const Tp::ContactPtr& contact, QWidget* parent)
-    : KDialog(parent)
+ContactInfoDialog::ContactInfoDialog(const Tp::AccountPtr &account, const Tp::ContactPtr &contact, QWidget *parent)
+    : QDialog(parent)
     , d(new Private(this))
 {
 #if 0   // Editing contacts is not yet supported in TpQt
@@ -345,17 +349,20 @@ ContactInfoDialog::ContactInfoDialog(const Tp::AccountPtr& account, const Tp::Co
     d->account = account;
     d->contact = KTp::ContactPtr::qObjectCast(contact);
 
+    d->buttonBox = new QDialogButtonBox(this);
+
 
     if (d->editable) {
-        setButtons(User1 | Close);
-        setButtonGuiItem(User1, KGuiItem(i18n("Save"), QLatin1String("document-save")));
+        d->buttonBox->setStandardButtons(QDialogButtonBox::Save | QDialogButtonBox::Close);
     } else {
-        setButtons(Close);
+        d->buttonBox->setStandardButtons(QDialogButtonBox::Close);
     }
+
+    connect(d->buttonBox, &QDialogButtonBox::clicked, this, &ContactInfoDialog::slotButtonClicked);
 
     setMaximumSize(sizeHint());
 
-    QVBoxLayout *layout = new QVBoxLayout(mainWidget());
+    QVBoxLayout *layout = new QVBoxLayout(this);
     layout->setSpacing(30);
 
     /* Title - presence icon, alias, id */
@@ -395,6 +402,8 @@ ContactInfoDialog::ContactInfoDialog(const Tp::AccountPtr& account, const Tp::Co
             d->loadStateRows();
         }
     }
+
+    layout->addWidget(d->buttonBox);
 }
 
 ContactInfoDialog::~ContactInfoDialog()
@@ -402,9 +411,9 @@ ContactInfoDialog::~ContactInfoDialog()
     delete d;
 }
 
-void ContactInfoDialog::slotButtonClicked(int button)
+void ContactInfoDialog::slotButtonClicked(QAbstractButton *button)
 {
-    if (button == User1) {
+    if (button == d->buttonBox->button(QDialogButtonBox::Save)) {
         if (d->avatarChanged) {
             Tp::Avatar avatar;
             if (!d->newAvatarFile.isEmpty()) {
@@ -415,7 +424,9 @@ void ContactInfoDialog::slotButtonClicked(int button)
 
                 avatar.avatarData = file.readAll();
                 file.seek(0); // reset before passing to KMimeType
-                avatar.MIMEType = KMimeType::findByNameAndContent(d->newAvatarFile, &file)->defaultMimeType();
+
+                QMimeDatabase db;
+                avatar.MIMEType = db.mimeTypeForFileNameAndData(d->newAvatarFile, &file).name();
             }
 
             d->account->setAvatar(avatar);
@@ -434,7 +445,7 @@ void ContactInfoDialog::slotButtonClicked(int button)
                     KDateComboBox *combo = qobject_cast<KDateComboBox*>(d->infoValueWidgets.value(index));
                     field.fieldValue << combo->date().toString();
                 } else {
-                    KLineEdit *lineEdit = qobject_cast<KLineEdit*>(d->infoValueWidgets.value(index));
+                    QLineEdit *lineEdit = qobject_cast<QLineEdit*>(d->infoValueWidgets.value(index));
                     field.fieldValue << lineEdit->text();
                 }
 
@@ -449,8 +460,6 @@ void ContactInfoDialog::slotButtonClicked(int button)
         accept();
         return;
     }
-
-    KDialog::slotButtonClicked(button);
 }
 
 
