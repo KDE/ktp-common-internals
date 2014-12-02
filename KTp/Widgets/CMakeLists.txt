@@ -6,6 +6,7 @@ set (ktp_widgets_private_SRCS
     contact-view-widget.cpp
     contact-grid-widget.cpp
     contact-grid-dialog.cpp
+    contact-info-dialog.cpp
     add-contact-dialog.cpp
     join-chat-room-dialog.cpp
     notification-config-dialog.cpp
@@ -18,6 +19,7 @@ set (ktp_widgets_private_HDRS
      contact-view-widget.h
      contact-grid-widget.h
      contact-grid-dialog.h
+     contact-info-dialog.h
      add-contact-dialog.h
      join-chat-room-dialog.h
      notification-config-dialog.h

@@ -6,7 +6,6 @@ set (ktp_common_internals_private_SRCS
      account-factory.cpp
      actions.cpp
      capabilities-hack-private.cpp
-     contact-info-dialog.cpp
      circular-countdown.cpp
      contact.cpp
      contact-factory.cpp
@@ -38,7 +37,6 @@ set (ktp_common_internals_private_HDRS
      actions.h
      circular-countdown.h
      contact.h
-     contact-info-dialog.h
      contact-factory.h
      core.h
      debug.h
