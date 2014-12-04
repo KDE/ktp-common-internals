@@ -329,7 +329,7 @@ bool ContactsFilterModel::Private::filterAcceptsContact(const QModelIndex &index
     return true;
 }
 
-bool ContactsFilterModel::Private::filterAcceptsGroup(const QModelIndex &index)
+bool ContactsFilterModel::Private::filterAcceptsGroup(const QModelIndex &/*index*/)
 {
     return true;
 }

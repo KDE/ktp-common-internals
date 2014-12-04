@@ -42,7 +42,7 @@ MainWindow::MainWindow(QWidget *parent)
     Tp::PendingReady *pendingReady = m_AccountManager->becomeReady();
     connect(pendingReady, SIGNAL(finished(Tp::PendingOperation*)), this, SLOT(onAccountManagerBecameReady(Tp::PendingOperation*)));
 
-    KAction *saveLogAction = new KAction(QIcon::fromTheme(QLatin1String("document-save-as")), i18n("Save Log"), this);
+    QAction *saveLogAction = new QAction(QIcon::fromTheme(QLatin1String("document-save-as")), i18n("Save Log"), this);
     saveLogAction->setToolTip(i18nc("Toolbar icon tooltip", "Save log of the current tab"));
     toolBar()->addAction(saveLogAction);
 
