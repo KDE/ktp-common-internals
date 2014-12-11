@@ -23,7 +23,7 @@
 #ifndef CONTACT_GRID_DIALOG_H
 #define CONTACT_GRID_DIALOG_H
 
-#include <KDialog>
+#include <QDialog>
 #include <TelepathyQt/Types>
 #include <TelepathyQt/AccountManager>
 #include <TelepathyQt/Account>
@@ -41,7 +41,7 @@ namespace KTp {
 class ContactGridWidget;
 class ContactsFilterModel;
 
-class KTPCOMMONINTERNALS_EXPORT ContactGridDialog : public KDialog
+class KTPCOMMONINTERNALS_EXPORT ContactGridDialog : public QDialog
 {
     Q_OBJECT
     Q_DISABLE_COPY(ContactGridDialog)

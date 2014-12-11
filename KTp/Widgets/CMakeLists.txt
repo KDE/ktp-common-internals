@@ -13,6 +13,7 @@ set (ktp_widgets_private_SRCS
     accounts-combo-box.cpp
     start-chat-dialog.cpp
     settings-kcm-dialog.cpp
+    debug.cpp
 )
 
 set (ktp_widgets_private_HDRS
@@ -53,7 +54,11 @@ target_link_libraries (KTpWidgets
                        KF5::KCMUtils # used in settings-kcm-dialog.h
                        Qt5::Widgets
                     PRIVATE
-                       KF5::KDELibs4Support
+                       KF5::I18n
+                       KF5::WidgetsAddons
+                       KF5::IconThemes
+                       KF5::KIOFileWidgets
+                       KF5::Notifications
                        KF5::NotifyConfig
                        KTp::Models
 )

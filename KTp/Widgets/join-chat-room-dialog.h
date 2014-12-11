@@ -22,7 +22,7 @@
 #define JOINCHATROOMDIALOG_H
 
 #include <TelepathyQt/AccountManager>
-#include <KDialog>
+#include <QDialog>
 #include <KTp/Models/rooms-model.h>
 
 #include <KTp/ktpcommoninternals_export.h>
@@ -34,10 +34,11 @@ class JoinChatRoomDialog;
 class RoomsModel;
 class FavoriteRoomsModel;
 class QSortFilterProxyModel;
+class QAbstractButton;
 
 namespace KTp {
 
-class KTPCOMMONINTERNALS_EXPORT JoinChatRoomDialog : public KDialog
+class KTPCOMMONINTERNALS_EXPORT JoinChatRoomDialog : public QDialog
 {
     Q_OBJECT
 
@@ -70,24 +71,13 @@ private Q_SLOTS:
     void onAccountManagerReady(Tp::PendingOperation*);
     void onStartChatFinished(Tp::PendingOperation *op);
 
-
 private:
     void sendNotificationToUser(const QString& errorMsg);
     void loadFavoriteRooms();
     void setJoinInProgress(bool);
 
-    //TODO d pointer this
-    QList<Tp::AccountPtr> m_accounts;
-    Ui::JoinChatRoomDialog *ui;
-    Tp::PendingChannel *m_pendingRoomListChannel;
-    Tp::ChannelPtr m_roomListChannel;
-    Tp::Client::ChannelTypeRoomListInterface *m_iface;
-    RoomsModel *m_model;
-    FavoriteRoomsModel *m_favoritesModel;
-    QSortFilterProxyModel *m_favoritesProxyModel;
-    KConfigGroup m_favoriteRoomsGroup;
-    KConfigGroup m_recentRoomsGroup;
-    bool m_joinInProgress;
+    struct Private;
+    Private * const d;
 };
 
 } //namespace KTp

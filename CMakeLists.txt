@@ -15,6 +15,9 @@ find_package (Qt5 REQUIRED CONFIG COMPONENTS
 
 find_package (KF5 REQUIRED COMPONENTS 
               CoreAddons
+              Notifications
+              KIO
+              WidgetsAddons
               KCMUtils
               NotifyConfig
               TextEditor

@@ -23,10 +23,11 @@
 
 #include <QObject>
 #include <QCloseEvent>
+#include <QDialogButtonBox>
+#include <QPushButton>
+#include <QDebug>
 
 #include <KMessageBox>
-#include <KPushButton>
-#include <KDebug>
 
 #include <TelepathyQt/AccountManager>
 #include <TelepathyQt/Account>
@@ -52,18 +53,28 @@ struct KTPCOMMONINTERNALS_NO_EXPORT StartChatDialog::Private
     Ui::StartChatDialog *ui;
     bool acceptInProgress;
     QPointer<Tp::PendingContacts> pendingContact;
+    QDialogButtonBox *buttonBox;
 };
 
 StartChatDialog::StartChatDialog(const Tp::AccountManagerPtr &accountManager, QWidget *parent) :
-    KDialog(parent),
+    QDialog(parent),
     d(new Private)
 {
     setWindowTitle(i18n("Start a chat"));
     setWindowIcon(QIcon::fromTheme(QLatin1String("telepathy-kde")));
 
+    d->buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
+
+    connect(d->buttonBox, SIGNAL(accepted()), this, SLOT(accept()));
+    connect(d->buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
+
     QWidget *widget = new QWidget(this);
     d->ui->setupUi(widget);
-    setMainWidget(widget);
+
+    QVBoxLayout *mainLayout = new QVBoxLayout(this);
+    mainLayout->addWidget(widget);
+    mainLayout->addWidget(d->buttonBox);
+    setLayout(mainLayout);
 
     d->ui->accountCombo->setAccountSet(accountManager->onlineAccounts());
 
@@ -121,14 +132,14 @@ void StartChatDialog::closeEvent(QCloseEvent *e)
 {
     // ignore close event if we are in the middle of an operation
     if (!d->acceptInProgress) {
-        KDialog::closeEvent(e);
+        QDialog::closeEvent(e);
     }
 }
 
 void StartChatDialog::_k_onStartChatFinished(Tp::PendingOperation *op)
 {
     if (op->isError()) {
-        kWarning() << "Failed to start a text channel with the contact for the given identifier"
+        qWarning() << "Failed to start a text channel with the contact for the given identifier"
                    << op->errorName() << op->errorMessage();
         KMessageBox::sorry(this, i18n("Failed to start a chat with the contact."));
         setInProgress(false);
@@ -140,9 +151,9 @@ void StartChatDialog::_k_onStartChatFinished(Tp::PendingOperation *op)
 void StartChatDialog::setInProgress(bool inProgress)
 {
     d->acceptInProgress = inProgress;
-    mainWidget()->setEnabled(!inProgress);
-    button(KDialog::Ok)->setEnabled(!inProgress);
-    button(KDialog::Cancel)->setEnabled(!inProgress);
+    layout()->itemAt(0)->widget()->setEnabled(!inProgress);
+    d->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(!inProgress);
+    d->buttonBox->button(QDialogButtonBox::Cancel)->setEnabled(!inProgress);
 }
 
 } //namespace KTp

@@ -21,7 +21,7 @@
 #ifndef STARTCHATDIALOG_H
 #define STARTCHATDIALOG_H
 
-#include <KDialog>
+#include <QDialog>
 
 #include <TelepathyQt/Types>
 
@@ -33,7 +33,7 @@ namespace Tp {
 
 namespace KTp
 {
-class KTPCOMMONINTERNALS_EXPORT StartChatDialog : public KDialog
+class KTPCOMMONINTERNALS_EXPORT StartChatDialog : public QDialog
 {
     Q_OBJECT
 

@@ -20,9 +20,7 @@
 
 #include "contact-view-widget.h"
 
-#include <KLineEdit>
-#include <KDebug>
-
+#include <QLineEdit>
 #include <QTextOption>
 #include <QPainter>
 #include <QtWidgets/QApplication>
@@ -105,7 +103,7 @@ public:
         : q(parent),
           layout(new QVBoxLayout(parent)),
           contactView(new QListView(parent)),
-          contactFilterLineEdit(new KLineEdit(parent)),
+          contactFilterLineEdit(new QLineEdit(parent)),
           contactsModel(0),
           filterModel(0)
     {
@@ -121,7 +119,7 @@ public:
     KTp::ContactViewWidget *q;
     QVBoxLayout *layout;
     QListView *contactView;
-    KLineEdit *contactFilterLineEdit;
+    QLineEdit *contactFilterLineEdit;
     KTp::ContactsListModel *contactsModel;
     KTp::ContactsFilterModel *filterModel;
 };
@@ -130,7 +128,6 @@ void KTp::ContactViewWidget::Private::_k_onSelectionChanged(const QItemSelection
                                                             const QItemSelection &oldSelection)
 {
     Q_UNUSED(oldSelection)
-    kDebug() << newSelection << oldSelection;
 
     if (newSelection.isEmpty()) {
         Q_EMIT q->selectionChanged(Tp::AccountPtr(), KTp::ContactPtr());
@@ -169,7 +166,7 @@ KTp::ContactViewWidget::ContactViewWidget(KTp::ContactsListModel* model, QWidget
     d->contactView->setIconSize(QSize(80, 80));
 
     d->contactFilterLineEdit->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
-    d->contactFilterLineEdit->setClearButtonShown(true);
+    d->contactFilterLineEdit->setClearButtonEnabled(true);
 
     d->layout->setMargin(0);
     d->layout->addWidget(d->contactView);
@@ -222,7 +219,6 @@ QSize KTp::ContactViewWidget::iconSize() const
 
 void KTp::ContactViewWidget::setIconSize(const QSize& iconSize)
 {
-    kDebug();
     if (iconSize != d->contactView->iconSize()) {
         d->contactView->setIconSize(iconSize);
         Q_EMIT iconSizeChanged(iconSize);

@@ -1,8 +1,5 @@
 /*
- * Settings KCM Dialog
- *
- * Copyright (C) 2011 Martin Klapetek <martin.klapetek@gmail.com>
- * Copyright (C) 2014 Siddhartha Sahu <sh.siddhartha@gmail.com>
+ * Copyright (C) 2014 Martin Klapetek <mklapetek@kde.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -19,27 +16,5 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef SETTINGS_KCM_DIALOG_H
-#define SETTINGS_KCM_DIALOG_H
-
-#include <ksettings/Dialog>
-#include <KTp/ktpcommoninternals_export.h>
-
-namespace KTp
-{
-
-class KTPCOMMONINTERNALS_EXPORT SettingsKcmDialog : public KSettings::Dialog
-{
-    Q_OBJECT
-public:
-    SettingsKcmDialog(QWidget *parent = 0);
-
-    // Add the General Settings tab
-    void addGeneralSettingsModule();
-    // Add the Notifications tab
-    void addNotificationsModule();
-};
-
-} // namespace KTp
-
-#endif // SETTINGS_KCM_DIALOG_H
+#include "debug.h"
+Q_LOGGING_CATEGORY(KTP_WIDGETS, "ktp-widgets")

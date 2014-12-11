@@ -22,7 +22,7 @@
 #ifndef ADDCONTACTDIALOG_H
 #define ADDCONTACTDIALOG_H
 
-#include <KDialog>
+#include <QDialog>
 
 #include <TelepathyQt/Types>
 
@@ -34,7 +34,7 @@ namespace Tp {
 
 namespace KTp
 {
-class KTPCOMMONINTERNALS_EXPORT AddContactDialog : public KDialog
+class KTPCOMMONINTERNALS_EXPORT AddContactDialog : public QDialog
 {
     Q_OBJECT
 

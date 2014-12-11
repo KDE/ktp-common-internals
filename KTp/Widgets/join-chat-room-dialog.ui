@@ -98,17 +98,16 @@
              <string>Clear Recent Rooms</string>
             </property>
             <property name="icon">
-             <iconset theme="edit-clear-list">
-              <normaloff>../../../../../home/drdanz/.designer/backup</normaloff>../../../../../home/drdanz/.designer/backup</iconset>
+             <iconset theme="edit-clear-list" />
             </property>
            </widget>
           </item>
           <item>
-           <widget class="KLineEdit" name="lineEdit">
-            <property name="clickMessage">
+           <widget class="QLineEdit" name="lineEdit">
+            <property name="placeholderText">
              <string>Enter chat room name or address</string>
             </property>
-            <property name="showClearButton" stdset="0">
+            <property name="clearButtonEnabled" stdset="0">
              <bool>true</bool>
             </property>
            </widget>
@@ -130,14 +129,11 @@
           <item>
            <layout class="QHBoxLayout" name="queryHLayout">
             <item>
-             <widget class="KLineEdit" name="serverLineEdit">
+             <widget class="QLineEdit" name="serverLineEdit">
               <property name="placeholderText">
-               <string/>
-              </property>
-              <property name="clickMessage">
                <string>Leave blank for the selected account's default server</string>
               </property>
-              <property name="showClearButton" stdset="0">
+              <property name="clearButtonEnabled" stdset="0">
                <bool>true</bool>
               </property>
              </widget>
@@ -188,14 +184,11 @@
              </widget>
             </item>
             <item>
-             <widget class="KLineEdit" name="filterBar">
+             <widget class="QLineEdit" name="filterBar">
               <property name="placeholderText">
-               <string/>
-              </property>
-              <property name="clickMessage">
                <string>Filter rooms</string>
               </property>
-              <property name="showClearButton" stdset="0">
+              <property name="clearButtonEnabled" stdset="0">
                <bool>true</bool>
               </property>
              </widget>
@@ -212,11 +205,6 @@
   </layout>
  </widget>
  <customwidgets>
-  <customwidget>
-   <class>KLineEdit</class>
-   <extends>QLineEdit</extends>
-   <header>klineedit.h</header>
-  </customwidget>
   <customwidget>
    <class>KTp::AccountsComboBox</class>
    <extends>QComboBox</extends>

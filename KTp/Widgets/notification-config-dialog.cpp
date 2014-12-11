@@ -23,34 +23,37 @@
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <QLabel>
+#include <QDialogButtonBox>
+#include <QPushButton>
 #include <QDBusInterface>
+#include <QComboBox>
 
 #include <TelepathyQt/Contact>
 
 #include <KNotifyConfigWidget>
-#include <KComboBox>
-#include <KAboutData>
 #include <KConfig>
 #include <KSharedConfig>
+#include <KConfigGroup>
 #include <KLocalizedString>
 
 KTp::NotificationConfigDialog::NotificationConfigDialog(const Tp::ContactPtr &contact, QWidget *parent)
-    : KDialog(parent)
+    : QDialog(parent)
     , m_notifyWidget(new KNotifyConfigWidget(this))
 {
     Q_ASSERT(contact);
     m_contact = contact;
     m_currentSelection = 0;
-    setCaption(i18n("Configure notifications for %1", m_contact.data()->alias()));
+    setWindowTitle(i18n("Configure notifications for %1", m_contact.data()->alias()));
     setAttribute(Qt::WA_DeleteOnClose);
-    setButtons(KDialog::Ok | KDialog::Apply | KDialog::Cancel | KDialog::Default );
-    enableButtonApply(false);
+
+    m_buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Apply | QDialogButtonBox::Cancel | QDialogButtonBox::RestoreDefaults, this);
+    m_buttonBox->button(QDialogButtonBox::Apply)->setDisabled(true);
 
     QWidget *centralWidget = new QWidget(this);
     QVBoxLayout *vboxLayout = new QVBoxLayout(centralWidget);
     QHBoxLayout *hboxLayout = new QHBoxLayout(centralWidget);
     QLabel *label = new QLabel(i18n("Configure notifications for"), centralWidget);
-    KComboBox *comboBox = new KComboBox(centralWidget);
+    QComboBox *comboBox = new QComboBox(centralWidget);
 
     comboBox->setEditable(false);
     comboBox->addItem(m_contact.data()->alias());
@@ -60,26 +63,43 @@ KTp::NotificationConfigDialog::NotificationConfigDialog(const Tp::ContactPtr &co
     vboxLayout->addLayout(hboxLayout);
     vboxLayout->addWidget(m_notifyWidget);
     centralWidget->setLayout(vboxLayout);
-    setMainWidget(centralWidget);
+
+    QVBoxLayout *mainLayout = new QVBoxLayout(this);
+    mainLayout->addWidget(centralWidget);
+    mainLayout->addWidget(m_buttonBox);
+    setLayout(mainLayout);
 
     m_notifyWidget->setApplication(QLatin1String("ktelepathy"),
                                    QLatin1String("contact"),
                                    m_contact.data()->id());
 
-    connect(this, SIGNAL(okClicked()),
-            SLOT(onOkClicked()));
-    connect(this, SIGNAL(applyClicked()),
-            SLOT(saveConfig()));
+    connect(m_buttonBox, SIGNAL(clicked(QAbstractButton*)),
+            this, SLOT(onButtonBoxClicked(QAbstractButton*)));
     connect(comboBox, SIGNAL(currentIndexChanged(int)),
             SLOT(updateNotifyWidget(int)));
-    connect(this, SIGNAL(defaultClicked()),
-            SLOT(defaults()));
     connect(m_notifyWidget, SIGNAL(changed(bool)),
             SLOT(enableButtonApply(bool)));
 }
 
 KTp::NotificationConfigDialog::~NotificationConfigDialog()
 {
+}
+
+void KTp::NotificationConfigDialog::onButtonBoxClicked(QAbstractButton *button)
+{
+    switch (m_buttonBox->standardButton(button)) {
+        case QDialogButtonBox::Ok:
+            onOkClicked();
+            break;
+        case QDialogButtonBox::Apply:
+            saveConfig();
+            break;
+        case QDialogButtonBox::RestoreDefaults:
+            defaults();
+            break;
+        default:
+            break;
+    }
 }
 
 void KTp::NotificationConfigDialog::saveConfig()
@@ -93,10 +113,10 @@ void KTp::NotificationConfigDialog::updateNotifyWidget(const int selection)
         m_notifyWidget->setApplication(QLatin1String("ktelepathy"),
                                        QLatin1String("contact"),
                                        m_contact.data()->id());
-        setCaption(i18n("Configure notifications for %1", m_contact.data()->alias()));
+        setWindowTitle(i18n("Configure notifications for %1", m_contact.data()->alias()));
     } else if (selection == 1) {
         m_notifyWidget->setApplication(QLatin1String("ktelepathy"));
-        setCaption(i18n("Configure notifications for all users"));
+        setWindowTitle(i18n("Configure notifications for all users"));
     }
 
     m_currentSelection = selection;
@@ -125,12 +145,6 @@ void KTp::NotificationConfigDialog::defaults()
         }
     }
     config->sync();
-    //ask the notify daemon to reload the config
-    if (QDBusConnection::sessionBus().interface()->isServiceRegistered(QLatin1String("org.kde.knotify")))
-    {
-        QDBusInterface( QLatin1String("org.kde.knotify"), QLatin1String("/Notify"),
-                        QLatin1String("org.kde.KNotify")).call( QLatin1String("reconfigure" ));
-    }
     updateNotifyWidget(m_currentSelection);
 }
 

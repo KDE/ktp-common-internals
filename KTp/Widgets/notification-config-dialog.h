@@ -23,28 +23,34 @@
 
 #include <KTp/ktpcommoninternals_export.h>
 
-#include <KDialog>
+#include <QDialog>
 #include <TelepathyQt/Types>
 
+class QDialogButtonBox;
 class KNotifyConfigWidget;
+class QAbstractButton;
 
 namespace KTp {
 
-class KTPCOMMONINTERNALS_EXPORT NotificationConfigDialog : public KDialog
+class KTPCOMMONINTERNALS_EXPORT NotificationConfigDialog : public QDialog
 {
     Q_OBJECT
 public:
-    explicit NotificationConfigDialog(const Tp::ContactPtr &contact, QWidget *parent=0);
+    explicit NotificationConfigDialog(const Tp::ContactPtr &contact, QWidget *parent = 0);
     ~NotificationConfigDialog();
-private:
-    KNotifyConfigWidget *m_notifyWidget;
-    Tp::ContactPtr m_contact;
-    int m_currentSelection;
+
 private Q_SLOTS:
     void saveConfig();
     void updateNotifyWidget(const int selection);
     void defaults();
     void onOkClicked();
+    void onButtonBoxClicked(QAbstractButton *button);
+
+private:
+    KNotifyConfigWidget *m_notifyWidget;
+    Tp::ContactPtr m_contact;
+    int m_currentSelection;
+    QDialogButtonBox *m_buttonBox;
 };
 
 }
