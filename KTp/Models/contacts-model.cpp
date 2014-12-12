@@ -238,5 +238,6 @@ void KTp::ContactsModel::setSourceModel(QAbstractItemModel *sourceModel)
     roles[KTp::ContactCanAudioCallRole]= "audioCall";
     roles[KTp::ContactCanVideoCallRole]= "videoCall";
     roles[KTp::ContactTubesRole]= "tubes";
+    roles[KTp::PersonIdRole]= "personId";
     setRoleNames(roles);
 }
