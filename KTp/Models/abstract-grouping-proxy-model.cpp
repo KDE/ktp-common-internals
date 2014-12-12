@@ -265,7 +265,7 @@ void KTp::AbstractGroupingProxyModel::onRowsRemoved(const QModelIndex &sourcePar
 
         QHash<QPersistentModelIndex, ProxyNode*>::const_iterator it = d->proxyMap.constFind(index);
         while (it != d->proxyMap.constEnd() && it.key() == index) {
-            kDebug() << "removing row" << index.data();
+//             kDebug() << "removing row" << index.data();
             itemsToRemove.append(it.value());
             ++it;
         }
