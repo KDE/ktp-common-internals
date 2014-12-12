@@ -61,10 +61,10 @@ set (ktp_common_internals_private_HDRS
      ${CMAKE_CURRENT_BINARY_DIR}/ktpcommoninternals_export.h
 )
 
-if (TELEPATHY_LOGGER_QT5_FOUND)
+if (TelepathyLoggerQt_FOUND)
     set (ktp_private_LIBS
          ${ktp_private_LIBS}
-         ${TELEPATHY_LOGGER_QT5_LIBRARIES}
+         ${TELEPATHY_LOGGER_LIBRARIES}
          )
 endif ()
 

@@ -19,10 +19,10 @@
 
 #include "pending-tp-logger-search.h"
 
-#include <TelepathyLoggerQt4/LogManager>
-#include <TelepathyLoggerQt4/PendingSearch>
-#include <TelepathyLoggerQt4/SearchHit>
-#include <TelepathyLoggerQt4/Entity>
+#include <TelepathyLoggerQt/LogManager>
+#include <TelepathyLoggerQt/PendingSearch>
+#include <TelepathyLoggerQt/SearchHit>
+#include <TelepathyLoggerQt/Entity>
 
 #include <TelepathyQt/Account>
 

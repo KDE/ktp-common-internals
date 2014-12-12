@@ -20,7 +20,7 @@
 #ifndef UTILS_H
 #define UTILS_H
 
-#include <TelepathyLoggerQt4/Entity>
+#include <TelepathyLoggerQt/Entity>
 #include <KTp/Logger/log-entity.h>
 
 namespace Utils

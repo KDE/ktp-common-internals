@@ -21,9 +21,9 @@
 #include "log-entity.h"
 #include "utils.h"
 
-#include <TelepathyLoggerQt4/LogManager>
-#include <TelepathyLoggerQt4/Entity>
-#include <TelepathyLoggerQt4/PendingDates>
+#include <TelepathyLoggerQt/LogManager>
+#include <TelepathyLoggerQt/Entity>
+#include <TelepathyLoggerQt/PendingDates>
 #include <TelepathyQt/Contact>
 
 PendingTpLoggerDates::PendingTpLoggerDates(const Tp::AccountPtr &account,

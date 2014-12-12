@@ -49,7 +49,7 @@ target_include_directories(KTpLogger PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_BI
 target_link_libraries (KTpLogger
                 PUBLIC
                        KTp::CommonInternals
-                       ${TELEPATHY_LOGGER_QT5_LIBRARIES}
+                       ${TELEPATHY_LOGGER_LIBRARIES}
                 PRIVATE
                        KF5::KDELibs4Support
 )

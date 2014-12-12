@@ -29,7 +29,7 @@ set(REQUIRED_TPQT_VERSION 0.9.2.1)
 
 find_package (TelepathyQt5 ${REQUIRED_TPQT_VERSION} REQUIRED)
 find_package (TelepathyQt5Service ${REQUIRED_TPQT_VERSION} REQUIRED) #used for the otr-proxy
-find_package (TelepathyLoggerQt5 QUIET)
+find_package (TelepathyLoggerQt QUIET)
 find_package (KF5People 0.5)
 
 find_package (KAccounts)
@@ -57,7 +57,7 @@ set_package_properties(KF5People PROPERTIES DESCRIPTION "Support for KDE Contact
                        URL "https://projects.kde.org/libkpeople"
                        TYPE OPTIONAL
                       )
-set_package_properties(TelepathyLoggerQt5 PROPERTIES DESCRIPTION "Qt bindings for TelepathyLogger. This is needed to provide access to chat logs. HIGHLY recommended"
+set_package_properties(TelepathyLoggerQt PROPERTIES DESCRIPTION "Qt bindings for TelepathyLogger. This is needed to provide access to chat logs. HIGHLY recommended"
                        URL "http://projects.kde.org/telepathy-logger-qt"
                        TYPE OPTIONAL
                       )
@@ -82,10 +82,9 @@ include_directories (
                      ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
-if (TELEPATHY_LOGGER_QT5_FOUND)
+if (TelepathyLoggerQt_FOUND)
     add_definitions(${TELEPATHY_LOGGER_QT5_DEFINITIONS}
                     -DHAVE_TPLOGGERQT)
-    include_directories(${TELEPATHY_LOGGER_QT5_INCLUDE_DIRS})
 endif ()
 
 if (KF5People_FOUND)

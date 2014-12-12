@@ -1,3 +1,3 @@
-if (TELEPATHY_LOGGER_QT5_FOUND)
+if (TelepathyLoggerQt_FOUND)
     add_subdirectory(tplogger)
 endif()

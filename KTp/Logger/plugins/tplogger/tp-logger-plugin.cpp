@@ -24,11 +24,10 @@
 #include "utils.h"
 #include "pending-tp-logger-search.h"
 
-#include <TelepathyLoggerQt4/LogManager>
-#include <TelepathyLoggerQt4/Init>
-#include <TelepathyLoggerQt4/PendingOperation>
+#include <TelepathyLoggerQt/LogManager>
+#include <TelepathyLoggerQt/Init>
+#include <TelepathyLoggerQt/PendingOperation>
 
-#include <KDebug>
 #include <KPluginFactory>
 
 TpLoggerPlugin::TpLoggerPlugin(QObject *parent, const QVariantList &):
@@ -85,7 +84,7 @@ void TpLoggerPlugin::clearContactLogs(const Tp::AccountPtr &account,
 void TpLoggerPlugin::genericOperationFinished(Tpl::PendingOperation *operation)
 {
     if (operation->isError()) {
-        kWarning() << operation->errorName() << ":" << operation->errorMessage();
+        qWarning() << operation->errorName() << ":" << operation->errorMessage();
     }
 }
 
@@ -103,3 +102,6 @@ bool TpLoggerPlugin::logsExist(const Tp::AccountPtr &account, const KTp::LogEnti
 
 K_PLUGIN_FACTORY(TpLoggerPluginFactory, registerPlugin<TpLoggerPlugin>();)
 K_EXPORT_PLUGIN(TpLoggerPluginFactory("ktp_logger_plugin_tpLogger"))
+
+#include "tp-logger-plugin.moc"
+#include "moc_tp-logger-plugin.cpp"

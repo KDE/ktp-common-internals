@@ -20,9 +20,9 @@
 #include "pending-tp-logger-entities.h"
 #include "utils.h"
 
-#include <TelepathyLoggerQt4/LogManager>
-#include <TelepathyLoggerQt4/Entity>
-#include <TelepathyLoggerQt4/PendingEntities>
+#include <TelepathyLoggerQt/LogManager>
+#include <TelepathyLoggerQt/Entity>
+#include <TelepathyLoggerQt/PendingEntities>
 #include <TelepathyQt/Account>
 
 PendingTpLoggerEntities::PendingTpLoggerEntities(const Tp::AccountPtr &account,

@@ -21,10 +21,10 @@
 #include "utils.h"
 
 #include <TelepathyQt/Contact>
-#include <TelepathyLoggerQt4/LogManager>
-#include <TelepathyLoggerQt4/Entity>
-#include <TelepathyLoggerQt4/TextEvent>
-#include <TelepathyLoggerQt4/PendingEvents>
+#include <TelepathyLoggerQt/LogManager>
+#include <TelepathyLoggerQt/Entity>
+#include <TelepathyLoggerQt/TextEvent>
+#include <TelepathyLoggerQt/PendingEvents>
 
 #include <KTp/message-processor.h>
 
