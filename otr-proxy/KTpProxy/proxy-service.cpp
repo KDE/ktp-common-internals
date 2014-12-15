@@ -31,9 +31,6 @@
 #include <TelepathyQt/TextChannel>
 #include <TelepathyQt/PendingReady>
 
-#include <KApplication>
-
-
 ProxyService::ProxyService(const QDBusConnection &dbusConnection, OTR::Config *config, const Tp::ClientRegistrarPtr &registrar)
     : Tp::DBusService(dbusConnection),
     adaptee(this, dbusConnection),
@@ -140,7 +137,7 @@ void ProxyService::onChannelProxyClosed()
 
     // stop the application when not needed anymore
     if(channels.isEmpty()) {
-        KApplication::kApplication()->quit();
+        qApp->quit();
     }
 }
 
