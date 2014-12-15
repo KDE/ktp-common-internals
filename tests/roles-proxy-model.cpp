@@ -21,17 +21,17 @@
 
 #include "roles-proxy-model.h"
 
-#include <KDebug>
+#include <QDebug>
 
 RolesProxyModel::RolesProxyModel(QObject *parent)
   : QAbstractProxyModel(parent)
 {
-    kDebug();
+    qDebug();
 }
 
 RolesProxyModel::~RolesProxyModel()
 {
-    kDebug();
+    qDebug();
 }
 
 void RolesProxyModel::setSourceModel(QAbstractItemModel *sourceModel)
