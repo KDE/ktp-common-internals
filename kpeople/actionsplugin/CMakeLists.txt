@@ -4,8 +4,8 @@ add_library (ktp_kpeople_plugin MODULE
 
 target_link_libraries (ktp_kpeople_plugin
     KF5::People
+    KF5::I18n
     KTp::CommonInternals
-    KF5::KDELibs4Support
 )
 
 # Install:

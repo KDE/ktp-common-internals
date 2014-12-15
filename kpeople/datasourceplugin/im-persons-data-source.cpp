@@ -31,11 +31,11 @@
 #include "KTp/contact-factory.h"
 #include "KTp/global-contact-manager.h"
 #include "KTp/types.h"
+#include "debug.h"
 
 #include <KPeople/AllContactsMonitor>
 #include <KContacts/Addressee>
 
-#include <KDebug>
 #include <KPluginFactory>
 #include <KPluginLoader>
 
@@ -172,13 +172,13 @@ QString KTpAllContacts::createUri(const KTp::ContactPtr &contact) const
 void KTpAllContacts::onAccountManagerReady(Tp::PendingOperation *op)
 {
     if (op->isError()) {
-        kWarning() << "Failed to initialize AccountManager:" << op->errorName();
-        kWarning() << op->errorMessage();
+        qCWarning(KTP_KPEOPLE) << "Failed to initialize AccountManager:" << op->errorName();
+        qCWarning(KTP_KPEOPLE) << op->errorMessage();
 
         return;
     }
 
-    kDebug() << "Account manager ready";
+    qCDebug(KTP_KPEOPLE) << "Account manager ready";
 
     connect(KTp::contactManager(), SIGNAL(allKnownContactsChanged(Tp::Contacts,Tp::Contacts)),
             this, SLOT(onAllKnownContactsChanged(Tp::Contacts,Tp::Contacts)));

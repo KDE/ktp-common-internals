@@ -23,8 +23,7 @@
 #include <QIcon>
 #include <KLocalizedString>
 #include <KPluginFactory>
-#include <KFileDialog>
-#include <kdemacros.h>
+#include <QFileDialog>
 
 #include "KTp/contact.h"
 #include "KTp/actions.h"
@@ -213,10 +212,8 @@ void KPeopleActionsPlugin::onActionTriggered()
             KTp::Actions::startAudioVideoCall(account, contact);
             break;
         case FileTransfer: {
-            const QStringList fileNames = KFileDialog::getOpenFileNames(QUrl(QStringLiteral("kfiledialog:///FileTransferLastDirectory")),
-                                                                        QString(),
-                                                                        0,
-                                                                        i18n("Choose files to send to %1", contact->alias()));
+            const QStringList fileNames = QFileDialog::getOpenFileNames(Q_NULLPTR, i18n("Choose files to send to %1", contact->alias()),
+                                                                        QStringLiteral("kfiledialog:///FileTransferLastDirectory"));
             Q_FOREACH(const QString& file, fileNames) {
                 KTp::Actions::startFileTransfer(account, contact, file);
             }
@@ -226,10 +223,8 @@ void KPeopleActionsPlugin::onActionTriggered()
             KTp::Actions::openLogViewer(action->uri());
             break;
         case CollabEditing: {
-            const QUrl file = KFileDialog::getOpenFileName(QUrl(QStringLiteral("kfiledialog:///CollabEditingLastDirectory")),
-                                                                QString(),
-                                                                0,
-                                                                i18n("Choose a file to edit with %1", contact->alias()));
+            const QUrl file = QFileDialog::getOpenFileName(Q_NULLPTR, i18n("Choose a file to edit with %1", contact->alias()),
+                                                           QStringLiteral("kfiledialog:///CollabEditingLastDirectory"));
             KTp::Actions::startCollaborativeEditing(account, contact, QList<QUrl>() << file, true);
             break;
         }
