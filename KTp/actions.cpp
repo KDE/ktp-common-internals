@@ -25,7 +25,7 @@
 #include <TelepathyQt/PendingFailure>
 #include <TelepathyQt/ReferencedHandles>
 
-#include <KMimeType>
+#include <QMimeType>
 #include <KToolInvocation>
 #include <KDebug>
 #include <KLocalizedString>
@@ -170,8 +170,9 @@ Tp::PendingChannelRequest* Actions::startFileTransfer(const Tp::AccountPtr &acco
 
         QString fileName = fileInfo.fileName().append(QLatin1String("_"));
 
+        QMimeDatabase db;
         fileTransferProperties = Tp::FileTransferChannelCreationProperties(fileName,
-                                                                           KMimeType::findByFileContent(filePath)->name(),
+                                                                           db.mimeTypeForFile(filePath).name(),
                                                                            fileInfo.size());
 
         fileTransferProperties.setUri(QUrl::fromLocalFile(filePath).toString());
@@ -185,9 +186,9 @@ Tp::PendingChannelRequest* Actions::startFileTransfer(const Tp::AccountPtr &acco
         notification->sendEvent();
 
     } else {
-
+        QMimeDatabase db;
         fileTransferProperties = Tp::FileTransferChannelCreationProperties(
-                                    filePath, KMimeType::findByFileContent(filePath)->name());
+                                    filePath, db.mimeTypeForFile(filePath, QMimeDatabase::MatchContent).name());
     }
 
     return account->createFileTransfer(contact,
