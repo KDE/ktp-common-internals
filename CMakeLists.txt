@@ -101,9 +101,7 @@ ecm_setup_version(${KTP_VERSION} VARIABLE_PREFIX KTP
 add_subdirectory(KTp)
 add_subdirectory(tools)
 add_subdirectory(data)
-if (KDE4_BUILD_TESTS)
 add_subdirectory(tests)
-endif ()
 
 if (OTR_LIBS_FOUND)
     include_directories (${LIBOTR_INCLUDE_DIR}
