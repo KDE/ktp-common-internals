@@ -13,6 +13,7 @@ set (ktp_qml_plugin_SRCS
     contact-pin.cpp
     telepathy-manager.cpp
     qml-plugins.cpp
+    debug.cpp
 )
 
 add_library (ktpqmlplugin SHARED ${ktp_qml_plugin_SRCS})
@@ -20,7 +21,8 @@ add_library (ktpqmlplugin SHARED ${ktp_qml_plugin_SRCS})
 target_link_libraries (ktpqmlplugin
     Qt5::Qml
     
-    KF5::KDELibs4Support
+    KF5::WindowSystem
+    KF5::I18n
     KTp::CommonInternals
     KTp::Logger
     KTp::Models

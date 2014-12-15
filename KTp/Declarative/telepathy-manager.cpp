@@ -22,7 +22,6 @@
 #include <Widgets/add-contact-dialog.h>
 #include <Widgets/settings-kcm-dialog.h>
 #include <KTp/actions.h>
-#include <kstandarddirs.h>
 #include <KToolInvocation>
 
 #include <TelepathyQt/Account>

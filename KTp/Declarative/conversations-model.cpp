@@ -21,7 +21,7 @@
 #include "conversation.h"
 #include "messages-model.h"
 
-#include <KDebug>
+#include "debug.h"
 
 #include <TelepathyQt/ChannelClassSpec>
 #include <TelepathyQt/TextChannel>
@@ -64,7 +64,7 @@ QVariant ConversationsModel::data(const QModelIndex &index, int role) const
     if (index.isValid()) {
         if (role == ConversationRole) {
             result = QVariant::fromValue<Conversation*>(d->conversations[index.row()]);
-            kDebug() << "returning value " << result;
+            qCDebug(KTP_DECLARATIVE) << "returning value " << result;
         }
     }
     return result;
@@ -104,7 +104,7 @@ void ConversationsModel::handleChannels(const Tp::MethodInvocationContextPtr<> &
 
     //find the relevant channelRequest
     Q_FOREACH(const Tp::ChannelRequestPtr channelRequest, channelRequests) {
-        kDebug() << channelRequest->hints().allHints();
+        qCDebug(KTP_DECLARATIVE) << channelRequest->hints().allHints();
         shouldDelegate = channelRequest->hints().hint(QLatin1String("org.freedesktop.Telepathy.ChannelRequest"), QLatin1String("DelegateToPreferredHandler")).toBool();
     }
 
@@ -172,7 +172,7 @@ void ConversationsModel::removeConversation(Conversation* conv)
         conv->deleteLater();
         endRemoveRows();
     } else {
-        kError() << "attempting to delete non-existent conversation";
+        qWarning() << "attempting to delete non-existent conversation";
     }
 }
 
