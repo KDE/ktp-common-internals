@@ -22,16 +22,16 @@
 #include <TelepathyQt/DebugReceiver>
 #include <TelepathyQt/PendingDebugMessageList>
 
-#include <KDebug>
+#include <QDebug>
+#include <QAction>
+#include <QFileDialog>
 #include <KColorScheme>
 #include <KStandardAction>
-#include <KAction>
 #include <KLocalizedString>
 #include <KFindDialog>
 #include <KService>
 #include <KTextEditor/View>
 #include <kfind.h>
-#include <KFileDialog>
 #include <KTextEditor/Document>
 
 #include <ctime>
@@ -51,7 +51,7 @@ DebugMessageView::DebugMessageView(QWidget *parent)
         Q_ASSERT(m_editor && "Failed to instantiate a KatePart");
     }
     else {
-        kFatal() << "Could not find kate part";
+        qCritical() << "Could not find kate part";
     }
 
     m_editor->setReadWrite(false);
@@ -113,7 +113,7 @@ void DebugMessageView::setService(const QString &service)
 
 void DebugMessageView::onServiceRegistered(const QString & service)
 {
-    kDebug() << "Service" << service << "registered. Introspecting Debug interface...";
+    qDebug() << "Service" << service << "registered. Introspecting Debug interface...";
 
     m_debugReceiver = Tp::DebugReceiver::create(service);
 
@@ -126,7 +126,7 @@ void DebugMessageView::onDebugReceiverInvalidated(Tp::DBusProxy *proxy,
                                                     const QString &errorName, const QString &errorMessage)
 {
     Q_UNUSED(proxy);
-    kDebug() << "DebugReceiver invalidated" << errorName << errorMessage;
+    qDebug() << "DebugReceiver invalidated" << errorName << errorMessage;
     m_ready = false;
     m_debugReceiver.reset();
 }
@@ -134,7 +134,7 @@ void DebugMessageView::onDebugReceiverInvalidated(Tp::DBusProxy *proxy,
 void DebugMessageView::onDebugReceiverReady(Tp::PendingOperation *op)
 {
     if (op->isError()) {
-        kDebug() << "Failed to introspect Debug interface for" << m_serviceName
+        qDebug() << "Failed to introspect Debug interface for" << m_serviceName
                  << "Error was:" << op->errorName() << "-" << op->errorMessage();
         m_debugReceiver.reset();
     } else {
@@ -150,7 +150,7 @@ void DebugMessageView::onDebugReceiverReady(Tp::PendingOperation *op)
 void DebugMessageView::onDebugReceiverMonitoringEnabled(Tp::PendingOperation* op)
 {
     if (op->isError()) {
-        kError() << "Failed to enable monitoring on the Debug object of" << m_serviceName
+        qWarning() << "Failed to enable monitoring on the Debug object of" << m_serviceName
                  << "Error was:" << op->errorName() << "-" << op->errorMessage();
         m_tmpCache.clear();
         m_debugReceiver.reset();
@@ -163,7 +163,7 @@ void DebugMessageView::onDebugReceiverMonitoringEnabled(Tp::PendingOperation* op
 void DebugMessageView::onFetchMessagesFinished(Tp::PendingOperation* op)
 {
     if (op->isError()) {
-        kError() << "Failed to fetch messages from" << m_serviceName
+        qWarning() << "Failed to fetch messages from" << m_serviceName
                  << "Error was:" << op->errorName() << "-" << op->errorMessage();
         m_tmpCache.clear();
         m_debugReceiver.reset();
@@ -212,7 +212,7 @@ static inline QString formatTimestamp(double timestamp)
     sec = (long) timestamp;
     tstruct = std::localtime((time_t *) &sec);
     if (!std::strftime(time_str, sizeof(time_str), "%x %T", tstruct)) {
-        kDebug() << "Failed to format timestamp" << timestamp;
+        qDebug() << "Failed to format timestamp" << timestamp;
         time_str[0] = '\0';
     }
 
@@ -238,7 +238,7 @@ void DebugMessageView::appendMessage(const Tp::DebugMessage &msg)
 
 void DebugMessageView::saveLogFile()
 {
-    QUrl savedFile = KFileDialog::getSaveFileName(QUrl(), QString(), 0, i18n("Save Log"));
+    QUrl savedFile = QFileDialog::getSaveFileName(this, i18n("Save Log"));
     m_editor->saveAs(savedFile);
 }
 

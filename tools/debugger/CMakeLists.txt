@@ -2,7 +2,6 @@ project(ktp-debugger)
 
 include_directories(
     ${CMAKE_CURRENT_BINARY_DIR}
-    ${TELEPATHY_QT5_INCLUDE_DIR}
 )
 
 set(ktp-debugger_SRCS
@@ -19,7 +18,7 @@ target_link_libraries(ktp-debugger
     KF5::TextEditor
     KF5::I18n
     KF5::IconThemes
-    KF5::KDELibs4Support
+    KF5::XmlGui
 )
 
 install(TARGETS ktp-debugger DESTINATION ${BIN_INSTALL_DIR})
