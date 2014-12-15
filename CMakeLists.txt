@@ -22,8 +22,7 @@ find_package (KF5 REQUIRED COMPONENTS
               NotifyConfig
               TextEditor
               Wallet
-              Config
-              KDELibs4Support)
+              Config)
 
 set(REQUIRED_TPQT_VERSION 0.9.2.1)
 
@@ -48,6 +47,7 @@ include(ECMMarkNonGuiExecutable)
 include(ECMPackageConfigHelpers)
 include(ECMInstallIcons)
 include(ECMSetupVersion)
+include(GenerateExportHeader)
 include(CMakePackageConfigHelpers)
 include(WriteBasicConfigVersionFile)
 include(CheckIncludeFiles)
