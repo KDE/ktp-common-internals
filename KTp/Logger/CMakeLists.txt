@@ -16,6 +16,7 @@ set (ktp_logger_private_SRCS
     pending-logger-search.cpp
     pending-logger-search-impl.cpp
     scrollback-manager.cpp
+    debug.cpp
 )
 
 set (ktp_logger_private_HDRS
@@ -51,7 +52,7 @@ target_link_libraries (KTpLogger
                        KTp::CommonInternals
                        ${TELEPATHY_LOGGER_LIBRARIES}
                 PRIVATE
-                       KF5::KDELibs4Support
+                       KF5::Service
 )
 
 install (TARGETS KTpLogger

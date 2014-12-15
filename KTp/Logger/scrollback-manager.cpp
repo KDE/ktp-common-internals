@@ -26,7 +26,7 @@
 #include "pending-logger-dates.h"
 #include "pending-logger-logs.h"
 
-#include <KDebug>
+#include "debug.h"
 
 #include <TelepathyQt/Types>
 #include <TelepathyQt/AvatarData>
@@ -122,7 +122,7 @@ void ScrollbackManager::onDatesFinished(KTp::PendingLoggerOperation* po)
 {
     KTp::PendingLoggerDates *datesOp = qobject_cast<KTp::PendingLoggerDates*>(po);
     if (datesOp->hasError()) {
-        kWarning() << "Failed to fetch dates:" << datesOp->error();
+        qCWarning(KTP_LOGGER) << "Failed to fetch dates:" << datesOp->error();
         Q_EMIT fetched(QList<KTp::Message>());
         return;
     }
@@ -144,7 +144,7 @@ void ScrollbackManager::onEventsFinished(KTp::PendingLoggerOperation *op)
 {
     KTp::PendingLoggerLogs *logsOp = qobject_cast<KTp::PendingLoggerLogs*>(op);
     if (logsOp->hasError()) {
-        kWarning() << "Failed to fetch events:" << logsOp->error();
+        qCWarning(KTP_LOGGER) << "Failed to fetch events:" << logsOp->error();
         Q_EMIT fetched(QList<KTp::Message>());
         return;
     }
@@ -155,7 +155,7 @@ void ScrollbackManager::onEventsFinished(KTp::PendingLoggerOperation *op)
             queuedMessageTokens.append(message.messageToken());
         }
     }
-    kDebug() << "queuedMessageTokens" << queuedMessageTokens;
+    qCDebug(KTP_LOGGER) << "queuedMessageTokens" << queuedMessageTokens;
 
     // get last n (d->fetchLast) messages that are not queued
     const QList<KTp::LogMessage> allMessages = logsOp->logs();
@@ -170,6 +170,6 @@ void ScrollbackManager::onEventsFinished(KTp::PendingLoggerOperation *op)
         messages << KTp::MessageProcessor::instance()->processIncomingMessage(message, ctx);
     }
 
-    kDebug() << "emit all messages" << messages.count();
+    qCDebug(KTP_LOGGER) << "emit all messages" << messages.count();
     Q_EMIT fetched(messages);
 }

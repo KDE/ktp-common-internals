@@ -19,7 +19,7 @@
 
 #include "pending-logger-logs-impl.h"
 #include "abstract-logger-plugin.h"
-#include <KDebug>
+#include "debug.h"
 
 PendingLoggerLogsImpl::PendingLoggerLogsImpl(const Tp::AccountPtr &account,
                                              const KTp::LogEntity &entity,
@@ -62,7 +62,7 @@ void PendingLoggerLogsImpl::operationFinished(KTp::PendingLoggerOperation *op)
     Q_ASSERT(operation);
 
     const QList<KTp::LogMessage> newLogs = operation->logs();
-    kDebug() << "Plugin" << op->parent() << "returned" << newLogs.count() << "logs";
+    qCDebug(KTP_LOGGER) << "Plugin" << op->parent() << "returned" << newLogs.count() << "logs";
 
     // FIXME: Maybe handle duplicates?
     appendLogs(newLogs);

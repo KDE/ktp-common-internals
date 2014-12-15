@@ -19,7 +19,7 @@
 
 #include "pending-logger-entities-impl.h"
 #include "abstract-logger-plugin.h"
-#include <KDebug>
+#include "debug.h"
 
 PendingLoggerEntitiesImpl::PendingLoggerEntitiesImpl(const Tp::AccountPtr &account,
                                                      QObject* parent):
@@ -59,7 +59,7 @@ void PendingLoggerEntitiesImpl::operationFinished(KTp::PendingLoggerOperation* o
     Q_ASSERT(operation);
 
     const QList<KTp::LogEntity> newEntities = operation->entities();
-    kDebug() << "Plugin" << op->parent() << "returned" << newEntities.count() << "entities";
+    qCDebug(KTP_LOGGER) << "Plugin" << op->parent() << "returned" << newEntities.count() << "entities";
     Q_FOREACH (const KTp::LogEntity &entity, newEntities) {
         if (!entities().contains(entity)) {
             appendEntity(entity);
