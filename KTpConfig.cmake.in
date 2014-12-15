@@ -2,6 +2,9 @@
 
 find_dependency(TelepathyQt5 @REQUIRED_TPQT_VERSION@)
 find_dependency(KF5Wallet)
+if(@TelepathyLoggerQt_FOUND@)
+    find_dependency(TelepathyLoggerQt QUIET)
+endif()
 
 include("${CMAKE_CURRENT_LIST_DIR}/KTpTargets.cmake")
 
