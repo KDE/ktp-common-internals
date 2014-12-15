@@ -22,7 +22,7 @@
 #include "accounts-list-model.h"
 
 #include <QIcon>
-#include <KDebug>
+#include "debug.h"
 #include <KLocalizedString>
 #include <KPixmapSequence>
 
@@ -183,7 +183,7 @@ QModelIndex KTp::AccountsListModel::index(int row, int column, const QModelIndex
 
 void KTp::AccountsListModel::onAccountAdded(const Tp::AccountPtr &account)
 {
-    kDebug() << "Creating a new Account from account:" << account.data();
+    qCDebug(KTP_MODELS) << "Creating a new Account from account:" << account.data();
 
     // Check if the account is already in the model.
     bool found = false;
@@ -198,11 +198,11 @@ void KTp::AccountsListModel::onAccountAdded(const Tp::AccountPtr &account)
     }
 
     if (found) {
-        kWarning() << "Requested to add account"
+        qCWarning(KTP_MODELS) << "Requested to add account"
                    << account.data()
                    << "to model, but it is already present. Doing nothing.";
     } else {
-        kDebug() << "Account not already in model. Create new Account from account:"
+        qCDebug(KTP_MODELS) << "Account not already in model. Create new Account from account:"
                  << account.data();
 
         beginInsertRows(QModelIndex(), d->accounts.size(), d->accounts.size());
@@ -243,7 +243,7 @@ void KTp::AccountsListModel::onAccountUpdated()
 
     Q_ASSERT(item);
     if (!item) {
-        kWarning() << "Not an Account pointer:" << sender();
+        qCWarning(KTP_MODELS) << "Not an Account pointer:" << sender();
         return;
     }
 

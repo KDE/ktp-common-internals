@@ -26,7 +26,6 @@
 #include "KTp/types.h"
 #include <global-contact-manager.h>
 
-#include <KDebug>
 #include <KIconLoader>
 #include <KContacts/Addressee>
 
@@ -54,7 +53,7 @@ QVariant KPeopleTranslationProxy::data(const QModelIndex &proxyIndex, int role) 
 //     IMPersonsDataSource *imPlugin = qobject_cast<IMPersonsDataSource*>(PersonPluginManager::presencePlugin());
 //
 //     if (!imPlugin) {
-//         kWarning() << "No imPlugin";
+//         qCWarning(KTP_MODELS) << "No imPlugin";
 //         return QVariant();
 //     }
 //

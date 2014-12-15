@@ -23,7 +23,7 @@
 #include <QSet>
 #include <QTimer>
 
-#include <KDebug>
+#include "debug.h"
 
 
 class KTp::AbstractGroupingProxyModel::Private
@@ -265,7 +265,7 @@ void KTp::AbstractGroupingProxyModel::onRowsRemoved(const QModelIndex &sourcePar
 
         QHash<QPersistentModelIndex, ProxyNode*>::const_iterator it = d->proxyMap.constFind(index);
         while (it != d->proxyMap.constEnd() && it.key() == index) {
-//             kDebug() << "removing row" << index.data();
+//             qCDebug(KTP_MODELS) << "removing row" << index.data();
             itemsToRemove.append(it.value());
             ++it;
         }
@@ -307,7 +307,7 @@ void KTp::AbstractGroupingProxyModel::onDataChanged(const QModelIndex &sourceTop
                         //cache to list and remove once outside the const_iterator
                         removedItems.append(it.value());
 
-                        kDebug() << "removing " << index.data().toString() << " from group " << it.value()->group();
+                        qCDebug(KTP_MODELS) << "removing " << index.data().toString() << " from group " << it.value()->group();
                     }
                     ++it;
                 }
@@ -319,7 +319,7 @@ void KTp::AbstractGroupingProxyModel::onDataChanged(const QModelIndex &sourceTop
                     GroupNode *groupNode = itemForGroup(group);
                     addProxyNode(index, groupNode);
 
-                    kDebug() << "adding " << index.data().toString() << " to group " << group;
+                    qCDebug(KTP_MODELS) << "adding " << index.data().toString() << " to group " << group;
                 }
             }
         }
@@ -355,7 +355,7 @@ void KTp::AbstractGroupingProxyModel::onModelReset()
     d->groupCache.clear();
     d->proxyMap.clear();
     d->groupMap.clear();
-    kDebug() << "reset";
+    qCDebug(KTP_MODELS) << "reset";
 
     if (d->source->rowCount() > 0) {
         onRowsInserted(QModelIndex(), 0, d->source->rowCount()-1);

@@ -9,6 +9,7 @@ set (ktp_models_private_SRCS
     presence-model.cpp
     text-channel-watcher-proxy-model.cpp
     rooms-model.cpp
+    debug.cpp
 )
 
 set (ktp_models_private_HDRS
@@ -60,7 +61,10 @@ target_link_libraries (KTpModels
     PUBLIC
         KTp::CommonInternals
     PRIVATE
-        KF5::KDELibs4Support
+        KF5::I18n
+        KF5::ConfigCore
+        KF5::WidgetsAddons
+        KF5::IconThemes
         ${ktp_models_private_LIBS}
 )
 

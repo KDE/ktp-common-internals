@@ -34,7 +34,7 @@
 #include "kpeopletranslationproxy.h"
 #endif
 
-#include <KDebug>
+#include "debug.h"
 
 
 namespace KTp
@@ -61,7 +61,7 @@ KTp::ContactsModel::ContactsModel(QObject *parent)
     d->trackUnread = false;
     if (KTp::kpeopleEnabled()) {
         #ifdef HAVE_KPEOPLE
-        kDebug() << "Built with kpeople support, using kpeople model";
+        qCDebug(KTP_MODELS) << "Built with kpeople support, using kpeople model";
         KPeople::PersonsModel *personsModel = new KPeople::PersonsModel(this);
 
         connect(personsModel, SIGNAL(modelInitialized(bool)),
@@ -73,7 +73,7 @@ KTp::ContactsModel::ContactsModel(QObject *parent)
     }
     else
     {
-        kDebug() << "KPeople support not built-in, using normal model";
+        qCDebug(KTP_MODELS) << "KPeople support not built-in, using normal model";
         d->source = new KTp::ContactsListModel(this);
         connect(d->source, SIGNAL(modelInitialized(bool)),
                 this, SIGNAL(modelInitialized(bool)));

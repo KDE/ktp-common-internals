@@ -26,10 +26,11 @@
 #include <QIcon>
 #include <QtDBus/QtDBus>
 
+#include <KSharedConfig>
 #include <KLocalizedString>
 #include <KConfig>
 #include <KConfigGroup>
-#include <KDebug>
+#include "debug.h"
 
 namespace KTp
 {
@@ -64,7 +65,7 @@ void PresenceModel::syncCustomPresencesToDisk()
 QVariant PresenceModel::data(int index) const
 {
     if (index < 0 || index >= m_presences.size()) {
-        kDebug() << "invalid index data requested" << index;
+        qCDebug(KTP_MODELS) << "invalid index data requested" << index;
         return QVariant();
     }
 
@@ -74,7 +75,7 @@ QVariant PresenceModel::data(int index) const
 QVariant PresenceModel::data(const QModelIndex &index, int role) const
 {
     if (!index.isValid()) {
-        kDebug() << "invalid index data requested" << index;
+        qCDebug(KTP_MODELS) << "invalid index data requested" << index;
         return QVariant();
     }
 
@@ -117,7 +118,7 @@ int PresenceModel::rowCount(const QModelIndex &parent) const
 
 void PresenceModel::loadPresences()
 {
-    KSharedConfigPtr config = KSharedConfig::openConfig(QLatin1String("ktelepathyrc"));
+    KSharedConfigPtr config = KSharedConfig::openConfig(QStringLiteral("ktelepathyrc"));
     config->reparseConfiguration();
     m_presenceGroup = config->group("Custom Presence List");
     m_presences.clear();

@@ -18,8 +18,8 @@
  */
 
 #include "rooms-model.h"
-#include <KLocale>
 #include <QIcon>
+#include <KLocalizedString>
 
 // RoomsModel
 KTp::RoomsModel::RoomsModel(QObject *parent): QAbstractListModel(parent)

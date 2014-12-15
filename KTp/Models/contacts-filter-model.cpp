@@ -27,7 +27,7 @@
 
 #include <presence.h>
 
-#include <KDebug>
+#include "debug.h"
 
 
 class KTp::ContactsFilterModel::Private
@@ -760,7 +760,7 @@ bool ContactsFilterModel::filterAcceptsRow(int sourceRow, const QModelIndex &sou
         rc = d->filterAcceptsGroup(index);
     }
     else {
-        kDebug() << "Unknown type found in Account Filter";
+        qCDebug(KTP_MODELS) << "Unknown type found in Account Filter";
         rc = true;
     }
 
