@@ -21,7 +21,7 @@
 #include "utils.h"
 #include "constants.h"
 
-#include <KDebug>
+#include <debug.h>
 
 #include <TelepathyQt/SharedPtr>
 #include <TelepathyQt/ReceivedMessage>
@@ -123,18 +123,18 @@ void ChannelAdapter::setChannel(const Tp::TextChannelPtr &textChannel)
     d->otrProxy = OTRProxyPtr(new KTp::Client::ChannelProxyInterfaceOTRInterface(KTP_PROXY_BUS_NAME, otrProxyPath, this));
 
     if(!d->otrProxy->isValid()) {
-        kDebug() << "No OTR proxy available for channel: " << textChannel->objectPath();
+        qCDebug(KTP_OTR) << "No OTR proxy available for channel: " << textChannel->objectPath();
         setupTextChannel();
         return;
     }
 
-    kDebug() << "Connecting to the OTR proxy: " << d->otrProxy->path();
+    qCDebug(KTP_OTR) << "Connecting to the OTR proxy: " << d->otrProxy->path();
     QDBusPendingReply<> connectResult = d->otrProxy->ConnectProxy();
     connectResult.waitForFinished();
     if(connectResult.isValid()) {
         setupOTRChannel();
     } else {
-        kWarning() << "Could not connect to the proxy" << connectResult.error().message();
+        qCWarning(KTP_OTR) << "Could not connect to the proxy" << connectResult.error().message();
         setupTextChannel();
     }
 }
@@ -146,7 +146,6 @@ Tp::TextChannelPtr ChannelAdapter::textChannel()
 
 void ChannelAdapter::setupTextChannel()
 {
-    kDebug();
     connect(d->textChannel.data(), SIGNAL(messageReceived(Tp::ReceivedMessage)),
             SIGNAL(messageReceived(Tp::ReceivedMessage)));
     connect(d->textChannel.data(), SIGNAL(pendingMessageRemoved(Tp::ReceivedMessage)),
@@ -157,7 +156,6 @@ void ChannelAdapter::setupTextChannel()
 
 void ChannelAdapter::setupOTRChannel()
 {
-    kDebug();
     d->otrConnected = true;
     d->trustLevel = KTp::OTRTrustLevelNotPrivate;
 
@@ -203,7 +201,7 @@ KTp::OTRTrustLevel ChannelAdapter::otrTrustLevel() const
 void ChannelAdapter::onTrustLevelPropertyGet(Tp::PendingOperation *op)
 {
     if(op->isError()) {
-        kWarning() << "Could not get property: TrustLevel";
+        qCWarning(KTP_OTR) << "Could not get property: TrustLevel";
         return;
     }
     // we must have received trust level changed signal before
@@ -222,13 +220,12 @@ bool ChannelAdapter::isOTRsuppored() const
 
 void ChannelAdapter::initializeOTR()
 {
-    kDebug() << "Initializing OTR session";
+    qCDebug(KTP_OTR) << "Initializing OTR session";
     d->otrProxy->Initialize();
 }
 
 void ChannelAdapter::stopOTR()
 {
-    kDebug();
     d->otrProxy->Stop();
 }
 
@@ -248,7 +245,6 @@ void ChannelAdapter::acknowledge(const QList<Tp::ReceivedMessage> &messages)
         return;
     }
 
-    kDebug();
     if(isOTRsuppored()) {
         QList<Tp::ReceivedMessage> toAck;
         QList<Tp::ReceivedMessage> eventsToRemove;
@@ -330,7 +326,6 @@ QList<Tp::ReceivedMessage> ChannelAdapter::messageQueue() const
 
 void ChannelAdapter::onMessageReceived(const Tp::MessagePartList &message)
 {
-    kDebug();
     OTRMessage recvMes(message, d->textChannel);
     if(recvMes.hasId()) {
         const int id = recvMes.getId();
@@ -338,7 +333,7 @@ void ChannelAdapter::onMessageReceived(const Tp::MessagePartList &message)
             d->messages.insert(id, recvMes);
             Q_EMIT messageReceived(recvMes);
         } else {
-            kWarning() << "Message already in the queue. Id: " << id;
+            qCWarning(KTP_OTR) << "Message already in the queue. Id: " << id;
         }
     } else if (KTp::Utils::isOtrEvent(recvMes)) {
         const int id = d->otrEvents.size();
@@ -346,13 +341,12 @@ void ChannelAdapter::onMessageReceived(const Tp::MessagePartList &message)
         d->otrEvents.insert(id, recvMes);
         Q_EMIT messageReceived(recvMes);
     } else {
-        kWarning() << "Message has not id and is not an OTR event either";
+        qCWarning(KTP_OTR) << "Message has not id and is not an OTR event either";
     }
 }
 
 void ChannelAdapter::onPendingMessagesPropertyGet(Tp::PendingOperation *op)
 {
-    kDebug();
     Tp::PendingVariant *variant = dynamic_cast<Tp::PendingVariant*>(op);
 
     if(!variant->isError()) {
@@ -363,27 +357,25 @@ void ChannelAdapter::onPendingMessagesPropertyGet(Tp::PendingOperation *op)
             onMessageReceived(message);
         }
     } else {
-        kWarning() << "Could not initialize message queue: " << variant->errorName() << " - "
+        qCWarning(KTP_OTR) << "Could not initialize message queue: " << variant->errorName() << " - "
             << variant->errorMessage();
     }
 }
 
 void ChannelAdapter::onRemoteFingerprintPropertyGet(Tp::PendingOperation *op)
 {
-    kDebug();
     Tp::PendingVariant *variant = dynamic_cast<Tp::PendingVariant*>(op);
 
     if(!variant->isError()) {
         d->remoteFp = variant->result().toString();
     } else {
-        kWarning() << "Could not get remote fingerprint: " << variant->errorName() << " - "
+        qCWarning(KTP_OTR) << "Could not get remote fingerprint: " << variant->errorName() << " - "
             << variant->errorMessage();
     }
 }
 
 void ChannelAdapter::onPendingMessagesRemoved(const Tp::UIntList &messageIDs)
 {
-    kDebug();
     Q_FOREACH(uint id, messageIDs) {
         const QMap<uint, OTRMessage>::Iterator mIt = d->messages.find(id);
         if(mIt != d->messages.end()) {
@@ -391,14 +383,13 @@ void ChannelAdapter::onPendingMessagesRemoved(const Tp::UIntList &messageIDs)
             d->messages.erase(mIt);
             Q_EMIT pendingMessageRemoved(message);
         } else {
-            kWarning() << "No message to remove with id: " << id;
+            qCWarning(KTP_OTR) << "No message to remove with id: " << id;
         }
     }
 }
 
 void ChannelAdapter::onMessageSent(const Tp::MessagePartList &content, uint flags, const QString &messageToken)
 {
-    kDebug();
     OTRMessage message(content, d->textChannel);
     Q_EMIT messageSent(message, Tp::MessageSendingFlags(flags), messageToken);
 }

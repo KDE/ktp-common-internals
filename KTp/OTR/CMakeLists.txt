@@ -15,7 +15,8 @@ add_library (KTpOTR SHARED
     channel-proxy-interface.cpp
     proxy-service-interface.cpp
     types.cpp
-    utils.cpp)
+    utils.cpp
+    debug.cpp)
 add_library(KTp::OTR ALIAS KTpOTR)
 
 set_target_properties(KTpOTR PROPERTIES
@@ -29,7 +30,6 @@ target_link_libraries (KTpOTR
                         PUBLIC
                             ${TELEPATHY_QT5_LIBRARIES}
                         PRIVATE
-                            KF5::KDELibs4Support
                             KF5::I18n
 )
 target_include_directories(KTpOTR PUBLIC ${TELEPATHY_QT5_INCLUDE_DIR}) # TODO: Remove when TelepathyQt exports include paths properly
