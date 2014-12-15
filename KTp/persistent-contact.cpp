@@ -27,7 +27,7 @@
 
 #include <KTp/core.h>
 
-#include <KDebug>
+#include "ktp-debug.h"
 
 namespace KTp
 {
@@ -92,7 +92,7 @@ Tp::AccountPtr KTp::PersistentContact::account() const
 void KTp::PersistentContact::onAccountReady(Tp::PendingOperation *op)
 {
     if (op->isError()) {
-        kWarning() << "could not load account " << d->accountId;
+        qCWarning(KTP_COMMONINTERNALS) << "could not load account " << d->accountId;
     }
     Tp::PendingReady *pendingReady = qobject_cast<Tp::PendingReady*>(op);
     Q_ASSERT(pendingReady);

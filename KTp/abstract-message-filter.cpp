@@ -17,7 +17,7 @@
 */
 
 #include "abstract-message-filter.h"
-#include <KDebug>
+#include "ktp-debug.h"
 
 namespace KTp {
 
@@ -51,7 +51,7 @@ void AbstractMessageFilter::filterOutgoingMessage(KTp::OutgoingMessage &message,
     Q_UNUSED(message)
     Q_UNUSED(context)
 
-    kDebug() << metaObject()->className() << " has no outgoing component";
+    qCDebug(KTP_COMMONINTERNALS) << metaObject()->className() << " has no outgoing component";
 }
 
 }

@@ -18,13 +18,13 @@
 */
 
 #include "telepathy-handler-application.h"
-#include "debug.h"
+#include "ktp-debug.h"
 
 #include <cstdlib>
 
 #include <QTimer>
-#include <KCmdLineArgs>
-#include <KDebug>
+#include <KLocalizedString>
+#include "debug.h"
 
 #include <TelepathyQt/Types>
 #include <TelepathyQt/Debug>
@@ -103,11 +103,6 @@ void TelepathyHandlerApplication::Private::init(int initialTimeout, int timeout)
 
     // Install TpQt4 debug callback
     KTp::Debug::installCallback(s_debug);
-
-    // Enable KDebug DBus interface
-    // FIXME This must be enabled here because there is a bug in plasma
-    //       it should be removed when this is fixed
-    kde_kdebug_enable_dbus_interface = s_debug;
 
     if (!Private::s_persist) {
         timer = new QTimer(q);

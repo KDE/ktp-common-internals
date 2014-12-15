@@ -18,15 +18,15 @@
 
 #include "debug.h"
 
-#include <KDebug>
 #include <TelepathyQt/Debug>
+#include <QLoggingCategory>
 
+Q_DECLARE_LOGGING_CATEGORY(TELEPATHY_QT)
 
 namespace KTp
 {
 
 namespace {
-int s_tpqtDebugArea;
 QString libraryString;
 
 static void tpDebugCallback(const QString &libraryName,
@@ -37,15 +37,13 @@ static void tpDebugCallback(const QString &libraryName,
     if (Q_UNLIKELY(libraryString.isEmpty())) {
         libraryString = QString::fromLatin1("%1:%2()").arg(libraryName, libraryVersion);
     }
-    kDebugStream(type, s_tpqtDebugArea, __FILE__, __LINE__, libraryString.toLatin1()) << qPrintable(msg);
+    qCDebug(TELEPATHY_QT) << libraryString << qPrintable(msg);
 }
 } // namespace
 } // namespace KTp
 
 void KTp::Debug::installCallback(bool debug, bool warning)
 {
-    s_tpqtDebugArea = KDebug::registerArea("Telepathy-Qt");
-
     // Redirect Tp debug and warnings to KDebug output
     Tp::setDebugCallback(&tpDebugCallback);
 
@@ -53,3 +51,6 @@ void KTp::Debug::installCallback(bool debug, bool warning)
     Tp::enableDebug(debug);
     Tp::enableWarnings(warning);
 }
+
+Q_LOGGING_CATEGORY(KTP_COMMONINTERNALS, "ktp-logger")
+Q_LOGGING_CATEGORY(TELEPATHY_QT, "ktp-logger")

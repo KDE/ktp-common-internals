@@ -22,7 +22,6 @@
 #include <QThread>
 #include <QStringList>
 #include <QDomDocument>
-#include <KDateTime>
 
 #include "logs-importer.h"
 
@@ -52,7 +51,7 @@ class LogsImporter::Private: public QThread
 
     void initKTpDocument();
     void saveKTpDocument();
-    KDateTime parseKopeteTime(const QDomElement &kopeteMessage) const;
+    QDateTime parseKopeteTime(const QDomElement &kopeteMessage) const;
     QDomElement convertKopeteMessage(const QDomElement &kopeteMessage);
     void convertKopeteLog(const QString &filepath);
 

@@ -20,8 +20,7 @@
 #include "logs-importer.h"
 
 #include <KLocalizedString>
-#include <KDebug>
-#include <KTimeZone>
+#include "ktp-debug.h"
 #include <QStandardPaths>
 
 using namespace KTp;
@@ -113,7 +112,7 @@ QString LogsImporter::Private::accountIdToProtocol(const QString &accountId) con
          *         Skype - not supported by KTp
          *         WinPopup - no support in Telepathy
          */
-        kWarning() << accountId << "is an unsupported protocol";
+        qCWarning(KTP_COMMONINTERNALS) << accountId << "is an unsupported protocol";
         return QString();
     }
 }
@@ -124,13 +123,13 @@ QStringList LogsImporter::Private::findKopeteLogs(const QString &accountId) cons
 
     QString protocol = accountIdToProtocol(accountId);
     if (protocol.isEmpty()) {
-        kWarning() << "Unsupported protocol";
+        qCWarning(KTP_COMMONINTERNALS) << "Unsupported protocol";
         return files;
     }
 
     QString kopeteAccountId = accountIdToAccountName(accountId);
     if (kopeteAccountId.isEmpty()) {
-        kWarning() << "Unable to parse account ID";
+        qCWarning(KTP_COMMONINTERNALS) << "Unable to parse account ID";
         return files;
     }
 
@@ -199,21 +198,21 @@ void LogsImporter::Private::saveKTpDocument()
     QTextStream stream(&outFile);
     m_ktpDocument.save(stream, 0);
 
-    kDebug() << "Stored as" << path;
+    qCDebug(KTP_COMMONINTERNALS) << "Stored as" << path;
 }
 
-KDateTime LogsImporter::Private::parseKopeteTime(const QDomElement& kopeteMessage) const
+QDateTime LogsImporter::Private::parseKopeteTime(const QDomElement& kopeteMessage) const
 {
     QString strtime = kopeteMessage.attribute(QLatin1String("time"));
     if (strtime.isEmpty()) {
-        return KDateTime();
+        return QDateTime();
     }
 
     /* Kopete time attribute is in format "D H:M:S" - year and month are stored in
      * log header, Hour, minute and seconds don't have zero padding */
     QStringList dateTime = strtime.split(QLatin1Char(' '), QString::SkipEmptyParts);
     if (dateTime.length() != 2) {
-        return KDateTime();
+        return QDateTime();
     }
 
     QStringList time = dateTime.at(1).split(QLatin1Char(':'));
@@ -229,17 +228,17 @@ KDateTime LogsImporter::Private::parseKopeteTime(const QDomElement& kopeteMessag
     /* Kopete stores date in local timezone but Telepathy in UTC. Note that we
      * must use time offset at the specific date rather then current offset
      * (could be different due to for example DST) */
-    KDateTime localTz = KDateTime::fromString(str, KDateTime::ISODate);
-    KDateTime utc = localTz.addSecs(-KDateTime::currentLocalDateTime().timeZone().offset(localTz.toTime_t()));
+    QDateTime localTz = QDateTime::fromString(str, Qt::ISODate);
+    QDateTime utc = localTz.addSecs(-QDateTime::currentDateTime().timeZone().offsetData(localTz).offsetFromUtc);
 
     return utc;
 }
 
 QDomElement LogsImporter::Private::convertKopeteMessage(const QDomElement& kopeteMessage)
 {
-    KDateTime time = parseKopeteTime(kopeteMessage);
+    QDateTime time = parseKopeteTime(kopeteMessage);
     if (!time.isValid()) {
-        kWarning() << "Failed to parse message time, skipping message";
+        qCWarning(KTP_COMMONINTERNALS) << "Failed to parse message time, skipping message";
         return QDomElement();
     }
 
@@ -259,7 +258,7 @@ QDomElement LogsImporter::Private::convertKopeteMessage(const QDomElement& kopet
     }
 
     QDomElement ktpMessage = m_ktpDocument.createElement(QLatin1String("message"));
-    ktpMessage.setAttribute(QLatin1String("time"), time.toUtc().toString(QLatin1String("%Y%m%dT%H:%M:%S")));
+    ktpMessage.setAttribute(QStringLiteral("time"), time.toUTC().toString(QStringLiteral("%Y%m%dT%H:%M:%S")));
 
     QString sender = kopeteMessage.attribute(QLatin1String("from"));
     if (!m_isMUCLog && sender.startsWith(m_contactId) && sender.length() > m_contactId.length()) {
@@ -295,7 +294,7 @@ QDomElement LogsImporter::Private::convertKopeteMessage(const QDomElement& kopet
 
 void LogsImporter::Private::convertKopeteLog(const QString& filepath)
 {
-    kDebug() << "Converting" << filepath;
+    qCDebug(KTP_COMMONINTERNALS) << "Converting" << filepath;
 
     /* Init */
     m_day = 0;
@@ -357,7 +356,7 @@ void LogsImporter::Private::convertKopeteLog(const QString& filepath)
     }
 
     if ((m_year == 0) || (m_month == 0) || m_meId.isEmpty() || m_contactId.isEmpty()) {
-        kWarning() << "Failed to correctly parse header. Possibly invalid log format";
+        qCWarning(KTP_COMMONINTERNALS) << "Failed to correctly parse header. Possibly invalid log format";
         return;
     }
 

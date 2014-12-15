@@ -26,7 +26,7 @@
 #include <TelepathyQt/Account>
 #include <TelepathyQt/PendingReady>
 
-#include <KDebug>
+#include "ktp-debug.h"
 
 namespace KTp
 {
@@ -46,7 +46,7 @@ GlobalPresence::GlobalPresence(QObject *parent)
 void GlobalPresence::setAccountManager(const Tp::AccountManagerPtr &accountManager)
 {
     if (! accountManager->isReady()) {
-        kWarning() << "GlobalPresence used with unready account manager";
+        qCWarning(KTP_COMMONINTERNALS) << "GlobalPresence used with unready account manager";
     }
 
     m_enabledAccounts = accountManager->enabledAccounts();
@@ -79,11 +79,11 @@ Tp::AccountManagerPtr GlobalPresence::accountManager() const
 void GlobalPresence::onAccountManagerReady(Tp::PendingOperation* op)
 {
     if (op->isError()) {
-        kDebug() << op->errorName();
-        kDebug() << op->errorMessage();
+        qCDebug(KTP_COMMONINTERNALS) << op->errorName();
+        qCDebug(KTP_COMMONINTERNALS) << op->errorMessage();
 
         //TODO: Create signal to send to client
-        kDebug() << "Something unexpected happened to the core part of your Instant Messaging system "
+        qCDebug(KTP_COMMONINTERNALS) << "Something unexpected happened to the core part of your Instant Messaging system "
                  << "and it couldn't be initialized. Try restarting the client.";
 
         return;
@@ -153,7 +153,7 @@ bool GlobalPresence::isChangingPresence() const
 void GlobalPresence::setPresence(const KTp::Presence &presence)
 {
     if (m_enabledAccounts.isNull()) {
-        kWarning() << "Requested presence change on empty accounts set";
+        qCWarning(KTP_COMMONINTERNALS) << "Requested presence change on empty accounts set";
         return;
     }
 
@@ -184,7 +184,7 @@ void GlobalPresence::setPresence(GlobalPresence::ConnectionPresenceType p, QStri
         setPresence(Tp::Presence::offline(message));
         break;
     default:
-        kDebug() << "You should not be here!";
+        qCDebug(KTP_COMMONINTERNALS) << "You should not be here!";
     }
 }
 
@@ -232,7 +232,7 @@ void GlobalPresence::onCurrentPresenceChanged()
         }
     }
 
-    kDebug() << "Current presence changed";
+    qCDebug(KTP_COMMONINTERNALS) << "Current presence changed";
 
     if (highestCurrentPresence.type() != m_currentPresence.type() ||
             highestCurrentPresence.status() != m_currentPresence.status() ||
@@ -316,13 +316,13 @@ bool GlobalPresence::hasEnabledAccounts() const
 
 void GlobalPresence::saveCurrentPresence()
 {
-    kDebug() << "Saving presence with message:" << m_currentPresence.statusMessage();
+    qCDebug(KTP_COMMONINTERNALS) << "Saving presence with message:" << m_currentPresence.statusMessage();
     m_savedPresence = m_currentPresence;
 }
 
 void GlobalPresence::restoreSavedPresence()
 {
-    kDebug() << m_savedPresence.statusMessage();
+    qCDebug(KTP_COMMONINTERNALS) << m_savedPresence.statusMessage();
     setPresence(m_savedPresence);
 }
 

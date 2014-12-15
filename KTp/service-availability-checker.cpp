@@ -22,7 +22,7 @@
 #include <QtDBus/QDBusPendingCall>
 #include <QtDBus/QDBusReply>
 
-#include <KDebug>
+#include "ktp-debug.h"
 
 namespace KTp
 {
@@ -81,7 +81,7 @@ void ServiceAvailabilityChecker::onCallFinished(QDBusPendingCallWatcher *watcher
 {
     QDBusReply<QStringList> reply = *watcher;
     if (!reply.isValid()) {
-        kDebug() << "Got error while introspecting service availability:" << reply.error();
+        qCDebug(KTP_COMMONINTERNALS) << "Got error while introspecting service availability:" << reply.error();
     } else {
         if (watcher->objectName() == QLatin1String("ListActivatableNamesWatcher")) {
             d->serviceActivatable = reply.value().contains(d->serviceName);

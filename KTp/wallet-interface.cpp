@@ -21,7 +21,7 @@
 #include "wallet-interface.h"
 #include "pending-wallet.h"
 
-#include <KDebug>
+#include "ktp-debug.h"
 
 
 class KTp::WalletInterfacePrivate : public QObject
@@ -81,7 +81,7 @@ KTp::PendingWallet* WalletInterface::openWallet()
 void WalletInterfacePrivate::onWalletOpened(bool success)
 {
     if (!success) {
-        kWarning() << "Couldn't open wallet";
+        qCWarning(KTP_COMMONINTERNALS) << "Couldn't open wallet";
     }
 
     disconnect(wallet.data(), SIGNAL(walletOpened(bool)), this, SLOT(onWalletOpened(bool)));
@@ -121,7 +121,7 @@ QString WalletInterface::password(const Tp::AccountPtr &account)
         int rc = d->wallet->readPassword(account->uniqueIdentifier(), password);
         if (rc != 0) {
             password.clear();
-            kWarning() << "failed to read password from KWallet";
+            qCWarning(KTP_COMMONINTERNALS) << "failed to read password from KWallet";
         }
     }
     return password;
@@ -187,7 +187,7 @@ bool WalletInterface::hasEntry(const Tp::AccountPtr &account, const QString &key
     if (d->wallet->hasEntry(d->mapsPrefix + account->uniqueIdentifier())) {
         int rc = d->wallet->readMap(d->mapsPrefix + account->uniqueIdentifier(), map);
         if (rc != 0) {
-            kWarning() << "failed to read map from KWallet (probably it is not a map)";
+            qCWarning(KTP_COMMONINTERNALS) << "failed to read map from KWallet (probably it is not a map)";
             return false;
         }
     }
@@ -206,7 +206,7 @@ QString WalletInterface::entry(const Tp::AccountPtr &account, const QString &key
     if (d->wallet->hasEntry(d->mapsPrefix + account->uniqueIdentifier())) {
         int rc = d->wallet->readMap(d->mapsPrefix + account->uniqueIdentifier(), map);
         if (rc != 0) {
-            kWarning() << "failed to read map from KWallet (probably it is not a map)";
+            qCWarning(KTP_COMMONINTERNALS) << "failed to read map from KWallet (probably it is not a map)";
             return QString();
         }
     }
@@ -228,7 +228,7 @@ void WalletInterface::setEntry(const Tp::AccountPtr &account, const QString &key
     if (d->wallet->hasEntry(d->mapsPrefix + account->uniqueIdentifier())) {
         int rc = d->wallet->readMap(d->mapsPrefix + account->uniqueIdentifier(), map);
         if (rc != 0) {
-            kWarning() << "failed to read map from KWallet (probably it is not a map)";
+            qCWarning(KTP_COMMONINTERNALS) << "failed to read map from KWallet (probably it is not a map)";
             return;
         }
     }
@@ -250,7 +250,7 @@ void WalletInterface::removeEntry(const Tp::AccountPtr &account, const QString &
     if (d->wallet->hasEntry(d->mapsPrefix + account->uniqueIdentifier())) {
         int rc = d->wallet->readMap(d->mapsPrefix + account->uniqueIdentifier(), map);
         if (rc != 0) {
-            kWarning() << "failed to read map from KWallet (probably it is not a map)";
+            qCWarning(KTP_COMMONINTERNALS) << "failed to read map from KWallet (probably it is not a map)";
             return;
         }
     }

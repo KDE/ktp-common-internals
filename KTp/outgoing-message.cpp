@@ -19,7 +19,7 @@
 
 #include "outgoing-message.h"
 
-#include <KDebug>
+#include "ktp-debug.h"
 #include <QSharedData>
 
 #include <TelepathyQt/ContactManager>

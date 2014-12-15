@@ -27,7 +27,7 @@
 
 #include "KTp/types.h"
 
-#include <KDebug>
+#include "ktp-debug.h"
 
 
 namespace KTp {
@@ -70,7 +70,7 @@ Tp::Contacts GlobalContactManager::allKnownContacts() const
 void GlobalContactManager::onAccountManagerReady(Tp::PendingOperation *op)
 {
     if (op->isError()) {
-        kWarning() << "Account Manager becomeReady failed";
+        qCWarning(KTP_COMMONINTERNALS) << "Account Manager becomeReady failed";
     }
 
     Q_FOREACH(const Tp::AccountPtr &account, d->accountManager->allAccounts()) {
@@ -143,7 +143,7 @@ void GlobalContactManager::onContactManagerStateChanged(const Tp::ContactManager
 Tp::AccountPtr GlobalContactManager::accountForContact(const Tp::ContactPtr &contact) const
 {
     if (!contact || !contact->manager()) {
-        kWarning() << "Null contact or contact manager!";
+        qCWarning(KTP_COMMONINTERNALS) << "Null contact or contact manager!";
         return Tp::AccountPtr();
     }
     return accountForConnection(contact->manager()->connection());

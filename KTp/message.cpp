@@ -20,7 +20,7 @@
 #include "message.h"
 #include "message-private.h"
 
-#include <KDebug>
+#include "ktp-debug.h"
 #include <QSharedData>
 
 #include <TelepathyQt/ContactManager>
@@ -120,7 +120,7 @@ QString Message::finalizedMessage() const
     QString msg = d->mainPart + QLatin1String("\n") +
         d->parts.join(QLatin1String("\n"));
 
-//     kDebug() << msg;
+//     qCDebug(KTP_COMMONINTERNALS) << msg;
     return msg;
 }
 
@@ -136,7 +136,7 @@ QString Message::finalizedScript() const
         finalScript.append(QLatin1String("false;"));
     }
 
-//    kDebug() << finalScript;
+//    qCDebug(KTP_COMMONINTERNALS) << finalScript;
     return finalScript;
 }
 

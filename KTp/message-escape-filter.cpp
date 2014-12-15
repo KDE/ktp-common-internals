@@ -21,7 +21,6 @@
 #include <QTextDocument> //needed for Qt::escape
 
 #include <KTp/text-parser.h>
-#include <KUrl>
 
 MessageEscapeFilter::MessageEscapeFilter(QObject *parent)
     : KTp::AbstractMessageFilter(parent)
@@ -53,8 +52,8 @@ void MessageEscapeFilter::filterMessage(KTp::Message &message, const KTp::Messag
 
     int offset = 0;
     for (int i = 0; i < parsedUrl.fixedUrls.size(); i++) {
-         KUrl url(parsedUrl.fixedUrls.at(i));
-         if (url.protocol() != QLatin1String("mailto")) {
+         QUrl url(parsedUrl.fixedUrls.at(i));
+         if (url.scheme() != QLatin1String("mailto")) {
              QString originalText = messageText.mid(parsedUrl.urlRanges.at(i).first + offset, parsedUrl.urlRanges.at(i).second);
              QString link = QString::fromLatin1("<a href=\"%1\">%2</a>").arg(QString::fromAscii(url.toEncoded()), originalText);
 

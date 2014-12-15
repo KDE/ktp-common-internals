@@ -27,7 +27,7 @@
 
 #include <QMimeType>
 #include <KToolInvocation>
-#include <KDebug>
+#include "ktp-debug.h"
 #include <KLocalizedString>
 #include <KNotification>
 #include <KAboutData>
@@ -44,10 +44,10 @@ Tp::PendingChannelRequest* Actions::startChat(const Tp::AccountPtr &account,
                                               bool delegateToPreferredHandler)
 {
     if (account.isNull() || contactIdentifier.isEmpty()) {
-        kWarning() << "Parameters invalid";
+        qCWarning(KTP_COMMONINTERNALS) << "Parameters invalid";
     }
 
-    kDebug() << "Requesting text channel for contact id: " << contactIdentifier;
+    qCDebug(KTP_COMMONINTERNALS) << "Requesting text channel for contact id: " << contactIdentifier;
 
     Tp::ChannelRequestHints hints;
     if (delegateToPreferredHandler) {
@@ -67,10 +67,10 @@ Tp::PendingChannelRequest* Actions::startChat(const Tp::AccountPtr &account,
                                               bool delegateToPreferredHandler)
 {
     if (account.isNull() || contact.isNull()) {
-        kWarning() << "Parameters invalid";
+        qCWarning(KTP_COMMONINTERNALS) << "Parameters invalid";
     }
 
-    kDebug() << "Requesting text channel for" << contact->id();
+    qCDebug(KTP_COMMONINTERNALS) << "Requesting text channel for" << contact->id();
 
     Tp::ChannelRequestHints hints;
     if (delegateToPreferredHandler) {
@@ -89,10 +89,10 @@ Tp::PendingChannelRequest* Actions::startGroupChat(const Tp::AccountPtr &account
                                                    const QString &roomName)
 {
     if (account.isNull() || roomName.isEmpty()) {
-        kWarning() << "Parameters invalid";
+        qCWarning(KTP_COMMONINTERNALS) << "Parameters invalid";
     }
 
-    kDebug() << "Requesting text chat room " << roomName;
+    qCDebug(KTP_COMMONINTERNALS) << "Requesting text chat room " << roomName;
 
     Tp::ChannelRequestHints hints;
     hints.setHint(QLatin1String("org.kde.telepathy"), QLatin1String("forceRaiseWindow"), QVariant(true));
@@ -107,10 +107,10 @@ Tp::PendingChannelRequest* Actions::startAudioCall(const Tp::AccountPtr &account
                                                    const Tp::ContactPtr &contact)
 {
     if (account.isNull() || contact.isNull()) {
-        kWarning() << "Parameters invalid";
+        qCWarning(KTP_COMMONINTERNALS) << "Parameters invalid";
     }
 
-    kDebug() << "Requesting audio channel for" << contact->id();
+    qCDebug(KTP_COMMONINTERNALS) << "Requesting audio channel for" << contact->id();
 
     return account->ensureAudioCall(contact,
                                     QLatin1String("audio"),
@@ -122,10 +122,10 @@ Tp::PendingChannelRequest* Actions::startAudioVideoCall(const Tp::AccountPtr &ac
                                                         const Tp::ContactPtr &contact)
 {
     if (account.isNull() || contact.isNull()) {
-        kWarning() << "Parameters invalid";
+        qCWarning(KTP_COMMONINTERNALS) << "Parameters invalid";
     }
 
-    kDebug() << "Requesting audio-video channel for" << contact->id();
+    qCDebug(KTP_COMMONINTERNALS) << "Requesting audio-video channel for" << contact->id();
 
     return account->ensureAudioVideoCall(contact,
                                          QLatin1String("audio"),
@@ -138,10 +138,10 @@ Tp::PendingChannelRequest* Actions::startDesktopSharing(const Tp::AccountPtr &ac
                                                         const Tp::ContactPtr &contact)
 {
     if (account.isNull() || contact.isNull()) {
-        kWarning() << "Parameters invalid";
+        qCWarning(KTP_COMMONINTERNALS) << "Parameters invalid";
     }
 
-    kDebug() << "Requesting stream tube for" << contact->id();
+    qCDebug(KTP_COMMONINTERNALS) << "Requesting stream tube for" << contact->id();
 
     return account->createStreamTube(contact,
                                      QLatin1String("rfb"),
@@ -154,10 +154,10 @@ Tp::PendingChannelRequest* Actions::startFileTransfer(const Tp::AccountPtr &acco
                                                       const QString &filePath)
 {
     if (account.isNull() || contact.isNull()) {
-        kWarning() << "Parameters invalid";
+        qCWarning(KTP_COMMONINTERNALS) << "Parameters invalid";
     }
 
-    kDebug() << "Requesting file transfer of" << filePath << "to" << contact->id();
+    qCDebug(KTP_COMMONINTERNALS) << "Requesting file transfer of" << filePath << "to" << contact->id();
 
     QFileInfo fileInfo(filePath);
 
@@ -166,7 +166,7 @@ Tp::PendingChannelRequest* Actions::startFileTransfer(const Tp::AccountPtr &acco
     if (account->serviceName() == QLatin1String("google-talk") &&
         (fileInfo.suffix() == QLatin1String("exe") || fileInfo.suffix() == QLatin1String("ini"))) {
 
-        kDebug() << "Google Talk forbids transfering files with suffix \"ini\" or \"exe\". Renaming.";
+        qCDebug(KTP_COMMONINTERNALS) << "Google Talk forbids transfering files with suffix \"ini\" or \"exe\". Renaming.";
 
         QString fileName = fileInfo.fileName().append(QLatin1String("_"));
 
@@ -202,10 +202,10 @@ Tp::PendingOperation* Actions::startFileTransfer(const Tp::AccountPtr &account,
                                                  const QUrl &url)
 {
     if (account.isNull() || contact.isNull() || url.isEmpty()) {
-        kWarning() << "Parameters invalid";
+        qCWarning(KTP_COMMONINTERNALS) << "Parameters invalid";
     }
 
-    kDebug() << "Requesting file transfer of" << url.toLocalFile() << "to" << contact->id();
+    qCDebug(KTP_COMMONINTERNALS) << "Requesting file transfer of" << url.toLocalFile() << "to" << contact->id();
 
     Tp::PendingOperation *ret = 0;
     if (url.isLocalFile()) {
@@ -220,7 +220,7 @@ void Actions::openLogViewer(const Tp::AccountPtr &account,
                             const Tp::ContactPtr &contact)
 {
     if (account.isNull() || contact.isNull()) {
-        kWarning() << "Parameters invalid";
+        qCWarning(KTP_COMMONINTERNALS) << "Parameters invalid";
         return;
     }
 
@@ -229,7 +229,7 @@ void Actions::openLogViewer(const Tp::AccountPtr &account,
 
 void Actions::openLogViewer(const QUrl &uri)
 {
-    kDebug() << "Opening logviewer for" << uri;
+    qCDebug(KTP_COMMONINTERNALS) << "Opening logviewer for" << uri;
 
     QStringList arguments;
     arguments << QLatin1String("--") << uri.toString();
@@ -240,11 +240,11 @@ void Actions::openLogViewer(const QUrl &uri)
 void Actions::openLogViewer(const Tp::AccountPtr& account, const QString& targetId)
 {
     if (account.isNull() || targetId.isEmpty()) {
-        kWarning() << " Parameters invalid";
+        qCWarning(KTP_COMMONINTERNALS) << " Parameters invalid";
         return;
     }
 
-    kDebug() << "Opening logviewer for" << targetId;
+    qCDebug(KTP_COMMONINTERNALS) << "Opening logviewer for" << targetId;
 
     QStringList arguments;
     arguments << QLatin1String("--") << account->uniqueIdentifier() << targetId;

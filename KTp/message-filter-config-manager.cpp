@@ -22,7 +22,7 @@
 #include <QMutex>
 #include <QSet>
 
-#include <KDebug>
+#include "ktp-debug.h"
 #include <KServiceTypeTrader>
 
 typedef QSet<KPluginInfo> PluginSet;
