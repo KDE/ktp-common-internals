@@ -52,5 +52,5 @@ void KTp::Debug::installCallback(bool debug, bool warning)
     Tp::enableWarnings(warning);
 }
 
-Q_LOGGING_CATEGORY(KTP_COMMONINTERNALS, "ktp-logger")
-Q_LOGGING_CATEGORY(TELEPATHY_QT, "ktp-logger")
+Q_LOGGING_CATEGORY(KTP_COMMONINTERNALS, "ktp-common-internals")
+Q_LOGGING_CATEGORY(TELEPATHY_QT, "telepathy-qt")
