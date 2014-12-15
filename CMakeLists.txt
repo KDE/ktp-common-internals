@@ -82,11 +82,6 @@ include_directories (
                      ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
-if (TelepathyLoggerQt_FOUND)
-    add_definitions(${TELEPATHY_LOGGER_QT5_DEFINITIONS}
-                    -DHAVE_TPLOGGERQT)
-endif ()
-
 if (KF5People_FOUND)
     add_definitions(-DHAVE_KPEOPLE)
     add_subdirectory(kpeople)
