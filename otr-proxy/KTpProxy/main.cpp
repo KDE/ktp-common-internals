@@ -20,10 +20,9 @@
 #include "proxy-service.h"
 #include "otr-config.h"
 #include "ktp_version.h"
+#include "ktp-proxy-debug.h"
 
 #include <KTp/OTR/types.h>
-
-#include <KDebug>
 
 #include "KTp/core.h"
 #include "KTp/debug.h"
@@ -83,7 +82,7 @@ int main(int argc, char *argv[])
 
     if(error.isValid())
     {
-        kError() << "Could not register ProxyService\n"
+        qCCritical(KTP_PROXY) << "Could not register ProxyService\n"
             << "error name: " << error.name() << "\n"
             << "error message: " << error.message();
 

@@ -24,6 +24,7 @@
 #include "otr-manager.h"
 #include "otr-utils.h"
 #include "pending-curry-operation.h"
+#include "ktp-proxy-debug.h"
 
 #include "KTp/OTR/constants.h"
 
@@ -32,9 +33,6 @@
 #include <TelepathyQt/Contact>
 
 #include <QDateTime>
-
-#include <KDebug>
-
 
 class PendingSendMessageResult : public PendingCurryOperation
 {
@@ -103,7 +101,7 @@ OtrProxyChannel::Adaptee::Adaptee(OtrProxyChannel *pc,
     isGenerating(false),
     aboutToInit(false)
 {
-    kDebug() << "Created OTR session for context: "
+    qCDebug(KTP_PROXY) << "Created OTR session for context: "
         << "Account id: " << context.accountId
         << " Account name: " << context.accountName
         << " recipient name: " << context.recipientName
@@ -164,7 +162,7 @@ Tp::TextChannelPtr OtrProxyChannel::Adaptee::channel() const
 void OtrProxyChannel::Adaptee::connectProxy(
         const Tp::Service::ChannelProxyInterfaceOTRAdaptor::ConnectProxyContextPtr &context)
 {
-    kDebug() << "Connecting proxy: " << pc->objectPath();
+    qCDebug(KTP_PROXY) << "Connecting proxy: " << pc->objectPath();
 
     connect(chan.data(),
             SIGNAL(messageReceived(const Tp::ReceivedMessage&)),
@@ -190,7 +188,7 @@ void OtrProxyChannel::Adaptee::disconnectProxy(
     if(otrSes.trustLevel() != OTR::TrustLevel::NOT_PRIVATE) {
         otrSes.stopSession();
     }
-    kDebug() << "Disconnecting proxy: " << pc->objectPath();
+    qCDebug(KTP_PROXY) << "Disconnecting proxy: " << pc->objectPath();
     disconnect(chan.data(), SIGNAL(messageReceived(const Tp::ReceivedMessage&)),
             this, SLOT(onMessageReceived(const Tp::ReceivedMessage&)));
 
@@ -209,7 +207,7 @@ void OtrProxyChannel::Adaptee::disconnectProxy(
 
 void OtrProxyChannel::Adaptee::processOTRmessage(const OTR::Message &message)
 {
-    kDebug();
+    qCDebug(KTP_PROXY);
     switch(message.direction()) {
         case OTR::MessageDirection::INTERNAL:
         case OTR::MessageDirection::FROM_PEER:
@@ -223,7 +221,7 @@ void OtrProxyChannel::Adaptee::processOTRmessage(const OTR::Message &message)
 
 void OtrProxyChannel::Adaptee::sendOTRmessage(const OTR::Message &message)
 {
-    kDebug();
+    qCDebug(KTP_PROXY);
     uint flags = 0;
     PendingSendMessageResult *pending = new PendingSendMessageResult(
             chan->send(message.parts(), (Tp::MessageSendingFlags) flags),
@@ -241,7 +239,7 @@ void OtrProxyChannel::Adaptee::sendOTRmessage(const OTR::Message &message)
 void OtrProxyChannel::Adaptee::sendMessage(const Tp::MessagePartList &message, uint flags,
         const Tp::Service::ChannelProxyInterfaceOTRAdaptor::SendMessageContextPtr &context)
 {
-    kDebug();
+    qCDebug(KTP_PROXY);
 
     if(!connected()) {
         context->setFinishedWithError(KTP_PROXY_ERROR_NOT_CONNECTED, QString::fromLatin1("Proxy is not connected"));
@@ -251,7 +249,7 @@ void OtrProxyChannel::Adaptee::sendMessage(const Tp::MessagePartList &message, u
     OTR::Message otrMessage(message);
     const OTR::CryptResult cres = otrSes.encrypt(otrMessage);
     if(cres == OTR::CryptResult::ERROR) {
-        kDebug() << "Sending error";
+        qCDebug(KTP_PROXY) << "Sending error";
         context->setFinishedWithError(KTP_PROXY_ERROR_ENCRYPTION_ERROR,
                 QLatin1String("Message could not be encrypted with OTR"));
         return;
@@ -283,12 +281,12 @@ void OtrProxyChannel::Adaptee::acknowledgePendingMessages(const Tp::UIntList &id
         return;
     }
 
-    kDebug() << "Message queue size: " << messages.size();
+    qCDebug(KTP_PROXY) << "Message queue size: " << messages.size();
     QList<Tp::ReceivedMessage> toAcknowledge;
     for(uint id: ids) {
         auto found = messages.find(id);
         if(found == messages.end()) {
-            kDebug() << "Client trying to acknowledge non existing message with id" << id;
+            qCDebug(KTP_PROXY) << "Client trying to acknowledge non existing message with id" << id;
             context->setFinishedWithError(TP_QT_ERROR_INVALID_ARGUMENT,
                     QLatin1String("Message with given ID is not present in the message queue"));
             return;
@@ -297,14 +295,14 @@ void OtrProxyChannel::Adaptee::acknowledgePendingMessages(const Tp::UIntList &id
         }
     }
 
-    kDebug() << "Acknowledging " << toAcknowledge.count() << " messages";
+    qCDebug(KTP_PROXY) << "Acknowledging " << toAcknowledge.count() << " messages";
     chan->acknowledge(toAcknowledge);
     context->setFinished();
 }
 
 void OtrProxyChannel::Adaptee::initialize(const Tp::Service::ChannelProxyInterfaceOTRAdaptor::InitializeContextPtr &context)
 {
-    kDebug();
+    qCDebug(KTP_PROXY);
     if(!connected()) {
         context->setFinishedWithError(KTP_PROXY_ERROR_NOT_CONNECTED, QString::fromLatin1("Proxy is not connected"));
         return;
@@ -341,7 +339,7 @@ void OtrProxyChannel::Adaptee::trustFingerprint(const QString& fingerprint, bool
         return;
     }
 
-    kDebug() << "TrustFingeprint - " << trust << ": " << fingerprint << " when remote is: " << otrSes.remoteFingerprint();
+    qCDebug(KTP_PROXY) << "TrustFingeprint - " << trust << ": " << fingerprint << " when remote is: " << otrSes.remoteFingerprint();
 
     if(otrSes.remoteFingerprint().isEmpty() || fingerprint != otrSes.remoteFingerprint()) {
         context->setFinishedWithError(TP_QT_ERROR_INVALID_ARGUMENT,
@@ -352,7 +350,7 @@ void OtrProxyChannel::Adaptee::trustFingerprint(const QString& fingerprint, bool
     OTR::TrustFpResult fpRes = otrSes.trustFingerprint(trust);
     if(fpRes != OTR::TrustFpResult::OK) {
         // should not happend, TODO clarify
-        kDebug() << "Trust error";
+        qCDebug(KTP_PROXY) << "Trust error";
         context->setFinishedWithError(TP_QT_ERROR_INVALID_ARGUMENT,
                 QLatin1String("No such fingerprint currently in use by remote contact"));
         return;
@@ -415,7 +413,7 @@ void OtrProxyChannel::Adaptee::onMessageReceived(const Tp::ReceivedMessage &rece
         return;
     }
 
-    kDebug() << "Received message with id: " << id;
+    qCDebug(KTP_PROXY) << "Received message with id: " << id;
     const OTR::CryptResult cres = otrSes.decrypt(otrMsg);
 
     if(cres == OTR::CryptResult::CHANGED || cres == OTR::CryptResult::UNCHANGED) {
@@ -425,7 +423,7 @@ void OtrProxyChannel::Adaptee::onMessageReceived(const Tp::ReceivedMessage &rece
     } else {
         // Error or OTR message - acknowledge right now
         if(cres == OTR::CryptResult::ERROR) {
-            kWarning() << "Decryption error of the message: " << otrMsg.text();
+            qCWarning(KTP_PROXY) << "Decryption error of the message: " << otrMsg.text();
         }
         chan->acknowledge(QList<Tp::ReceivedMessage>() << receivedMessage);
     }
@@ -437,7 +435,7 @@ void OtrProxyChannel::Adaptee::onPendingMessageRemoved(const Tp::ReceivedMessage
     if(messages.remove(id)) {
         Q_EMIT pendingMessagesRemoved(Tp::UIntList() << id);
     } else {
-        kDebug() << "Text channel removed missing pending message with id or an OTR message: " << id;
+        qCDebug(KTP_PROXY) << "Text channel removed missing pending message with id or an OTR message: " << id;
     }
 }
 
@@ -479,7 +477,7 @@ void OtrProxyChannel::Adaptee::onTrustLevelChanged(TrustLevel trustLevel)
 void OtrProxyChannel::Adaptee::acquirePrivateKey()
 {
     if(!ps->createNewPrivateKey(otrSes.context().accountId, otrSes.context().accountName)) {
-        kDebug() << "Probably ongoing key generation for another session";
+        qCDebug(KTP_PROXY) << "Probably ongoing key generation for another session";
     }
 }
 
@@ -496,11 +494,11 @@ void OtrProxyChannel::Adaptee::onKeyGenerationFinished(const QString &accountId,
     if(accountId != otrSes.context().accountId) {
         return;
     }
-    kDebug() << "Finished key generation for: " << accountId;
+    qCDebug(KTP_PROXY) << "Finished key generation for: " << accountId;
     isGenerating = false;
 
     if(error) {
-        kWarning() << "Could not generate private key for " << accountId;
+        qCWarning(KTP_PROXY) << "Could not generate private key for " << accountId;
         return;
     }
     if(!enqueuedMessages.isEmpty()) {
@@ -517,7 +515,7 @@ void OtrProxyChannel::Adaptee::onKeyGenerationFinished(const QString &accountId,
 
 void OtrProxyChannel::Adaptee::onChannelClosed()
 {
-    kDebug();
+    qCDebug(KTP_PROXY);
     // we will not be able to send disconnect message so we just finish our own OTR session
     if(isConnected) {
         otrSes.forceUnencrypted();

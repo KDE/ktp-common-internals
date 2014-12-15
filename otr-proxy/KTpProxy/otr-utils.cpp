@@ -18,6 +18,7 @@
  ***************************************************************************/
 
 #include "otr-utils.h"
+#include "ktp-proxy-debug.h"
 
 namespace OTR
 {
@@ -71,7 +72,7 @@ namespace utils
                 instance, 0, NULL, NULL, NULL);
 
         if(context == nullptr) {
-            kWarning() << "Could not get trust level";
+            qCWarning(KTP_PROXY) << "Could not get trust level";
             return TrustLevel::NOT_PRIVATE;
         }
 

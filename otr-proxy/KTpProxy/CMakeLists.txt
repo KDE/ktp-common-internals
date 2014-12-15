@@ -12,6 +12,7 @@ set(ktp-proxy_SRCS
         otr-message.cpp
         otr-config.cpp
         otr-utils.cpp
+        ktp-proxy-debug.cpp
 )
 
 kconfig_add_kcfg_files(ktp-proxy_SRCS ktp-proxy-config.kcfgc)

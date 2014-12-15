@@ -25,7 +25,7 @@
 #include <TelepathyQt/TextChannel>
 #include <TelepathyQt/PendingReady>
 
-#include <KDebug>
+#include <QDebug>
 
 ProxyObserver::ProxyObserver(ProxyService *ps)
     : Tp::AbstractClientObserver(Tp::ChannelClassSpecList() << Tp::ChannelClassSpec::textChat(), true),
@@ -50,7 +50,6 @@ void ProxyObserver::observeChannels(
     Q_UNUSED(dispatchOperation);
     Q_UNUSED(requestsSatisfied);
     Q_UNUSED(observerInfo);
-    kDebug() << "Observed a channel";
 
     Q_FOREACH(const Tp::ChannelPtr &chan, channels) {
 
@@ -58,7 +57,7 @@ void ProxyObserver::observeChannels(
         if(textChannel) {
             ps->addChannel(textChannel, account);
         } else {
-            kWarning() << "Could not get a text channel";
+            qWarning() << "Could not get a text channel";
         }
     }
 

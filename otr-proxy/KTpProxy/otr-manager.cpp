@@ -20,10 +20,9 @@
 #include "otr-manager.h"
 #include "otr-utils.h"
 #include "otr-constants.h"
+#include "ktp-proxy-debug.h"
 
 #include "KTp/OTR/constants.h"
-
-#include <KDebug>
 
 namespace OTR
 {
@@ -43,7 +42,7 @@ namespace {
     {
         Q_UNUSED(accountname);
         Q_UNUSED(protocol);
-        kDebug();
+        qCDebug(KTP_PROXY);
 
         Session *session = reinterpret_cast<Session*>(opdata);
         session->parent()->createNewPrivateKey(session);
@@ -209,7 +208,7 @@ namespace {
         Q_UNUSED(progress_percent);
 
         Session *session = reinterpret_cast<Session*>(opdata);
-        kDebug() << session->context().accountName;
+        qCDebug(KTP_PROXY) << session->context().accountName;
 
         switch (smp_event) {
             case OTRL_SMPEVENT_NONE:

@@ -26,8 +26,6 @@
 #include <QStringList>
 #include <QDBusObjectPath>
 
-#include <KDebug>
-
 extern "C" {
 #include <libotr/privkey.h>
 }
