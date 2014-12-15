@@ -11,7 +11,6 @@ target_link_libraries (ktploggerplugin_tplogger
     KTp::CommonInternals
     KTp::Logger
     KF5::Service
-    KF5::KDELibs4Support
 )
 kde_target_enable_exceptions(ktploggerplugin_tplogger PRIVATE)
 

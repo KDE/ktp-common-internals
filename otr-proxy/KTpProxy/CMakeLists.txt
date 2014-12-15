@@ -24,7 +24,6 @@ set(ktp-proxy_LIBS
         ${TELEPATHY_QT5_SERVICE_LIBRARIES}
         KTp::CommonInternals
         KTp::OTR
-        KF5::KDELibs4Support
 )
 
 target_link_libraries(ktp-proxy-lib ${ktp-proxy_LIBS})
