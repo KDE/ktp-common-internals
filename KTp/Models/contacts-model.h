@@ -73,10 +73,7 @@ public:
     */
     void setTrackUnreadMessages(bool trackUnread);
     bool trackUnreadMessages() const;
-
-protected:
-    //prevent previously public setSourceModel being called externally
-    virtual void setSourceModel(QAbstractItemModel *sourceModel);
+    QHash<int, QByteArray> roleNames() const Q_DECL_OVERRIDE;
 
 Q_SIGNALS:
     void modelInitialized(bool success);

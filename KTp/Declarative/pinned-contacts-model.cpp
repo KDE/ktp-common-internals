@@ -60,14 +60,6 @@ PinnedContactsModel::PinnedContactsModel(QObject *parent)
     : QAbstractListModel(parent)
     , d(new PinnedContactsModelPrivate)
 {
-    QHash<int, QByteArray> roles = roleNames();
-    roles[PresenceIconRole] = "presenceIcon";
-    roles[AvailabilityRole] = "available";
-    roles[ContactRole] = "contact";
-    roles[AccountRole] = "account";
-    roles[AlreadyChattingRole] = "alreadyChatting";
-    setRoleNames(roles);
-
     connect(this, SIGNAL(rowsInserted(QModelIndex,int,int)), SIGNAL(countChanged()));
     connect(this, SIGNAL(rowsRemoved(QModelIndex,int,int)), SIGNAL(countChanged()));
 }
@@ -75,6 +67,17 @@ PinnedContactsModel::PinnedContactsModel(QObject *parent)
 PinnedContactsModel::~PinnedContactsModel()
 {
     delete d;
+}
+
+QHash<int, QByteArray> PinnedContactsModel::roleNames() const
+{
+    QHash<int, QByteArray> roles = QAbstractListModel::roleNames();
+    roles[PresenceIconRole] = "presenceIcon";
+    roles[AvailabilityRole] = "available";
+    roles[ContactRole] = "contact";
+    roles[AccountRole] = "account";
+    roles[AlreadyChattingRole] = "alreadyChatting";
+    return roles;
 }
 
 QStringList PinnedContactsModel::state() const

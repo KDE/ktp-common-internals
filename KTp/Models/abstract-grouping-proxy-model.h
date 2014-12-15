@@ -44,6 +44,8 @@ public:
 
     void groupChanged(const QString &group);
 
+    QHash<int, QByteArray> roleNames() const Q_DECL_OVERRIDE;
+
 //protected:
     /** Return a list of all groups this items belongs to. Subclasses must override this*/
     virtual QSet<QString> groupsForIndex(const QModelIndex &sourceIndex) const = 0;

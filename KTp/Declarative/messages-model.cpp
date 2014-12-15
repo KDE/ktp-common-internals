@@ -69,17 +69,6 @@ MessagesModel::MessagesModel(const Tp::AccountPtr &account, QObject *parent) :
 {
     qCDebug(KTP_DECLARATIVE);
 
-    QHash<int, QByteArray> roles;
-    roles[TextRole] = "text";
-    roles[TimeRole] = "time";
-    roles[TypeRole] = "type";
-    roles[SenderIdRole] = "senderId";
-    roles[SenderAliasRole] = "senderAlias";
-    roles[SenderAvatarRole] = "senderAvatar";
-    roles[DeliveryStatusRole] = "deliveryStatus";
-    roles[DeliveryReportReceiveTimeRole] = "deliveryReportReceiveTime";
-    setRoleNames(roles);
-
     d->account = account;
     d->visible = false;
 
@@ -91,6 +80,20 @@ MessagesModel::MessagesModel(const Tp::AccountPtr &account, QObject *parent) :
     KConfig config(QLatin1String("ktelepathyrc"));
     KConfigGroup tabConfig = config.group("Behavior");
     d->logManager->setScrollbackLength(tabConfig.readEntry<int>("scrollbackLength", 10));
+}
+
+QHash<int, QByteArray> MessagesModel::roleNames() const
+{
+    QHash<int, QByteArray> roles = QAbstractListModel::roleNames();
+    roles[TextRole] = "text";
+    roles[TimeRole] = "time";
+    roles[TypeRole] = "type";
+    roles[SenderIdRole] = "senderId";
+    roles[SenderAliasRole] = "senderAlias";
+    roles[SenderAvatarRole] = "senderAvatar";
+    roles[DeliveryStatusRole] = "deliveryStatus";
+    roles[DeliveryReportReceiveTimeRole] = "deliveryReportReceiveTime";
+    return roles;
 }
 
 Tp::TextChannelPtr MessagesModel::textChannel() const

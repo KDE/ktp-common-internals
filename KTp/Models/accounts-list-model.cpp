@@ -44,8 +44,16 @@ KTp::AccountsListModel::AccountsListModel(QObject *parent)
  : QAbstractListModel(parent),
    d(new AccountsListModel::Private)
 {
-  
-    QHash<int, QByteArray> roles = roleNames();
+}
+
+KTp::AccountsListModel::~AccountsListModel()
+{
+    delete d;
+}
+
+QHash<int, QByteArray> KTp::AccountsListModel::roleNames() const
+{
+    QHash<int, QByteArray> roles = QAbstractListModel::roleNames();
     roles[ConnectionStateRole] = "connectionState";
     roles[ConnectionStateDisplayRole] = "conectionStateDisplay";
     roles[ConnectionStateIconRole] = "connectionStateIcon";
@@ -53,12 +61,7 @@ KTp::AccountsListModel::AccountsListModel(QObject *parent)
     roles[ConnectionProtocolNameRole] = "connectionProtocolName";
     roles[EnabledRole] = "enabled";
     roles[AccountRole] = "account";
-    setRoleNames(roles);
-}
-
-KTp::AccountsListModel::~AccountsListModel()
-{
-    delete d;
+    return roles;
 }
 
 void KTp::AccountsListModel::setAccountSet(const Tp::AccountSetPtr &accountSet)

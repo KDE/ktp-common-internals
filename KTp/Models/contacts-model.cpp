@@ -142,12 +142,6 @@ bool KTp::ContactsModel::trackUnreadMessages() const
 
 void KTp::ContactsModel::updateGroupProxyModels()
 {
-    //reset the filter
-    //trying to track current selections whilst updating proxy models can cause issues
-    //debug versions of Qt will assert
-    reset();
-
-    //if there no account manager there's not a lot point doing anything
     if (!d->accountManager) {
         return;
     }
@@ -191,27 +185,19 @@ void KTp::ContactsModel::updateGroupProxyModels()
         setSourceModel(modelToGroup);
         break;
     case AccountGrouping:
-        d->proxy = new KTp::AccountsTreeProxyModel(modelToGroup, d->accountManager);
+        d->proxy = QSharedPointer<KTp::AbstractGroupingProxyModel>(new KTp::AccountsTreeProxyModel(modelToGroup, d->accountManager));
         setSourceModel(d->proxy.data());
         break;
     case GroupGrouping:
-        d->proxy = new KTp::GroupsTreeProxyModel(modelToGroup);
+        d->proxy = QSharedPointer<KTp::AbstractGroupingProxyModel>(new KTp::GroupsTreeProxyModel(modelToGroup));
         setSourceModel(d->proxy.data());
         break;
     }
 }
 
-void KTp::ContactsModel::setSourceModel(QAbstractItemModel *sourceModel)
+QHash<int, QByteArray> KTp::ContactsModel::roleNames() const
 {
-    KTp::ContactsFilterModel::setSourceModel(sourceModel);
-
-    //Qt automatically updates the role names to use that of the source model
-    //this causes problems when we have multiple source models that we change between
-    //instead we update here just after we set a source model
-
-    //in Qt5.0 override the virtual roleNames() method and do it there.
-
-    QHash<int, QByteArray> roles = roleNames();
+    QHash<int, QByteArray> roles = KTp::ContactsFilterModel::roleNames();
     roles[KTp::RowTypeRole]= "type";
     roles[KTp::IdRole]= "id";
 
@@ -239,5 +225,5 @@ void KTp::ContactsModel::setSourceModel(QAbstractItemModel *sourceModel)
     roles[KTp::ContactCanVideoCallRole]= "videoCall";
     roles[KTp::ContactTubesRole]= "tubes";
     roles[KTp::PersonIdRole]= "personId";
-    setRoleNames(roles);
+    return roles;
 }

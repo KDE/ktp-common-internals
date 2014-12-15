@@ -65,8 +65,9 @@ class MessagesModel : public QAbstractListModel
         DeliveryStatusFailed
     };
 
-    virtual QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
-    virtual int rowCount(const QModelIndex &parent = QModelIndex()) const;
+    QHash<int, QByteArray> roleNames() const Q_DECL_OVERRIDE;
+    virtual QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const Q_DECL_OVERRIDE;
+    virtual int rowCount(const QModelIndex &parent = QModelIndex()) const Q_DECL_OVERRIDE;
 
     Tp::TextChannelPtr textChannel() const;
     void setTextChannel(const Tp::TextChannelPtr &channel);

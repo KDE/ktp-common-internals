@@ -44,9 +44,6 @@ ConversationsModel::ConversationsModel(QObject *parent) :
         Tp::AbstractClientHandler(channelClassList()),
         d(new ConversationsModelPrivate)
 {
-    QHash<int, QByteArray> roles;
-    roles[ConversationRole] = "conversation";
-    setRoleNames(roles);
     d->activeChatIndex = -1;
     connect(this, SIGNAL(rowsInserted(QModelIndex,int,int)), SIGNAL(totalUnreadCountChanged()));
     connect(this, SIGNAL(rowsRemoved(QModelIndex,int,int)), SIGNAL(totalUnreadCountChanged()));
@@ -56,6 +53,13 @@ ConversationsModel::~ConversationsModel()
 {
     qDeleteAll(d->conversations);
     delete d;
+}
+
+QHash<int, QByteArray> ConversationsModel::roleNames() const
+{
+    QHash<int, QByteArray> roles = QAbstractListModel::roleNames();
+    roles[ConversationRole] = "conversation";
+    return roles;
 }
 
 QVariant ConversationsModel::data(const QModelIndex &index, int role) const

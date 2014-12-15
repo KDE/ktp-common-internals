@@ -51,6 +51,7 @@ public:
     explicit AccountsListModel(QObject *parent = 0);
     virtual ~AccountsListModel();
 
+    QHash<int, QByteArray> roleNames() const Q_DECL_OVERRIDE;
     void setAccountSet(const Tp::AccountSetPtr &accountSet);
 
     virtual int rowCount(const QModelIndex & parent = QModelIndex()) const;

@@ -49,8 +49,9 @@ class PinnedContactsModel : public QAbstractListModel
         AlreadyChattingRole
     };
 
-    virtual QVariant data(const QModelIndex &index, int role) const;
-    virtual int rowCount(const QModelIndex &parent = QModelIndex()) const;
+    QHash<int, QByteArray> roleNames() const Q_DECL_OVERRIDE;
+    virtual QVariant data(const QModelIndex &index, int role) const Q_DECL_OVERRIDE;
+    virtual int rowCount(const QModelIndex &parent = QModelIndex()) const Q_DECL_OVERRIDE;
 
     Q_SLOT void setPinning(const Tp::AccountPtr &account, const KTp::ContactPtr &contact, bool newState);
 

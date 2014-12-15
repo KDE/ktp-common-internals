@@ -37,8 +37,9 @@ class ConversationsModel : public QAbstractListModel, public Tp::AbstractClientH
     explicit ConversationsModel(QObject *parent=0);
     virtual ~ConversationsModel();
 
-    virtual QVariant data ( const QModelIndex &index, int role = Qt::DisplayRole ) const;
-    virtual int rowCount ( const QModelIndex &parent = QModelIndex() ) const;
+    QHash<int, QByteArray> roleNames() const Q_DECL_OVERRIDE;
+    virtual QVariant data ( const QModelIndex &index, int role = Qt::DisplayRole ) const Q_DECL_OVERRIDE;
+    virtual int rowCount ( const QModelIndex &parent = QModelIndex() ) const Q_DECL_OVERRIDE;
 
     /** @returns the sum of all unread messages among all conversations */
     int totalUnreadCount() const;

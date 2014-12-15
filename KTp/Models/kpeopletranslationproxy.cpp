@@ -230,15 +230,15 @@ QPixmap KPeopleTranslationProxy::contactPixmap(const QModelIndex &index) const
         //if the contact is offline, gray it out
         if (presenceType == Tp::ConnectionPresenceTypeOffline) {
             QImage image = avatar.toImage();
-            const QPixmap alpha = avatar.alphaChannel();
+            const QImage alpha = image.alphaChannel();
             for (int i = 0; i < image.width(); ++i) {
                 for (int j = 0; j < image.height(); ++j) {
                     int colour = qGray(image.pixel(i, j));
                     image.setPixel(i, j, qRgb(colour, colour, colour));
                 }
             }
+            image.setAlphaChannel(alpha);
             avatar = avatar.fromImage(image);
-            avatar.setAlphaChannel(alpha);
         }
 
         //insert the contact into pixmap cache for faster lookup

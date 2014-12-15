@@ -121,8 +121,8 @@ KTp::JoinChatRoomDialog::JoinChatRoomDialog(Tp::AccountManagerPtr accountManager
     d->ui->previousView->setModel(d->favoritesProxyModel);
     d->ui->previousView->setHeaderHidden(true);
     d->ui->previousView->header()->setStretchLastSection(false);
-    d->ui->previousView->header()->setResizeMode(FavoriteRoomsModel::BookmarkColumn, QHeaderView::ResizeToContents);
-    d->ui->previousView->header()->setResizeMode(FavoriteRoomsModel::HandleNameColumn, QHeaderView::Stretch);
+    d->ui->previousView->header()->setSectionResizeMode(FavoriteRoomsModel::BookmarkColumn, QHeaderView::ResizeToContents);
+    d->ui->previousView->header()->setSectionResizeMode(FavoriteRoomsModel::HandleNameColumn, QHeaderView::Stretch);
     d->ui->previousView->setColumnHidden(FavoriteRoomsModel::AccountIdentifierColumn, true);
     d->ui->previousView->sortByColumn(FavoriteRoomsModel::BookmarkColumn, Qt::DescendingOrder);
 
@@ -136,10 +136,10 @@ KTp::JoinChatRoomDialog::JoinChatRoomDialog(Tp::AccountManagerPtr accountManager
 
     d->ui->queryView->setModel(proxyModel);
     d->ui->queryView->header()->setStretchLastSection(false);
-    d->ui->queryView->header()->setResizeMode(0, QHeaderView::Stretch);
-    d->ui->queryView->header()->setResizeMode(1, QHeaderView::Stretch);
-    d->ui->queryView->header()->setResizeMode(2, QHeaderView::ResizeToContents);
-    d->ui->queryView->header()->setResizeMode(3, QHeaderView::ResizeToContents);
+    d->ui->queryView->header()->setSectionResizeMode(0, QHeaderView::Stretch);
+    d->ui->queryView->header()->setSectionResizeMode(1, QHeaderView::Stretch);
+    d->ui->queryView->header()->setSectionResizeMode(2, QHeaderView::ResizeToContents);
+    d->ui->queryView->header()->setSectionResizeMode(3, QHeaderView::ResizeToContents);
     d->ui->queryView->header()->setSortIndicatorShown(false);
     d->ui->queryView->sortByColumn(RoomsModel::NameColumn, Qt::AscendingOrder);
 
