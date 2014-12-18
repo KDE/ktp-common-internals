@@ -18,7 +18,7 @@ foreach(file ${TEST_FILES})
     get_filename_component(base_name ${file} NAME_WE)
     get_filename_component(full_name ${file} NAME)
 
-    kde4_add_unit_test(${base_name} TESTNAME ktp-proxy-${base_name} ${full_name})
+    add_executable(${base_name} ${full_name} )
     target_link_libraries (${base_name} ${ktp-proxy-test_LIBS})
 
     LIST(APPEND TEST_NAMES ${base_name})

@@ -845,8 +845,8 @@ void OTRTest::testFingerprintManagement()
 
     startSession(alice, bob);
     startSession(aliceJ, john);
-    kDebug() << (int)alice.trustLevel();
-    kDebug() << (int)bob.trustLevel();
+    qDebug() << (int)alice.trustLevel();
+    qDebug() << (int)bob.trustLevel();
 
     KTp::FingerprintInfoList infoList = aliceMan->getKnownFingerprints(tst::aliceCtx.accountId);
     QCOMPARE(infoList.size(), 2);
