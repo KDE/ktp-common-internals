@@ -44,7 +44,7 @@ class ContactsModel::Private
 public:
     GroupMode groupMode;
     bool trackUnread;
-    QSharedPointer<KTp::AbstractGroupingProxyModel> proxy;
+    QPointer<KTp::AbstractGroupingProxyModel> proxy;
     QAbstractItemModel *source;
     Tp::AccountManagerPtr accountManager;
     Tp::ClientRegistrarPtr clientRegistrar;
@@ -179,7 +179,7 @@ void KTp::ContactsModel::updateGroupProxyModels()
 
     //delete any previous proxy
     if (d->proxy) {
-        d->proxy.data()->deleteLater();
+        d->proxy->deleteLater();
     }
 
     switch (d->groupMode) {
@@ -192,12 +192,12 @@ void KTp::ContactsModel::updateGroupProxyModels()
         setSourceModel(modelToGroup);
         break;
     case AccountGrouping:
-        d->proxy = QSharedPointer<KTp::AbstractGroupingProxyModel>(new KTp::AccountsTreeProxyModel(modelToGroup, d->accountManager));
-        setSourceModel(d->proxy.data());
+        d->proxy = new KTp::AccountsTreeProxyModel(modelToGroup, d->accountManager);
+        setSourceModel(d->proxy);
         break;
     case GroupGrouping:
-        d->proxy = QSharedPointer<KTp::AbstractGroupingProxyModel>(new KTp::GroupsTreeProxyModel(modelToGroup));
-        setSourceModel(d->proxy.data());
+        d->proxy = new KTp::GroupsTreeProxyModel(modelToGroup);
+        setSourceModel(d->proxy);
         break;
     }
 }
