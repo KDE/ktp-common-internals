@@ -123,8 +123,6 @@ TelepathyHandlerApplication::TelepathyHandlerApplication(int &argc, char *argv[]
     : QApplication(argc, argv),
       d(new Private(this))
 {
-    QCoreApplication::setApplicationName(i18n("KDE Telepathy"));
-
     QCommandLineOption persistOption(QStringLiteral("persist"), i18n("Persistent mode (do not exit on timeout)"));
     QCommandLineOption debugOption(QStringLiteral("debug"), i18n("Show Telepathy debugging information"));
 
