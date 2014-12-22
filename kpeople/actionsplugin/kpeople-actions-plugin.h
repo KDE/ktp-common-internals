@@ -19,7 +19,7 @@
 #ifndef IM_PLUGIN_H
 #define IM_PLUGIN_H
 
-#include <KPeople/AbstractPersonAction>
+#include <KPeopleBackend/AbstractPersonAction>
 
 class KPeopleActionsPlugin : public KPeople::AbstractPersonAction
 {
@@ -27,7 +27,7 @@ class KPeopleActionsPlugin : public KPeople::AbstractPersonAction
 public:
     KPeopleActionsPlugin(QObject *parent, const QVariantList &args);
     virtual QList<QAction*> actionsForPerson(const KContacts::Addressee &person,
-                                             const KContacts::AddresseeList &contacts,
+                                             const KContacts::Addressee::List &contacts,
                                              QObject *parent) const;
 
 private Q_SLOTS:

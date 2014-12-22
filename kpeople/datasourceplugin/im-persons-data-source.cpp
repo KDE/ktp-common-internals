@@ -33,7 +33,7 @@
 #include "KTp/types.h"
 #include "debug.h"
 
-#include <KPeople/AllContactsMonitor>
+#include <KPeopleBackend/AllContactsMonitor>
 #include <KContacts/Addressee>
 
 #include <KPluginFactory>
