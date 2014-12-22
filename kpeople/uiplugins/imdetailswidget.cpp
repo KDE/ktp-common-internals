@@ -48,7 +48,7 @@ QString ImDetailsWidget::label() const
     return i18n("IM");
 }
 
-QWidget* ImDetailsWidget::createDetailsWidget(const KContacts::Addressee& person, const KContacts::AddresseeList &contacts, QWidget* parent) const
+QWidget* ImDetailsWidget::createDetailsWidget(const KContacts::Addressee& person, const KContacts::Addressee::List &contacts, QWidget* parent) const
 {
     Q_UNUSED(person);
     QWidget *root = new QWidget(parent);

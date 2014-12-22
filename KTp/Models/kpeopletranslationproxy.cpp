@@ -96,7 +96,7 @@ QVariant KPeopleTranslationProxy::data(const QModelIndex &proxyIndex, int role) 
             return mapToSource(proxyIndex).data(KPeople::PersonsModel::PersonVCardRole);
     }
 
-    const KContacts::AddresseeList &contacts = mapToSource(proxyIndex).data(PersonsModel::ContactsVCardRole).value<KContacts::AddresseeList>();
+    const KContacts::Addressee::List &contacts = mapToSource(proxyIndex).data(PersonsModel::ContactsVCardRole).value<KContacts::Addressee::List>();
 
     int mostOnlineIndex = 0;
 

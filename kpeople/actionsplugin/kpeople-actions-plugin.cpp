@@ -106,7 +106,7 @@ KPeopleActionsPlugin::KPeopleActionsPlugin(QObject *parent, const QVariantList &
 }
 
 QList<QAction*> KPeopleActionsPlugin::actionsForPerson(const KContacts::Addressee &person,
-                                                       const KContacts::AddresseeList &contacts,
+                                                       const KContacts::Addressee::List &contacts,
                                                        QObject *parent) const
 {
     QList<QAction*> actions;
