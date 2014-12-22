@@ -44,7 +44,7 @@ class ContactsModel::Private
 public:
     GroupMode groupMode;
     bool trackUnread;
-    QWeakPointer<KTp::AbstractGroupingProxyModel> proxy;
+    QSharedPointer<KTp::AbstractGroupingProxyModel> proxy;
     QAbstractItemModel *source;
     Tp::AccountManagerPtr accountManager;
     Tp::ClientRegistrarPtr clientRegistrar;
