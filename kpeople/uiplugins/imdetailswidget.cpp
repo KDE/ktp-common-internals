@@ -26,7 +26,6 @@
 
 #include <KLocalizedString>
 #include <KPluginFactory>
-#include <KContacts/Addressee>
 
 #include <KPeople/PersonData>
 #include <TelepathyQt/AccountManager>
@@ -48,17 +47,17 @@ QString ImDetailsWidget::label() const
     return i18n("IM");
 }
 
-QWidget* ImDetailsWidget::createDetailsWidget(const KContacts::Addressee& person, const KContacts::Addressee::List &contacts, QWidget* parent) const
+QWidget* ImDetailsWidget::createDetailsWidget(const KPeople::PersonData &person, QWidget *parent) const
 {
-    Q_UNUSED(person);
     QWidget *root = new QWidget(parent);
     QGridLayout *layout = new QGridLayout(root);
     root->setLayout(layout);
 
     int row = 0;
-    Q_FOREACH(const KContacts::Addressee &contact, contacts) {
-        const QString contactId = contact.custom(QLatin1String("telepathy"), QLatin1String("contactId"));
-        const QString accountPath = contact.custom(QLatin1String("telepathy"), QLatin1String("accountPath")); //probably unused till we fix everything properly
+    for(const QString &contactId: person.contactIds()) {
+        PersonData contact(contactId);
+        const QString tpcontactId = contact.contactCustomProperty(QStringLiteral("telepathy-contactId")).toString();
+        const QString accountPath = contact.contactCustomProperty(QStringLiteral("telepathy-accountPath")).toString(); //probably unused till we fix everything properly
 
         Tp::AccountPtr account = KTp::accountManager()->accountForObjectPath(accountPath);
         if (!account) {
@@ -70,10 +69,10 @@ QWidget* ImDetailsWidget::createDetailsWidget(const KContacts::Addressee& person
         iconLabel->setPixmap(QIcon::fromTheme(account->iconName()).pixmap(iconSize, iconSize));
         layout->addWidget(iconLabel, row, 0);
 
-        QLabel *label = new QLabel(contactId, root);
+        QLabel *label = new QLabel(tpcontactId, root);
         label->setTextInteractionFlags(Qt::TextSelectableByMouse);
         layout->addWidget(label, row, 1);
-        qDebug() << contactId;
+
         row++;
         //FUTURE - presence here + blocked + presence subscription
     }

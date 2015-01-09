@@ -105,8 +105,7 @@ KPeopleActionsPlugin::KPeopleActionsPlugin(QObject *parent, const QVariantList &
     Q_UNUSED(args);
 }
 
-QList<QAction*> KPeopleActionsPlugin::actionsForPerson(const KContacts::Addressee &person,
-                                                       const KContacts::Addressee::List &contacts,
+QList<QAction*> KPeopleActionsPlugin::actionsForPerson(const KPeople::PersonData &person,
                                                        QObject *parent) const
 {
     QList<QAction*> actions;
@@ -116,10 +115,8 @@ QList<QAction*> KPeopleActionsPlugin::actionsForPerson(const KContacts::Addresse
     // the subcontacts for all capabilities and fill them in on the Person, so if eg. one of
     // the subcontacts can do audio calls and the other can do video calls, the Person
     // should have both actions present.
-    Q_UNUSED(contacts);
-
-    const QString &accountPath = person.custom(QLatin1String("telepathy"), QLatin1String("accountPath"));
-    const QString &contactId = person.custom(QLatin1String("telepathy"), QLatin1String("contactId"));
+    QString accountPath = person.contactCustomProperty(QLatin1String("telepathy-accountPath")).toString();
+    QString contactId = person.contactCustomProperty(QLatin1String("telepathy-contactId")).toString();
 
     const Tp::AccountPtr account = KTp::contactManager()->accountForAccountPath(accountPath);
     if (!account) {

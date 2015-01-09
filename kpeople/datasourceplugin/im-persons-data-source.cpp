@@ -34,7 +34,6 @@
 #include "debug.h"
 
 #include <KPeopleBackend/AllContactsMonitor>
-#include <KContacts/Addressee>
 
 #include <KPluginFactory>
 #include <KPluginLoader>
@@ -44,14 +43,13 @@
 
 using namespace KPeople;
 
-
 class KTpAllContacts : public AllContactsMonitor
 {
     Q_OBJECT
 public:
     KTpAllContacts();
     ~KTpAllContacts();
-    virtual KContacts::Addressee::Map contacts();
+    virtual QMap<QString, AbstractContact::Ptr> contacts() Q_DECL_OVERRIDE;
 
 private Q_SLOTS:
     void loadCache();
@@ -62,33 +60,74 @@ private Q_SLOTS:
 
 private:
     QString createUri(const KTp::ContactPtr &contact) const;
-    KContacts::Addressee contactToAddressee(const Tp::ContactPtr &contact) const;
 
     //presence names indexed by ConnectionPresenceType
-    QVector<QString> m_presenceStrings;
     QHash<QString, KTp::ContactPtr> m_contacts;
-    KContacts::Addressee::Map m_contactVCards;
+    QMap<QString, AbstractContact::Ptr> m_contactVCards;
 };
 
-static const QString S_KABC_PRODUCT = QString::fromLatin1("telepathy");
-static const QString S_KABC_FIELD_ACCOUNT_PATH = QString::fromLatin1("accountPath");
-static const QString S_KABC_FIELD_CONTACT_ID = QString::fromLatin1("contactId");
-static const QString S_KABC_FIELD_PRESENCE = QString::fromLatin1("presence");
+static const QString S_KPEOPLE_PROPERTY_ACCOUNT_PATH = QString::fromLatin1("telepathy-accountPath");
+static const QString S_KPEOPLE_PROPERTY_CONTACT_ID = QString::fromLatin1("telepathy-contactId");
+static const QString S_KPEOPLE_PROPERTY_PRESENCE = QString::fromLatin1("telepathy-presence");
+const QHash<Tp::ConnectionPresenceType, QString> s_presenceStrings = {
+        { Tp::ConnectionPresenceTypeUnset, QString() },
+        { Tp::ConnectionPresenceTypeOffline, QString::fromLatin1("offline") },
+        { Tp::ConnectionPresenceTypeAvailable, QString::fromLatin1("available") },
+        { Tp::ConnectionPresenceTypeAway, QString::fromLatin1("away") },
+        { Tp::ConnectionPresenceTypeExtendedAway, QString::fromLatin1("xa") },
+        { Tp::ConnectionPresenceTypeHidden, QString::fromLatin1("hidden") }, //of 'offline' ?
+        { Tp::ConnectionPresenceTypeBusy, QString::fromLatin1("busy") },
+        { Tp::ConnectionPresenceTypeUnknown, QString() },
+        { Tp::ConnectionPresenceTypeError, QString() }
+};
+
+class TelepathyContact : public KPeople::AbstractContact
+{
+public:
+    virtual QVariant customProperty(const QString &key) const Q_DECL_OVERRIDE
+    {
+        if (m_contact && m_account) {
+            if (key == AbstractContact::NameProperty)
+                return m_contact->alias();
+            else if(key == AbstractContact::GroupsProperty)
+                return m_contact->groups();
+            else if(key == S_KPEOPLE_PROPERTY_CONTACT_ID)
+                return m_contact->id();
+            else if(key == S_KPEOPLE_PROPERTY_ACCOUNT_PATH)
+                return m_account->objectPath();
+            else if(key == S_KPEOPLE_PROPERTY_PRESENCE)
+                return s_presenceStrings.value(m_contact->presence().type());
+            else if (key == AbstractContact::PictureProperty && !m_contact->avatarData().fileName.isEmpty()) {
+                return QUrl::fromLocalFile(m_contact->avatarData().fileName);
+            }
+        }
+        return m_properties[key];
+    }
+
+    void insertProperty(const QString &key, const QVariant &value)
+    {
+        m_properties[key] = value;
+    }
+
+    void setContact(const Tp::ContactPtr &contact)
+    {
+        m_contact = contact;
+    }
+
+    void setAccount(const Tp::AccountPtr &account)
+    {
+        m_account = account;
+    }
+
+private:
+    Tp::ContactPtr m_contact;
+    Tp::AccountPtr m_account;
+    QVariantMap m_properties;
+};
 
 KTpAllContacts::KTpAllContacts()
 {
     Tp::registerTypes();
-
-    m_presenceStrings.reserve(9);
-    m_presenceStrings.insert(Tp::ConnectionPresenceTypeUnset, QString());
-    m_presenceStrings.insert(Tp::ConnectionPresenceTypeOffline, QString::fromLatin1("offline"));
-    m_presenceStrings.insert(Tp::ConnectionPresenceTypeAvailable, QString::fromLatin1("available"));
-    m_presenceStrings.insert(Tp::ConnectionPresenceTypeAway, QString::fromLatin1("away"));
-    m_presenceStrings.insert(Tp::ConnectionPresenceTypeExtendedAway, QString::fromLatin1("xa"));
-    m_presenceStrings.insert(Tp::ConnectionPresenceTypeHidden, QString::fromLatin1("hidden")); //of 'offline' ?
-    m_presenceStrings.insert(Tp::ConnectionPresenceTypeBusy, QString::fromLatin1("busy"));
-    m_presenceStrings.insert(Tp::ConnectionPresenceTypeUnknown, QString());
-    m_presenceStrings.insert(Tp::ConnectionPresenceTypeError, QString());
 
     loadCache();
 }
@@ -122,15 +161,15 @@ void KTpAllContacts::loadCache()
     }
 
     while (query.next()) {
-        KContacts::Addressee addressee;
+        QExplicitlySharedDataPointer<TelepathyContact> addressee(new TelepathyContact);
 
         const QString accountId =  query.value(0).toString();
         const QString contactId =  query.value(1).toString();
-        addressee.setFormattedName(query.value(2).toString());
-        addressee.setPhoto(KContacts::Picture(query.value(3).toString()));
+        addressee->insertProperty(AbstractContact::NameProperty, query.value(2).toString());
+        addressee->insertProperty(AbstractContact::PictureProperty, QUrl::fromLocalFile(query.value(3).toString()));
 
         if (!groupsList.isEmpty()) {
-            QStringList contactGroups;
+            QVariantList contactGroups;
 
             Q_FOREACH (const QString &groupIdStr, query.value(4).toString().split(QLatin1String(","))) {
                 bool convSuccess;
@@ -141,12 +180,12 @@ void KTpAllContacts::loadCache()
                 contactGroups.append(groupsList.at(groupId));
             }
 
-            addressee.setCategories(contactGroups);
+            addressee->insertProperty(QStringLiteral("groups"), contactGroups);
         }
 
-        addressee.insertCustom(S_KABC_PRODUCT, S_KABC_FIELD_CONTACT_ID, contactId);
-        addressee.insertCustom(S_KABC_PRODUCT, S_KABC_FIELD_ACCOUNT_PATH, TP_QT_ACCOUNT_OBJECT_PATH_BASE + QLatin1Char('/') + accountId);
-        addressee.insertCustom(S_KABC_PRODUCT, S_KABC_FIELD_PRESENCE, m_presenceStrings.at(Tp::ConnectionPresenceTypeOffline));
+        addressee->insertProperty(S_KPEOPLE_PROPERTY_CONTACT_ID, contactId);
+        addressee->insertProperty(S_KPEOPLE_PROPERTY_ACCOUNT_PATH, TP_QT_ACCOUNT_OBJECT_PATH_BASE + QLatin1Char('/') + accountId);
+        addressee->insertProperty(S_KPEOPLE_PROPERTY_PRESENCE, s_presenceStrings[Tp::ConnectionPresenceTypeOffline]);
 
         const QString uri = QLatin1String("ktp://") + accountId + QLatin1Char('?') + contactId;
 
@@ -202,18 +241,22 @@ void KTpAllContacts::onAllKnownContactsChanged(const Tp::Contacts &contactsAdded
         KTp::ContactPtr ktpContact = KTp::ContactPtr::qObjectCast(contact);
         const QString uri = createUri(ktpContact);
 
-        const KContacts::Addressee vcard = contactToAddressee(contact);
+        AbstractContact::Ptr vcard = m_contactVCards.value(uri);
+        bool added = false;
+        if (!vcard) {
+            vcard = AbstractContact::Ptr(new TelepathyContact);
+            m_contactVCards[uri] = vcard;
+            added = true;
+        }
+        static_cast<TelepathyContact*>(vcard.data())->setContact(ktpContact);
+        static_cast<TelepathyContact*>(vcard.data())->setAccount(KTp::contactManager()->accountForContact(ktpContact));
 
         m_contacts.insert(uri, ktpContact);
 
-        //TODO OPTIMISATION if we already exist we shouldn't create a whole new KABC object, just update the existing one
-        //onContactChanged should be split into the relevant onAliasChanged etc.
-        if (m_contactVCards.contains(uri)) {
-            m_contactVCards[uri] = vcard;
-            Q_EMIT contactChanged(uri, vcard);
-        } else {
-            m_contactVCards.insert(uri, vcard);
+        if (added) {
             Q_EMIT contactAdded(uri, vcard);
+        } else {
+            Q_EMIT contactChanged(uri, vcard);
         }
 
         connect(ktpContact.data(), SIGNAL(presenceChanged(Tp::Presence)),
@@ -239,8 +282,8 @@ void KTpAllContacts::onAllKnownContactsChanged(const Tp::Contacts &contactsAdded
 void KTpAllContacts::onContactChanged()
 {
     const KTp::ContactPtr contact(qobject_cast<KTp::Contact*>(sender()));
-    m_contactVCards.insert(createUri(contact), contactToAddressee(contact));
-    Q_EMIT contactChanged(createUri(contact), contactToAddressee(contact));
+    const QString uri = createUri(contact);
+    Q_EMIT contactChanged(uri, m_contactVCards.value(uri));
 }
 
 void KTpAllContacts::onContactInvalidated()
@@ -251,32 +294,15 @@ void KTpAllContacts::onContactInvalidated()
     m_contacts.remove(uri);
 
     //set to offline and emit changed
-    KContacts::Addressee &vcard = m_contactVCards[uri];
-    vcard.insertCustom(S_KABC_PRODUCT, S_KABC_FIELD_PRESENCE, QLatin1String("offline"));
+    AbstractContact::Ptr vcard = m_contactVCards[uri];
+    TelepathyContact *tpContact = static_cast<TelepathyContact*>(vcard.data());
+    tpContact->insertProperty(S_KPEOPLE_PROPERTY_PRESENCE, QStringLiteral("offline"));
     Q_EMIT contactChanged(uri, vcard);
 }
 
-KContacts::Addressee::Map KTpAllContacts::contacts()
+QMap<QString, AbstractContact::Ptr> KTpAllContacts::contacts()
 {
     return m_contactVCards;
-}
-
-KContacts::Addressee KTpAllContacts::contactToAddressee(const Tp::ContactPtr &contact) const
-{
-    KContacts::Addressee vcard;
-    Tp::AccountPtr account = KTp::contactManager()->accountForContact(contact);
-    if (contact && account) {
-        vcard.setFormattedName(contact->alias());
-        vcard.setCategories(contact->groups());
-
-        vcard.insertCustom(S_KABC_PRODUCT, S_KABC_FIELD_CONTACT_ID, contact->id());
-        vcard.insertCustom(S_KABC_PRODUCT, S_KABC_FIELD_ACCOUNT_PATH, account->objectPath());
-        vcard.insertCustom(S_KABC_PRODUCT, S_KABC_FIELD_PRESENCE, m_presenceStrings.at(contact->presence().type()));
-        if (!contact->avatarData().fileName.isEmpty()) {
-            vcard.setPhoto(KContacts::Picture(contact->avatarData().fileName));
-        }
-    }
-    return vcard;
 }
 
 IMPersonsDataSource::IMPersonsDataSource(QObject *parent, const QVariantList &args)
@@ -291,7 +317,7 @@ IMPersonsDataSource::~IMPersonsDataSource()
 
 QString IMPersonsDataSource::sourcePluginId() const
 {
-    return QLatin1String("ktp");
+    return QStringLiteral("ktp");
 }
 
 AllContactsMonitor* IMPersonsDataSource::createAllContactsMonitor()

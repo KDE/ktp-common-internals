@@ -34,7 +34,7 @@ public:
     explicit ChatWidgetFactory(QObject *parent, const QVariantList &args);
     virtual QString label() const;
     virtual int sortWeight() const;
-    virtual QWidget *createDetailsWidget(const KContacts::Addressee &person, const KContacts::Addressee::List &contacts, QWidget *parent) const;
+    virtual QWidget* createDetailsWidget(const KPeople::PersonData &person, QWidget *parent) const Q_DECL_OVERRIDE;
 
 private Q_SLOTS:
     void onPendingDates(KTp::PendingLoggerOperation *);

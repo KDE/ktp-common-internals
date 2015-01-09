@@ -38,6 +38,7 @@ if (KF5People_FOUND)
 
     KF5::I18n
     KF5::People
+    KF5::CoreAddons
     KTp::CommonInternals
     KTp::Models
     )

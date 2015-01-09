@@ -26,9 +26,9 @@
 #include <QVBoxLayout>
 #include <QScrollArea>
 #include <KLocalizedString>
-#include <KContacts/Addressee>
 #include <KPluginFactory>
 #include <KLocalizedString>
+#include <KPeople/PersonData>
 
 #include <KTp/core.h>
 #include <KTp/Logger/log-manager.h>
@@ -51,9 +51,8 @@ ChatWidgetFactory::ChatWidgetFactory(QObject *parent, const QVariantList &args):
     m_model = new QStandardItemModel();
 }
 
-QWidget *ChatWidgetFactory::createDetailsWidget(const KContacts::Addressee &person, const KContacts::Addressee::List &contacts, QWidget *parent) const
+QWidget *ChatWidgetFactory::createDetailsWidget(const KPeople::PersonData &person, QWidget *parent) const
 {
-    Q_UNUSED(contacts);
     QWidget *widget = new QWidget(parent);
 
     QScrollArea *scrollArea = new QScrollArea();
@@ -70,19 +69,20 @@ QWidget *ChatWidgetFactory::createDetailsWidget(const KContacts::Addressee &pers
     chatlistView->setModel(m_model);
     layout->setContentsMargins(0, 0, 0, 0);
 
-    if (person.custom(QLatin1String("telepathy"), QLatin1String("accountPath")).isEmpty()) {
-        layout->addWidget(new QLabel(QLatin1String("Chat for current contact is not supported")));
+    QString accountPath = person.contactCustomProperty(QStringLiteral("telepathy-accountPath")).toString();
+    if (accountPath.isNull()) {
+        layout->addWidget(new QLabel(i18n("Chat for current contact is not supported")));
     } else {
         KTp::LogManager *logManager = KTp::LogManager::instance();
         logManager->setAccountManager(KTp::accountManager());
-        KTp::LogEntity logEntity(Tp::HandleTypeContact, person.custom(QLatin1String("telepathy"), QLatin1String("contactId")));
+        KTp::LogEntity logEntity(Tp::HandleTypeContact, person.contactCustomProperty(QStringLiteral("telepathy-contactId")).toString());
 
         Tp::AccountPtr account;
 
-        if (person.custom(QLatin1String("telepathy"), QLatin1String("accountPath")).contains(QLatin1String(TP_ACCOUNT_OBJECT_PATH_BASE))) {
-            account = KTp::accountManager().data()->accountForObjectPath(person.custom(QLatin1String("telepathy"), QLatin1String("accountPath")));
+        if (accountPath.contains(QLatin1String(TP_ACCOUNT_OBJECT_PATH_BASE))) {
+            account = KTp::accountManager().data()->accountForObjectPath(accountPath);
         } else {
-            account = KTp::accountManager().data()->accountForObjectPath(QLatin1String(TP_ACCOUNT_OBJECT_PATH_BASE) + person.custom(QLatin1String("telepathy"), QLatin1String("accountPath")));
+            account = KTp::accountManager().data()->accountForObjectPath(QLatin1String(TP_ACCOUNT_OBJECT_PATH_BASE) + accountPath);
         }
 
         if (account.isNull()) {
