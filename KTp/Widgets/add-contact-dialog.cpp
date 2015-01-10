@@ -223,7 +223,7 @@ void AddContactDialog::updateSubscriptionMessageVisibility()
 void AddContactDialog::setInProgress(bool inProgress)
 {
     d->acceptInProgress = inProgress;
-    layout()->widget()->setEnabled(!inProgress);
+    layout()->parentWidget()->setEnabled(!inProgress);
     d->buttonBox->setEnabled(!inProgress);
 }
 
