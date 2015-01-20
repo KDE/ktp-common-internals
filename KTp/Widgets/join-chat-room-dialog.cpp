@@ -461,7 +461,7 @@ void KTp::JoinChatRoomDialog::onStartChatFinished(Tp::PendingOperation *op)
 void KTp::JoinChatRoomDialog::setJoinInProgress(bool inProgress)
 {
     d->joinInProgress = inProgress;
-    layout()->widget()->setEnabled(!inProgress);
+    layout()->parentWidget()->setEnabled(!inProgress);
     d->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(!inProgress);
     d->buttonBox->button(QDialogButtonBox::Cancel)->setEnabled(!inProgress);
 }
