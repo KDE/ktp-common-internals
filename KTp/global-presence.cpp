@@ -119,6 +119,11 @@ QString GlobalPresence::currentPresenceIconName() const
     return currentPresence().iconName();
 }
 
+QString GlobalPresence::currentPresenceName() const
+{
+    return currentPresence().displayString();
+}
+
 GlobalPresence::ConnectionPresenceType GlobalPresence::currentPresenceType() const
 {
     KTp::Presence p = currentPresence();
@@ -143,6 +148,11 @@ GlobalPresence::ConnectionPresenceType GlobalPresence::currentPresenceType() con
 Presence GlobalPresence::requestedPresence() const
 {
     return m_requestedPresence;
+}
+
+QString GlobalPresence::requestedPresenceName() const
+{
+    return m_requestedPresence.displayString();
 }
 
 bool GlobalPresence::isChangingPresence() const

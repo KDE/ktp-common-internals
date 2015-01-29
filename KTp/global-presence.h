@@ -50,9 +50,10 @@ class KTPCOMMONINTERNALS_EXPORT GlobalPresence : public QObject
     Q_PROPERTY(QIcon currentPresenceIcon READ currentPresenceIcon NOTIFY currentPresenceChanged)
     Q_PROPERTY(QString currentPresenceIconName READ currentPresenceIconName NOTIFY currentPresenceChanged)
     Q_PROPERTY(KTp::Presence currentPresence READ currentPresence NOTIFY currentPresenceChanged)
-
+    Q_PROPERTY(QString currentPresenceName READ currentPresenceName NOTIFY currentPresenceChanged);
     Q_PROPERTY(KTp::Presence requestedPresence READ requestedPresence WRITE setPresence NOTIFY requestedPresenceChanged)
-
+    Q_PROPERTY(QString requestedPresenceName READ requestedPresenceName NOTIFY requestedPresenceChanged)
+    Q_PROPERTY(bool isChangingPresence READ isChangingPresence NOTIFY changingPresence)
 
 public:
     explicit GlobalPresence(QObject *parent = 0);
@@ -87,10 +88,13 @@ public:
     QIcon currentPresenceIcon() const;
     QString currentPresenceIconName() const;
     ConnectionPresenceType currentPresenceType() const;
+    QString currentPresenceName() const;
 
     /** The most online presence requested for any account if any of the accounts are changing state.
       otherwise returns current presence*/
     Presence requestedPresence() const;
+
+    QString requestedPresenceName() const;
 
     /** Returns true if any account is changing state (i.e connecting*/
     bool isChangingPresence() const;
