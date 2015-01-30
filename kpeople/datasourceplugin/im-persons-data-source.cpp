@@ -109,7 +109,7 @@ public:
         m_properties[key] = value;
     }
 
-    void setContact(const Tp::ContactPtr &contact)
+    void setContact(const KTp::ContactPtr &contact)
     {
         m_contact = contact;
     }
@@ -120,7 +120,7 @@ public:
     }
 
 private:
-    Tp::ContactPtr m_contact;
+    KTp::ContactPtr m_contact;
     Tp::AccountPtr m_account;
     QVariantMap m_properties;
 };
