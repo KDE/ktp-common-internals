@@ -40,6 +40,7 @@
 
 #include <QSqlDatabase>
 #include <QSqlQuery>
+#include <QPixmap>
 
 using namespace KPeople;
 
@@ -97,9 +98,8 @@ public:
                 return m_account->objectPath();
             else if(key == S_KPEOPLE_PROPERTY_PRESENCE)
                 return s_presenceStrings.value(m_contact->presence().type());
-            else if (key == AbstractContact::PictureProperty && !m_contact->avatarData().fileName.isEmpty()) {
-                return QUrl::fromLocalFile(m_contact->avatarData().fileName);
-            }
+            else if (key == AbstractContact::PictureProperty)
+                return m_contact->avatarPixmap();
         }
         return m_properties[key];
     }
