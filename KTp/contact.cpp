@@ -184,13 +184,7 @@ QPixmap KTp::Contact::avatarPixmap()
         //if neither above succeeded, return empty QPixmap,
         //PersonsModel will return the default icon instead
         if (avatar.isNull()) {
-
             return QPixmap();
-        }
-
-        //if the contact is offline, gray it out
-        if (presence().type() == Tp::ConnectionPresenceTypeOffline) {
-            avatarToGray(avatar);
         }
 
         //insert the contact into pixmap cache for faster lookup
