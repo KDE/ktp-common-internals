@@ -181,9 +181,11 @@ QPixmap KTp::Contact::avatarPixmap()
             avatar.load(file);
         }
 
-        //if neither above succeeded, we need to load the icon
+        //if neither above succeeded, return empty QPixmap,
+        //PersonsModel will return the default icon instead
         if (avatar.isNull()) {
-            avatar = KIconLoader::global()->loadIcon(QLatin1String("im-user"), KIconLoader::NoGroup, 96);
+
+            return QPixmap();
         }
 
         //if the contact is offline, gray it out
