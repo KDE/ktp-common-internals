@@ -201,7 +201,6 @@ void GlobalPresence::setPresence(GlobalPresence::ConnectionPresenceType p, QStri
 void GlobalPresence::onAccountAdded(const Tp::AccountPtr &account)
 {
     connect(account.data(), SIGNAL(connectionStatusChanged(Tp::ConnectionStatus)), SLOT(onConnectionStatusChanged()));
-    connect(account.data(), SIGNAL(changingPresence(bool)), SLOT(onChangingPresence()));
     connect(account.data(), SIGNAL(requestedPresenceChanged(Tp::Presence)), SLOT(onRequestedPresenceChanged()));
     connect(account.data(), SIGNAL(currentPresenceChanged(Tp::Presence)), SLOT(onCurrentPresenceChanged()));
 }
@@ -251,6 +250,8 @@ void GlobalPresence::onCurrentPresenceChanged()
         m_currentPresence = Presence(highestCurrentPresence);
         Q_EMIT currentPresenceChanged(m_currentPresence);
     }
+
+    onChangingPresence();
 }
 
 void GlobalPresence::onRequestedPresenceChanged()
@@ -270,13 +271,15 @@ void GlobalPresence::onRequestedPresenceChanged()
         onCurrentPresenceChanged();
         Q_EMIT requestedPresenceChanged(m_requestedPresence);
     }
+
+    onChangingPresence();
 }
 
 void GlobalPresence::onChangingPresence()
 {
     bool isChangingPresence = false;
     Q_FOREACH(const Tp::AccountPtr &account, m_enabledAccounts->accounts()) {
-        if (account->isChangingPresence()) {
+        if (account->requestedPresence() != account->currentPresence()) {
             isChangingPresence = true;
         }
     }
