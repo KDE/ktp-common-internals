@@ -123,6 +123,9 @@ QVariant KPeopleTranslationProxy::data(const QModelIndex &proxyIndex, int role) 
 
 QVariant KPeopleTranslationProxy::dataForKTpContact(const QString &accountPath, const QString &contactId, int role) const
 {
+    if (accountPath.isEmpty()) {
+        return QVariant();
+    }
     if (role == KTp::AccountRole) {
         return QVariant::fromValue<Tp::AccountPtr>(KTp::contactManager()->accountForAccountPath(accountPath));
     }
