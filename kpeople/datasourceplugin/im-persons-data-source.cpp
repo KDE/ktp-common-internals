@@ -87,7 +87,8 @@ class TelepathyContact : public KPeople::AbstractContact
 public:
     virtual QVariant customProperty(const QString &key) const Q_DECL_OVERRIDE
     {
-        if (m_contact && m_account) {
+        // Check if the contact is valid first
+        if (m_contact && m_contact->manager() && m_contact->manager()->connection() && m_account) {
             if (key == AbstractContact::NameProperty)
                 return m_contact->alias();
             else if(key == AbstractContact::GroupsProperty)
