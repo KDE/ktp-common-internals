@@ -72,7 +72,6 @@ private:
     QString buildAvatarPath(const QString &avatarToken);
 
     QString m_accountUniqueIdentifier;
-
 };
 
 

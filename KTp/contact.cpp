@@ -61,6 +61,10 @@ QString KTp::Contact::accountUniqueIdentifier() const
 
 KTp::Presence KTp::Contact::presence() const
 {
+    if (!manager() || !manager()->connection()) {
+        return Tp::Presence::offline();
+    }
+
     return KTp::Presence(Tp::Contact::presence());
 }
 
