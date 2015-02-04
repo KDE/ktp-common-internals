@@ -3,7 +3,8 @@ add_library (ktp_kpeople_plugin MODULE
 )
 
 target_link_libraries (ktp_kpeople_plugin
-    KF5::PeopleWidgets
+    KF5::People
+    KF5::PeopleBackend
     KF5::I18n
     KF5::Service
     KTp::CommonInternals
