@@ -26,6 +26,8 @@
 #include <QStyledItemDelegate>
 #include <QPainter>
 #include <QFontDatabase>
+#include <QDebug>
+
 #include <KTp/types.h>
 
 class SimpleDelegate : public QStyledItemDelegate {
@@ -33,7 +35,7 @@ class SimpleDelegate : public QStyledItemDelegate {
     virtual void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
 };
 
-QSize SimpleDelegate::sizeHint(const QStyleOptionViewItem& option, const QModelIndex& index) const
+QSize SimpleDelegate::sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
     return QSize(24, 24);
 }
@@ -109,6 +111,19 @@ ModelView::ModelView(QAbstractItemModel *model, QWidget *parent)
     TreeView->setModel(proxy);
     TreeView->setUniformRowHeights(true);
     TreeView->setItemDelegate(new SimpleDelegate());
+
+    connect(TreeView, &QAbstractItemView::clicked, [this] (const QModelIndex &index) {
+        bool isPerson = index.data(KTp::RowTypeRole).toUInt() == KTp::PersonRowType;
+        QString personString = isPerson ? QStringLiteral("Yes, ") + QString::number(index.model()->rowCount(index)) + QStringLiteral(" subcontacts") : QStringLiteral("No");
+
+        qDebug() << "Contact info";
+        qDebug() << "------------";
+        qDebug() << "        ID:" << index.data(KTp::IdRole).toString();
+        qDebug() << " Person ID:" << index.data(KTp::PersonIdRole).toString();
+        qDebug() << "  Username:" << index.data(Qt::DisplayRole).toString();
+        qDebug() << " Is Person:" << personString;
+        qDebug();
+    });
 }
 
 ModelView::~ModelView()
