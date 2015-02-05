@@ -7,7 +7,6 @@ include_directories(
 
 set(model_view_SRCS
     model-view.cpp
-    roles-proxy-model.cpp
 )
 
 qt5_wrap_ui(model_view_SRCS model-view.ui)
@@ -19,7 +18,6 @@ add_executable(ktp_contact_list_model_view
 
 target_link_libraries(ktp_contact_list_model_view
   Qt5::Test
-  
   KF5::CoreAddons
   KF5::I18n
   KTp::CommonInternals
@@ -35,7 +33,6 @@ if (KF5People_FOUND)
 
     target_link_libraries(ktp_kpeople_list_model_view
     Qt5::Test
-
     KF5::I18n
     KF5::People
     KF5::CoreAddons
