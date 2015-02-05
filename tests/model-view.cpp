@@ -23,7 +23,76 @@
 
 #include "roles-proxy-model.h"
 #include <QSortFilterProxyModel>
+#include <QStyledItemDelegate>
+#include <QPainter>
+#include <QFontDatabase>
+#include <KTp/types.h>
 
+class SimpleDelegate : public QStyledItemDelegate {
+    virtual QSize sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const;
+    virtual void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
+};
+
+QSize SimpleDelegate::sizeHint(const QStyleOptionViewItem& option, const QModelIndex& index) const
+{
+    return QSize(24, 24);
+}
+
+void SimpleDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
+{
+    QStyleOptionViewItemV4 optV4 = option;
+    initStyleOption(&optV4, index);
+    painter->save();
+
+    painter->setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform | QPainter::HighQualityAntialiasing);
+    painter->setClipRect(optV4.rect);
+
+    QStyle *style = QApplication::style();
+    style->drawPrimitive(QStyle::PE_PanelItemViewItem, &optV4, painter);
+
+    QRect iconRect = optV4.rect;
+    iconRect.setSize(QSize(22, 22));
+    iconRect.moveTo(QPoint(iconRect.x() + 8, iconRect.y() + 8));
+
+    QPixmap avatar(qvariant_cast<QPixmap>(index.data(KTp::ContactAvatarPixmapRole)));
+
+    if (!avatar.isNull()) {
+        style->drawItemPixmap(painter, iconRect, Qt::AlignCenter, avatar.scaled(iconRect.size(), Qt::KeepAspectRatio, Qt::SmoothTransformation));
+    }
+
+    QPixmap icon = QIcon::fromTheme(index.data(KTp::ContactPresenceIconRole).toString()).pixmap(22);
+
+    QRect statusIconRect = optV4.rect;
+    statusIconRect.setSize(QSize(22, 22));
+    statusIconRect.moveTo(QPoint(optV4.rect.right() - 24,
+                                 optV4.rect.top() + (optV4.rect.height() - 22) / 2));
+
+    painter->drawPixmap(statusIconRect, icon);
+
+    QFont nameFont = QFontDatabase::systemFont(QFontDatabase::GeneralFont);
+
+    const QFontMetrics nameFontMetrics(nameFont);
+
+    if (option.state & QStyle::State_Selected) {
+        painter->setPen(option.palette.color(QPalette::Active, QPalette::HighlightedText));
+    } else {
+        painter->setPen(option.palette.color(QPalette::Active, QPalette::Text));
+    }
+
+    painter->setFont(nameFont);
+
+    QRect userNameRect = optV4.rect;
+    userNameRect.setX(iconRect.x() + iconRect.width() + 18);
+    userNameRect.setY(userNameRect.y() + (userNameRect.height()/2 - nameFontMetrics.height()/2));
+    userNameRect.setWidth(userNameRect.width() - 22);
+
+    QString nameText = index.data(Qt::DisplayRole).toString();
+
+    painter->drawText(userNameRect,
+                      nameFontMetrics.elidedText(nameText, Qt::ElideRight, userNameRect.width()));
+
+    painter->restore();
+}
 
 
 ModelView::ModelView(QAbstractItemModel *model, QWidget *parent)
@@ -31,15 +100,15 @@ ModelView::ModelView(QAbstractItemModel *model, QWidget *parent)
 {
     setupUi(this);
 
-//     RolesProxyModel *proxyModel = new RolesProxyModel(this);
-//     proxyModel->setSourceModel(model);
-
     QSortFilterProxyModel *proxy = new QSortFilterProxyModel(this);
     proxy->setDynamicSortFilter(true);
     proxy->setSourceModel(model);
     proxy->setSortRole(Qt::DisplayRole);
+    proxy->sort(0);
 
     TreeView->setModel(proxy);
+    TreeView->setUniformRowHeights(true);
+    TreeView->setItemDelegate(new SimpleDelegate());
 }
 
 ModelView::~ModelView()
