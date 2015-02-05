@@ -78,8 +78,8 @@ const QHash<Tp::ConnectionPresenceType, QString> s_presenceStrings = {
         { Tp::ConnectionPresenceTypeExtendedAway, QString::fromLatin1("xa") },
         { Tp::ConnectionPresenceTypeHidden, QString::fromLatin1("hidden") }, //of 'offline' ?
         { Tp::ConnectionPresenceTypeBusy, QString::fromLatin1("busy") },
-        { Tp::ConnectionPresenceTypeUnknown, QString() },
-        { Tp::ConnectionPresenceTypeError, QString() }
+        { Tp::ConnectionPresenceTypeUnknown, QString::fromLatin1("unknown") },
+        { Tp::ConnectionPresenceTypeError, QString::fromLatin1("error") }
 };
 
 class TelepathyContact : public KPeople::AbstractContact
