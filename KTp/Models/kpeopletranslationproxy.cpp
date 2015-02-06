@@ -18,13 +18,11 @@
 
 
 #include "kpeopletranslationproxy.h"
+#include "KTp/types.h"
+#include "KTp/global-contact-manager.h"
 
 #include <KPeople/PersonsModel>
-
-#include <kpeople/global.h>
-
-#include "KTp/types.h"
-#include <global-contact-manager.h>
+#include <KPeople/KPeopleBackend/AbstractContact>
 
 #include <KIconLoader>
 
