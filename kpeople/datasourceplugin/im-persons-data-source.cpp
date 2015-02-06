@@ -153,11 +153,12 @@ void KTpAllContacts::loadCache()
         const QString contactId =  query.value(1).toString();
         addressee->insertProperty(AbstractContact::NameProperty, query.value(2).toString());
         addressee->insertProperty(AbstractContact::PictureProperty, QUrl::fromLocalFile(query.value(3).toString()));
+        addressee->insertProperty(S_KPEOPLE_PROPERTY_IS_BLOCKED, query.value(4).toBool());
 
         if (!groupsList.isEmpty()) {
             QVariantList contactGroups;
 
-            Q_FOREACH (const QString &groupIdStr, query.value(4).toString().split(QLatin1String(","))) {
+            Q_FOREACH (const QString &groupIdStr, query.value(5).toString().split(QLatin1String(","))) {
                 bool convSuccess;
                 int groupId = groupIdStr.toInt(&convSuccess);
                 if ((!convSuccess) || (groupId >= groupsList.count()))
