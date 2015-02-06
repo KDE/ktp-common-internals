@@ -67,21 +67,6 @@ private:
     QMap<QString, AbstractContact::Ptr> m_contactVCards;
 };
 
-static const QString S_KPEOPLE_PROPERTY_ACCOUNT_PATH = QString::fromLatin1("telepathy-accountPath");
-static const QString S_KPEOPLE_PROPERTY_CONTACT_ID = QString::fromLatin1("telepathy-contactId");
-static const QString S_KPEOPLE_PROPERTY_PRESENCE = QString::fromLatin1("telepathy-presence");
-const QHash<Tp::ConnectionPresenceType, QString> s_presenceStrings = {
-        { Tp::ConnectionPresenceTypeUnset, QString() },
-        { Tp::ConnectionPresenceTypeOffline, QString::fromLatin1("offline") },
-        { Tp::ConnectionPresenceTypeAvailable, QString::fromLatin1("available") },
-        { Tp::ConnectionPresenceTypeAway, QString::fromLatin1("away") },
-        { Tp::ConnectionPresenceTypeExtendedAway, QString::fromLatin1("xa") },
-        { Tp::ConnectionPresenceTypeHidden, QString::fromLatin1("hidden") }, //of 'offline' ?
-        { Tp::ConnectionPresenceTypeBusy, QString::fromLatin1("busy") },
-        { Tp::ConnectionPresenceTypeUnknown, QString::fromLatin1("unknown") },
-        { Tp::ConnectionPresenceTypeError, QString::fromLatin1("error") }
-};
-
 class TelepathyContact : public KPeople::AbstractContact
 {
 public:

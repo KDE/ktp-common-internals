@@ -61,9 +61,9 @@ QVariant KPeopleTranslationProxy::data(const QModelIndex &proxyIndex, int role) 
 
     switch (role) {
         case KTp::ContactPresenceTypeRole:
-            return translatePresence(contact->customProperty(QStringLiteral("telepathy-presence")));
+            return s_presenceStrings.key(contact->customProperty(S_KPEOPLE_PROPERTY_PRESENCE).toString());
         case KTp::ContactPresenceIconRole:
-            return KPeople::iconNameForPresenceString(contact->customProperty(QStringLiteral("telepathy-presence")).toString());
+            return KPeople::iconNameForPresenceString(contact->customProperty(S_KPEOPLE_PROPERTY_PRESENCE).toString());
 //         case KTp::ContactPresenceNameRole:
 //             return sourceIndex.data(PersonsModel::PresenceDisplayRole);
         case Qt::DisplayRole:
@@ -85,7 +85,7 @@ QVariant KPeopleTranslationProxy::data(const QModelIndex &proxyIndex, int role) 
         case KTp::ContactAvatarPixmapRole:
             return sourceIndex.data(KPeople::PersonsModel::PhotoRole);
         case KTp::IdRole:
-            return contact->customProperty(QStringLiteral("telepathy-contactId"));
+            return contact->customProperty(S_KPEOPLE_PROPERTY_CONTACT_ID);
 //         case KTp::HeaderTotalUsersRole:
 //             return sourceModel()->rowCount(sourceIndex);
         case KTp::ContactGroupsRole:
@@ -101,8 +101,8 @@ QVariant KPeopleTranslationProxy::data(const QModelIndex &proxyIndex, int role) 
     int mostOnlineIndex = 0;
 
     for (int i = 0; i < contacts.size(); i++) {
-        if (KPeople::presenceSortPriority(contact->customProperty(QStringLiteral("telepathy-presence")).toString())
-            < KPeople::presenceSortPriority(contacts.at(mostOnlineIndex)->customProperty(QStringLiteral("telepathy-presence")).toString())) {
+        if (KPeople::presenceSortPriority(contact->customProperty(S_KPEOPLE_PROPERTY_PRESENCE).toString())
+            < KPeople::presenceSortPriority(contacts.at(mostOnlineIndex)->customProperty(S_KPEOPLE_PROPERTY_PRESENCE).toString())) {
 
             mostOnlineIndex = i;
         }
@@ -110,9 +110,9 @@ QVariant KPeopleTranslationProxy::data(const QModelIndex &proxyIndex, int role) 
 
     QVariant rValue;
     AbstractContact::Ptr informationContact = contacts.isEmpty() ? contact : contacts.at(mostOnlineIndex);
-    rValue = dataForKTpContact(informationContact->customProperty(QStringLiteral("telepathy-accountPath")).toString(),
-                               informationContact->customProperty(QStringLiteral("telepathy-contactId")).toString(),
-                                 role);
+    rValue = dataForKTpContact(informationContact->customProperty(S_KPEOPLE_PROPERTY_ACCOUNT_PATH).toString(),
+                               informationContact->customProperty(S_KPEOPLE_PROPERTY_CONTACT_ID).toString(),
+                               role);
 
     if (rValue.isNull()) {
         return sourceIndex.data(role);
@@ -168,30 +168,12 @@ bool KPeopleTranslationProxy::filterAcceptsRow(int source_row, const QModelIndex
     QModelIndex sourceIndex = sourceModel()->index(source_row, 0, source_parent);
 
     //if no valid presence (not even "offline") .. reject the contact
-    return !sourceIndex.data(KPeople::PersonsModel::PersonVCardRole).value<KPeople::AbstractContact::Ptr>()->customProperty(QStringLiteral("telepathy-presence")).isNull();
+    return !sourceIndex.data(KPeople::PersonsModel::PersonVCardRole).value<KPeople::AbstractContact::Ptr>()->customProperty(S_KPEOPLE_PROPERTY_PRESENCE).isNull();
 }
 
 QVariant KPeopleTranslationProxy::translatePresence(const QVariant &presenceName) const
 {
-    if (presenceName == QLatin1String("available")) {
-        return Tp::ConnectionPresenceTypeAvailable;
-    }
 
-    if (presenceName == QLatin1String("away")) {
-        return Tp::ConnectionPresenceTypeAway;
-    }
-
-    if (presenceName == QLatin1String("busy") || presenceName == QLatin1String("dnd")) {
-        return Tp::ConnectionPresenceTypeBusy;
-    }
-
-    if (presenceName == QLatin1String("xa")) {
-        return Tp::ConnectionPresenceTypeExtendedAway;
-    }
-
-    if (presenceName == QLatin1String("hidden")) {
-        return Tp::ConnectionPresenceTypeHidden;
-    }
 
     return Tp::ConnectionPresenceTypeOffline;
 }
