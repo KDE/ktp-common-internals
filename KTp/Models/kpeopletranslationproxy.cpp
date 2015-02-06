@@ -86,6 +86,8 @@ QVariant KPeopleTranslationProxy::data(const QModelIndex &proxyIndex, int role) 
             return sourceIndex.data(KPeople::PersonsModel::PhotoRole);
         case KTp::IdRole:
             return contact->customProperty(S_KPEOPLE_PROPERTY_CONTACT_ID);
+        case KTp::ContactIsBlockedRole:
+            return contact->customProperty(S_KPEOPLE_PROPERTY_IS_BLOCKED);
 //         case KTp::HeaderTotalUsersRole:
 //             return sourceModel()->rowCount(sourceIndex);
         case KTp::ContactGroupsRole:
