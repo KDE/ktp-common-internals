@@ -121,6 +121,8 @@ ModelView::ModelView(QAbstractItemModel *model, QWidget *parent)
         qDebug() << "        ID:" << index.data(KTp::IdRole).toString();
         qDebug() << " Person ID:" << index.data(KTp::PersonIdRole).toString();
         qDebug() << "  Username:" << index.data(Qt::DisplayRole).toString();
+        qDebug() << "   Blocked:" << index.data(KTp::ContactIsBlockedRole).toString();
+        qDebug() << "    Groups:" << index.data(KTp::ContactGroupsRole).toStringList();
         qDebug() << " Is Person:" << personString;
         qDebug();
     });
