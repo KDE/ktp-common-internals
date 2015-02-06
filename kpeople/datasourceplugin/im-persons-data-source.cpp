@@ -133,7 +133,7 @@ void KTpAllContacts::loadCache()
     }
 
     QSqlQuery query(db);
-    query.exec(QLatin1String("SELECT groupName FROM groups ORDER BY groupId;"));
+    query.exec(QLatin1String("SELECT DISTINCT groupName FROM groups ORDER BY groupId;"));
 
     QStringList groupsList;
     while (query.next()) {
