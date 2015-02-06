@@ -167,7 +167,7 @@ void KTpAllContacts::loadCache()
                 contactGroups.append(groupsList.at(groupId));
             }
 
-            addressee->insertProperty(QStringLiteral("groups"), contactGroups);
+            addressee->insertProperty(AbstractContact::GroupsProperty, contactGroups);
         }
 
         addressee->insertProperty(S_KPEOPLE_PROPERTY_CONTACT_ID, contactId);
