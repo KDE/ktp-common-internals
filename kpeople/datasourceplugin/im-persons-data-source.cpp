@@ -27,6 +27,7 @@
 #include <TelepathyQt/PendingOperation>
 #include <TelepathyQt/PendingReady>
 #include <TelepathyQt/Presence>
+#include <TelepathyQt/Utils>
 
 #include "KTp/contact-factory.h"
 #include "KTp/global-contact-manager.h"
@@ -37,6 +38,8 @@
 
 #include <KPluginFactory>
 #include <KPluginLoader>
+#include <KConfig>
+#include <KConfigGroup>
 
 #include <QSqlDatabase>
 #include <QSqlQuery>
@@ -53,11 +56,12 @@ public:
     virtual QMap<QString, AbstractContact::Ptr> contacts() Q_DECL_OVERRIDE;
 
 private Q_SLOTS:
-    void loadCache();
+    void loadCache(const QString &accountId = QString());
     void onAccountManagerReady(Tp::PendingOperation *op);
     void onContactChanged();
     void onContactInvalidated();
     void onAllKnownContactsChanged(const Tp::Contacts &contactsAdded, const Tp::Contacts &contactsRemoved);
+    void onAccountCurrentPresenceChanged(const Tp::Presence &currentPresence);
 
 private:
     QString createUri(const KTp::ContactPtr &contact) const;
@@ -122,7 +126,7 @@ KTpAllContacts::~KTpAllContacts()
 {
 }
 
-void KTpAllContacts::loadCache()
+void KTpAllContacts::loadCache(const QString &accountId)
 {
     QSqlDatabase db = QSqlDatabase::addDatabase(QLatin1String("QSQLITE"), QLatin1String("ktpCache"));
     QString path = QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation) + QLatin1String("/ktp");
@@ -140,10 +144,27 @@ void KTpAllContacts::loadCache()
         groupsList.append(query.value(0).toString());
     }
 
+    QString queryPrep = QStringLiteral("SELECT accountId, contactId, alias, avatarFileName, isBlocked");
     if (!groupsList.isEmpty()) {
-        query.exec(QLatin1String("SELECT accountId, contactId, alias, avatarFileName, groupsIds FROM contacts;"));
+        queryPrep.append(QStringLiteral(", groupsIds"));
+    }
+    queryPrep.append(QStringLiteral(" FROM contacts"));
+
+    if (!accountId.isEmpty()) {
+        queryPrep.append(QStringLiteral(" WHERE accountId = ?;"));
+        query.prepare(queryPrep);
+        query.bindValue(0, accountId);
     } else {
-        query.exec(QLatin1String("SELECT accountId, contactId, alias, avatarFileName FROM contacts;"));
+        queryPrep.append(QStringLiteral(";"));
+        query.prepare(queryPrep);
+    }
+
+    query.exec();
+
+    KConfig config(QLatin1String("ktelepathy-avatarsrc"));
+    QString cacheDir = QString::fromLatin1(qgetenv("XDG_CACHE_HOME"));
+    if (cacheDir.isEmpty()) {
+        cacheDir = QString(QStringLiteral("%1/.cache")).arg(QLatin1String(qgetenv("HOME")));
     }
 
     while (query.next()) {
@@ -151,14 +172,30 @@ void KTpAllContacts::loadCache()
 
         const QString accountId =  query.value(0).toString();
         const QString contactId =  query.value(1).toString();
+        QString avatarFileName = query.value(3).toString();
         addressee->insertProperty(AbstractContact::NameProperty, query.value(2).toString());
-        addressee->insertProperty(AbstractContact::PictureProperty, QUrl::fromLocalFile(query.value(3).toString()));
+
+        if (avatarFileName.isEmpty()) {
+            KConfigGroup avatarTokenGroup = config.group(contactId);
+            QString avatarToken = avatarTokenGroup.readEntry(QLatin1String("avatarToken"));
+            //only bother loading the pixmap if the token is not empty
+            if (!avatarToken.isEmpty()) {
+                // the accountId is in form of "connection manager name / protocol / username...",
+                // so let's look for the first / after the very first / (ie. second /)
+                QString path = QString(QStringLiteral("%1/telepathy/avatars/%2")).
+                    arg(cacheDir).arg(accountId.left(accountId.indexOf(QLatin1Char('/'), accountId.indexOf(QLatin1Char('/')) + 1)));
+
+                avatarFileName = QString(QStringLiteral("%1/%2")).arg(path).arg(Tp::escapeAsIdentifier(avatarToken));
+            }
+        }
+
+        addressee->insertProperty(AbstractContact::PictureProperty, QUrl::fromLocalFile(avatarFileName));
         addressee->insertProperty(S_KPEOPLE_PROPERTY_IS_BLOCKED, query.value(4).toBool());
 
         if (!groupsList.isEmpty()) {
             QVariantList contactGroups;
 
-            Q_FOREACH (const QString &groupIdStr, query.value(5).toString().split(QLatin1String(","))) {
+            Q_FOREACH (const QString &groupIdStr, query.value(5).toString().split(QLatin1Char('/'))) {
                 bool convSuccess;
                 int groupId = groupIdStr.toInt(&convSuccess);
                 if ((!convSuccess) || (groupId >= groupsList.count()))
@@ -176,13 +213,19 @@ void KTpAllContacts::loadCache()
 
         const QString uri = QLatin1String("ktp://") + accountId + QLatin1Char('?') + contactId;
 
+        QMap<QString, AbstractContact::Ptr>::const_iterator it = m_contactVCards.constFind(uri);
+        if (it != m_contactVCards.constEnd()) {
+            Q_EMIT contactChanged(uri, addressee);
+        } else {
+            Q_EMIT contactAdded(uri, addressee);
+        }
+
         m_contactVCards[uri] = addressee;
-        Q_EMIT contactAdded(uri, addressee);
     }
 
     //now start fetching the up-to-date information
     connect(KTp::accountManager()->becomeReady(), SIGNAL(finished(Tp::PendingOperation*)),
-        this, SLOT(onAccountManagerReady(Tp::PendingOperation*)));
+        this, SLOT(onAccountManagerReady(Tp::PendingOperation*)), Qt::UniqueConnection);
 
     emitInitialFetchComplete(true);
 }
@@ -206,10 +249,26 @@ void KTpAllContacts::onAccountManagerReady(Tp::PendingOperation *op)
 
     qCDebug(KTP_KPEOPLE) << "Account manager ready";
 
+    Q_FOREACH (const Tp::AccountPtr &account, KTp::accountManager()->allAccounts()) {
+        connect(account.data(), &Tp::Account::currentPresenceChanged, this, &KTpAllContacts::onAccountCurrentPresenceChanged);
+    }
+
     connect(KTp::contactManager(), SIGNAL(allKnownContactsChanged(Tp::Contacts,Tp::Contacts)),
             this, SLOT(onAllKnownContactsChanged(Tp::Contacts,Tp::Contacts)));
 
     onAllKnownContactsChanged(KTp::contactManager()->allKnownContacts(), Tp::Contacts());
+}
+
+void KTpAllContacts::onAccountCurrentPresenceChanged(const Tp::Presence &currentPresence)
+{
+    Tp::Account *account = qobject_cast<Tp::Account*>(sender());
+    if (!account) {
+        return;
+    }
+
+    if (currentPresence.type() == Tp::ConnectionPresenceTypeOffline) {
+        loadCache(account->uniqueIdentifier());
+    }
 }
 
 void KTpAllContacts::onAllKnownContactsChanged(const Tp::Contacts &contactsAdded, const Tp::Contacts &contactsRemoved)

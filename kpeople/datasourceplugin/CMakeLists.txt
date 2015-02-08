@@ -5,6 +5,7 @@ add_library (im_persons_data_source_plugin MODULE im-persons-data-source.cpp deb
 target_link_libraries (im_persons_data_source_plugin
     Qt5::Sql
     KF5::CoreAddons
+    KF5::ConfigCore
     KF5::People
     KF5::PeopleBackend
     KTp::CommonInternals
