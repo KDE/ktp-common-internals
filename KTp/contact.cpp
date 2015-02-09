@@ -221,7 +221,7 @@ QString KTp::Contact::buildAvatarPath(const QString &avatarToken)
 {
     QString cacheDir = QString::fromLatin1(qgetenv("XDG_CACHE_HOME"));
     if (cacheDir.isEmpty()) {
-        cacheDir = QString(QStringLiteral("%1/.cache")).arg(QLatin1String(qgetenv("HOME")));
+        cacheDir = QStringLiteral("%1/.cache").arg(QLatin1String(qgetenv("HOME")));
     }
 
     if (manager().isNull()) {
@@ -233,10 +233,10 @@ QString KTp::Contact::buildAvatarPath(const QString &avatarToken)
     }
 
     Tp::ConnectionPtr conn = manager()->connection();
-    QString path = QString(QStringLiteral("%1/telepathy/avatars/%2/%3")).
+    QString path = QStringLiteral("%1/telepathy/avatars/%2/%3").
         arg(cacheDir).arg(conn->cmName()).arg(conn->protocolName());
 
-    QString avatarFileName = QString(QStringLiteral("%1/%2")).arg(path).arg(Tp::escapeAsIdentifier(avatarToken));
+    QString avatarFileName = QStringLiteral("%1/%2").arg(path).arg(Tp::escapeAsIdentifier(avatarToken));
 
     return avatarFileName;
 }

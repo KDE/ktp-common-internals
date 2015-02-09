@@ -164,7 +164,7 @@ void KTpAllContacts::loadCache(const QString &accountId)
     KConfig config(QLatin1String("ktelepathy-avatarsrc"));
     QString cacheDir = QString::fromLatin1(qgetenv("XDG_CACHE_HOME"));
     if (cacheDir.isEmpty()) {
-        cacheDir = QString(QStringLiteral("%1/.cache")).arg(QLatin1String(qgetenv("HOME")));
+        cacheDir = QStringLiteral("%1/.cache").arg(QLatin1String(qgetenv("HOME")));
     }
 
     while (query.next()) {
@@ -182,10 +182,10 @@ void KTpAllContacts::loadCache(const QString &accountId)
             if (!avatarToken.isEmpty()) {
                 // the accountId is in form of "connection manager name / protocol / username...",
                 // so let's look for the first / after the very first / (ie. second /)
-                QString path = QString(QStringLiteral("%1/telepathy/avatars/%2")).
+                QString path = QStringLiteral("%1/telepathy/avatars/%2").
                     arg(cacheDir).arg(accountId.left(accountId.indexOf(QLatin1Char('/'), accountId.indexOf(QLatin1Char('/')) + 1)));
 
-                avatarFileName = QString(QStringLiteral("%1/%2")).arg(path).arg(Tp::escapeAsIdentifier(avatarToken));
+                avatarFileName = QStringLiteral("%1/%2").arg(path).arg(Tp::escapeAsIdentifier(avatarToken));
             }
         }
 
