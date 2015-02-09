@@ -204,15 +204,17 @@ void TelepathyManager::toggleContactList()
                                                              QLatin1String("toggleWindowVisibility"));
 
     QDBusPendingCall call = QDBusConnection::sessionBus().asyncCall(methodCall);
-    QDBusPendingCallWatcher* watch = new QDBusPendingCallWatcher(call, this);
+    QDBusPendingCallWatcher *watch = new QDBusPendingCallWatcher(call, this);
     connect(watch, SIGNAL(finished(QDBusPendingCallWatcher*)), SLOT(contactlistDBusAccessed(QDBusPendingCallWatcher*)));
     connect(watch, SIGNAL(finished(QDBusPendingCallWatcher*)), watch, SLOT(deleteLater()));
 }
 
-void TelepathyManager::contactlistDBusAccessed(QDBusPendingCallWatcher* w)
+void TelepathyManager::contactlistDBusAccessed(QDBusPendingCallWatcher *w)
 {
-    if(w->isError())
-        KToolInvocation::startServiceByDesktopName(QLatin1String("ktp-contactlist"));
+    if (w->isError()) {
+        // if toggleWindowVisibility failed, try starting the application via dbus
+        QDBusConnection::sessionBus().interface()->startService(QStringLiteral("org.kde.ktpcontactlist"));
+    }
 }
 
 void TelepathyManager::showSettingsKCM()
