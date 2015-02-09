@@ -198,8 +198,8 @@ void TelepathyManager::joinChatRoom()
 void TelepathyManager::toggleContactList()
 {
     //contact list is registered, call toggleWindowVisibility in contact list
-    QDBusMessage methodCall = QDBusMessage::createMethodCall(QLatin1String("org.kde.ktp-contactlist"),
-                                                             QLatin1String("/ktp_contactlist/MainWindow"),
+    QDBusMessage methodCall = QDBusMessage::createMethodCall(QLatin1String("org.kde.ktpcontactlist"),
+                                                             QLatin1String("/ktpcontactlist/MainWindow"),
                                                              QLatin1String("org.kde.KTp.ContactList"),
                                                              QLatin1String("toggleWindowVisibility"));
 
