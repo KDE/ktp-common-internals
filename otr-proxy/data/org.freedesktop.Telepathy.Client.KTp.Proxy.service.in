@@ -1,3 +1,3 @@
 [D-BUS Service]
 Name=org.freedesktop.Telepathy.Client.KTp.Proxy
-Exec=@LIBEXEC_INSTALL_DIR@/ktp-proxy
+Exec=@CMAKE_INSTALL_FULL_LIBEXECDIR@/ktp-proxy
