@@ -97,6 +97,9 @@ void KTp::NotificationConfigDialog::onButtonBoxClicked(QAbstractButton *button)
         case QDialogButtonBox::RestoreDefaults:
             defaults();
             break;
+        case QDialogButtonBox::Cancel:
+            reject();
+            break;
         default:
             break;
     }
