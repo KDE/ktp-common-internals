@@ -40,7 +40,6 @@ public:
     ~NotificationConfigDialog();
 
 private Q_SLOTS:
-    void saveConfig();
     void updateNotifyWidget(const int selection);
     void defaults();
     void onOkClicked();

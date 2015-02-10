@@ -92,7 +92,7 @@ void KTp::NotificationConfigDialog::onButtonBoxClicked(QAbstractButton *button)
             onOkClicked();
             break;
         case QDialogButtonBox::Apply:
-            saveConfig();
+            m_notifyWidget->save();
             break;
         case QDialogButtonBox::RestoreDefaults:
             defaults();
@@ -100,11 +100,6 @@ void KTp::NotificationConfigDialog::onButtonBoxClicked(QAbstractButton *button)
         default:
             break;
     }
-}
-
-void KTp::NotificationConfigDialog::saveConfig()
-{
-    m_notifyWidget->save();
 }
 
 void KTp::NotificationConfigDialog::updateNotifyWidget(const int selection)
