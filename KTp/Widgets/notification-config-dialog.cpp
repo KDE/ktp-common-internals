@@ -77,8 +77,10 @@ KTp::NotificationConfigDialog::NotificationConfigDialog(const Tp::ContactPtr &co
             this, SLOT(onButtonBoxClicked(QAbstractButton*)));
     connect(comboBox, SIGNAL(currentIndexChanged(int)),
             SLOT(updateNotifyWidget(int)));
-    connect(m_notifyWidget, SIGNAL(changed(bool)),
-            SLOT(enableButtonApply(bool)));
+
+    connect(m_notifyWidget, &KNotifyConfigWidget::changed, [=](bool changed) {
+        m_buttonBox->button(QDialogButtonBox::Apply)->setEnabled(changed);
+    });
 }
 
 KTp::NotificationConfigDialog::~NotificationConfigDialog()
