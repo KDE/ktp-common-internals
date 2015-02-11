@@ -91,21 +91,21 @@ namespace KTp
     };
 }
 
-static const QString S_KPEOPLE_PROPERTY_ACCOUNT_PATH = QString::fromLatin1("telepathy-accountPath");
-static const QString S_KPEOPLE_PROPERTY_CONTACT_ID = QString::fromLatin1("telepathy-contactId");
-static const QString S_KPEOPLE_PROPERTY_PRESENCE = QString::fromLatin1("telepathy-presence");
-static const QString S_KPEOPLE_PROPERTY_IS_BLOCKED = QString::fromLatin1("telepathy-isBlocked");
+static const QString S_KPEOPLE_PROPERTY_ACCOUNT_PATH = QStringLiteral("telepathy-accountPath");
+static const QString S_KPEOPLE_PROPERTY_CONTACT_ID = QStringLiteral("telepathy-contactId");
+static const QString S_KPEOPLE_PROPERTY_PRESENCE = QStringLiteral("telepathy-presence");
+static const QString S_KPEOPLE_PROPERTY_IS_BLOCKED = QStringLiteral("telepathy-isBlocked");
 
 const QHash<Tp::ConnectionPresenceType, QString> s_presenceStrings = {
     { Tp::ConnectionPresenceTypeUnset, QString() },
-    { Tp::ConnectionPresenceTypeOffline, QString::fromLatin1("offline") },
-    { Tp::ConnectionPresenceTypeAvailable, QString::fromLatin1("available") },
-    { Tp::ConnectionPresenceTypeAway, QString::fromLatin1("away") },
-    { Tp::ConnectionPresenceTypeExtendedAway, QString::fromLatin1("xa") },
-    { Tp::ConnectionPresenceTypeHidden, QString::fromLatin1("hidden") }, //or 'offline' ?
-    { Tp::ConnectionPresenceTypeBusy, QString::fromLatin1("busy") },
-    { Tp::ConnectionPresenceTypeUnknown, QString::fromLatin1("unknown") },
-    { Tp::ConnectionPresenceTypeError, QString::fromLatin1("error") }
+    { Tp::ConnectionPresenceTypeOffline, QStringLiteral("offline") },
+    { Tp::ConnectionPresenceTypeAvailable, QStringLiteral("available") },
+    { Tp::ConnectionPresenceTypeAway, QStringLiteral("away") },
+    { Tp::ConnectionPresenceTypeExtendedAway, QStringLiteral("xa") },
+    { Tp::ConnectionPresenceTypeHidden, QStringLiteral("hidden") }, //or 'offline' ?
+    { Tp::ConnectionPresenceTypeBusy, QStringLiteral("busy") },
+    { Tp::ConnectionPresenceTypeUnknown, QStringLiteral("unknown") },
+    { Tp::ConnectionPresenceTypeError, QStringLiteral("error") }
 };
 
 Q_DECLARE_METATYPE(Tp::AccountPtr)
