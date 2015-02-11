@@ -81,6 +81,7 @@ namespace KTp
         ContactCanVideoCallRole, ///< bool. You and contact can both video call
         ContactTubesRole, ///< stringlist. common supported dbus + stream services between you and contact
 
+        ContactUriRole,
         ContactVCardRole, ///< VCard of the contact in KContacts::Addresse format; KPeople only at the moment
 
         //heading roles
@@ -93,6 +94,7 @@ namespace KTp
 
 static const QString S_KPEOPLE_PROPERTY_ACCOUNT_PATH = QStringLiteral("telepathy-accountPath");
 static const QString S_KPEOPLE_PROPERTY_CONTACT_ID = QStringLiteral("telepathy-contactId");
+static const QString S_KPEOPLE_PROPERTY_CONTACT_URI = QStringLiteral("telepathy-contactUri");
 static const QString S_KPEOPLE_PROPERTY_PRESENCE = QStringLiteral("telepathy-presence");
 static const QString S_KPEOPLE_PROPERTY_IS_BLOCKED = QStringLiteral("telepathy-isBlocked");
 

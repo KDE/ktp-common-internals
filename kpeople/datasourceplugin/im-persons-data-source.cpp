@@ -213,6 +213,8 @@ void KTpAllContacts::loadCache(const QString &accountId)
 
         const QString uri = QLatin1String("ktp://") + accountId + QLatin1Char('?') + contactId;
 
+        addressee->insertProperty(S_KPEOPLE_PROPERTY_CONTACT_URI, uri);
+
         QMap<QString, AbstractContact::Ptr>::const_iterator it = m_contactVCards.constFind(uri);
         if (it != m_contactVCards.constEnd()) {
             Q_EMIT contactChanged(uri, addressee);
@@ -290,7 +292,9 @@ void KTpAllContacts::onAllKnownContactsChanged(const Tp::Contacts &contactsAdded
         AbstractContact::Ptr vcard = m_contactVCards.value(uri);
         bool added = false;
         if (!vcard) {
-            vcard = AbstractContact::Ptr(new TelepathyContact);
+            QExplicitlySharedDataPointer<TelepathyContact> tpc(new TelepathyContact);
+            vcard = AbstractContact::Ptr(tpc);
+            tpc->insertProperty(S_KPEOPLE_PROPERTY_CONTACT_URI, uri);
             m_contactVCards[uri] = vcard;
             added = true;
         }
