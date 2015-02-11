@@ -93,7 +93,7 @@ QVariant KPeopleTranslationProxy::data(const QModelIndex &proxyIndex, int role) 
         case KTp::ContactGroupsRole:
             return sourceIndex.data(PersonsModel::GroupsRole);
         case KTp::PersonIdRole:
-            return sourceIndex.data(PersonsModel::PersonIdRole);
+            return sourceIndex.data(PersonsModel::PersonUriRole);
         case KTp::ContactVCardRole:
             return sourceIndex.data(KPeople::PersonsModel::PersonVCardRole);
     }
