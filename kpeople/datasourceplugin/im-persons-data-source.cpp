@@ -340,7 +340,7 @@ void KTpAllContacts::onContactInvalidated()
     m_contacts.remove(uri);
 
     //set to offline and emit changed
-    AbstractContact::Ptr vcard = m_contactVCards[uri];
+    AbstractContact::Ptr vcard = m_contactVCards.value(uri);
     TelepathyContact *tpContact = static_cast<TelepathyContact*>(vcard.data());
     tpContact->insertProperty(S_KPEOPLE_PROPERTY_PRESENCE, QStringLiteral("offline"));
     Q_EMIT contactChanged(uri, vcard);
