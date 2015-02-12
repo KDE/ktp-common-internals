@@ -168,11 +168,23 @@ void KTpAllContacts::loadCache(const QString &accountId)
     }
 
     while (query.next()) {
-        QExplicitlySharedDataPointer<TelepathyContact> addressee(new TelepathyContact);
 
         const QString accountId =  query.value(0).toString();
         const QString contactId =  query.value(1).toString();
         QString avatarFileName = query.value(3).toString();
+
+        const QString uri = QLatin1String("ktp://") + accountId + QLatin1Char('?') + contactId;
+        QExplicitlySharedDataPointer<TelepathyContact> addressee;
+        bool found = false;
+        {
+            QMap<QString, AbstractContact::Ptr>::const_iterator it = m_contactVCards.constFind(uri);
+            found = it!=m_contactVCards.constEnd();
+            if (found)
+                addressee = QExplicitlySharedDataPointer<TelepathyContact>(static_cast<TelepathyContact*>(it->data()));
+            else
+                addressee = QExplicitlySharedDataPointer<TelepathyContact>(new TelepathyContact);
+        }
+
         addressee->insertProperty(AbstractContact::NameProperty, query.value(2).toString());
 
         if (avatarFileName.isEmpty()) {
@@ -211,12 +223,9 @@ void KTpAllContacts::loadCache(const QString &accountId)
         addressee->insertProperty(S_KPEOPLE_PROPERTY_ACCOUNT_PATH, TP_QT_ACCOUNT_OBJECT_PATH_BASE + QLatin1Char('/') + accountId);
         addressee->insertProperty(S_KPEOPLE_PROPERTY_PRESENCE, s_presenceStrings[Tp::ConnectionPresenceTypeOffline]);
 
-        const QString uri = QLatin1String("ktp://") + accountId + QLatin1Char('?') + contactId;
-
         addressee->insertProperty(S_KPEOPLE_PROPERTY_CONTACT_URI, uri);
 
-        QMap<QString, AbstractContact::Ptr>::const_iterator it = m_contactVCards.constFind(uri);
-        if (it != m_contactVCards.constEnd()) {
+        if (found) {
             Q_EMIT contactChanged(uri, addressee);
         } else {
             Q_EMIT contactAdded(uri, addressee);
