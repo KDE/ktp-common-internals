@@ -128,10 +128,12 @@ QIcon Conversation::avatar() const
     } else {
         const QString path = d->targetContact->avatarData().fileName;
         QIcon icon;
-        if (path.isEmpty()) {
-            icon = QIcon::fromTheme(QStringLiteral("im-user"));
-        } else
+        if (!path.isEmpty()) {
             icon = QIcon(path);
+        }
+        if (icon.availableSizes().isEmpty()) {
+            icon = QIcon::fromTheme(QStringLiteral("im-user"));
+        }
         return icon;
     }
 }
