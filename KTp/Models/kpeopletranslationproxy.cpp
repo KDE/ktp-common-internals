@@ -110,9 +110,8 @@ QVariant KPeopleTranslationProxy::data(const QModelIndex &proxyIndex, int role) 
         }
     }
 
-    QVariant rValue;
     AbstractContact::Ptr informationContact = contacts.isEmpty() ? contact : contacts.at(mostOnlineIndex);
-    rValue = dataForKTpContact(informationContact->customProperty(S_KPEOPLE_PROPERTY_ACCOUNT_PATH).toString(),
+    QVariant rValue = dataForKTpContact(informationContact->customProperty(S_KPEOPLE_PROPERTY_ACCOUNT_PATH).toString(),
                                informationContact->customProperty(S_KPEOPLE_PROPERTY_CONTACT_ID).toString(),
                                role);
 
