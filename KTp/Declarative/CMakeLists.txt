@@ -6,7 +6,6 @@ include_directories (${CMAKE_CURRENT_BINARY_DIR}
 set (ktp_qml_plugin_SRCS
     conversation.cpp
     conversations-model.cpp
-    hide-window-component.cpp
     messages-model.cpp
     pinned-contacts-model.cpp
     filtered-pinned-contacts-proxy-model.cpp

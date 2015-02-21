@@ -25,7 +25,6 @@
 
 #include "conversation.h"
 #include "conversations-model.h"
-#include "hide-window-component.h"
 #include "messages-model.h"
 #include "pinned-contacts-model.h"
 #include "contact-pin.h"
@@ -56,7 +55,6 @@ void QmlPlugins::registerTypes(const char *uri)
 
     qmlRegisterType<ConversationsModel> (uri, 0, 1, "ConversationsModel");
     qmlRegisterType<Conversation>(uri, 0, 1, "Conversation");
-    qmlRegisterType<HideWindowComponent>(uri, 0, 1, "HideWindowComponent");
     qmlRegisterType<PinnedContactsModel>(uri, 0, 1, "PinnedContactsModel");
     qmlRegisterType<ContactPin>(uri, 0, 1, "ContactPin");
     qmlRegisterType<FilteredPinnedContactsProxyModel>(uri, 0, 1, "FilteredPinnedContactsProxyModel");
