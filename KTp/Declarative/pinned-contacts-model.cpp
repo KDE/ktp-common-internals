@@ -236,9 +236,16 @@ void PinnedContactsModel::contactDataChanged()
 void PinnedContactsModel::setConversationsModel(ConversationsModel *model)
 {
     beginResetModel();
+    if (d->conversations) {
+        disconnect(d->conversations, &QAbstractItemModel::rowsAboutToBeRemoved, this, &PinnedContactsModel::conversationsStateChanged);
+        disconnect(d->conversations, &QAbstractItemModel::rowsInserted, this, &PinnedContactsModel::conversationsStateChanged);
+    }
+
     d->conversations = model;
-    connect(d->conversations, SIGNAL(rowsAboutToBeRemoved(QModelIndex, int, int)), SLOT(conversationsStateChanged(QModelIndex, int, int)));
-    connect(d->conversations, SIGNAL(rowsInserted(QModelIndex, int, int)), SLOT(conversationsStateChanged(QModelIndex, int, int)));
+    if (model) {
+        connect(d->conversations, &QAbstractItemModel::rowsAboutToBeRemoved, this, &PinnedContactsModel::conversationsStateChanged);
+        connect(d->conversations, &QAbstractItemModel::rowsInserted, this, &PinnedContactsModel::conversationsStateChanged);
+    }
     endResetModel();
 }
 
