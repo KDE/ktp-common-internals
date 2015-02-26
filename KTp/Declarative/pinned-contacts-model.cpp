@@ -94,8 +94,8 @@ void PinnedContactsModel::setState(const QStringList &pins)
 
 QModelIndex PinnedContactsModel::indexForContact(const KTp::ContactPtr &contact) const
 {
-    for (int i=0; i<d->m_pins.size();i++) {
-        if (d->m_pins[i]->contact() == contact) {
+    for (int i=0; i<d->m_pins.size() && contact; i++) {
+        if (d->m_pins[i]->contactId() == contact->id()) {
             return index(i);
         }
     }
@@ -193,6 +193,11 @@ void PinnedContactsModel::removeContactPin(const KTp::PersistentContactPtr &pin)
 
 void PinnedContactsModel::appendContactPin(const KTp::PersistentContactPtr &pin)
 {
+    auto samePin = [pin](const KTp::PersistentContactPtr &p) -> bool { return p->contactId() == pin->contactId(); };
+    if (std::find_if(d->m_pins.constBegin(), d->m_pins.constEnd(), samePin) != d->m_pins.constEnd()) {
+        return;
+    }
+
     int s = d->m_pins.size();
     beginInsertRows(QModelIndex(), s, s);
     d->m_pins += pin;
@@ -254,9 +259,10 @@ void PinnedContactsModel::conversationsStateChanged(const QModelIndex &parent, i
     for (int i = start; i <= end; i++) {
         QModelIndex idx = d->conversations->index(i, 0, parent);
         Conversation* conv = idx.data(ConversationsModel::ConversationRole).value<Conversation*>();
-        KTp::ContactPtr contact = conv->targetContact();
+        QString contactId = conv->targetContact()->id();
+
         Q_FOREACH(const KTp::PersistentContactPtr &p, d->m_pins) {
-            if (p->contact() == contact) {
+            if (p->contactId() == contactId) {
                 QModelIndex contactIdx = indexForContact(p->contact());
                 //We need to delay the dataChanged until the next event loop, when endRowsRemoved has been called
                 QMetaObject::invokeMethod(this, "dataChanged", Qt::QueuedConnection, Q_ARG(QModelIndex, contactIdx), Q_ARG(QModelIndex, contactIdx));
