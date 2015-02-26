@@ -57,7 +57,7 @@ KTp::PersistentContact::PersistentContact(const QString &accountId, const QStrin
     QString objectPath = TP_QT_ACCOUNT_OBJECT_PATH_BASE + QLatin1Char('/') + accountId;
 
     Tp::PendingReady *op = KTp::accountFactory()->proxy(TP_QT_ACCOUNT_MANAGER_BUS_NAME, objectPath, KTp::connectionFactory(), KTp::channelFactory(), KTp::contactFactory());
-    connect(op, SIGNAL(finished(Tp::PendingOperation*)), SLOT(onCreateAccountFinished(Tp::PendingOperation*)));
+    connect(op, &Tp::PendingReady::finished, this, &KTp::PersistentContact::onAccountReady);
 }
 
 KTp::PersistentContact::~PersistentContact()
