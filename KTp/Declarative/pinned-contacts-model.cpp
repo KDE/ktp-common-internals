@@ -189,6 +189,7 @@ void PinnedContactsModel::removeContactPin(const KTp::PersistentContactPtr &pin)
     beginRemoveRows(QModelIndex(), row, row);
     d->m_pins.removeAt(row);
     endRemoveRows();
+        Q_EMIT stateChanged();
 }
 
 void PinnedContactsModel::appendContactPin(const KTp::PersistentContactPtr &pin)
@@ -211,6 +212,8 @@ void PinnedContactsModel::appendContactPin(const KTp::PersistentContactPtr &pin)
         contactChanged(pin->contact());
     }
     connect(pin.data(), SIGNAL(contactChanged(KTp::ContactPtr)), SLOT(contactChanged(KTp::ContactPtr)));
+
+    Q_EMIT stateChanged();
 }
 
 void PinnedContactsModel::contactChanged(const KTp::ContactPtr &contact)

@@ -34,7 +34,7 @@ class PinnedContactsModel : public QAbstractListModel
 
     Q_PROPERTY(ConversationsModel *conversations READ conversationsModel WRITE setConversationsModel)
     Q_PROPERTY(Tp::AccountManagerPtr accountManager READ accountManager WRITE setAccountManager)
-    Q_PROPERTY(QStringList state READ state WRITE setState)
+    Q_PROPERTY(QStringList state READ state WRITE setState NOTIFY stateChanged)
     Q_PROPERTY(int count READ rowCount NOTIFY countChanged)
 
   public:
@@ -74,6 +74,7 @@ class PinnedContactsModel : public QAbstractListModel
 
   Q_SIGNALS:
     void countChanged();
+    void stateChanged();
 
   private:
     void appendContactPin(const KTp::PersistentContactPtr &pin);
