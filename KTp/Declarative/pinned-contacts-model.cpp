@@ -186,10 +186,14 @@ int PinnedContactsModel::rowCount(const QModelIndex &parent) const
 void PinnedContactsModel::removeContactPin(const KTp::PersistentContactPtr &pin)
 {
     int row = d->m_pins.indexOf(pin);
-    beginRemoveRows(QModelIndex(), row, row);
-    d->m_pins.removeAt(row);
-    endRemoveRows();
+    if (row>=0) {
+        beginRemoveRows(QModelIndex(), row, row);
+        d->m_pins.removeAt(row);
+        endRemoveRows();
+
         Q_EMIT stateChanged();
+    } else
+        qWarning() << "trying to remove missing pin" << pin->contactId();
 }
 
 void PinnedContactsModel::appendContactPin(const KTp::PersistentContactPtr &pin)
