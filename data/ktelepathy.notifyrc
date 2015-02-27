@@ -1,6 +1,7 @@
 [Global]
 IconName=telepathy-kde
 Name=Instant messaging
+Name[ast]=Mensaxería nel intre
 Name[bs]=Trenutne poruke
 Name[ca]=Missatgeria instantània
 Name[ca@valencia]=Missatgeria instantània
