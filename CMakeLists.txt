@@ -66,7 +66,7 @@ set_package_properties(Libgcrypt PROPERTIES DESCRIPTION "Required for OTR suppor
 
 # Bump for every 0.x release, or whenever BC changes
 set (KTP_SONUMBER 9)
-set (KTP_VERSION "0.${KTP_SONUMBER}.0")
+set (KTP_VERSION "0.${KTP_SONUMBER}.80")
 set (KTP_MESSAGE_FILTER_FRAMEWORK_VERSION "5")
 
 add_definitions(-DKTP_MESSAGE_FILTER_FRAMEWORK_VERSION=\"${KTP_MESSAGE_FILTER_FRAMEWORK_VERSION}\")
