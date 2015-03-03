@@ -146,7 +146,7 @@ QVariant PinnedContactsModel::data(const QModelIndex &index, int role) const
         case AccountRole:
             return QVariant::fromValue<Tp::AccountPtr>(p->account());
         case AlreadyChattingRole: {
-            if (!p->contact()) {
+            if (!p->contact() || !d->conversations) {
                 return false;
             }
             bool found = false;
