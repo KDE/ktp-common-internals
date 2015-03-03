@@ -67,8 +67,6 @@ MessagesModel::MessagesModel(const Tp::AccountPtr &account, QObject *parent) :
         QAbstractListModel(parent),
         d(new MessagesModelPrivate)
 {
-    qCDebug(KTP_DECLARATIVE);
-
     d->account = account;
     d->visible = false;
 
@@ -129,7 +127,6 @@ void MessagesModel::setupChannelSignals(const Tp::TextChannelPtr &channel)
 void MessagesModel::setTextChannel(const Tp::TextChannelPtr &channel)
 {
     Q_ASSERT(channel != d->textChannel);
-    qCDebug(KTP_DECLARATIVE);
     setupChannelSignals(channel);
 
     if (d->textChannel) {
@@ -164,7 +161,6 @@ void MessagesModel::setTextChannel(const Tp::TextChannelPtr &channel)
 
 void MessagesModel::onHistoryFetched(const QList<KTp::Message> &messages)
 {
-    qCDebug(KTP_DECLARATIVE) << "found" << messages.count() << "messages in history";
     if (!messages.isEmpty()) {
         //Add all messages before the ones already present in the channel
         beginInsertRows(QModelIndex(), 0, messages.count() - 1);
@@ -179,21 +175,15 @@ void MessagesModel::onHistoryFetched(const QList<KTp::Message> &messages)
 void MessagesModel::onMessageReceived(const Tp::ReceivedMessage &message)
 {
     int unreadCount = d->textChannel->messageQueue().size();
-    qCDebug(KTP_DECLARATIVE) << "unreadMessagesCount =" << unreadCount;
-    qCDebug(KTP_DECLARATIVE) << "text =" << message.text();
-    qCDebug(KTP_DECLARATIVE) << "messageType = " << message.messageType();
-    qCDebug(KTP_DECLARATIVE) << "messageToken =" << message.messageToken();
-
     if (message.isDeliveryReport()) {
         d->textChannel->acknowledge(QList<Tp::ReceivedMessage>() << message);
 
         Tp::ReceivedMessage::DeliveryDetails deliveryDetails = message.deliveryDetails();
         if(!deliveryDetails.hasOriginalToken()) {
-            qCDebug(KTP_DECLARATIVE) << "Delivery report without original message token received.";
+            qCWarning(KTP_DECLARATIVE) << "Delivery report without original message token received.";
             // Matching the delivery report to the original message is impossible without the token.
             return;
         }
-        qCDebug(KTP_DECLARATIVE) << "originalMessageToken =" << deliveryDetails.originalToken();
 
         QPersistentModelIndex originalMessageIndex = d->messagesByMessageToken.value(
                     deliveryDetails.originalToken());
@@ -203,8 +193,6 @@ void MessagesModel::onMessageReceived(const Tp::ReceivedMessage &message)
         }
 
         MessagePrivate &originalMessage = d->messages[originalMessageIndex.row()];
-        qCDebug(KTP_DECLARATIVE) << "Got delivery status" << deliveryDetails.status()
-                 << "for message with text" << originalMessage.message.mainMessagePart();
         originalMessage.deliveryReportReceiveTime = message.received();
         switch(deliveryDetails.status()) {
         case Tp::DeliveryStatusPermanentlyFailed:
@@ -248,7 +236,6 @@ void MessagesModel::onMessageSent(const Tp::Message &message, Tp::MessageSending
 
     int length = rowCount();
     beginInsertRows(QModelIndex(), length, length);
-    qCDebug(KTP_DECLARATIVE) << "text =" << message.text();
 
     const KTp::Message &newMessage = KTp::MessageProcessor::instance()->processIncomingMessage(
                 message, d->account, d->textChannel);
@@ -368,16 +355,12 @@ void MessagesModel::acknowledgeAllMessages()
 {
     QList<Tp::ReceivedMessage> queue = d->textChannel->messageQueue();
 
-    qCDebug(KTP_DECLARATIVE) << "Conversation Visible, Acknowledging " << queue.size() << " messages.";
-
     d->textChannel->acknowledge(queue);
     Q_EMIT unreadCountChanged(queue.size());
 }
 
 void MessagesModel::setVisibleToUser(bool visible)
 {
-    qCDebug(KTP_DECLARATIVE) << visible;
-
     if (d->visible != visible) {
         d->visible = visible;
         Q_EMIT visibleToUserChanged(d->visible);
@@ -395,7 +378,6 @@ bool MessagesModel::isVisibleToUser() const
 
 MessagesModel::~MessagesModel()
 {
-    qCDebug(KTP_DECLARATIVE);
     delete d;
 }
 
