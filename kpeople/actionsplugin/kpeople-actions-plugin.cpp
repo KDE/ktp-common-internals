@@ -32,6 +32,7 @@
 
 #include <TelepathyQt/Account>
 #include <TelepathyQt/ContactManager>
+#include <TelepathyQt/Constants>
 
 #include <KPeople/PersonData>
 
@@ -110,84 +111,117 @@ QList<QAction*> KPeopleActionsPlugin::actionsForPerson(const KPeople::PersonData
 {
     QList<QAction*> actions;
 
-    // === TODO ===
-    // This creates actions just for the "most online contact", what we want is to query all
-    // the subcontacts for all capabilities and fill them in on the Person, so if eg. one of
-    // the subcontacts can do audio calls and the other can do video calls, the Person
-    // should have both actions present.
-    QString accountPath = person.contactCustomProperty(QLatin1String("telepathy-accountPath")).toString();
-    QString contactId = person.contactCustomProperty(QLatin1String("telepathy-contactId")).toString();
+    // Get the most online account path and contact id
+    QString personAccountPath = person.contactCustomProperty(QLatin1String("telepathy-accountPath")).toString();
 
-    const Tp::AccountPtr account = KTp::contactManager()->accountForAccountPath(accountPath);
-    if (!account) {
-        return actions;
-    }
+    // The property for "telepathy-accountPath" is in form "/org/freedesktop/Telepathy/Account/gabble/jabber/myjabberaccount"
+    // which is needed for retrieving the account from Tp::AccountManager. However we can only retrieve the other
+    // contact uri list, not any objects which would give us the "telepathy-accountPath" for the subcontact.
+    // So the code below constructs the account path from the contact uri which is known to be for ktp contacts
+    // in form of "ktp:// + short account path + ? + contact id". But in order to not have the same actions
+    // twice in the menu (one for most online and one from the contactUris()), this turns these properties into regular
+    // uri format and puts it into the first position in the list, making sure that they will appear at the beggining.
+    // It's also easier to simply remove it here and not having to check each uri separately in the foreach below.
+    // And it cannot take the person.personUri() because for metacontacts that is in form of "kpeople://num_id".
+    personAccountPath = personAccountPath.right(personAccountPath.length() - TP_QT_ACCOUNT_OBJECT_PATH_BASE.size() - 1);
+    QString personContactId = person.contactCustomProperty(QLatin1String("telepathy-contactId")).toString();
+    QString mostOnlineUri = QStringLiteral("ktp://") + personAccountPath + QLatin1Char('?') + personContactId;
 
-    const KTp::ContactPtr contact = KTp::contactManager()->contactForContactId(accountPath, contactId);
-    if (!contact || !contact->manager()) {
-        return actions;
-    }
+    QStringList uris{mostOnlineUri};
+    QStringList contactUris = person.contactUris();
 
-    if (contact->textChatCapability()) {
-        QAction *action = new IMAction(i18n("Start Chat Using %1...", account->displayName()),
-                            QIcon::fromTheme(QStringLiteral("text-x-generic")),
-                            contact,
-                            account,
-                            TextChannel,
-                            parent);
-        connect (action, SIGNAL(triggered(bool)), SLOT(onActionTriggered()));
-        actions << action;
-    }
-    if (contact->audioCallCapability()) {
-        QAction *action = new IMAction(i18n("Start Audio Call Using %1...", account->displayName()),
-                            QIcon::fromTheme(QStringLiteral("audio-headset")),
-                            contact,
-                            account,
-                            AudioChannel,
-                            parent);
-        connect (action, SIGNAL(triggered(bool)), SLOT(onActionTriggered()));
-        actions << action;
-    }
-    if (contact->videoCallCapability()) {
-        QAction *action = new IMAction(i18n("Start Video Call Using %1...", account->displayName()),
-                            QIcon::fromTheme(QStringLiteral("camera-web")),
-                            contact,
-                            account,
-                            VideoChannel,
-                            parent);
-        connect (action, SIGNAL(triggered(bool)), SLOT(onActionTriggered()));
-        actions << action;
+    // Only append the child contacts if there is more than 1, otherwise
+    // it means this contact has only itself as a subcontact.
+    if (contactUris.size() > 1) {
+        uris.append(contactUris);
+        // Make sure we don't have duplicate uris in the list
+        uris.removeDuplicates();
     }
 
-    if (contact->fileTransferCapability()) {
-        QAction *action = new IMAction(i18n("Send Files Using %1...", account->displayName()),
-                                    QIcon::fromTheme(QStringLiteral("mail-attachment")),
-                                    contact,
-                                    account,
-                                    FileTransfer,
-                                    parent);
-        connect (action, SIGNAL(triggered(bool)), SLOT(onActionTriggered()));
-        actions << action;
-    }
-    if (contact->collaborativeEditingCapability()) {
-        QAction *action = new IMAction(i18n("Collaboratively edit a document Using %1...", account->displayName()),
-                                    QIcon::fromTheme(QStringLiteral("document-edit")),
-                                    contact,
-                                    account,
-                                    CollabEditing,
-                                    parent);
-        connect (action, SIGNAL(triggered(bool)), SLOT(onActionTriggered()));
-        actions << action;
+    Q_FOREACH (const QString &uri, uris) {
+        if (!uri.startsWith(QStringLiteral("ktp://"))) {
+            continue;
+        }
+
+        int delimiterIndex = uri.indexOf(QLatin1Char('?'));
+        QString contactId = uri.right(uri.length() - delimiterIndex - 1);
+        QString accountPath = uri.mid(6, delimiterIndex - 6);
+        // Prepend the "/org/freedesktop/Telepathy" part so that Tp::AccountManager
+        // returns valid account
+        accountPath.prepend(TP_QT_ACCOUNT_OBJECT_PATH_BASE + QLatin1Char('/'));
+
+
+        const Tp::AccountPtr account = KTp::contactManager()->accountForAccountPath(accountPath);
+        if (!account) {
+            continue;
+        }
+
+        const KTp::ContactPtr contact = KTp::contactManager()->contactForContactId(accountPath, contactId);
+        if (!contact || !contact->manager()) {
+            continue;
+        }
+
+        if (contact->textChatCapability()) {
+            QAction *action = new IMAction(i18n("Start Chat Using %1...", account->displayName()),
+                                QIcon::fromTheme(QStringLiteral("text-x-generic")),
+                                contact,
+                                account,
+                                TextChannel,
+                                parent);
+            connect (action, SIGNAL(triggered(bool)), SLOT(onActionTriggered()));
+            actions << action;
+        }
+        if (contact->audioCallCapability()) {
+            QAction *action = new IMAction(i18n("Start Audio Call Using %1...", account->displayName()),
+                                QIcon::fromTheme(QStringLiteral("audio-headset")),
+                                contact,
+                                account,
+                                AudioChannel,
+                                parent);
+            connect (action, SIGNAL(triggered(bool)), SLOT(onActionTriggered()));
+            actions << action;
+        }
+        if (contact->videoCallCapability()) {
+            QAction *action = new IMAction(i18n("Start Video Call Using %1...", account->displayName()),
+                                QIcon::fromTheme(QStringLiteral("camera-web")),
+                                contact,
+                                account,
+                                VideoChannel,
+                                parent);
+            connect (action, SIGNAL(triggered(bool)), SLOT(onActionTriggered()));
+            actions << action;
+        }
+
+        if (contact->fileTransferCapability()) {
+            QAction *action = new IMAction(i18n("Send Files Using %1...", account->displayName()),
+                                        QIcon::fromTheme(QStringLiteral("mail-attachment")),
+                                        contact,
+                                        account,
+                                        FileTransfer,
+                                        parent);
+            connect (action, SIGNAL(triggered(bool)), SLOT(onActionTriggered()));
+            actions << action;
+        }
+        if (contact->collaborativeEditingCapability()) {
+            QAction *action = new IMAction(i18n("Collaboratively edit a document Using %1...", account->displayName()),
+                                        QIcon::fromTheme(QStringLiteral("document-edit")),
+                                        contact,
+                                        account,
+                                        CollabEditing,
+                                        parent);
+            connect (action, SIGNAL(triggered(bool)), SLOT(onActionTriggered()));
+            actions << action;
+        }
     }
 
-    //FIXME-KPEOPLE
-//     QAction *action = new IMAction(i18n("Open Log Viewer..."),
-//                                    QIcon::fromTheme(QStringLiteral("documentation")),
-//                                    personData->uri(),
-//                                    LogViewer,
-//                                    parent);
-//     connect(action, SIGNAL(triggered(bool)), SLOT(onActionTriggered()));
-//     actions << action;
+    QAction *action = new IMAction(i18n("Previous Conversations..."),
+                                   QIcon::fromTheme(QStringLiteral("documentation")),
+                                   person.personUri(),
+                                   LogViewer,
+                                   parent);
+    connect(action, SIGNAL(triggered(bool)), SLOT(onActionTriggered()));
+    actions << action;
+
     return actions;
 }
 
