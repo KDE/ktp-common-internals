@@ -48,6 +48,7 @@ public Q_SLOTS:
 private Q_SLOTS:
     void onConnectionManagerReady(Tp::PendingOperation *op);
     void onAccountManagerReady(Tp::PendingOperation *op);
+    void onAccountSynced();
 
 private:
     class Private;

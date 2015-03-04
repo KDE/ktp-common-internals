@@ -24,6 +24,7 @@
 #include <TelepathyQt/PendingOperation>
 #include <TelepathyQt/PendingAccount>
 #include <TelepathyQt/PendingReady>
+#include <TelepathyQt/AccountSet>
 
 #include <KSharedConfig>
 #include <KConfigGroup>
@@ -34,18 +35,29 @@
 
 #include <Accounts/Service>
 #include <Accounts/Manager>
+#include <Accounts/Account>
 
 #include <KAccounts/getcredentialsjob.h>
 #include <KAccounts/core.h>
 
+static QStringList s_knownProviders{QStringLiteral("haze-icq"),
+                                    QStringLiteral("jabber"),
+                                    QStringLiteral("kde-talk"),
+                                    QStringLiteral("haze-sametime"),
+                                    QStringLiteral("haze-yahoo"),
+                                    QStringLiteral("haze-gadugadu")};
+
 class KAccountsKTpPlugin::Private {
 public:
+    Private(KAccountsKTpPlugin *qq) { q = qq; };
     Tp::AccountPtr tpAccountForAccountId(const Accounts::AccountId accountId);
+    void migrateTelepathyAccounts();
 
     Tp::AccountManagerPtr accountManager;
     Tp::ConnectionManagerPtr connectionManager;
     Tp::ProfilePtr profile;
     KSharedConfigPtr kaccountsConfig;
+    KAccountsKTpPlugin *q;
 };
 
 Tp::AccountPtr KAccountsKTpPlugin::Private::tpAccountForAccountId(const Accounts::AccountId accountId)
@@ -57,11 +69,74 @@ Tp::AccountPtr KAccountsKTpPlugin::Private::tpAccountForAccountId(const Accounts
     return accountManager->accountForObjectPath(accountUid);
 }
 
+void KAccountsKTpPlugin::Private::migrateTelepathyAccounts()
+{
+    Accounts::Manager *manager = KAccounts::accountsManager();
+    Accounts::Account *account;
+
+    kaccountsConfig->reparseConfiguration();
+    KConfigGroup ktpKaccountsGroup = kaccountsConfig->group(QStringLiteral("ktp-kaccounts"));
+
+    qDebug() << "Going to migrate Tp accounts";
+
+    Q_FOREACH (const Tp::AccountPtr &tpAccount, accountManager->validAccounts()->accounts()) {
+        if (ktpKaccountsGroup.hasKey(tpAccount->objectPath())) {
+            // we already have this account
+            continue;
+        }
+
+        QString providerName = QStringLiteral("ktp-");
+
+        if (s_knownProviders.contains(tpAccount->serviceName())) {
+            providerName.append(tpAccount->serviceName());
+        } else {
+            providerName.append(QStringLiteral("generic"));
+        }
+
+        qDebug() << "Creating account with providerName" << providerName;
+
+        account = manager->createAccount(providerName);
+        account->setDisplayName(tpAccount->displayName());
+        account->setValue(QStringLiteral("uid"), tpAccount->objectPath());
+        account->setValue(QStringLiteral("username"), tpAccount->nickname());
+        account->setValue(QStringLiteral("auth/mechanism"), QStringLiteral("password"));
+        account->setValue(QStringLiteral("auth/method"), QStringLiteral("password"));
+
+        account->setEnabled(true);
+
+        Accounts::ServiceList services = account->services();
+        Q_FOREACH(const Accounts::Service &service, services) {
+            account->selectService(service);
+            account->setEnabled(tpAccount->isEnabled());
+        }
+
+        qDebug() << tpAccount->nickname() << account->id();
+
+        account->sync();
+        QObject::connect(account, &Accounts::Account::synced, q, &KAccountsKTpPlugin::onAccountSynced);
+    }
+}
+
+void KAccountsKTpPlugin::onAccountSynced()
+{
+    Accounts::Account *account = qobject_cast<Accounts::Account*>(sender());
+    if (!account) {
+        return;
+    }
+    KConfigGroup ktpKaccountsGroup = d->kaccountsConfig->group(QStringLiteral("kaccounts-ktp"));
+    ktpKaccountsGroup.writeEntry(QString::number(account->id()), account->value(QStringLiteral("uid")).toString());
+
+    KConfigGroup kaccountsKtpGroup = d->kaccountsConfig->group(QStringLiteral("ktp-kaccounts"));
+    kaccountsKtpGroup.writeEntry(account->value(QStringLiteral("uid")).toString(), QString::number(account->id()));
+
+    d->kaccountsConfig->sync();
+}
+
 //---------------------------------------------------------------------------------------
 
 KAccountsKTpPlugin::KAccountsKTpPlugin(QObject *parent)
     : KAccountsDPlugin(parent),
-      d(new Private)
+      d(new Private(this))
 {
     d->kaccountsConfig = KSharedConfig::openConfig(QStringLiteral("kaccounts-ktprc"));
 
@@ -99,6 +174,8 @@ void KAccountsKTpPlugin::onAccountManagerReady(Tp::PendingOperation *op)
             onAccountRemoved(kaccountId.toUInt());
         }
     }
+
+    d->migrateTelepathyAccounts();
 }
 
 void KAccountsKTpPlugin::onAccountCreated(const Accounts::AccountId accountId, const Accounts::ServiceList &serviceList)
