@@ -920,6 +920,7 @@ Persistant=true
 [Event/kde_telepathy_outgoing]
 IconName=mail-queued
 Name=Outgoing Message
+Name[ast]=Mensaxe saliente
 Name[bs]=Odlazna poruka
 Name[ca]=Missatge sortint
 Name[ca@valencia]=Missatge eixint
@@ -964,6 +965,7 @@ Name[x-test]=xxOutgoing Messagexx
 Name[zh_CN]=发出消息
 Name[zh_TW]=出去的訊息
 Comment=An outgoing message has been sent
+Comment[ast]=Unvióse un mensaxe saliente
 Comment[bs]=Odlazna poruka je poslana
 Comment[ca]=S'ha enviat un missatge sortint
 Comment[ca@valencia]=S'ha enviat un missatge eixint
@@ -1452,6 +1454,7 @@ Action=Popup|Sound
 [Event/incoming_file_transfer]
 IconName=go-down-search
 Name=Incoming file transfer
+Name[ast]=Tresferencia de ficheru entrante
 Name[bs]=Dolazni transfer datoteke
 Name[ca]=Transferència de fitxer entrant
 Name[ca@valencia]=Transferència de fitxer entrant
@@ -1543,6 +1546,7 @@ Flags=Persistent
 [Event/incoming_call]
 IconName=internet-telephony
 Name=Incoming call
+Name[ast]=Llamada entrante
 Name[bs]=Dolazni poziv
 Name[ca]=Trucada entrant
 Name[ca@valencia]=Trucada entrant
@@ -1922,6 +1926,7 @@ Flags=Persistent
 
 [Event/contactInfo]
 Name=Contact status changed
+Name[ast]=L'estáu del contautu camudó
 Name[bs]=Status kontakta promijenjen
 Name[ca]=L'estat d'un contacte ha canviat
 Name[ca@valencia]=L'estat d'un contacte ha canviat
