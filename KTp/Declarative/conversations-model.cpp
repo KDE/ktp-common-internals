@@ -68,7 +68,6 @@ QVariant ConversationsModel::data(const QModelIndex &index, int role) const
     if (index.isValid()) {
         if (role == ConversationRole) {
             result = QVariant::fromValue<Conversation*>(d->conversations[index.row()]);
-            qCDebug(KTP_DECLARATIVE) << "returning value " << result;
         }
     }
     return result;
