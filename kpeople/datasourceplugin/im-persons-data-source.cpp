@@ -67,7 +67,6 @@ private:
     QString createUri(const KTp::ContactPtr &contact) const;
 
     //presence names indexed by ConnectionPresenceType
-    QHash<QString, KTp::ContactPtr> m_contacts;
     QMap<QString, AbstractContact::Ptr> m_contactVCards;
 };
 
@@ -284,11 +283,10 @@ void KTpAllContacts::onAccountCurrentPresenceChanged(const Tp::Presence &current
 
 void KTpAllContacts::onAllKnownContactsChanged(const Tp::Contacts &contactsAdded, const Tp::Contacts &contactsRemoved)
 {
-    if (!m_contacts.isEmpty()) {
+    if (!m_contactVCards.isEmpty()) {
         Q_FOREACH (const Tp::ContactPtr &c, contactsRemoved) {
             const KTp::ContactPtr &contact = KTp::ContactPtr::qObjectCast(c);
             const QString uri = createUri(contact);
-            m_contacts.remove(uri);
             m_contactVCards.remove(uri);
             Q_EMIT contactRemoved(uri);
         }
@@ -309,8 +307,6 @@ void KTpAllContacts::onAllKnownContactsChanged(const Tp::Contacts &contactsAdded
         }
         static_cast<TelepathyContact*>(vcard.data())->setContact(ktpContact);
         static_cast<TelepathyContact*>(vcard.data())->setAccount(KTp::contactManager()->accountForContact(ktpContact));
-
-        m_contacts.insert(uri, ktpContact);
 
         if (added) {
             Q_EMIT contactAdded(uri, vcard);
@@ -349,8 +345,6 @@ void KTpAllContacts::onContactInvalidated()
 {
     const KTp::ContactPtr contact(qobject_cast<KTp::Contact*>(sender()));
     const QString uri = createUri(contact);
-
-    m_contacts.remove(uri);
 
     //set to offline and emit changed
     AbstractContact::Ptr vcard = m_contactVCards.value(uri);
