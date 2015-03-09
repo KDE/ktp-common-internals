@@ -214,13 +214,13 @@ QList<QAction*> KPeopleActionsPlugin::actionsForPerson(const KPeople::PersonData
         }
     }
 
-    QAction *action = new IMAction(i18n("Previous Conversations..."),
-                                   QIcon::fromTheme(QStringLiteral("documentation")),
-                                   person.personUri(),
-                                   LogViewer,
-                                   parent);
-    connect(action, SIGNAL(triggered(bool)), SLOT(onActionTriggered()));
-    actions << action;
+//     QAction *action = new IMAction(i18n("Open Log Viewer..."),
+//                                    QIcon::fromTheme(QStringLiteral("documentation")),
+//                                    person.personUri(),
+//                                    LogViewer,
+//                                    parent);
+//     connect(action, SIGNAL(triggered(bool)), SLOT(onActionTriggered()));
+//     actions << action;
 
     return actions;
 }
