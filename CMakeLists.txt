@@ -13,7 +13,7 @@ find_package (Qt5 REQUIRED CONFIG COMPONENTS
               Qml
               Test)
 
-find_package (KF5 REQUIRED COMPONENTS 
+find_package (KF5 REQUIRED COMPONENTS
               CoreAddons
               Notifications
               KIO
@@ -24,7 +24,7 @@ find_package (KF5 REQUIRED COMPONENTS
               Wallet
               Config)
 
-set(REQUIRED_TPQT_VERSION 0.9.2.1)
+set(REQUIRED_TPQT_VERSION 0.9.5)
 
 find_package (TelepathyQt5 ${REQUIRED_TPQT_VERSION} REQUIRED)
 find_package (TelepathyQt5Service ${REQUIRED_TPQT_VERSION} REQUIRED) #used for the otr-proxy
@@ -36,7 +36,7 @@ find_package (AccountsQt5 1.10 CONFIG)
 find_package (LibOTR 4.0.0)
 find_package (Libgcrypt)
 
-if (LIBOTR_FOUND AND LIBGCRYPT_FOUND AND TelepathyQt5_VERSION VERSION_GREATER "0.9.4")
+if (LIBOTR_FOUND AND LIBGCRYPT_FOUND)
     set(OTR_LIBS_FOUND TRUE)
 endif ()
 
