@@ -28,7 +28,7 @@ set(REQUIRED_TPQT_VERSION 0.9.2.1)
 
 find_package (TelepathyQt5 ${REQUIRED_TPQT_VERSION} REQUIRED)
 find_package (TelepathyQt5Service ${REQUIRED_TPQT_VERSION} REQUIRED) #used for the otr-proxy
-find_package (TelepathyLoggerQt QUIET)
+find_package (TelepathyLoggerQt)
 find_package (KF5People 0.5)
 
 find_package (KAccounts)
