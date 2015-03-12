@@ -115,7 +115,10 @@ add_subdirectory(Declarative)
 add_subdirectory(Models)
 add_subdirectory(Widgets)
 add_subdirectory(Logger)
-add_subdirectory(OTR)
+
+if (OTR_LIBS_FOUND)
+    add_subdirectory(OTR)
+endif (OTR_LIBS_FOUND)
 
 # API docs
 find_package(Doxygen)
