@@ -36,7 +36,7 @@ find_package (AccountsQt5 1.10 CONFIG)
 find_package (LibOTR 4.0.0)
 find_package (Libgcrypt)
 
-if (LIBOTR_FOUND AND LIBGCRYPT_FOUND)
+if (LIBOTR_FOUND AND LIBGCRYPT_FOUND AND TelepathyQt5_VERSION VERSION_GREATER "0.9.4")
     set(OTR_LIBS_FOUND TRUE)
 endif ()
 
