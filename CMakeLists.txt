@@ -66,8 +66,8 @@ set_package_properties(LibOTR PROPERTIES DESCRIPTION "Required for OTR support" 
 set_package_properties(Libgcrypt PROPERTIES DESCRIPTION "Required for OTR support" TYPE OPTIONAL)
 
 # Bump for every 0.x release, or whenever BC changes
-set (KTP_SONUMBER 9)
-set (KTP_VERSION "0.${KTP_SONUMBER}.80")
+set (KTP_SONUMBER 9) # SO 9 is for 15.04 release
+set (KTP_VERSION "15.03.95")
 set (KTP_MESSAGE_FILTER_FRAMEWORK_VERSION "5")
 
 add_definitions(-DKTP_MESSAGE_FILTER_FRAMEWORK_VERSION=\"${KTP_MESSAGE_FILTER_FRAMEWORK_VERSION}\")
