@@ -22,7 +22,8 @@ find_package (KF5 REQUIRED COMPONENTS
               NotifyConfig
               TextEditor
               Wallet
-              Config)
+              Config
+              WindowSystem)
 
 set(REQUIRED_TPQT_VERSION 0.9.5)
 
