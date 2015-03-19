@@ -23,7 +23,8 @@ find_package (KF5 REQUIRED COMPONENTS
               TextEditor
               Wallet
               Config
-              WindowSystem)
+              WindowSystem
+              IconThemes)
 
 set(REQUIRED_TPQT_VERSION 0.9.5)
 
