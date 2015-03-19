@@ -99,6 +99,7 @@ target_link_libraries (KTpCommonInternals
                     KF5::I18n
                     KF5::IconThemes
                     KF5::Notifications
+                    KF5::IconThemes
 )
 target_include_directories(KTpCommonInternals PUBLIC ${TELEPATHY_QT5_INCLUDE_DIR}) # TODO: Remove when TelepathyQt exports include paths properly
 
