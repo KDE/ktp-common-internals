@@ -35,6 +35,7 @@
 #include <TelepathyQt/Constants>
 
 #include <KPeople/PersonData>
+#include <kpeople/widgets/actions.h> // pretty headers are currently broken for this
 
 enum IMActionType {
     TextChannel,
@@ -57,6 +58,7 @@ public:
     IMActionType type() const;
     QUrl uri() const;
 private:
+    void setActionType();
     KTp::ContactPtr m_contact;
     Tp::AccountPtr m_account;
     QUrl m_uri;
@@ -70,6 +72,7 @@ IMAction::IMAction(const QString &text, const QIcon &icon, const KTp::ContactPtr
     m_account(account),
     m_type(type)
 {
+    setActionType();
 }
 
 IMAction::IMAction(const QString &text, const QIcon &icon, const QUrl &uri,
@@ -78,6 +81,28 @@ IMAction::IMAction(const QString &text, const QIcon &icon, const QUrl &uri,
     m_uri(uri),
     m_type(type)
 {
+    setActionType();
+}
+
+void IMAction::setActionType()
+{
+    switch (m_type) {
+        case TextChannel:
+            setProperty("actionType", KPeople::TextChatAction);
+            break;
+        case AudioChannel:
+            setProperty("actionType", KPeople::AudioCallAction);
+            break;
+        case VideoChannel:
+            setProperty("actionType", KPeople::VideoCallAction);
+            break;
+        case FileTransfer:
+            setProperty("actionType", KPeople::SendFileAction);
+            break;
+        default:
+            setProperty("actionType", KPeople::OtherAction);
+            break;
+    }
 }
 
 KTp::ContactPtr IMAction::contact() const
@@ -157,7 +182,19 @@ QList<QAction*> KPeopleActionsPlugin::actionsForPerson(const KPeople::PersonData
         }
 
         const KTp::ContactPtr contact = KTp::contactManager()->contactForContactId(accountPath, contactId);
-        if (!contact || !contact->manager()) {
+        if (!contact || !contact->manager() || account->currentPresence().type() == Tp::ConnectionPresenceTypeOffline) {
+            // if there is no valid contact or if the contact is online,
+            // add a special action that will first connect the account
+            // and then start a chat right away
+            QAction *action = new IMAction(i18nc("Context menu action; means 'Bring your account online and then start a chat using %1 account'",
+                                                 "Connect and Start Chat Using %1...", account->displayName()),
+                                           QIcon::fromTheme(QStringLiteral("text-x-generic")),
+                                           contactId,
+                                           TextChannel,
+                                           parent);
+            action->setProperty("accountPath", accountPath);
+            connect(action, SIGNAL(triggered(bool)), SLOT(onConnectAndActionTriggered()));
+            actions << action;
             continue;
         }
 
@@ -260,6 +297,37 @@ void KPeopleActionsPlugin::onActionTriggered()
             break;
         }
     }
+}
+
+void KPeopleActionsPlugin::onConnectAndActionTriggered()
+{
+    IMAction *action = qobject_cast<IMAction*>(sender());
+
+    const Tp::AccountPtr account = KTp::contactManager()->accountForAccountPath(action->property("accountPath").toString());
+    account->setProperty("contactId", action->uri());
+    connect(account.data(), &Tp::Account::connectionStatusChanged, this, &KPeopleActionsPlugin::onAccountConnectionStatusChanged);
+    account->setRequestedPresence(Tp::Presence::available());
+}
+
+void KPeopleActionsPlugin::onAccountConnectionStatusChanged(Tp::ConnectionStatus status)
+{
+    Tp::AccountPtr account = Tp::AccountPtr(qobject_cast<Tp::Account*>(sender()));
+    if (!account || status != Tp::ConnectionStatusConnected) {
+        return;
+    }
+
+    QString contactId = account->property("contactId").toString();
+
+    if (contactId.isEmpty()) {
+        return;
+    }
+
+    account->ensureTextChat(contactId,
+                            QDateTime::currentDateTime(),
+                            QLatin1String("org.freedesktop.Telepathy.Client.KTp.TextUi"));
+
+    // avoid calling this slot repeatedly on account connection changes
+    disconnect(account.data(), &Tp::Account::connectionStatusChanged, this, &KPeopleActionsPlugin::onAccountConnectionStatusChanged);
 }
 
 K_PLUGIN_FACTORY( KPeopleActionsPluginFactory, registerPlugin<KPeopleActionsPlugin>(); )

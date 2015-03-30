@@ -20,6 +20,7 @@
 #define IM_PLUGIN_H
 
 #include <KPeopleBackend/AbstractPersonAction>
+#include <TelepathyQt/Connection>
 
 class KPeopleActionsPlugin : public KPeople::AbstractPersonAction
 {
@@ -31,6 +32,8 @@ public:
 
 private Q_SLOTS:
     void onActionTriggered();
+    void onConnectAndActionTriggered();
+    void onAccountConnectionStatusChanged(Tp::ConnectionStatus status);
 };
 
 #endif // IM_PLUGIN_H
