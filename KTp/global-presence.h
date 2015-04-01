@@ -53,7 +53,7 @@ class KTPCOMMONINTERNALS_EXPORT GlobalPresence : public QObject
     Q_PROPERTY(QString currentPresenceName READ currentPresenceName NOTIFY currentPresenceChanged);
     Q_PROPERTY(KTp::Presence requestedPresence READ requestedPresence WRITE setPresence NOTIFY requestedPresenceChanged)
     Q_PROPERTY(QString requestedPresenceName READ requestedPresenceName NOTIFY requestedPresenceChanged)
-    Q_PROPERTY(bool isChangingPresence READ isChangingPresence NOTIFY changingPresence)
+    Q_PROPERTY(bool isChangingPresence READ isChangingPresence NOTIFY connectionStatusChanged)
 
 public:
     explicit GlobalPresence(QObject *parent = 0);
