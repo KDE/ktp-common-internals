@@ -157,7 +157,7 @@ QString GlobalPresence::requestedPresenceName() const
 
 bool GlobalPresence::isChangingPresence() const
 {
-    return m_changingPresence;
+    return connectionStatus() == Tp::ConnectionStatusConnecting;
 }
 
 void GlobalPresence::setPresence(const KTp::Presence &presence)
