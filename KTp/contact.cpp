@@ -59,6 +59,14 @@ QString KTp::Contact::accountUniqueIdentifier() const
     return m_accountUniqueIdentifier;
 }
 
+QString KTp::Contact::uri() const
+{
+    // so real ID will look like
+    // ktp://gabble/jabber/blah/asdfjwer?foo@bar.com
+    // ? is used as it is not a valid character in the dbus path that makes up the account UID
+    return QStringLiteral("ktp://") + m_accountUniqueIdentifier + QLatin1Char('?') + id();
+}
+
 KTp::Presence KTp::Contact::presence() const
 {
     if (!manager() || !manager()->connection()) {

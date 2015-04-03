@@ -58,6 +58,12 @@ public:
 
     QString accountUniqueIdentifier() const;
 
+    /**
+     * Returns unique identifier for this contact in the form of
+     * ktp:// + account unique ID + ? + contact ID
+     */
+    QString uri() const;
+
 Q_SIGNALS:
     void invalidated();
 

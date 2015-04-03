@@ -64,8 +64,6 @@ private Q_SLOTS:
     void onAccountCurrentPresenceChanged(const Tp::Presence &currentPresence);
 
 private:
-    QString createUri(const KTp::ContactPtr &contact) const;
-
     //presence names indexed by ConnectionPresenceType
     QMap<QString, AbstractContact::Ptr> m_contactVCards;
 };
@@ -240,14 +238,6 @@ void KTpAllContacts::loadCache(const QString &accountId)
     emitInitialFetchComplete(true);
 }
 
-QString KTpAllContacts::createUri(const KTp::ContactPtr &contact) const
-{
-    // so real ID will look like
-    // ktp://gabble/jabber/blah/asdfjwer?foo@bar.com
-    // ? is used as it is not a valid character in the dbus path that makes up the account UID
-    return QLatin1String("ktp://") + contact->accountUniqueIdentifier() + QLatin1Char('?') + contact->id();
-}
-
 void KTpAllContacts::onAccountManagerReady(Tp::PendingOperation *op)
 {
     if (op->isError()) {
@@ -286,7 +276,7 @@ void KTpAllContacts::onAllKnownContactsChanged(const Tp::Contacts &contactsAdded
     if (!m_contactVCards.isEmpty()) {
         Q_FOREACH (const Tp::ContactPtr &c, contactsRemoved) {
             const KTp::ContactPtr &contact = KTp::ContactPtr::qObjectCast(c);
-            const QString uri = createUri(contact);
+            const QString uri = contact->uri();
             m_contactVCards.remove(uri);
             Q_EMIT contactRemoved(uri);
         }
@@ -294,7 +284,7 @@ void KTpAllContacts::onAllKnownContactsChanged(const Tp::Contacts &contactsAdded
 
     Q_FOREACH (const Tp::ContactPtr &contact, contactsAdded) {
         KTp::ContactPtr ktpContact = KTp::ContactPtr::qObjectCast(contact);
-        const QString uri = createUri(ktpContact);
+        const QString uri = ktpContact->uri();
 
         AbstractContact::Ptr vcard = m_contactVCards.value(uri);
         bool added = false;
@@ -337,14 +327,14 @@ void KTpAllContacts::onAllKnownContactsChanged(const Tp::Contacts &contactsAdded
 void KTpAllContacts::onContactChanged()
 {
     const KTp::ContactPtr contact(qobject_cast<KTp::Contact*>(sender()));
-    const QString uri = createUri(contact);
+    const QString uri = contact->uri();
     Q_EMIT contactChanged(uri, m_contactVCards.value(uri));
 }
 
 void KTpAllContacts::onContactInvalidated()
 {
     const KTp::ContactPtr contact(qobject_cast<KTp::Contact*>(sender()));
-    const QString uri = createUri(contact);
+    const QString uri = contact->uri();
 
     //set to offline and emit changed
     AbstractContact::Ptr vcard = m_contactVCards.value(uri);
