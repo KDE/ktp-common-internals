@@ -37,8 +37,6 @@
 KTp::Contact::Contact(Tp::ContactManager *manager, const Tp::ReferencedHandles &handle, const Tp::Features &requestedFeatures, const QVariantMap &attributes)
     : Tp::Contact(manager, handle, requestedFeatures, attributes)
 {
-    m_accountUniqueIdentifier = manager->connection()->property("accountUID").toString();
-
     connect(manager->connection().data(), SIGNAL(destroyed()), SIGNAL(invalidated()));
     connect(manager->connection().data(), SIGNAL(invalidated(Tp::DBusProxy*,QString,QString)), SIGNAL(invalidated()));
     connect(this, SIGNAL(avatarTokenChanged(QString)), SLOT(invalidateAvatarCache()));
@@ -56,6 +54,9 @@ void KTp::Contact::onPresenceChanged(const Tp::Presence &presence)
 
 QString KTp::Contact::accountUniqueIdentifier() const
 {
+    if (m_accountUniqueIdentifier.isEmpty()) {
+        const_cast<KTp::Contact*>(this)->m_accountUniqueIdentifier = manager()->connection()->property("accountUID").toString();
+    }
     return m_accountUniqueIdentifier;
 }
 
@@ -64,7 +65,7 @@ QString KTp::Contact::uri() const
     // so real ID will look like
     // ktp://gabble/jabber/blah/asdfjwer?foo@bar.com
     // ? is used as it is not a valid character in the dbus path that makes up the account UID
-    return QStringLiteral("ktp://") + m_accountUniqueIdentifier + QLatin1Char('?') + id();
+    return QStringLiteral("ktp://") + accountUniqueIdentifier() + QLatin1Char('?') + id();
 }
 
 KTp::Presence KTp::Contact::presence() const
