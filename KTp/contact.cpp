@@ -54,7 +54,7 @@ void KTp::Contact::onPresenceChanged(const Tp::Presence &presence)
 
 QString KTp::Contact::accountUniqueIdentifier() const
 {
-    if (m_accountUniqueIdentifier.isEmpty()) {
+    if (m_accountUniqueIdentifier.isEmpty() && manager()->connection()) {
         const_cast<KTp::Contact*>(this)->m_accountUniqueIdentifier = manager()->connection()->property("accountUID").toString();
     }
     return m_accountUniqueIdentifier;
