@@ -54,6 +54,7 @@ class KTPCOMMONINTERNALS_EXPORT GlobalPresence : public QObject
     Q_PROPERTY(KTp::Presence requestedPresence READ requestedPresence WRITE setPresence NOTIFY requestedPresenceChanged)
     Q_PROPERTY(QString requestedPresenceName READ requestedPresenceName NOTIFY requestedPresenceChanged)
     Q_PROPERTY(bool isChangingPresence READ isChangingPresence NOTIFY connectionStatusChanged)
+    Q_PROPERTY(bool hasEnabledAccounts READ hasEnabledAccounts NOTIFY enabledAccountsChanged)
 
 public:
     explicit GlobalPresence(QObject *parent = 0);
@@ -111,6 +112,7 @@ Q_SIGNALS:
     void changingPresence(bool isChanging);
     void connectionStatusChanged(Tp::ConnectionStatus);
     void accountManagerReady();
+    void enabledAccountsChanged();
 
 public Q_SLOTS:
     /** Set all enabled accounts to the specified presence*/

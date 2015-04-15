@@ -62,6 +62,7 @@ void GlobalPresence::setAccountManager(const Tp::AccountManagerPtr &accountManag
     onConnectionStatusChanged();
 
     connect(m_enabledAccounts.data(), SIGNAL(accountAdded(Tp::AccountPtr)), SLOT(onAccountAdded(Tp::AccountPtr)));
+    connect(m_enabledAccounts.data(), SIGNAL(accountRemoved(Tp::AccountPtr)), this, SIGNAL(enabledAccountsChanged()));
 }
 
 void GlobalPresence::addAccountManager(const Tp::AccountManagerPtr &accountManager)
@@ -203,6 +204,8 @@ void GlobalPresence::onAccountAdded(const Tp::AccountPtr &account)
     connect(account.data(), SIGNAL(connectionStatusChanged(Tp::ConnectionStatus)), SLOT(onConnectionStatusChanged()));
     connect(account.data(), SIGNAL(requestedPresenceChanged(Tp::Presence)), SLOT(onRequestedPresenceChanged()));
     connect(account.data(), SIGNAL(currentPresenceChanged(Tp::Presence)), SLOT(onCurrentPresenceChanged()));
+
+    Q_EMIT enabledAccountsChanged();
 }
 
 void GlobalPresence::onCurrentPresenceChanged()
