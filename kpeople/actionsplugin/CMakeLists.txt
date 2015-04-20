@@ -1,6 +1,4 @@
-add_library (ktp_kpeople_plugin MODULE
-                 kpeople-actions-plugin.cpp
-)
+kcoreaddons_add_plugin (ktp_kpeople_plugin SOURCES kpeople-actions-plugin.cpp JSON "ktp_kpeople_plugin.json" INSTALL_NAMESPACE "kpeople/actions")
 
 target_link_libraries (ktp_kpeople_plugin
     KF5::People
@@ -9,13 +7,4 @@ target_link_libraries (ktp_kpeople_plugin
     KF5::I18n
     KF5::Service
     KTp::CommonInternals
-)
-
-# Install:
-install (TARGETS ktp_kpeople_plugin
-         DESTINATION ${PLUGIN_INSTALL_DIR}
-)
-
-install (FILES ktp_kpeople_plugin.desktop
-         DESTINATION ${SERVICES_INSTALL_DIR}
 )

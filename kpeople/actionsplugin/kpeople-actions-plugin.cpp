@@ -330,7 +330,7 @@ void KPeopleActionsPlugin::onAccountConnectionStatusChanged(Tp::ConnectionStatus
     disconnect(account.data(), &Tp::Account::connectionStatusChanged, this, &KPeopleActionsPlugin::onAccountConnectionStatusChanged);
 }
 
-K_PLUGIN_FACTORY( KPeopleActionsPluginFactory, registerPlugin<KPeopleActionsPlugin>(); )
+K_PLUGIN_FACTORY_WITH_JSON( KPeopleActionsPluginFactory, "ktp_kpeople_plugin.json", registerPlugin<KPeopleActionsPlugin>(); )
 K_EXPORT_PLUGIN( KPeopleActionsPluginFactory("ktp_kpeople_plugin", "ktp-common-internals") )
 
 #include "kpeople-actions-plugin.moc"

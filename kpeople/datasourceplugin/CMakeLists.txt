@@ -1,6 +1,6 @@
 find_package(Qt5Sql REQUIRED)
 
-add_library (im_persons_data_source_plugin MODULE im-persons-data-source.cpp debug.cpp)
+kcoreaddons_add_plugin (im_persons_data_source_plugin SOURCES im-persons-data-source.cpp debug.cpp JSON "im_persons_data_source_plugin.json" INSTALL_NAMESPACE "kpeople/datasource")
 
 target_link_libraries (im_persons_data_source_plugin
     Qt5::Sql
@@ -10,13 +10,3 @@ target_link_libraries (im_persons_data_source_plugin
     KF5::PeopleBackend
     KTp::CommonInternals
 )
-
-# Install:
-install (TARGETS im_persons_data_source_plugin
-         DESTINATION ${PLUGIN_INSTALL_DIR}
-)
-
-install (FILES im_persons_data_source_plugin.desktop
-         DESTINATION ${SERVICES_INSTALL_DIR}
-)
-

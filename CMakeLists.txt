@@ -13,7 +13,7 @@ find_package (Qt5 REQUIRED CONFIG COMPONENTS
               Qml
               Test)
 
-find_package (KF5 REQUIRED COMPONENTS
+find_package (KF5 5.10 REQUIRED COMPONENTS
               CoreAddons
               Notifications
               KIO

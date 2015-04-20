@@ -1,6 +1,4 @@
-include_directories(${KPEOPLE_INCLUDES})
-
-add_library(imdetailswidgetplugin MODULE imdetailswidget.cpp)
+kcoreaddons_add_plugin(imdetailswidgetplugin SOURCES imdetailswidget.cpp JSON "imdetailswidgetplugin.json" INSTALL_NAMESPACE "kpeople/widgets")
 target_link_libraries(imdetailswidgetplugin Qt5::Core
     Qt5::Gui
     KF5::PeopleWidgets
@@ -8,8 +6,5 @@ target_link_libraries(imdetailswidgetplugin Qt5::Core
     KF5::I18n
     KTp::CommonInternals
 )
-
-install(TARGETS imdetailswidgetplugin DESTINATION ${PLUGIN_INSTALL_DIR})
-install(FILES imdetailswidgetplugin.desktop DESTINATION ${SERVICES_INSTALL_DIR})
 
 add_subdirectory(chatplugin)

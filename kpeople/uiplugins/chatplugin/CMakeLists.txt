@@ -1,4 +1,4 @@
-add_library(kpeople_chat_plugin MODULE chatlistviewdelegate.cpp kpeople_chat_plugin.cpp)
+kcoreaddons_add_plugin(kpeople_chat_plugin SOURCES chatlistviewdelegate.cpp kpeople_chat_plugin.cpp JSON "kpeople_chat_plugin.json" INSTALL_NAMESPACE "kpeople/widgets")
 target_link_libraries(kpeople_chat_plugin ${QT_QTCORE_LIBRARY}
     KF5::PeopleWidgets
     KF5::CoreAddons
@@ -6,6 +6,3 @@ target_link_libraries(kpeople_chat_plugin ${QT_QTCORE_LIBRARY}
     KTp::Logger
     KTp::CommonInternals
 )
-
-install(TARGETS kpeople_chat_plugin DESTINATION ${PLUGIN_INSTALL_DIR})
-install(FILES kpeople_chat_plugin.desktop DESTINATION ${SERVICES_INSTALL_DIR})

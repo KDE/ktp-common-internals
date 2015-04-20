@@ -368,7 +368,7 @@ AllContactsMonitor* IMPersonsDataSource::createAllContactsMonitor()
     return new KTpAllContacts();
 }
 
-K_PLUGIN_FACTORY( IMPersonsDataSourceFactory, registerPlugin<IMPersonsDataSource>(); )
+K_PLUGIN_FACTORY_WITH_JSON( IMPersonsDataSourceFactory, "im_persons_data_source_plugin.json", registerPlugin<IMPersonsDataSource>(); )
 K_EXPORT_PLUGIN( IMPersonsDataSourceFactory("im_persons_data_source_plugin") )
 
 

@@ -31,7 +31,7 @@
 #include <TelepathyQt/AccountManager>
 #include <KTp/core.h>
 
-K_PLUGIN_FACTORY( ImDetailsWidgetFactory, registerPlugin<ImDetailsWidget>(); )
+K_PLUGIN_FACTORY_WITH_JSON( ImDetailsWidgetFactory, "imdetailswidgetplugin.json", registerPlugin<ImDetailsWidget>(); )
 K_EXPORT_PLUGIN( ImDetailsWidgetFactory("imdetailswidgetplugin", "ktp-common-internals"))
 
 using namespace KPeople;

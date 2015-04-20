@@ -1,0 +1,18 @@
+{
+    "Encoding": "UTF-8",
+    "KPlugin": {
+        "Authors": [
+            {
+                "Email": "mklapetek@kde.org",
+                "Name": "Martin Klapetek"
+            }
+        ],
+        "EnabledByDefault": true,
+        "Id": "IMProvider",
+        "License": "LGPL",
+        "ServiceTypes": [
+            "KPeople/DataSource"
+        ],
+        "Version": "0.1"
+    }
+}

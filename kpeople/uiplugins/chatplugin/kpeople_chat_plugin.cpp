@@ -41,7 +41,7 @@
 
 #define TP_ACCOUNT_OBJECT_PATH_BASE "/org/freedesktop/Telepathy/Account/"
 
-K_PLUGIN_FACTORY(KpeopleChatFactory, registerPlugin<ChatWidgetFactory>();)
+K_PLUGIN_FACTORY_WITH_JSON(KpeopleChatFactory, "kpeople_chat_plugin.json", registerPlugin<ChatWidgetFactory>();)
 K_EXPORT_PLUGIN(KpeopleChatFactory("kpeople_chat_plugin", "ktp-common-internals"))
 
 ChatWidgetFactory::ChatWidgetFactory(QObject *parent, const QVariantList &args): AbstractFieldWidgetFactory(parent)
