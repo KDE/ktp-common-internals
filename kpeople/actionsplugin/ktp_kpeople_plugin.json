@@ -1,18 +1,18 @@
 {
-    "Encoding": "UTF-8",
+    "Encoding": "UTF-8", 
     "KPlugin": {
         "Authors": [
             {
-                "Email": "daivdedmundson@kde.org",
+                "Email": "daivdedmundson@kde.org", 
                 "Name": "David Edmundson"
             }
-        ],
-        "EnabledByDefault": true,
-        "Id": "ktp",
-        "License": "LGPL",
+        ], 
+        "EnabledByDefault": true, 
+        "Id": "ktp", 
+        "License": "LGPL", 
         "ServiceTypes": [
             "KPeople/Plugin"
-        ],
+        ], 
         "Version": "0.1"
     }
 }

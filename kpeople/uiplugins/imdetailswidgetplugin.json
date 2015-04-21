@@ -2,16 +2,16 @@
     "KPlugin": {
         "Authors": [
             {
-                "Email": "davidedmundson@kde.org",
+                "Email": "davidedmundson@kde.org", 
                 "Name": "David Edmundson"
             }
-        ],
-        "Id": "imdetailswidgetplugin",
-        "License": "LGPL",
+        ], 
+        "Id": "imdetailswidgetplugin", 
+        "License": "LGPL", 
         "ServiceTypes": [
             "KPeopleWidgets/Plugin"
-        ],
+        ], 
         "Version": "0.1"
-    },
+    }, 
     "X-KPeople-Weight": "2"
 }
