@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2014 Martin Klapetek <mklapetek@kde.org>
- * Copyright (C) 2014 Aleix Pol Gonzalez <aleixpol@blue-systems.com>
+ * Copyright (C) 2014 Aleix Pol Gonzalez <aleixpol@kde.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
