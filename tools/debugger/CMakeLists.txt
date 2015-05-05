@@ -10,7 +10,7 @@ set(ktp-debugger_SRCS
     main.cpp
 )
 
-qt5_wrap_ui(ktp-debugger_SRCS main-window.ui)
+ki18n_wrap_ui(ktp-debugger_SRCS main-window.ui)
 add_executable(ktp-debugger ${ktp-debugger_SRCS})
 target_link_libraries(ktp-debugger
     ${TELEPATHY_QT5_LIBRARIES}

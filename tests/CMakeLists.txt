@@ -9,7 +9,7 @@ set(model_view_SRCS
     model-view.cpp
 )
 
-qt5_wrap_ui(model_view_SRCS model-view.ui)
+ki18n_wrap_ui(model_view_SRCS model-view.ui)
 
 add_executable(ktp_contact_list_model_view
     ${model_view_SRCS}
