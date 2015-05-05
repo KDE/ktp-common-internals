@@ -29,10 +29,10 @@ set (ktp_widgets_private_HDRS
      settings-kcm-dialog.h
 )
 
-qt5_wrap_ui (ktp_widgets_private_SRCS
-                   add-contact-dialog.ui
-                   join-chat-room-dialog.ui
-                   start-chat-dialog.ui
+ki18n_wrap_ui(ktp_widgets_private_SRCS
+    add-contact-dialog.ui
+    join-chat-room-dialog.ui
+    start-chat-dialog.ui
 )
 
 add_library (KTpWidgets
