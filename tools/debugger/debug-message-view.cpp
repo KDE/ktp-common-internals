@@ -238,7 +238,7 @@ void DebugMessageView::appendMessage(const Tp::DebugMessage &msg)
 
 void DebugMessageView::saveLogFile()
 {
-    QUrl savedFile = QFileDialog::getSaveFileName(this, i18n("Save Log"));
+    QUrl savedFile = QFileDialog::getSaveFileName(this, i18nc("@title:window", "Save Log"));
     m_editor->saveAs(savedFile);
 }
 
