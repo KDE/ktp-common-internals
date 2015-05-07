@@ -2,6 +2,11 @@ project(ktp-common-internals)
 
 cmake_minimum_required (VERSION 2.8.12 FATAL_ERROR)
 
+# Bump for every 0.x release, or whenever BC changes
+set (KTP_SONUMBER 9) # SO 9 is for 15.04 release
+set (KTP_VERSION "15.04.1")
+set (KTP_MESSAGE_FILTER_FRAMEWORK_VERSION "5")
+
 find_package(ECM 0.0.11 REQUIRED NO_MODULE)
 set (CMAKE_MODULE_PATH
      "${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules"
@@ -65,11 +70,6 @@ set_package_properties(TelepathyLoggerQt PROPERTIES DESCRIPTION "Qt bindings for
                       )
 set_package_properties(LibOTR PROPERTIES DESCRIPTION "Required for OTR support" TYPE OPTIONAL)
 set_package_properties(Libgcrypt PROPERTIES DESCRIPTION "Required for OTR support" TYPE OPTIONAL)
-
-# Bump for every 0.x release, or whenever BC changes
-set (KTP_SONUMBER 9) # SO 9 is for 15.04 release
-set (KTP_VERSION "15.04.0")
-set (KTP_MESSAGE_FILTER_FRAMEWORK_VERSION "5")
 
 add_definitions(-DKTP_MESSAGE_FILTER_FRAMEWORK_VERSION=\"${KTP_MESSAGE_FILTER_FRAMEWORK_VERSION}\")
 add_definitions(-DTRANSLATION_DOMAIN=\"ktp-common-internals\")
