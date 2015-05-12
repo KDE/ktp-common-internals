@@ -23,4 +23,4 @@ target_link_libraries(ktp-debugger
 target_include_directories(ktp-debugger PUBLIC ${TELEPATHY_QT5_INCLUDE_DIR}) # TODO: Remove when TelepathyQt exports include paths properly
 
 install(TARGETS ktp-debugger DESTINATION ${BIN_INSTALL_DIR})
-install(FILES ktpdebugoutput.xml DESTINATION ${DATA_INSTALL_DIR}/katepart5/syntax)
+install(FILES ktpdebugoutput.xml DESTINATION ${KDE_INSTALL_DATADIR}/katepart5/syntax)

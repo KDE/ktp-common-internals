@@ -34,4 +34,4 @@ add_executable(ktp-proxy main.cpp)
 target_link_libraries(ktp-proxy ktp-proxy-lib)
 
 install(TARGETS ktp-proxy DESTINATION ${LIBEXEC_INSTALL_DIR})
-install(FILES ktp-proxy-config.kcfg DESTINATION ${KCFG_INSTALL_DIR})
+install(FILES ktp-proxy-config.kcfg DESTINATION ${KDE_INSTALL_KCFGDIR})

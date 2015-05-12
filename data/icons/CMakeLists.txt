@@ -51,5 +51,5 @@ ecm_install_icons(
         hi64-apps-telepathy-kde.png
         hisc-apps-telepathy-kde.svgz
     THEME hicolor
-    DESTINATION ${ICON_INSTALL_DIR}
+    DESTINATION ${KDE_INSTALL_ICONDIR}
 )

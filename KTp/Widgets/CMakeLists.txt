@@ -65,9 +65,9 @@ target_link_libraries (KTpWidgets
 
 install (TARGETS KTpWidgets
          EXPORT KTpTargets
-         ${INSTALL_TARGETS_DEFAULT_ARGS}
+         ${KDE_INSTALL_TARGETS_DEFAULT_ARGS}
 )
 
 install (FILES ${ktp_widgets_private_HDRS}
-         DESTINATION ${INCLUDE_INSTALL_DIR}/KTp/Widgets
+         DESTINATION ${KDE_INSTALL_INCLUDEDIR}/KTp/Widgets
 )

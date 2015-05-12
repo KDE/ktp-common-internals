@@ -72,10 +72,10 @@ target_link_libraries (KTpModels
 
 install (TARGETS KTpModels
          EXPORT KTpTargets
-         ${INSTALL_TARGETS_DEFAULT_ARGS}
+         ${KDE_INSTALL_TARGETS_DEFAULT_ARGS}
 )
 
 install (FILES ${ktp_models_private_HDRS}
-         DESTINATION ${INCLUDE_INSTALL_DIR}/KTp/Models
+         DESTINATION ${KDE_INSTALL_INCLUDEDIR}/KTp/Models
 )
 

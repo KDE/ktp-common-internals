@@ -57,11 +57,11 @@ target_link_libraries (KTpLogger
 
 install (TARGETS KTpLogger
          EXPORT KTpTargets
-         ${INSTALL_TARGETS_DEFAULT_ARGS}
+         ${KDE_INSTALL_TARGETS_DEFAULT_ARGS}
 )
 
 install (FILES ${ktp_logger_private_HDRS}
-         DESTINATION ${INCLUDE_INSTALL_DIR}/KTp/Logger
+         DESTINATION ${KDE_INSTALL_INCLUDEDIR}/KTp/Logger
 )
 
 install(FILES ktp_logger_plugin.desktop

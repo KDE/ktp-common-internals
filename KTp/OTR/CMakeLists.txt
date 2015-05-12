@@ -36,9 +36,9 @@ target_include_directories(KTpOTR PUBLIC ${TELEPATHY_QT5_INCLUDE_DIR}) # TODO: R
 
 install (TARGETS KTpOTR
          EXPORT KTpTargets
-         ${INSTALL_TARGETS_DEFAULT_ARGS}
+         ${KDE_INSTALL_TARGETS_DEFAULT_ARGS}
 )
 
 install (FILES ${ktp_otr_private_HDRS}
-         DESTINATION ${INCLUDE_INSTALL_DIR}/KTp/OTR
+         DESTINATION ${KDE_INSTALL_INCLUDEDIR}/KTp/OTR
 )
