@@ -46,9 +46,7 @@ public Q_SLOTS:
     void onServiceDisabled(const Accounts::AccountId accountId, const Accounts::Service &service);
 
 private Q_SLOTS:
-    void onConnectionManagerReady(Tp::PendingOperation *op);
     void onAccountManagerReady(Tp::PendingOperation *op);
-    void onAccountSynced();
 
 private:
     class Private;
