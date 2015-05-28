@@ -4,7 +4,7 @@ cmake_minimum_required (VERSION 2.8.12 FATAL_ERROR)
 
 # Bump for every 0.x release, or whenever BC changes
 set (KTP_SONUMBER 9) # SO 9 is for 15.04 release
-set (KTP_VERSION "15.04.1")
+set (KTP_VERSION "15.04.2")
 set (KTP_MESSAGE_FILTER_FRAMEWORK_VERSION "5")
 
 find_package(ECM 0.0.11 REQUIRED NO_MODULE)
