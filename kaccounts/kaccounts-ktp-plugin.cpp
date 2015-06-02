@@ -56,16 +56,18 @@ static QStringList s_knownProviders{QStringLiteral("haze-icq"),
 
 class KAccountsKTpPlugin::Private {
 public:
-    Private(KAccountsKTpPlugin *qq) { q = qq; };
+    Private(KAccountsKTpPlugin *qq) { q = qq; migrationRef = 0; };
     Tp::AccountPtr tpAccountForAccountId(const Accounts::AccountId accountId);
     void migrateTelepathyAccounts();
     void migrateLogs(const QString &tpAccountId, const Accounts::AccountId accountId);
+    void derefMigrationCount();
 
     Tp::AccountManagerPtr accountManager;
     Tp::ConnectionManagerPtr connectionManager;
     Tp::ProfilePtr profile;
     KSharedConfigPtr kaccountsConfig;
     QString logsBasePath;
+    uint migrationRef;
     KAccountsKTpPlugin *q;
 };
 
@@ -80,12 +82,21 @@ Tp::AccountPtr KAccountsKTpPlugin::Private::tpAccountForAccountId(const Accounts
 
 void KAccountsKTpPlugin::Private::migrateTelepathyAccounts()
 {
+    KSharedConfigPtr config = KSharedConfig::openConfig(QStringLiteral("kaccountsrc"));
+    KConfigGroup generalGroup = config->group(QStringLiteral("General"));
+    bool migrationDone = generalGroup.readEntry(QStringLiteral("migration2Done"), false);
+
+    if (migrationDone) {
+        return;
+    }
+
     Q_FOREACH (const Tp::AccountPtr &account, accountManager->validAccounts()->accounts()) {
         KConfigGroup kaccountsKtpGroup = kaccountsConfig->group(QStringLiteral("ktp-kaccounts"));
         const Accounts::AccountId kaccountsId = kaccountsKtpGroup.readEntry(account->objectPath(), 0);
 
         qDebug() << "Looking at" << account->objectPath();
         qDebug() << " KAccounts id" << kaccountsId;
+        migrationRef++;
 
         if (kaccountsId != 0) {
             migrateLogs(account->objectPath(), kaccountsId);
@@ -110,6 +121,7 @@ void KAccountsKTpPlugin::Private::migrateTelepathyAccounts()
             kaccount->deleteLater();
             // Remove the old Tp Account; the new one will be served by the MC plugin directly
             account->remove();
+            derefMigrationCount();
         } else {
             // Get account storage interface for checking if this account is not already handled
             // by Accounts SSO MC plugin
@@ -127,6 +139,7 @@ void KAccountsKTpPlugin::onStorageProviderRetrieved(Tp::PendingOperation *op)
     const QString accountObjectPath = op->property("accountObjectPath").toString();
     if (storageProvider == QLatin1String("im.telepathy.Account.Storage.AccountsSSO")) {
         qDebug() << "Found Tp Account" << accountObjectPath << "with AccountsSSO provider, skipping...";
+        d->derefMigrationCount();
         return;
     }
 
@@ -137,6 +150,7 @@ void KAccountsKTpPlugin::onStorageProviderRetrieved(Tp::PendingOperation *op)
 
     if (account.isNull() || !account->isValid()) {
         qDebug() << "An invalid Tp Account retrieved, aborting...";
+        d->derefMigrationCount();
         return;
     }
 
@@ -181,6 +195,7 @@ void KAccountsKTpPlugin::onAccountSynced()
 {
     Accounts::Account *account = qobject_cast<Accounts::Account*>(sender());
     if (!account) {
+        d->derefMigrationCount();
         return;
     }
 
@@ -189,6 +204,7 @@ void KAccountsKTpPlugin::onAccountSynced()
     Tp::AccountPtr tpAccount = d->accountManager->accountForObjectPath(tpAccountId);
     // Remove the old Tp Account; the new one will be served by the MC plugin directly
     tpAccount->remove();
+    d->derefMigrationCount();
 }
 
 void KAccountsKTpPlugin::Private::migrateLogs(const QString &tpAccountId, const Accounts::AccountId accountId)
@@ -240,6 +256,25 @@ void KAccountsKTpPlugin::Private::migrateLogs(const QString &tpAccountId, const 
 
     if (!renamed) {
         qWarning() << "Could not rename the directory!";
+    }
+}
+
+void KAccountsKTpPlugin::Private::derefMigrationCount()
+{
+    migrationRef--;
+    qDebug() << "Dereferencing migration count, currently" << migrationRef;
+    if (migrationRef == 0) {
+//         qDebug() << "Killing MC";
+//         QProcess mcKiller;
+//         mcKiller.start(QStringLiteral("killall mission-control-5"));
+//
+//         QProcess mcSpawner;
+//         mcSpawner.start(QStringLiteral("mc-tool list"));
+
+        KSharedConfigPtr config = KSharedConfig::openConfig(QStringLiteral("kaccountsrc"));
+        KConfigGroup generalGroup = config->group(QStringLiteral("General"));
+        generalGroup.writeEntry(QStringLiteral("migration2Done"), true);
+        generalGroup.sync();
     }
 }
 
