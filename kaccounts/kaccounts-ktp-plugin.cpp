@@ -209,10 +209,15 @@ void KAccountsKTpPlugin::Private::migrateLogs(const QString &tpAccountId, const 
 
     // Construct the new dir which is in form "$cmName_$protocol_ktp_2d$service_name_$KAccountsID"
     // eg. haze_icq_ktp_2d_haze_2dicq_2dim_24
-    QString newLogsDir = tpAccount->cmName() + QStringLiteral("_")
-                           + tpAccount->protocolName() + QStringLiteral("_")
-                           + Tp::escapeAsIdentifier(QStringLiteral("ktp-") + tpAccount->serviceName())
-                           + QStringLiteral("_") + QString::number(accountId);
+    QString newLogsDir = tpAccount->cmName() + QLatin1Char('_') + tpAccount->protocolName() + QLatin1Char('_');
+
+    if (tpAccount->serviceName() == QLatin1String("google-talk")) {
+        newLogsDir += QStringLiteral("google_2dim");
+    } else {
+        newLogsDir += Tp::escapeAsIdentifier(QStringLiteral("ktp-") + tpAccount->serviceName());
+    }
+
+    newLogsDir += QLatin1Char('_') + QString::number(accountId);
 
     QString accountLogsDir = tpAccount->uniqueIdentifier();
 
