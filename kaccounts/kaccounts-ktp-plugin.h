@@ -47,6 +47,8 @@ public Q_SLOTS:
 
 private Q_SLOTS:
     void onAccountManagerReady(Tp::PendingOperation *op);
+    void onAccountSynced();
+    void onStorageProviderRetrieved(Tp::PendingOperation *op);
 
 private:
     class Private;
