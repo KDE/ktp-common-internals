@@ -102,15 +102,17 @@ void KAccountsKTpPlugin::Private::migrateTelepathyAccounts()
                 kaccount->sync();
             }
 
+            // Remove the mapping from the config file
             kaccountsKtpGroup.deleteEntry(account->objectPath());
             KConfigGroup ktpKaccountsGroup = kaccountsConfig->group(QStringLiteral("kaccounts-ktp"));
             ktpKaccountsGroup.deleteEntry(QString::number(kaccountsId));
 
             kaccount->deleteLater();
+            // Remove the old Tp Account; the new one will be served by the MC plugin directly
             account->remove();
         } else {
-            // Get account storage interface
-
+            // Get account storage interface for checking if this account is not already handled
+            // by Accounts SSO MC plugin
             Tp::Client::AccountInterfaceStorageInterface storageInterface(account.data());
             Tp::PendingVariant *data = storageInterface.requestPropertyStorageProvider();
             data->setProperty("accountObjectPath", account->objectPath());
@@ -162,13 +164,13 @@ void KAccountsKTpPlugin::onStorageProviderRetrieved(Tp::PendingOperation *op)
         kaccount->setEnabled(account->isEnabled());
 
         if (service.serviceType() == QLatin1String("IM")) {
+            // Set the telepathy/ settings on the service so that
+            // the MC plugin can use this service
             Accounts::AccountService accountService(kaccount, service);
             accountService.setValue("telepathy/manager", account->cmName());
             accountService.setValue("telepathy/protocol", account->protocolName());
         }
     }
-
-    qDebug() << account->nickname() << kaccount->id();
 
     kaccount->sync();
     QObject::connect(kaccount, &Accounts::Account::synced, this, &KAccountsKTpPlugin::onAccountSynced);
@@ -184,6 +186,7 @@ void KAccountsKTpPlugin::onAccountSynced()
     const QString tpAccountId = account->value(QStringLiteral("uid")).toString();
     d->migrateLogs(tpAccountId, account->id());
     Tp::AccountPtr tpAccount = d->accountManager->accountForObjectPath(tpAccountId);
+    // Remove the old Tp Account; the new one will be served by the MC plugin directly
     tpAccount->remove();
 }
 
@@ -204,6 +207,8 @@ void KAccountsKTpPlugin::Private::migrateLogs(const QString &tpAccountId, const 
         return;
     }
 
+    // Construct the new dir which is in form "$cmName_$protocol_ktp_2d$service_name_$KAccountsID"
+    // eg. haze_icq_ktp_2d_haze_2dicq_2dim_24
     QString newLogsDir = tpAccount->cmName() + QStringLiteral("_")
                            + tpAccount->protocolName() + QStringLiteral("_")
                            + Tp::escapeAsIdentifier(QStringLiteral("ktp-") + tpAccount->serviceName())
