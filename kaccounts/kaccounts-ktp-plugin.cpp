@@ -124,15 +124,16 @@ void KAccountsKTpPlugin::Private::migrateTelepathyAccounts()
 void KAccountsKTpPlugin::onStorageProviderRetrieved(Tp::PendingOperation *op)
 {
     const QString storageProvider = qobject_cast<Tp::PendingVariant*>(op)->result().toString();
+    const QString accountObjectPath = op->property("accountObjectPath").toString();
     if (storageProvider == QLatin1String("im.telepathy.Account.Storage.AccountsSSO")) {
-        qDebug() << "Found Tp Account with AccountsSSO provider, skipping...";
+        qDebug() << "Found Tp Account" << accountObjectPath << "with AccountsSSO provider, skipping...";
         return;
     }
 
-    qDebug() << "No KAccounts id, creating new account";
+    qDebug() << "Creating new KAccounts account for" << accountObjectPath;
     Accounts::Account *kaccount;
 
-    Tp::AccountPtr account = d->accountManager->accountForObjectPath(op->property("accountObjectPath").toString());
+    Tp::AccountPtr account = d->accountManager->accountForObjectPath(accountObjectPath);
 
     if (account.isNull() || !account->isValid()) {
         qDebug() << "An invalid Tp Account retrieved, aborting...";
@@ -204,6 +205,7 @@ void KAccountsKTpPlugin::Private::migrateLogs(const QString &tpAccountId, const 
     Tp::AccountPtr tpAccount = accountManager->accountForObjectPath(tpAccountId);
 
     if (tpAccount.isNull() || !tpAccount->isValid()) {
+        qDebug() << "Invalid account for" << tpAccountId << "aborting...";
         return;
     }
 
