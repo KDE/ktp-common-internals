@@ -203,7 +203,7 @@ void KAccountsKTpPlugin::Private::migrateLogs(const QString &tpAccountId, const 
 
     Tp::AccountPtr tpAccount = accountManager->accountForObjectPath(tpAccountId);
 
-    if (tpAccount.isNull() || tpAccount->isValid()) {
+    if (tpAccount.isNull() || !tpAccount->isValid()) {
         return;
     }
 
