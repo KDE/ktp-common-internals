@@ -102,6 +102,15 @@ void KAccountsKTpPlugin::Private::migrateTelepathyAccounts()
             migrateLogs(account->objectPath(), kaccountsId);
 
             Accounts::Account *kaccount = KAccounts::accountsManager()->account(kaccountsId);
+            if (!kaccount) {
+                qWarning() << "KAccount for" << kaccountsId << "does not exist, removing it from config";
+                kaccountsKtpGroup.deleteEntry(account->objectPath());
+                KConfigGroup ktpKaccountsGroup = kaccountsConfig->group(QStringLiteral("kaccounts-ktp"));
+                ktpKaccountsGroup.deleteEntry(QString::number(kaccountsId));
+                derefMigrationCount();
+                continue;
+            }
+
             auto services = kaccount->services(QStringLiteral("IM"));
 
             if (services.size() > 0) {
