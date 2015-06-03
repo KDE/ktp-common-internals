@@ -90,13 +90,15 @@ void KAccountsKTpPlugin::Private::migrateTelepathyAccounts()
         return;
     }
 
-    Q_FOREACH (const Tp::AccountPtr &account, accountManager->validAccounts()->accounts()) {
+    auto tpAccountsList = accountManager->validAccounts()->accounts();
+    migrationRef = tpAccountsList.size();
+
+    Q_FOREACH (const Tp::AccountPtr &account, tpAccountsList) {
         KConfigGroup kaccountsKtpGroup = kaccountsConfig->group(QStringLiteral("ktp-kaccounts"));
         const Accounts::AccountId kaccountsId = kaccountsKtpGroup.readEntry(account->objectPath(), 0);
 
         qDebug() << "Looking at" << account->objectPath();
         qDebug() << " KAccounts id" << kaccountsId;
-        migrationRef++;
 
         if (kaccountsId != 0) {
             migrateLogs(account->objectPath(), kaccountsId);
