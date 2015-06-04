@@ -43,6 +43,8 @@
 #include <Accounts/Manager>
 #include <Accounts/Account>
 #include <Accounts/AccountService>
+#include <SignOn/IdentityInfo>
+#include <SignOn/Identity>
 
 #include <KAccounts/getcredentialsjob.h>
 #include <KAccounts/core.h>
@@ -198,6 +200,25 @@ void KAccountsKTpPlugin::onStorageProviderRetrieved(Tp::PendingOperation *op)
         }
     }
 
+    SignOn::IdentityInfo info;
+    info.setUserName(account->nickname());
+    // TODO? Query for the current password and store directly?
+    // info.setSecret(secret);
+    info.setCaption(account->nickname());
+    info.setAccessControlList(QStringList(QLatin1String("*")));
+    info.setType(SignOn::IdentityInfo::Application);
+
+    SignOn::Identity *identity = SignOn::Identity::newIdentity(info, this);
+
+    if (!identity) {
+        qWarning() << "Unable to create new SignOn::Identity, aborting...";
+        d->derefMigrationCount();
+        return;
+    }
+
+    identity->storeCredentials(info);
+
+    kaccount->setCredentialsId(identity->id());
     kaccount->sync();
     QObject::connect(kaccount, &Accounts::Account::synced, this, &KAccountsKTpPlugin::onAccountSynced);
 }
