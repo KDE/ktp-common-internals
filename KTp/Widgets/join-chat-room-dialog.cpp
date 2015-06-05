@@ -331,7 +331,7 @@ void KTp::JoinChatRoomDialog::getRoomList()
 
     // If the user provided a server use it, else use the standard server for the selected account
     if (!d->ui->serverLineEdit->text().isEmpty()) {
-        request.insert(TP_QT_IFACE_CHANNEL + QLatin1String(".Type.RoomList.Server"),
+        request.insert(TP_QT_IFACE_CHANNEL_TYPE_ROOM_LIST + QLatin1String(".Server"),
                        d->ui->serverLineEdit->text());
     }
 
