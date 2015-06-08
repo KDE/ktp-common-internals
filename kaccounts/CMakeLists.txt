@@ -17,6 +17,7 @@ target_link_libraries(kaccounts_ktp_plugin
                       KTp::Logger
                       KAccounts
                       ${ACCOUNTSQT_LIBRARIES}
+                      ${SIGNONQT_LIBRARIES}
 )
 
 # Install:

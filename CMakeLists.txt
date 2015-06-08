@@ -35,6 +35,7 @@ find_package (KF5People 0.5)
 
 find_package (KAccounts)
 find_package (AccountsQt5 1.10 CONFIG)
+find_package (SignOnQt5 8.55 CONFIG)
 find_package (LibOTR 4.0.0)
 find_package (Libgcrypt)
 
@@ -90,8 +91,8 @@ if (KF5People_FOUND)
 endif ()
 
 #If we find KAccounts library, build the plugin for it
-if (KAccounts_FOUND AND AccountsQt5_FOUND)
-    include_directories(${ACCOUNTSQT_INCLUDE_DIRS})
+if (KAccounts_FOUND AND AccountsQt5_FOUND AND SignOnQt5_FOUND)
+    include_directories(${ACCOUNTSQT_INCLUDE_DIRS} ${SIGNONQT_INCLUDE_DIRS})
     add_subdirectory(kaccounts)
 endif ()
 
