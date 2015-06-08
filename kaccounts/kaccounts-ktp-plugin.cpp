@@ -95,6 +95,8 @@ void KAccountsKTpPlugin::Private::migrateTelepathyAccounts()
     auto tpAccountsList = accountManager->validAccounts()->accounts();
     migrationRef = tpAccountsList.size();
 
+    qDebug() << "Starting accounts migration...";
+
     Q_FOREACH (const Tp::AccountPtr &account, tpAccountsList) {
         KConfigGroup kaccountsKtpGroup = kaccountsConfig->group(QStringLiteral("ktp-kaccounts"));
         const Accounts::AccountId kaccountsId = kaccountsKtpGroup.readEntry(account->objectPath(), 0);
@@ -294,7 +296,6 @@ void KAccountsKTpPlugin::Private::migrateLogs(const QString &tpAccountId, const 
 void KAccountsKTpPlugin::Private::derefMigrationCount()
 {
     migrationRef--;
-    qDebug() << "Dereferencing migration count, currently" << migrationRef;
     if (migrationRef == 0) {
 //         qDebug() << "Killing MC";
 //         QProcess mcKiller;
@@ -307,6 +308,8 @@ void KAccountsKTpPlugin::Private::derefMigrationCount()
         KConfigGroup generalGroup = config->group(QStringLiteral("General"));
         generalGroup.writeEntry(QStringLiteral("migration2Done"), true);
         generalGroup.sync();
+
+        qDebug() << "Migration done";
     }
 }
 
