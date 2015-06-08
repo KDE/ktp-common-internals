@@ -347,20 +347,24 @@ void KAccountsKTpPlugin::onAccountManagerReady(Tp::PendingOperation *op)
 
 void KAccountsKTpPlugin::onAccountCreated(const Accounts::AccountId accountId, const Accounts::ServiceList &serviceList)
 {
+    Q_UNUSED(accountId);
+    Q_UNUSED(serviceList);
     //TODO: should we connect the new account here?
 }
 
 void KAccountsKTpPlugin::onAccountRemoved(const Accounts::AccountId accountId)
 {
-
+    Q_UNUSED(accountId);
 }
 
 void KAccountsKTpPlugin::onServiceEnabled(const Accounts::AccountId accountId, const Accounts::Service &service)
 {
-
+    Q_UNUSED(accountId);
+    Q_UNUSED(service);
 }
 
 void KAccountsKTpPlugin::onServiceDisabled(const Accounts::AccountId accountId, const Accounts::Service &service)
 {
-
+    Q_UNUSED(accountId);
+    Q_UNUSED(service);
 }
