@@ -36,6 +36,7 @@
 #include <QTimer>
 #include <QStandardPaths>
 #include <QDir>
+#include <QDBusConnection>
 
 #include <KTp/Logger/log-manager.h>
 
@@ -48,6 +49,9 @@
 
 #include <KAccounts/getcredentialsjob.h>
 #include <KAccounts/core.h>
+
+// for ::kill
+#include <signal.h>
 
 static QStringList s_knownProviders{QStringLiteral("haze-icq"),
                                     QStringLiteral("jabber"),
@@ -297,12 +301,17 @@ void KAccountsKTpPlugin::Private::derefMigrationCount()
 {
     migrationRef--;
     if (migrationRef == 0) {
-//         qDebug() << "Killing MC";
-//         QProcess mcKiller;
-//         mcKiller.start(QStringLiteral("killall mission-control-5"));
-//
-//         QProcess mcSpawner;
-//         mcSpawner.start(QStringLiteral("mc-tool list"));
+        qDebug() << "Restarting MC";
+
+        // Get the PID of mission control and then SIGTERM it
+        QProcess pidOf;
+        pidOf.start(QStringLiteral("pidof"), QStringList() << QStringLiteral("mission-control-5"));
+        pidOf.waitForFinished();
+        QByteArray pidOfOutput = pidOf.readAllStandardOutput();
+        int mcPid = pidOfOutput.trimmed().toInt();
+        ::kill(mcPid, SIGTERM);
+
+        QDBusConnection::sessionBus().interface()->startService(QStringLiteral("org.freedesktop.Telepathy.MissionControl5"));
 
         KSharedConfigPtr config = KSharedConfig::openConfig(QStringLiteral("kaccountsrc"));
         KConfigGroup generalGroup = config->group(QStringLiteral("General"));
