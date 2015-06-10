@@ -69,8 +69,7 @@ set_package_properties(LibOTR PROPERTIES DESCRIPTION "Required for OTR support" 
 set_package_properties(Libgcrypt PROPERTIES DESCRIPTION "Required for OTR support" TYPE OPTIONAL)
 
 set_package_properties(telepathy-accounts-signon PROPERTIES
-                       PURPOSE "Runtime-only dependency on a Telepathy Mission Control plugin," \
-                               "currently residing at https://github.com/mck182/telepathy-accounts-signon"
+                       PURPOSE "Runtime-only dependency on a Telepathy Mission Control plugin, currently residing at https://github.com/mck182/telepathy-accounts-signon"
                        TYPE RUNTIME
                       )
 
