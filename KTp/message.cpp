@@ -41,7 +41,6 @@ Message::Message(Message::Private *dd):
 Message::Message(const Tp::Message &original, const KTp::MessageContext &context) :
     d(new Private)
 {
-    Q_UNUSED(context)
     d->sentTime = original.sent();
     d->token = original.messageToken();
     d->messageType = original.messageType();
@@ -117,7 +116,7 @@ void Message::appendScript(const QString& script)
 
 QString Message::finalizedMessage() const
 {
-    QString msg = d->mainPart + QLatin1String("\n") +
+    QString msg = d->mainPart + QLatin1Char('\n') +
         d->parts.join(QLatin1String("\n"));
 
 //     qCDebug(KTP_COMMONINTERNALS) << msg;
@@ -130,7 +129,7 @@ QString Message::finalizedScript() const
         return QString();
     }
 
-    QString finalScript = d->scripts.join(QLatin1String(""));
+    QString finalScript = d->scripts.join(QString());
 
     if (!finalScript.isEmpty()) {
         finalScript.append(QLatin1String("false;"));
