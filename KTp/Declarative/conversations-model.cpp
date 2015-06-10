@@ -212,7 +212,10 @@ int ConversationsModel::activeChatIndex() const
 
 void ConversationsModel::closeAllConversations()
 {
-    Q_FOREACH(Conversation *c, d->conversations) {
-        c->requestClose();
+    if (!d->conversations.isEmpty()) {
+        beginRemoveRows(QModelIndex(), 0, rowCount() - 1);
+        d->conversations.clear();
+        endRemoveRows();
+        qDeleteAll(d->conversations);
     }
 }
