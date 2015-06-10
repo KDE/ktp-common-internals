@@ -24,21 +24,34 @@
 #include <TelepathyQt/PendingOperation>
 #include <TelepathyQt/PendingAccount>
 #include <TelepathyQt/PendingReady>
+#include <TelepathyQt/PendingVariant>
 #include <TelepathyQt/AccountSet>
+#include <TelepathyQt/AccountInterfaceStorageInterface>
+#include <TelepathyQt/Utils>
+#include <TelepathyQt/PendingVariantMap>
 
 #include <KSharedConfig>
 #include <KConfigGroup>
 
 #include <QTimer>
+#include <QStandardPaths>
+#include <QDir>
+#include <QDBusConnection>
 
 #include <KTp/Logger/log-manager.h>
 
 #include <Accounts/Service>
 #include <Accounts/Manager>
 #include <Accounts/Account>
+#include <Accounts/AccountService>
+#include <SignOn/IdentityInfo>
+#include <SignOn/Identity>
 
 #include <KAccounts/getcredentialsjob.h>
 #include <KAccounts/core.h>
+
+// for ::kill
+#include <signal.h>
 
 static QStringList s_knownProviders{QStringLiteral("haze-icq"),
                                     QStringLiteral("jabber"),
@@ -49,14 +62,18 @@ static QStringList s_knownProviders{QStringLiteral("haze-icq"),
 
 class KAccountsKTpPlugin::Private {
 public:
-    Private(KAccountsKTpPlugin *qq) { q = qq; };
+    Private(KAccountsKTpPlugin *qq) { q = qq; migrationRef = 0; };
     Tp::AccountPtr tpAccountForAccountId(const Accounts::AccountId accountId);
     void migrateTelepathyAccounts();
+    void migrateLogs(const QString &tpAccountId, const Accounts::AccountId accountId);
+    void derefMigrationCount();
 
     Tp::AccountManagerPtr accountManager;
     Tp::ConnectionManagerPtr connectionManager;
     Tp::ProfilePtr profile;
     KSharedConfigPtr kaccountsConfig;
+    QString logsBasePath;
+    uint migrationRef;
     KAccountsKTpPlugin *q;
 };
 
@@ -71,65 +88,238 @@ Tp::AccountPtr KAccountsKTpPlugin::Private::tpAccountForAccountId(const Accounts
 
 void KAccountsKTpPlugin::Private::migrateTelepathyAccounts()
 {
-    Accounts::Manager *manager = KAccounts::accountsManager();
-    Accounts::Account *account;
+    KSharedConfigPtr config = KSharedConfig::openConfig(QStringLiteral("kaccountsrc"));
+    KConfigGroup generalGroup = config->group(QStringLiteral("General"));
+    bool migrationDone = generalGroup.readEntry(QStringLiteral("migration2Done"), false);
 
-    kaccountsConfig->reparseConfiguration();
-    KConfigGroup ktpKaccountsGroup = kaccountsConfig->group(QStringLiteral("ktp-kaccounts"));
-
-    qDebug() << "Going to migrate Tp accounts";
-
-    Q_FOREACH (const Tp::AccountPtr &tpAccount, accountManager->validAccounts()->accounts()) {
-        if (ktpKaccountsGroup.hasKey(tpAccount->objectPath())) {
-            // we already have this account
-            continue;
-        }
-
-        QString providerName = QStringLiteral("ktp-");
-
-        if (s_knownProviders.contains(tpAccount->serviceName())) {
-            providerName.append(tpAccount->serviceName());
-        } else {
-            providerName.append(QStringLiteral("generic"));
-        }
-
-        qDebug() << "Creating account with providerName" << providerName;
-
-        account = manager->createAccount(providerName);
-        account->setDisplayName(tpAccount->displayName());
-        account->setValue(QStringLiteral("uid"), tpAccount->objectPath());
-        account->setValue(QStringLiteral("username"), tpAccount->nickname());
-        account->setValue(QStringLiteral("auth/mechanism"), QStringLiteral("password"));
-        account->setValue(QStringLiteral("auth/method"), QStringLiteral("password"));
-
-        account->setEnabled(true);
-
-        Accounts::ServiceList services = account->services();
-        Q_FOREACH(const Accounts::Service &service, services) {
-            account->selectService(service);
-            account->setEnabled(tpAccount->isEnabled());
-        }
-
-        qDebug() << tpAccount->nickname() << account->id();
-
-        account->sync();
-        QObject::connect(account, &Accounts::Account::synced, q, &KAccountsKTpPlugin::onAccountSynced);
+    if (migrationDone) {
+        return;
     }
+
+    auto tpAccountsList = accountManager->validAccounts()->accounts();
+    migrationRef = tpAccountsList.size();
+
+    qDebug() << "Starting accounts migration...";
+
+    Q_FOREACH (const Tp::AccountPtr &account, tpAccountsList) {
+        KConfigGroup kaccountsKtpGroup = kaccountsConfig->group(QStringLiteral("ktp-kaccounts"));
+        const Accounts::AccountId kaccountsId = kaccountsKtpGroup.readEntry(account->objectPath(), 0);
+
+        qDebug() << "Looking at" << account->objectPath();
+        qDebug() << " KAccounts id" << kaccountsId;
+
+        if (kaccountsId != 0) {
+            migrateLogs(account->objectPath(), kaccountsId);
+
+            Accounts::Account *kaccount = KAccounts::accountsManager()->account(kaccountsId);
+            if (!kaccount) {
+                qWarning() << "KAccount for" << kaccountsId << "does not exist, removing it from config";
+                kaccountsKtpGroup.deleteEntry(account->objectPath());
+                KConfigGroup ktpKaccountsGroup = kaccountsConfig->group(QStringLiteral("kaccounts-ktp"));
+                ktpKaccountsGroup.deleteEntry(QString::number(kaccountsId));
+                derefMigrationCount();
+                continue;
+            }
+
+            auto services = kaccount->services(QStringLiteral("IM"));
+
+            if (services.size() > 0) {
+                qDebug() << "Writing service data:" << account->cmName() << account->protocolName() << account->serviceName();
+                Accounts::Service imService = services.at(0);
+                Accounts::AccountService accountService(kaccount, imService);
+                accountService.setValue("telepathy/manager", account->cmName());
+                accountService.setValue("telepathy/protocol", account->protocolName());
+                kaccount->sync();
+            }
+
+            // Remove the mapping from the config file
+            kaccountsKtpGroup.deleteEntry(account->objectPath());
+            KConfigGroup ktpKaccountsGroup = kaccountsConfig->group(QStringLiteral("kaccounts-ktp"));
+            ktpKaccountsGroup.deleteEntry(QString::number(kaccountsId));
+
+            kaccount->deleteLater();
+            // Remove the old Tp Account; the new one will be served by the MC plugin directly
+            account->remove();
+            derefMigrationCount();
+        } else {
+            // Get account storage interface for checking if this account is not already handled
+            // by Accounts SSO MC plugin
+            Tp::Client::AccountInterfaceStorageInterface storageInterface(account.data());
+            Tp::PendingVariant *data = storageInterface.requestPropertyStorageProvider();
+            data->setProperty("accountObjectPath", account->objectPath());
+            QObject::connect(data, &Tp::PendingOperation::finished, q, &KAccountsKTpPlugin::onStorageProviderRetrieved);
+        }
+    }
+}
+
+void KAccountsKTpPlugin::onStorageProviderRetrieved(Tp::PendingOperation *op)
+{
+    const QString storageProvider = qobject_cast<Tp::PendingVariant*>(op)->result().toString();
+    const QString accountObjectPath = op->property("accountObjectPath").toString();
+    if (storageProvider == QLatin1String("im.telepathy.Account.Storage.AccountsSSO")) {
+        qDebug() << "Found Tp Account" << accountObjectPath << "with AccountsSSO provider, skipping...";
+        d->derefMigrationCount();
+        return;
+    }
+
+    qDebug() << "Creating new KAccounts account for" << accountObjectPath;
+    Accounts::Account *kaccount;
+
+    Tp::AccountPtr account = d->accountManager->accountForObjectPath(accountObjectPath);
+
+    if (account.isNull() || !account->isValid()) {
+        qDebug() << "An invalid Tp Account retrieved, aborting...";
+        d->derefMigrationCount();
+        return;
+    }
+
+    QString providerName = QStringLiteral("ktp-");
+
+    if (s_knownProviders.contains(account->serviceName())) {
+        providerName.append(account->serviceName());
+    } else {
+        providerName.append(QStringLiteral("generic"));
+    }
+
+    qDebug() << "Creating account with providerName" << providerName;
+
+    kaccount = KAccounts::accountsManager()->createAccount(providerName);
+    kaccount->setDisplayName(account->displayName());
+    kaccount->setValue(QStringLiteral("uid"), account->objectPath());
+    kaccount->setValue(QStringLiteral("username"), account->nickname());
+    kaccount->setValue(QStringLiteral("auth/mechanism"), QStringLiteral("password"));
+    kaccount->setValue(QStringLiteral("auth/method"), QStringLiteral("password"));
+
+    kaccount->setEnabled(true);
+
+    Accounts::ServiceList services = kaccount->services();
+    Q_FOREACH(const Accounts::Service &service, services) {
+        kaccount->selectService(service);
+        kaccount->setEnabled(account->isEnabled());
+
+        if (service.serviceType() == QLatin1String("IM")) {
+            // Set the telepathy/ settings on the service so that
+            // the MC plugin can use this service
+            Accounts::AccountService accountService(kaccount, service);
+            accountService.setValue("telepathy/manager", account->cmName());
+            accountService.setValue("telepathy/protocol", account->protocolName());
+        }
+    }
+
+    SignOn::IdentityInfo info;
+    info.setUserName(account->nickname());
+    // TODO? Query for the current password and store directly?
+    // info.setSecret(secret);
+    info.setCaption(account->nickname());
+    info.setAccessControlList(QStringList(QLatin1String("*")));
+    info.setType(SignOn::IdentityInfo::Application);
+
+    SignOn::Identity *identity = SignOn::Identity::newIdentity(info, this);
+
+    if (!identity) {
+        qWarning() << "Unable to create new SignOn::Identity, aborting...";
+        d->derefMigrationCount();
+        return;
+    }
+
+    identity->storeCredentials(info);
+
+    kaccount->setCredentialsId(identity->id());
+    kaccount->sync();
+    QObject::connect(kaccount, &Accounts::Account::synced, this, &KAccountsKTpPlugin::onAccountSynced);
 }
 
 void KAccountsKTpPlugin::onAccountSynced()
 {
     Accounts::Account *account = qobject_cast<Accounts::Account*>(sender());
     if (!account) {
+        d->derefMigrationCount();
         return;
     }
-    KConfigGroup ktpKaccountsGroup = d->kaccountsConfig->group(QStringLiteral("kaccounts-ktp"));
-    ktpKaccountsGroup.writeEntry(QString::number(account->id()), account->value(QStringLiteral("uid")).toString());
 
-    KConfigGroup kaccountsKtpGroup = d->kaccountsConfig->group(QStringLiteral("ktp-kaccounts"));
-    kaccountsKtpGroup.writeEntry(account->value(QStringLiteral("uid")).toString(), QString::number(account->id()));
+    const QString tpAccountId = account->value(QStringLiteral("uid")).toString();
+    d->migrateLogs(tpAccountId, account->id());
+    Tp::AccountPtr tpAccount = d->accountManager->accountForObjectPath(tpAccountId);
+    // Remove the old Tp Account; the new one will be served by the MC plugin directly
+    tpAccount->remove();
+    d->derefMigrationCount();
+}
 
-    d->kaccountsConfig->sync();
+void KAccountsKTpPlugin::Private::migrateLogs(const QString &tpAccountId, const Accounts::AccountId accountId)
+{
+    if (tpAccountId.isEmpty() || accountId == 0) {
+        qWarning() << "Cannot finish migration because of empty data received: TP account id:" << tpAccountId << "KAccounts ID:" << accountId;
+        return;
+    }
+
+    if (logsBasePath.isEmpty()) {
+        logsBasePath = QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation) + QLatin1String("/TpLogger/logs");
+    }
+
+    Tp::AccountPtr tpAccount = accountManager->accountForObjectPath(tpAccountId);
+
+    if (tpAccount.isNull() || !tpAccount->isValid()) {
+        qDebug() << "Invalid account for" << tpAccountId << "aborting...";
+        return;
+    }
+
+    // Construct the new dir which is in form "$cmName_$protocol_ktp_2d$service_name_$KAccountsID"
+    // eg. haze_icq_ktp_2d_haze_2dicq_2dim_24
+    QString newLogsDir = tpAccount->cmName() + QLatin1Char('_') + tpAccount->protocolName() + QLatin1Char('_');
+
+    if (tpAccount->serviceName() == QLatin1String("google-talk")) {
+        newLogsDir += QStringLiteral("google_2dim");
+    } else {
+        newLogsDir += Tp::escapeAsIdentifier(QStringLiteral("ktp-") + tpAccount->serviceName());
+    }
+
+    newLogsDir += QLatin1Char('_') + QString::number(accountId);
+
+    QString accountLogsDir = tpAccount->uniqueIdentifier();
+
+    /* Escape '/' in tpAccountId as '_' */
+    if (accountLogsDir.contains(QLatin1Char('/'))) {
+        accountLogsDir.replace(QLatin1Char('/'), QLatin1String("_"));
+    }
+
+    QDir logsDir(logsBasePath);
+
+    qDebug() << "Migrating logs for" << accountLogsDir << "into" << newLogsDir;
+
+    bool renamed = false;
+
+    if (logsDir.exists()) {
+        renamed = logsDir.rename(accountLogsDir, newLogsDir);
+    }
+
+    if (!renamed) {
+        qWarning() << "Could not rename the directory!";
+    }
+}
+
+void KAccountsKTpPlugin::Private::derefMigrationCount()
+{
+    migrationRef--;
+    if (migrationRef == 0) {
+        qDebug() << "Restarting MC";
+
+        // Get the PID of mission control and then SIGTERM it
+        QProcess pidOf;
+        pidOf.start(QStringLiteral("pidof"), QStringList() << QStringLiteral("mission-control-5"));
+        pidOf.waitForFinished();
+        QByteArray pidOfOutput = pidOf.readAllStandardOutput();
+        int mcPid = pidOfOutput.trimmed().toInt();
+        ::kill(mcPid, SIGTERM);
+
+        QDBusConnection::sessionBus().interface()->startService(QStringLiteral("org.freedesktop.Telepathy.MissionControl5"));
+
+        KSharedConfigPtr config = KSharedConfig::openConfig(QStringLiteral("kaccountsrc"));
+        KConfigGroup generalGroup = config->group(QStringLiteral("General"));
+        generalGroup.writeEntry(QStringLiteral("migration2Done"), true);
+        generalGroup.sync();
+
+        qDebug() << "Migration done";
+    }
 }
 
 //---------------------------------------------------------------------------------------
@@ -164,217 +354,29 @@ void KAccountsKTpPlugin::onAccountManagerReady(Tp::PendingOperation *op)
         return;
     }
 
-    // Do a cleanup
-    KConfigGroup ktpKaccountsGroup = d->kaccountsConfig->group(QStringLiteral("kaccounts-ktp"));
-
-    auto kaccountsList = KAccounts::accountsManager()->accountList();
-
-    Q_FOREACH (const QString &kaccountId, ktpKaccountsGroup.keyList()) {
-        if (!kaccountsList.contains(kaccountId.toUInt())) {
-            onAccountRemoved(kaccountId.toUInt());
-        }
-    }
-
     d->migrateTelepathyAccounts();
 }
 
 void KAccountsKTpPlugin::onAccountCreated(const Accounts::AccountId accountId, const Accounts::ServiceList &serviceList)
 {
-    bool containsImService = false;
-    QString providerName;
-
-    Q_FOREACH (const Accounts::Service &s, serviceList) {
-        if (s.serviceType() == QLatin1String("IM")) {
-            containsImService = true;
-            providerName = s.provider();
-            break;
-        }
-    }
-
-    if (!containsImService) {
-        qDebug() << "No IM service found, ignoring...";
-        return;
-    }
-
-    // if the provider name starts with "ktp-", it means the ktp-accounts UI was used for creating it
-    // and it also means it was already created, do nothing.
-    if (providerName.startsWith(QLatin1String("ktp-"))) {
-        return;
-    }
-
-    if (providerName.contains(QLatin1String("google"))) {
-        providerName = QStringLiteral("google-talk");
-    }
-
-    qDebug() << "Creating new Tp account for AccountId" << accountId;
-
-    // Sometimes it can happen that the database is not yet synced with signond
-    // and requesting data from it (GetCredentialsJob in onConnectionManagerReady)
-    // may result in an error, so let's give it some grace time and only
-    // then go ahead and try getting the info.
-    QTimer *delayTimer = new QTimer(this);
-    delayTimer->setSingleShot(true);
-
-    connect(delayTimer, &QTimer::timeout, [=]() {
-        d->profile = Tp::Profile::createForServiceName(providerName);
-
-        d->connectionManager = Tp::ConnectionManager::create(d->profile->cmName());
-        Tp::PendingReady *op = d->connectionManager->becomeReady();
-        op->setProperty("accountId", accountId);
-        connect(op, SIGNAL(finished(Tp::PendingOperation*)),
-                this, SLOT(onConnectionManagerReady(Tp::PendingOperation*)));
-
-        delayTimer->deleteLater();
-    });
-
-    delayTimer->start(1500);
-}
-
-void KAccountsKTpPlugin::onConnectionManagerReady(Tp::PendingOperation *op)
-{
-    quint32 accountId = op->property("accountId").toUInt();
-    GetCredentialsJob *credentialsJob = new GetCredentialsJob(accountId, QStringLiteral("password"), QStringLiteral("password"), this);
-    connect(credentialsJob, &GetCredentialsJob::finished, [this, accountId](KJob *job) {
-
-        if (job->error()) {
-            qWarning() << "Failed at receiving credentials, aborting creating new Telepathy account";
-            return;
-        }
-
-        Tp::ProtocolInfo protocolInfo = d->connectionManager->protocol(d->profile->protocolName());
-        Tp::ProtocolParameterList parameters = protocolInfo.parameters();
-        Tp::Profile::ParameterList profileParameters = d->profile->parameters();
-
-        QVariantMap credentials = qobject_cast<GetCredentialsJob*>(job)->credentialsData();
-        QVariantMap values;
-
-        Q_FOREACH (const Tp::ProtocolParameter &parameter, parameters) {
-            //try and find the correct profile parameter, if it can't be found leave it as empty.
-            Q_FOREACH (const Tp::Profile::Parameter &profileParameter, profileParameters) {
-                if (profileParameter.name() == parameter.name()) {
-                    values.insert(parameter.name(), profileParameter.value());
-                    break;
-                }
-            }
-        }
-
-        values.insert(QStringLiteral("account"), credentials.value(QStringLiteral("UserName")));
-
-        // FIXME: In some next version of tp-qt4 there should be a convenience class for this
-        // https://bugs.freedesktop.org/show_bug.cgi?id=33153
-        QVariantMap properties;
-
-        if (d->accountManager->supportedAccountProperties().contains(QLatin1String("org.freedesktop.Telepathy.Account.Service"))) {
-            properties.insert(QLatin1String("org.freedesktop.Telepathy.Account.Service"), d->profile->serviceName());
-        }
-        if (d->accountManager->supportedAccountProperties().contains(QLatin1String("org.freedesktop.Telepathy.Account.Enabled"))) {
-            properties.insert(QLatin1String("org.freedesktop.Telepathy.Account.Enabled"), true);
-        }
-
-        qDebug() << "Sending account manager request to create new account";
-
-        Tp::PendingAccount *pa = d->accountManager->createAccount(d->profile->cmName(),
-                                                                  d->profile->protocolName(),
-                                                                  credentials.value(QStringLiteral("UserName")).toString(),
-                                                                  values,
-                                                                  properties);
-
-        connect(pa,
-                &Tp::PendingAccount::finished, [this, accountId](Tp::PendingOperation *op) {
-                    if (op->isError()) {
-                        qWarning() << "Failed to create KDE Telepathy account -" << op->errorName() << op->errorMessage();
-                    } else {
-                        Tp::PendingAccount *pendingAccount = qobject_cast<Tp::PendingAccount*>(op);
-                        if (!pendingAccount) {
-                            qWarning() << "Cannot cast operation to PendingAccount!";
-                            return;
-                        }
-                        KConfigGroup ktpKaccountsGroup = d->kaccountsConfig->group(QStringLiteral("kaccounts-ktp"));
-                        ktpKaccountsGroup.writeEntry(QString::number(accountId), pendingAccount->account()->objectPath());
-
-                        KConfigGroup kaccountsKtpGroup = d->kaccountsConfig->group(QStringLiteral("ktp-kaccounts"));
-                        kaccountsKtpGroup.writeEntry(pendingAccount->account()->objectPath(), accountId);
-
-                        d->kaccountsConfig->sync();
-                    }
-                });
-
-    });
-
-    credentialsJob->start();
+    Q_UNUSED(accountId);
+    Q_UNUSED(serviceList);
+    //TODO: should we connect the new account here?
 }
 
 void KAccountsKTpPlugin::onAccountRemoved(const Accounts::AccountId accountId)
 {
-    d->kaccountsConfig->group(QStringLiteral("kaccounts-ktp")).keyList();
-    // Lookup the config file and then proceed to remove the Tp account
-    // that corresponds with the account id
-    Tp::AccountPtr account = d->tpAccountForAccountId(accountId);
-
-    // Delete the entry from config file
-    KConfigGroup ktpKaccountsGroup = d->kaccountsConfig->group(QStringLiteral("kaccounts-ktp"));
-    // Read it first so we can then remove the reversed entry
-    QString accountUid = ktpKaccountsGroup.readEntry(QString::number(accountId));
-    ktpKaccountsGroup.deleteEntry(QString::number(accountId));
-
-    // As the config file contains mapping both ways (ktp id -> accounts id; accounts id -> ktp id)
-    // we also need to remove the other entry
-    KConfigGroup kaccountsKtpGroup = d->kaccountsConfig->group(QStringLiteral("ktp-kaccounts"));
-    kaccountsKtpGroup.deleteEntry(accountUid);
-
-    d->kaccountsConfig->sync();
-
-    if (account.isNull()) {
-        qWarning() << "Account manager returned null account, aborting";
-        return;
-    }
-
-    // FIXME keep this non-optional? The problem is that we can't show the "are you sure"
-    //       dialog here as that's too late at this point
-    KTp::LogManager *logManager = KTp::LogManager::instance();
-    logManager->clearAccountLogs(account);
-
-    account->remove();
+    Q_UNUSED(accountId);
 }
 
 void KAccountsKTpPlugin::onServiceEnabled(const Accounts::AccountId accountId, const Accounts::Service &service)
 {
-    if (service.serviceType() != QLatin1String("IM")) {
-        return;
-    }
-
-    Tp::AccountPtr account = d->tpAccountForAccountId(accountId);
-
-    if (account.isNull()) {
-        qWarning() << "Account manager returned null account, aborting";
-        return;
-    }
-
-    Tp::PendingOperation *op = account->setEnabled(true);
-    connect(op, &Tp::PendingOperation::finished, [](Tp::PendingOperation *op) {
-        if (op->isError()) {
-            qWarning() << "Unable to enable account -" << op->errorName() << op->errorMessage();
-        }
-    });
+    Q_UNUSED(accountId);
+    Q_UNUSED(service);
 }
 
 void KAccountsKTpPlugin::onServiceDisabled(const Accounts::AccountId accountId, const Accounts::Service &service)
 {
-    if (service.serviceType() != QLatin1String("IM")) {
-        return;
-    }
-
-    Tp::AccountPtr account = d->tpAccountForAccountId(accountId);
-
-    if (account.isNull()) {
-        qWarning() << "Account manager returned null account, aborting";
-        return;
-    }
-
-    Tp::PendingOperation *op = account->setEnabled(false);
-    connect(op, &Tp::PendingOperation::finished, [](Tp::PendingOperation *op) {
-        if (op->isError()) {
-            qWarning() << "Unable to disable account -" << op->errorName() << op->errorMessage();
-        }
-    });
+    Q_UNUSED(accountId);
+    Q_UNUSED(service);
 }

@@ -35,8 +35,10 @@ find_package (KF5People 0.5)
 
 find_package (KAccounts)
 find_package (AccountsQt5 1.10 CONFIG)
+find_package (SignOnQt5 8.55 CONFIG)
 find_package (LibOTR 4.0.0)
 find_package (Libgcrypt)
+find_package (telepathy-accounts-signon QUIET)
 
 if (LIBOTR_FOUND AND LIBGCRYPT_FOUND)
     set(OTR_LIBS_FOUND TRUE)
@@ -66,6 +68,12 @@ set_package_properties(TelepathyLoggerQt PROPERTIES DESCRIPTION "Qt bindings for
 set_package_properties(LibOTR PROPERTIES DESCRIPTION "Required for OTR support" TYPE OPTIONAL)
 set_package_properties(Libgcrypt PROPERTIES DESCRIPTION "Required for OTR support" TYPE OPTIONAL)
 
+set_package_properties(telepathy-accounts-signon PROPERTIES
+                       PURPOSE "Runtime-only dependency on a Telepathy Mission Control plugin," \
+                               "currently residing at https://github.com/mck182/telepathy-accounts-signon"
+                       TYPE RUNTIME
+                      )
+
 # Bump for every 0.x release, or whenever BC changes
 set (KTP_SONUMBER 9) # SO 9 is for 15.04 release
 set (KTP_VERSION "15.04.0")
@@ -90,8 +98,8 @@ if (KF5People_FOUND)
 endif ()
 
 #If we find KAccounts library, build the plugin for it
-if (KAccounts_FOUND AND AccountsQt5_FOUND)
-    include_directories(${ACCOUNTSQT_INCLUDE_DIRS})
+if (KAccounts_FOUND AND AccountsQt5_FOUND AND SignOnQt5_FOUND)
+    include_directories(${ACCOUNTSQT_INCLUDE_DIRS} ${SIGNONQT_INCLUDE_DIRS})
     add_subdirectory(kaccounts)
 endif ()
 
