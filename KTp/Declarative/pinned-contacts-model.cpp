@@ -24,7 +24,6 @@
 #include <TelepathyQt/AvatarData>
 #include <TelepathyQt/Presence>
 #include <TelepathyQt/Account>
-#include <TelepathyQt/AccountManager>
 #include <TelepathyQt/PendingReady>
 #include <TelepathyQt/ContactManager>
 #include <TelepathyQt/PendingContacts>
@@ -43,7 +42,6 @@ public:
     }
 
     QList<KTp::PersistentContactPtr> m_pins;
-    Tp::AccountManagerPtr accountManager;
     ConversationsModel *conversations;
 
     QStringList pinsToString() const {
@@ -208,10 +206,6 @@ void PinnedContactsModel::appendContactPin(const KTp::PersistentContactPtr &pin)
     d->m_pins += pin;
     endInsertRows();
 
-    if (d->accountManager && d->accountManager->isReady()) {
-        pin->setAccountManager(d->accountManager);
-    }
-
     if (pin->contact()) {
         contactChanged(pin->contact());
     }
@@ -281,23 +275,4 @@ void PinnedContactsModel::conversationsStateChanged(const QModelIndex &parent, i
 ConversationsModel* PinnedContactsModel::conversationsModel() const
 {
     return d->conversations;
-}
-
-Tp::AccountManagerPtr PinnedContactsModel::accountManager() const
-{
-    return d->accountManager;
-}
-
-void PinnedContactsModel::setAccountManager(const Tp::AccountManagerPtr &accounts)
-{
-    d->accountManager = accounts;
-
-    connect(d->accountManager->becomeReady(), SIGNAL(finished(Tp::PendingOperation*)), SLOT(onAccountManagerReady()));
-}
-
-void PinnedContactsModel::onAccountManagerReady()
-{
-    Q_FOREACH(const KTp::PersistentContactPtr &p, d->m_pins) {
-        p->setAccountManager(d->accountManager);
-    }
 }

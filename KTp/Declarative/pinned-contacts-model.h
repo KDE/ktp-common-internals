@@ -33,7 +33,6 @@ class PinnedContactsModel : public QAbstractListModel
     Q_OBJECT
 
     Q_PROPERTY(ConversationsModel *conversations READ conversationsModel WRITE setConversationsModel)
-    Q_PROPERTY(Tp::AccountManagerPtr accountManager READ accountManager WRITE setAccountManager)
     Q_PROPERTY(QStringList state READ state WRITE setState NOTIFY stateChanged)
     Q_PROPERTY(int count READ rowCount NOTIFY countChanged)
 
@@ -60,9 +59,6 @@ class PinnedContactsModel : public QAbstractListModel
     ConversationsModel* conversationsModel() const;
     void setConversationsModel(ConversationsModel *model);
 
-    Tp::AccountManagerPtr accountManager() const;
-    void setAccountManager(const Tp::AccountManagerPtr &accounts);
-
     QStringList state() const;
     void setState(const QStringList &s);
 
@@ -70,7 +66,6 @@ class PinnedContactsModel : public QAbstractListModel
     void contactDataChanged();
     void contactChanged(const KTp::ContactPtr &contact);
     void conversationsStateChanged(const QModelIndex &parent, int start, int end);
-    void onAccountManagerReady();
 
   Q_SIGNALS:
     void countChanged();
