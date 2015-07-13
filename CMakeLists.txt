@@ -9,6 +9,16 @@ set (CMAKE_MODULE_PATH
 )
 cmake_policy(SET CMP0002 OLD)
 
+# KDE Application Version, managed by release script
+set (KDE_APPLICATIONS_VERSION_MAJOR "15")
+set (KDE_APPLICATIONS_VERSION_MINOR "07")
+set (KDE_APPLICATIONS_VERSION_MICRO "80")
+
+# Bump for every 0.x release, or whenever BC changes
+set (KTP_SONUMBER 9) # SO 9 is for 15.08 release
+set (KTP_VERSION "${KDE_APPLICATIONS_VERSION_MAJOR}.${KDE_APPLICATIONS_VERSION_MINOR}.${KDE_APPLICATIONS_VERSION_MICRO}")
+set (KTP_MESSAGE_FILTER_FRAMEWORK_VERSION "5")
+
 find_package (Qt5 REQUIRED CONFIG COMPONENTS
               Qml
               Test)
@@ -72,11 +82,6 @@ set_package_properties(telepathy-accounts-signon PROPERTIES
                        PURPOSE "Runtime-only dependency on a Telepathy Mission Control plugin, currently residing at https://gitlab.com/accounts-sso/telepathy-accounts-signon"
                        TYPE RUNTIME
                       )
-
-# Bump for every 0.x release, or whenever BC changes
-set (KTP_SONUMBER 9) # SO 9 is for 15.04 release
-set (KTP_VERSION "15.04.0")
-set (KTP_MESSAGE_FILTER_FRAMEWORK_VERSION "5")
 
 add_definitions(-DKTP_MESSAGE_FILTER_FRAMEWORK_VERSION=\"${KTP_MESSAGE_FILTER_FRAMEWORK_VERSION}\")
 add_definitions(-DTRANSLATION_DOMAIN=\"ktp-common-internals\")
