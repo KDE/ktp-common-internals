@@ -38,7 +38,7 @@ find_package (AccountsQt5 1.10 CONFIG)
 find_package (SignOnQt5 8.55 CONFIG)
 find_package (LibOTR 4.0.0)
 find_package (Libgcrypt)
-find_package (telepathy-accounts-signon QUIET)
+find_package (telepathy-accounts-signon REQUIRED)
 
 if (LIBOTR_FOUND AND LIBGCRYPT_FOUND)
     set(OTR_LIBS_FOUND TRUE)
