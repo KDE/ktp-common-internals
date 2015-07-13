@@ -23,7 +23,7 @@ find_package (Qt5 REQUIRED CONFIG COMPONENTS
               Qml
               Test)
 
-find_package (KF5 5.10 REQUIRED COMPONENTS
+find_package (KF5 5.11 REQUIRED COMPONENTS
               CoreAddons
               Notifications
               KIO
@@ -34,14 +34,14 @@ find_package (KF5 5.10 REQUIRED COMPONENTS
               Wallet
               Config
               WindowSystem
-              IconThemes)
+              IconThemes
+              People)
 
 set(REQUIRED_TPQT_VERSION 0.9.5)
 
 find_package (TelepathyQt5 ${REQUIRED_TPQT_VERSION} REQUIRED)
 find_package (TelepathyQt5Service ${REQUIRED_TPQT_VERSION} REQUIRED) #used for the otr-proxy
 find_package (TelepathyLoggerQt)
-find_package (KF5People 0.5)
 
 find_package (KAccounts)
 find_package (AccountsQt5 1.10 CONFIG)
