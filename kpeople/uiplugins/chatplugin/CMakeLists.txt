@@ -8,7 +8,7 @@ target_link_libraries(kpeople_chat_plugin ${QT_QTCORE_LIBRARY}
     ${KDE4_KDEUI_LIBRARY}
     ${KPEOPLE_LIBS}
     ${KDEPIMLIBS_KABC_LIBS}
-    kpeoplewidgets
+    ${KPEOPLEWIDGETS_LIBRARY}
     ktploggerprivate
     ktpcommoninternalsprivate
 )

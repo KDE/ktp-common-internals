@@ -98,7 +98,7 @@ set_target_properties(ktpcommoninternalsprivate PROPERTIES
                                                          SOVERSION ${KTP_SONUMBER}
                                                          DEFINE_SYMBOL MAKE_KTP_LIB)
 
-target_link_libraries (ktpcommoninternalsprivate
+target_link_libraries (ktpcommoninternalsprivate LINK_PRIVATE
                       ${ktp_private_LIBS}
 )
 

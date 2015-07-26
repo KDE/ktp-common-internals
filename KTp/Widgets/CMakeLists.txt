@@ -43,7 +43,7 @@ set_target_properties(ktpwidgetsprivate PROPERTIES
                                                 SOVERSION ${KTP_SONUMBER}
                                                 DEFINE_SYMBOL MAKE_KTP_LIB)
 
-target_link_libraries (ktpwidgetsprivate
+target_link_libraries (ktpwidgetsprivate LINK_PRIVATE
                        ${KDE4_KDECORE_LIBS}
                        ${TELEPATHY_QT4_LIBRARIES}
                        ${KDE4_KDEUI_LIBS}

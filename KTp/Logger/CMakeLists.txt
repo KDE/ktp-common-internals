@@ -46,7 +46,7 @@ set_target_properties(ktploggerprivate PROPERTIES
                                        SOVERSION ${KTP_SONUMBER}
                                        DEFINE_SYMBOL MAKE_KTP_LIB)
 
-target_link_libraries (ktploggerprivate
+target_link_libraries (ktploggerprivate LINK_PRIVATE
                        ${KDE4_KDECORE_LIBS}
                        ${TELEPATHY_QT4_LIBRARIES}
                        ktpcommoninternalsprivate

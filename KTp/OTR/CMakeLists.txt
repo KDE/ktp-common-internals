@@ -29,7 +29,7 @@ set_target_properties(ktpotrprivate PROPERTIES
                                        SOVERSION ${KTP_SONUMBER}
                                        DEFINE_SYMBOL MAKE_KTP_LIB)
 
-target_link_libraries (ktpotrprivate
+target_link_libraries (ktpotrprivate LINK_PRIVATE
                        ${KDE4_KDECORE_LIBS}
                        ${TELEPATHY_QT4_LIBRARIES}
 )
