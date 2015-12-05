@@ -40,7 +40,8 @@ TelepathyManager::TelepathyManager(QObject *parent)
 
     m_accountFactory = Tp::AccountFactory::create(QDBusConnection::sessionBus(),
                                                   Tp::Features() << Tp::Account::FeatureCore
-                                                  << Tp::Account::FeatureProfile);
+                                                                 << Tp::Account::FeatureProfile
+                                                                 << Tp::Account::FeatureCapabilities);
 
     m_connectionFactory = Tp::ConnectionFactory::create(QDBusConnection::sessionBus(),
                                                         Tp::Features() << Tp::Connection::FeatureCore);
