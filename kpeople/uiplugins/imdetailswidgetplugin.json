@@ -3,7 +3,8 @@
         "Authors": [
             {
                 "Email": "davidedmundson@kde.org", 
-                "Name": "David Edmundson"
+                "Name": "David Edmundson", 
+                "Name[x-test]": "xxDavid Edmundsonxx"
             }
         ], 
         "Id": "imdetailswidgetplugin", 

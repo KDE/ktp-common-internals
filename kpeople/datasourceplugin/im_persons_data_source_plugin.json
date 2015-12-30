@@ -4,7 +4,8 @@
         "Authors": [
             {
                 "Email": "mklapetek@kde.org", 
-                "Name": "Martin Klapetek"
+                "Name": "Martin Klapetek", 
+                "Name[x-test]": "xxMartin Klapetekxx"
             }
         ], 
         "EnabledByDefault": true, 
