@@ -5,6 +5,8 @@
             {
                 "Email": "mklapetek@kde.org", 
                 "Name": "Martin Klapetek", 
+                "Name[sr@ijekavian]": "Мартин Клапетек", 
+                "Name[sr]": "Мартин Клапетек", 
                 "Name[x-test]": "xxMartin Klapetekxx"
             }
         ], 

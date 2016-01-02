@@ -5,6 +5,10 @@
             {
                 "Email": "nileshsuthar@live.in", 
                 "Name": "Nilesh Suthar", 
+                "Name[sr@ijekavian]": "Нилеш Сутар", 
+                "Name[sr@ijekavianlatin]": "Nileš Sutar", 
+                "Name[sr@latin]": "Nileš Sutar", 
+                "Name[sr]": "Нилеш Сутар", 
                 "Name[x-test]": "xxNilesh Sutharxx"
             }
         ], 

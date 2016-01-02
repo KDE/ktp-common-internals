@@ -5,6 +5,10 @@
             {
                 "Email": "daivdedmundson@kde.org", 
                 "Name": "David Edmundson", 
+                "Name[sr@ijekavian]": "Дејвид Едмундсон", 
+                "Name[sr@ijekavianlatin]": "Dejvid Edmundson", 
+                "Name[sr@latin]": "Dejvid Edmundson", 
+                "Name[sr]": "Дејвид Едмундсон", 
                 "Name[x-test]": "xxDavid Edmundsonxx"
             }
         ], 
