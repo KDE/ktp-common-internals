@@ -464,7 +464,7 @@ Comment[wa]=Åk n' a nén stî dins ene messaedjreye sol moumint
 Comment[x-test]=xxAn error occurred within instant messagingxx
 Comment[zh_CN]=即时通讯发生错误
 Comment[zh_TW]=即時訊息發生錯誤
-Sound=KDE-Im-Cant-Connect.ogg
+Sound=Oxygen-Im-Cant-Connect.ogg
 Action=Popup|Sound
 
 [Event/telepathyInfo]
@@ -557,7 +557,7 @@ Comment[wa]=On messaedje djenerå d' informåcion del messaedjreye sol moumint
 Comment[x-test]=xxA general info message from instant messagingxx
 Comment[zh_CN]=一条常规的即时通讯信息消息
 Comment[zh_TW]=即時訊息帳號的一般資訊
-Sound=KDE-Im-Low-Priority-Message.ogg
+Sound=Oxygen-Im-Low-Priority-Message.ogg
 Action=Popup|Sound
 
 # Text UI Notifications
@@ -657,7 +657,7 @@ Comment[x-test]=xxAn incoming message has been receivedxx
 Comment[zh_CN]=收到了一条消息
 Comment[zh_TW]=接收到的訊息
 Contexts=contact,group,class
-Sound=KDE-Im-Message-In.ogg
+Sound=Oxygen-Im-Message-In.ogg
 Action=Popup|Taskbar
 Persistant=true
 
@@ -753,7 +753,7 @@ Comment[x-test]=xxAn incoming message in the active chat window has been receive
 Comment[zh_CN]=活动聊天窗口收到了一条消息
 Comment[zh_TW]=目前聊天室裡接收到的訊息
 Contexts=contact,group,class
-Sound=KDE-Im-Message-In.ogg
+Sound=Oxygen-Im-Message-In.ogg
 Action=Sound
 
 [Event/kde_telepathy_group_chat_incoming]
@@ -839,7 +839,7 @@ Comment[x-test]=xxAn incoming message has been received in a group chatxx
 Comment[zh_CN]=在组对话收到了一条消息
 Comment[zh_TW]=群組聊天接收到進來的訊息
 Contexts=contact,group,class
-Sound=KDE-Im-Message-In.ogg
+Sound=Oxygen-Im-Message-In.ogg
 Action=None
 Persistant=true
 
@@ -925,7 +925,7 @@ Comment[x-test]=xxAn incoming message in the active group chat window has been r
 Comment[zh_CN]=活动组聊天窗口收到了一条消息
 Comment[zh_TW]=目前群組聊天室裡接收到的訊息
 Contexts=contact,group,class
-Sound=KDE-Im-Message-In.ogg
+Sound=Oxygen-Im-Message-In.ogg
 Action=None
 Persistant=true
 
@@ -1022,7 +1022,7 @@ Comment[x-test]=xxAn outgoing message has been sentxx
 Comment[zh_CN]=发出了一条消息
 Comment[zh_TW]=送出去的訊息
 Contexts=contact,group,class
-Sound=KDE-Im-Message-Out.ogg
+Sound=Oxygen-Im-Message-Out.ogg
 Action=None
 
 [Event/kde_telepathy_group_chat_highlight]
@@ -1104,7 +1104,7 @@ Comment[uk]=У груповому спілкуванні отримано під
 Comment[x-test]=xxA highlighted message has been received in a group chatxx
 Comment[zh_CN]=在组对话中收到了突出显示的消息
 Comment[zh_TW]=群組聊天室中已接收到高亮度訊息
-Sound=KDE-Im-Highlight-Msg.ogg
+Sound=Oxygen-Im-Highlight-Msg.ogg
 Action=Sound|Popup|Taskbar
 Persistant=true
 
@@ -1187,7 +1187,7 @@ Comment[uk]=У активному вікні групового спілкува
 Comment[x-test]=xxA highlighted message has been received in the active group chat windowxx
 Comment[zh_CN]=在活动的组对话窗口中收到了突出显示的消息
 Comment[zh_TW]=目前群組聊天視窗中已接收到高亮度訊息
-Sound=KDE-Im-Highlight-Msg.ogg
+Sound=Oxygen-Im-Highlight-Msg.ogg
 Action=Sound
 Persistant=true
 
@@ -1470,7 +1470,7 @@ Comment[wa]=On novea messaedje sol moumint a stî rçî
 Comment[x-test]=xxA new instant message has been receivedxx
 Comment[zh_CN]=收到了一条即时通讯消息
 Comment[zh_TW]=已接收到新的即時訊息
-Sound=KDE-Im-Message-In.ogg
+Sound=Oxygen-Im-Message-In.ogg
 Action=Popup|Sound
 
 [Event/incoming_file_transfer]
@@ -1562,7 +1562,7 @@ Comment[wa]=Ene dimande di berwetaedje di fitchî intrant a stî rçî
 Comment[x-test]=xxAn incoming file transfer request has been receivedxx
 Comment[zh_CN]=收到了一条文件传入请求
 Comment[zh_TW]=已接收到將檔案傳進來的要求
-Sound=KDE-Im-Message-In.ogg
+Sound=Oxygen-Im-Message-In.ogg
 Action=Popup|Sound
 Flags=Persistent
 
@@ -1657,7 +1657,7 @@ Comment[wa]=Ene dimande di houcaedje odio/videyo a stî rçî
 Comment[x-test]=xxAn incoming audio/video call request has been receivedxx
 Comment[zh_CN]=收到了一条音频/视频呼叫请求
 Comment[zh_TW]=已接收到以音效/視訊的呼叫
-Sound=KDE-Im-Phone-Ring.ogg
+Sound=Oxygen-Im-Phone-Ring.ogg
 Action=Popup|Sound
 Flags=Persistent
 
