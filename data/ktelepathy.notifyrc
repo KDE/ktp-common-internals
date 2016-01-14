@@ -514,7 +514,7 @@ Name[x-test]=xxInstant messaging info messagexx
 Name[zh_CN]=即时通讯信息消息
 Name[zh_TW]=即時訊息一般資訊
 Comment=A general info message from instant messaging
-Comment[ast]=Un mensaxes d'información xeneral de la mensxería nel intre
+Comment[ast]=Un mensaxe d'información xeneral de la mensxería nel intre
 Comment[bs]=Opšta informativna poruka kod instant poruka
 Comment[ca]=Un missatge informatiu general de la missatgeria instantània
 Comment[ca@valencia]=Un missatge informatiu general de la missatgeria instantània
@@ -1952,7 +1952,7 @@ Flags=Persistent
 
 [Event/contactInfo]
 Name=Contact status changed
-Name[ast]=L'estáu del contautu camudó
+Name[ast]=Camudó l'estáu del contautu
 Name[bs]=Status kontakta promijenjen
 Name[ca]=L'estat d'un contacte ha canviat
 Name[ca@valencia]=L'estat d'un contacte ha canviat
