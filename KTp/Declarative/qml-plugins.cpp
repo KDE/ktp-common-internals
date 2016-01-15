@@ -72,5 +72,7 @@ void QmlPlugins::registerTypes(const char *uri)
     qRegisterMetaType<Tp::AccountManagerPtr>();
     qRegisterMetaType<KTp::ContactPtr>();
     qRegisterMetaType<Tp::AccountPtr>();
+
+    QMetaType::registerComparators<KTp::Presence>();
 }
 
