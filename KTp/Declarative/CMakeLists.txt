@@ -13,15 +13,18 @@ set (ktp_qml_plugin_SRCS
     telepathy-manager.cpp
     qml-plugins.cpp
     debug.cpp
+    mainlogmodel.cpp
 )
 
 add_library (ktpqmlplugin SHARED ${ktp_qml_plugin_SRCS})
 
 target_link_libraries (ktpqmlplugin
     Qt5::Qml
-    
+    Qt5::Sql
+
     KF5::WindowSystem
     KF5::I18n
+    KF5::People
     KTp::CommonInternals
     KTp::Logger
     KTp::Models
