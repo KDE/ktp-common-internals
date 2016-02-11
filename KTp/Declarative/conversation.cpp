@@ -81,7 +81,7 @@ Conversation::Conversation(QObject *parent)
 {
 }
 
-void Conversation::setTextChannel(const Tp::TextChannelPtr& channel)
+void Conversation::setTextChannel(const Tp::TextChannelPtr &channel)
 {
     if (!d->messages) {
         d->messages = new MessagesModel(d->account, this);
@@ -161,7 +161,8 @@ QIcon Conversation::avatar() const
     }
 }
 
-KTp::ContactPtr Conversation::targetContact() const {
+KTp::ContactPtr Conversation::targetContact() const
+{
     if (d->isGroupChat) {
         return KTp::ContactPtr();
     } else {
@@ -169,7 +170,8 @@ KTp::ContactPtr Conversation::targetContact() const {
     }
 }
 
-Tp::AccountPtr Conversation::account() const {
+Tp::AccountPtr Conversation::account() const
+{
     return d->account;
 }
 

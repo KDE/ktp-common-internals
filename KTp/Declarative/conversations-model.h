@@ -33,13 +33,13 @@ class ConversationsModel : public QAbstractListModel, public Tp::AbstractClientH
     Q_PROPERTY(int totalUnreadCount READ totalUnreadCount NOTIFY totalUnreadCountChanged)
     Q_PROPERTY(int activeChatIndex READ activeChatIndex NOTIFY activeChatIndexChanged)
 
-  public:
-    explicit ConversationsModel(QObject *parent=0);
+public:
+    explicit ConversationsModel(QObject *parent = 0);
     virtual ~ConversationsModel();
 
     QHash<int, QByteArray> roleNames() const Q_DECL_OVERRIDE;
-    virtual QVariant data ( const QModelIndex &index, int role = Qt::DisplayRole ) const Q_DECL_OVERRIDE;
-    virtual int rowCount ( const QModelIndex &parent = QModelIndex() ) const Q_DECL_OVERRIDE;
+    virtual QVariant data (const QModelIndex &index, int role = Qt::DisplayRole) const Q_DECL_OVERRIDE;
+    virtual int rowCount (const QModelIndex &parent = QModelIndex()) const Q_DECL_OVERRIDE;
 
     /** @returns the sum of all unread messages among all conversations */
     int totalUnreadCount() const;
@@ -62,21 +62,21 @@ class ConversationsModel : public QAbstractListModel, public Tp::AbstractClientH
                         const HandlerInfo &handlerInfo);
     bool bypassApproval() const;
 
-  public Q_SLOTS:
+public Q_SLOTS:
     int nextActiveConversation(int first);
 
-  private:
-    void removeConversation(Conversation* conversation);
+private:
+    void removeConversation(Conversation *conversation);
 
     class ConversationsModelPrivate;
     ConversationsModelPrivate *d;
 
-  private Q_SLOTS:
+private Q_SLOTS:
     void onConversationCloseRequested();
 
-  Q_SIGNALS:
-      void totalUnreadCountChanged();
-      void activeChatIndexChanged();
+Q_SIGNALS:
+    void totalUnreadCountChanged();
+    void activeChatIndexChanged();
 };
 
 #endif // CONVERSATIONS_MODEL_H

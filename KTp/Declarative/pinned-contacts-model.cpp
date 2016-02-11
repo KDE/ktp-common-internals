@@ -92,7 +92,7 @@ void PinnedContactsModel::setState(const QStringList &pins)
 
 QModelIndex PinnedContactsModel::indexForContact(const KTp::ContactPtr &contact) const
 {
-    for (int i=0; i<d->m_pins.size() && contact; i++) {
+    for (int i = 0; i < d->m_pins.size() && contact; i++) {
         if (d->m_pins[i]->contactId() == contact->id()) {
             return index(i);
         }
@@ -132,12 +132,11 @@ QVariant PinnedContactsModel::data(const QModelIndex &index, int role) const
         case AvailabilityRole:
             if (!p->contact()) {
                 return false;
-            }
-            else {
-                return p->contact()->presence().type()!=Tp::ConnectionPresenceTypeOffline
-                        && p->contact()->presence().type()!=Tp::ConnectionPresenceTypeError
-                        && p->contact()->presence().type()!=Tp::ConnectionPresenceTypeUnset
-                        && p->contact()->presence().type()!=Tp::ConnectionPresenceTypeUnknown;
+            } else {
+                return p->contact()->presence().type() != Tp::ConnectionPresenceTypeOffline
+                        && p->contact()->presence().type() != Tp::ConnectionPresenceTypeError
+                        && p->contact()->presence().type() != Tp::ConnectionPresenceTypeUnset
+                        && p->contact()->presence().type() != Tp::ConnectionPresenceTypeUnknown;
             }
         case ContactRole:
             return QVariant::fromValue<KTp::ContactPtr>(p->contact());
@@ -184,7 +183,7 @@ int PinnedContactsModel::rowCount(const QModelIndex &parent) const
 void PinnedContactsModel::removeContactPin(const KTp::PersistentContactPtr &pin)
 {
     int row = d->m_pins.indexOf(pin);
-    if (row>=0) {
+    if (row >= 0) {
         beginRemoveRows(QModelIndex(), row, row);
         d->m_pins.removeAt(row);
         endRemoveRows();
@@ -259,10 +258,10 @@ void PinnedContactsModel::conversationsStateChanged(const QModelIndex &parent, i
 {
     for (int i = start; i <= end; i++) {
         QModelIndex idx = d->conversations->index(i, 0, parent);
-        Conversation* conv = idx.data(ConversationsModel::ConversationRole).value<Conversation*>();
+        Conversation *conv = idx.data(ConversationsModel::ConversationRole).value<Conversation*>();
         QString contactId = conv->targetContact()->id();
 
-        Q_FOREACH(const KTp::PersistentContactPtr &p, d->m_pins) {
+        Q_FOREACH (const KTp::PersistentContactPtr &p, d->m_pins) {
             if (p->contactId() == contactId) {
                 QModelIndex contactIdx = indexForContact(p->contact());
                 //We need to delay the dataChanged until the next event loop, when endRowsRemoved has been called
