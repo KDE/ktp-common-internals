@@ -223,6 +223,7 @@ void MessagesModel::onMessageReceived(const Tp::ReceivedMessage &message)
                                message, d->account, d->textChannel));
 
         endInsertRows();
+        Q_EMIT dataChanged(createIndex(length - 1, 0), createIndex(length - 1, 0));
 
         if (d->visible) {
             acknowledgeAllMessages();
