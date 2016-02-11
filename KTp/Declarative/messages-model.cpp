@@ -195,22 +195,22 @@ void MessagesModel::onMessageReceived(const Tp::ReceivedMessage &message)
         MessagePrivate &originalMessage = d->messages[originalMessageIndex.row()];
         originalMessage.deliveryReportReceiveTime = message.received();
         switch(deliveryDetails.status()) {
-        case Tp::DeliveryStatusPermanentlyFailed:
-        case Tp::DeliveryStatusTemporarilyFailed:
-            originalMessage.deliveryStatus = DeliveryStatusFailed;
-            if (deliveryDetails.hasDebugMessage()) {
-                qCDebug(KTP_DECLARATIVE) << "Delivery failure debug message:" << deliveryDetails.debugMessage();
-            }
-            break;
-        case Tp::DeliveryStatusDelivered:
-            originalMessage.deliveryStatus = DeliveryStatusDelivered;
-            break;
-        case Tp::DeliveryStatusRead:
-            originalMessage.deliveryStatus = DeliveryStatusRead;
-            break;
-        default:
-            originalMessage.deliveryStatus = DeliveryStatusUnknown;
-            break;
+            case Tp::DeliveryStatusPermanentlyFailed:
+            case Tp::DeliveryStatusTemporarilyFailed:
+                originalMessage.deliveryStatus = DeliveryStatusFailed;
+                if (deliveryDetails.hasDebugMessage()) {
+                    qCDebug(KTP_DECLARATIVE) << "Delivery failure debug message:" << deliveryDetails.debugMessage();
+                }
+                break;
+            case Tp::DeliveryStatusDelivered:
+                originalMessage.deliveryStatus = DeliveryStatusDelivered;
+                break;
+            case Tp::DeliveryStatusRead:
+                originalMessage.deliveryStatus = DeliveryStatusRead;
+                break;
+            default:
+                originalMessage.deliveryStatus = DeliveryStatusUnknown;
+                break;
         }
         Q_EMIT dataChanged(originalMessageIndex, originalMessageIndex);
     } else {

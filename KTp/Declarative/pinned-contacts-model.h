@@ -60,7 +60,7 @@ class PinnedContactsModel : public QAbstractListModel
     void setConversationsModel(ConversationsModel *model);
 
     QStringList state() const;
-    void setState(const QStringList &s);
+    void setState(const QStringList &state);
 
   private Q_SLOTS:
     void contactDataChanged();

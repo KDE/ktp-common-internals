@@ -40,9 +40,9 @@ class ConversationsModel::ConversationsModelPrivate
 };
 
 ConversationsModel::ConversationsModel(QObject *parent) :
-        QAbstractListModel(parent),
-        Tp::AbstractClientHandler(channelClassList()),
-        d(new ConversationsModelPrivate)
+    QAbstractListModel(parent),
+    Tp::AbstractClientHandler(channelClassList()),
+    d(new ConversationsModelPrivate)
 {
     d->activeChatIndex = -1;
     connect(this, SIGNAL(rowsInserted(QModelIndex,int,int)), SIGNAL(totalUnreadCountChanged()));
@@ -65,10 +65,8 @@ QHash<int, QByteArray> ConversationsModel::roleNames() const
 QVariant ConversationsModel::data(const QModelIndex &index, int role) const
 {
     QVariant result;
-    if (index.isValid()) {
-        if (role == ConversationRole) {
-            result = QVariant::fromValue<Conversation*>(d->conversations[index.row()]);
-        }
+    if (index.isValid() && role == ConversationRole) {
+        result = QVariant::fromValue<Conversation*>(d->conversations[index.row()]);
     }
     return result;
 }
@@ -96,7 +94,7 @@ void ConversationsModel::handleChannels(const Tp::MethodInvocationContextPtr<> &
 
     //check that the channel is of type text
     Tp::TextChannelPtr textChannel;
-    Q_FOREACH(const Tp::ChannelPtr &channel, channels) {
+    Q_FOREACH (const Tp::ChannelPtr &channel, channels) {
         textChannel = Tp::TextChannelPtr::dynamicCast(channel);
         if (textChannel) {
             break;
@@ -106,9 +104,10 @@ void ConversationsModel::handleChannels(const Tp::MethodInvocationContextPtr<> &
     Q_ASSERT(textChannel);
 
     //find the relevant channelRequest
-    Q_FOREACH(const Tp::ChannelRequestPtr channelRequest, channelRequests) {
+    Q_FOREACH (const Tp::ChannelRequestPtr channelRequest, channelRequests) {
         qCDebug(KTP_DECLARATIVE) << channelRequest->hints().allHints();
-        shouldDelegate = channelRequest->hints().hint(QLatin1String("org.freedesktop.Telepathy.ChannelRequest"), QLatin1String("DelegateToPreferredHandler")).toBool();
+        shouldDelegate = channelRequest->hints().hint(QLatin1String("org.freedesktop.Telepathy.ChannelRequest"),
+                                                      QLatin1String("DelegateToPreferredHandler")).toBool();
     }
 
     //loop through all conversations checking for matches
@@ -116,18 +115,18 @@ void ConversationsModel::handleChannels(const Tp::MethodInvocationContextPtr<> &
     //if we are handling and we're not told to delegate it, update the text channel
     //if we are handling but should delegate, call delegate channel
     int i = 0;
-    Q_FOREACH(Conversation *convo, d->conversations) {
-        if (convo->textChannel()->targetId() == textChannel->targetId() &&
-                convo->textChannel()->targetHandleType() == textChannel->targetHandleType())
+    Q_FOREACH (Conversation *conversation, d->conversations) {
+        if (conversation->textChannel()->targetId() == textChannel->targetId()
+            && conversation->textChannel()->targetHandleType() == textChannel->targetHandleType())
         {
             if (!shouldDelegate) {
-                convo->setTextChannel(textChannel);
+                conversation->setTextChannel(textChannel);
                 //Update the active chat index to this channel
                 d->activeChatIndex = i;
                 Q_EMIT activeChatIndexChanged();
             } else {
-                if (convo->textChannel() == textChannel) {
-                    convo->delegateToProperClient();
+                if (conversation->textChannel() == textChannel) {
+                    conversation->delegateToProperClient();
                 }
             }
             handled = true;
@@ -148,7 +147,7 @@ void ConversationsModel::handleChannels(const Tp::MethodInvocationContextPtr<> &
 
         //If this is a locally generated request or there is no active chat, the index of the newly inserted conversation is saved as the active chat
         //The model is reset to load the newly created chat channel
-        if(textChannel->isRequested() || d->activeChatIndex == -1) {
+        if (textChannel->isRequested() || d->activeChatIndex == -1) {
             d->activeChatIndex = rowCount() - 1;
             Q_EMIT activeChatIndexChanged();
         }
@@ -181,14 +180,14 @@ void ConversationsModel::removeConversation(Conversation* conv)
 
 int ConversationsModel::nextActiveConversation(int fromRow)
 {
-    if(d->conversations.isEmpty()) {
+    if (d->conversations.isEmpty()) {
         return -1;
     }
-    Q_ASSERT(qBound(0, fromRow, d->conversations.count()-1) == fromRow);
+    Q_ASSERT(qBound(0, fromRow, d->conversations.count() - 1) == fromRow);
 
     bool first = true; //let first be checked on the first loop
-    for(int i = fromRow; i != fromRow || first; i = (i + 1) % d->conversations.count()) {
-        if(d->conversations[i]->messages()->unreadCount() > 0) {
+    for (int i = fromRow; i != fromRow || first; i = (i + 1) % d->conversations.count()) {
+        if (d->conversations[i]->messages()->unreadCount() > 0) {
             return i;
         }
         first = false;
