@@ -270,7 +270,7 @@ QVariant MessagesModel::data(const QModelIndex &index, int role) const
 {
     QVariant result;
 
-    if (index.isValid()) {
+    if (index.isValid() && index.row() < rowCount(index.parent())) {
         const MessagePrivate m = d->messages[index.row()];
 
         switch (role) {
