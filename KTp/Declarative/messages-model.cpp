@@ -91,6 +91,8 @@ QHash<int, QByteArray> MessagesModel::roleNames() const
     roles[SenderAvatarRole] = "senderAvatar";
     roles[DeliveryStatusRole] = "deliveryStatus";
     roles[DeliveryReportReceiveTimeRole] = "deliveryReportReceiveTime";
+    roles[PreviousMessageTypeRole] = "previousMessageType";
+    roles[NextMessageTypeRole] = "nextMessageType";
     return roles;
 }
 
@@ -307,6 +309,16 @@ QVariant MessagesModel::data(const QModelIndex &index, int role) const
             break;
         case DeliveryReportReceiveTimeRole:
             result = m.deliveryReportReceiveTime;
+            break;
+        case PreviousMessageTypeRole:
+            if (index.row() > 0) {
+                result = data(createIndex(index.row() - 1, 0), TypeRole);
+            }
+            break;
+        case NextMessageTypeRole:
+            if (index.row() < d->messages.size() - 1) {
+                result = data(createIndex(index.row() + 1, 0), TypeRole);
+            }
             break;
         };
     } else {

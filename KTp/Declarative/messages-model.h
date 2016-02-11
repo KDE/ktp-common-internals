@@ -48,7 +48,9 @@ class MessagesModel : public QAbstractListModel
         SenderAliasRole, //string
         SenderAvatarRole, //pixmap
         DeliveryStatusRole, //MessagesModel::DeliveryStatus
-        DeliveryReportReceiveTimeRole //QDateTime
+        DeliveryReportReceiveTimeRole, //QDateTime
+        PreviousMessageTypeRole, // allows for painting the messages as grouped
+        NextMessageTypeRole,
     };
 
     enum MessageType {
