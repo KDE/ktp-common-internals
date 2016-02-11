@@ -71,16 +71,9 @@ Conversation::Conversation(const Tp::TextChannelPtr &channel,
     d->pausedStateTimer = new QTimer(this);
     d->pausedStateTimer->setSingleShot(true);
     connect(d->pausedStateTimer, SIGNAL(timeout()), this, SLOT(onChatPausedTimerExpired()));
+}
 
-    if (channel->targetContact().isNull()) {
-        d->isGroupChat = true;
-    } else {
-        d->isGroupChat = false;
-        d->targetContact = KTp::ContactPtr::qObjectCast(channel->targetContact());
 
-        connect(d->targetContact.constData(), SIGNAL(aliasChanged(QString)), SIGNAL(titleChanged()));
-        connect(d->targetContact.constData(), SIGNAL(presenceChanged(Tp::Presence)), SIGNAL(presenceIconChanged()));
-        connect(d->targetContact.constData(), SIGNAL(avatarDataChanged(Tp::AvatarData)), SIGNAL(avatarChanged()));
     }
 }
 
@@ -97,6 +90,21 @@ void Conversation::setTextChannel(const Tp::TextChannelPtr& channel)
         connect(channel.data(), SIGNAL(invalidated(Tp::DBusProxy*,QString,QString)),
                 SLOT(onChannelInvalidated(Tp::DBusProxy*,QString,QString)));
         Q_EMIT validityChanged(d->valid);
+
+        if (channel->targetContact().isNull()) {
+            d->isGroupChat = true;
+        } else {
+            d->isGroupChat = false;
+            d->targetContact = KTp::ContactPtr::qObjectCast(channel->targetContact());
+
+            connect(d->targetContact.constData(), SIGNAL(aliasChanged(QString)), SIGNAL(titleChanged()));
+            connect(d->targetContact.constData(), SIGNAL(presenceChanged(Tp::Presence)), SIGNAL(presenceIconChanged()));
+            connect(d->targetContact.constData(), SIGNAL(avatarDataChanged(Tp::AvatarData)), SIGNAL(avatarChanged()));
+        }
+
+        Q_EMIT avatarChanged();
+        Q_EMIT titleChanged();
+        Q_EMIT presenceIconChanged();
     }
 }
 
