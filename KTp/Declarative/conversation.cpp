@@ -32,6 +32,14 @@
 class Conversation::ConversationPrivate
 {
   public:
+      ConversationPrivate()
+      {
+          messages = 0;
+          delegated = false;
+          valid = false;
+          isGroupChat = false;
+      }
+
     MessagesModel *messages;
     //stores if the conversation has been delegated to another client and we are only observing the channel
     //and not handling it.
