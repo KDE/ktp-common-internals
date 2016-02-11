@@ -135,6 +135,7 @@ void MainLogModel::startChat(const QString &accountId, const QString &contactId)
                     Conversation *conversation = new Conversation(Tp::TextChannelPtr(channel), account, this);
                     m_conversations.insert(accountId + contactId, conversation);
                 } else {
+                    (*i)->setAccount(account);
                     (*i)->setTextChannel(Tp::TextChannelPtr(channel));
                 }
             }
