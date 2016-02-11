@@ -223,6 +223,10 @@ void MessagesModel::onMessageReceived(const Tp::ReceivedMessage &message)
                                message, d->account, d->textChannel));
 
         endInsertRows();
+        // Update the previous message in the view
+        // This will redraw the part of the bubble to not
+        // be bottom but middle one, if this is a consecutive
+        // message to the previous one
         Q_EMIT dataChanged(createIndex(length - 1, 0), createIndex(length - 1, 0));
 
         if (d->visible) {
@@ -251,6 +255,12 @@ void MessagesModel::onMessageSent(const Tp::Message &message, Tp::MessageSending
     }
 
     endInsertRows();
+
+    // Update the previous message in the view
+    // This will redraw the part of the bubble to not
+    // be bottom but middle one, if this is a consecutive
+    // message to the previous one
+    Q_EMIT dataChanged(createIndex(length - 1, 0), createIndex(length - 1, 0));
 }
 
 void MessagesModel::onPendingMessageRemoved()
