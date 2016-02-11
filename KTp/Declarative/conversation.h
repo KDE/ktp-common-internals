@@ -59,6 +59,7 @@ public:
     KTp::ContactPtr targetContact() const;
     Tp::AccountPtr account() const;
 
+    void setAccount(const Tp::AccountPtr &account);
     bool isValid();
 
 Q_SIGNALS:
