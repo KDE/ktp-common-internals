@@ -128,18 +128,22 @@ QString Conversation::title() const
     if (d->isGroupChat) {
         QString roomName = textChannel()->targetId();
         return roomName.left(roomName.indexOf(QLatin1Char('@')));
-    } else {
+    } else if (!d->targetContact.isNull()) {
         return d->targetContact->alias();
     }
+
+    return QString();
 }
 
 QIcon Conversation::presenceIcon() const
 {
     if (d->isGroupChat) {
         return KTp::Presence(Tp::Presence::available()).icon();
-    } else {
+    } else if (!d->targetContact.isNull()) {
         return KTp::Presence(d->targetContact->presence()).icon();
     }
+
+    return QIcon();
 }
 
 QIcon Conversation::avatar() const
