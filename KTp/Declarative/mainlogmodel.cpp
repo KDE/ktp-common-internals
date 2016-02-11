@@ -80,8 +80,8 @@ QVariant MainLogModel::data(const QModelIndex &index, int role) const
         case MainLogModel::LastMessageTextRole:
             return m_dbModel->record(row).value(QStringLiteral("message"));
         case MainLogModel::ConversationRole:
-            const QString hashKey = m_dbModel->record(row).value(QStringLiteral("targetContact")).toString()
-                                  + m_dbModel->record(row).value(QStringLiteral("accountObjectPath")).toString().mid(35);
+            const QString hashKey = m_dbModel->record(row).value(QStringLiteral("accountObjectPath")).toString().mid(35)
+                                  + m_dbModel->record(row).value(QStringLiteral("targetContact")).toString();
 
             // this can return null/invalid Conversation
             return QVariant::fromValue(m_conversations.value(hashKey));
