@@ -80,6 +80,9 @@ Conversation::Conversation(QObject *parent) : QObject(parent)
 
 void Conversation::setTextChannel(const Tp::TextChannelPtr& channel)
 {
+    if (!d->messages) {
+        d->messages = new MessagesModel(d->account, this);
+    }
     if (d->messages->textChannel() != channel) {
         d->messages->setTextChannel(channel);
         d->valid = channel->isValid();
