@@ -83,8 +83,14 @@ QVariant MainLogModel::data(const QModelIndex &index, int role) const
             const QString hashKey = m_dbModel->record(row).value(QStringLiteral("accountObjectPath")).toString().mid(35)
                                   + m_dbModel->record(row).value(QStringLiteral("targetContact")).toString();
 
-            // this can return null/invalid Conversation
-            return QVariant::fromValue(m_conversations.value(hashKey));
+            const QHash<QString, Conversation*>::const_iterator i = m_conversations.find(hashKey);
+            if (i == m_conversations.end()) {
+                Conversation *conversation = new Conversation(const_cast<MainLogModel*>(this));
+                const_cast<MainLogModel*>(this)->m_conversations.insert(hashKey, conversation);
+                return QVariant::fromValue(conversation);
+            } else {
+                return QVariant::fromValue(i.value());
+            }
     }
 
     return QVariant();
