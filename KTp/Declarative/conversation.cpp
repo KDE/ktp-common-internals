@@ -75,7 +75,9 @@ Conversation::Conversation(const Tp::TextChannelPtr &channel,
     connect(d->pausedStateTimer, SIGNAL(timeout()), this, SLOT(onChatPausedTimerExpired()));
 }
 
-Conversation::Conversation(QObject *parent) : QObject(parent)
+Conversation::Conversation(QObject *parent)
+    : QObject(parent),
+      d(new ConversationPrivate)
 {
     qCCritical(KTP_DECLARATIVE) << "Conversation should not be created directly. Use ConversationWatcher instead.";
 }
