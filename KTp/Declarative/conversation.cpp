@@ -175,6 +175,11 @@ Tp::AccountPtr Conversation::account() const
     return d->account;
 }
 
+void Conversation::setAccount(const Tp::AccountPtr &account)
+{
+    d->account = account;
+}
+
 bool Conversation::isValid() const
 {
     return d->valid;
