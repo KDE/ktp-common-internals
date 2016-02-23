@@ -87,6 +87,8 @@ public:
                 return s_presenceStrings.value(m_contact->presence().type());
             else if (key == AbstractContact::PictureProperty)
                 return m_contact->avatarPixmap();
+            else if (key == S_KPEOPLE_PROPERTY_ACCOUNT_DISPLAY_NAME)
+                return m_account->displayName();
         }
         return m_properties[key];
     }

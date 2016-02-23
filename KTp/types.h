@@ -93,6 +93,7 @@ namespace KTp
 }
 
 static const QString S_KPEOPLE_PROPERTY_ACCOUNT_PATH = QStringLiteral("telepathy-accountPath");
+static const QString S_KPEOPLE_PROPERTY_ACCOUNT_DISPLAY_NAME = QStringLiteral("telepathy-accountDisplayName");
 static const QString S_KPEOPLE_PROPERTY_CONTACT_ID = QStringLiteral("telepathy-contactId");
 static const QString S_KPEOPLE_PROPERTY_CONTACT_URI = QStringLiteral("telepathy-contactUri");
 static const QString S_KPEOPLE_PROPERTY_PRESENCE = QStringLiteral("telepathy-presence");
