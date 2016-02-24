@@ -87,16 +87,29 @@ QVariant MainLogModel::data(const QModelIndex &index, int role) const
         case MainLogModel::LastMessageTextRole:
             return m_dbModel->record(row).value(QStringLiteral("message"));
         case MainLogModel::ConversationRole:
+        case MainLogModel::HasUnreadMessagesRole:
             const QString hashKey = m_dbModel->record(row).value(QStringLiteral("accountObjectPath")).toString().mid(35)
                                   + m_dbModel->record(row).value(QStringLiteral("targetContact")).toString();
 
             const QHash<QString, Conversation*>::const_iterator i = m_conversations.find(hashKey);
             if (i == m_conversations.end()) {
-                Conversation *conversation = new Conversation(const_cast<MainLogModel*>(this));
-                const_cast<MainLogModel*>(this)->m_conversations.insert(hashKey, conversation);
-                return QVariant::fromValue(conversation);
+                if (role == MainLogModel::ConversationRole) {
+                    Conversation *conversation = new Conversation(const_cast<MainLogModel*>(this));
+                    const_cast<MainLogModel*>(this)->m_conversations.insert(hashKey, conversation);
+                    return QVariant::fromValue(conversation);
+                } else if (role == MainLogModel::HasUnreadMessagesRole) {
+                    return false;
+                }
             } else {
-                return QVariant::fromValue(i.value());
+                if (role == MainLogModel::ConversationRole) {
+                    return QVariant::fromValue(i.value());
+                } else if (role == MainLogModel::HasUnreadMessagesRole) {
+                    if (i.value()->messages()) {
+                        return i.value()->messages()->unreadCount() > 0;
+                    } else {
+                        return false;
+                    }
+                }
             }
     }
 
