@@ -29,13 +29,20 @@
 #include <TelepathyQt/PendingChannel>
 #include <TelepathyQt/TextChannel>
 #include <TelepathyQt/Channel>
+#include <TelepathyQt/ChannelClassSpecList>
 
 #include "conversation.h"
 
 #include <QDebug>
 
+static inline Tp::ChannelClassSpecList channelClassList()
+{
+    return Tp::ChannelClassSpecList() << Tp::ChannelClassSpec::textChat();
+}
+
 MainLogModel::MainLogModel(QObject *parent)
     : QIdentityProxyModel(parent),
+      Tp::AbstractClientHandler(channelClassList()),
       m_dbModel(new QSqlQueryModel(this))
 {
     const QString dbLocation = QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation) + QStringLiteral("/ktp-mobile-logger/");
@@ -129,16 +136,7 @@ void MainLogModel::startChat(const QString &accountId, const QString &contactId)
         Tp::PendingChannel *pc = qobject_cast<Tp::PendingChannel*>(op);
         if (pc) {
             Tp::TextChannel *channel = qobject_cast<Tp::TextChannel*>(pc->channel().data());
-            if (channel) {
-                const QHash<QString, Conversation*>::const_iterator i = m_conversations.find(accountId + contactId);
-                if (i == m_conversations.end()) {
-                    Conversation *conversation = new Conversation(Tp::TextChannelPtr(channel), account, this);
-                    m_conversations.insert(accountId + contactId, conversation);
-                } else {
-                    (*i)->setAccount(account);
-                    (*i)->setTextChannel(Tp::TextChannelPtr(channel));
-                }
-            }
+            handleChannel(account, Tp::TextChannelPtr(channel));
         }
     });
 }
@@ -146,4 +144,56 @@ void MainLogModel::startChat(const QString &accountId, const QString &contactId)
 void MainLogModel::setAccountManager(const Tp::AccountManagerPtr &accountManager)
 {
     m_accountManager = accountManager;
+}
+
+void MainLogModel::handleChannels(const Tp::MethodInvocationContextPtr<> &context,
+                                        const Tp::AccountPtr &account,
+                                        const Tp::ConnectionPtr &connection,
+                                        const QList<Tp::ChannelPtr> &channels,
+                                        const QList<Tp::ChannelRequestPtr> &channelRequests,
+                                        const QDateTime &userActionTime,
+                                        const HandlerInfo &handlerInfo)
+{
+    Q_UNUSED(connection);
+    Q_UNUSED(handlerInfo);
+    Q_UNUSED(userActionTime);
+
+    bool handled = false;
+    bool shouldDelegate = false;
+
+    //check that the channel is of type text
+    Tp::TextChannelPtr textChannel;
+    Q_FOREACH (const Tp::ChannelPtr &channel, channels) {
+        textChannel = Tp::TextChannelPtr::dynamicCast(channel);
+        if (textChannel) {
+            break;
+        }
+    }
+
+    Q_ASSERT(textChannel);
+
+    handleChannel(account, textChannel);
+    context->setFinished();
+}
+
+bool MainLogModel::bypassApproval() const
+{
+    return true;
+}
+
+void MainLogModel::handleChannel(const Tp::AccountPtr &account, const Tp::TextChannelPtr &channel)
+{
+    if (channel && account) {
+        const QString accountId = account->objectPath().mid(35);
+        const QString contactId = channel->targetContact()->id();
+        qDebug() << accountId << contactId;
+        const QHash<QString, Conversation*>::const_iterator i = m_conversations.find(accountId + contactId);
+        if (i == m_conversations.end()) {
+            Conversation *conversation = new Conversation(channel, account, this);
+            m_conversations.insert(accountId + contactId, conversation);
+        } else {
+            (*i)->setAccount(account);
+            (*i)->setTextChannel(channel);
+        }
+    }
 }

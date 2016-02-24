@@ -22,13 +22,15 @@
 #include <QObject>
 #include <QIdentityProxyModel>
 
+#include <TelepathyQt/AbstractClientHandler>
+
 #include <KTp/persistent-contact.h>
 #include <KTp/types.h>
 
 class QSqlQueryModel;
 class Conversation;
 
-class MainLogModel : public QIdentityProxyModel
+class MainLogModel : public QIdentityProxyModel, public Tp::AbstractClientHandler
 {
     Q_OBJECT
 
@@ -54,8 +56,20 @@ public:
     Q_INVOKABLE void startChat(const QString &accountId, const QString &contactId);
     Q_INVOKABLE void setAccountManager(const Tp::AccountManagerPtr &accountManager);
 
+    void handleChannels(const Tp::MethodInvocationContextPtr<> &context,
+                        const Tp::AccountPtr &account,
+                        const Tp::ConnectionPtr &connection,
+                        const QList<Tp::ChannelPtr> &channels,
+                        const QList<Tp::ChannelRequestPtr> &channelRequests,
+                        const QDateTime &userActionTime,
+                        const HandlerInfo &handlerInfo);
+    bool bypassApproval() const;
+
+private Q_SLOTS:
+    void handleChannel(const Tp::AccountPtr &account, const Tp::TextChannelPtr &channel);
+
 private:
-    QHash<QString, Conversation*> m_conversations;
+    QHash<QString, Conversation*> m_conversations; // This is a hash with keys "accountId + contactId"
     QSqlQueryModel *m_dbModel;
     Tp::AccountManagerPtr m_accountManager;
 };
