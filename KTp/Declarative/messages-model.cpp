@@ -404,3 +404,13 @@ bool MessagesModel::shouldStartOpened() const
 {
     return d->textChannel->isRequested();
 }
+
+QString MessagesModel::lastMessage() const
+{
+    return data(createIndex(rowCount() - 1, 0), MessagesModel::TextRole).toString();
+}
+
+QDateTime MessagesModel::lastMessageDateTime() const
+{
+    return data(createIndex(rowCount() - 1, 0), MessagesModel::TimeRole).toDateTime();
+}
