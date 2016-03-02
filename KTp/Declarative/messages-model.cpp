@@ -416,3 +416,25 @@ bool MessagesModel::shouldStartOpened() const
 {
     return d->textChannel->isRequested();
 }
+
+QString MessagesModel::lastMessage() const
+{
+    const QModelIndex index = createIndex(rowCount() - 1, 0);
+
+    if (!index.isValid()) {
+        return QString();
+    }
+
+    return data(index, MessagesModel::TextRole).toString();
+}
+
+QDateTime MessagesModel::lastMessageDateTime() const
+{
+    const QModelIndex index = createIndex(rowCount() - 1, 0);
+
+    if (!index.isValid()) {
+        return QDateTime();
+    }
+
+    return data(index, MessagesModel::TimeRole).toDateTime();
+}

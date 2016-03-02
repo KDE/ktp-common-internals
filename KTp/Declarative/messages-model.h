@@ -82,6 +82,9 @@ class MessagesModel : public QAbstractListModel
 
     bool shouldStartOpened() const;
 
+    QString lastMessage() const;
+    QDateTime lastMessageDateTime() const;
+
   Q_SIGNALS:
     void visibleToUserChanged(bool visible);
     void unreadCountChanged(int unreadMesssagesCount);
