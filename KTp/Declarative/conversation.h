@@ -39,6 +39,7 @@ class Conversation : public QObject
     Q_PROPERTY(QIcon avatar READ avatar NOTIFY avatarChanged)
     Q_PROPERTY(Tp::AccountPtr account READ account CONSTANT)
     Q_PROPERTY(KTp::ContactPtr targetContact READ targetContact CONSTANT)
+    Q_PROPERTY(bool hasUnreadMessages READ hasUnreadMessages NOTIFY unreadMessagesChanged)
 
 public:
     Conversation(const Tp::TextChannelPtr &channel, const Tp::AccountPtr &account, QObject *parent = 0);
@@ -61,12 +62,15 @@ public:
 
     bool isValid();
 
+    bool hasUnreadMessages() const;
+
 Q_SIGNALS:
     void validityChanged(bool isValid);
     void avatarChanged();
     void titleChanged();
     void presenceIconChanged();
     void conversationCloseRequested();
+    void unreadMessagesChanged();
 
 public Q_SLOTS:
     void delegateToProperClient();

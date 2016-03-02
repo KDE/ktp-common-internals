@@ -64,6 +64,7 @@ Conversation::Conversation(const Tp::TextChannelPtr &channel,
     connect(d->account.data(), SIGNAL(connectionChanged(Tp::ConnectionPtr)), SLOT(onAccountConnectionChanged(Tp::ConnectionPtr)));
 
     d->messages = new MessagesModel(account, this);
+    connect(d->messages, &MessagesModel::unreadCountChanged, this, &Conversation::unreadMessagesChanged);
     setTextChannel(channel);
 
     d->delegated = false;
@@ -82,6 +83,7 @@ void Conversation::setTextChannel(const Tp::TextChannelPtr& channel)
 {
     if (!d->messages) {
         d->messages = new MessagesModel(d->account, this);
+        connect(d->messages, &MessagesModel::unreadCountChanged, this, &Conversation::unreadMessagesChanged);
     }
     if (d->messages->textChannel() != channel) {
         d->messages->setTextChannel(channel);
@@ -256,4 +258,13 @@ Conversation::~Conversation()
         d->messages->textChannel()->requestClose();
     }
     delete d;
+}
+
+bool Conversation::hasUnreadMessages() const
+{
+    if (d->messages) {
+        return d->messages->unreadCount() > 0;
+    }
+
+    return false;
 }
