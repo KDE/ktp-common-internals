@@ -146,6 +146,7 @@ QHash<int, QByteArray> MainLogModel::roleNames() const
     roles.insert(LastMessageDateRole, "lastMessageDate");
     roles.insert(LastMessageTextRole, "lastMessageText");
     roles.insert(ConversationRole, "conversation");
+    roles.insert(HasUnreadMessagesRole, "hasUnreadMessages");
 
     return roles;
 }
