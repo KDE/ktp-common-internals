@@ -223,11 +223,57 @@ void MainLogModel::handleChannel(const Tp::AccountPtr &account, const Tp::TextCh
         qDebug() << accountId << contactId;
         const QHash<QString, Conversation*>::const_iterator i = m_conversations.find(accountId + contactId);
         if (i == m_conversations.end()) {
-            Conversation *conversation = new Conversation(channel, account, this);
+            Conversation *conversation = new Conversation(this);
+            setupSignals(conversation);
             m_conversations.insert(accountId + contactId, conversation);
+
+            conversation->setAccount(account);
+            conversation->setTextChannel(channel);
         } else {
             (*i)->setAccount(account);
             (*i)->setTextChannel(channel);
         }
+
+        QModelIndex contactIndex = indexForContact(account->objectPath(), contactId);
+        if (contactIndex.isValid()) {
+            Q_EMIT dataChanged(contactIndex, contactIndex);
+        }
+    }
+}
+
+QModelIndex MainLogModel::indexForContact(const QString &accountObjectPath, const QString &contactId) const
+{
+    for (int i = 0; i < rowCount(); i++) {
+
+        if (m_dbModel->record(i).value(QStringLiteral("targetContact")).toString() == contactId
+            && m_dbModel->record(i).value(QStringLiteral("accountObjectPath")).toString() == accountObjectPath) {
+
+            return createIndex(i, 0);
+        }
+    }
+
+    return QModelIndex();
+}
+
+void MainLogModel::setupSignals(Conversation *conversation) const
+{
+    connect(conversation, &Conversation::unreadMessagesChanged, this, &MainLogModel::onConversationChanged);
+    connect(conversation, &Conversation::avatarChanged, this, &MainLogModel::onConversationChanged);
+    connect(conversation, &Conversation::presenceIconChanged, this, &MainLogModel::onConversationChanged);
+    connect(conversation, &Conversation::titleChanged, this, &MainLogModel::onConversationChanged);
+    connect(conversation, &Conversation::validityChanged, this, &MainLogModel::onConversationChanged);
+}
+
+void MainLogModel::onConversationChanged()
+{
+    Conversation *conversation = qobject_cast<Conversation*>(sender());
+    if (!conversation || !conversation->isValid()) {
+        return;
+    }
+
+    const QModelIndex index = indexForContact(conversation->account()->objectPath(), conversation->targetContact()->id());
+
+    if (index.isValid()) {
+        Q_EMIT dataChanged(index, index);
     }
 }

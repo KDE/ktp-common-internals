@@ -70,8 +70,12 @@ public:
 
 private Q_SLOTS:
     void handleChannel(const Tp::AccountPtr &account, const Tp::TextChannelPtr &channel);
+    void onConversationChanged();
 
 private:
+    QModelIndex indexForContact(const QString &accountObjectPath, const QString &contactId) const;
+    void setupSignals(Conversation *conversation) const;
+
     QHash<QString, Conversation*> m_conversations; // This is a hash with keys "accountId + contactId"
     QSqlQueryModel *m_dbModel;
     QSqlQuery m_query;
