@@ -206,6 +206,8 @@ void MainLogModel::handleChannels(const Tp::MethodInvocationContextPtr<> &contex
 
     Q_ASSERT(textChannel);
 
+    m_dbModel->clear();
+    m_dbModel->setQuery(m_query);
     handleChannel(account, textChannel);
     context->setFinished();
 }
