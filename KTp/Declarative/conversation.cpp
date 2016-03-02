@@ -92,7 +92,6 @@ void Conversation::setTextChannel(const Tp::TextChannelPtr &channel)
         d->valid = channel->isValid();
         connect(channel.data(), SIGNAL(invalidated(Tp::DBusProxy*,QString,QString)),
                 SLOT(onChannelInvalidated(Tp::DBusProxy*,QString,QString)));
-        Q_EMIT validityChanged(d->valid);
 
         if (channel->targetContact().isNull()) {
             d->isGroupChat = true;
@@ -108,6 +107,7 @@ void Conversation::setTextChannel(const Tp::TextChannelPtr &channel)
         Q_EMIT avatarChanged();
         Q_EMIT titleChanged();
         Q_EMIT presenceIconChanged();
+        Q_EMIT validityChanged(d->valid);
     }
 }
 
