@@ -21,6 +21,7 @@
 
 #include <QObject>
 #include <QIdentityProxyModel>
+#include <QSqlQuery>
 
 #include <TelepathyQt/AbstractClientHandler>
 
@@ -72,6 +73,7 @@ private Q_SLOTS:
 private:
     QHash<QString, Conversation*> m_conversations; // This is a hash with keys "accountId + contactId"
     QSqlQueryModel *m_dbModel;
+    QSqlQuery m_query;
     QSqlDatabase m_db;
     Tp::AccountManagerPtr m_accountManager;
 };

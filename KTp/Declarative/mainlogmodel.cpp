@@ -47,15 +47,17 @@ MainLogModel::MainLogModel(QObject *parent)
 {
     const QString dbLocation = QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation) + QStringLiteral("/ktp-mobile-logger/");
 
-
-    m_dbModel->setQuery(QStringLiteral("SELECT data.messageDateTime, data.message, "
     m_db = QSqlDatabase::addDatabase(QStringLiteral("QSQLITE"), QStringLiteral("logger-db"));
     m_db.setDatabaseName(dbLocation + QStringLiteral("history.db3"));
     qDebug() << dbLocation << m_db.open();
+    m_query = QSqlQuery(QStringLiteral("SELECT data.messageDateTime, data.message, "
                                        "accountData.accountObjectPath, contactData.targetContact "
                                        "FROM data LEFT JOIN contactData ON data.targetContactId = contactData.id "
                                        "LEFT JOIN accountData ON data.accountId = accountData.id "
-                                       "GROUP BY data.targetContactId ORDER BY data.messageDateTime DESC"));
+                                       "GROUP BY data.targetContactId ORDER BY data.messageDateTime DESC"),
+                        m_db);
+
+    m_dbModel->setQuery(m_query);
 
     setSourceModel(m_dbModel);
 }
