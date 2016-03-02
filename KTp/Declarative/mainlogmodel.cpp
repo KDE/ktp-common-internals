@@ -85,9 +85,7 @@ QVariant MainLogModel::data(const QModelIndex &index, int role) const
         case MainLogModel::AccountIdRole:
             return m_dbModel->record(row).value(QStringLiteral("accountObjectPath")).toString().mid(35);
         case MainLogModel::LastMessageDateRole:
-            return m_dbModel->record(row).value(QStringLiteral("messageDateTime"));
         case MainLogModel::LastMessageTextRole:
-            return m_dbModel->record(row).value(QStringLiteral("message"));
         case MainLogModel::ConversationRole:
         case MainLogModel::HasUnreadMessagesRole:
             const QString hashKey = m_dbModel->record(row).value(QStringLiteral("accountObjectPath")).toString().mid(35)
@@ -96,21 +94,23 @@ QVariant MainLogModel::data(const QModelIndex &index, int role) const
             const QHash<QString, Conversation*>::const_iterator i = m_conversations.find(hashKey);
             if (i == m_conversations.end()) {
                 if (role == MainLogModel::ConversationRole) {
-                    Conversation *conversation = new Conversation(const_cast<MainLogModel*>(this));
-                    const_cast<MainLogModel*>(this)->m_conversations.insert(hashKey, conversation);
-                    return QVariant::fromValue(conversation);
+                    return QVariant();
                 } else if (role == MainLogModel::HasUnreadMessagesRole) {
                     return false;
+                } else if (role == MainLogModel::LastMessageDateRole) {
+                    return m_dbModel->record(row).value(QStringLiteral("messageDateTime"));
+                } else if (role == MainLogModel::LastMessageTextRole) {
+                    return m_dbModel->record(row).value(QStringLiteral("message"));
                 }
             } else {
                 if (role == MainLogModel::ConversationRole) {
                     return QVariant::fromValue(i.value());
                 } else if (role == MainLogModel::HasUnreadMessagesRole) {
-                    if (i.value()->messages()) {
-                        return i.value()->messages()->unreadCount() > 0;
-                    } else {
-                        return false;
-                    }
+                    return i.value()->hasUnreadMessages();
+                } else if (role == MainLogModel::LastMessageDateRole) {
+                    return i.value()->messages()->lastMessageDateTime();
+                } else if (role == MainLogModel::LastMessageTextRole) {
+                    return i.value()->messages()->lastMessage();
                 }
             }
     }
