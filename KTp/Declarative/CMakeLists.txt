@@ -24,6 +24,7 @@ target_link_libraries (ktpqmlplugin
 
     KF5::WindowSystem
     KF5::I18n
+    KF5::People
     KTp::CommonInternals
     KTp::Logger
     KTp::Models

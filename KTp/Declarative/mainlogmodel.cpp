@@ -31,6 +31,8 @@
 #include <TelepathyQt/Channel>
 #include <TelepathyQt/ChannelClassSpecList>
 
+#include <KPeople/PersonData>
+
 #include "conversation.h"
 
 #include <QDebug>
@@ -81,7 +83,22 @@ QVariant MainLogModel::data(const QModelIndex &index, int role) const
     switch (role) {
         case MainLogModel::ContactDisplayNameRole:
         case MainLogModel::ContactIdRole:
-            return m_dbModel->record(row).value(QStringLiteral("targetContact"));
+        case MainLogModel::PersonUriRole:
+        {
+            const QVariant contactId = m_dbModel->record(row).value(QStringLiteral("targetContact"));
+            if (role == MainLogModel::ContactIdRole) {
+                return contactId;
+            }
+
+            // TODO: Cache this or something
+            const KPeople::PersonData person(contactId.toString());
+
+            if (role == MainLogModel::PersonUriRole) {
+                return person.personUri();
+            } else if (role == MainLogModel::ContactDisplayNameRole) {
+                return person.name();
+            }
+        }
         case MainLogModel::AccountIdRole:
             return m_dbModel->record(row).value(QStringLiteral("accountObjectPath")).toString().mid(35);
         case MainLogModel::LastMessageDateRole:
@@ -124,6 +141,7 @@ QHash<int, QByteArray> MainLogModel::roleNames() const
 
     roles.insert(ContactDisplayNameRole, "contactDisplayName");
     roles.insert(ContactIdRole, "contactId");
+    roles.insert(PersonUriRole, "personUri");
     roles.insert(AccountIdRole, "accountId");
     roles.insert(LastMessageDateRole, "lastMessageDate");
     roles.insert(LastMessageTextRole, "lastMessageText");

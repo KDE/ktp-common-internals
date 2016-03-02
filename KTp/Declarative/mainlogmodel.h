@@ -39,6 +39,7 @@ public:
     enum Role {
         ContactDisplayNameRole = Qt::DisplayRole,
         ContactIdRole = Qt::UserRole,
+        PersonUriRole,
         AccountIdRole,
         LastMessageDateRole,
         LastMessageTextRole,
