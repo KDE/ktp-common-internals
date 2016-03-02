@@ -20,6 +20,7 @@
 
 #include <QSqlQueryModel>
 #include <QSqlRecord>
+#include <QSqlQuery>
 #include <QSqlDatabase>
 #include <QStandardPaths>
 // #include <QDBusArgument>
@@ -74,9 +75,6 @@ QVariant MainLogModel::data(const QModelIndex &index, int role) const
     if (!index.isValid()) {
         return QVariant();
     }
-
-//     qDebug() << m_dbModel->record(index.row()) << m_dbModel->record(index.row()).value("targetContact");
-//     qDebug() << index << index.row() << index.column();
 
     const int row = index.row();
 
@@ -189,11 +187,9 @@ void MainLogModel::handleChannels(const Tp::MethodInvocationContextPtr<> &contex
                                         const HandlerInfo &handlerInfo)
 {
     Q_UNUSED(connection);
-    Q_UNUSED(handlerInfo);
+    Q_UNUSED(channelRequests);
     Q_UNUSED(userActionTime);
-
-    bool handled = false;
-    bool shouldDelegate = false;
+    Q_UNUSED(handlerInfo);
 
     //check that the channel is of type text
     Tp::TextChannelPtr textChannel;
