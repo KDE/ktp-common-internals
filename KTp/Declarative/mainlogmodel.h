@@ -72,6 +72,7 @@ private Q_SLOTS:
 private:
     QHash<QString, Conversation*> m_conversations; // This is a hash with keys "accountId + contactId"
     QSqlQueryModel *m_dbModel;
+    QSqlDatabase m_db;
     Tp::AccountManagerPtr m_accountManager;
 };
 
