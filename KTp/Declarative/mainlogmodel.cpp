@@ -21,9 +21,9 @@
 #include <QSqlQueryModel>
 #include <QSqlRecord>
 #include <QSqlQuery>
+#include <QSqlError>
 #include <QSqlDatabase>
 #include <QStandardPaths>
-// #include <QDBusArgument>
 
 #include <TelepathyQt/AccountManager>
 #include <TelepathyQt/PendingOperation>
@@ -44,9 +44,8 @@ static inline Tp::ChannelClassSpecList channelClassList()
 }
 
 MainLogModel::MainLogModel(QObject *parent)
-    : QIdentityProxyModel(parent),
-      Tp::AbstractClientHandler(channelClassList()),
-      m_dbModel(new QSqlQueryModel(this))
+    : QAbstractListModel(parent),
+      Tp::AbstractClientHandler(channelClassList())
 {
     const QString dbLocation = QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation) + QStringLiteral("/ktp-mobile-logger/");
 
@@ -60,14 +59,30 @@ MainLogModel::MainLogModel(QObject *parent)
                                        "GROUP BY data.targetContactId ORDER BY data.messageDateTime DESC"),
                         m_db);
 
-    m_dbModel->setQuery(m_query);
-
-    setSourceModel(m_dbModel);
+    m_query.exec();
+    processQueryResults(m_query);
 }
 
 MainLogModel::~MainLogModel()
 {
 
+}
+
+void MainLogModel::processQueryResults(QSqlQuery query)
+{
+    while (query.next()) {
+        LogItem item;
+        item.messageDateTime = query.value(QStringLiteral("messageDateTime")).toDateTime();
+        item.message = query.value(QStringLiteral("message")).toString();
+        item.accountObjectPath = query.value(QStringLiteral("accountObjectPath")).toString();
+        item.targetContact = query.value(QStringLiteral("targetContact")).toString();
+        item.conversation = 0;
+
+        //TODO: This might be more effective to insert at once?
+        beginInsertRows(QModelIndex(), rowCount(), rowCount());
+        m_logItems << item;
+        endInsertRows();
+    }
 }
 
 QVariant MainLogModel::data(const QModelIndex &index, int role) const
@@ -83,13 +98,13 @@ QVariant MainLogModel::data(const QModelIndex &index, int role) const
         case MainLogModel::ContactIdRole:
         case MainLogModel::PersonUriRole:
         {
-            const QVariant contactId = m_dbModel->record(row).value(QStringLiteral("targetContact"));
+            const QString contactId = m_logItems.at(row).targetContact;
             if (role == MainLogModel::ContactIdRole) {
                 return contactId;
             }
 
             // TODO: Cache this or something
-            const KPeople::PersonData person(contactId.toString());
+            const KPeople::PersonData person(contactId);
 
             if (role == MainLogModel::PersonUriRole) {
                 return person.personUri();
@@ -98,39 +113,43 @@ QVariant MainLogModel::data(const QModelIndex &index, int role) const
             }
         }
         case MainLogModel::AccountIdRole:
-            return m_dbModel->record(row).value(QStringLiteral("accountObjectPath")).toString().mid(35);
+            return m_logItems.at(row).accountObjectPath.mid(35);
         case MainLogModel::LastMessageDateRole:
         case MainLogModel::LastMessageTextRole:
         case MainLogModel::ConversationRole:
         case MainLogModel::HasUnreadMessagesRole:
-            const QString hashKey = m_dbModel->record(row).value(QStringLiteral("accountObjectPath")).toString().mid(35)
-                                  + m_dbModel->record(row).value(QStringLiteral("targetContact")).toString();
-
-            const QHash<QString, Conversation*>::const_iterator i = m_conversations.find(hashKey);
-            if (i == m_conversations.end()) {
+        {
+            Conversation *conversation = m_logItems.at(row).conversation;
+            if (conversation == 0) {
                 if (role == MainLogModel::ConversationRole) {
                     return QVariant();
                 } else if (role == MainLogModel::HasUnreadMessagesRole) {
                     return false;
                 } else if (role == MainLogModel::LastMessageDateRole) {
-                    return m_dbModel->record(row).value(QStringLiteral("messageDateTime"));
+                    return m_logItems.at(row).messageDateTime;
                 } else if (role == MainLogModel::LastMessageTextRole) {
-                    return m_dbModel->record(row).value(QStringLiteral("message"));
+                    return m_logItems.at(row).message;
                 }
             } else {
                 if (role == MainLogModel::ConversationRole) {
-                    return QVariant::fromValue(i.value());
+                    return QVariant::fromValue(conversation);
                 } else if (role == MainLogModel::HasUnreadMessagesRole) {
-                    return i.value()->hasUnreadMessages();
+                    return conversation->hasUnreadMessages();
                 } else if (role == MainLogModel::LastMessageDateRole) {
-                    return i.value()->messages()->lastMessageDateTime();
+                    return conversation->messages()->lastMessageDateTime();
                 } else if (role == MainLogModel::LastMessageTextRole) {
-                    return i.value()->messages()->lastMessage();
+                    return conversation->messages()->lastMessage();
                 }
             }
+        }
     }
 
     return QVariant();
+}
+
+int MainLogModel::rowCount(const QModelIndex &parent) const
+{
+    return m_logItems.size();
 }
 
 QHash<int, QByteArray> MainLogModel::roleNames() const
@@ -202,8 +221,37 @@ void MainLogModel::handleChannels(const Tp::MethodInvocationContextPtr<> &contex
 
     Q_ASSERT(textChannel);
 
-    m_dbModel->clear();
-    m_dbModel->setQuery(m_query);
+    const QString targetContact = textChannel->targetContact()->id();
+    const QString accountObjectPath = account->objectPath();
+
+    bool existsInModel = false;
+    Q_FOREACH (const LogItem &item, m_logItems) {
+        if (item.targetContact == targetContact && item.accountObjectPath == accountObjectPath) {
+            existsInModel = true;
+            break;
+        }
+    }
+
+    if (!existsInModel) {
+        QSqlQuery q(m_db);
+        q.prepare(QStringLiteral("SELECT data.messageDateTime, data.message, "
+                                 "accountData.accountObjectPath, contactData.targetContact "
+                                 "FROM data LEFT JOIN contactData ON data.targetContactId = contactData.id "
+                                 "LEFT JOIN accountData ON data.accountId = accountData.id "
+                                 "WHERE contactData.targetContact = :contactId AND accountData.accountObjectPath = :accountObjectPath "
+                                 "GROUP BY data.targetContactId ORDER BY data.messageDateTime DESC"));
+        q.bindValue(QStringLiteral(":contactId"), targetContact);
+        q.bindValue(QStringLiteral(":accountObjectPath"), accountObjectPath);
+
+        q.exec();
+
+        if (q.lastError().isValid()) {
+            qWarning() << "Error selecting latest conversation from log database:" << q.lastError().text();
+        }
+
+        processQueryResults(q);
+    }
+
     handleChannel(account, textChannel);
     context->setFinished();
 }
@@ -219,38 +267,33 @@ void MainLogModel::handleChannel(const Tp::AccountPtr &account, const Tp::TextCh
         const QString accountId = account->objectPath().mid(35);
         const QString contactId = channel->targetContact()->id();
         qDebug() << accountId << contactId;
-        const QHash<QString, Conversation*>::const_iterator i = m_conversations.find(accountId + contactId);
-        if (i == m_conversations.end()) {
-            Conversation *conversation = new Conversation(this);
-            setupSignals(conversation);
-            m_conversations.insert(accountId + contactId, conversation);
 
-            conversation->setAccount(account);
-            conversation->setTextChannel(channel);
-        } else {
-            (*i)->setAccount(account);
-            (*i)->setTextChannel(channel);
+        int i = 0;
+        for (i = 0; i < m_logItems.size(); i++) {
+            LogItem &item = m_logItems[i];
+            if (item.targetContact == contactId && item.accountObjectPath == account->objectPath()) {
+                if (item.conversation) {
+                    item.conversation->setAccount(account);
+                    item.conversation->setTextChannel(channel);
+                } else {
+                    Conversation *conversation = new Conversation(this);
+                    item.conversation = conversation;
+                    setupSignals(conversation);
+                    m_conversations.insert(accountId + contactId, conversation);
+
+                    conversation->setAccount(account);
+                    conversation->setTextChannel(channel);
+                }
+
+                break;
+            }
         }
 
-        QModelIndex contactIndex = indexForContact(account->objectPath(), contactId);
+        QModelIndex contactIndex = createIndex(i, 0);
         if (contactIndex.isValid()) {
             Q_EMIT dataChanged(contactIndex, contactIndex);
         }
     }
-}
-
-QModelIndex MainLogModel::indexForContact(const QString &accountObjectPath, const QString &contactId) const
-{
-    for (int i = 0; i < rowCount(); i++) {
-
-        if (m_dbModel->record(i).value(QStringLiteral("targetContact")).toString() == contactId
-            && m_dbModel->record(i).value(QStringLiteral("accountObjectPath")).toString() == accountObjectPath) {
-
-            return createIndex(i, 0);
-        }
-    }
-
-    return QModelIndex();
 }
 
 void MainLogModel::setupSignals(Conversation *conversation) const
@@ -269,7 +312,14 @@ void MainLogModel::onConversationChanged()
         return;
     }
 
-    const QModelIndex index = indexForContact(conversation->account()->objectPath(), conversation->targetContact()->id());
+    int i = 0;
+    for (i = 0; i < m_logItems.size(); i++) {
+        if (m_logItems.at(i).conversation == conversation) {
+            break;
+        }
+    }
+
+    const QModelIndex index = createIndex(i, 0);
 
     if (index.isValid()) {
         Q_EMIT dataChanged(index, index);

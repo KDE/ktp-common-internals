@@ -20,7 +20,7 @@
 #define MAINLOGMODEL_H
 
 #include <QObject>
-#include <QIdentityProxyModel>
+#include <QAbstractListModel>
 #include <QSqlQuery>
 
 #include <TelepathyQt/AbstractClientHandler>
@@ -28,10 +28,18 @@
 #include <KTp/persistent-contact.h>
 #include <KTp/types.h>
 
-class QSqlQueryModel;
 class Conversation;
 
-class MainLogModel : public QIdentityProxyModel, public Tp::AbstractClientHandler
+class LogItem {
+public:
+    QDateTime messageDateTime;
+    QString message;
+    QString accountObjectPath;
+    QString targetContact;
+    Conversation *conversation;
+};
+
+class MainLogModel : public QAbstractListModel, public Tp::AbstractClientHandler
 {
     Q_OBJECT
 
@@ -54,6 +62,7 @@ public:
     ~MainLogModel();
 
     virtual QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const Q_DECL_OVERRIDE;
+    virtual int rowCount(const QModelIndex &parent = QModelIndex()) const Q_DECL_OVERRIDE;
     virtual QHash<int, QByteArray> roleNames() const Q_DECL_OVERRIDE;
 
     Q_INVOKABLE void startChat(const QString &accountId, const QString &contactId);
@@ -73,11 +82,11 @@ private Q_SLOTS:
     void onConversationChanged();
 
 private:
-    QModelIndex indexForContact(const QString &accountObjectPath, const QString &contactId) const;
     void setupSignals(Conversation *conversation) const;
+    void processQueryResults(QSqlQuery query);
 
     QHash<QString, Conversation*> m_conversations; // This is a hash with keys "accountId + contactId"
-    QSqlQueryModel *m_dbModel;
+    QList<LogItem> m_logItems;
     QSqlQuery m_query;
     QSqlDatabase m_db;
     Tp::AccountManagerPtr m_accountManager;
