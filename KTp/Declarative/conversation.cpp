@@ -269,7 +269,7 @@ Conversation::~Conversation()
     delete d;
 }
 
-bool Conversation::hasUnreadMessages()
+bool Conversation::hasUnreadMessages() const
 {
     if (d->messages) {
         return d->messages->unreadCount() > 0;

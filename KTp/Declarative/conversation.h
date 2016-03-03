@@ -63,7 +63,7 @@ public:
     void setAccount(const Tp::AccountPtr &account);
     bool isValid();
 
-    bool hasUnreadMessages();
+    bool hasUnreadMessages() const;
 
 Q_SIGNALS:
     void validityChanged(bool isValid);
