@@ -124,6 +124,13 @@ void MessagesModel::setupChannelSignals(const Tp::TextChannelPtr &channel)
     connect(channel.data(),
             SIGNAL(pendingMessageRemoved(Tp::ReceivedMessage)),
             SLOT(onPendingMessageRemoved()));
+
+    connect(channel.data(), &Tp::TextChannel::messageReceived,
+            this, &MessagesModel::lastMessageChanged);
+    connect(channel.data(), &Tp::TextChannel::messageSent,
+            this, &MessagesModel::lastMessageChanged);
+    connect(channel.data(), &Tp::TextChannel::pendingMessageRemoved,
+            this, &MessagesModel::lastMessageChanged);
 }
 
 void MessagesModel::setTextChannel(const Tp::TextChannelPtr &channel)
@@ -182,6 +189,8 @@ void MessagesModel::onHistoryFetched(const QList<KTp::Message> &messages)
         endInsertRows();
     }
     d->logsLoaded = true;
+
+    Q_EMIT lastMessageChanged();
 }
 
 void MessagesModel::onMessageReceived(const Tp::ReceivedMessage &message)

@@ -66,6 +66,7 @@ Conversation::Conversation(const Tp::TextChannelPtr &channel,
 
     d->messages = new MessagesModel(account, this);
     connect(d->messages, &MessagesModel::unreadCountChanged, this, &Conversation::unreadMessagesChanged);
+    connect(d->messages, &MessagesModel::lastMessageChanged, this, &Conversation::lastMessageChanged);
     setTextChannel(channel);
 
     d->delegated = false;
@@ -86,6 +87,7 @@ void Conversation::setTextChannel(const Tp::TextChannelPtr &channel)
     if (!d->messages) {
         d->messages = new MessagesModel(d->account, this);
         connect(d->messages, &MessagesModel::unreadCountChanged, this, &Conversation::unreadMessagesChanged);
+        connect(d->messages, &MessagesModel::lastMessageChanged, this, &Conversation::lastMessageChanged);
     }
     if (d->messages->textChannel() != channel) {
         d->messages->setTextChannel(channel);
