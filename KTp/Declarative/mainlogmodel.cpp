@@ -121,18 +121,23 @@ QVariant MainLogModel::data(const QModelIndex &index, int role) const
         {
             Conversation *conversation = m_logItems.at(row).conversation;
             if (conversation == 0) {
-                if (role == MainLogModel::ConversationRole) {
-                    // This allows the model to just pass an empty Conversation to the conversation
-                    // page component, request a channel and when that channel is ready, pass that
-                    // to the Conversation, which will automatically fill the conversation page with the history.
-                    Conversation *conversation = new Conversation(const_cast<MainLogModel*>(this));
-                    const_cast<MainLogModel*>(this)->m_conversations.insert(m_logItems.at(row).accountObjectPath.mid(35) + m_logItems.at(row).targetContact, conversation);
-                    setupSignals(conversation);
+                // This allows the model to just pass an empty Conversation to the conversation
+                // page component, request a channel and when that channel is ready, pass that
+                // to the Conversation, which will automatically fill the conversation page with the history.
+                conversation = new Conversation(const_cast<MainLogModel*>(this));
+                const_cast<MainLogModel*>(this)->m_conversations.insert(m_logItems.at(row).accountObjectPath.mid(35) + m_logItems.at(row).targetContact, conversation);
+                setupSignals(conversation);
 
-                    LogItem &item = const_cast<MainLogModel*>(this)->m_logItems[row];
-                    item.conversation = conversation;
-                    return QVariant::fromValue(conversation);
-                } else if (role == MainLogModel::HasUnreadMessagesRole) {
+                LogItem &item = const_cast<MainLogModel*>(this)->m_logItems[row];
+                item.conversation = conversation;
+            }
+
+            if (role == MainLogModel::ConversationRole) {
+                return QVariant::fromValue(conversation);
+            }
+
+            if (!conversation->isValid()) {
+                if (role == MainLogModel::HasUnreadMessagesRole) {
                     return false;
                 } else if (role == MainLogModel::LastMessageDateRole) {
                     return m_logItems.at(row).messageDateTime;
@@ -140,9 +145,7 @@ QVariant MainLogModel::data(const QModelIndex &index, int role) const
                     return m_logItems.at(row).message;
                 }
             } else {
-                if (role == MainLogModel::ConversationRole) {
-                    return QVariant::fromValue(conversation);
-                } else if (role == MainLogModel::HasUnreadMessagesRole) {
+                if (role == MainLogModel::HasUnreadMessagesRole) {
                     return conversation->hasUnreadMessages();
                 } else if (role == MainLogModel::LastMessageDateRole) {
                     return conversation->messages()->lastMessageDateTime();
