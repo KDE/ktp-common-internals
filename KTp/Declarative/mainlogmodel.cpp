@@ -315,6 +315,7 @@ void MainLogModel::setupSignals(Conversation *conversation) const
     connect(conversation, &Conversation::presenceIconChanged, this, &MainLogModel::onConversationChanged);
     connect(conversation, &Conversation::titleChanged, this, &MainLogModel::onConversationChanged);
     connect(conversation, &Conversation::validityChanged, this, &MainLogModel::onConversationChanged);
+    connect(conversation, &Conversation::lastMessageChanged, this, &MainLogModel::onConversationChanged);
 }
 
 void MainLogModel::onConversationChanged()

@@ -89,6 +89,7 @@ class MessagesModel : public QAbstractListModel
   Q_SIGNALS:
     void visibleToUserChanged(bool visible);
     void unreadCountChanged(int unreadMesssagesCount);
+    void lastMessageChanged();
 
   public Q_SLOTS:
     void sendNewMessage(const QString &message);

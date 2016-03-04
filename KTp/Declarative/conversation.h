@@ -72,6 +72,7 @@ Q_SIGNALS:
     void presenceIconChanged();
     void conversationCloseRequested();
     void unreadMessagesChanged();
+    void lastMessageChanged();
 
 public Q_SLOTS:
     void delegateToProperClient();
