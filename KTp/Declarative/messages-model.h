@@ -88,12 +88,14 @@ class MessagesModel : public QAbstractListModel
     QString lastMessage() const;
     QDateTime lastMessageDateTime() const;
 
+
   Q_SIGNALS:
     void visibleToUserChanged(bool visible);
     void unreadCountChanged(int unreadMesssagesCount);
     void lastMessageChanged();
 
   public Q_SLOTS:
+    void fetchMoreHistory();
     void sendNewMessage(const QString &message);
 
   private Q_SLOTS:
