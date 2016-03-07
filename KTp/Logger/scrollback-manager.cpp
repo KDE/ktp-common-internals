@@ -89,6 +89,19 @@ void ScrollbackManager::setTextChannel(const Tp::AccountPtr &account, const Tp::
     }
 }
 
+void ScrollbackManager::setAccountAndContact(const Tp::AccountPtr &account, const QString &contactId, const QString &contactAlias)
+{
+    d->account = account;
+
+    if (d->account.isNull()) {
+        return;
+    }
+
+    d->contactEntity = KTp::LogEntity(Tp::HandleTypeContact,
+                                      contactId,
+                                      contactAlias);
+}
+
 void ScrollbackManager::setScrollbackLength(int n)
 {
     d->scrollbackLength = n;
@@ -106,15 +119,13 @@ void ScrollbackManager::fetchScrollback()
 
 void ScrollbackManager::fetchHistory(int n, const QString &fromMessageToken)
 {
-    if (n > 0 && !d->account.isNull() && !d->textChannel.isNull()) {
-        if (d->contactEntity.isValid()) {
-            d->fromMessageToken = fromMessageToken;
-            KTp::LogManager *manager = KTp::LogManager::instance();
-            KTp::PendingLoggerDates *dates = manager->queryDates(d->account, d->contactEntity);
-            connect(dates, SIGNAL(finished(KTp::PendingLoggerOperation*)),
-                    this, SLOT(onDatesFinished(KTp::PendingLoggerOperation*)));
-            return;
-        }
+    if (n > 0 && !d->account.isNull() && d->contactEntity.isValid()) {
+        d->fromMessageToken = fromMessageToken;
+        KTp::LogManager *manager = KTp::LogManager::instance();
+        KTp::PendingLoggerDates *dates = manager->queryDates(d->account, d->contactEntity);
+        connect(dates, SIGNAL(finished(KTp::PendingLoggerOperation*)),
+                this, SLOT(onDatesFinished(KTp::PendingLoggerOperation*)));
+        return;
     }
 
     //in all other cases finish immediately.

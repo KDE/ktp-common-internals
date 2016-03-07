@@ -40,6 +40,14 @@ public:
     void setTextChannel(const Tp::AccountPtr &account, const Tp::TextChannelPtr &textChannel);
 
     /**
+     * This is an alternative for setTextChannel() to allow for offline scrollback
+     *
+     * @param account The account of the contact
+     * @param contactId id of the contact for which the screollback is requested
+     */
+    void setAccountAndContact(const Tp::AccountPtr &account, const QString &contactId, const QString &contactAlias = QString());
+
+    /**
      * Sets amount of messages to be fetched via @p fetchScrollback()
      */
     void setScrollbackLength(int n);
