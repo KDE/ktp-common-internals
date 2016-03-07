@@ -74,6 +74,11 @@ class MessagesModel : public QAbstractListModel
     Tp::TextChannelPtr textChannel() const;
     void setTextChannel(const Tp::TextChannelPtr &channel);
 
+    /**
+     * Useful for offline history retrieving (as there's no text channel when offline)
+     */
+    void setContactData(const QString &contactId, const QString &contactAlias);
+
     bool isVisibleToUser() const;
     void setVisibleToUser(bool visible);
 

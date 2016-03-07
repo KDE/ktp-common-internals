@@ -133,6 +133,8 @@ QVariant MainLogModel::data(const QModelIndex &index, int role) const
             }
 
             if (role == MainLogModel::ConversationRole) {
+                conversation->setAccount(m_accountManager->accountForObjectPath(m_logItems.at(row).accountObjectPath));
+                conversation->setContactData(m_logItems.at(row).targetContact, data(index, MainLogModel::ContactDisplayNameRole).toString());
                 return QVariant::fromValue(conversation);
             }
 
