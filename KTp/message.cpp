@@ -214,3 +214,10 @@ KTp::Message::MessageDirection Message::direction() const
 {
     return d->direction;
 }
+
+bool KTp::Message::operator==(const KTp::Message &other) const
+{
+    return mainMessagePart() == other.mainMessagePart()
+        && time() == other.time()
+        && senderId() == other.senderId();
+}
