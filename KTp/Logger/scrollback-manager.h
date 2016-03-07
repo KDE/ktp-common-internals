@@ -53,8 +53,10 @@ public:
 
     /**
      * Fetches last @p n messages
+     * If @p fromMessageToken is specified, it fetches last @p n messages
+     * from the message with the given token
      */
-    void fetchHistory(int n);
+    void fetchHistory(int n, const QString &fromMessageToken = QString());
 
 Q_SIGNALS:
     void fetched(const QList<KTp::Message> &messages);

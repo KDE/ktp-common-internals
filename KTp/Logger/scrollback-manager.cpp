@@ -44,6 +44,9 @@ class ScrollbackManager::Private
     Tp::TextChannelPtr textChannel;
     KTp::LogEntity contactEntity;
     int scrollbackLength;
+    QList<QDate> datesCache;
+    QList<KTp::LogMessage> messagesCache;
+    QString fromMessageToken;
 };
 
 ScrollbackManager::ScrollbackManager(QObject *parent)
@@ -101,10 +104,11 @@ void ScrollbackManager::fetchScrollback()
     fetchHistory(d->scrollbackLength);
 }
 
-void ScrollbackManager::fetchHistory(int n)
+void ScrollbackManager::fetchHistory(int n, const QString &fromMessageToken)
 {
     if (n > 0 && !d->account.isNull() && !d->textChannel.isNull()) {
         if (d->contactEntity.isValid()) {
+            d->fromMessageToken = fromMessageToken;
             KTp::LogManager *manager = KTp::LogManager::instance();
             KTp::PendingLoggerDates *dates = manager->queryDates(d->account, d->contactEntity);
             connect(dates, SIGNAL(finished(KTp::PendingLoggerOperation*)),
@@ -133,9 +137,15 @@ void ScrollbackManager::onDatesFinished(KTp::PendingLoggerOperation* po)
         return;
     }
 
+
+    // Store all the fetched dates for later reusing
+    d->datesCache = dates;
+
+    // Request all logs for the last date in the datesCache and remove
+    // it from the cache
     KTp::LogManager *manager = KTp::LogManager::instance();
     KTp::PendingLoggerLogs *logs = manager->queryLogs(datesOp->account(), datesOp->entity(),
-                                                      dates.last());
+                                                      d->datesCache.takeLast());
     connect(logs, SIGNAL(finished(KTp::PendingLoggerOperation*)),
             this, SLOT(onEventsFinished(KTp::PendingLoggerOperation*)));
 }
@@ -155,10 +165,76 @@ void ScrollbackManager::onEventsFinished(KTp::PendingLoggerOperation *op)
             queuedMessageTokens.append(message.messageToken());
         }
     }
-    qCDebug(KTP_LOGGER) << "queuedMessageTokens" << queuedMessageTokens;
 
     // get last n (d->fetchLast) messages that are not queued
-    const QList<KTp::LogMessage> allMessages = logsOp->logs();
+    QList<KTp::LogMessage> allMessages = logsOp->logs();
+
+    // First of all check if the "fromMessageToken" was specified and if yes,
+    // then look if any message in the current fetched logs set
+    // contains the requested message that the logs should start from
+    // In case the token is empty, it compares message date and message body
+    if (!d->fromMessageToken.isEmpty()) {
+        int i = 0;
+        for (i = 0; i < allMessages.size(); i++) {
+            if (allMessages.at(i).token().isEmpty()) {
+                const QString token = allMessages.at(i).time().toString(Qt::ISODate) + allMessages.at(i).mainMessagePart();
+                if (token == d->fromMessageToken) {
+                    break;
+                }
+            } else {
+                if (allMessages.at(i).token() == d->fromMessageToken) {
+                    break;
+                }
+            }
+        }
+
+        // If the message with the "fromMessageToken" is in the current logs set,
+        // drop all the messages beyond the one with "fromMessageToken" as we don't
+        // care about those. If the message is not in this set, clear all the fetched
+        // messages set (the querying works backwards from the most recent dates; so
+        // if this set does not contain the message with the specified token, it will
+        // be in some older set and all these newer messages than the "fromMessageToken"
+        // message are useless)
+        if (i < allMessages.size()) {
+            allMessages = allMessages.mid(0, i);
+
+            // Clear the fromMessageToken to not break fetching more logs from history.
+            // For example: the current set has the requested-token message but has
+            // only 3 messages, so below it queries further in the history to fetch
+            // more messages. If the token would not be empty when the new request finishes,
+            // it would discard the fetched messages in the following else branch
+            // resulting in no messages being fetched
+            d->fromMessageToken.clear();
+        } else {
+            allMessages.clear();
+        }
+    }
+
+    // The messages are fetched backwards - the most recent
+    // date is fetched first, so take the messages from the previous
+    // dates and append them to the messages from the current date,
+    // that will sort them with newest dates first.
+    // This is useful only for the case below when the fetched messages
+    // are less than the requested scrollback length
+    allMessages.append(d->messagesCache);
+
+    // If the logs for the last date were too few, cache the
+    // retrieved messages and request logs from another date
+    if (allMessages.size() < d->scrollbackLength) {
+        // Only request more logs when there are more dates to query
+        if (!d->datesCache.isEmpty()) {
+            d->messagesCache = allMessages;
+
+            KTp::LogManager *manager = KTp::LogManager::instance();
+            KTp::PendingLoggerLogs *logs = manager->queryLogs(logsOp->account(), logsOp->entity(),
+                                                            d->datesCache.takeLast());
+            connect(logs, SIGNAL(finished(KTp::PendingLoggerOperation*)),
+                    this, SLOT(onEventsFinished(KTp::PendingLoggerOperation*)));
+
+            return;
+        }
+    }
+
     QList<KTp::Message> messages;
     const KTp::MessageContext ctx(d->account, d->textChannel);
     for (int i = qMax(allMessages.count() - d->scrollbackLength, 0) ; i < allMessages.count(); ++i) {
@@ -170,6 +246,8 @@ void ScrollbackManager::onEventsFinished(KTp::PendingLoggerOperation *op)
         messages << KTp::MessageProcessor::instance()->processIncomingMessage(message, ctx);
     }
 
-    qCDebug(KTP_LOGGER) << "emit all messages" << messages.count();
+    d->messagesCache.clear();
+    d->datesCache.clear();
+
     Q_EMIT fetched(messages);
 }
