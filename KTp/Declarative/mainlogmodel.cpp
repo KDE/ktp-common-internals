@@ -329,9 +329,29 @@ void MainLogModel::handleChannel(const Tp::AccountPtr &account, const Tp::TextCh
             }
         }
 
-        QModelIndex contactIndex = createIndex(i, 0);
-        if (contactIndex.isValid()) {
-            Q_EMIT dataChanged(contactIndex, contactIndex);
+        // No existing log item was found and it's a local request,
+        // do a model insert
+        if (i == m_logItems.size() && channel->isRequested()) {
+            LogItem item;
+            item.targetContact = contactId;
+            item.accountObjectPath = account->objectPath();
+
+            Conversation *conversation = new Conversation(this);
+            item.conversation = conversation;
+            setupSignals(conversation);
+            m_conversations.insert(accountId + contactId, conversation);
+
+            conversation->setAccount(account);
+            conversation->setTextChannel(channel);
+
+            beginInsertRows(QModelIndex(), m_logItems.size(), m_logItems.size());
+            m_logItems << item;
+            endInsertRows();
+        } else {
+            QModelIndex contactIndex = createIndex(i, 0);
+            if (contactIndex.isValid()) {
+                Q_EMIT dataChanged(contactIndex, contactIndex);
+            }
         }
     }
 }
