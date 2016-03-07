@@ -182,6 +182,22 @@ QHash<int, QByteArray> MainLogModel::roleNames() const
     return roles;
 }
 
+bool MainLogModel::canChat(const QString &accountId) const
+{
+    if (m_accountManager.isNull()) {
+        return false;
+    }
+
+    const QString objectPath = TP_QT_ACCOUNT_OBJECT_PATH_BASE + QLatin1Char('/') + accountId;
+    const Tp::AccountPtr account = m_accountManager->accountForObjectPath(objectPath);
+
+    if (account && account->currentPresence().type() != Tp::ConnectionPresenceTypeOffline) {
+        return true;
+    }
+
+    return false;
+}
+
 void MainLogModel::startChat(const QString &accountId, const QString &contactId)
 {
     const QString objectPath = TP_QT_ACCOUNT_OBJECT_PATH_BASE + QLatin1Char('/') + accountId;

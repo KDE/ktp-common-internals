@@ -65,6 +65,7 @@ public:
     virtual int rowCount(const QModelIndex &parent = QModelIndex()) const Q_DECL_OVERRIDE;
     virtual QHash<int, QByteArray> roleNames() const Q_DECL_OVERRIDE;
 
+    Q_INVOKABLE bool canChat(const QString &accountId) const;
     Q_INVOKABLE void startChat(const QString &accountId, const QString &contactId);
     Q_INVOKABLE void setAccountManager(const Tp::AccountManagerPtr &accountManager);
 
