@@ -161,6 +161,11 @@ QVariant MainLogModel::data(const QModelIndex &index, int role) const
     return QVariant();
 }
 
+QVariant MainLogModel::data(int index, QByteArray role) const
+{
+    return data(createIndex(index, 0), roleNames().key(role));
+}
+
 int MainLogModel::rowCount(const QModelIndex &parent) const
 {
     return m_logItems.size();

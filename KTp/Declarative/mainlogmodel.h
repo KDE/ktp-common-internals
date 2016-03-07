@@ -68,6 +68,7 @@ public:
     Q_INVOKABLE bool canChat(const QString &accountId) const;
     Q_INVOKABLE void startChat(const QString &accountId, const QString &contactId);
     Q_INVOKABLE void setAccountManager(const Tp::AccountManagerPtr &accountManager);
+    Q_INVOKABLE QVariant data(int index, QByteArray role) const;
 
     void handleChannels(const Tp::MethodInvocationContextPtr<> &context,
                         const Tp::AccountPtr &account,
