@@ -86,6 +86,8 @@ class MessagesModel : public QAbstractListModel
 
     QDateTime lastMessageDateTime() const;
 
+    Q_INVOKABLE void fetchMoreHistory();
+
   Q_SIGNALS:
     void visibleToUserChanged(bool visible);
     void unreadCountChanged(int unreadMesssagesCount);

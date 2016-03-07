@@ -170,16 +170,36 @@ void MessagesModel::setTextChannel(const Tp::TextChannelPtr &channel)
 
 void MessagesModel::onHistoryFetched(const QList<KTp::Message> &messages)
 {
-    if (!messages.isEmpty()) {
+    QList<KTp::Message> messagesToAdd;
+
+    // Make sure we're not adding duplicated messages to the model
+    if (d->messages.size() > 0) {
+        int i = 0;
+        for (i = 0; i < messages.size(); i++) {
+            if (messages.at(i) == d->messages.at(0).message) {
+                break;
+            }
+        }
+        messagesToAdd = messages.mid(0, i);
+    } else {
+        messagesToAdd = messages;
+    }
+
+    if (!messagesToAdd.isEmpty()) {
         //Add all messages before the ones already present in the channel
-        beginInsertRows(QModelIndex(), 0, messages.count() - 1);
-        for(int i=messages.size()-1;i>=0;i--) {
-            d->messages.prepend(messages[i]);
+        beginInsertRows(QModelIndex(), 0, messagesToAdd.count() - 1);
+        for (int i = messagesToAdd.size() - 1; i >= 0; i--) {
+            d->messages.prepend(messagesToAdd[i]);
         }
         endInsertRows();
     }
     d->logsLoaded = true;
 
+    // Emit changed for the first message after the prepended
+    // logs, to make sure the bubble shape is updated
+    // through PreviousMessageTypeRole
+    QModelIndex index = createIndex(messagesToAdd.count(), 0);
+    Q_EMIT dataChanged(index, index);
     Q_EMIT lastMessageChanged();
 }
 
@@ -422,4 +442,19 @@ QString MessagesModel::lastMessage() const
 QDateTime MessagesModel::lastMessageDateTime() const
 {
     return data(createIndex(rowCount() - 1, 0), MessagesModel::TimeRole).toDateTime();
+
+void MessagesModel::fetchMoreHistory()
+{
+    if (d->messages.isEmpty() || !d->logsLoaded) {
+        return;
+    }
+
+    d->logsLoaded = false;
+
+    const KTp::Message message = d->messages.at(0).message;
+
+    const QString token = message.token().isEmpty() ? message.time().toString(Qt::ISODate) + message.mainMessagePart()
+                                                    : message.token();
+    d->logManager->setScrollbackLength(10);
+    d->logManager->fetchHistory(rowCount() + 10, token);
 }
