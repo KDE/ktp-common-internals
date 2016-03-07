@@ -153,6 +153,8 @@ public:
 
     MessageDirection direction() const;
 
+    bool operator==(const KTp::Message &other) const;
+
 protected:
     class Private;
 
