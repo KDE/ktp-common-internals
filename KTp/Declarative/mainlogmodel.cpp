@@ -191,6 +191,11 @@ void MainLogModel::startChat(const QString &accountId, const QString &contactId)
         qWarning() << "Cannot get account for" << accountId;
     }
 
+    if (m_conversations.contains(accountId + contactId) && m_conversations.value(accountId + contactId)->isValid()) {
+        // We already have a conversation, don't request new channel
+        return;
+    }
+
     Tp::PendingChannel *pendingChannel = account->ensureAndHandleTextChat(contactId);
     connect(pendingChannel, &Tp::PendingChannel::finished, [=](Tp::PendingOperation *op) {
         if (op->isError()) {
