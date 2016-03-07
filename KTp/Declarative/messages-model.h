@@ -83,7 +83,6 @@ class MessagesModel : public QAbstractListModel
     bool shouldStartOpened() const;
 
     QString lastMessage() const;
-
     QDateTime lastMessageDateTime() const;
 
     Q_INVOKABLE void fetchMoreHistory();

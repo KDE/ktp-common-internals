@@ -436,12 +436,25 @@ bool MessagesModel::shouldStartOpened() const
 
 QString MessagesModel::lastMessage() const
 {
-    return data(createIndex(rowCount() - 1, 0), MessagesModel::TextRole).toString();
+    const QModelIndex index = createIndex(rowCount() - 1, 0);
+
+    if (!index.isValid()) {
+        return QString();
+    }
+
+    return data(index, MessagesModel::TextRole).toString();
 }
 
 QDateTime MessagesModel::lastMessageDateTime() const
 {
-    return data(createIndex(rowCount() - 1, 0), MessagesModel::TimeRole).toDateTime();
+    const QModelIndex index = createIndex(rowCount() - 1, 0);
+
+    if (!index.isValid()) {
+        return QDateTime();
+    }
+
+    return data(index, MessagesModel::TimeRole).toDateTime();
+}
 
 void MessagesModel::fetchMoreHistory()
 {
