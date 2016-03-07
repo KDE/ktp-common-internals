@@ -104,7 +104,7 @@ QVariant MainLogModel::data(const QModelIndex &index, int role) const
             }
 
             // TODO: Cache this or something
-            const KPeople::PersonData person(contactId);
+            const KPeople::PersonData person(QStringLiteral("ktp://") + m_logItems.at(row).accountObjectPath.mid(35) + QStringLiteral("?") + contactId);
 
             if (role == MainLogModel::PersonUriRole) {
                 return person.personUri();
