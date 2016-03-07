@@ -37,7 +37,7 @@ class Conversation : public QObject
     Q_PROPERTY(QString title READ title NOTIFY titleChanged)
     Q_PROPERTY(QIcon presenceIcon READ presenceIcon NOTIFY presenceIconChanged)
     Q_PROPERTY(QIcon avatar READ avatar NOTIFY avatarChanged)
-    Q_PROPERTY(Tp::AccountPtr account READ account CONSTANT)
+    Q_PROPERTY(Tp::Account *account READ accountObject CONSTANT)
     Q_PROPERTY(KTp::ContactPtr targetContact READ targetContact CONSTANT)
     Q_PROPERTY(bool hasUnreadMessages READ hasUnreadMessages NOTIFY unreadMessagesChanged)
 
@@ -64,6 +64,7 @@ public:
      */
     KTp::ContactPtr targetContact() const;
     Tp::AccountPtr account() const;
+    Tp::Account* accountObject() const;
 
     void setAccount(const Tp::AccountPtr &account);
     bool isValid();
