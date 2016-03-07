@@ -79,7 +79,6 @@ Conversation::Conversation(QObject *parent)
     : QObject(parent),
       d(new ConversationPrivate)
 {
-    qCCritical(KTP_DECLARATIVE) << "Conversation should not be created directly. Use ConversationWatcher instead.";
 }
 
 void Conversation::setTextChannel(const Tp::TextChannelPtr& channel)
