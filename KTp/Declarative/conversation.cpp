@@ -177,6 +177,15 @@ Tp::AccountPtr Conversation::account() const
     return d->account;
 }
 
+Tp::Account* Conversation::accountObject() const
+{
+    if (!d->account.isNull()) {
+        return d->account.data();
+    }
+
+    return 0;
+}
+
 void Conversation::setAccount(const Tp::AccountPtr &account)
 {
     d->account = account;
