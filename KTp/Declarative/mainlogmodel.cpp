@@ -50,6 +50,14 @@ MainLogModel::MainLogModel(QObject *parent)
 {
     const QString dbLocation = QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation) + QStringLiteral("/ktp-mobile-logger/");
 
+    connect(qApp, &QCoreApplication::aboutToQuit, this, [=]() {
+        Q_FOREACH (Conversation *c, m_conversations.values()) {
+            if (!c->textChannel().isNull()) {
+                c->textChannel()->requestClose();
+            }
+        }
+    });
+
     m_db = QSqlDatabase::addDatabase(QStringLiteral("QSQLITE"), QStringLiteral("logger-db"));
     m_db.setDatabaseName(dbLocation + QStringLiteral("history.db3"));
     qDebug() << dbLocation << m_db.open();
