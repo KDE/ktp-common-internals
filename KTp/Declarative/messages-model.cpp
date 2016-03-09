@@ -422,6 +422,10 @@ int MessagesModel::unreadCount() const
 
 void MessagesModel::acknowledgeAllMessages()
 {
+    if (d->textChannel.isNull()) {
+        return;
+    }
+
     QList<Tp::ReceivedMessage> queue = d->textChannel->messageQueue();
 
     d->textChannel->acknowledge(queue);
