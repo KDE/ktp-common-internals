@@ -77,7 +77,7 @@ MessagesModel::MessagesModel(const Tp::AccountPtr &account, QObject *parent) :
     //Load configuration for number of message to show
     KConfig config(QLatin1String("ktelepathyrc"));
     KConfigGroup tabConfig = config.group("Behavior");
-    d->logManager->setScrollbackLength(tabConfig.readEntry<int>("scrollbackLength", 10));
+    d->logManager->setScrollbackLength(tabConfig.readEntry<int>("scrollbackLength", 20));
 }
 
 QHash<int, QByteArray> MessagesModel::roleNames() const
