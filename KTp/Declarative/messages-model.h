@@ -74,6 +74,9 @@ class MessagesModel : public QAbstractListModel
     Tp::TextChannelPtr textChannel() const;
     void setTextChannel(const Tp::TextChannelPtr &channel);
 
+    Tp::AccountPtr account() const;
+    void setAccount(const Tp::AccountPtr &account);
+
     bool isVisibleToUser() const;
     void setVisibleToUser(bool visible);
 

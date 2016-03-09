@@ -161,6 +161,16 @@ void MessagesModel::setTextChannel(const Tp::TextChannelPtr &channel)
     }
 }
 
+Tp::AccountPtr MessagesModel::account() const
+{
+    return d->account;
+}
+
+void MessagesModel::setAccount(const Tp::AccountPtr &account)
+{
+    d->account = account;
+}
+
 void MessagesModel::onHistoryFetched(const QList<KTp::Message> &messages)
 {
     if (!messages.isEmpty()) {
