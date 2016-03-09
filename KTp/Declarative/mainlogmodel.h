@@ -24,6 +24,8 @@
 #include <QSqlQuery>
 
 #include <TelepathyQt/AbstractClientHandler>
+#include <TelepathyQt/AbstractClientObserver>
+#include <TelepathyQt/ChannelDispatchOperation>
 
 #include <KTp/persistent-contact.h>
 #include <KTp/types.h>
@@ -39,7 +41,7 @@ public:
     Conversation *conversation;
 };
 
-class MainLogModel : public QAbstractListModel, public Tp::AbstractClientHandler
+class MainLogModel : public QAbstractListModel, public Tp::AbstractClientHandler, public Tp::AbstractClientObserver
 {
     Q_OBJECT
 
@@ -77,6 +79,15 @@ public:
                         const QList<Tp::ChannelRequestPtr> &channelRequests,
                         const QDateTime &userActionTime,
                         const HandlerInfo &handlerInfo);
+
+    void observeChannels(const Tp::MethodInvocationContextPtr<> &context,
+                         const Tp::AccountPtr &account,
+                         const Tp::ConnectionPtr &connection,
+                         const QList<Tp::ChannelPtr> &channels,
+                         const Tp::ChannelDispatchOperationPtr &dispatchOperation,
+                         const QList<Tp::ChannelRequestPtr> &requestsSatisfied,
+                         const Tp::AbstractClientObserver::ObserverInfo &observerInfo);
+
     bool bypassApproval() const;
 
 private Q_SLOTS:
@@ -93,5 +104,7 @@ private:
     QSqlDatabase m_db;
     Tp::AccountManagerPtr m_accountManager;
 };
+
+Q_DECLARE_METATYPE(Tp::ChannelDispatchOperationPtr)
 
 #endif

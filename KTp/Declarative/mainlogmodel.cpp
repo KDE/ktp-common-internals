@@ -45,7 +45,8 @@ static inline Tp::ChannelClassSpecList channelClassList()
 
 MainLogModel::MainLogModel(QObject *parent)
     : QAbstractListModel(parent),
-      Tp::AbstractClientHandler(channelClassList())
+      Tp::AbstractClientHandler(channelClassList()),
+      Tp::AbstractClientObserver(channelClassList(), true)
 {
     const QString dbLocation = QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation) + QStringLiteral("/ktp-mobile-logger/");
 
@@ -196,7 +197,7 @@ bool MainLogModel::canChat(const QString &accountId) const
     const QString objectPath = TP_QT_ACCOUNT_OBJECT_PATH_BASE + QLatin1Char('/') + accountId;
     const Tp::AccountPtr account = m_accountManager->accountForObjectPath(objectPath);
 
-    if (account && account->currentPresence().type() != Tp::ConnectionPresenceTypeOffline) {
+    if (!account.isNull() && account->currentPresence().type() != Tp::ConnectionPresenceTypeOffline) {
         return true;
     }
 
@@ -213,6 +214,11 @@ void MainLogModel::startChat(const QString &accountId, const QString &contactId)
     }
 
     if (m_conversations.contains(accountId + contactId) && m_conversations.value(accountId + contactId)->isValid()) {
+        Tp::ChannelDispatchOperationPtr dispatch = m_conversations.value(accountId + contactId)->textChannel().data()->property("dispatchOperation").value<Tp::ChannelDispatchOperationPtr>();
+
+        if (!dispatch.isNull()) {
+            dispatch->claim();
+        }
         // We already have a conversation, don't request new channel
         return;
     }
@@ -294,6 +300,28 @@ void MainLogModel::handleChannels(const Tp::MethodInvocationContextPtr<> &contex
 
     handleChannel(account, textChannel);
     context->setFinished();
+}
+
+void MainLogModel::observeChannels(const Tp::MethodInvocationContextPtr<> &context,
+                                   const Tp::AccountPtr &account,
+                                   const Tp::ConnectionPtr &connection,
+                                   const QList<Tp::ChannelPtr> &channels,
+                                   const Tp::ChannelDispatchOperationPtr &dispatchOperation,
+                                   const QList<Tp::ChannelRequestPtr> &requestsSatisfied,
+                                   const Tp::AbstractClientObserver::ObserverInfo &observerInfo)
+{
+    Q_UNUSED(context)
+    Q_UNUSED(connection)
+    Q_UNUSED(requestsSatisfied)
+    Q_UNUSED(observerInfo)
+
+    Q_FOREACH(const Tp::ChannelPtr &channel, channels) {
+        Tp::TextChannelPtr textChannel = Tp::TextChannelPtr::dynamicCast(channel);
+        if (textChannel) {
+            textChannel.data()->setProperty("dispatchOperation", QVariant::fromValue(dispatchOperation));
+            handleChannel(account, textChannel);
+        }
+    }
 }
 
 bool MainLogModel::bypassApproval() const
