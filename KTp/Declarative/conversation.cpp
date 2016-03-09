@@ -80,6 +80,9 @@ Conversation::Conversation(QObject *parent)
     : QObject(parent),
       d(new ConversationPrivate)
 {
+    d->messages = new MessagesModel(Tp::AccountPtr(), this);
+    connect(d->messages, &MessagesModel::unreadCountChanged, this, &Conversation::unreadMessagesChanged);
+    connect(d->messages, &MessagesModel::lastMessageChanged, this, &Conversation::lastMessageChanged);
 }
 
 void Conversation::setTextChannel(const Tp::TextChannelPtr &channel)
