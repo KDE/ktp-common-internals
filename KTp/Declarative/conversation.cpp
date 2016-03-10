@@ -233,8 +233,9 @@ void Conversation::requestClose()
 {
     qCDebug(KTP_DECLARATIVE);
 
-    //removing from the model will delete this object closing the channel
-    Q_EMIT conversationCloseRequested();
+    if (!d->messages->textChannel().isNull()) {
+        d->messages->textChannel()->requestClose();
+    }
 }
 
 void Conversation::updateTextChanged(const QString &message)
