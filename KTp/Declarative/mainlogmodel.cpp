@@ -369,9 +369,11 @@ void MainLogModel::handleChannel(const Tp::AccountPtr &account, const Tp::TextCh
             }
         }
 
+        QModelIndex contactIndex = createIndex(i, 0);
+
         // No existing log item was found and it's a local request,
         // do a model insert
-        if (i == m_logItems.size() && channel->isRequested()) {
+        if (i == m_logItems.size()) {
             LogItem item;
             item.targetContact = contactId;
             item.accountObjectPath = account->objectPath();
@@ -388,10 +390,13 @@ void MainLogModel::handleChannel(const Tp::AccountPtr &account, const Tp::TextCh
             m_logItems << item;
             endInsertRows();
         } else {
-            QModelIndex contactIndex = createIndex(i, 0);
             if (contactIndex.isValid()) {
                 Q_EMIT dataChanged(contactIndex, contactIndex);
             }
+        }
+
+        if (channel->isRequested()) {
+            Q_EMIT newRequestedChannel(contactIndex);
         }
     }
 }

@@ -90,6 +90,9 @@ public:
 
     bool bypassApproval() const;
 
+Q_SIGNALS:
+    void newRequestedChannel(const QModelIndex &index);
+
 private Q_SLOTS:
     void handleChannel(const Tp::AccountPtr &account, const Tp::TextChannelPtr &channel);
     void onConversationChanged();
