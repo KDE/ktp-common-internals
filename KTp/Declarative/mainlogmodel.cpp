@@ -221,14 +221,18 @@ void MainLogModel::startChat(const QString &accountId, const QString &contactId)
         qWarning() << "Cannot get account for" << accountId;
     }
 
-    if (m_conversations.contains(accountId + contactId) && m_conversations.value(accountId + contactId)->isValid()) {
-        Tp::ChannelDispatchOperationPtr dispatch = m_conversations.value(accountId + contactId)->textChannel().data()->property("dispatchOperation").value<Tp::ChannelDispatchOperationPtr>();
+    if (m_conversations.contains(accountId + contactId)) {
+        Conversation *conversation = m_conversations.value(accountId + contactId);
+        if (conversation->isValid() && !conversation->textChannel().isNull()) {
+            Tp::ChannelDispatchOperationPtr dispatch = conversation->textChannel().data()->property("dispatchOperation").value<Tp::ChannelDispatchOperationPtr>();
 
-        if (!dispatch.isNull()) {
-            dispatch->claim();
+            if (!dispatch.isNull()) {
+                // Claim the channel that is being observed
+                dispatch->claim();
+            }
+            // We already have a conversation, don't request new channel
+            return;
         }
-        // We already have a conversation, don't request new channel
-        return;
     }
 
     Tp::PendingChannel *pendingChannel = account->ensureAndHandleTextChat(contactId);
