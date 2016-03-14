@@ -435,7 +435,7 @@ QString MessagesModel::lastMessage() const
         return QString();
     }
 
-    return data(index, MessagesModel::TextRole).toString();
+    return data(index, MessagesModel::TextRole).toString().simplified();
 }
 
 QDateTime MessagesModel::lastMessageDateTime() const
