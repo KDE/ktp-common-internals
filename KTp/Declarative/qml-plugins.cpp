@@ -55,7 +55,6 @@ void QmlPlugins::registerTypes(const char *uri)
     qmlRegisterType<KTp::AccountsListModel> (uri, 0, 1, "AccountsListModel");
 
     qmlRegisterType<ConversationsModel> (uri, 0, 1, "ConversationsModel");
-    qmlRegisterType<Conversation>(uri, 0, 1, "Conversation");
     qmlRegisterType<PinnedContactsModel>(uri, 0, 1, "PinnedContactsModel");
     qmlRegisterType<ContactPin>(uri, 0, 1, "ContactPin");
     qmlRegisterType<FilteredPinnedContactsProxyModel>(uri, 0, 1, "FilteredPinnedContactsProxyModel");
@@ -67,7 +66,8 @@ void QmlPlugins::registerTypes(const char *uri)
         QLatin1String("It will be created once the conversation is created"));
 
     qmlRegisterType<TelepathyManager>();
-    qmlRegisterType<ConversationsModel>();
+    qmlRegisterUncreatableType<ConversationsModel>(uri, 0, 1, "Conversation",
+        QStringLiteral("Conversation type cannot be created from QML"));
     qmlRegisterType<Tp::PendingChannelRequest>();
     qmlRegisterType<Tp::PendingOperation>();
     qRegisterMetaType<Tp::Presence>();

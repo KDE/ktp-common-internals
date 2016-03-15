@@ -46,9 +46,9 @@ class Conversation::ConversationPrivate
     //and not handling it.
     bool delegated;
     bool valid;
-    QString contactAlias;
     Tp::AccountPtr account;
     QTimer *pausedStateTimer;
+    KPeople::PersonData *personData;
     // May be null for group chats.
     KTp::ContactPtr targetContact;
     bool isGroupChat;
@@ -61,6 +61,8 @@ Conversation::Conversation(const Tp::TextChannelPtr &channel,
         d (new ConversationPrivate)
 {
     qCDebug(KTP_DECLARATIVE);
+    d->valid = false;
+    d->isGroupChat = false;
 
     d->account = account;
     connect(d->account.data(), SIGNAL(connectionChanged(Tp::ConnectionPtr)), SLOT(onAccountConnectionChanged(Tp::ConnectionPtr)));
@@ -77,13 +79,26 @@ Conversation::Conversation(const Tp::TextChannelPtr &channel,
     connect(d->pausedStateTimer, SIGNAL(timeout()), this, SLOT(onChatPausedTimerExpired()));
 }
 
-Conversation::Conversation(QObject *parent)
+Conversation::Conversation(const QString &contactId,
+                           const Tp::AccountPtr &account,
+                           QObject *parent)
     : QObject(parent),
       d(new ConversationPrivate)
 {
-    d->messages = new MessagesModel(Tp::AccountPtr(), this);
+    d->valid = true;
+    d->isGroupChat = false;
+    d->account = account;
+    d->personData = new KPeople::PersonData(QStringLiteral("ktp://") + d->account->objectPath().mid(35) + QStringLiteral("?") + contactId);
+
+    d->messages = new MessagesModel(account, this);
     connect(d->messages, &MessagesModel::unreadCountChanged, this, &Conversation::unreadMessagesChanged);
     connect(d->messages, &MessagesModel::lastMessageChanged, this, &Conversation::lastMessageChanged);
+    d->messages->setContactData(contactId, d->personData->name());
+
+    Q_EMIT avatarChanged();
+    Q_EMIT titleChanged();
+    Q_EMIT presenceIconChanged();
+    Q_EMIT validityChanged(d->valid);
 }
 
 void Conversation::setTextChannel(const Tp::TextChannelPtr &channel)
@@ -102,6 +117,7 @@ void Conversation::setTextChannel(const Tp::TextChannelPtr &channel)
         } else {
             d->isGroupChat = false;
             d->targetContact = KTp::ContactPtr::qObjectCast(channel->targetContact());
+            d->personData = new KPeople::PersonData(QStringLiteral("ktp://") + d->account->objectPath().mid(35) + QStringLiteral("?") + d->targetContact->id());
 
             connect(d->targetContact.constData(), SIGNAL(aliasChanged(QString)), SIGNAL(titleChanged()));
             connect(d->targetContact.constData(), SIGNAL(presenceChanged(Tp::Presence)), SIGNAL(presenceIconChanged()));
@@ -113,20 +129,6 @@ void Conversation::setTextChannel(const Tp::TextChannelPtr &channel)
         Q_EMIT presenceIconChanged();
         Q_EMIT validityChanged(d->valid);
     }
-}
-
-void Conversation::setContactData(const QString &contactId, const QString &contactAlias)
-{
-    if (!d->messages) {
-        qWarning() << "Needs messages model first!";
-        return;
-    }
-
-    qDebug() << "Setting contact data";
-    d->contactAlias = contactAlias;
-    d->messages->setContactData(contactId, contactAlias);
-
-    Q_EMIT titleChanged();
 }
 
 Tp::TextChannelPtr Conversation::textChannel() const
@@ -144,11 +146,9 @@ QString Conversation::title() const
     if (d->isGroupChat) {
         QString roomName = textChannel()->targetId();
         return roomName.left(roomName.indexOf(QLatin1Char('@')));
-    } else if (!d->targetContact.isNull()) {
-        return d->targetContact->alias();
+    } else {
+        return d->personData->name();
     }
-
-    return d->contactAlias;
 }
 
 QIcon Conversation::presenceIcon() const
@@ -200,12 +200,6 @@ Tp::Account* Conversation::accountObject() const
     }
 
     return 0;
-}
-
-void Conversation::setAccount(const Tp::AccountPtr &account)
-{
-    d->messages->setAccount(account);
-    d->account = account;
 }
 
 bool Conversation::isValid() const
@@ -305,4 +299,9 @@ bool Conversation::hasUnreadMessages() const
     }
 
     return false;
+}
+
+KPeople::PersonData* Conversation::personData() const
+{
+    return d->personData;
 }
