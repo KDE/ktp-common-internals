@@ -103,30 +103,16 @@ QVariant MainLogModel::data(const QModelIndex &index, int role) const
     const int row = index.row();
 
     switch (role) {
-        case MainLogModel::ContactDisplayNameRole:
         case MainLogModel::ContactIdRole:
-        case MainLogModel::PersonUriRole:
-        {
-            const QString contactId = m_logItems.at(row).targetContact;
-            if (role == MainLogModel::ContactIdRole) {
-                return contactId;
-            }
-
-            // TODO: Cache this or something
-            const KPeople::PersonData person(QStringLiteral("ktp://") + m_logItems.at(row).accountObjectPath.mid(35) + QStringLiteral("?") + contactId);
-
-            if (role == MainLogModel::PersonUriRole) {
-                return person.personUri();
-            } else if (role == MainLogModel::ContactDisplayNameRole) {
-                return person.name();
-            }
-        }
+            return m_logItems.at(row).targetContact;
         case MainLogModel::AccountIdRole:
             return m_logItems.at(row).accountObjectPath.mid(35);
         case MainLogModel::LastMessageDateRole:
         case MainLogModel::LastMessageTextRole:
         case MainLogModel::ConversationRole:
         case MainLogModel::HasUnreadMessagesRole:
+        case MainLogModel::ContactDisplayNameRole:
+        case MainLogModel::PersonUriRole:
         {
             Conversation *conversation = m_logItems.at(row).conversation;
             if (conversation == 0) {
@@ -145,6 +131,18 @@ QVariant MainLogModel::data(const QModelIndex &index, int role) const
                 conversation->setAccount(m_accountManager->accountForObjectPath(m_logItems.at(row).accountObjectPath));
                 conversation->setContactData(m_logItems.at(row).targetContact, data(index, MainLogModel::ContactDisplayNameRole).toString());
                 return QVariant::fromValue(conversation);
+            }
+
+            if (!conversation->personData()->isValid()) {
+                if (role == MainLogModel::PersonUriRole || role == MainLogModel::ContactDisplayNameRole) {
+                    return QVariant();
+                }
+            } else {
+                if (role == MainLogModel::PersonUriRole) {
+                    return conversation->personData()->personUri();
+                } else if (role == MainLogModel::ContactDisplayNameRole) {
+                    return conversation->personData()->name();
+                }
             }
 
             if (!conversation->isValid()) {

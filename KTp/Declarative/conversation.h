@@ -25,6 +25,8 @@
 #include <TelepathyQt/Account>
 #include <TelepathyQt/TextChannel>
 
+#include <KPeople/PersonData>
+
 #include "messages-model.h"
 
 class MessagesModel;
@@ -39,6 +41,7 @@ class Conversation : public QObject
     Q_PROPERTY(QIcon avatar READ avatar NOTIFY avatarChanged)
     Q_PROPERTY(Tp::Account *account READ accountObject CONSTANT)
     Q_PROPERTY(KTp::ContactPtr targetContact READ targetContact CONSTANT)
+    Q_PROPERTY(KPeople::PersonData *personData READ personData NOTIFY personDataChanged)
     Q_PROPERTY(bool hasUnreadMessages READ hasUnreadMessages NOTIFY unreadMessagesChanged)
 
 public:
@@ -66,6 +69,8 @@ public:
     Tp::AccountPtr account() const;
     Tp::Account* accountObject() const;
 
+    KPeople::PersonData* personData() const;
+
     void setAccount(const Tp::AccountPtr &account);
     bool isValid();
 
@@ -79,6 +84,7 @@ Q_SIGNALS:
     void conversationCloseRequested();
     void unreadMessagesChanged();
     void lastMessageChanged();
+    void personDataChanged();
 
 public Q_SLOTS:
     void delegateToProperClient();
