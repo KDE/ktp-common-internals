@@ -193,7 +193,7 @@ Tp::Account* Conversation::accountObject() const
     return 0;
 }
 
-bool Conversation::isValid()
+bool Conversation::isValid() const
 {
     return d->valid;
 }

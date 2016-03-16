@@ -72,7 +72,7 @@ public:
     KPeople::PersonData* personData() const;
 
     void setAccount(const Tp::AccountPtr &account);
-    bool isValid();
+    bool isValid() const;
 
     bool hasUnreadMessages() const;
 
