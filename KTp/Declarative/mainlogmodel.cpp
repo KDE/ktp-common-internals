@@ -69,7 +69,9 @@ MainLogModel::MainLogModel(QObject *parent)
                         m_db);
 
     m_query.exec();
-    processQueryResults(m_query);
+
+    // The query results are processed as soon as AccountManager
+    // is passsed to MainLogModel
 }
 
 MainLogModel::~MainLogModel()
@@ -85,7 +87,12 @@ void MainLogModel::processQueryResults(QSqlQuery query)
         item.message = query.value(QStringLiteral("message")).toString();
         item.accountObjectPath = query.value(QStringLiteral("accountObjectPath")).toString();
         item.targetContact = query.value(QStringLiteral("targetContact")).toString();
-        item.conversation = 0;
+
+        const QString accountObjectPath = item.accountObjectPath.mid(35);
+        item.conversation = new Conversation(item.targetContact, m_accountManager->accountForObjectPath(item.accountObjectPath), this);
+
+        m_conversations.insert(accountObjectPath + item.targetContact, item.conversation);
+        setupSignals(item.conversation);
 
         //TODO: This might be more effective to insert at once?
         beginInsertRows(QModelIndex(), rowCount(), rowCount());
@@ -114,24 +121,11 @@ QVariant MainLogModel::data(const QModelIndex &index, int role) const
         case MainLogModel::ContactDisplayNameRole:
         case MainLogModel::PersonUriRole:
         {
-            Conversation *conversation = m_logItems.at(row).conversation;
-            if (conversation == 0) {
-                // This allows the model to just pass an empty Conversation to the conversation
-                // page component, request a channel and when that channel is ready, pass that
-                // to the Conversation, which will automatically fill the conversation page with the history.
-                conversation = new Conversation(const_cast<MainLogModel*>(this));
-                const_cast<MainLogModel*>(this)->m_conversations.insert(m_logItems.at(row).accountObjectPath.mid(35) + m_logItems.at(row).targetContact, conversation);
-                setupSignals(conversation);
-
-                LogItem &item = const_cast<MainLogModel*>(this)->m_logItems[row];
-                item.conversation = conversation;
-            }
-
             if (role == MainLogModel::ConversationRole) {
-                conversation->setAccount(m_accountManager->accountForObjectPath(m_logItems.at(row).accountObjectPath));
-                conversation->setContactData(m_logItems.at(row).targetContact, data(index, MainLogModel::ContactDisplayNameRole).toString());
-                return QVariant::fromValue(conversation);
+                return QVariant::fromValue(m_logItems.at(row).conversation);
             }
+
+            const Conversation *conversation = m_logItems.at(row).conversation;
 
             if (!conversation->personData()->isValid()) {
                 if (role == MainLogModel::PersonUriRole || role == MainLogModel::ContactDisplayNameRole) {
@@ -251,6 +245,8 @@ void MainLogModel::startChat(const QString &accountId, const QString &contactId)
 void MainLogModel::setAccountManager(const Tp::AccountManagerPtr &accountManager)
 {
     m_accountManager = accountManager;
+
+    processQueryResults(m_query);
 }
 
 void MainLogModel::handleChannels(const Tp::MethodInvocationContextPtr<> &context,
@@ -350,19 +346,7 @@ void MainLogModel::handleChannel(const Tp::AccountPtr &account, const Tp::TextCh
         for (i = 0; i < m_logItems.size(); i++) {
             LogItem &item = m_logItems[i];
             if (item.targetContact == contactId && item.accountObjectPath == account->objectPath()) {
-                if (item.conversation) {
-                    item.conversation->setAccount(account);
-                    item.conversation->setTextChannel(channel);
-                } else {
-                    Conversation *conversation = new Conversation(this);
-                    item.conversation = conversation;
-                    setupSignals(conversation);
-                    m_conversations.insert(accountId + contactId, conversation);
-
-                    conversation->setAccount(account);
-                    conversation->setTextChannel(channel);
-                }
-
+                item.conversation->setTextChannel(channel);
                 break;
             }
         }
@@ -376,12 +360,11 @@ void MainLogModel::handleChannel(const Tp::AccountPtr &account, const Tp::TextCh
             item.targetContact = contactId;
             item.accountObjectPath = account->objectPath();
 
-            Conversation *conversation = new Conversation(this);
+            Conversation *conversation = new Conversation(contactId, account, this);
             item.conversation = conversation;
             setupSignals(conversation);
             m_conversations.insert(accountId + contactId, conversation);
 
-            conversation->setAccount(account);
             conversation->setTextChannel(channel);
 
             beginInsertRows(QModelIndex(), m_logItems.size(), m_logItems.size());

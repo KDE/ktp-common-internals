@@ -32,25 +32,11 @@
 class Conversation::ConversationPrivate
 {
   public:
-      ConversationPrivate()
-      {
-          messages = 0;
-          delegated = false;
-          valid = false;
-          isGroupChat = false;
-          contactAlias = QString();
-
-          // Construct empty/invalid PersonData
-          personData = new KPeople::PersonData(QString());
-      }
-
     MessagesModel *messages;
     //stores if the conversation has been delegated to another client and we are only observing the channel
     //and not handling it.
     bool delegated;
     bool valid;
-    QString contactId;
-    QString contactAlias;
     Tp::AccountPtr account;
     QTimer *pausedStateTimer;
     KPeople::PersonData *personData;
@@ -66,6 +52,8 @@ Conversation::Conversation(const Tp::TextChannelPtr &channel,
         d (new ConversationPrivate)
 {
     qCDebug(KTP_DECLARATIVE);
+    d->valid = false;
+    d->isGroupChat = false;
 
     d->account = account;
     connect(d->account.data(), SIGNAL(connectionChanged(Tp::ConnectionPtr)), SLOT(onAccountConnectionChanged(Tp::ConnectionPtr)));
@@ -82,13 +70,26 @@ Conversation::Conversation(const Tp::TextChannelPtr &channel,
     connect(d->pausedStateTimer, SIGNAL(timeout()), this, SLOT(onChatPausedTimerExpired()));
 }
 
-Conversation::Conversation(QObject *parent)
+Conversation::Conversation(const QString &contactId,
+                           const Tp::AccountPtr &account,
+                           QObject *parent)
     : QObject(parent),
       d(new ConversationPrivate)
 {
-    d->messages = new MessagesModel(Tp::AccountPtr(), this);
+    d->valid = true;
+    d->isGroupChat = false;
+    d->account = account;
+    d->personData = new KPeople::PersonData(QStringLiteral("ktp://") + d->account->objectPath().mid(35) + QStringLiteral("?") + contactId);
+
+    d->messages = new MessagesModel(account, this);
     connect(d->messages, &MessagesModel::unreadCountChanged, this, &Conversation::unreadMessagesChanged);
     connect(d->messages, &MessagesModel::lastMessageChanged, this, &Conversation::lastMessageChanged);
+    d->messages->setContactData(contactId, d->personData->name());
+
+    Q_EMIT avatarChanged();
+    Q_EMIT titleChanged();
+    Q_EMIT presenceIconChanged();
+    Q_EMIT validityChanged(d->valid);
 }
 
 void Conversation::setTextChannel(const Tp::TextChannelPtr &channel)
@@ -107,9 +108,7 @@ void Conversation::setTextChannel(const Tp::TextChannelPtr &channel)
         } else {
             d->isGroupChat = false;
             d->targetContact = KTp::ContactPtr::qObjectCast(channel->targetContact());
-            if (!d->personData->isValid()) {
-                d->personData = new KPeople::PersonData(QStringLiteral("ktp://") + d->account->objectPath() + QStringLiteral("?") + d->targetContact->id());
-            }
+            d->personData = new KPeople::PersonData(QStringLiteral("ktp://") + d->account->objectPath().mid(35) + QStringLiteral("?") + d->targetContact->id());
 
             connect(d->targetContact.constData(), SIGNAL(aliasChanged(QString)), SIGNAL(titleChanged()));
             connect(d->targetContact.constData(), SIGNAL(presenceChanged(Tp::Presence)), SIGNAL(presenceIconChanged()));
@@ -120,30 +119,6 @@ void Conversation::setTextChannel(const Tp::TextChannelPtr &channel)
         Q_EMIT titleChanged();
         Q_EMIT presenceIconChanged();
         Q_EMIT validityChanged(d->valid);
-        Q_EMIT personDataChanged();
-    }
-}
-
-void Conversation::setContactData(const QString &contactId, const QString &contactAlias)
-{
-    if (!d->messages) {
-        qWarning() << "Needs messages model first!";
-        return;
-    }
-
-    qDebug() << "Setting contact data";
-    d->contactAlias = contactAlias;
-    d->contactId = contactId;
-    d->messages->setContactData(contactId, contactAlias);
-
-    Q_EMIT titleChanged();
-
-    // If no PersonData yet and a non-null account is set,
-    // create new PersonData
-    if (!d->personData->isValid() && !d->account.isNull()) {
-        d->personData = new KPeople::PersonData(QStringLiteral("ktp://") + d->account->objectPath() + QStringLiteral("?") + d->targetContact->id());
-
-        Q_EMIT personDataChanged();
     }
 }
 
@@ -162,11 +137,9 @@ QString Conversation::title() const
     if (d->isGroupChat) {
         QString roomName = textChannel()->targetId();
         return roomName.left(roomName.indexOf(QLatin1Char('@')));
-    } else if (!d->targetContact.isNull()) {
-        return d->targetContact->alias();
+    } else {
+        return d->personData->name();
     }
-
-    return d->contactAlias;
 }
 
 QIcon Conversation::presenceIcon() const
@@ -218,20 +191,6 @@ Tp::Account* Conversation::accountObject() const
     }
 
     return 0;
-}
-
-void Conversation::setAccount(const Tp::AccountPtr &account)
-{
-    d->messages->setAccount(account);
-    d->account = account;
-
-    // If no PersonData yet and a non-null account is set,
-    // create new PersonData
-    if (!d->personData->isValid() && !d->account.isNull()) {
-        d->personData = new KPeople::PersonData(QStringLiteral("ktp://") + d->account->objectPath() + QStringLiteral("?") + d->contactId);
-
-        Q_EMIT personDataChanged();
-    }
 }
 
 bool Conversation::isValid()

@@ -41,12 +41,12 @@ class Conversation : public QObject
     Q_PROPERTY(QIcon avatar READ avatar NOTIFY avatarChanged)
     Q_PROPERTY(Tp::Account *account READ accountObject CONSTANT)
     Q_PROPERTY(KTp::ContactPtr targetContact READ targetContact CONSTANT)
-    Q_PROPERTY(KPeople::PersonData *personData READ personData NOTIFY personDataChanged)
+    Q_PROPERTY(KPeople::PersonData *personData READ personData CONSTANT)
     Q_PROPERTY(bool hasUnreadMessages READ hasUnreadMessages NOTIFY unreadMessagesChanged)
 
 public:
     Conversation(const Tp::TextChannelPtr &channel, const Tp::AccountPtr &account, QObject *parent = 0);
-    Conversation(QObject *parent = 0);
+    Conversation(const QString &contactId, const Tp::AccountPtr &account, QObject *parent = 0);
     virtual ~Conversation();
 
     void setTextChannel(const Tp::TextChannelPtr &channel);
@@ -84,7 +84,6 @@ Q_SIGNALS:
     void conversationCloseRequested();
     void unreadMessagesChanged();
     void lastMessageChanged();
-    void personDataChanged();
 
 public Q_SLOTS:
     void delegateToProperClient();
