@@ -30,6 +30,7 @@
 #include <TelepathyQt/AbstractClient>
 #include <TelepathyQt/TextChannel>
 #include <TelepathyQt/PendingChannelRequest>
+#include <TelepathyQt/PendingReady>
 
 #include <QQmlEngine>
 
@@ -37,6 +38,8 @@ TelepathyManager::TelepathyManager(QObject *parent)
     : QObject(parent)
 {
     Tp::registerTypes();
+
+    m_isReady = false;
 
     m_accountFactory = Tp::AccountFactory::create(QDBusConnection::sessionBus(),
                                                   Tp::Features() << Tp::Account::FeatureCore
@@ -53,6 +56,16 @@ TelepathyManager::TelepathyManager(QObject *parent)
     m_channelFactory = Tp::ChannelFactory::create(QDBusConnection::sessionBus());
 
     m_accountManager = Tp::AccountManager::create(m_accountFactory, m_connectionFactory, m_channelFactory, m_contactFactory);
+    connect(m_accountManager->becomeReady(), &Tp::PendingReady::finished, [=](Tp::PendingOperation *op) {
+        if (op->isError()) {
+            qWarning() << "AccountManager failed to become ready!" << op->errorMessage();
+            return;
+        }
+
+        m_isReady = true;
+
+        Q_EMIT ready();
+    });
 }
 
 TelepathyManager::~TelepathyManager()
@@ -170,6 +183,11 @@ bool TelepathyManager::canDial() const
 bool TelepathyManager::canSendFiles() const
 {
     return !QStandardPaths::findExecutable(QLatin1String("ktp-send-file")).isEmpty();
+}
+
+bool TelepathyManager::isReady() const
+{
+    return m_isReady;
 }
 
 void TelepathyManager::openDialUi() const
