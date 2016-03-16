@@ -61,7 +61,7 @@ public:
     KTp::ContactPtr targetContact() const;
     Tp::AccountPtr account() const;
 
-    bool isValid();
+    bool isValid() const;
 
     bool hasUnreadMessages() const;
 

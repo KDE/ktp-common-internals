@@ -172,7 +172,7 @@ Tp::AccountPtr Conversation::account() const {
     return d->account;
 }
 
-bool Conversation::isValid()
+bool Conversation::isValid() const
 {
     return d->valid;
 }
