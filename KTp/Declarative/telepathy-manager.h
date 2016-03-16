@@ -44,6 +44,8 @@ class TelepathyManager : public QObject
     /** @returns whether there's a ktp-send-file executable */
     Q_PROPERTY(bool canSendFiles READ canSendFiles)
 
+    Q_PROPERTY(bool ready READ isReady NOTIFY ready)
+
 public:
     TelepathyManager(QObject *parent=0);
     virtual ~TelepathyManager();
@@ -87,6 +89,7 @@ public:
 
     bool canDial() const;
     bool canSendFiles() const;
+    bool isReady() const;
 
     /** Opens UI to start an audio call */
     Q_INVOKABLE void openDialUi() const;
@@ -156,6 +159,9 @@ public Q_SLOTS:
 private Q_SLOTS:
     void contactlistDBusAccessed(QDBusPendingCallWatcher*);
 
+Q_SIGNALS:
+    void ready();
+
 private:
     Tp::AccountManagerPtr m_accountManager;
     Tp::ClientRegistrarPtr m_clientRegistrar;
@@ -164,6 +170,8 @@ private:
     Tp::ContactFactoryPtr m_contactFactory;
     Tp::ConnectionFactoryPtr m_connectionFactory;
     Tp::ChannelFactoryPtr m_channelFactory;
+
+    bool m_isReady;
 
 };
 
