@@ -418,7 +418,11 @@ void MessagesModel::removeChannelSignals(const Tp::TextChannelPtr &channel)
 
 int MessagesModel::unreadCount() const
 {
-    return d->textChannel->messageQueue().size();
+    if (d->textChannel) {
+        return d->textChannel->messageQueue().size();
+    }
+
+    return 0;
 }
 
 void MessagesModel::acknowledgeAllMessages()
