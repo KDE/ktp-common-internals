@@ -150,6 +150,7 @@ QVariant MainLogModel::data(const QModelIndex &index, int role) const
         case MainLogModel::LastMessageTextRole:
         case MainLogModel::ConversationRole:
         case MainLogModel::HasUnreadMessagesRole:
+        case MainLogModel::UnreadMessagesCountRole:
         case MainLogModel::ContactDisplayNameRole:
         case MainLogModel::PersonUriRole:
         {
@@ -174,6 +175,10 @@ QVariant MainLogModel::data(const QModelIndex &index, int role) const
             if (!conversation->isValid()) {
                 if (role == MainLogModel::HasUnreadMessagesRole) {
                     return false;
+                } else if (role == MainLogModel::UnreadMessagesCountRole) {
+                    // TODO this needs to be replaced once the persistent
+                    //      unread count is done
+                    return 0;
                 } else if (role == MainLogModel::LastMessageDateRole) {
                     return m_logItems.at(row).messageDateTime;
                 } else if (role == MainLogModel::LastMessageTextRole) {
@@ -182,6 +187,8 @@ QVariant MainLogModel::data(const QModelIndex &index, int role) const
             } else {
                 if (role == MainLogModel::HasUnreadMessagesRole) {
                     return conversation->hasUnreadMessages();
+                } else if (role == MainLogModel::UnreadMessagesCountRole) {
+                    return conversation->messages()->unreadCount();
                 } else if (role == MainLogModel::LastMessageDateRole) {
                     return conversation->messages()->lastMessageDateTime();
                 } else if (role == MainLogModel::LastMessageTextRole) {
@@ -218,6 +225,7 @@ QHash<int, QByteArray> MainLogModel::roleNames() const
     roles.insert(LastMessageTextRole, "lastMessageText");
     roles.insert(ConversationRole, "conversation");
     roles.insert(HasUnreadMessagesRole, "hasUnreadMessages");
+    roles.insert(UnreadMessagesCountRole, "unreadMessagesCount");
 
     return roles;
 }
