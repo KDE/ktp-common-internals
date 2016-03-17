@@ -112,6 +112,8 @@ void Conversation::setTextChannel(const Tp::TextChannelPtr &channel)
         connect(channel.data(), SIGNAL(invalidated(Tp::DBusProxy*,QString,QString)),
                 SLOT(onChannelInvalidated(Tp::DBusProxy*,QString,QString)));
 
+        connect(channel.data(), &Tp::TextChannel::chatStateChanged, this, &Conversation::contactTypingChanged);
+
         if (channel->targetContact().isNull()) {
             d->isGroupChat = true;
         } else {
@@ -304,4 +306,13 @@ bool Conversation::hasUnreadMessages() const
 KPeople::PersonData* Conversation::personData() const
 {
     return d->personData;
+}
+
+bool Conversation::isContactTyping() const
+{
+    if (d->messages->textChannel()) {
+        return d->messages->textChannel()->chatState(d->targetContact) == Tp::ChannelChatStateComposing;
+    }
+
+    return false;
 }
