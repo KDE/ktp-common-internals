@@ -22,6 +22,7 @@
 
 #include <QObject>
 #include <QList>
+#include <QLoggingCategory>
 #include <KPluginInfo>
 
 #include <KTp/message.h>
@@ -29,6 +30,8 @@
 
 #include <KTp/ktpcommoninternals_export.h>
 #include <KTp/abstract-message-filter.h>
+
+Q_DECLARE_LOGGING_CATEGORY(KTP_MESSAGEPROCESSOR)
 
 namespace Tp
 {
