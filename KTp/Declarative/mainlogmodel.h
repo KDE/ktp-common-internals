@@ -23,14 +23,15 @@
 #include <QAbstractListModel>
 #include <QSqlQuery>
 
-#include <TelepathyQt/AbstractClientHandler>
 #include <TelepathyQt/AbstractClientObserver>
+#include <TelepathyQt/AbstractClientHandler>
 #include <TelepathyQt/ChannelDispatchOperation>
 
 #include <KTp/persistent-contact.h>
 #include <KTp/types.h>
 
 class Conversation;
+class MainLogModel; // Cause of ObserverProxy
 
 class LogItem {
 public:
@@ -41,7 +42,37 @@ public:
     Conversation *conversation;
 };
 
-class MainLogModel : public QAbstractListModel, public Tp::AbstractClientHandler, public Tp::AbstractClientObserver
+/**
+ * The reason for this class is that an Observer and a Handler cannot
+ * be registered under the same client name if the Observer is not to
+ * be autostarted and only monitor things once the app is executed.
+ *
+ * So this is a tiny proxy class that gets registered as SpaceBarObserverProxy
+ * and forwards all observerChannels calls to the model which then merges
+ * them with the existing conversations
+ */
+class ObserverProxy : public QObject, public Tp::AbstractClientObserver
+{
+    Q_OBJECT
+
+public:
+    ObserverProxy(MainLogModel *model);
+
+    void observeChannels(const Tp::MethodInvocationContextPtr<> &context,
+                         const Tp::AccountPtr &account,
+                         const Tp::ConnectionPtr &connection,
+                         const QList<Tp::ChannelPtr> &channels,
+                         const Tp::ChannelDispatchOperationPtr &dispatchOperation,
+                         const QList<Tp::ChannelRequestPtr> &requestsSatisfied,
+                         const Tp::AbstractClientObserver::ObserverInfo &observerInfo);
+
+private:
+    MainLogModel *m_model;
+};
+
+//-----------------------------------------------------------------------------
+
+class MainLogModel : public QAbstractListModel, public Tp::AbstractClientHandler
 {
     Q_OBJECT
 
@@ -72,6 +103,7 @@ public:
     Q_INVOKABLE void startChat(const QString &accountId, const QString &contactId);
     Q_INVOKABLE void setAccountManager(const Tp::AccountManagerPtr &accountManager);
     Q_INVOKABLE QVariant data(int index, QByteArray role) const;
+    Q_INVOKABLE QObject* observerProxy() const;
 
     void handleChannels(const Tp::MethodInvocationContextPtr<> &context,
                         const Tp::AccountPtr &account,
@@ -80,14 +112,6 @@ public:
                         const QList<Tp::ChannelRequestPtr> &channelRequests,
                         const QDateTime &userActionTime,
                         const HandlerInfo &handlerInfo);
-
-    void observeChannels(const Tp::MethodInvocationContextPtr<> &context,
-                         const Tp::AccountPtr &account,
-                         const Tp::ConnectionPtr &connection,
-                         const QList<Tp::ChannelPtr> &channels,
-                         const Tp::ChannelDispatchOperationPtr &dispatchOperation,
-                         const QList<Tp::ChannelRequestPtr> &requestsSatisfied,
-                         const Tp::AbstractClientObserver::ObserverInfo &observerInfo);
 
     bool bypassApproval() const;
 
@@ -107,6 +131,9 @@ private:
     QSqlQuery m_query;
     QSqlDatabase m_db;
     Tp::AccountManagerPtr m_accountManager;
+    ObserverProxy *m_observerProxy;
+
+    friend class ObserverProxy;
 };
 
 Q_DECLARE_METATYPE(Tp::ChannelDispatchOperationPtr)

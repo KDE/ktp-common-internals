@@ -43,10 +43,42 @@ static inline Tp::ChannelClassSpecList channelClassList()
     return Tp::ChannelClassSpecList() << Tp::ChannelClassSpec::textChat();
 }
 
+ObserverProxy::ObserverProxy(MainLogModel *model)
+    : QObject(model),
+      Tp::AbstractClientObserver(channelClassList(), true),
+      m_model(model)
+{
+
+}
+
+void ObserverProxy::observeChannels(const Tp::MethodInvocationContextPtr<> &context,
+                                    const Tp::AccountPtr &account,
+                                    const Tp::ConnectionPtr &connection,
+                                    const QList<Tp::ChannelPtr> &channels,
+                                    const Tp::ChannelDispatchOperationPtr &dispatchOperation,
+                                    const QList<Tp::ChannelRequestPtr> &requestsSatisfied,
+                                    const Tp::AbstractClientObserver::ObserverInfo &observerInfo)
+{
+    Q_UNUSED(context)
+    Q_UNUSED(connection)
+    Q_UNUSED(requestsSatisfied)
+    Q_UNUSED(observerInfo)
+
+    Q_FOREACH(const Tp::ChannelPtr &channel, channels) {
+        Tp::TextChannelPtr textChannel = Tp::TextChannelPtr::dynamicCast(channel);
+        if (textChannel) {
+            textChannel.data()->setProperty("dispatchOperation", QVariant::fromValue(dispatchOperation));
+            m_model->handleChannel(account, textChannel);
+        }
+    }
+}
+
+// -----------------------------------------------------------------------
+
 MainLogModel::MainLogModel(QObject *parent)
     : QAbstractListModel(parent),
       Tp::AbstractClientHandler(channelClassList()),
-      Tp::AbstractClientObserver(channelClassList(), true)
+      m_observerProxy(new ObserverProxy(this))
 {
     const QString dbLocation = QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation) + QStringLiteral("/ktp-mobile-logger/");
 
@@ -257,6 +289,11 @@ void MainLogModel::setAccountManager(const Tp::AccountManagerPtr &accountManager
     processQueryResults(m_query);
 }
 
+QObject* MainLogModel::observerProxy() const
+{
+    return m_observerProxy;
+}
+
 void MainLogModel::handleChannels(const Tp::MethodInvocationContextPtr<> &context,
                                         const Tp::AccountPtr &account,
                                         const Tp::ConnectionPtr &connection,
@@ -314,28 +351,6 @@ void MainLogModel::handleChannels(const Tp::MethodInvocationContextPtr<> &contex
 
     handleChannel(account, textChannel);
     context->setFinished();
-}
-
-void MainLogModel::observeChannels(const Tp::MethodInvocationContextPtr<> &context,
-                                   const Tp::AccountPtr &account,
-                                   const Tp::ConnectionPtr &connection,
-                                   const QList<Tp::ChannelPtr> &channels,
-                                   const Tp::ChannelDispatchOperationPtr &dispatchOperation,
-                                   const QList<Tp::ChannelRequestPtr> &requestsSatisfied,
-                                   const Tp::AbstractClientObserver::ObserverInfo &observerInfo)
-{
-    Q_UNUSED(context)
-    Q_UNUSED(connection)
-    Q_UNUSED(requestsSatisfied)
-    Q_UNUSED(observerInfo)
-
-    Q_FOREACH(const Tp::ChannelPtr &channel, channels) {
-        Tp::TextChannelPtr textChannel = Tp::TextChannelPtr::dynamicCast(channel);
-        if (textChannel) {
-            textChannel.data()->setProperty("dispatchOperation", QVariant::fromValue(dispatchOperation));
-            handleChannel(account, textChannel);
-        }
-    }
 }
 
 bool MainLogModel::bypassApproval() const
