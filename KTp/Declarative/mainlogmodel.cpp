@@ -376,6 +376,11 @@ void MainLogModel::handleChannel(const Tp::AccountPtr &account, const Tp::TextCh
         for (i = 0; i < m_logItems.size(); i++) {
             LogItem &item = m_logItems[i];
             if (item.targetContact == contactId && item.accountObjectPath == account->objectPath()) {
+                // Don't set the same channel again
+                if (item.conversation->textChannel() == channel) {
+                    return;
+                }
+
                 item.conversation->setTextChannel(channel);
                 break;
             }
