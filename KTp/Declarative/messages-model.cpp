@@ -362,10 +362,14 @@ QVariant MessagesModel::data(const QModelIndex &index, int role) const
             result = m.deliveryReportReceiveTime;
             break;
         case PreviousMessageTypeRole:
-            result = data(createIndex(index.row() - 1, 0), TypeRole);
+            if (index.row() > 0) {
+                result = data(createIndex(index.row() - 1, 0), TypeRole);
+            }
             break;
         case NextMessageTypeRole:
-            result = data(createIndex(index.row() + 1, 0), TypeRole);
+            if (index.row() < d->messages.size() - 1) {
+                result = data(createIndex(index.row() + 1, 0), TypeRole);
+            }
             break;
         };
     } else {
