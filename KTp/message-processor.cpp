@@ -30,6 +30,8 @@
 #include <KServiceTypeTrader>
 #include <KPluginFactory>
 
+Q_LOGGING_CATEGORY(KTP_MESSAGEPROCESSOR, "ktp-message-processor")
+
 using namespace KTp;
 
 FilterPlugin::FilterPlugin(const KPluginInfo &pluginInfo, KTp::AbstractMessageFilter *instance_):
@@ -68,15 +70,15 @@ void MessageProcessor::Private::loadFilter(const KPluginInfo &pluginInfo)
 
     KPluginFactory *factory = KPluginLoader(service->library()).factory();
     if (factory) {
-        qCDebug(KTP_COMMONINTERNALS) << "loaded factory :" << factory;
+        qCDebug(KTP_MESSAGEPROCESSOR) << "loaded factory :" << factory;
         AbstractMessageFilter *filter = factory->create<AbstractMessageFilter>(q);
 
         if (filter) {
-            qCDebug(KTP_COMMONINTERNALS) << "loaded message filter : " << filter;
+            qCDebug(KTP_MESSAGEPROCESSOR) << "loaded message filter : " << filter;
             filters << FilterPlugin(pluginInfo, filter);
         }
     } else {
-        qCWarning(KTP_COMMONINTERNALS) << "error loading plugin :" << service->library();
+        qCWarning(KTP_MESSAGEPROCESSOR) << "error loading plugin :" << service->library();
     }
 
     // Re-sort filters by weight
@@ -90,7 +92,7 @@ void MessageProcessor::Private::unloadFilter(const KPluginInfo &pluginInfo)
         const FilterPlugin &plugin = *iter;
 
         if (plugin.name == pluginInfo.pluginName()) {
-            qCDebug(KTP_COMMONINTERNALS) << "unloading message filter : " << plugin.instance;
+            qCDebug(KTP_MESSAGEPROCESSOR) << "unloading message filter : " << plugin.instance;
             plugin.instance->deleteLater();
             filters.erase(iter);
             return;
@@ -100,7 +102,7 @@ void MessageProcessor::Private::unloadFilter(const KPluginInfo &pluginInfo)
 
 void MessageProcessor::Private::loadFilters()
 {
-    qCDebug(KTP_COMMONINTERNALS) << "Starting loading filters...";
+    qCDebug(KTP_MESSAGEPROCESSOR) << "Starting loading filters...";
 
     KPluginInfo::List plugins = MessageFilterConfigManager::self()->enabledPlugins();
 
@@ -111,8 +113,6 @@ void MessageProcessor::Private::loadFilters()
 
 KTp::MessageProcessor* MessageProcessor::instance()
 {
-    qCDebug(KTP_COMMONINTERNALS);
-
     static KTp::MessageProcessor *mp_instance;
     static QMutex mutex;
     mutex.lock();
@@ -174,7 +174,7 @@ QString MessageProcessor::header()
                   % QLatin1String("\" />\n");
     }
 
-    qCDebug(KTP_COMMONINTERNALS) << out;
+    qCDebug(KTP_MESSAGEPROCESSOR) << out;
 
     return out;
 }
@@ -194,7 +194,7 @@ KTp::Message KTp::MessageProcessor::processIncomingMessage(const Tp::ReceivedMes
 KTp::Message MessageProcessor::processIncomingMessage(KTp::Message message, const KTp::MessageContext &context)
 {
     Q_FOREACH (const FilterPlugin &plugin, d->filters) {
-        qCDebug(KTP_COMMONINTERNALS) << "running filter :" << plugin.instance->metaObject()->className();
+        qCDebug(KTP_MESSAGEPROCESSOR) << "running filter:" << plugin.instance->metaObject()->className();
         plugin.instance->filterMessage(message, context);
     }
     return message;
@@ -206,7 +206,7 @@ KTp::OutgoingMessage MessageProcessor::processOutgoingMessage(const QString &mes
     KTp::OutgoingMessage message(messageText);
 
     Q_FOREACH (const FilterPlugin &plugin, d->filters) {
-        qCDebug(KTP_COMMONINTERNALS) << "running outgoing filter : " << plugin.instance->metaObject()->className();
+        qCDebug(KTP_MESSAGEPROCESSOR) << "running outgoing filter: " << plugin.instance->metaObject()->className();
         plugin.instance->filterOutgoingMessage(message, context);
     }
 
