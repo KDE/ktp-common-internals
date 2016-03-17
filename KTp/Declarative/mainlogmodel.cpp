@@ -208,6 +208,8 @@ QVariant MainLogModel::data(int index, QByteArray role) const
 
 int MainLogModel::rowCount(const QModelIndex &parent) const
 {
+    Q_UNUSED(parent)
+
     return m_logItems.size();
 }
 
