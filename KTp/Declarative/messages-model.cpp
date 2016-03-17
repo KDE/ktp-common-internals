@@ -325,7 +325,7 @@ int MessagesModel::rowCount(const QModelIndex &parent) const
 void MessagesModel::sendNewMessage(const QString &message)
 {
     if (message.isEmpty()) {
-        qCWarning(KTP_DECLARATIVE) << "Attempting to send empty string";
+        qCWarning(KTP_DECLARATIVE) << "Attempting to send empty string, this is not supported";
     } else {
         Tp::PendingOperation *op;
         QString modifiedMessage = message;
