@@ -80,6 +80,11 @@ MainLogModel::MainLogModel(QObject *parent)
       Tp::AbstractClientHandler(channelClassList()),
       m_observerProxy(new ObserverProxy(this))
 {
+    QCommandLineParser parser;
+    parser.process(qApp->arguments());
+
+    m_openIncomingChannel = parser.isSet(QStringLiteral("openIncomingChannel"));
+
     const QString dbLocation = QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation) + QStringLiteral("/ktp-mobile-logger/");
 
     connect(qApp, &QCoreApplication::aboutToQuit, this, [=]() {
@@ -406,8 +411,9 @@ void MainLogModel::handleChannel(const Tp::AccountPtr &account, const Tp::TextCh
             }
         }
 
-        if (channel->isRequested()) {
+        if (channel->isRequested() || m_openIncomingChannel) {
             Q_EMIT newRequestedChannel(contactIndex);
+            m_openIncomingChannel = false;
         }
     }
 }

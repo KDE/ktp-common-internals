@@ -133,6 +133,13 @@ private:
     Tp::AccountManagerPtr m_accountManager;
     ObserverProxy *m_observerProxy;
 
+    // This is true when mission control autostarted the app
+    // on an incoming channel; the model will emit newRequestedChannel()
+    // for the first incoming channel even though it was not requested
+    // This is useful to switch the application directly to the new
+    // message
+    bool m_openIncomingChannel;
+
     friend class ObserverProxy;
 };
 
