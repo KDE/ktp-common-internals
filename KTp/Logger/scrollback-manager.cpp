@@ -148,6 +148,7 @@ void ScrollbackManager::onDatesFinished(KTp::PendingLoggerOperation* po)
         return;
     }
 
+
     // Store all the fetched dates for later reusing
     d->datesCache = dates;
 
@@ -175,7 +176,6 @@ void ScrollbackManager::onEventsFinished(KTp::PendingLoggerOperation *op)
             queuedMessageTokens.append(message.messageToken());
         }
     }
-    qCDebug(KTP_LOGGER) << "queuedMessageTokens" << queuedMessageTokens;
 
     // get last n (d->fetchLast) messages that are not queued
     QList<KTp::LogMessage> allMessages = logsOp->logs();
@@ -187,7 +187,6 @@ void ScrollbackManager::onEventsFinished(KTp::PendingLoggerOperation *op)
     if (!d->fromMessageToken.isEmpty()) {
         int i = 0;
         for (i = 0; i < allMessages.size(); i++) {
-            qDebug() << i << allMessages.at(i).time() << allMessages.at(i).mainMessagePart();
             if (allMessages.at(i).token().isEmpty()) {
                 const QString token = allMessages.at(i).time().toString(Qt::ISODate) + allMessages.at(i).mainMessagePart();
                 if (token == d->fromMessageToken) {
@@ -229,6 +228,7 @@ void ScrollbackManager::onEventsFinished(KTp::PendingLoggerOperation *op)
     // This is useful only for the case below when the fetched messages
     // are less than the requested scrollback length
     allMessages.append(d->messagesCache);
+
     // If the logs for the last date were too few, cache the
     // retrieved messages and request logs from another date
     if (allMessages.size() < d->scrollbackLength) {
@@ -260,6 +260,5 @@ void ScrollbackManager::onEventsFinished(KTp::PendingLoggerOperation *op)
     d->messagesCache.clear();
     d->datesCache.clear();
 
-    qCDebug(KTP_LOGGER) << "emit all messages" << messages.count();
     Q_EMIT fetched(messages);
 }
