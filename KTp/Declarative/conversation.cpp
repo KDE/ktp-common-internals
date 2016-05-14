@@ -316,3 +316,12 @@ bool Conversation::isContactTyping() const
 
     return false;
 }
+
+bool Conversation::canSendMessages() const
+{
+    if (d->messages && d->messages->textChannel()) {
+        return true;
+    }
+
+    return false;
+}

@@ -405,6 +405,11 @@ void MessagesModel::sendNewMessage(const QString &message)
     if (message.isEmpty()) {
         qCWarning(KTP_DECLARATIVE) << "Attempting to send empty string, this is not supported";
     } else {
+        if (!d->textChannel) {
+            qWarning(KTP_DECLARATIVE) << "Attempting to send a message without a channel, returning";
+            return;
+        }
+
         Tp::PendingOperation *op;
         QString modifiedMessage = message;
         if (d->textChannel->supportsMessageType(Tp::ChannelTextMessageTypeAction)

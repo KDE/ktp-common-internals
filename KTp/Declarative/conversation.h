@@ -45,6 +45,7 @@ class Conversation : public QObject
     Q_PROPERTY(KPeople::PersonData *personData READ personData CONSTANT)
     Q_PROPERTY(bool hasUnreadMessages READ hasUnreadMessages NOTIFY unreadMessagesChanged)
     Q_PROPERTY(bool isContactTyping READ isContactTyping NOTIFY contactTypingChanged)
+    Q_PROPERTY(bool canSendMessages READ canSendMessages NOTIFY canSendMessagesChanged)
 
 public:
     Conversation(const Tp::TextChannelPtr &channel, const Tp::AccountPtr &account, QObject *parent = 0);
@@ -78,6 +79,7 @@ public:
     bool hasUnreadMessages() const;
 
     bool isContactTyping() const;
+    bool canSendMessages() const;
 
 Q_SIGNALS:
     void validityChanged(bool isValid);
@@ -88,6 +90,7 @@ Q_SIGNALS:
     void unreadMessagesChanged();
     void lastMessageChanged();
     void contactTypingChanged();
+    void canSendMessagesChanged();
 
 public Q_SLOTS:
     void delegateToProperClient();
