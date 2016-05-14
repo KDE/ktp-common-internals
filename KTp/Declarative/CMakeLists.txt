@@ -14,6 +14,7 @@ set (ktp_qml_plugin_SRCS
     qml-plugins.cpp
     debug.cpp
     mainlogmodel.cpp
+    emojis-model.cpp
 )
 
 add_library (ktpqmlplugin SHARED ${ktp_qml_plugin_SRCS})
@@ -25,6 +26,7 @@ target_link_libraries (ktpqmlplugin
     KF5::WindowSystem
     KF5::I18n
     KF5::People
+    KF5::Emoticons
     KTp::CommonInternals
     KTp::Logger
     KTp::Models
