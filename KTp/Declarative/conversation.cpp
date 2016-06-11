@@ -1,5 +1,6 @@
 /*
     Copyright (C) 2011  Lasath Fernando <kde@lasath.org>
+    Copyright (C) 2016  Martin Klapetek <mklapetek@kde.org>
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Lesser General Public
