@@ -78,7 +78,13 @@ QVariant EmojisModel::data(const QModelIndex &index, int role) const
                 return QStringLiteral("Diversity");
             }
         case EmojiText:
-            return m_emojisHash.value(filePath).at(0);
+            const auto emojiValues = m_emojisHash.value(filePath);
+            Q_FOREACH (const QString &emoji, emojiValues) {
+                if (emoji.startsWith(QLatin1Char(':'))) {
+                    return emoji;
+                }
+            }
+            return emojiValues.at(0);
     }
 
     return QVariant();
