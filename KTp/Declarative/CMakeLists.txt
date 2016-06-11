@@ -9,6 +9,7 @@ set (ktp_qml_plugin_SRCS
     messages-model.cpp
     pinned-contacts-model.cpp
     filtered-pinned-contacts-proxy-model.cpp
+    text-area-emojis-handler.cpp
     contact-pin.cpp
     telepathy-manager.cpp
     qml-plugins.cpp
@@ -22,6 +23,7 @@ add_library (ktpqmlplugin SHARED ${ktp_qml_plugin_SRCS})
 target_link_libraries (ktpqmlplugin
     Qt5::Qml
     Qt5::Sql
+    Qt5::Quick
 
     KF5::WindowSystem
     KF5::I18n

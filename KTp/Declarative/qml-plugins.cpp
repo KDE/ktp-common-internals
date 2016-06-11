@@ -32,6 +32,7 @@
 #include "telepathy-manager.h"
 #include "mainlogmodel.h"
 #include "emojis-model.h"
+#include "text-area-emojis-handler.h"
 
 #include <TelepathyQt/PendingChannelRequest>
 #include "KTp/types.h"
@@ -63,6 +64,7 @@ void QmlPlugins::registerTypes(const char *uri)
     qmlRegisterType<KTp::PresenceModel> (uri, 0, 1, "PresenceModel");
     qmlRegisterType<MainLogModel> (uri, 0, 1, "MainLogModel");
     qmlRegisterType<EmojisModel> (uri, 0, 1, "EmojisModel");
+    qmlRegisterType<TextAreaEmojisHandler> (uri, 0, 1, "TextAreaEmojisHandler");
 
     qmlRegisterUncreatableType<MessagesModel> (uri, 0, 1, "MessagesModel",
         QLatin1String("It will be created once the conversation is created"));

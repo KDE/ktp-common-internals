@@ -21,6 +21,7 @@ set (KTP_MESSAGE_FILTER_FRAMEWORK_VERSION "5")
 
 find_package (Qt5 REQUIRED CONFIG COMPONENTS
               Qml
+              Quick
               Sql
               Test)
 
