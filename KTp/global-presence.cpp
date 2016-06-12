@@ -323,7 +323,7 @@ void GlobalPresence::onConnectionStatusChanged()
 
 bool GlobalPresence::hasEnabledAccounts() const
 {
-    if (m_enabledAccounts->accounts().isEmpty()) {
+    if (m_enabledAccounts.isNull() || m_enabledAccounts->accounts().isEmpty()) {
         return false;
     }
 
