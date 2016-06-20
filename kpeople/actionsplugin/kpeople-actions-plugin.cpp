@@ -190,7 +190,7 @@ QList<QAction*> KPeopleActionsPlugin::actionsForPerson(const KPeople::PersonData
             QAction *action = new IMAction(i18nc("Context menu action; means 'Bring your account online and then start a chat using %1 account'",
                                                  "Connect and Start Chat Using %1...", account->displayName()),
                                            QIcon::fromTheme(QStringLiteral("text-x-generic")),
-                                           contactId,
+                                           QUrl(contactId),
                                            TextChannel,
                                            parent);
             action->setProperty("accountPath", accountPath);
@@ -254,7 +254,7 @@ QList<QAction*> KPeopleActionsPlugin::actionsForPerson(const KPeople::PersonData
 
     QAction *action = new IMAction(i18n("Previous Conversations..."),
                                    QIcon::fromTheme(QStringLiteral("documentation")),
-                                   person.personUri(),
+                                   QUrl(person.personUri()),
                                    LogViewer,
                                    parent);
     connect(action, SIGNAL(triggered(bool)), SLOT(onActionTriggered()));
@@ -292,8 +292,8 @@ void KPeopleActionsPlugin::onActionTriggered()
             KTp::Actions::openLogViewer(action->uri());
             break;
         case CollabEditing: {
-            const QUrl file = QFileDialog::getOpenFileName(Q_NULLPTR, i18n("Choose a file to edit with %1", contact->alias()),
-                                                           QStringLiteral("kfiledialog:///CollabEditingLastDirectory"));
+            const QUrl file = QUrl::fromLocalFile(QFileDialog::getOpenFileName(Q_NULLPTR, i18n("Choose a file to edit with %1", contact->alias()),
+                                                           QStringLiteral("kfiledialog:///CollabEditingLastDirectory")));
             KTp::Actions::startCollaborativeEditing(account, contact, QList<QUrl>() << file, true);
             break;
         }
