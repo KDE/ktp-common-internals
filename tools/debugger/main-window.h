@@ -21,6 +21,7 @@
 #include "ui_main-window.h"
 
 #include <TelepathyQt/Types>
+#include <TelepathyQt/PendingOperation>
 
 #include <KXmlGuiWindow>
 

@@ -18,21 +18,20 @@
 #ifndef DEBUG_MESSAGES_MODEL_H
 #define DEBUG_MESSAGES_MODEL_H
 
-#include <QTextEdit>
+#include <QWidget>
 #include <TelepathyQt/Types>
 #include <TelepathyQt/PendingOperation>
-#include <kparts/part.h>
 #include <KTextEditor/Document>
-
 
 class DebugMessageView : public QWidget
 {
 Q_OBJECT
 public:
     explicit DebugMessageView(QWidget *parent = 0);
-    void setService(const QString & service);
     virtual ~DebugMessageView();
-    virtual void showEvent(QShowEvent* );
+
+    void setService(const QString & service);
+    virtual void showEvent(QShowEvent *event);
     void saveLogFile();
 
 private Q_SLOTS:
@@ -46,9 +45,6 @@ private Q_SLOTS:
     void addDelayedMessages();
     void clear();
 
-Q_SIGNALS:
-    void statusMessage(const QString& msg);
-
 private:
     void appendMessage(const Tp::DebugMessage &msg);
 
@@ -57,7 +53,7 @@ private:
     Tp::DebugMessageList m_tmpCache;
     QDBusServiceWatcher *m_serviceWatcher;
     bool m_ready;
-    KTextEditor::Document* m_editor;
+    KTextEditor::Document *m_editor;
 };
 
 #endif // DEBUG_MESSAGES_MODEL_H

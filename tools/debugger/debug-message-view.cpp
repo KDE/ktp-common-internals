@@ -25,13 +25,10 @@
 #include <QDebug>
 #include <QAction>
 #include <QFileDialog>
-#include <KColorScheme>
 #include <KStandardAction>
 #include <KLocalizedString>
-#include <KFindDialog>
 #include <KService>
 #include <KTextEditor/View>
-#include <kfind.h>
 #include <KTextEditor/Document>
 
 #include <ctime>
@@ -49,8 +46,7 @@ DebugMessageView::DebugMessageView(QWidget *parent)
     if (service) {
         m_editor = qobject_cast<KTextEditor::Document*>(service->createInstance<KParts::ReadWritePart>(this));
         Q_ASSERT(m_editor && "Failed to instantiate a KatePart");
-    }
-    else {
+    } else {
         qCritical() << "Could not find kate part";
     }
 
@@ -62,6 +58,17 @@ DebugMessageView::DebugMessageView(QWidget *parent)
 
     view->setContextMenu(new QMenu());
     view->contextMenu()->addAction(KStandardAction::clear(this, SLOT(clear()), this));
+}
+
+DebugMessageView::~DebugMessageView()
+{
+    if (m_debugReceiver && m_ready) {
+        //disable monitoring and do it synchronously before all the objects are destroyed
+        Tp::PendingOperation *op = m_debugReceiver->setMonitoringEnabled(false);
+        QEventLoop loop;
+        connect(op, SIGNAL(finished(Tp::PendingOperation*)), &loop, SLOT(quit()));
+        loop.exec();
+    }
 }
 
 void DebugMessageView::clear()
@@ -84,17 +91,6 @@ void DebugMessageView::addDelayedMessages()
         appendMessage(msg);
     }
     m_tmpCache.clear();
-}
-
-DebugMessageView::~DebugMessageView()
-{
-    if (m_debugReceiver && m_ready) {
-        //disable monitoring and do it synchronously before all the objects are destroyed
-        Tp::PendingOperation *op = m_debugReceiver->setMonitoringEnabled(false);
-        QEventLoop loop;
-        connect(op, SIGNAL(finished(Tp::PendingOperation*)), &loop, SLOT(quit()));
-        loop.exec();
-    }
 }
 
 void DebugMessageView::setService(const QString &service)
@@ -199,7 +195,6 @@ void DebugMessageView::onNewDebugMessage(const Tp::DebugMessage & msg)
     }
 }
 
-
 //taken from empathy
 static inline QString formatTimestamp(double timestamp)
 {
@@ -223,15 +218,14 @@ static inline QString formatTimestamp(double timestamp)
 
 void DebugMessageView::appendMessage(const Tp::DebugMessage &msg)
 {
-    if ( isVisible() ) {
+    if (isVisible()) {
         QString message = QString(formatTimestamp(msg.timestamp) %
                                 QLatin1Literal(" - [") % msg.domain % QLatin1Literal("] ") %
                                 msg.message);
         m_editor->setReadWrite(true);
         m_editor->insertText(m_editor->documentEnd(), message + QString::fromLatin1("\n"));
         m_editor->setReadWrite(false);
-    }
-    else {
+    } else {
         m_tmpCache.append(msg);
     }
 }
@@ -241,6 +235,3 @@ void DebugMessageView::saveLogFile()
     QUrl savedFile = QUrl::fromUserInput(QFileDialog::getSaveFileName(this, i18nc("@title:window", "Save Log")));
     m_editor->saveAs(savedFile);
 }
-
-
-
