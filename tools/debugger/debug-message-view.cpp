@@ -217,7 +217,7 @@ static inline QString formatTimestamp(double timestamp)
     }
 
     QString str;
-    str.sprintf("%s.%d", time_str, ms);
+    str.sprintf("%s.%06d", time_str, ms);
     return str;
 }
 
