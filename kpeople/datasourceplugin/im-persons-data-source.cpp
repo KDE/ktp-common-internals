@@ -117,6 +117,12 @@ KTpAllContacts::KTpAllContacts()
     Tp::registerTypes();
 
     loadCache();
+
+    //now start fetching the up-to-date information
+    connect(KTp::accountManager()->becomeReady(), SIGNAL(finished(Tp::PendingOperation*)),
+        this, SLOT(onAccountManagerReady(Tp::PendingOperation*)));
+
+    emitInitialFetchComplete(true);
 }
 
 KTpAllContacts::~KTpAllContacts()
@@ -230,12 +236,6 @@ void KTpAllContacts::loadCache(const QString &accountId)
 
         m_contactVCards[uri] = addressee;
     }
-
-    //now start fetching the up-to-date information
-    connect(KTp::accountManager()->becomeReady(), SIGNAL(finished(Tp::PendingOperation*)),
-        this, SLOT(onAccountManagerReady(Tp::PendingOperation*)), Qt::UniqueConnection);
-
-    emitInitialFetchComplete(true);
 }
 
 void KTpAllContacts::onAccountManagerReady(Tp::PendingOperation *op)
