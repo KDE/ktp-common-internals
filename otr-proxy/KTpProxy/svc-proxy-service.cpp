@@ -33,7 +33,7 @@ void ProxyServiceAdaptor::SetPolicySettings(const uint &newValue)
 
 void ProxyServiceAdaptor::GeneratePrivateKey(const QDBusObjectPath& account, const QDBusMessage& dbusMessage)
 {
-    if (!adaptee()->metaObject()->indexOfMethod("generatePrivateKey(QDBusObjectPath,Tp::Service::ProxyServiceAdaptor::GeneratePrivateKeyContextPtr)") == -1) {
+    if (adaptee()->metaObject()->indexOfMethod("generatePrivateKey(QDBusObjectPath,Tp::Service::ProxyServiceAdaptor::GeneratePrivateKeyContextPtr)") < 0) {
         dbusConnection().send(dbusMessage.createErrorReply(TP_QT_ERROR_NOT_IMPLEMENTED, QLatin1String("Not implemented")));
         return;
     }
@@ -47,7 +47,7 @@ void ProxyServiceAdaptor::GeneratePrivateKey(const QDBusObjectPath& account, con
 
 QString ProxyServiceAdaptor::GetFingerprintForAccount(const QDBusObjectPath& account, const QDBusMessage& dbusMessage)
 {
-    if (!adaptee()->metaObject()->indexOfMethod("getFingerprintForAccount(QDBusObjectPath,Tp::Service::ProxyServiceAdaptor::GetFingerprintForAccountContextPtr)") == -1) {
+    if (adaptee()->metaObject()->indexOfMethod("getFingerprintForAccount(QDBusObjectPath,Tp::Service::ProxyServiceAdaptor::GetFingerprintForAccountContextPtr)") < 0) {
         dbusConnection().send(dbusMessage.createErrorReply(TP_QT_ERROR_NOT_IMPLEMENTED, QLatin1String("Not implemented")));
         return QString();
     }
@@ -62,7 +62,7 @@ QString ProxyServiceAdaptor::GetFingerprintForAccount(const QDBusObjectPath& acc
 
 KTp::FingerprintInfoList ProxyServiceAdaptor::GetKnownFingerprints(const QDBusObjectPath& account, const QDBusMessage& dbusMessage)
 {
-    if (!adaptee()->metaObject()->indexOfMethod("getKnownFingerprints(QDBusObjectPath,Tp::Service::ProxyServiceAdaptor::GetKnownFingerprintsContextPtr)") == -1) {
+    if (adaptee()->metaObject()->indexOfMethod("getKnownFingerprints(QDBusObjectPath,Tp::Service::ProxyServiceAdaptor::GetKnownFingerprintsContextPtr)") < 0) {
         dbusConnection().send(dbusMessage.createErrorReply(TP_QT_ERROR_NOT_IMPLEMENTED, QLatin1String("Not implemented")));
         return KTp::FingerprintInfoList();
     }
@@ -77,7 +77,7 @@ KTp::FingerprintInfoList ProxyServiceAdaptor::GetKnownFingerprints(const QDBusOb
 
 void ProxyServiceAdaptor::TrustFingerprint(const QDBusObjectPath& account, const QString& contactName, const QString& fingerprint, bool trust, const QDBusMessage& dbusMessage)
 {
-    if (!adaptee()->metaObject()->indexOfMethod("trustFingerprint(QDBusObjectPath,QString,QString,bool,Tp::Service::ProxyServiceAdaptor::TrustFingerprintContextPtr)") == -1) {
+    if (adaptee()->metaObject()->indexOfMethod("trustFingerprint(QDBusObjectPath,QString,QString,bool,Tp::Service::ProxyServiceAdaptor::TrustFingerprintContextPtr)") < 0) {
         dbusConnection().send(dbusMessage.createErrorReply(TP_QT_ERROR_NOT_IMPLEMENTED, QLatin1String("Not implemented")));
         return;
     }
@@ -91,7 +91,7 @@ void ProxyServiceAdaptor::TrustFingerprint(const QDBusObjectPath& account, const
 
 void ProxyServiceAdaptor::ForgetFingerprint(const QDBusObjectPath& account, const QString& contactName, const QString& fingerprint, const QDBusMessage& dbusMessage)
 {
-    if (!adaptee()->metaObject()->indexOfMethod("forgetFingerprint(QDBusObjectPath,QString,QString,Tp::Service::ProxyServiceAdaptor::ForgetFingerprintContextPtr)") == -1) {
+    if (adaptee()->metaObject()->indexOfMethod("forgetFingerprint(QDBusObjectPath,QString,QString,Tp::Service::ProxyServiceAdaptor::ForgetFingerprintContextPtr)") < 0) {
         dbusConnection().send(dbusMessage.createErrorReply(TP_QT_ERROR_NOT_IMPLEMENTED, QLatin1String("Not implemented")));
         return;
     }
