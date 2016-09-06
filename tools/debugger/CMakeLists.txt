@@ -5,8 +5,9 @@ include_directories(
 )
 
 set(ktp-debugger_SRCS
-    main-window.cpp
     debug-message-view.cpp
+    telepathy-process.cpp
+    main-window.cpp
     main.cpp
 )
 

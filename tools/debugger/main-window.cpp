@@ -17,6 +17,7 @@
 */
 #include "main-window.h"
 #include "debug-message-view.h"
+#include "telepathy-process.h"
 
 #include <TelepathyQt/AccountManager>
 #include <TelepathyQt/AccountSet>
@@ -36,7 +37,9 @@ MainWindow::MainWindow(QWidget *parent)
     m_ui.setupUi(centralWidget());
     setupGUI();
 
-    m_ui.mcLogsView->setService(QLatin1String("org.freedesktop.Telepathy.MissionControl5"));
+    TelepathyProcess *process = new TelepathyProcess(this);
+    process->setOwnerId(QStringLiteral("org.freedesktop.Telepathy.MissionControl5"));
+    m_ui.mcLogsView->setTelepathyProcess(process);
 
     m_AccountManager = Tp::AccountManager::create();
     Tp::PendingReady *pendingReady = m_AccountManager->becomeReady();
@@ -88,7 +91,10 @@ void MainWindow::initConnectionManagerTabs(const QSet<QString>& connectionManage
         QWidget *cmTab = new QWidget();
         QHBoxLayout *horizontalLayout = new QHBoxLayout(cmTab);
         DebugMessageView *cmDebugMessageView = new DebugMessageView(cmTab);
-        cmDebugMessageView->setService(QString(QLatin1String("org.freedesktop.Telepathy.ConnectionManager.%1")).arg(connectionManager));
+
+        TelepathyProcess *process = new TelepathyProcess(cmDebugMessageView);
+        process->setOwnerId(QString(QStringLiteral("org.freedesktop.Telepathy.ConnectionManager.%1")).arg(connectionManager));
+        cmDebugMessageView->setTelepathyProcess(process);
 
         horizontalLayout->addWidget(cmDebugMessageView);
 

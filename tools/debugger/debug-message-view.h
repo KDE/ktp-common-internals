@@ -20,39 +20,28 @@
 
 #include <QWidget>
 #include <TelepathyQt/Types>
-#include <TelepathyQt/PendingOperation>
 #include <KTextEditor/Document>
+
+class TelepathyProcess;
 
 class DebugMessageView : public QWidget
 {
-Q_OBJECT
+    Q_OBJECT
 public:
     explicit DebugMessageView(QWidget *parent = 0);
-    virtual ~DebugMessageView();
+    ~DebugMessageView();
 
-    void setService(const QString & service);
-    virtual void showEvent(QShowEvent *event);
+    void showEvent(QShowEvent *event);
+    void setTelepathyProcess(TelepathyProcess *process);
     void saveLogFile();
 
 private Q_SLOTS:
-    void onServiceRegistered(const QString & service);
-    void onDebugReceiverInvalidated(Tp::DBusProxy *proxy,
-            const QString &errorName, const QString &errorMessage);
-    void onDebugReceiverReady(Tp::PendingOperation *op);
-    void onDebugReceiverMonitoringEnabled(Tp::PendingOperation *op);
-    void onFetchMessagesFinished(Tp::PendingOperation *op);
-    void onNewDebugMessage(const Tp::DebugMessage &msg);
+    void appendMessage(const Tp::DebugMessage &msg);
     void addDelayedMessages();
     void clear();
 
 private:
-    void appendMessage(const Tp::DebugMessage &msg);
-
-    QString m_serviceName;
-    Tp::DebugReceiverPtr m_debugReceiver;
     Tp::DebugMessageList m_tmpCache;
-    QDBusServiceWatcher *m_serviceWatcher;
-    bool m_ready;
     KTextEditor::Document *m_editor;
 };
 
