@@ -70,7 +70,6 @@ Message::Message(const Tp::ReceivedMessage &original, const KTp::MessageContext 
     d->token = original.messageToken();
     d->messageType = original.messageType();
     d->isHistory = original.isScrollback();
-    d->direction = KTp::Message::RemoteToLocal;
 
     setMainMessagePart(original.text());
 
@@ -78,6 +77,22 @@ Message::Message(const Tp::ReceivedMessage &original, const KTp::MessageContext 
         d->sender = KTp::ContactPtr::qObjectCast(original.sender());
     } else {
         d->senderAlias = original.senderNickname();
+    }
+
+    bool isLocalToRemote = false;
+
+    if (!d->sender.isNull()) {
+        if (context.channel()->interfaces().contains(TP_QT_IFACE_CHANNEL_INTERFACE_GROUP)) {
+            isLocalToRemote = d->sender->id() == context.channel()->groupSelfContact()->id();
+        } else {
+            isLocalToRemote = d->sender->id() == context.channel()->connection()->selfContact()->id();
+        }
+    }
+
+    if (isLocalToRemote) {
+        d->direction = KTp::Message::LocalToRemote;
+    } else {
+        d->direction = KTp::Message::RemoteToLocal;
     }
 }
 
