@@ -214,10 +214,21 @@ void MessagesModel::onMessageReceived(const Tp::ReceivedMessage &message)
         }
         Q_EMIT dataChanged(originalMessageIndex, originalMessageIndex);
     } else {
-        int length = rowCount();
-        beginInsertRows(QModelIndex(), length, length);
+        int newMessageIndex = 0;
+        const QDateTime sentTimestamp = message.sent();
+        if (sentTimestamp.isValid()) {
+            for (int i = d->messages.count() - 1; i >= 0; --i) {
+                if (sentTimestamp > d->messages.at(i).message.time()) {
+                    newMessageIndex = i;
+                    break;
+                }
+            }
+        } else {
+            newMessageIndex = rowCount();
+        }
+        beginInsertRows(QModelIndex(), newMessageIndex, newMessageIndex);
 
-        d->messages.append(KTp::MessageProcessor::instance()->processIncomingMessage(
+        d->messages.insert(newMessageIndex, KTp::MessageProcessor::instance()->processIncomingMessage(
                                message, d->account, d->textChannel));
 
         endInsertRows();
