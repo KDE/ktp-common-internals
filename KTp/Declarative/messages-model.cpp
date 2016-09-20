@@ -254,7 +254,7 @@ void MessagesModel::onMessageSent(const Tp::Message &message, Tp::MessageSending
 
     if (!messageToken.isEmpty()) {
         // Insert the message into the lookup table for delivery reports.
-        const QPersistentModelIndex &modelIndex(createIndex(length, 0));
+        const QPersistentModelIndex modelIndex = createIndex(length, 0);
         d->messagesByMessageToken.insert(messageToken, modelIndex);
     }
 
