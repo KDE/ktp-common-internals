@@ -60,7 +60,7 @@ QString ChannelProxyInterfaceOTRAdaptor::RemoteFingerprint() const
 
 void ChannelProxyInterfaceOTRAdaptor::ConnectProxy(const QDBusMessage& dbusMessage)
 {
-    if (!adaptee()->metaObject()->indexOfMethod("connectProxy(Tp::Service::ChannelProxyInterfaceOTRAdaptor::ConnectProxyContextPtr)") == -1) {
+    if (adaptee()->metaObject()->indexOfMethod("connectProxy(Tp::Service::ChannelProxyInterfaceOTRAdaptor::ConnectProxyContextPtr)") < 0) {
         dbusConnection().send(dbusMessage.createErrorReply(TP_QT_ERROR_NOT_IMPLEMENTED, QLatin1String("Not implemented")));
         return;
     }
@@ -73,7 +73,7 @@ void ChannelProxyInterfaceOTRAdaptor::ConnectProxy(const QDBusMessage& dbusMessa
 
 void ChannelProxyInterfaceOTRAdaptor::DisconnectProxy(const QDBusMessage& dbusMessage)
 {
-    if (!adaptee()->metaObject()->indexOfMethod("disconnectProxy(Tp::Service::ChannelProxyInterfaceOTRAdaptor::DisconnectProxyContextPtr)") == -1) {
+    if (adaptee()->metaObject()->indexOfMethod("disconnectProxy(Tp::Service::ChannelProxyInterfaceOTRAdaptor::DisconnectProxyContextPtr)") < 0) {
         dbusConnection().send(dbusMessage.createErrorReply(TP_QT_ERROR_NOT_IMPLEMENTED, QLatin1String("Not implemented")));
         return;
     }
@@ -86,7 +86,7 @@ void ChannelProxyInterfaceOTRAdaptor::DisconnectProxy(const QDBusMessage& dbusMe
 
 QString ChannelProxyInterfaceOTRAdaptor::SendMessage(const Tp::MessagePartList& message, uint flags, const QDBusMessage& dbusMessage)
 {
-    if (!adaptee()->metaObject()->indexOfMethod("sendMessage(Tp::MessagePartList,uint,Tp::Service::ChannelProxyInterfaceOTRAdaptor::SendMessageContextPtr)") == -1) {
+    if (adaptee()->metaObject()->indexOfMethod("sendMessage(Tp::MessagePartList,uint,Tp::Service::ChannelProxyInterfaceOTRAdaptor::SendMessageContextPtr)") < 0) {
         dbusConnection().send(dbusMessage.createErrorReply(TP_QT_ERROR_NOT_IMPLEMENTED, QLatin1String("Not implemented")));
         return QString();
     }
@@ -101,7 +101,7 @@ QString ChannelProxyInterfaceOTRAdaptor::SendMessage(const Tp::MessagePartList& 
 
 void ChannelProxyInterfaceOTRAdaptor::AcknowledgePendingMessages(const Tp::UIntList& IDs, const QDBusMessage& dbusMessage)
 {
-    if (!adaptee()->metaObject()->indexOfMethod("acknowledgePendingMessages(Tp::UIntList,Tp::Service::ChannelProxyInterfaceOTRAdaptor::AcknowledgePendingMessagesContextPtr)") == -1) {
+    if (adaptee()->metaObject()->indexOfMethod("acknowledgePendingMessages(Tp::UIntList,Tp::Service::ChannelProxyInterfaceOTRAdaptor::AcknowledgePendingMessagesContextPtr)") < 0) {
         dbusConnection().send(dbusMessage.createErrorReply(TP_QT_ERROR_NOT_IMPLEMENTED, QLatin1String("Not implemented")));
         return;
     }
@@ -115,7 +115,7 @@ void ChannelProxyInterfaceOTRAdaptor::AcknowledgePendingMessages(const Tp::UIntL
 
 void ChannelProxyInterfaceOTRAdaptor::Initialize(const QDBusMessage& dbusMessage)
 {
-    if (!adaptee()->metaObject()->indexOfMethod("initialize(Tp::Service::ChannelProxyInterfaceOTRAdaptor::InitializeContextPtr)") == -1) {
+    if (adaptee()->metaObject()->indexOfMethod("initialize(Tp::Service::ChannelProxyInterfaceOTRAdaptor::InitializeContextPtr)") < 0) {
         dbusConnection().send(dbusMessage.createErrorReply(TP_QT_ERROR_NOT_IMPLEMENTED, QLatin1String("Not implemented")));
         return;
     }
@@ -128,7 +128,7 @@ void ChannelProxyInterfaceOTRAdaptor::Initialize(const QDBusMessage& dbusMessage
 
 void ChannelProxyInterfaceOTRAdaptor::Stop(const QDBusMessage& dbusMessage)
 {
-    if (!adaptee()->metaObject()->indexOfMethod("stop(Tp::Service::ChannelProxyInterfaceOTRAdaptor::StopContextPtr)") == -1) {
+    if (adaptee()->metaObject()->indexOfMethod("stop(Tp::Service::ChannelProxyInterfaceOTRAdaptor::StopContextPtr)") < 0) {
         dbusConnection().send(dbusMessage.createErrorReply(TP_QT_ERROR_NOT_IMPLEMENTED, QLatin1String("Not implemented")));
         return;
     }
@@ -141,7 +141,7 @@ void ChannelProxyInterfaceOTRAdaptor::Stop(const QDBusMessage& dbusMessage)
 
 void ChannelProxyInterfaceOTRAdaptor::TrustFingerprint(const QString& fingerprint, bool trust, const QDBusMessage& dbusMessage)
 {
-    if (!adaptee()->metaObject()->indexOfMethod("trustFingerprint(QString,bool,Tp::Service::ChannelProxyInterfaceOTRAdaptor::TrustFingerprintContextPtr)") == -1) {
+    if (adaptee()->metaObject()->indexOfMethod("trustFingerprint(QString,bool,Tp::Service::ChannelProxyInterfaceOTRAdaptor::TrustFingerprintContextPtr)") < 0) {
         dbusConnection().send(dbusMessage.createErrorReply(TP_QT_ERROR_NOT_IMPLEMENTED, QLatin1String("Not implemented")));
         return;
     }
@@ -155,7 +155,7 @@ void ChannelProxyInterfaceOTRAdaptor::TrustFingerprint(const QString& fingerprin
 
 void ChannelProxyInterfaceOTRAdaptor::StartPeerAuthentication(const QString& question, const QString& secret, const QDBusMessage& dbusMessage)
 {
-    if (!adaptee()->metaObject()->indexOfMethod("startPeerAuthentication(QString,QString,Tp::Service::ChannelProxyInterfaceOTRAdaptor::StartPeerAuthenticationContextPtr)") == -1) {
+    if (adaptee()->metaObject()->indexOfMethod("startPeerAuthentication(QString,QString,Tp::Service::ChannelProxyInterfaceOTRAdaptor::StartPeerAuthenticationContextPtr)") < 0) {
         dbusConnection().send(dbusMessage.createErrorReply(TP_QT_ERROR_NOT_IMPLEMENTED, QLatin1String("Not implemented")));
         return;
     }
@@ -169,7 +169,7 @@ void ChannelProxyInterfaceOTRAdaptor::StartPeerAuthentication(const QString& que
 
 void ChannelProxyInterfaceOTRAdaptor::RespondPeerAuthentication(const QString& secret, const QDBusMessage& dbusMessage)
 {
-    if (!adaptee()->metaObject()->indexOfMethod("respondPeerAuthentication(QString,Tp::Service::ChannelProxyInterfaceOTRAdaptor::RespondPeerAuthenticationContextPtr)") == -1) {
+    if (adaptee()->metaObject()->indexOfMethod("respondPeerAuthentication(QString,Tp::Service::ChannelProxyInterfaceOTRAdaptor::RespondPeerAuthenticationContextPtr)") < 0) {
         dbusConnection().send(dbusMessage.createErrorReply(TP_QT_ERROR_NOT_IMPLEMENTED, QLatin1String("Not implemented")));
         return;
     }
@@ -183,7 +183,7 @@ void ChannelProxyInterfaceOTRAdaptor::RespondPeerAuthentication(const QString& s
 
 void ChannelProxyInterfaceOTRAdaptor::AbortPeerAuthentication(const QDBusMessage& dbusMessage)
 {
-    if (!adaptee()->metaObject()->indexOfMethod("abortPeerAuthentication(Tp::Service::ChannelProxyInterfaceOTRAdaptor::AbortPeerAuthenticationContextPtr)") == -1) {
+    if (adaptee()->metaObject()->indexOfMethod("abortPeerAuthentication(Tp::Service::ChannelProxyInterfaceOTRAdaptor::AbortPeerAuthenticationContextPtr)") < 0) {
         dbusConnection().send(dbusMessage.createErrorReply(TP_QT_ERROR_NOT_IMPLEMENTED, QLatin1String("Not implemented")));
         return;
     }
