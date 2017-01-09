@@ -69,9 +69,14 @@ public:
     QString displayString() const;
 
     /**
-     * \brief Returns which presence is "more available"
+     * \brief Returns which presence is "less available"
      */
     bool operator <(const Presence &other) const;
+
+    /**
+     * \brief Returns which presence is "more available"
+     */
+    bool operator >(const Presence &other) const;
 
     /**
      * \brief Returns an int representation of the presence type sorted by priority.

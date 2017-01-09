@@ -1,6 +1,7 @@
 /*
  * Presence Model - A model of settable presences.
  *
+ * Copyright (C) 2016 James D. Smith <smithjd15@gmail.com>
  * Copyright (C) 2011 David Edmundson <kde@davidedmundson.co.uk>
  *
  * This library is free software; you can redistribute it and/or
@@ -45,9 +46,10 @@ public:
         IconNameRole
     };
 
-    /** Adds a custom presence to the model, and write value to config file.
-      @return the newly added item
-    */
+    /** Adds a custom presence to the model, writes it to the config file, and
+      * propagates it to other models.
+      * @return the newly added item
+      */
     QModelIndex addPresence(const KTp::Presence &presence);
 
     void removePresence(const KTp::Presence &presence);
@@ -58,9 +60,6 @@ public:
     /** Write all presences to disk */
     void syncCustomPresencesToDisk();
 
-    /** Updates context menu of presence applet */
-    int updatePresenceApplet();
-
     Q_SCRIPTABLE QVariant get(int row, const QByteArray& role) const;
 
     //protected:
@@ -69,12 +68,18 @@ public:
     virtual int rowCount(const QModelIndex &parent = QModelIndex()) const;
     virtual QHash<int, QByteArray> roleNames() const;
 
+public Q_SLOTS:
+    /** Incoming changes from other models */
+    void propagationChange(const QVariantList modelChange);
+
 Q_SIGNALS:
     void countChanged();
 
 private:
+    void modifyModel(const KTp::Presence &presence);
+    void propagateChange(const KTp::Presence &presence);
 
-    /** Loads standard presences (online, away etc) into */
+    /** Loads standard presences (online, away etc) into the model */
     void loadDefaultPresences();
 
     /** Loads any user custom presences into the model */

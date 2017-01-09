@@ -1,6 +1,7 @@
 /*
  * Presence Model - A model of settable presences.
  *
+ * Copyright (C) 2016 James D. Smith <smithjd15@gmail.com>
  * Copyright (C) 2011 David Edmundson <kde@davidedmundson.co.uk>
  *
  * This library is free software; you can redistribute it and/or
@@ -30,20 +31,43 @@
 #include <KLocalizedString>
 #include <KConfig>
 #include <KConfigGroup>
+
+#include "types.h"
 #include "debug.h"
 
 namespace KTp
 {
 
+struct PresenceModelGreaterThan : public std::function<bool(KTp::Presence,KTp::Presence)>
+{
+    inline bool operator()(const KTp::Presence& presence, const KTp::Presence& other)
+    {
+        if (KTp::Presence::sortPriority(presence.type()) < KTp::Presence::sortPriority(other.type())) {
+            return true;
+        } else if (KTp::Presence::sortPriority(presence.type()) == KTp::Presence::sortPriority(other.type())) {
+            return (presence.statusMessage() < other.statusMessage());
+        } else {
+            return false;
+        }
+    }
+};
+
 PresenceModel::PresenceModel(QObject *parent) :
     QAbstractListModel(parent)
 {
+    Tp::registerTypes();
+
     loadPresences();
+
+    QDBusConnection::sessionBus().connect(QString(), QLatin1String("/Telepathy"),
+                                              QLatin1String("org.kde.Telepathy"),
+                                              QLatin1String("presenceModelChanged"),
+                                              this,
+                                              SLOT(propagationChange(QVariantList)));
 }
 
 PresenceModel::~PresenceModel()
 {
-    syncCustomPresencesToDisk();
 }
 
 void PresenceModel::syncCustomPresencesToDisk()
@@ -60,6 +84,20 @@ void PresenceModel::syncCustomPresencesToDisk()
         }
     }
     m_presenceGroup.sync();
+}
+
+void PresenceModel::propagationChange(const QVariantList modelChange)
+{
+    KTp::Presence presence = KTp::Presence(qdbus_cast<Tp::SimplePresence>(modelChange.value(0)));
+    bool presenceAdded = qdbus_cast<bool>(modelChange.value(1));
+
+    if (!presence.isValid()) {
+        return;
+    }
+
+    if (presenceAdded != m_presences.contains(presence)) {
+        modifyModel(presence);
+    }
 }
 
 QVariant PresenceModel::data(int index) const
@@ -128,12 +166,12 @@ void PresenceModel::loadPresences()
 
 void PresenceModel::loadDefaultPresences()
 {
-    addPresence(Tp::Presence::available());
-    addPresence(Tp::Presence::busy());
-    addPresence(Tp::Presence::away());
-    addPresence(Tp::Presence::xa());
-    addPresence(Tp::Presence::hidden());
-    addPresence(Tp::Presence::offline());
+    modifyModel(KTp::Presence::available());
+    modifyModel(KTp::Presence::busy());
+    modifyModel(KTp::Presence::away());
+    modifyModel(KTp::Presence::xa());
+    modifyModel(KTp::Presence::hidden());
+    modifyModel(KTp::Presence::offline());
 }
 
 void PresenceModel::loadCustomPresences()
@@ -145,60 +183,77 @@ void PresenceModel::loadCustomPresences()
 
         switch (entry.first().toInt()) {
         case Tp::ConnectionPresenceTypeAvailable:
-            addPresence(Tp::Presence::available(statusMessage));
+            modifyModel(KTp::Presence::available(statusMessage));
             break;
         case Tp::ConnectionPresenceTypeAway:
-            addPresence(Tp::Presence::away(statusMessage));
+            modifyModel(KTp::Presence::away(statusMessage));
             break;
         case Tp::ConnectionPresenceTypeBusy:
-            addPresence(Tp::Presence::busy(statusMessage));
+            modifyModel(KTp::Presence::busy(statusMessage));
             break;
         case Tp::ConnectionPresenceTypeExtendedAway:
-            addPresence(Tp::Presence::xa(statusMessage));
+            modifyModel(KTp::Presence::xa(statusMessage));
         }
     }
 }
 
-QModelIndex PresenceModel::addPresence(const KTp::Presence &presence)
+void PresenceModel::modifyModel(const KTp::Presence &presence)
 {
     if (m_presences.contains(presence)) {
-        return createIndex(m_presences.indexOf(presence), 0);
+        int row = m_presences.indexOf(presence);
+        beginRemoveRows(QModelIndex(), row, row);
+        endRemoveRows();
+
+        m_presences.removeOne(presence);
+    } else {
+        m_presences.append(presence);
+
+        // Identical presence types with status messages are compared with the
+        // status messages in ascending order.
+        std::sort(m_presences.begin(), m_presences.end(), PresenceModelGreaterThan());
+
+        int index = m_presences.indexOf(presence);
+
+        beginInsertRows(QModelIndex(), index, index);
+        endInsertRows();
     }
 
-    QList<KTp::Presence>::iterator i = qLowerBound(m_presences.begin(), m_presences.end(), KTp::Presence(presence));
-    m_presences.insert(i, presence);
-
-    int index = m_presences.indexOf(presence);
-    //this is technically a backwards and wrong, but I can't get a row from a const iterator,
-    //and using qLowerBound does seem a good approach
-    beginInsertRows(QModelIndex(), index, index);
-    endInsertRows();
     Q_EMIT countChanged();
-    return createIndex(index, 0);
+}
+
+QModelIndex PresenceModel::addPresence(const KTp::Presence &presence)
+{
+    if (!m_presences.contains(presence)) {
+        modifyModel(presence);
+        propagateChange(presence);
+    }
+
+    return createIndex(m_presences.indexOf(presence), 0);
 }
 
 void PresenceModel::removePresence(const KTp::Presence &presence)
 {
-    int row = m_presences.indexOf(presence);
-    beginRemoveRows(QModelIndex(), row, row);
-    m_presences.removeOne(presence);
-    endRemoveRows();
-    Q_EMIT countChanged();
+    if (m_presences.contains(presence)) {
+        modifyModel(presence);
+        propagateChange(presence);
+    }
 }
 
-int PresenceModel::updatePresenceApplet()
+void PresenceModel::propagateChange(const KTp::Presence &presence)
 {
-    if (!QDBusConnection::sessionBus().isConnected()) {
-        return 1;
-    }
+    QVariantList messageArgList;
+    QDBusMessage message = QDBusMessage::createSignal(QLatin1String("/Telepathy"),
+                                                          QLatin1String("org.kde.Telepathy"),
+                                                          QLatin1String("presenceModelChanged"));
 
-    QDBusInterface callApplet(QLatin1String("org.kde.Telepathy.PresenceAppletActive"),
-                              QLatin1String("/"), QLatin1String(""), QDBusConnection::sessionBus());
-    if (callApplet.isValid()) {
-        callApplet.asyncCall(QLatin1String("handleCustomPresenceChange"));
-        return 0;
+    messageArgList << QVariant::fromValue<Tp::SimplePresence>(presence.barePresence());
+    messageArgList << QVariant::fromValue<bool>(m_presences.contains(presence));
+    message << messageArgList;
+
+    if (!QDBusConnection::sessionBus().send(message)) {
+        const QString &error = QDBusConnection::sessionBus().lastError().message();
+        qCWarning(KTP_MODELS) << "presence model change propagation failed: " << error;
     }
-    return 1;
 }
 
 QHash<int, QByteArray> PresenceModel::roleNames() const

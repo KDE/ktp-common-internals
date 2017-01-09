@@ -78,13 +78,18 @@ QString Presence::iconName(bool useImIcons) const
 
 bool Presence::operator <(const Presence &other) const
 {
-    if (sortPriority(type()) < sortPriority(other.type())) {
+    if (sortPriority(type()) > sortPriority(other.type())) {
         return true;
     } else if (sortPriority(type()) == sortPriority(other.type())) {
         return (statusMessage() < other.statusMessage());
     } else {
         return false;
     }
+}
+
+bool Presence::operator >(const Presence &other) const
+{
+    return (other < *this);
 }
 
 QString Presence::displayString() const
@@ -114,11 +119,11 @@ int Presence::sortPriority(const Tp::ConnectionPresenceType &type)
             return 0;
         case Tp::ConnectionPresenceTypeBusy:
             return 1;
-        case Tp::ConnectionPresenceTypeHidden:
-            return 2;
         case Tp::ConnectionPresenceTypeAway:
-            return 3;
+            return 2;
         case Tp::ConnectionPresenceTypeExtendedAway:
+            return 3;
+        case Tp::ConnectionPresenceTypeHidden:
             return 4;
         //don't distinguish between the following three presences
         case Tp::ConnectionPresenceTypeError:
