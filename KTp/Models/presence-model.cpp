@@ -32,6 +32,8 @@
 #include <KConfig>
 #include <KConfigGroup>
 
+#include <functional>
+
 #include "types.h"
 #include "debug.h"
 
