@@ -27,6 +27,7 @@
 
 #include <TelepathyQt/TextChannel>
 #include <TelepathyQt/Account>
+#include <TelepathyQt/AccountSet>
 #include <TelepathyQt/AccountManager>
 
 #include <QVariant>
@@ -111,6 +112,7 @@ const QHash<Tp::ConnectionPresenceType, QString> s_presenceStrings = {
     { Tp::ConnectionPresenceTypeError, QStringLiteral("error") }
 };
 
+Q_DECLARE_METATYPE(Tp::AccountSetPtr);
 Q_DECLARE_METATYPE(Tp::AccountPtr)
 Q_DECLARE_METATYPE(KTp::ContactPtr)
 Q_DECLARE_METATYPE(Tp::AccountManagerPtr);

@@ -23,6 +23,7 @@
 
 #include <QObject>
 #include <QIcon>
+#include <QDBusInterface>
 
 #include <TelepathyQt/AccountManager>
 #include <TelepathyQt/AccountSet>
@@ -30,20 +31,20 @@
 
 #include <KTp/ktpcommoninternals_export.h>
 #include <KTp/types.h>
-#include "presence.h"
+#include <KTp/presence.h>
 
 namespace KTp
 {
 
-/** This class handles the presence between all enabled accounts
- * It shows the highest current available presence, indicates if any accounts are changing, and what they are changing to.
+/** This class handles the presence between all enabled accounts.
+ * It shows the highest current / requested presence, indicates if any accounts
+ * are changing state, and the highest they are changing to.
 */
 
 class KTPCOMMONINTERNALS_EXPORT GlobalPresence : public QObject
 {
     Q_OBJECT
-    Q_ENUMS(ConnectionPresenceType)
-    Q_PROPERTY(Tp::AccountManagerPtr accountManager READ accountManager WRITE addAccountManager)
+    Q_PROPERTY(Tp::AccountManagerPtr accountManager READ accountManager WRITE addAccountManager NOTIFY accountManagerReady)
 
     Q_PROPERTY(QString presenceMessage READ currentPresenceMessage NOTIFY currentPresenceChanged)
     Q_PROPERTY(ConnectionPresenceType presenceType READ currentPresenceType NOTIFY currentPresenceChanged)
@@ -51,10 +52,15 @@ class KTPCOMMONINTERNALS_EXPORT GlobalPresence : public QObject
     Q_PROPERTY(QString currentPresenceIconName READ currentPresenceIconName NOTIFY currentPresenceChanged)
     Q_PROPERTY(KTp::Presence currentPresence READ currentPresence NOTIFY currentPresenceChanged)
     Q_PROPERTY(QString currentPresenceName READ currentPresenceName NOTIFY currentPresenceChanged);
-    Q_PROPERTY(KTp::Presence requestedPresence READ requestedPresence WRITE setPresence NOTIFY requestedPresenceChanged)
+    Q_PROPERTY(KTp::Presence requestedPresence READ requestedPresence NOTIFY requestedPresenceChanged WRITE setPresence)
     Q_PROPERTY(QString requestedPresenceName READ requestedPresenceName NOTIFY requestedPresenceChanged)
-    Q_PROPERTY(bool isChangingPresence READ isChangingPresence NOTIFY connectionStatusChanged)
+    Q_PROPERTY(KTp::Presence globalPresence READ globalPresence WRITE setPresence)
+    Q_PROPERTY(ConnectionStatus connectionStatus READ connectionStatus NOTIFY connectionStatusChanged)
+    Q_PROPERTY(bool isChangingPresence READ isChangingPresence NOTIFY changingPresence)
+    Q_PROPERTY(bool hasConnectionError READ hasConnectionError NOTIFY connectionStatusChanged)
     Q_PROPERTY(bool hasEnabledAccounts READ hasEnabledAccounts NOTIFY enabledAccountsChanged)
+    Q_PROPERTY(Tp::AccountSetPtr enabledAccounts READ enabledAccounts)
+    Q_PROPERTY(Tp::AccountSetPtr onlineAccounts READ onlineAccounts)
 
 public:
     explicit GlobalPresence(QObject *parent = 0);
@@ -68,86 +74,168 @@ public:
         Hidden = Tp::ConnectionPresenceTypeHidden,
         Busy = Tp::ConnectionPresenceTypeBusy,
         Unknown = Tp::ConnectionPresenceTypeUnknown,
+        Unset = Tp::ConnectionPresenceTypeUnset,
         Error = Tp::ConnectionPresenceTypeError
     };
-    Q_ENUMS(ConnectionPresenceType)
+    Q_ENUM(ConnectionPresenceType)
 
-    /** Set the account manager to use
-      * @param accountManager should be ready.
-      */
+    enum ConnectionStatus
+    {
+        Disconnected = Tp::ConnectionStatusDisconnected,
+        Connecting = Tp::ConnectionStatusConnecting,
+        Connected = Tp::ConnectionStatusConnected
+    };
+    Q_ENUM(ConnectionStatus)
+
+    enum PresenceClass
+    {
+        Persistent,
+        Session
+    };
+    Q_ENUM(PresenceClass)
+
+    /**
+     * \brief Set a ready account manager.
+     *
+     * \param accountManager A Tp::AccountManagerPtr.
+     */
     void setAccountManager(const Tp::AccountManagerPtr &accountManager);
 
+    /**
+     * \brief Add a new (unready) account manager.
+     *
+     * \param accountManager A Tp::AccountManagerPtr.
+     */
     void addAccountManager(const Tp::AccountManagerPtr &accountManager);
+
+    /**
+     * \brief The account manager.
+     *
+     * \return A Tp::AccountManagerPtr.
+     */
     Tp::AccountManagerPtr accountManager() const;
 
-    /** Returns connecting if any account is connecting, else connected if at least one account is connected, disconnected otherwise*/
-    Tp::ConnectionStatus connectionStatus() const;
+    /**
+     * \brief Global connection status. Returns connecting if any account is
+     * connecting, else connected if at least one account is connected,
+     * disconnected otherwise.
+     *
+     * \return A ConnectionStatus enum.
+     */
+    ConnectionStatus connectionStatus() const;
 
-    /** The most online presence of any account*/
-    Presence currentPresence() const;
+    /**
+     * \brief The most online presence of all accounts. Returns the same presence
+     * as the requested presence if the most online account supports the
+     * requested presence.
+     */
+    KTp::Presence currentPresence() const;
     QString currentPresenceMessage() const;
     QIcon currentPresenceIcon() const;
     QString currentPresenceIconName() const;
     ConnectionPresenceType currentPresenceType() const;
     QString currentPresenceName() const;
 
-    /** The most online presence requested for any account if any of the accounts are changing state.
-      otherwise returns current presence*/
-    Presence requestedPresence() const;
-
+    /**
+     * \brief The most online requested presence for all accounts.
+     */
+    KTp::Presence requestedPresence() const;
     QString requestedPresenceName() const;
 
-    /** Returns true if any account is changing state (i.e connecting*/
+    /**
+     * \brief If any account is changing presence.
+     *
+     * \return true if any account is changing state.
+     */
     bool isChangingPresence() const;
 
-    /** Returns true if there is any enabled account */
+    /**
+     * \brief The KDED module requested global presence.
+     *
+     * \return A KTp::Presence.
+     */
+    KTp::Presence globalPresence() const;
+
+    /**
+     * \brief If any account has a connection error.
+     *
+     * \return true if any account has a connection error.
+     */
+    bool hasConnectionError() const;
+
+    /**
+     * \brief If the account manager has enabled accounts.
+     *
+     * \return true if the account manager has enabled accounts.
+     */
     bool hasEnabledAccounts() const;
 
+    /**
+     * \brief The account manager enabled accounts.
+     *
+     * \return The account manager enabled accounts set.
+     */
+    Tp::AccountSetPtr enabledAccounts() const;
+
+    /**
+     * \brief The account manager online accounts.
+     *
+     * \return The account manager online accounts set.
+     */
     Tp::AccountSetPtr onlineAccounts() const;
 
-
 Q_SIGNALS:
-    void requestedPresenceChanged(const KTp::Presence &customPresence);
-    void currentPresenceChanged(const KTp::Presence &presence);
-    void changingPresence(bool isChanging);
-    void connectionStatusChanged(Tp::ConnectionStatus);
+    void requestedPresenceChanged(const KTp::Presence &requestedPresence);
+    void currentPresenceChanged(const KTp::Presence &currentPresence);
+    void connectionStatusChanged(KTp::GlobalPresence::ConnectionStatus connectionStatus);
+    void changingPresence(bool isChangingPresence);
+    void enabledAccountsChanged(bool hasEnabledAccounts);
     void accountManagerReady();
-    void enabledAccountsChanged();
 
 public Q_SLOTS:
-    /** Set all enabled accounts to the specified presence*/
-    void setPresence(const KTp::Presence &presence);
-    void setPresence(ConnectionPresenceType p, QString message);
+    /**
+     * \brief Set the requested presence of all enabled accounts. If setting
+     * the global requested presence fails, will set each account to the
+     * specified presence. A presence type of unset will unset the presence.
+     *
+     * \param presence The requested presence.
+     *
+     * \overload presenceClass Session or Persistent presence class.
+     **/
+    void setPresence(const KTp::Presence &presence, PresenceClass presenceClass = Persistent);
 
-    /**Saves the current presence to memory*/
-    void saveCurrentPresence();
-    /**Restores the saved presence from memory */
-    void restoreSavedPresence();
+    /**
+     * \brief Set the requested presence of all enabled accounts. If setting
+     * the global requested presence fails, will set each account to the
+     * specified presence. A presence type of unset will unset the presence.
+     *
+     * \param type The ConnectionPresenceType.
+     *
+     * \overload message A status message.
+     * \overload presenceClass Session or Persistent presence class.
+     **/
+    void setPresence(ConnectionPresenceType type, QString message = QString(), PresenceClass presenceClass = Session);
 
 private Q_SLOTS:
-    void onCurrentPresenceChanged();
-    void onRequestedPresenceChanged();
-    void onChangingPresence();
-    void onConnectionStatusChanged();
+    void onCurrentPresenceChanged(const Tp::Presence &currentPresence);
+    void onRequestedPresenceChanged(const Tp::Presence &requestedPresence);
+    void onChangingPresence(bool isChangingPresence);
+    void onConnectionStatusChanged(Tp::ConnectionStatus connectionStatus);
 
-    void onAccountAdded(const Tp::AccountPtr &account);
-    void onAccountManagerReady(Tp::PendingOperation* op);
+    void onAccountEnabledChanged(const Tp::AccountPtr &account);
 
 private:
+    QDBusInterface *m_statusHandlerInterface;
     Tp::AccountManagerPtr m_accountManager;
-
     Tp::AccountSetPtr m_enabledAccounts;
     Tp::AccountSetPtr m_onlineAccounts;
 
-    /**Saved presence for later restoration (for example after returning from auto-away) */
-    KTp::Presence m_savedPresence;
-    /** A cache of the last sent requested presence, to avoid resignalling*/
     KTp::Presence m_requestedPresence;
-    /** A cache of the last sent presence*/
     KTp::Presence m_currentPresence;
-
-    Tp::ConnectionStatus m_connectionStatus;
+    ConnectionStatus m_connectionStatus;
     bool m_changingPresence;
+    bool m_hasConnectionError;
+    bool m_hasEnabledAccounts;
 };
 
 }

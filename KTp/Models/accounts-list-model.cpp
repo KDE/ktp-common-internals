@@ -22,7 +22,13 @@
 #include "accounts-list-model.h"
 
 #include <QIcon>
+#include <QDBusInterface>
+#include <QDBusPendingCall>
+#include <QVariant>
+
 #include "debug.h"
+#include "types.h"
+
 #include <KLocalizedString>
 #include <KPixmapSequence>
 
@@ -31,12 +37,18 @@
 
 #include <TelepathyQt/Account>
 #include <TelepathyQt/AccountSet>
+#include <TelepathyQt/Constants>
+#include <TelepathyQt/Presence>
 
-class KTp::AccountsListModel::Private {
+class KTp::AccountsListModel::Private : public QObject {
+Q_OBJECT
 public:
     QList<Tp::AccountPtr> accounts;
     Tp::AccountSetPtr accountSet;
+    QDBusInterface *statusHandler;
 
+Q_SIGNALS:
+    void statusHandlerStatusChange(const QString &accountUID);
 };
 
 
@@ -44,6 +56,14 @@ KTp::AccountsListModel::AccountsListModel(QObject *parent)
  : QAbstractListModel(parent),
    d(new AccountsListModel::Private)
 {
+    Tp::registerTypes();
+
+    d->statusHandler = new QDBusInterface(QLatin1String("org.freedesktop.Telepathy.Client.KTp.KdedIntegrationModule"),
+								  QLatin1String("/StatusHandler"),
+								  QString(),
+								  QDBusConnection::sessionBus(), this);
+
+    connect(d->statusHandler, SIGNAL(statusChange(QString)), d, SIGNAL(statusHandlerStatusChange(QString)));
 }
 
 KTp::AccountsListModel::~AccountsListModel()
@@ -59,6 +79,10 @@ QHash<int, QByteArray> KTp::AccountsListModel::roleNames() const
     roles[ConnectionStateIconRole] = "connectionStateIcon";
     roles[ConnectionErrorMessageDisplayRole] = "connectionErrorMessage";
     roles[ConnectionProtocolNameRole] = "connectionProtocolName";
+    roles[StatusHandlerSessionPresenceRole] = "statusHandlerSessionPresence";
+    roles[StatusHandlerPresenceRole] = "statusHandlerPresence";
+    roles[RequestedPresenceRole] = "requestedPresence";
+    roles[IconNameRole] = "iconName";
     roles[EnabledRole] = "enabled";
     roles[AccountRole] = "account";
     return roles;
@@ -74,12 +98,12 @@ void KTp::AccountsListModel::setAccountSet(const Tp::AccountSetPtr &accountSet)
     Q_FOREACH(const Tp::AccountPtr &account, d->accountSet->accounts()) {
         onAccountAdded(account);
     }
+
     connect(d->accountSet.data(), SIGNAL(accountAdded(Tp::AccountPtr)), SLOT(onAccountAdded(Tp::AccountPtr)));
     connect(d->accountSet.data(), SIGNAL(accountRemoved(Tp::AccountPtr)), SLOT(onAccountRemoved(Tp::AccountPtr)));
-
 }
 
-int KTp::AccountsListModel::rowCount(const QModelIndex & parent) const
+int KTp::AccountsListModel::rowCount(const QModelIndex &parent) const
 {
     // If the index is the root item, then return the row count.
     if (parent == QModelIndex()) {
@@ -90,15 +114,6 @@ int KTp::AccountsListModel::rowCount(const QModelIndex & parent) const
     // are children of the root item).
     return 0;
 }
-
-int KTp::AccountsListModel::columnCount(const QModelIndex& parent) const
-{
-    Q_UNUSED(parent);
-
-    // Column count is always 1
-    return 1;
-}
-
 
 QVariant KTp::AccountsListModel::data(const QModelIndex &index, int role) const
 {
@@ -138,6 +153,23 @@ QVariant KTp::AccountsListModel::data(const QModelIndex &index, int role) const
         data = QVariant(account->protocolName());
         break;
 
+    case AccountsListModel::StatusHandlerSessionPresenceRole:
+    case AccountsListModel::StatusHandlerPresenceRole:
+        if (d->statusHandler->property("requestedAccountPresences").toHash().contains(account->uniqueIdentifier())) {
+            data = QVariant::fromValue<KTp::Presence>(KTp::Presence(qdbus_cast<Tp::SimplePresence>(d->statusHandler->property("requestedAccountPresences").toHash().value(account->uniqueIdentifier()))));
+        } else {
+            data = QVariant::fromValue<KTp::Presence>(Tp::Presence(Tp::ConnectionPresenceTypeUnset, QLatin1String("unset"), QString()));
+        }
+        break;
+
+    case AccountsListModel::RequestedPresenceRole:
+        data = QVariant::fromValue<KTp::Presence>(account->requestedPresence());
+        break;
+
+    case AccountsListModel::IconNameRole:
+        data = QVariant(account->iconName());
+        break;
+
     case AccountsListModel::EnabledRole:
         if (account->isEnabled()) {
             data = QVariant(Qt::Checked);
@@ -162,6 +194,24 @@ bool KTp::AccountsListModel::setData(const QModelIndex &index, const QVariant &v
     if (!index.isValid()) {
         return false;
     }
+    if ((role == AccountsListModel::StatusHandlerSessionPresenceRole) || (role == AccountsListModel::StatusHandlerPresenceRole)) {
+        const QVariant &accountUID = QVariant::fromValue<QString>(index.data(AccountRole).value<Tp::AccountPtr>()->uniqueIdentifier());
+        const QVariant &presence = QVariant::fromValue<Tp::SimplePresence>(qvariant_cast<KTp::Presence>(value).barePresence());
+        QVariant presenceClass;
+        if (role == AccountsListModel::StatusHandlerPresenceRole) {
+            presenceClass = QVariant::fromValue<uint>(0);
+        } else {
+            presenceClass = QVariant::fromValue<uint>(1);
+        }
+
+        QDBusPendingCall call = d->statusHandler->asyncCall(QLatin1String("setRequestedAccountPresence"), accountUID, presence, presenceClass);
+
+        return true;
+    }
+    if (role == AccountsListModel::RequestedPresenceRole) {
+        index.data(AccountRole).value<Tp::AccountPtr>()->setRequestedPresence(qvariant_cast<KTp::Presence>(value));
+        return true;
+    }
     if (role == AccountsListModel::EnabledRole) {
         //this is index from QSortFilterProxyModel
         index.data(AccountRole).value<Tp::AccountPtr>()->setEnabled(value.toInt() == Qt::Checked);
@@ -169,19 +219,6 @@ bool KTp::AccountsListModel::setData(const QModelIndex &index, const QVariant &v
     }
 
     return false;
-}
-
-QModelIndex KTp::AccountsListModel::index(int row, int column, const QModelIndex& parent) const
-{
-    if (row < 0 || column < 0 || parent != QModelIndex()) {
-        return QModelIndex();
-    }
-
-    if (row < rowCount() && column < columnCount()) {
-        return createIndex(row, column);
-    }
-
-    return QModelIndex();
 }
 
 void KTp::AccountsListModel::onAccountAdded(const Tp::AccountPtr &account)
@@ -208,8 +245,17 @@ void KTp::AccountsListModel::onAccountAdded(const Tp::AccountPtr &account)
         qCDebug(KTP_MODELS) << "Account not already in model. Create new Account from account:"
                  << account.data();
 
-        beginInsertRows(QModelIndex(), d->accounts.size(), d->accounts.size());
-        d->accounts.append(account);
+        auto accountIdentifiersLessThan = [] (const Tp::AccountPtr &account, const Tp::AccountPtr &other) {
+            if (account->serviceName() == other->serviceName()) {
+                return (QString::localeAwareCompare(account->normalizedName(), other->normalizedName()) < 0);
+            } else {
+                return (QString::localeAwareCompare(account->serviceName(), other->serviceName()) < 0);
+            }
+        };
+
+        int row = std::lower_bound(d->accounts.constBegin(), d->accounts.constEnd(), account, accountIdentifiersLessThan) - d->accounts.constBegin();
+        beginInsertRows(QModelIndex(), row, row);
+        d->accounts.insert(row, account);
         endInsertRows();
 
         connect(account.data(),
@@ -230,13 +276,19 @@ void KTp::AccountsListModel::onAccountAdded(const Tp::AccountPtr &account)
         connect(account.data(),
                 SIGNAL(stateChanged(bool)),
                 SLOT(onAccountUpdated()));
+        connect(d, &AccountsListModel::Private::statusHandlerStatusChange, [=] (const QString &accountUID) {
+            if (accountUID == account->uniqueIdentifier()) {
+                onAccountUpdated();
+            }
+        });
     }
 }
 
 void KTp::AccountsListModel::onAccountRemoved(const Tp::AccountPtr &account)
 {
-    beginRemoveRows(QModelIndex(), d->accounts.indexOf(account), d->accounts.indexOf(account));
-    d->accounts.removeAll(account);
+    int row = d->accounts.indexOf(account);
+    beginRemoveRows(QModelIndex(), row, row);
+    d->accounts.removeAt(row);
     endRemoveRows();
 }
 
@@ -298,6 +350,13 @@ const QString KTp::AccountsListModel::connectionStatusReason(const Tp::AccountPt
     } else {
         return KTp::ErrorDictionary::displayShortErrorMessage(account->connectionError());
     }
+}
+
+QVariant KTp::AccountsListModel::get(int row, const QByteArray& role) const
+{
+    //TODO: cache roles?
+    QHash<int, QByteArray> roles = roleNames();
+    return index(row, 0).data(roles.key(role));
 }
 
 #include "accounts-list-model.moc"

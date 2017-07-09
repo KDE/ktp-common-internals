@@ -23,6 +23,7 @@
 #define PRESENCEMODEL_H
 
 #include <QAbstractListModel>
+#include <QVariant>
 
 #include <KConfigGroup>
 
@@ -35,7 +36,8 @@ namespace KTp
 class KTPMODELS_EXPORT PresenceModel : public QAbstractListModel
 {
     Q_OBJECT
-    Q_PROPERTY(int count READ rowCount NOTIFY countChanged)
+    Q_PROPERTY(int count READ rowCount)
+
 public:
     explicit PresenceModel(QObject *parent = 0);
     ~PresenceModel();
@@ -63,17 +65,14 @@ public:
     Q_SCRIPTABLE QVariant get(int row, const QByteArray& role) const;
 
     //protected:
-    virtual QVariant data(const QModelIndex &index, int role) const;
-    virtual QVariant data(int index) const;
     virtual int rowCount(const QModelIndex &parent = QModelIndex()) const;
+    virtual QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
+    virtual QModelIndexList match(const QModelIndex &start, int role, const QVariant &value, int hits = 1, Qt::MatchFlags flags =  Qt::MatchFlags(Qt::MatchStartsWith | Qt::MatchWrap)) const;
     virtual QHash<int, QByteArray> roleNames() const;
 
 public Q_SLOTS:
     /** Incoming changes from other models */
     void propagationChange(const QVariantList modelChange);
-
-Q_SIGNALS:
-    void countChanged();
 
 private:
     void modifyModel(const KTp::Presence &presence);

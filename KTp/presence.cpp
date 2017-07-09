@@ -76,6 +76,22 @@ QString Presence::iconName(bool useImIcons) const
     }
 }
 
+bool Presence::operator ==(const Presence &other) const
+{
+    if (sortPriority(type()) == sortPriority(other.type())) {
+        if (statusMessage() == other.statusMessage()) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+bool Presence::operator !=(const Presence &other) const
+{
+    return !(other == *this);
+}
+
 bool Presence::operator <(const Presence &other) const
 {
     if (sortPriority(type()) > sortPriority(other.type())) {

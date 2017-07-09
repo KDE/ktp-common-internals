@@ -26,11 +26,14 @@
 #include <QFontDatabase>
 #include <QIcon>
 #include <QtDBus/QtDBus>
+#include <QVariant>
 
 #include <KSharedConfig>
 #include <KLocalizedString>
 #include <KConfig>
 #include <KConfigGroup>
+
+#include <KTp/presence.h>
 
 #include <functional>
 
@@ -39,20 +42,6 @@
 
 namespace KTp
 {
-
-struct PresenceModelGreaterThan : public std::function<bool(KTp::Presence,KTp::Presence)>
-{
-    inline bool operator()(const KTp::Presence& presence, const KTp::Presence& other)
-    {
-        if (KTp::Presence::sortPriority(presence.type()) < KTp::Presence::sortPriority(other.type())) {
-            return true;
-        } else if (KTp::Presence::sortPriority(presence.type()) == KTp::Presence::sortPriority(other.type())) {
-            return (presence.statusMessage() < other.statusMessage());
-        } else {
-            return false;
-        }
-    }
-};
 
 PresenceModel::PresenceModel(QObject *parent) :
     QAbstractListModel(parent)
@@ -102,14 +91,10 @@ void PresenceModel::propagationChange(const QVariantList modelChange)
     }
 }
 
-QVariant PresenceModel::data(int index) const
+int PresenceModel::rowCount(const QModelIndex &parent) const
 {
-    if (index < 0 || index >= m_presences.size()) {
-        qCDebug(KTP_MODELS) << "invalid index data requested" << index;
-        return QVariant();
-    }
-
-    return QVariant::fromValue<KTp::Presence>(m_presences[index]);
+    Q_UNUSED(parent)
+    return m_presences.size();
 }
 
 QVariant PresenceModel::data(const QModelIndex &index, int role) const
@@ -123,13 +108,13 @@ QVariant PresenceModel::data(const QModelIndex &index, int role) const
     switch (role) {
     case Qt::DisplayRole:
         if (presence.statusMessage().isEmpty()) {
-            return presence.displayString();
+            return QVariant(presence.displayString());
         } else {
-            return presence.statusMessage();
+            return QVariant(presence.statusMessage());
         }
 
     case Qt::DecorationRole:
-        return presence.icon();
+        return QVariant(presence.icon());
 
     case Qt::FontRole:
         if (presence.statusMessage().isEmpty()) {
@@ -144,16 +129,44 @@ QVariant PresenceModel::data(const QModelIndex &index, int role) const
         return QVariant::fromValue<KTp::Presence>(presence);
 
     case IconNameRole:
-        return presence.iconName();
+        return QVariant(presence.iconName());
     }
 
     return QVariant();
 }
 
-int PresenceModel::rowCount(const QModelIndex &parent) const
+QModelIndexList PresenceModel::match(const QModelIndex &start, int role, const QVariant &value, int hits, Qt::MatchFlags flags) const
 {
-    Q_UNUSED(parent)
-    return m_presences.size();
+    Q_UNUSED(flags);
+
+    QModelIndexList items;
+
+    for (int i = 0; i < m_presences.size(); i++) {
+        if (i < start.row())
+            continue;
+
+        const KTp::Presence &presence = m_presences[i];
+        if (role == Qt::DisplayRole) {
+            if (presence.statusMessage().isEmpty()
+              && (presence.displayString() == qvariant_cast<QString>(value))) {
+                items.append(createIndex(i, 0));
+            } else if (presence.statusMessage() == qvariant_cast<QString>(value)) {
+                items.append(createIndex(i, 0));
+            }
+        }
+        if (role == PresenceRole) {
+            const KTp::Presence &matchPresence = qvariant_cast<KTp::Presence>(value);
+            if (presence == matchPresence) {
+                items.append(createIndex(i, 0));
+            }
+        }
+
+        if (items.size() == hits) {
+            return items;
+        }
+    }
+
+    return items;
 }
 
 void PresenceModel::loadPresences()
@@ -204,23 +217,25 @@ void PresenceModel::modifyModel(const KTp::Presence &presence)
     if (m_presences.contains(presence)) {
         int row = m_presences.indexOf(presence);
         beginRemoveRows(QModelIndex(), row, row);
+        m_presences.removeAt(row);
         endRemoveRows();
-
-        m_presences.removeOne(presence);
     } else {
-        m_presences.append(presence);
-
         // Identical presence types with status messages are compared with the
         // status messages in ascending order.
-        std::sort(m_presences.begin(), m_presences.end(), PresenceModelGreaterThan());
+        auto presenceMessageGreaterThan = [] (const KTp::Presence &presence, const KTp::Presence &other) {
+            if (KTp::Presence::sortPriority(presence.type()) == KTp::Presence::sortPriority(other.type())) {
+                return (QString::localeAwareCompare(presence.statusMessage(), other.statusMessage()) < 0);
+            } else {
+                return (KTp::Presence::sortPriority(presence.type()) < KTp::Presence::sortPriority(other.type()));
+            }
+        };
 
-        int index = m_presences.indexOf(presence);
+        int row = std::lower_bound(m_presences.constBegin(), m_presences.constEnd(), presence, presenceMessageGreaterThan) - m_presences.constBegin();
 
-        beginInsertRows(QModelIndex(), index, index);
+        beginInsertRows(QModelIndex(), row, row);
+        m_presences.insert(row, presence);
         endInsertRows();
     }
-
-    Q_EMIT countChanged();
 }
 
 QModelIndex PresenceModel::addPresence(const KTp::Presence &presence)

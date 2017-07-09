@@ -20,12 +20,18 @@
 
 #include "global-presence.h"
 
-#include "presence.h"
+#include <KTp/presence.h>
 
-#include <TelepathyQt/AccountSet>
+#include <QDBusPendingCall>
+#include <QVariant>
+
 #include <TelepathyQt/Account>
+#include <TelepathyQt/AccountSet>
+#include <TelepathyQt/AccountManager>
 #include <TelepathyQt/PendingReady>
+#include <TelepathyQt/Types>
 
+#include "types.h"
 #include "ktp-debug.h"
 
 namespace KTp
@@ -33,43 +39,58 @@ namespace KTp
 
 GlobalPresence::GlobalPresence(QObject *parent)
     : QObject(parent),
-      m_connectionStatus(Tp::ConnectionStatusDisconnected),
-      m_changingPresence(false)
+      m_connectionStatus(GlobalPresence::Disconnected),
+      m_changingPresence(false),
+      m_hasEnabledAccounts(false)
 {
-    Tp::Presence unknown;
-    unknown.setStatus(Tp::ConnectionPresenceTypeUnknown, QLatin1String("unknown"), QString());
+    Tp::registerTypes();
 
-    m_requestedPresence = KTp::Presence(unknown);
-    m_currentPresence = KTp::Presence(unknown);
+    m_statusHandlerInterface = new QDBusInterface(QLatin1String("org.freedesktop.Telepathy.Client.KTp.KdedIntegrationModule"),
+								  QLatin1String("/StatusHandler"),
+								  QString(),
+								  QDBusConnection::sessionBus(), this);
+
+    m_requestedPresence.setStatus(Tp::ConnectionPresenceTypeUnset, QLatin1String("unset"), QString());
+    m_currentPresence.setStatus(Tp::ConnectionPresenceTypeUnset, QLatin1String("unset"), QString());
 }
 
 void GlobalPresence::setAccountManager(const Tp::AccountManagerPtr &accountManager)
 {
-    if (! accountManager->isReady()) {
+    m_accountManager = accountManager;
+
+    m_enabledAccounts = m_accountManager->enabledAccounts();
+    m_onlineAccounts = m_accountManager->onlineAccounts();
+
+    for (const Tp::AccountPtr &account : m_enabledAccounts->accounts()) {
+        onAccountEnabledChanged(account);
+    }
+
+    connect(m_enabledAccounts.data(), &Tp::AccountSet::accountAdded, this, &GlobalPresence::onAccountEnabledChanged);
+    connect(m_enabledAccounts.data(), &Tp::AccountSet::accountRemoved, this, &GlobalPresence::onAccountEnabledChanged);
+
+    if (!m_accountManager->isReady()) {
         qCWarning(KTP_COMMONINTERNALS) << "GlobalPresence used with unready account manager";
+    } else {
+        Q_EMIT accountManagerReady();
     }
-
-    m_enabledAccounts = accountManager->enabledAccounts();
-    m_onlineAccounts = accountManager->onlineAccounts();
-
-    Q_FOREACH(const Tp::AccountPtr &account, m_enabledAccounts->accounts()) {
-        onAccountAdded(account);
-    }
-
-    onCurrentPresenceChanged();
-    onRequestedPresenceChanged();
-    onChangingPresence();
-    onConnectionStatusChanged();
-
-    connect(m_enabledAccounts.data(), SIGNAL(accountAdded(Tp::AccountPtr)), SLOT(onAccountAdded(Tp::AccountPtr)));
-    connect(m_enabledAccounts.data(), SIGNAL(accountRemoved(Tp::AccountPtr)), this, SIGNAL(enabledAccountsChanged()));
 }
 
 void GlobalPresence::addAccountManager(const Tp::AccountManagerPtr &accountManager)
 {
-    m_accountManager = accountManager;
-    connect(m_accountManager->becomeReady(), SIGNAL(finished(Tp::PendingOperation*)),
-            this, SLOT(onAccountManagerReady(Tp::PendingOperation*)));
+    connect(accountManager->becomeReady(), &Tp::PendingReady::finished, [=] (Tp::PendingOperation* op) {
+        if (op->isError()) {
+            qCDebug(KTP_COMMONINTERNALS) << op->errorName();
+            qCDebug(KTP_COMMONINTERNALS) << op->errorMessage();
+
+            qCDebug(KTP_COMMONINTERNALS) << "Something unexpected happened to"
+              << "the core part of your Instant Messaging system and it couldn't"
+              << "be initialized. Try restarting the client.";
+
+            return;
+        }
+
+        setAccountManager(accountManager);
+    });
 }
 
 Tp::AccountManagerPtr GlobalPresence::accountManager() const
@@ -77,58 +98,39 @@ Tp::AccountManagerPtr GlobalPresence::accountManager() const
     return m_accountManager;
 }
 
-void GlobalPresence::onAccountManagerReady(Tp::PendingOperation* op)
-{
-    if (op->isError()) {
-        qCDebug(KTP_COMMONINTERNALS) << op->errorName();
-        qCDebug(KTP_COMMONINTERNALS) << op->errorMessage();
-
-        //TODO: Create signal to send to client
-        qCDebug(KTP_COMMONINTERNALS) << "Something unexpected happened to the core part of your Instant Messaging system "
-                 << "and it couldn't be initialized. Try restarting the client.";
-
-        return;
-    }
-
-    setAccountManager(m_accountManager);
-    Q_EMIT(accountManagerReady());
-}
-
-Tp::ConnectionStatus GlobalPresence::connectionStatus() const
+GlobalPresence::ConnectionStatus GlobalPresence::connectionStatus() const
 {
     return m_connectionStatus;
 }
 
-Presence GlobalPresence::currentPresence() const
+KTp::Presence GlobalPresence::currentPresence() const
 {
     return m_currentPresence;
 }
 
 QString GlobalPresence::currentPresenceMessage() const
 {
-    KTp::Presence p = currentPresence();
-    return p.statusMessage();
+    return m_currentPresence.statusMessage();
 }
 
 QIcon GlobalPresence::currentPresenceIcon() const
 {
-    return currentPresence().icon();
+    return m_currentPresence.icon();
 }
 
 QString GlobalPresence::currentPresenceIconName() const
 {
-    return currentPresence().iconName();
+    return m_currentPresence.iconName();
 }
 
 QString GlobalPresence::currentPresenceName() const
 {
-    return currentPresence().displayString();
+    return m_currentPresence.displayString();
 }
 
 GlobalPresence::ConnectionPresenceType GlobalPresence::currentPresenceType() const
 {
-    KTp::Presence p = currentPresence();
-    switch(p.type()) {
+    switch(m_currentPresence.type()) {
         case Tp::ConnectionPresenceTypeAvailable:
             return GlobalPresence::Available;
         case Tp::ConnectionPresenceTypeBusy:
@@ -146,7 +148,7 @@ GlobalPresence::ConnectionPresenceType GlobalPresence::currentPresenceType() con
     }
 }
 
-Presence GlobalPresence::requestedPresence() const
+KTp::Presence GlobalPresence::requestedPresence() const
 {
     return m_requestedPresence;
 }
@@ -158,57 +160,98 @@ QString GlobalPresence::requestedPresenceName() const
 
 bool GlobalPresence::isChangingPresence() const
 {
-    return connectionStatus() == Tp::ConnectionStatusConnecting;
+    return m_changingPresence;
 }
 
-void GlobalPresence::setPresence(const KTp::Presence &presence)
+KTp::Presence GlobalPresence::globalPresence() const
+{
+    KTp::Presence globalPresence;
+    globalPresence.setStatus(Tp::ConnectionPresenceTypeUnset, QLatin1String("unset"), QString());
+
+    if (m_statusHandlerInterface->property("requestedGlobalPresence").isValid()) {
+        globalPresence = KTp::Presence(qdbus_cast<Tp::SimplePresence>(m_statusHandlerInterface->property("requestedGlobalPresence")));
+    }
+
+    return globalPresence;
+}
+
+void GlobalPresence::setPresence(const KTp::Presence &presence, PresenceClass presenceClass)
 {
     if (m_enabledAccounts.isNull()) {
         qCWarning(KTP_COMMONINTERNALS) << "Requested presence change on empty accounts set";
         return;
     }
 
-    Q_FOREACH(const Tp::AccountPtr &account, m_enabledAccounts->accounts()) {
-        account->setRequestedPresence(presence);
+    if (!presence.isValid()) {
+        qCWarning(KTP_COMMONINTERNALS) << "Invalid requested presence";
+        return;
     }
+
+    QDBusPendingCall call = m_statusHandlerInterface->asyncCall(QLatin1String("setRequestedGlobalPresence"), QVariant::fromValue<Tp::SimplePresence>(presence.barePresence()), QVariant::fromValue<uint>(presenceClass));
 }
 
-void GlobalPresence::setPresence(GlobalPresence::ConnectionPresenceType p, QString message)
+void GlobalPresence::setPresence(GlobalPresence::ConnectionPresenceType type, QString message, PresenceClass presenceClass)
 {
-    switch (p) {
-    case GlobalPresence::Available:
-        setPresence(Tp::Presence::available(message));
-        break;
-    case GlobalPresence::Busy:
-        setPresence(Tp::Presence::busy(message));
-        break;
-    case GlobalPresence::Away:
-        setPresence(Tp::Presence::away(message));
-        break;
-    case GlobalPresence::ExtendedAway:
-        setPresence(Tp::Presence::xa(message));
-        break;
-    case GlobalPresence::Hidden:
-        setPresence(Tp::Presence::hidden(message));
-        break;
-    case GlobalPresence::Offline:
-        setPresence(Tp::Presence::offline(message));
-        break;
-    default:
-        qCDebug(KTP_COMMONINTERNALS) << "You should not be here!";
+    KTp::Presence presence;
+
+    switch (type) {
+        case GlobalPresence::Available:
+            presence = KTp::Presence::available(message);
+            break;
+        case GlobalPresence::Busy:
+            presence = KTp::Presence::busy(message);
+            break;
+        case GlobalPresence::Away:
+            presence = KTp::Presence::away(message);
+            break;
+        case GlobalPresence::ExtendedAway:
+            presence = KTp::Presence::xa(message);
+            break;
+        case GlobalPresence::Hidden:
+            presence = KTp::Presence::hidden(message);
+            break;
+        case GlobalPresence::Offline:
+            presence = KTp::Presence::offline(message);
+            break;
+        case GlobalPresence::Unknown:
+            presence = KTp::Presence(Tp::Presence(Tp::ConnectionPresenceTypeUnknown, QLatin1String("unknown"), message));
+            break;
+        case GlobalPresence::Unset:
+            presence = KTp::Presence(Tp::Presence(Tp::ConnectionPresenceTypeUnset, QLatin1String("unset"), message));
+            break;
+        default:
+            qCDebug(KTP_COMMONINTERNALS) << "You should not be here!";
     }
+
+    setPresence(presence, presenceClass);
 }
 
-void GlobalPresence::onAccountAdded(const Tp::AccountPtr &account)
+void GlobalPresence::onAccountEnabledChanged(const Tp::AccountPtr &account)
 {
-    connect(account.data(), SIGNAL(connectionStatusChanged(Tp::ConnectionStatus)), SLOT(onConnectionStatusChanged()));
-    connect(account.data(), SIGNAL(requestedPresenceChanged(Tp::Presence)), SLOT(onRequestedPresenceChanged()));
-    connect(account.data(), SIGNAL(currentPresenceChanged(Tp::Presence)), SLOT(onCurrentPresenceChanged()));
+    if (account->isEnabled()) {
+        connect(account.data(), &Tp::Account::connectionStatusChanged, this, &GlobalPresence::onConnectionStatusChanged);
+        connect(account.data(), &Tp::Account::changingPresence, this, &GlobalPresence::onChangingPresence);
+        connect(account.data(), &Tp::Account::requestedPresenceChanged, this, &GlobalPresence::onRequestedPresenceChanged);
+        connect(account.data(), &Tp::Account::currentPresenceChanged, this, &GlobalPresence::onCurrentPresenceChanged);
+    } else {
+        disconnect(account.data());
+    }
 
-    Q_EMIT enabledAccountsChanged();
+    onCurrentPresenceChanged(account->currentPresence());
+    onRequestedPresenceChanged(account->requestedPresence());
+    onChangingPresence(account->isChangingPresence());
+    onConnectionStatusChanged(account->connectionStatus());
+
+    if (m_hasEnabledAccounts != !m_enabledAccounts.data()->accounts().isEmpty()) {
+        m_hasEnabledAccounts = !m_enabledAccounts.data()->accounts().isEmpty();
+        Q_EMIT enabledAccountsChanged(m_hasEnabledAccounts);
+    }
+
+    qCDebug(KTP_COMMONINTERNALS) << "Account" << account->uniqueIdentifier()
+      << "enabled:" << account->isEnabled();
 }
 
-void GlobalPresence::onCurrentPresenceChanged()
+void GlobalPresence::onCurrentPresenceChanged(const Tp::Presence &currentPresence)
 {
     /* basic idea of choosing global presence it to make it reflects the presence
      * over all accounts, usually this is used to indicates user the whole system
@@ -232,119 +275,121 @@ void GlobalPresence::onCurrentPresenceChanged()
      * from all accounts based on priority, and it also indicates there is no account support
      * the user-chosen presence.
      */
-    Tp::Presence highestCurrentPresence = Tp::Presence::offline();
-    Q_FOREACH(const Tp::AccountPtr &account, m_enabledAccounts->accounts()) {
-        if (account->currentPresence().type() == m_requestedPresence.type()) {
-            highestCurrentPresence = account->currentPresence();
-            break;
-        }
+    KTp::Presence highestCurrentPresence = KTp::Presence::offline();
 
-        if (Presence::sortPriority(account->currentPresence().type()) < Presence::sortPriority(highestCurrentPresence.type())) {
-            highestCurrentPresence = account->currentPresence();
-        }
-    }
-
-    qCDebug(KTP_COMMONINTERNALS) << "Current presence changed";
-
-    if (highestCurrentPresence.type() != m_currentPresence.type() ||
-            highestCurrentPresence.status() != m_currentPresence.status() ||
-            highestCurrentPresence.statusMessage() != m_currentPresence.statusMessage()) {
-
-        m_currentPresence = Presence(highestCurrentPresence);
-        Q_EMIT currentPresenceChanged(m_currentPresence);
-    }
-
-    onChangingPresence();
-}
-
-void GlobalPresence::onRequestedPresenceChanged()
-{
-    Tp::Presence highestRequestedPresence = Tp::Presence::offline();
-    Q_FOREACH(const Tp::AccountPtr &account, m_enabledAccounts->accounts()) {
-        if (Presence::sortPriority(account->requestedPresence().type()) < Presence::sortPriority(highestRequestedPresence.type())) {
-            highestRequestedPresence = account->requestedPresence();
-        }
-    }
-
-    if (highestRequestedPresence.type() != m_requestedPresence.type() ||
-            highestRequestedPresence.status() != m_requestedPresence.status() ||
-            highestRequestedPresence.statusMessage() != m_requestedPresence.statusMessage()) {
-        m_requestedPresence = Presence(highestRequestedPresence);
-        // current presence priority is affected by requested presence
-        onCurrentPresenceChanged();
-        Q_EMIT requestedPresenceChanged(m_requestedPresence);
-    }
-
-    onChangingPresence();
-}
-
-void GlobalPresence::onChangingPresence()
-{
-    bool isChangingPresence = false;
-    Q_FOREACH(const Tp::AccountPtr &account, m_enabledAccounts->accounts()) {
-        if (account->requestedPresence().type() != account->currentPresence().type()) {
-            isChangingPresence = true;
-        }
-    }
-
-    if (isChangingPresence != m_changingPresence) {
-        m_changingPresence = isChangingPresence;
-        Q_EMIT changingPresence(m_changingPresence);
-    }
-}
-
-void GlobalPresence::onConnectionStatusChanged()
-{
-    Tp::ConnectionStatus connectionStatus = Tp::ConnectionStatusDisconnected;
-
-    Q_FOREACH(const Tp::AccountPtr &account, m_enabledAccounts->accounts()) {
-        switch (account->connectionStatus()) {
-        case Tp::ConnectionStatusConnecting:
-            //connecting is the highest state, use this always
-            connectionStatus = Tp::ConnectionStatusConnecting;
-            break;
-        case Tp::ConnectionStatusConnected:
-            //only set to connected if we're not at connecting
-            if (connectionStatus == Tp::ConnectionStatusDisconnected) {
-                connectionStatus = Tp::ConnectionStatusConnected;
+    if (m_currentPresence == KTp::Presence(currentPresence)) {
+        return;
+    } else {
+        for (const Tp::AccountPtr &account : m_enabledAccounts->accounts()) {
+            if (KTp::Presence(account->currentPresence()) > highestCurrentPresence) {
+                highestCurrentPresence = KTp::Presence(account->currentPresence());
             }
-            break;
-        default:
-            break;
         }
     }
 
-    if (connectionStatus != m_connectionStatus) {
-        m_connectionStatus = connectionStatus;
-        Q_EMIT connectionStatusChanged(m_connectionStatus);
+    if (m_currentPresence != highestCurrentPresence) {
+        m_currentPresence = highestCurrentPresence;
+        Q_EMIT currentPresenceChanged(m_currentPresence);
+        qCDebug(KTP_COMMONINTERNALS) << "Current presence changed:"
+          << m_currentPresence.status() << m_currentPresence.statusMessage();
     }
 }
 
+void GlobalPresence::onRequestedPresenceChanged(const Tp::Presence &requestedPresence)
+{
+    KTp::Presence highestRequestedPresence = KTp::Presence::offline();
+
+    if (m_requestedPresence == KTp::Presence(requestedPresence)) {
+        return;
+    } else {
+        for (const Tp::AccountPtr &account : m_enabledAccounts->accounts()) {
+            if (KTp::Presence(account->requestedPresence()) > highestRequestedPresence) {
+                highestRequestedPresence = KTp::Presence(account->requestedPresence());
+            }
+        }
+    }
+
+    if (m_requestedPresence != highestRequestedPresence) {
+        m_requestedPresence = highestRequestedPresence;
+        Q_EMIT requestedPresenceChanged(m_requestedPresence);
+        qCDebug(KTP_COMMONINTERNALS) << "Requested presence changed:"
+          << m_requestedPresence.status() << m_requestedPresence.statusMessage();
+    }
+}
+
+void GlobalPresence::onChangingPresence(bool isChangingPresence)
+{
+    bool changing = false;
+
+    if (m_changingPresence == isChangingPresence) {
+        return;
+    } else {
+        for (const Tp::AccountPtr &account : m_enabledAccounts->accounts()) {
+            changing = account->isChangingPresence();
+
+            if (account->isChangingPresence()) {
+                break;
+            }
+        }
+    }
+
+    if (m_changingPresence != changing) {
+        m_changingPresence = changing;
+        Q_EMIT changingPresence(m_changingPresence);
+        qCDebug(KTP_COMMONINTERNALS) << "Presence changing:" << m_changingPresence;
+    }
+}
+
+void GlobalPresence::onConnectionStatusChanged(Tp::ConnectionStatus connectionStatus)
+{
+    GlobalPresence::ConnectionStatus changedConnectionStatus = GlobalPresence::Disconnected;
+    QList<GlobalPresence::ConnectionStatus> accountConnectionStatuses;
+    bool hasConnectionError = false;
+
+    if (m_connectionStatus == ConnectionStatus(connectionStatus)) {
+        return;
+    } else {
+        for (const Tp::AccountPtr &account : m_enabledAccounts->accounts()) {
+            accountConnectionStatuses << ConnectionStatus(account->connectionStatus());
+            if (!account->connectionError().isEmpty()) {
+                hasConnectionError = true;
+            }
+        }
+    }
+
+    if (accountConnectionStatuses.contains(GlobalPresence::Connecting)) {
+        changedConnectionStatus = GlobalPresence::Connecting;
+    } else if (accountConnectionStatuses.contains(GlobalPresence::Connected)) {
+        changedConnectionStatus = GlobalPresence::Connected;
+    }
+
+    m_hasConnectionError = hasConnectionError;
+
+    if (m_connectionStatus != changedConnectionStatus) {
+        m_connectionStatus = changedConnectionStatus;
+        Q_EMIT connectionStatusChanged(m_connectionStatus);
+        qCDebug(KTP_COMMONINTERNALS) << "Connection status changed:" << m_connectionStatus;
+    }
+}
 
 bool GlobalPresence::hasEnabledAccounts() const
 {
-    if (m_enabledAccounts.isNull() || m_enabledAccounts->accounts().isEmpty()) {
-        return false;
-    }
-
-    return true;
+    return m_hasEnabledAccounts;
 }
 
-void GlobalPresence::saveCurrentPresence()
+bool GlobalPresence::hasConnectionError() const
 {
-    qCDebug(KTP_COMMONINTERNALS) << "Saving presence with message:" << m_currentPresence.statusMessage();
-    m_savedPresence = m_currentPresence;
-}
-
-void GlobalPresence::restoreSavedPresence()
-{
-    qCDebug(KTP_COMMONINTERNALS) << m_savedPresence.statusMessage();
-    setPresence(m_savedPresence);
+    return m_hasConnectionError;
 }
 
 Tp::AccountSetPtr GlobalPresence::onlineAccounts() const
 {
     return m_onlineAccounts;
+}
+
+Tp::AccountSetPtr GlobalPresence::enabledAccounts() const
+{
+    return m_enabledAccounts;
 }
 
 }

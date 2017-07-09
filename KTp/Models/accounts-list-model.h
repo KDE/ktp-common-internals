@@ -22,9 +22,8 @@
 #ifndef KTP_ACCOUNTS_LIST_MODEL_H
 #define KTP_ACCOUNTS_LIST_MODEL_H
 
-#include <QtCore/QAbstractListModel>
-
-#include <TelepathyQt/Account>
+#include <QAbstractListModel>
+#include <QVariant>
 
 #include <KTp/Models/ktpmodels_export.h>
 #include <KTp/types.h>
@@ -35,6 +34,7 @@ namespace KTp
 class KTPMODELS_EXPORT AccountsListModel : public QAbstractListModel
 {
     Q_OBJECT
+    Q_PROPERTY(int count READ rowCount);
     Q_DISABLE_COPY(AccountsListModel);
 
 public:
@@ -44,6 +44,10 @@ public:
         ConnectionStateIconRole,
         ConnectionErrorMessageDisplayRole,
         ConnectionProtocolNameRole,
+        StatusHandlerSessionPresenceRole,
+        StatusHandlerPresenceRole,
+        RequestedPresenceRole,
+        IconNameRole,
         EnabledRole,
         AccountRole
     };
@@ -54,11 +58,11 @@ public:
     QHash<int, QByteArray> roleNames() const Q_DECL_OVERRIDE;
     void setAccountSet(const Tp::AccountSetPtr &accountSet);
 
-    virtual int rowCount(const QModelIndex & parent = QModelIndex()) const;
-    virtual int columnCount(const QModelIndex &parent = QModelIndex()) const;
+    Q_SCRIPTABLE QVariant get(int row, const QByteArray& role) const;
+
+    virtual int rowCount(const QModelIndex &parent = QModelIndex()) const;
     virtual QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
     virtual bool setData(const QModelIndex &index, const QVariant &value, int role);
-    virtual QModelIndex index(int row, int column, const QModelIndex &parent = QModelIndex()) const;
 
 private Q_SLOTS:
     void onAccountAdded(const Tp::AccountPtr &account);

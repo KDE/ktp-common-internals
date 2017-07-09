@@ -69,6 +69,16 @@ public:
     QString displayString() const;
 
     /**
+     * \brief Returns if the presences are equivalent
+     */
+    bool operator ==(const Presence &other) const;
+
+    /**
+     * \brief Returns if the presences are not equivalent
+     */
+    bool operator !=(const Presence &other) const;
+
+    /**
      * \brief Returns which presence is "less available"
      */
     bool operator <(const Presence &other) const;
