@@ -225,7 +225,7 @@ QVariant KTp::FavoriteRoomsModel::data(const QModelIndex &index, int role) const
             return QVariant();
         }
     case FavoriteRoomsModel::BookmarkRole:
-        room.value(QLatin1String("is-bookmarked")).toBool();
+        return room.value(QLatin1String("is-bookmarked"));
     case FavoriteRoomsModel::HandleNameRole:
         return room.value(QLatin1String("handle-name"));
     case FavoriteRoomsModel::AccountRole:
