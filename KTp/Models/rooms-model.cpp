@@ -214,6 +214,7 @@ QVariant KTp::FavoriteRoomsModel::data(const QModelIndex &index, int role) const
             }
         case HandleNameColumn:
         case AccountIdentifierColumn:
+        default:
             return QVariant();
         }
     case Qt::CheckStateRole:
