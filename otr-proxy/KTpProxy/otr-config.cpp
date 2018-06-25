@@ -71,6 +71,6 @@ namespace OTR
                 KTpProxyConfig::setOTRPolicy(KTpProxyConfig::Never);
                 break;
         }
-        KTpProxyConfig::self()->writeConfig();
+        KTpProxyConfig::self()->save();
     }
 }
