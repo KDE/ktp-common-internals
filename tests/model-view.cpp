@@ -23,6 +23,7 @@
 
 #include "roles-proxy-model.h"
 #include <QSortFilterProxyModel>
+#include <QStyleOptionViewItem>
 #include <QStyledItemDelegate>
 #include <QPainter>
 #include <QFontDatabase>
@@ -42,17 +43,17 @@ QSize SimpleDelegate::sizeHint(const QStyleOptionViewItem &option, const QModelI
 
 void SimpleDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
-    QStyleOptionViewItemV4 optV4 = option;
-    initStyleOption(&optV4, index);
+    QStyleOptionViewItem opt = option;
+    initStyleOption(&opt, index);
     painter->save();
 
     painter->setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform | QPainter::HighQualityAntialiasing);
-    painter->setClipRect(optV4.rect);
+    painter->setClipRect(opt.rect);
 
     QStyle *style = QApplication::style();
-    style->drawPrimitive(QStyle::PE_PanelItemViewItem, &optV4, painter);
+    style->drawPrimitive(QStyle::PE_PanelItemViewItem, &opt, painter);
 
-    QRect iconRect = optV4.rect;
+    QRect iconRect = opt.rect;
     iconRect.setSize(QSize(22, 22));
     iconRect.moveTo(QPoint(iconRect.x() + 8, iconRect.y() + 8));
 
@@ -64,10 +65,10 @@ void SimpleDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option
 
     QPixmap icon = QIcon::fromTheme(index.data(KTp::ContactPresenceIconRole).toString()).pixmap(22);
 
-    QRect statusIconRect = optV4.rect;
+    QRect statusIconRect = opt.rect;
     statusIconRect.setSize(QSize(22, 22));
-    statusIconRect.moveTo(QPoint(optV4.rect.right() - 24,
-                                 optV4.rect.top() + (optV4.rect.height() - 22) / 2));
+    statusIconRect.moveTo(QPoint(opt.rect.right() - 24,
+                                 opt.rect.top() + (opt.rect.height() - 22) / 2));
 
     painter->drawPixmap(statusIconRect, icon);
 
@@ -83,7 +84,7 @@ void SimpleDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option
 
     painter->setFont(nameFont);
 
-    QRect userNameRect = optV4.rect;
+    QRect userNameRect = opt.rect;
     userNameRect.setX(iconRect.x() + iconRect.width() + 18);
     userNameRect.setY(userNameRect.y() + (userNameRect.height()/2 - nameFontMetrics.height()/2));
     userNameRect.setWidth(userNameRect.width() - 22);
