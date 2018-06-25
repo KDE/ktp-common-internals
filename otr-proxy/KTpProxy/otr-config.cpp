@@ -27,7 +27,7 @@ namespace OTR
 {
     Config::Config()
     {
-        KTpProxyConfig::self()->readConfig();
+        KTpProxyConfig::self()->load();
     }
 
     QString Config::saveLocation()
