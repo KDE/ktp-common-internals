@@ -53,6 +53,12 @@ ChatWidgetFactory::ChatWidgetFactory(QObject *parent, const QVariantList &args):
 
 QWidget *ChatWidgetFactory::createDetailsWidget(const KPeople::PersonData &person, QWidget *parent) const
 {
+    QString accountPath = person.contactCustomProperty(QStringLiteral("telepathy-accountPath")).toString();
+    if (accountPath.isNull()) {
+        QLabel *label = new QLabel(i18n("Chat for current contact is not supported"));
+        return label;
+    }
+
     QWidget *widget = new QWidget(parent);
 
     QScrollArea *scrollArea = new QScrollArea();
@@ -69,30 +75,25 @@ QWidget *ChatWidgetFactory::createDetailsWidget(const KPeople::PersonData &perso
     chatlistView->setModel(m_model);
     layout->setContentsMargins(0, 0, 0, 0);
 
-    QString accountPath = person.contactCustomProperty(QStringLiteral("telepathy-accountPath")).toString();
-    if (accountPath.isNull()) {
-        layout->addWidget(new QLabel(i18n("Chat for current contact is not supported")));
+    KTp::LogManager *logManager = KTp::LogManager::instance();
+    logManager->setAccountManager(KTp::accountManager());
+    KTp::LogEntity logEntity(Tp::HandleTypeContact, person.contactCustomProperty(QStringLiteral("telepathy-contactId")).toString());
+
+    Tp::AccountPtr account;
+
+    if (accountPath.contains(QLatin1String(TP_ACCOUNT_OBJECT_PATH_BASE))) {
+        account = KTp::accountManager().data()->accountForObjectPath(accountPath);
     } else {
-        KTp::LogManager *logManager = KTp::LogManager::instance();
-        logManager->setAccountManager(KTp::accountManager());
-        KTp::LogEntity logEntity(Tp::HandleTypeContact, person.contactCustomProperty(QStringLiteral("telepathy-contactId")).toString());
+        account = KTp::accountManager().data()->accountForObjectPath(QLatin1String(TP_ACCOUNT_OBJECT_PATH_BASE) + accountPath);
+    }
 
-        Tp::AccountPtr account;
-
-        if (accountPath.contains(QLatin1String(TP_ACCOUNT_OBJECT_PATH_BASE))) {
-            account = KTp::accountManager().data()->accountForObjectPath(accountPath);
+    if (account.isNull()) {
+        qDebug() << "Error Occoured Account is not supposed to be null";
+    } else {
+        if (logManager->logsExist(account, logEntity)) {
+            connect(logManager->queryDates(account, logEntity), SIGNAL(finished(KTp::PendingLoggerOperation*)), SLOT(onPendingDates(KTp::PendingLoggerOperation*)));
         } else {
-            account = KTp::accountManager().data()->accountForObjectPath(QLatin1String(TP_ACCOUNT_OBJECT_PATH_BASE) + accountPath);
-        }
-
-        if (account.isNull()) {
-            qDebug() << "Error Occoured Account is not supposed to be null";
-        } else {
-            if (logManager->logsExist(account, logEntity)) {
-                connect(logManager->queryDates(account, logEntity), SIGNAL(finished(KTp::PendingLoggerOperation*)), SLOT(onPendingDates(KTp::PendingLoggerOperation*)));
-            } else {
-                layout->addWidget(new QLabel(QLatin1String("Chat for current contact is not available")));
-            }
+            layout->addWidget(new QLabel(QLatin1String("Chat for current contact is not available")));
         }
     }
 
