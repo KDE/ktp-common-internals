@@ -55,6 +55,9 @@ QWidget* ImDetailsWidget::createDetailsWidget(const KPeople::PersonData &person,
 
     int row = 0;
     for(const QString &contactId: person.contactUris()) {
+        if (!contactId.startsWith("ktp://")) {
+            continue;
+        }
         PersonData contact(contactId);
         const QString tpcontactId = contact.contactCustomProperty(QStringLiteral("telepathy-contactId")).toString();
         const QString accountPath = contact.contactCustomProperty(QStringLiteral("telepathy-accountPath")).toString(); //probably unused till we fix everything properly
