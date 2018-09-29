@@ -55,7 +55,7 @@ QWidget* ImDetailsWidget::createDetailsWidget(const KPeople::PersonData &person,
 
     int row = 0;
     for(const QString &contactId: person.contactUris()) {
-        if (!contactId.startsWith("ktp://")) {
+        if (!contactId.startsWith(QStringLiteral("ktp://"))) {
             continue;
         }
         PersonData contact(contactId);
