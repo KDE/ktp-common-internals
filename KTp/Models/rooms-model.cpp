@@ -192,6 +192,7 @@ QVariant KTp::FavoriteRoomsModel::data(const QModelIndex &index, int role) const
         case AccountIdentifierColumn:
             return room.value(QLatin1String("account-identifier"));
         }
+        break;
     case Qt::ToolTipRole:
         switch (index.column()) {
         case BookmarkColumn:
@@ -204,6 +205,7 @@ QVariant KTp::FavoriteRoomsModel::data(const QModelIndex &index, int role) const
         case AccountIdentifierColumn:
             return room.value(QLatin1String("handle-name"));
         }
+        break;
     case Qt::DecorationRole:
         switch (index.column()) {
         case BookmarkColumn:
@@ -217,6 +219,7 @@ QVariant KTp::FavoriteRoomsModel::data(const QModelIndex &index, int role) const
         default:
             return QVariant();
         }
+        break;
     case Qt::CheckStateRole:
         switch (index.column()) {
         case BookmarkColumn:
@@ -225,6 +228,7 @@ QVariant KTp::FavoriteRoomsModel::data(const QModelIndex &index, int role) const
         case AccountIdentifierColumn:
             return QVariant();
         }
+        break;
     case FavoriteRoomsModel::BookmarkRole:
         return room.value(QLatin1String("is-bookmarked"));
     case FavoriteRoomsModel::HandleNameRole:
