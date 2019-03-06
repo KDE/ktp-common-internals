@@ -50,6 +50,11 @@ public:
     void setTextChannel(const Tp::TextChannelPtr &channel);
     Tp::TextChannelPtr textChannel() const;
 
+    /**
+     * Useful for offline history retrieving (as there's no text channel when offline)
+     */
+    void setContactData(const QString &contactId, const QString &contactAlias);
+
     MessagesModel* messages() const;
     QString title() const;
     QIcon presenceIcon() const;

@@ -46,6 +46,7 @@ class Conversation::ConversationPrivate
     //and not handling it.
     bool delegated;
     bool valid;
+    QString contactAlias;
     Tp::AccountPtr account;
     QTimer *pausedStateTimer;
     // May be null for group chats.
@@ -87,10 +88,8 @@ Conversation::Conversation(QObject *parent)
 
 void Conversation::setTextChannel(const Tp::TextChannelPtr &channel)
 {
-    if (!d->messages) {
-        d->messages = new MessagesModel(d->account, this);
-        connect(d->messages, &MessagesModel::unreadCountChanged, this, &Conversation::unreadMessagesChanged);
-        connect(d->messages, &MessagesModel::lastMessageChanged, this, &Conversation::lastMessageChanged);
+    if (d->messages->account().isNull()) {
+        d->messages->setAccount(d->account);
     }
     if (d->messages->textChannel() != channel) {
         d->messages->setTextChannel(channel);
@@ -116,6 +115,20 @@ void Conversation::setTextChannel(const Tp::TextChannelPtr &channel)
     }
 }
 
+void Conversation::setContactData(const QString &contactId, const QString &contactAlias)
+{
+    if (!d->messages) {
+        qWarning() << "Needs messages model first!";
+        return;
+    }
+
+    qDebug() << "Setting contact data";
+    d->contactAlias = contactAlias;
+    d->messages->setContactData(contactId, contactAlias);
+
+    Q_EMIT titleChanged();
+}
+
 Tp::TextChannelPtr Conversation::textChannel() const
 {
     return d->messages->textChannel();
@@ -135,7 +148,7 @@ QString Conversation::title() const
         return d->targetContact->alias();
     }
 
-    return QString();
+    return d->contactAlias;
 }
 
 QIcon Conversation::presenceIcon() const
@@ -191,6 +204,7 @@ Tp::Account* Conversation::accountObject() const
 
 void Conversation::setAccount(const Tp::AccountPtr &account)
 {
+    d->messages->setAccount(account);
     d->account = account;
 }
 

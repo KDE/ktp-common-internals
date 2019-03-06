@@ -178,6 +178,17 @@ void MessagesModel::setAccount(const Tp::AccountPtr &account)
     d->account = account;
 }
 
+void MessagesModel::setContactData(const QString &contactId, const QString &contactAlias)
+{
+    d->logManager->setAccountAndContact(d->account, contactId, contactAlias);
+
+    //Load messages unless they have already been loaded
+    if (!d->logsLoaded) {
+        qDebug() << "Fetching scrollback";
+        d->logManager->fetchScrollback();
+    }
+}
+
 void MessagesModel::onHistoryFetched(const QList<KTp::Message> &messages)
 {
     QList<KTp::Message> messagesToAdd;
