@@ -257,8 +257,8 @@ void MessagesModel::onMessageSent(const Tp::Message &message, Tp::MessageSending
 {
     Q_UNUSED(flags);
 
-    int length = rowCount();
-    beginInsertRows(QModelIndex(), length, length);
+    int newMessageIndex = rowCount();
+    beginInsertRows(QModelIndex(), newMessageIndex, newMessageIndex);
 
     const KTp::Message &newMessage = KTp::MessageProcessor::instance()->processIncomingMessage(
                 message, d->account, d->textChannel);
@@ -266,7 +266,7 @@ void MessagesModel::onMessageSent(const Tp::Message &message, Tp::MessageSending
 
     if (!messageToken.isEmpty()) {
         // Insert the message into the lookup table for delivery reports.
-        const QPersistentModelIndex modelIndex = createIndex(length, 0);
+        const QPersistentModelIndex modelIndex = createIndex(newMessageIndex, 0);
         d->messagesByMessageToken.insert(messageToken, modelIndex);
     }
 
