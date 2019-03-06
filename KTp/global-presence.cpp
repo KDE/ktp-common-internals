@@ -393,6 +393,3 @@ Tp::AccountSetPtr GlobalPresence::enabledAccounts() const
 }
 
 }
-
-
-#include "global-presence.moc"
