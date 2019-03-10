@@ -57,7 +57,7 @@ void MessageEscapeFilter::filterMessage(KTp::Message &message, const KTp::Messag
              QString originalText = messageText.mid(parsedUrl.urlRanges.at(i).first + offset, parsedUrl.urlRanges.at(i).second);
              QString link = QString::fromLatin1("<a href=\"%1\">%2</a>").arg(QString::fromLatin1(url.toEncoded()), originalText);
 
-             QString placeholder = QString::fromLatin1("#K#T#P%1").arg(i);
+             QString placeholder = QString::fromLatin1("#K#T#P%1#LINK").arg(i);
 
              // replace the link with a placeholder^ so it passes through the escaping phase,
              // then it will be replaced back for the actual link
