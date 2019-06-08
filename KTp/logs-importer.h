@@ -41,7 +41,7 @@ class KTPCOMMONINTERNALS_EXPORT LogsImporter : public QObject
   public:
     LogsImporter(QObject *parent = 0);
 
-    virtual ~LogsImporter();
+    ~LogsImporter() override;
 
     /**
      * Checks whether there are any Kopete logs for \p account.

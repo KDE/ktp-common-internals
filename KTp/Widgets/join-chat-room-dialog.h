@@ -44,14 +44,14 @@ class KTPCOMMONINTERNALS_EXPORT JoinChatRoomDialog : public QDialog
 
 public:
     explicit JoinChatRoomDialog(Tp::AccountManagerPtr accountManager, QWidget *parent = 0);
-    ~JoinChatRoomDialog();
+    ~JoinChatRoomDialog() override;
 
     Tp::AccountPtr selectedAccount() const;     /** returns selected account */
     QString selectedChatRoom() const;           /** returns selected chat room */
-    virtual void accept();
+    void accept() override;
 
 protected:
-    virtual void closeEvent(QCloseEvent *e);
+    void closeEvent(QCloseEvent *e) override;
 
 private Q_SLOTS:
     void onTextChanged(QString newText);

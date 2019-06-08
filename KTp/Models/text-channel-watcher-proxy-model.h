@@ -35,17 +35,17 @@ class KTPMODELS_EXPORT TextChannelWatcherProxyModel : public QIdentityProxyModel
     Q_OBJECT
 public:
     explicit TextChannelWatcherProxyModel(QObject *parent=0);
-    virtual ~TextChannelWatcherProxyModel();
+    ~TextChannelWatcherProxyModel() override;
 
-    virtual void observeChannels(const Tp::MethodInvocationContextPtr<> &context,
+    void observeChannels(const Tp::MethodInvocationContextPtr<> &context,
                                  const Tp::AccountPtr &account,
                                  const Tp::ConnectionPtr &connection,
                                  const QList<Tp::ChannelPtr> &channels,
                                  const Tp::ChannelDispatchOperationPtr &dispatchOperation,
                                  const QList<Tp::ChannelRequestPtr> &requestsSatisfied,
-                                 const Tp::AbstractClientObserver::ObserverInfo &observerInfo);
+                                 const Tp::AbstractClientObserver::ObserverInfo &observerInfo) override;
 
-    QVariant data(const QModelIndex &proxyIndex, int role) const;
+    QVariant data(const QModelIndex &proxyIndex, int role) const override;
 
 private Q_SLOTS:
     void onChannelMessagesChanged();

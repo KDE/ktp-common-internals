@@ -53,7 +53,7 @@ class KTPCOMMONINTERNALS_EXPORT AbstractLoggerPlugin : public QObject
     /**
      * Destructor.
      */
-    virtual ~AbstractLoggerPlugin();
+    ~AbstractLoggerPlugin() override;
 
     /**
      * Queries all available plugins that handle given @p account for list of dates

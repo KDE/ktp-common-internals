@@ -38,7 +38,7 @@ class MessagesModel : public QAbstractListModel
 
   public:
     MessagesModel(const Tp::AccountPtr &account, QObject *parent = 0);
-    virtual ~MessagesModel();
+    ~MessagesModel() override;
 
     enum Roles {
         TextRole = Qt::UserRole, //String
@@ -68,8 +68,8 @@ class MessagesModel : public QAbstractListModel
     };
 
     QHash<int, QByteArray> roleNames() const Q_DECL_OVERRIDE;
-    virtual QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const Q_DECL_OVERRIDE;
-    virtual int rowCount(const QModelIndex &parent = QModelIndex()) const Q_DECL_OVERRIDE;
+    QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const Q_DECL_OVERRIDE;
+    int rowCount(const QModelIndex &parent = QModelIndex()) const Q_DECL_OVERRIDE;
 
     Tp::TextChannelPtr textChannel() const;
     void setTextChannel(const Tp::TextChannelPtr &channel);

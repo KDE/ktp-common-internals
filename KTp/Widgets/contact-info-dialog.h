@@ -40,7 +40,7 @@ class KTPCOMMONINTERNALS_EXPORT ContactInfoDialog : public QDialog
 
   public:
     explicit ContactInfoDialog(const Tp::AccountPtr &account, const Tp::ContactPtr &contact, QWidget *parent = 0);
-    virtual ~ContactInfoDialog();
+    ~ContactInfoDialog() override;
 
   protected:
     virtual void slotButtonClicked(QAbstractButton *button);

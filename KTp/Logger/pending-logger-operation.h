@@ -33,7 +33,7 @@ class KTPCOMMONINTERNALS_EXPORT PendingLoggerOperation : public QObject
     Q_OBJECT
 
   public:
-    virtual ~PendingLoggerOperation();
+    ~PendingLoggerOperation() override;
 
     bool hasError() const;
     QString error() const;

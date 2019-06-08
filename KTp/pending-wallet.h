@@ -37,7 +37,7 @@ public:
     KTp::WalletInterface *walletInterface() const;
 private:
     PendingWallet(KTp::WalletInterface *wallet);
-    virtual ~PendingWallet();
+    ~PendingWallet() override;
     KTp::PendingWalletPrivate *d;
 };
 

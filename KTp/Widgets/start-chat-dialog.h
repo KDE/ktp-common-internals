@@ -39,12 +39,12 @@ class KTPCOMMONINTERNALS_EXPORT StartChatDialog : public QDialog
 
 public:
     explicit StartChatDialog(const Tp::AccountManagerPtr &accountManager, QWidget *parent = 0);
-    virtual ~StartChatDialog();
+    ~StartChatDialog() override;
 
-    virtual void accept();
+    void accept() override;
 
 protected:
-    virtual void closeEvent(QCloseEvent *e);
+    void closeEvent(QCloseEvent *e) override;
 
 private Q_SLOTS:
     KTPCOMMONINTERNALS_NO_EXPORT void _k_onStartChatFinished(Tp::PendingOperation *op);

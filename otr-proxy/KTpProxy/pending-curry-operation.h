@@ -27,7 +27,7 @@ class PendingCurryOperation : public Tp::PendingOperation
 
     public:
         PendingCurryOperation(Tp::PendingOperation *op, const Tp::SharedPtr<Tp::RefCounted> &obj);
-        ~PendingCurryOperation();
+        ~PendingCurryOperation() override;
 
     protected:
         virtual void extract(Tp::PendingOperation *op) = 0;

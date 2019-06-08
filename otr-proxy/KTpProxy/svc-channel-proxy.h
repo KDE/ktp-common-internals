@@ -107,7 +107,7 @@ class TP_QT_EXPORT ChannelProxyInterfaceOTRAdaptor : public Tp::AbstractAdaptor
 
 public:
     ChannelProxyInterfaceOTRAdaptor(const QDBusConnection& dbusConnection, QObject* adaptee, QObject* parent);
-    virtual ~ChannelProxyInterfaceOTRAdaptor();
+    ~ChannelProxyInterfaceOTRAdaptor() override;
 
     typedef Tp::MethodInvocationContextPtr<  > ConnectProxyContextPtr;
     typedef Tp::MethodInvocationContextPtr<  > DisconnectProxyContextPtr;

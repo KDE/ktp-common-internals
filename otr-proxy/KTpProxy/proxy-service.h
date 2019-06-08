@@ -46,13 +46,13 @@ class ProxyService : public Tp::DBusService
 
     public:
         ProxyService(const QDBusConnection &dbusConnection, OTR::Config *config, const Tp::ClientRegistrarPtr &registrar);
-        ~ProxyService();
+        ~ProxyService() override;
 
         void addChannel(const Tp::TextChannelPtr &channel, const Tp::AccountPtr &account);
 
         void registerService(Tp::DBusError *error);
 
-        QVariantMap immutableProperties() const;
+        QVariantMap immutableProperties() const override;
         OtrlPolicy getPolicy() const;
         void setPolicy(OtrlPolicy otrPolicy);
 

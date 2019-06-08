@@ -38,7 +38,7 @@ class KTPCOMMONINTERNALS_EXPORT GlobalContactManager : public QObject
     Q_OBJECT
 public:
     explicit GlobalContactManager(const Tp::AccountManagerPtr &accountManager, QObject *parent = 0);
-    virtual ~GlobalContactManager();
+    ~GlobalContactManager() override;
 
     Tp::Contacts allKnownContacts() const;
     Tp::AccountPtr accountForConnection(const Tp::ConnectionPtr &connection) const;

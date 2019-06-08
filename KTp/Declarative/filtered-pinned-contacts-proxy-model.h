@@ -28,7 +28,7 @@ class FilteredPinnedContactsProxyModel : public QSortFilterProxyModel
     public:
         FilteredPinnedContactsProxyModel(QObject* parent = 0);
 
-        virtual bool filterAcceptsRow(int source_row, const QModelIndex& source_parent) const;
+        bool filterAcceptsRow(int source_row, const QModelIndex& source_parent) const override;
 };
 
 #endif // FILTEREDPINNEDCONTACTSPROXYMODEL_H

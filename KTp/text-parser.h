@@ -74,7 +74,7 @@ public:
      *
      * @param void
      */
-    virtual ~TextParser();
+    ~TextParser() override;
 
 private:
     /**

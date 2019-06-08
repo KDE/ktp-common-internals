@@ -32,8 +32,8 @@
 #include <KTp/types.h>
 
 class SimpleDelegate : public QStyledItemDelegate {
-    virtual QSize sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const;
-    virtual void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
+    QSize sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const override;
+    void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const override;
 };
 
 QSize SimpleDelegate::sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const

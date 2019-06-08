@@ -57,7 +57,7 @@ class KTPCOMMONINTERNALS_EXPORT ContactViewWidget : public QWidget
                WRITE setViewMode)
 public:
     explicit ContactViewWidget(ContactsListModel *model, QWidget *parent = 0);
-    virtual ~ContactViewWidget();
+    ~ContactViewWidget() override;
 
     virtual QString displayNameFilter() const;
     Q_SLOT virtual void clearDisplayNameFilter();

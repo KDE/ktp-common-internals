@@ -39,10 +39,10 @@ class ContactViewDelegate : public QAbstractItemDelegate
 
 public:
     ContactViewDelegate(QObject *parent);
-    virtual ~ContactViewDelegate();
+    ~ContactViewDelegate() override;
 
-    virtual void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
-    virtual QSize sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const;
+    void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const override;
+    QSize sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const override;
 
 }; // class ContactViewDelegate
 

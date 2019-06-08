@@ -30,16 +30,16 @@ class ProxyObserver : public Tp::AbstractClientObserver
 {
     public:
         ProxyObserver(ProxyService *ps);
-        ~ProxyObserver();
+        ~ProxyObserver() override;
 
-        virtual void observeChannels(
+        void observeChannels(
                 const Tp::MethodInvocationContextPtr<> &context,
                 const Tp::AccountPtr &account,
                 const Tp::ConnectionPtr &connection,
                 const QList<Tp::ChannelPtr> &channels,
                 const Tp::ChannelDispatchOperationPtr &dispatchOperation,
                 const QList<Tp::ChannelRequestPtr> &requestsSatisfied,
-                const Tp::AbstractClientObserver::ObserverInfo &observerInfo);
+                const Tp::AbstractClientObserver::ObserverInfo &observerInfo) override;
 
     private:
         ProxyService *ps;

@@ -70,7 +70,7 @@ class PendingSendMessageResult : public PendingCurryOperation
             return token;
         }
 
-        virtual void extract(Tp::PendingOperation *op)
+        void extract(Tp::PendingOperation *op) override
         {
             token = dynamic_cast<Tp::PendingSendMessage*>(op)->sentMessageToken();
         }

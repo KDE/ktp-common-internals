@@ -37,13 +37,13 @@ class KAccountsKTpPlugin : public KAccountsDPlugin
 
 public:
     KAccountsKTpPlugin(QObject *parent = 0);
-    ~KAccountsKTpPlugin();
+    ~KAccountsKTpPlugin() override;
 
 public Q_SLOTS:
-    void onAccountCreated(const Accounts::AccountId accountId, const Accounts::ServiceList &serviceList);
-    void onAccountRemoved(const Accounts::AccountId accountId);
-    void onServiceEnabled(const Accounts::AccountId accountId, const Accounts::Service &service);
-    void onServiceDisabled(const Accounts::AccountId accountId, const Accounts::Service &service);
+    void onAccountCreated(const Accounts::AccountId accountId, const Accounts::ServiceList &serviceList) override;
+    void onAccountRemoved(const Accounts::AccountId accountId) override;
+    void onServiceEnabled(const Accounts::AccountId accountId, const Accounts::Service &service) override;
+    void onServiceDisabled(const Accounts::AccountId accountId, const Accounts::Service &service) override;
 
 private Q_SLOTS:
     void onAccountManagerReady(Tp::PendingOperation *op);

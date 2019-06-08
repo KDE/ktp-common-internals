@@ -52,8 +52,8 @@ class KTpAllContacts : public AllContactsMonitor
     Q_OBJECT
 public:
     KTpAllContacts();
-    ~KTpAllContacts();
-    virtual QMap<QString, AbstractContact::Ptr> contacts() Q_DECL_OVERRIDE;
+    ~KTpAllContacts() override;
+    QMap<QString, AbstractContact::Ptr> contacts() Q_DECL_OVERRIDE;
 
 private Q_SLOTS:
     void loadCache(const QString &accountId = QString());
@@ -71,7 +71,7 @@ private:
 class TelepathyContact : public KPeople::AbstractContact
 {
 public:
-    virtual QVariant customProperty(const QString &key) const Q_DECL_OVERRIDE
+    QVariant customProperty(const QString &key) const Q_DECL_OVERRIDE
     {
         // Check if the contact is valid first
         if (m_contact && m_contact->manager() && m_contact->manager()->connection() && m_account) {

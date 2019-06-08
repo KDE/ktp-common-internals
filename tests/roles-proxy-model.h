@@ -30,21 +30,21 @@ class RolesProxyModel : public QAbstractProxyModel {
 
 public:
     RolesProxyModel(QObject *parent = 0);
-    virtual ~RolesProxyModel();
+    ~RolesProxyModel() override;
 
-    virtual void setSourceModel(QAbstractItemModel *sourceModel);
+    void setSourceModel(QAbstractItemModel *sourceModel) override;
 
-    virtual int rowCount(const QModelIndex &parent = QModelIndex()) const;
-    virtual int columnCount(const QModelIndex &parent = QModelIndex()) const;
-    virtual QModelIndex index(int row, int column, const QModelIndex &parent = QModelIndex()) const;
-    virtual QModelIndex parent(const QModelIndex &index) const;
+    int rowCount(const QModelIndex &parent = QModelIndex()) const override;
+    int columnCount(const QModelIndex &parent = QModelIndex()) const override;
+    QModelIndex index(int row, int column, const QModelIndex &parent = QModelIndex()) const override;
+    QModelIndex parent(const QModelIndex &index) const override;
 
-    virtual QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
-    virtual Qt::ItemFlags flags(const QModelIndex &index) const;
-    virtual QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const;
+    QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
+    Qt::ItemFlags flags(const QModelIndex &index) const override;
+    QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const override;
 
-    virtual QModelIndex mapFromSource(const QModelIndex &sourceIndex) const;
-    virtual QModelIndex mapToSource(const QModelIndex &proxyIndex) const;
+    QModelIndex mapFromSource(const QModelIndex &sourceIndex) const override;
+    QModelIndex mapToSource(const QModelIndex &proxyIndex) const override;
 
 protected Q_SLOTS:
     virtual void onSourceRowsInserted(const QModelIndex &parent, int start, int end);

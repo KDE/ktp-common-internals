@@ -45,7 +45,7 @@ class KTPCOMMONINTERNALS_EXPORT LogMessage : public KTp::Message
                         const QString &messageToken);
     LogMessage(const LogMessage& other);
 
-    virtual ~LogMessage();
+    ~LogMessage() override;
 };
 
 } // namespace KTp

@@ -30,7 +30,7 @@ class MainWindow : public KXmlGuiWindow
     Q_OBJECT
 public:
     explicit MainWindow(QWidget *parent = 0);
-    virtual ~MainWindow();
+    ~MainWindow() override;
 
 public Q_SLOTS:
     void saveLogFile();

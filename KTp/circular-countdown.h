@@ -33,7 +33,7 @@ class KTPCOMMONINTERNALS_EXPORT CircularCountdown : public QWidget
 
 public:
     explicit CircularCountdown(int msec = 5000, QWidget *parent = 0);
-    ~CircularCountdown();
+    ~CircularCountdown() override;
 
     void setDuration(int msec);
     int duration() const;
@@ -49,8 +49,8 @@ Q_SIGNALS:
 
 
 protected:
-     void paintEvent(QPaintEvent *event);
-     QSize sizeHint() const;
+     void paintEvent(QPaintEvent *event) override;
+     QSize sizeHint() const override;
 
 private:
     class Private;

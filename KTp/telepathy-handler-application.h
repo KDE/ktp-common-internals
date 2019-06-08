@@ -51,7 +51,7 @@ public:
                                          int initialTimeout = 15000,
                                          int timeout = 2000);
 
-    virtual ~TelepathyHandlerApplication();
+    ~TelepathyHandlerApplication() override;
 
     static int newJob();
     static void jobFinished();

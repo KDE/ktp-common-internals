@@ -41,7 +41,7 @@ namespace OTR
         Q_OBJECT
         public:
             UserStateBox(OtrlUserState userState);
-            ~UserStateBox();
+            ~UserStateBox() override;
 
             OtrlUserState userState();
             /** if zero timer is stopped */
@@ -62,7 +62,7 @@ namespace OTR
 
         public:
             Session(const SessionContext &context, Manager *parent);
-            virtual ~Session() = default;
+            ~Session() override = default;
 
             UserStateBox* userStateBox() const;
             Manager* parent() const;
@@ -138,9 +138,9 @@ namespace OTR
         public:
             ProxySession(OtrProxyChannel::Adaptee *pca, const SessionContext &ctx, Manager *parent);
 
-            virtual void handleMessage(const Message &message) override;
-            virtual int recipientStatus() const override;
-            virtual unsigned int maxMessageSize() const override;
+            void handleMessage(const Message &message) override;
+            int recipientStatus() const override;
+            unsigned int maxMessageSize() const override;
 
         private:
             OtrProxyChannel::Adaptee *pca;

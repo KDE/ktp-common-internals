@@ -37,7 +37,7 @@ class KTPMODELS_EXPORT AbstractGroupingProxyModel : public QStandardItemModel
     Q_OBJECT
 public:
     explicit AbstractGroupingProxyModel(QAbstractItemModel *source);
-    virtual ~AbstractGroupingProxyModel();
+    ~AbstractGroupingProxyModel() override;
 
     void forceGroup(const QString &group);
     void unforceGroup(const QString &group);

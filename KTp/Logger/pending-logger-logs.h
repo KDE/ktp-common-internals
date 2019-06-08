@@ -47,7 +47,7 @@ class KTPCOMMONINTERNALS_EXPORT PendingLoggerLogs : public KTp::PendingLoggerOpe
     /**
      * Destructor.
      */
-    virtual ~PendingLoggerLogs();
+    ~PendingLoggerLogs() override;
 
     /**
      * Returns account for which logs are being queried.

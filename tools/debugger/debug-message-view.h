@@ -29,9 +29,9 @@ class DebugMessageView : public QWidget
     Q_OBJECT
 public:
     explicit DebugMessageView(QWidget *parent = 0);
-    ~DebugMessageView();
+    ~DebugMessageView() override;
 
-    void showEvent(QShowEvent *event);
+    void showEvent(QShowEvent *event) override;
     void setTelepathyProcess(TelepathyProcess *process);
     void saveLogFile();
 

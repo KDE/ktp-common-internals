@@ -203,10 +203,10 @@ public:
     Q_DECLARE_FLAGS(SubscriptionStateFilterFlags, SubscriptionStateFilterFlag)
 
     ContactsFilterModel(QObject *parent = 0);
-    virtual ~ContactsFilterModel();
+    ~ContactsFilterModel() override;
 
-    virtual QVariant data(const QModelIndex &index, int role) const;
-    virtual void setSourceModel(QAbstractItemModel *sourceModel);
+    QVariant data(const QModelIndex &index, int role) const override;
+    void setSourceModel(QAbstractItemModel *sourceModel) override;
     void invalidateFilter();
 
     PresenceTypeFilterFlags presenceTypeFilterFlags() const;
@@ -292,11 +292,11 @@ public:
     Q_SLOT void setSortRoleString(const QString &role);
 
 protected:
-    bool filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent) const;
-    bool lessThan (const QModelIndex &left, const QModelIndex &right) const;
+    bool filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent) const override;
+    bool lessThan (const QModelIndex &left, const QModelIndex &right) const override;
     QModelIndexList match(const QModelIndex &start, int role,
                           const QVariant &value, int hits,
-                          Qt::MatchFlags flags) const;
+                          Qt::MatchFlags flags) const override;
 
 private:
     class Private;

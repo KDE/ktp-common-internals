@@ -40,7 +40,7 @@ class KTPMODELS_EXPORT PresenceModel : public QAbstractListModel
 
 public:
     explicit PresenceModel(QObject *parent = 0);
-    ~PresenceModel();
+    ~PresenceModel() override;
 
     enum Roles {
         //Also supplies Qt::DisplayRole and Qt::DecorationRole
@@ -65,10 +65,10 @@ public:
     Q_SCRIPTABLE QVariant get(int row, const QByteArray& role) const;
 
     //protected:
-    virtual int rowCount(const QModelIndex &parent = QModelIndex()) const;
-    virtual QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
-    virtual QModelIndexList match(const QModelIndex &start, int role, const QVariant &value, int hits = 1, Qt::MatchFlags flags =  Qt::MatchFlags(Qt::MatchStartsWith | Qt::MatchWrap)) const;
-    virtual QHash<int, QByteArray> roleNames() const;
+    int rowCount(const QModelIndex &parent = QModelIndex()) const override;
+    QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
+    QModelIndexList match(const QModelIndex &start, int role, const QVariant &value, int hits = 1, Qt::MatchFlags flags =  Qt::MatchFlags(Qt::MatchStartsWith | Qt::MatchWrap)) const override;
+    QHash<int, QByteArray> roleNames() const override;
 
 public Q_SLOTS:
     /** Incoming changes from other models */

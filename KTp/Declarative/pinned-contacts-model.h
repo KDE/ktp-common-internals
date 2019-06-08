@@ -38,7 +38,7 @@ class PinnedContactsModel : public QAbstractListModel
 
   public:
     explicit PinnedContactsModel(QObject *parent = 0);
-    virtual ~PinnedContactsModel();
+    ~PinnedContactsModel() override;
 
     enum role {
         PresenceIconRole = Qt::UserRole + 1,
@@ -49,8 +49,8 @@ class PinnedContactsModel : public QAbstractListModel
     };
 
     QHash<int, QByteArray> roleNames() const Q_DECL_OVERRIDE;
-    virtual QVariant data(const QModelIndex &index, int role) const Q_DECL_OVERRIDE;
-    virtual int rowCount(const QModelIndex &parent = QModelIndex()) const Q_DECL_OVERRIDE;
+    QVariant data(const QModelIndex &index, int role) const Q_DECL_OVERRIDE;
+    int rowCount(const QModelIndex &parent = QModelIndex()) const Q_DECL_OVERRIDE;
 
     Q_SLOT void setPinning(const Tp::AccountPtr &account, const KTp::ContactPtr &contact, bool newState);
 

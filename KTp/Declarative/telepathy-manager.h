@@ -48,7 +48,7 @@ class TelepathyManager : public QObject
 
 public:
     TelepathyManager(QObject *parent=0);
-    virtual ~TelepathyManager();
+    ~TelepathyManager() override;
 
     /** Returns the account manager*/
     Tp::AccountManagerPtr accountManager();

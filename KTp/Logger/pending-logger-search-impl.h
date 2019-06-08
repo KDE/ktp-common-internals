@@ -32,7 +32,7 @@ class PendingLoggerSearchImpl : public KTp::PendingLoggerSearch
 
   public:
     explicit PendingLoggerSearchImpl(const QString& term, QObject* parent = 0);
-    virtual ~PendingLoggerSearchImpl();
+    ~PendingLoggerSearchImpl() override;
 
 
   public Q_SLOTS:

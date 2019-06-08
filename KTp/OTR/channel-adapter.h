@@ -38,7 +38,7 @@ class KTPOTR_EXPORT ChannelAdapter : public QObject, public Tp::RefCounted
 
     public:
         ChannelAdapter(const Tp::TextChannelPtr &textChannel, QObject *parent = 0);
-        ~ChannelAdapter();
+        ~ChannelAdapter() override;
 
         Tp::TextChannelPtr textChannel();
 

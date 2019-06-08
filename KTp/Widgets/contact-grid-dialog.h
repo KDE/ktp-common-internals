@@ -48,7 +48,7 @@ class KTPCOMMONINTERNALS_EXPORT ContactGridDialog : public QDialog
 
 public:
     ContactGridDialog(QWidget *parent);
-    virtual ~ContactGridDialog();
+    ~ContactGridDialog() override;
 
     virtual KTp::ContactsFilterModel* filter() const;
 

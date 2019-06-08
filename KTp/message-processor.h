@@ -52,7 +52,7 @@ class KTPCOMMONINTERNALS_EXPORT MessageProcessor : public QObject
 
   public:
     static MessageProcessor* instance();
-    ~MessageProcessor();
+    ~MessageProcessor() override;
 
     //text-ui will call this somewhere when creating the template
     QString header();

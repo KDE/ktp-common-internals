@@ -33,7 +33,7 @@ class KTPCOMMONINTERNALS_EXPORT AccountsComboBox : public QComboBox
     Q_DISABLE_COPY(AccountsComboBox)
 public:
     explicit AccountsComboBox(QWidget *parent = 0);
-    virtual ~AccountsComboBox();
+    ~AccountsComboBox() override;
 
 public:
     /** A set of accounts to show.

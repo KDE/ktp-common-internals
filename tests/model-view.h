@@ -33,7 +33,7 @@ class ModelView : public QWidget, protected Ui::MainWidget {
 
 public:
     ModelView(QAbstractItemModel *model, QWidget *parent = 0);
-    ~ModelView();
+    ~ModelView() override;
 
 };
 

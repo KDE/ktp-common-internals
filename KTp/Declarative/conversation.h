@@ -45,7 +45,7 @@ class Conversation : public QObject
 public:
     Conversation(const Tp::TextChannelPtr &channel, const Tp::AccountPtr &account, QObject *parent = 0);
     Conversation(QObject *parent = 0);
-    virtual ~Conversation();
+    ~Conversation() override;
 
     void setTextChannel(const Tp::TextChannelPtr &channel);
     Tp::TextChannelPtr textChannel() const;

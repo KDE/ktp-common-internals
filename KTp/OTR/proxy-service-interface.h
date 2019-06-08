@@ -346,7 +346,7 @@ Q_SIGNALS:
     void KeyGenerationFinished(const QDBusObjectPath& account, bool error);
 
 protected:
-    virtual void invalidate(Tp::DBusProxy *, const QString &, const QString &);
+    void invalidate(Tp::DBusProxy *, const QString &, const QString &) override;
 };
 }
 }

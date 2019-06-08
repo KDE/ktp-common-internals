@@ -33,7 +33,7 @@ class LogsImporter::Private: public QThread
 
   public:
     Private(LogsImporter* parent);
-    ~Private();
+    ~Private() override;
 
     void setAccountId(const QString &accountId);
     QStringList findKopeteLogs(const QString &accountId) const;
@@ -42,7 +42,7 @@ class LogsImporter::Private: public QThread
     void error(const QString &error);
 
   protected:
-    virtual void run();
+    void run() override;
 
   private:
 

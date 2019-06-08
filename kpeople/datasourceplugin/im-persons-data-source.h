@@ -28,10 +28,10 @@ class IMPersonsDataSource : public KPeople::BasePersonsDataSource
 {
 public:
     IMPersonsDataSource(QObject *parent, const QVariantList &data);
-    virtual ~IMPersonsDataSource();
-    virtual QString sourcePluginId() const;
+    ~IMPersonsDataSource() override;
+    QString sourcePluginId() const override;
 
-    virtual KPeople::AllContactsMonitor* createAllContactsMonitor();
+    KPeople::AllContactsMonitor* createAllContactsMonitor() override;
 };
 
 #endif // IM_PERSONS_DATA_SOURCE_H

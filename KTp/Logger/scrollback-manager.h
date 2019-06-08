@@ -33,7 +33,7 @@ class KTPCOMMONINTERNALS_EXPORT ScrollbackManager : public QObject
 
 public:
     explicit ScrollbackManager(QObject *parent = 0);
-    virtual ~ScrollbackManager();
+    ~ScrollbackManager() override;
 
     bool exists() const;
 

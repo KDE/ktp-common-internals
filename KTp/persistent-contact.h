@@ -35,7 +35,7 @@ class KTPCOMMONINTERNALS_EXPORT PersistentContact : public QObject, public Tp::R
     Q_OBJECT
 public:
     static Tp::SharedPtr<KTp::PersistentContact> create(const QString &accountId, const QString &contactId);
-    virtual ~PersistentContact();
+    ~PersistentContact() override;
 
     QString contactId() const;
     QString accountId() const;

@@ -28,7 +28,7 @@ class KPeopleActionsPlugin : public KPeople::AbstractPersonAction
     Q_OBJECT
 public:
     KPeopleActionsPlugin(QObject *parent, const QVariantList &args);
-    virtual QList< QAction* > actionsForPerson(const KPeople::PersonData &data,
+    QList< QAction* > actionsForPerson(const KPeople::PersonData &data,
                                                QObject *parent) const Q_DECL_OVERRIDE;
 
 private Q_SLOTS:

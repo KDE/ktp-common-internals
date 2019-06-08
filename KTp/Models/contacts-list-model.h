@@ -33,12 +33,12 @@ class KTPMODELS_EXPORT ContactsListModel : public QAbstractListModel
     Q_OBJECT
 public:
     explicit ContactsListModel(QObject *parent = 0);
-    virtual ~ContactsListModel();
+    ~ContactsListModel() override;
 
     void setAccountManager(const Tp::AccountManagerPtr &accountManager);
 
-    int rowCount(const QModelIndex &parent) const;
-    QVariant data(const QModelIndex &index, int role) const;
+    int rowCount(const QModelIndex &parent) const override;
+    QVariant data(const QModelIndex &index, int role) const override;
 
 Q_SIGNALS:
     void modelInitialized(bool success);

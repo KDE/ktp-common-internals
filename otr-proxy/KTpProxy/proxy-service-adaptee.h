@@ -41,7 +41,7 @@ class ProxyServiceAdaptee : public QObject
 
     public:
         ProxyServiceAdaptee(ProxyService *ps, const QDBusConnection &dbusConnection);
-        ~ProxyServiceAdaptee();
+        ~ProxyServiceAdaptee() override;
 
         uint policy() const;
         void setPolicy(uint otrPolicy);

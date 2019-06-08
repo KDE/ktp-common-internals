@@ -44,11 +44,11 @@ public:
     static Tp::AccountFactoryPtr create(const QDBusConnection &bus, const Tp::Features &features=Tp::Features());
 protected:
     AccountFactory(const QDBusConnection& bus, const Tp::Features& features);
-    virtual Tp::AccountPtr construct(const QString& busName,
+    Tp::AccountPtr construct(const QString& busName,
                                      const QString& objectPath,
                                      const Tp::ConnectionFactoryConstPtr& connFactory,
                                      const Tp::ChannelFactoryConstPtr& chanFactory,
-                                     const Tp::ContactFactoryConstPtr& contactFactory) const;
+                                     const Tp::ContactFactoryConstPtr& contactFactory) const override;
 };
 
 class Account: public Tp::Account

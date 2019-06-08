@@ -50,13 +50,13 @@ public:
     {
     }
 
-    bool isValid() const
+    bool isValid() const override
     {
         //return whether the filter is valid which is always true as this filter is hardcoded
         return true;
     }
 
-    bool matches(const Tp::AccountPtr &account) const
+    bool matches(const Tp::AccountPtr &account) const override
     {
         //if there's no connection we can't add contacts as we have no contactmanager
         if (! account->connection()) {

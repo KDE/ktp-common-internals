@@ -32,7 +32,7 @@ class TelepathyProcess : public QObject
     Q_OBJECT
 public:
     explicit TelepathyProcess(QObject *parent = nullptr);
-    ~TelepathyProcess();
+    ~TelepathyProcess() override;
 
     QString ownerId() const Q_REQUIRED_RESULT { return m_owner; }
     void setOwnerId(const QString &owner);

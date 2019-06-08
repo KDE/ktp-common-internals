@@ -30,8 +30,8 @@ class ImDetailsWidget : public KPeople::AbstractFieldWidgetFactory
 {
 public:
     explicit ImDetailsWidget(QObject *parent, const QVariantList &args);
-    QString label() const;
-    virtual QWidget* createDetailsWidget(const KPeople::PersonData &person, QWidget *parent) const;
+    QString label() const override;
+    QWidget* createDetailsWidget(const KPeople::PersonData &person, QWidget *parent) const override;
 };
 
 #endif // IM_DETAILS_WIDGET_H

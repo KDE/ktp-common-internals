@@ -46,7 +46,7 @@ class KTPCOMMONINTERNALS_EXPORT PendingLoggerSearch : public  KTp::PendingLogger
     /**
      * Destructor.
      */
-    virtual ~PendingLoggerSearch();
+    ~PendingLoggerSearch() override;
 
     /**
      * Returns the search term that is used.

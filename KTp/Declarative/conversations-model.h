@@ -35,11 +35,11 @@ class ConversationsModel : public QAbstractListModel, public Tp::AbstractClientH
 
 public:
     explicit ConversationsModel(QObject *parent = 0);
-    virtual ~ConversationsModel();
+    ~ConversationsModel() override;
 
     QHash<int, QByteArray> roleNames() const Q_DECL_OVERRIDE;
-    virtual QVariant data (const QModelIndex &index, int role = Qt::DisplayRole) const Q_DECL_OVERRIDE;
-    virtual int rowCount (const QModelIndex &parent = QModelIndex()) const Q_DECL_OVERRIDE;
+    QVariant data (const QModelIndex &index, int role = Qt::DisplayRole) const Q_DECL_OVERRIDE;
+    int rowCount (const QModelIndex &parent = QModelIndex()) const Q_DECL_OVERRIDE;
 
     /** @returns the sum of all unread messages among all conversations */
     int totalUnreadCount() const;
@@ -59,8 +59,8 @@ public:
                         const QList<Tp::ChannelPtr> &channels,
                         const QList<Tp::ChannelRequestPtr> &channelRequests,
                         const QDateTime &userActionTime,
-                        const HandlerInfo &handlerInfo);
-    bool bypassApproval() const;
+                        const HandlerInfo &handlerInfo) override;
+    bool bypassApproval() const override;
 
 public Q_SLOTS:
     int nextActiveConversation(int first);

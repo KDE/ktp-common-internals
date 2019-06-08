@@ -57,12 +57,12 @@ class KTPCOMMONINTERNALS_EXPORT LogManager : public AbstractLoggerPlugin
      *
      * @param accountManager An Tp::AccountManager in the ready state.
      */
-    void setAccountManager(const Tp::AccountManagerPtr &accountManager);
+    void setAccountManager(const Tp::AccountManagerPtr &accountManager) override;
 
     /**
      * Returns the set Tp::AccountManager or an empty pointer if none was set.
      */
-    Tp::AccountManagerPtr accountManager() const;
+    Tp::AccountManagerPtr accountManager() const override;
 
     /**
      * Queries all available plugins for list of dates with logs of user's chat
@@ -74,7 +74,7 @@ class KTPCOMMONINTERNALS_EXPORT LogManager : public AbstractLoggerPlugin
      *         signal when all backends are finished.
      */
     KTp::PendingLoggerDates* queryDates(const Tp::AccountPtr &account,
-                                        const KTp::LogEntity &entity);
+                                        const KTp::LogEntity &entity) override;
 
     /**
      * Queries all available plugins for list of logs of chats with @p entity.
@@ -87,7 +87,7 @@ class KTPCOMMONINTERNALS_EXPORT LogManager : public AbstractLoggerPlugin
      */
     KTp::PendingLoggerLogs*  queryLogs(const Tp::AccountPtr &account,
                                        const KTp::LogEntity &entity,
-                                       const QDate &date);
+                                       const QDate &date) override;
 
    /**
      * Queries all available plugins for list of entities for which they have
@@ -97,7 +97,7 @@ class KTPCOMMONINTERNALS_EXPORT LogManager : public AbstractLoggerPlugin
      * @return Returns KTp::PendingLoggerEntities operation that will emit finished()
      *         signal when all backends are finished.
      */
-    KTp::PendingLoggerEntities* queryEntities(const Tp::AccountPtr &account);
+    KTp::PendingLoggerEntities* queryEntities(const Tp::AccountPtr &account) override;
 
     /**
      * Removes all logs for given @p account from all available plugins that
@@ -105,7 +105,7 @@ class KTPCOMMONINTERNALS_EXPORT LogManager : public AbstractLoggerPlugin
      *
      * @param account Account of which to remove logs
      */
-    void clearAccountLogs(const Tp::AccountPtr &account);
+    void clearAccountLogs(const Tp::AccountPtr &account) override;
 
     /**
      * Removes all logs for given @p entity from all available plugins that
@@ -115,7 +115,7 @@ class KTPCOMMONINTERNALS_EXPORT LogManager : public AbstractLoggerPlugin
      * @param entity Entity whose logs to remove
      */
     void clearContactLogs(const Tp::AccountPtr &account,
-                          const KTp::LogEntity &entity);
+                          const KTp::LogEntity &entity) override;
 
     /**
      * Searches all logs for given @p term.
@@ -124,7 +124,7 @@ class KTPCOMMONINTERNALS_EXPORT LogManager : public AbstractLoggerPlugin
      * @return Returns KTp::PendingLoggerSearch operation that will emit finished()
      *         signal when search is finished.
      */
-    KTp::PendingLoggerSearch* search(const QString &term);
+    KTp::PendingLoggerSearch* search(const QString &term) override;
 
     /**
      * Checks whether there are any logs for given @p account and @p contact.
@@ -136,12 +136,12 @@ class KTPCOMMONINTERNALS_EXPORT LogManager : public AbstractLoggerPlugin
      * @param contact Contact to query
      * @return Returns whether there are any logs for given person
      */
-    bool logsExist(const Tp::AccountPtr &account, const KTp::LogEntity &contact);
+    bool logsExist(const Tp::AccountPtr &account, const KTp::LogEntity &contact) override;
 
     /**
      * Destructor.
      */
-    virtual ~LogManager();
+    ~LogManager() override;
 
  private:
     explicit LogManager();

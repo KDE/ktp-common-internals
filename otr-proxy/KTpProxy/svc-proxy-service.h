@@ -80,7 +80,7 @@ class TP_QT_EXPORT ProxyServiceAdaptor : public Tp::AbstractAdaptor
 
 public:
     ProxyServiceAdaptor(const QDBusConnection& dbusConnection, QObject* adaptee, QObject* parent);
-    virtual ~ProxyServiceAdaptor();
+    ~ProxyServiceAdaptor() override;
 
     typedef Tp::MethodInvocationContextPtr<  > GeneratePrivateKeyContextPtr;
     typedef Tp::MethodInvocationContextPtr< QString > GetFingerprintForAccountContextPtr;

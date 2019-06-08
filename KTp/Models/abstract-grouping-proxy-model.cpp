@@ -43,7 +43,7 @@ class ProxyNode : public QStandardItem
 {
 public:
     ProxyNode(const QPersistentModelIndex &sourceIndex);
-    QVariant data(int role) const;
+    QVariant data(int role) const override;
     void changed(); //expose protected method in QStandardItem
     QString group() const;
 private:
@@ -54,7 +54,7 @@ class GroupNode : public QStandardItem {
 public:
     GroupNode(const QString &groupId);
     QString group() const;
-    virtual QVariant data(int role) const;
+    QVariant data(int role) const override;
     bool forced() const;
     void changed(); //expose protected method in QStandardItem
     void setForced(bool forced);

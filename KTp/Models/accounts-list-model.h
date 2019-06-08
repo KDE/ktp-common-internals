@@ -53,16 +53,16 @@ public:
     };
 
     explicit AccountsListModel(QObject *parent = 0);
-    virtual ~AccountsListModel();
+    ~AccountsListModel() override;
 
     QHash<int, QByteArray> roleNames() const Q_DECL_OVERRIDE;
     void setAccountSet(const Tp::AccountSetPtr &accountSet);
 
     Q_SCRIPTABLE QVariant get(int row, const QByteArray& role) const;
 
-    virtual int rowCount(const QModelIndex &parent = QModelIndex()) const;
-    virtual QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
-    virtual bool setData(const QModelIndex &index, const QVariant &value, int role);
+    int rowCount(const QModelIndex &parent = QModelIndex()) const override;
+    QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
+    bool setData(const QModelIndex &index, const QVariant &value, int role) override;
 
 private Q_SLOTS:
     void onAccountAdded(const Tp::AccountPtr &account);

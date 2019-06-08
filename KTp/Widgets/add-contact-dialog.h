@@ -40,12 +40,12 @@ class KTPCOMMONINTERNALS_EXPORT AddContactDialog : public QDialog
 
 public:
     explicit AddContactDialog(const Tp::AccountManagerPtr &accountManager, QWidget *parent = 0);
-    virtual ~AddContactDialog();
+    ~AddContactDialog() override;
 
-    virtual void accept();
+    void accept() override;
 
 protected:
-    virtual void closeEvent(QCloseEvent *e);
+    void closeEvent(QCloseEvent *e) override;
 
 private Q_SLOTS:
     KTPCOMMONINTERNALS_NO_EXPORT void _k_onContactsForIdentifiersFinished(Tp::PendingOperation *op);

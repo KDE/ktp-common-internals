@@ -31,12 +31,12 @@ class KTPMODELS_EXPORT KPeopleTranslationProxy : public QSortFilterProxyModel
 
 public:
     KPeopleTranslationProxy(QObject *parent = 0);
-    virtual ~KPeopleTranslationProxy();
+    ~KPeopleTranslationProxy() override;
 
-    virtual QVariant data(const QModelIndex &proxyIndex, int role = Qt::DisplayRole) const;
+    QVariant data(const QModelIndex &proxyIndex, int role = Qt::DisplayRole) const override;
     QVariant dataForKTpContact(const QString &accountPath, const QString &contactId, int role) const;
 
-    virtual bool filterAcceptsRow(int source_row, const QModelIndex & source_parent ) const;
+    bool filterAcceptsRow(int source_row, const QModelIndex & source_parent ) const override;
 private:
     QVariant translatePresence(const QVariant &presenceName) const;
     QPixmap contactPixmap(const QModelIndex &index) const;

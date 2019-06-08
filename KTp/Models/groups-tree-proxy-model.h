@@ -33,10 +33,10 @@ class KTPMODELS_EXPORT GroupsTreeProxyModel : public KTp::AbstractGroupingProxyM
     Q_OBJECT
 public:
     GroupsTreeProxyModel(QAbstractItemModel *sourceModel);
-    virtual ~GroupsTreeProxyModel();
+    ~GroupsTreeProxyModel() override;
    
-    virtual QSet<QString> groupsForIndex(const QModelIndex &sourceIndex) const;
-    virtual QVariant dataForGroup(const QString &group, int role) const;
+    QSet<QString> groupsForIndex(const QModelIndex &sourceIndex) const override;
+    QVariant dataForGroup(const QString &group, int role) const override;
 private:
     class Private;
     Private *d;

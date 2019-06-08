@@ -32,9 +32,9 @@ class ChatWidgetFactory : public KPeople::AbstractFieldWidgetFactory
     Q_OBJECT
 public:
     explicit ChatWidgetFactory(QObject *parent, const QVariantList &args);
-    virtual QString label() const;
-    virtual int sortWeight() const;
-    virtual QWidget* createDetailsWidget(const KPeople::PersonData &person, QWidget *parent) const Q_DECL_OVERRIDE;
+    QString label() const override;
+    int sortWeight() const override;
+    QWidget* createDetailsWidget(const KPeople::PersonData &person, QWidget *parent) const Q_DECL_OVERRIDE;
 
 private Q_SLOTS:
     void onPendingDates(KTp::PendingLoggerOperation *);

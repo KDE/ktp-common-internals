@@ -54,7 +54,7 @@ public:
 
     ContactsModel(QObject *parent=0);
 
-    virtual ~ContactsModel();
+    ~ContactsModel() override;
 
     /** Sets the accounts manager to be used for the KTp::ContactListModel*/
     void setAccountManager(const Tp::AccountManagerPtr &accountManager);

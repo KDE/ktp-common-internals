@@ -32,10 +32,10 @@ class KTPMODELS_EXPORT AccountsTreeProxyModel : public KTp::AbstractGroupingProx
     Q_OBJECT
 public:
     AccountsTreeProxyModel(QAbstractItemModel *sourceModel, const Tp::AccountManagerPtr &accountManager);
-    virtual ~AccountsTreeProxyModel();
+    ~AccountsTreeProxyModel() override;
 
-    virtual QSet<QString> groupsForIndex(const QModelIndex &sourceIndex) const;
-    virtual QVariant dataForGroup(const QString &group, int role) const;
+    QSet<QString> groupsForIndex(const QModelIndex &sourceIndex) const override;
+    QVariant dataForGroup(const QString &group, int role) const override;
 
 private Q_SLOTS:
     void onAccountChanged();

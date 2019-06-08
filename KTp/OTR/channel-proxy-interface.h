@@ -683,7 +683,7 @@ Q_SIGNALS:
     void TrustLevelChanged(uint trustLevel);
 
 protected:
-    virtual void invalidate(Tp::DBusProxy *, const QString &, const QString &);
+    void invalidate(Tp::DBusProxy *, const QString &, const QString &) override;
 };
 }
 }

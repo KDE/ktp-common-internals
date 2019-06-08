@@ -48,7 +48,7 @@ class KTPCOMMONINTERNALS_EXPORT PendingLoggerDates : public KTp::PendingLoggerOp
     /**
      * Destructor.
      */
-    virtual ~PendingLoggerDates();
+    ~PendingLoggerDates() override;
 
     /**
      * Returns account for which the dates are queried.

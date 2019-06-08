@@ -52,7 +52,7 @@ class OtrProxyChannel : public Tp::DBusService
 
         void registerService(Tp::DBusError *error);
 
-        QVariantMap immutableProperties() const;
+        QVariantMap immutableProperties() const override;
 
         bool isConnected() const;
 
