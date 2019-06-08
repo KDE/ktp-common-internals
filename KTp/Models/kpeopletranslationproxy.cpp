@@ -22,7 +22,7 @@
 #include "KTp/global-contact-manager.h"
 
 #include <KPeople/PersonsModel>
-#include <KPeople/KPeopleBackend/AbstractContact>
+#include <KPeopleBackend/AbstractContact>
 
 #include <KIconLoader>
 
