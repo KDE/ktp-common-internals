@@ -68,11 +68,11 @@ include(CheckIncludeFiles)
 include(FeatureSummary)
 
 set_package_properties(KF5People PROPERTIES DESCRIPTION "Support for KDE Contact Aggregation"
-                       URL "https://projects.kde.org/libkpeople"
+                       URL "https://commits.kde.org/kpeople"
                        TYPE OPTIONAL
                       )
 set_package_properties(TelepathyLoggerQt PROPERTIES DESCRIPTION "Qt bindings for TelepathyLogger. This is needed to provide access to chat logs. HIGHLY recommended"
-                       URL "http://projects.kde.org/telepathy-logger-qt"
+                       URL "https://commits.kde.org/telepathy-logger-qt"
                        TYPE OPTIONAL
                       )
 set_package_properties(LibOTR PROPERTIES DESCRIPTION "Required for OTR support" TYPE OPTIONAL)
