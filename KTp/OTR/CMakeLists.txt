@@ -28,6 +28,7 @@ generate_export_header(KTpOTR)
 
 target_link_libraries (KTpOTR
                         PUBLIC
+                            Qt5::DBus
                             ${TELEPATHY_QT5_LIBRARIES}
                         PRIVATE
                             KF5::I18n

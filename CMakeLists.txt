@@ -20,8 +20,10 @@ set (KTP_VERSION "${KDE_APPLICATIONS_VERSION_MAJOR}.${KDE_APPLICATIONS_VERSION_M
 set (KTP_MESSAGE_FILTER_FRAMEWORK_VERSION "5")
 
 find_package (Qt5 REQUIRED CONFIG COMPONENTS
+              DBus
               Qml
-              Test)
+              Test
+              Xml)
 
 find_package (KF5 5.11 REQUIRED COMPONENTS
               CoreAddons

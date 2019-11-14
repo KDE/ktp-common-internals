@@ -91,6 +91,8 @@ set_target_properties(KTpCommonInternals PROPERTIES
 
 target_link_libraries (KTpCommonInternals
                 PUBLIC
+                    Qt5::DBus
+                    Qt5::Xml
                     KF5::Wallet #included from wallet-interface.h
                     ${TELEPATHY_QT5_LIBRARIES}
                 PRIVATE
