@@ -29,11 +29,10 @@ generate_export_header(KTpOTR)
 target_link_libraries (KTpOTR
                         PUBLIC
                             Qt5::DBus
-                            ${TELEPATHY_QT5_LIBRARIES}
+                            TelepathyQt5::Core
                         PRIVATE
                             KF5::I18n
 )
-target_include_directories(KTpOTR PUBLIC ${TELEPATHY_QT5_INCLUDE_DIR}) # TODO: Remove when TelepathyQt exports include paths properly
 
 install (TARGETS KTpOTR
          EXPORT KTpTargets

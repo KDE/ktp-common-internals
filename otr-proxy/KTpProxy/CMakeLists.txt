@@ -22,7 +22,7 @@ add_library(ktp-proxy-lib STATIC ${ktp-proxy_SRCS})
 set(ktp-proxy_LIBS
         ${LIBOTR_LIBRARY}
         ${LIBGCRYPT_LIBRARIES}
-        ${TELEPATHY_QT5_SERVICE_LIBRARIES}
+        TelepathyQt5::Service
         KTp::CommonInternals
         KTp::OTR
         KF5::ConfigGui

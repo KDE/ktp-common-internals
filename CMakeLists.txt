@@ -39,10 +39,10 @@ find_package (KF5 5.11 REQUIRED COMPONENTS
               IconThemes
               People)
 
-set(REQUIRED_TPQT_VERSION 0.9.5)
+set(REQUIRED_TPQT_VERSION 0.9.8)
 
-find_package (TelepathyQt5 ${REQUIRED_TPQT_VERSION} REQUIRED)
-find_package (TelepathyQt5Service ${REQUIRED_TPQT_VERSION} REQUIRED) #used for the otr-proxy
+find_package (TelepathyQt5 ${REQUIRED_TPQT_VERSION} COMPONENTS Core REQUIRED)
+find_package (TelepathyQt5 ${REQUIRED_TPQT_VERSION} COMPONENTS Service) #used for the otr-proxy
 find_package (TelepathyLoggerQt)
 
 find_package (KAccounts)
@@ -52,7 +52,7 @@ find_package (LibOTR 4.0.0)
 find_package (Libgcrypt)
 find_package (telepathy-accounts-signon)
 
-if (LIBOTR_FOUND AND LIBGCRYPT_FOUND)
+if (LIBOTR_FOUND AND LIBGCRYPT_FOUND AND TARGET TelepathyQt5::Service)
     set(OTR_LIBS_FOUND TRUE)
 endif ()
 
