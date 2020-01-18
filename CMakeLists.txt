@@ -1,6 +1,6 @@
 project(ktp-common-internals)
 
-cmake_minimum_required (VERSION 2.8.12 FATAL_ERROR)
+cmake_minimum_required (VERSION 3.5)
 
 find_package(ECM 1.7.0 REQUIRED NO_MODULE)
 set (CMAKE_MODULE_PATH
