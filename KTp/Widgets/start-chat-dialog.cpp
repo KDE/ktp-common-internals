@@ -157,5 +157,3 @@ void StartChatDialog::setInProgress(bool inProgress)
 }
 
 } //namespace KTp
-
-#include "start-chat-dialog.moc"

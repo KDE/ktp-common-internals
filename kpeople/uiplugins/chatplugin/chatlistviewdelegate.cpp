@@ -56,5 +56,3 @@ void ChatListviewDelegate::paint(QPainter *painter, const QStyleOptionViewItem &
     painter->restore();
 
 }
-
-#include "chatlistviewdelegate.moc"

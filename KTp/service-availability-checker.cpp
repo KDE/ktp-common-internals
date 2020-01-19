@@ -108,5 +108,3 @@ void ServiceAvailabilityChecker::onServiceOwnerChanged(const QString & service,
 }
 
 }
-
-#include "service-availability-checker.moc"
