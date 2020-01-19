@@ -82,7 +82,7 @@ void MessageProcessor::Private::loadFilter(const KPluginInfo &pluginInfo)
     }
 
     // Re-sort filters by weight
-    qSort(filters);
+    std::sort(filters.begin(), filters.end());
 }
 
 void MessageProcessor::Private::unloadFilter(const KPluginInfo &pluginInfo)

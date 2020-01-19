@@ -85,7 +85,7 @@ void MainWindow::onAccountManagerBecameReady(Tp::PendingOperation* op)
 void MainWindow::initConnectionManagerTabs(const QSet<QString>& connectionManagerSet)
 {
     QStringList connectionManagerStringList = connectionManagerSet.toList();
-    qSort(connectionManagerStringList);
+    std::sort(connectionManagerStringList.begin(), connectionManagerStringList.end());
 
     Q_FOREACH(QString connectionManager, connectionManagerStringList) {
         QWidget *cmTab = new QWidget();

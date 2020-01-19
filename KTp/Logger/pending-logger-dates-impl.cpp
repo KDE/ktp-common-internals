@@ -72,7 +72,7 @@ void PendingLoggerDatesImpl::operationFinished(KTp::PendingLoggerOperation *op)
 
     if (mRunningOps.isEmpty()) {
         QList<QDate> allDates = dates();
-        qSort(allDates);
+        std::sort(allDates.begin(), allDates.end());
         setDates(allDates);
 
         emitFinished();
