@@ -26,7 +26,7 @@ class FilteredPinnedContactsProxyModel : public QSortFilterProxyModel
     Q_OBJECT
     Q_PROPERTY(QAbstractItemModel* sourceModel READ sourceModel WRITE setSourceModel)
     public:
-        FilteredPinnedContactsProxyModel(QObject* parent = 0);
+        FilteredPinnedContactsProxyModel(QObject* parent = nullptr);
 
         bool filterAcceptsRow(int source_row, const QModelIndex& source_parent) const override;
 };

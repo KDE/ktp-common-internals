@@ -31,7 +31,7 @@ class PendingTpLoggerSearch : public KTp::PendingLoggerSearch
     Q_OBJECT
 
   public:
-    explicit PendingTpLoggerSearch(const QString& term, QObject* parent = 0);
+    explicit PendingTpLoggerSearch(const QString& term, QObject* parent = nullptr);
     ~PendingTpLoggerSearch() override;
 
   private Q_SLOTS:

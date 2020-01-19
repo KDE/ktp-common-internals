@@ -38,7 +38,7 @@ class KTPCOMMONINTERNALS_EXPORT StartChatDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit StartChatDialog(const Tp::AccountManagerPtr &accountManager, QWidget *parent = 0);
+    explicit StartChatDialog(const Tp::AccountManagerPtr &accountManager, QWidget *parent = nullptr);
     ~StartChatDialog() override;
 
     void accept() override;

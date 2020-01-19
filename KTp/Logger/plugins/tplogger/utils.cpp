@@ -25,7 +25,7 @@ Tpl::EntityPtr Utils::toTplEntity(const KTp::LogEntity &entity)
                                entity.entityType() == Tp::HandleTypeContact ?
                                     Tpl::EntityTypeContact : Tpl::EntityTypeRoom,
                                entity.alias().toLatin1().constData(),
-                               0);
+                               nullptr);
 }
 
 KTp::LogEntity Utils::fromTplEntity(const Tpl::EntityPtr& entity)

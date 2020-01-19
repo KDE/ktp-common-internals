@@ -34,7 +34,7 @@ class ConversationsModel : public QAbstractListModel, public Tp::AbstractClientH
     Q_PROPERTY(int activeChatIndex READ activeChatIndex NOTIFY activeChatIndexChanged)
 
 public:
-    explicit ConversationsModel(QObject *parent = 0);
+    explicit ConversationsModel(QObject *parent = nullptr);
     ~ConversationsModel() override;
 
     QHash<int, QByteArray> roleNames() const Q_DECL_OVERRIDE;

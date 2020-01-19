@@ -68,7 +68,7 @@ namespace utils
                 ctx.recipientName.toLocal8Bit(),
                 ctx.accountName.toLocal8Bit(),
                 ctx.protocol.toLocal8Bit(),
-                instance, 0, NULL, NULL, NULL);
+                instance, 0, nullptr, nullptr, nullptr);
 
         if(context == nullptr) {
             qCWarning(KTP_PROXY) << "Could not get trust level";

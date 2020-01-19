@@ -244,7 +244,7 @@ void KTp::AbstractGroupingProxyModel::removeProxyNodes(const QModelIndex &source
         d->proxyMap.remove(sourceIndex, proxy);
 
         //if the parent item to this proxy node is now empty, and is a top level item
-        if (parentItem->rowCount() == 0 && parentItem->parent() == 0 ) {
+        if (parentItem->rowCount() == 0 && parentItem->parent() == nullptr ) {
             GroupNode* groupNode = dynamic_cast<GroupNode*>(parentItem);
 
             //do not delete forced groups

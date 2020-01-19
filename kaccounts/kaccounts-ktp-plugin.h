@@ -36,7 +36,7 @@ class KAccountsKTpPlugin : public KAccountsDPlugin
     Q_INTERFACES(KAccountsDPlugin)
 
 public:
-    KAccountsKTpPlugin(QObject *parent = 0);
+    KAccountsKTpPlugin(QObject *parent = nullptr);
     ~KAccountsKTpPlugin() override;
 
 public Q_SLOTS:

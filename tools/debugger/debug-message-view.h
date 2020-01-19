@@ -28,7 +28,7 @@ class DebugMessageView : public QWidget
 {
     Q_OBJECT
 public:
-    explicit DebugMessageView(QWidget *parent = 0);
+    explicit DebugMessageView(QWidget *parent = nullptr);
     ~DebugMessageView() override;
 
     void showEvent(QShowEvent *event) override;

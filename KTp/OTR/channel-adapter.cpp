@@ -32,7 +32,7 @@ typedef QSharedPointer<KTp::Client::ChannelProxyInterfaceOTRInterface> OTRProxyP
 
 static int getId(const Tp::ReceivedMessage &recvMes)
 {
-    return recvMes.header()[QLatin1String("pending-message-id")].variant().toUInt(NULL);
+    return recvMes.header()[QLatin1String("pending-message-id")].variant().toUInt(nullptr);
 }
 
 class OTRMessage : public Tp::ReceivedMessage
@@ -209,7 +209,7 @@ void ChannelAdapter::onTrustLevelPropertyGet(Tp::PendingOperation *op)
         return;
     }
     Tp::PendingVariant *pv = dynamic_cast<Tp::PendingVariant*>(op);
-    d->trustLevel = static_cast<KTp::OTRTrustLevel>(pv->result().toUInt(NULL));
+    d->trustLevel = static_cast<KTp::OTRTrustLevel>(pv->result().toUInt(nullptr));
     Q_EMIT otrTrustLevelChanged(d->trustLevel, KTp::OTRTrustLevelNotPrivate);
 }
 

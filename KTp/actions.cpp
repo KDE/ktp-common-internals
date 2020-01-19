@@ -207,7 +207,7 @@ Tp::PendingOperation* Actions::startFileTransfer(const Tp::AccountPtr &account,
 
     qCDebug(KTP_COMMONINTERNALS) << "Requesting file transfer of" << url.toLocalFile() << "to" << contact->id();
 
-    Tp::PendingOperation *ret = 0;
+    Tp::PendingOperation *ret = nullptr;
     if (url.isLocalFile()) {
         ret = startFileTransfer(account, contact, url.toLocalFile());
     } else {

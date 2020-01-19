@@ -28,7 +28,7 @@ class PendingLoggerEntitiesImpl: public KTp::PendingLoggerEntities
 
   public:
     explicit PendingLoggerEntitiesImpl(const Tp::AccountPtr &account,
-                                       QObject *parent = 0);
+                                       QObject *parent = nullptr);
     ~PendingLoggerEntitiesImpl() override;
 
   private Q_SLOTS:

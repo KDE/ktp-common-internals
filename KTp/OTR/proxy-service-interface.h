@@ -71,7 +71,7 @@ public:
     ProxyServiceInterface(
         const QString& busName,
         const QString& objectPath,
-        QObject* parent = 0
+        QObject* parent = nullptr
     );
 
     /**
@@ -86,7 +86,7 @@ public:
         const QDBusConnection& connection,
         const QString& busName,
         const QString& objectPath,
-        QObject* parent = 0
+        QObject* parent = nullptr
     );
 
     /**

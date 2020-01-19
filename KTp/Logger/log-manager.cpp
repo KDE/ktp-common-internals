@@ -37,7 +37,7 @@ using namespace KTp;
 
 #define KTP_LOGGER_PLUGIN_VERSION "1"
 
-LogManager* LogManager::Private::s_logManagerInstance = 0;
+LogManager* LogManager::Private::s_logManagerInstance = nullptr;
 
 void LogManager::Private::loadPlugins()
 {
@@ -71,7 +71,7 @@ LogManager::Private::Private(LogManager *parent):
 
 LogManager* LogManager::instance()
 {
-    if (Private::s_logManagerInstance == 0) {
+    if (Private::s_logManagerInstance == nullptr) {
         Private::s_logManagerInstance = new LogManager();
     }
 

@@ -64,7 +64,7 @@ void WalletInterfacePrivate::ensureWalletIsReady()
 
 
 WalletInterfacePrivate::WalletInterfacePrivate() :
-    wallet(NULL),
+    wallet(nullptr),
     isOpening(false)
 {
     ensureWalletIsReady();

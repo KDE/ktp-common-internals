@@ -82,7 +82,7 @@ QWidget* ImDetailsWidget::createDetailsWidget(const KPeople::PersonData &person,
     if (layout->count()) {
         return root;
     } else {
-        return 0;
+        return nullptr;
     }
 }
 

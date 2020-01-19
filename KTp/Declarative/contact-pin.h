@@ -33,7 +33,7 @@ class ContactPin : public QObject
     Q_PROPERTY(bool pinned READ isPinned NOTIFY pinnedChanged)
 
   public:
-    explicit ContactPin(QObject *parent = 0);
+    explicit ContactPin(QObject *parent = nullptr);
 
     KTp::ContactPtr contact() const;
     Tp::AccountPtr account() const;

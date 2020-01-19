@@ -39,7 +39,7 @@ class KTPCOMMONINTERNALS_EXPORT LogsImporter : public QObject
   Q_OBJECT
 
   public:
-    LogsImporter(QObject *parent = 0);
+    LogsImporter(QObject *parent = nullptr);
 
     ~LogsImporter() override;
 

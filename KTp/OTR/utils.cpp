@@ -36,7 +36,7 @@ namespace Utils {
     }
 
     uint getId(const Tp::MessagePartList &message) {
-        return message.first()[QLatin1String("pending-message-id")].variant().toUInt(NULL);
+        return message.first()[QLatin1String("pending-message-id")].variant().toUInt(nullptr);
     }
 
     QString getOtrProxyObjectPathFor(const Tp::TextChannelPtr &textChannel)
@@ -67,7 +67,7 @@ namespace Utils {
     {
         Tp::MessagePart messagePart = message.part(0);
         OTRMessageEvent otrEvent = static_cast<OTRMessageEvent>(
-                messagePart[OTR_MESSAGE_EVENT_HEADER].variant().toUInt(0));
+                messagePart[OTR_MESSAGE_EVENT_HEADER].variant().toUInt(nullptr));
 
         switch(otrEvent) {
 

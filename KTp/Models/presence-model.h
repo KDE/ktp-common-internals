@@ -39,7 +39,7 @@ class KTPMODELS_EXPORT PresenceModel : public QAbstractListModel
     Q_PROPERTY(int count READ rowCount)
 
 public:
-    explicit PresenceModel(QObject *parent = 0);
+    explicit PresenceModel(QObject *parent = nullptr);
     ~PresenceModel() override;
 
     enum Roles {

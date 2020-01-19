@@ -23,7 +23,7 @@
 
 ContactPin::ContactPin(QObject *parent)
     : QObject(parent)
-    , m_model(0)
+    , m_model(nullptr)
 {
 }
 

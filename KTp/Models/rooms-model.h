@@ -44,7 +44,7 @@ public:
         HandleNameRole = Qt::UserRole
     };
 
-    explicit RoomsModel(QObject *parent = 0);
+    explicit RoomsModel(QObject *parent = nullptr);
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
     int columnCount(const QModelIndex &parent = QModelIndex()) const override;
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
@@ -84,7 +84,7 @@ public:
         FavoriteRoomRole
     };
 
-    explicit FavoriteRoomsModel(QObject *parent = 0);
+    explicit FavoriteRoomsModel(QObject *parent = nullptr);
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
     int columnCount(const QModelIndex &parent = QModelIndex()) const override;
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;

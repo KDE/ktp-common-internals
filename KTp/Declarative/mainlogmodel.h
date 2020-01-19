@@ -92,7 +92,7 @@ public:
     };
     Q_ENUMS(Role)
 
-    MainLogModel(QObject *parent = 0);
+    MainLogModel(QObject *parent = nullptr);
     ~MainLogModel() override;
 
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;

@@ -48,8 +48,8 @@ class Conversation : public QObject
     Q_PROPERTY(bool canSendMessages READ canSendMessages NOTIFY canSendMessagesChanged)
 
 public:
-    Conversation(const Tp::TextChannelPtr &channel, const Tp::AccountPtr &account, QObject *parent = 0);
-    Conversation(const QString &contactId, const Tp::AccountPtr &account, QObject *parent = 0);
+    Conversation(const Tp::TextChannelPtr &channel, const Tp::AccountPtr &account, QObject *parent = nullptr);
+    Conversation(const QString &contactId, const Tp::AccountPtr &account, QObject *parent = nullptr);
     ~Conversation() override;
 
     void setTextChannel(const Tp::TextChannelPtr &channel);

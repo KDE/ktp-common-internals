@@ -32,7 +32,7 @@ class ModelView : public QWidget, protected Ui::MainWidget {
     Q_OBJECT
 
 public:
-    ModelView(QAbstractItemModel *model, QWidget *parent = 0);
+    ModelView(QAbstractItemModel *model, QWidget *parent = nullptr);
     ~ModelView() override;
 
 };

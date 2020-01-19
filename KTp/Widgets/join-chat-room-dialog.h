@@ -43,7 +43,7 @@ class KTPCOMMONINTERNALS_EXPORT JoinChatRoomDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit JoinChatRoomDialog(Tp::AccountManagerPtr accountManager, QWidget *parent = 0);
+    explicit JoinChatRoomDialog(Tp::AccountManagerPtr accountManager, QWidget *parent = nullptr);
     ~JoinChatRoomDialog() override;
 
     Tp::AccountPtr selectedAccount() const;     /** returns selected account */

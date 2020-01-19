@@ -32,7 +32,7 @@ class KTPMODELS_EXPORT ContactsListModel : public QAbstractListModel
 {
     Q_OBJECT
 public:
-    explicit ContactsListModel(QObject *parent = 0);
+    explicit ContactsListModel(QObject *parent = nullptr);
     ~ContactsListModel() override;
 
     void setAccountManager(const Tp::AccountManagerPtr &accountManager);

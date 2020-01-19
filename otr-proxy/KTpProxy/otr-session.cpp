@@ -64,7 +64,7 @@ namespace OTR
 
     void UserStateBox::otrlMessagePoll()
     {
-        otrl_message_poll(us, 0, 0);
+        otrl_message_poll(us, nullptr, nullptr);
     }
 
     // -------- Session -------------------------------------------------
@@ -116,7 +116,7 @@ namespace OTR
                 ctx.recipientName.toLocal8Bit(),
                 ctx.accountName.toLocal8Bit(),
                 ctx.protocol.toLocal8Bit(),
-                instance, 0, NULL, NULL, NULL);
+                instance, 0, nullptr, nullptr, nullptr);
     }
 
     void Session::onFingerprintTrusted(const QString &accountId, const QString &fingerprint, bool trusted)
@@ -183,7 +183,7 @@ namespace OTR
     {
         if(otrl_proto_message_type(message.text().toLocal8Bit()) == OTRL_MSGTYPE_NOTOTR) {
 
-            char *encMessage = 0;
+            char *encMessage = nullptr;
             ConnContext *context;
 
             int err = otrl_message_sending(
@@ -195,12 +195,12 @@ namespace OTR
                     ctx.recipientName.toLocal8Bit(),
                     instance,
                     message.text().toLocal8Bit(),
-                    NULL,
+                    nullptr,
                     &encMessage,
                     OTRL_FRAGMENT_SEND_ALL_BUT_LAST,
                     &context,
-                    NULL,
-                    NULL);
+                    nullptr,
+                    nullptr);
 
             if(err) {
                 return CryptResult::ERROR;
@@ -244,7 +244,7 @@ namespace OTR
                 message.text().toLocal8Bit(),
                 &decMsg,
                 &tlvs,
-                &context, NULL, NULL);
+                &context, nullptr, nullptr);
 
 		if(otrl_tlv_find(tlvs, OTRL_TLV_DISCONNECTED) != nullptr) {
             isFinished = true;
@@ -304,7 +304,7 @@ namespace OTR
 
     void Session::abortSMPAuthentiaction(ConnContext *context)
     {
-        if(context == NULL) {
+        if(context == nullptr) {
             context = findContext();
         }
         otrl_message_abort_smp(userstate->userState(), &global::appOps, this, context);

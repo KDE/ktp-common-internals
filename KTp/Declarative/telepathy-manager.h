@@ -47,7 +47,7 @@ class TelepathyManager : public QObject
     Q_PROPERTY(bool ready READ isReady NOTIFY ready)
 
 public:
-    TelepathyManager(QObject *parent=0);
+    TelepathyManager(QObject *parent=nullptr);
     ~TelepathyManager() override;
 
     /** Returns the account manager*/

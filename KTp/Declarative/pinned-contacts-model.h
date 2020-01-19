@@ -37,7 +37,7 @@ class PinnedContactsModel : public QAbstractListModel
     Q_PROPERTY(int count READ rowCount NOTIFY countChanged)
 
   public:
-    explicit PinnedContactsModel(QObject *parent = 0);
+    explicit PinnedContactsModel(QObject *parent = nullptr);
     ~PinnedContactsModel() override;
 
     enum role {

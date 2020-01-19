@@ -42,7 +42,7 @@ class KTPCOMMONINTERNALS_EXPORT PendingLoggerOperation : public QObject
     void finished(KTp::PendingLoggerOperation *self);
 
   protected:
-    explicit PendingLoggerOperation(QObject *parent = 0);
+    explicit PendingLoggerOperation(QObject *parent = nullptr);
 
     void setError(const QString &error);
     void emitFinished();

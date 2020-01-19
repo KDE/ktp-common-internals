@@ -26,7 +26,7 @@
 namespace KTp
 {
 
-TextParser* TextParser::s_instance = NULL;
+TextParser* TextParser::s_instance = nullptr;
 
 /**
  * RegExp for url detection
@@ -42,7 +42,7 @@ TextParser::TextParser(QObject* parent)
 TextParser* TextParser::instance()
 {
     if (!s_instance) {
-        s_instance = new TextParser(0);
+        s_instance = new TextParser(nullptr);
     }
 
     return s_instance;

@@ -28,7 +28,7 @@ public:
 }
 
 KTp::PendingWallet::PendingWallet(KTp::WalletInterface* walletInterface)
-    :Tp::PendingOperation(Tp::SharedPtr<Tp::RefCounted>(0)),
+    :Tp::PendingOperation(Tp::SharedPtr<Tp::RefCounted>(nullptr)),
       d( new KTp::PendingWalletPrivate())
 {
     d->walletInterface = walletInterface;

@@ -52,7 +52,7 @@ public:
         GroupGrouping
     };
 
-    ContactsModel(QObject *parent=0);
+    ContactsModel(QObject *parent=nullptr);
 
     ~ContactsModel() override;
 

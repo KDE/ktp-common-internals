@@ -29,7 +29,7 @@ class PendingLoggerDatesImpl : public KTp::PendingLoggerDates
   public:
     explicit PendingLoggerDatesImpl(const Tp::AccountPtr &account,
                                     const KTp::LogEntity &entity,
-                                    QObject* parent = 0);
+                                    QObject* parent = nullptr);
     ~PendingLoggerDatesImpl() override;
 
   private Q_SLOTS:

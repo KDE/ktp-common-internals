@@ -37,7 +37,7 @@ class ChannelWatcher : public QObject, public Tp::RefCounted
 {
     Q_OBJECT
 public:
-    ChannelWatcher(const QPersistentModelIndex &index, const Tp::TextChannelPtr &channel, QObject *parent=0);
+    ChannelWatcher(const QPersistentModelIndex &index, const Tp::TextChannelPtr &channel, QObject *parent=nullptr);
     int unreadMessageCount() const;
     QString lastMessage() const;
     KTp::Message::MessageDirection lastMessageDirection() const;

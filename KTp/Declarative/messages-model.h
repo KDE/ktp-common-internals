@@ -37,7 +37,7 @@ class MessagesModel : public QAbstractListModel
     Q_PROPERTY(bool shouldStartOpened READ shouldStartOpened CONSTANT)
 
   public:
-    MessagesModel(const Tp::AccountPtr &account, QObject *parent = 0);
+    MessagesModel(const Tp::AccountPtr &account, QObject *parent = nullptr);
     ~MessagesModel() override;
 
     enum Roles {

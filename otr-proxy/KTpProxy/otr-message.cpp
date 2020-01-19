@@ -143,7 +143,7 @@ namespace OTR
         if(it == message[0].end()) {
             return 0;
         } else {
-            return it->variant().toLongLong(NULL);
+            return it->variant().toLongLong(nullptr);
         }
     }
 
@@ -173,7 +173,7 @@ namespace OTR
         if(it == message[0].end()) {
             return 0;
         } else {
-            return it->variant().toUInt(NULL);
+            return it->variant().toUInt(nullptr);
         }
     }
 

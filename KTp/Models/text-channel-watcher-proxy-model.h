@@ -34,7 +34,7 @@ class KTPMODELS_EXPORT TextChannelWatcherProxyModel : public QIdentityProxyModel
 {
     Q_OBJECT
 public:
-    explicit TextChannelWatcherProxyModel(QObject *parent=0);
+    explicit TextChannelWatcherProxyModel(QObject *parent=nullptr);
     ~TextChannelWatcherProxyModel() override;
 
     void observeChannels(const Tp::MethodInvocationContextPtr<> &context,

@@ -104,8 +104,8 @@ public:
           layout(new QVBoxLayout(parent)),
           contactView(new QListView(parent)),
           contactFilterLineEdit(new QLineEdit(parent)),
-          contactsModel(0),
-          filterModel(0)
+          contactsModel(nullptr),
+          filterModel(nullptr)
     {
     }
 

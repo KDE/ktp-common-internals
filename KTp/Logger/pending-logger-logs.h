@@ -74,7 +74,7 @@ class KTPCOMMONINTERNALS_EXPORT PendingLoggerLogs : public KTp::PendingLoggerOpe
     explicit PendingLoggerLogs(const Tp::AccountPtr &account,
                                const KTp::LogEntity &entity,
                                const QDate &date,
-                               QObject* parent = 0);
+                               QObject* parent = nullptr);
 
     void appendLogs(const QList<KTp::LogMessage> &logs);
 

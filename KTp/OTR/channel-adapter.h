@@ -37,7 +37,7 @@ class KTPOTR_EXPORT ChannelAdapter : public QObject, public Tp::RefCounted
     Q_OBJECT
 
     public:
-        ChannelAdapter(const Tp::TextChannelPtr &textChannel, QObject *parent = 0);
+        ChannelAdapter(const Tp::TextChannelPtr &textChannel, QObject *parent = nullptr);
         ~ChannelAdapter() override;
 
         Tp::TextChannelPtr textChannel();
@@ -61,7 +61,7 @@ class KTPOTR_EXPORT ChannelAdapter : public QObject, public Tp::RefCounted
         void acknowledge(const QList<Tp::ReceivedMessage> &messages);
         void send(const QString& text,
                 Tp::ChannelTextMessageType type = Tp::ChannelTextMessageTypeNormal,
-                Tp::MessageSendingFlags flags = 0);
+                Tp::MessageSendingFlags flags = nullptr);
 
         bool supportsMessageType(Tp::ChannelTextMessageType messageType) const;
         QList<Tp::ChannelTextMessageType> supportedMessageTypes() const;

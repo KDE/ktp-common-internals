@@ -81,7 +81,7 @@ namespace OTR
 
             void initSMPQuery(const QString &question, const QString &secret);
             void initSMPSecret(const QString &secret);
-            void abortSMPAuthentiaction(ConnContext *context = NULL);
+            void abortSMPAuthentiaction(ConnContext *context = nullptr);
             void respondSMPAuthentication(const QString &answer);
 
             TrustFpResult trustFingerprint(bool trust);

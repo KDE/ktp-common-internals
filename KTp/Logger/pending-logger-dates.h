@@ -69,7 +69,7 @@ class KTPCOMMONINTERNALS_EXPORT PendingLoggerDates : public KTp::PendingLoggerOp
   protected:
     explicit PendingLoggerDates(const Tp::AccountPtr &account,
                                 const KTp::LogEntity &entity,
-                                QObject *parent = 0);
+                                QObject *parent = nullptr);
 
     void setDates(const QList<QDate> &dates);
 

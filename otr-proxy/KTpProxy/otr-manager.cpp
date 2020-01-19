@@ -132,7 +132,7 @@ namespace {
     {
         Q_UNUSED(opdata);
 
-        char *err_msg = 0;
+        char *err_msg = nullptr;
         switch (err_code)
         {
             case OTRL_ERRCODE_NONE:
@@ -385,9 +385,9 @@ namespace global
         gone_insecure,
         still_secure,
         max_message_size,
-        NULL,           /* account_name */
-        NULL,           /* account_name_free */
-        NULL,           /* received symkey */
+        nullptr,           /* account_name */
+        nullptr,           /* account_name_free */
+        nullptr,           /* received symkey */
         otr_error_message,
         otr_error_message_free,
         resent_msg_prefix,
@@ -395,8 +395,8 @@ namespace global
         handle_smp_event,
         handle_msg_event,
         create_instag,
-        NULL,           /* convert_data */
-        NULL,           /* convert_data_free */
+        nullptr,           /* convert_data */
+        nullptr,           /* convert_data_free */
         timer_control
     };
 } /* global namespace */
@@ -418,7 +418,7 @@ UserStateBox* Manager::getUserState(const QString &accountId)
         otrl_privkey_read(userstate, path.toLocal8Bit());
 
         path = config->saveLocation() + accountId + QLatin1String(".fingerprints");
-        otrl_privkey_read_fingerprints(userstate, path.toLocal8Bit(), NULL, NULL);
+        otrl_privkey_read_fingerprints(userstate, path.toLocal8Bit(), nullptr, nullptr);
 
         path = config->saveLocation() + accountId + QLatin1String(".instags");
         otrl_instag_read(userstate, path.toLocal8Bit());
@@ -510,7 +510,7 @@ TrustFpResult Manager::trustFingerprint(const SessionContext &ctx, Fingerprint *
     if(trust) {
         otrl_context_set_trust(fingerprint, "VERIFIED");
     } else {
-        otrl_context_set_trust(fingerprint, NULL);
+        otrl_context_set_trust(fingerprint, nullptr);
     }
 
     const QString path = config->saveLocation() + ctx.accountId + QLatin1String(".fingerprints");
@@ -550,7 +550,7 @@ bool Manager::trustFingerprint(const QString &accountId, const QString &contactN
         if(trust) {
             otrl_context_set_trust(fingerprint, "VERIFIED");
         } else {
-            otrl_context_set_trust(fingerprint, NULL);
+            otrl_context_set_trust(fingerprint, nullptr);
         }
 
         Q_EMIT fingerprintTrusted(accountId, fp, trust);

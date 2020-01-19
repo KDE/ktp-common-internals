@@ -52,7 +52,7 @@ public:
         AccountRole
     };
 
-    explicit AccountsListModel(QObject *parent = 0);
+    explicit AccountsListModel(QObject *parent = nullptr);
     ~AccountsListModel() override;
 
     QHash<int, QByteArray> roleNames() const Q_DECL_OVERRIDE;

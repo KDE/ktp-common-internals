@@ -60,7 +60,7 @@ class KTPCOMMONINTERNALS_EXPORT PendingLoggerEntities : public KTp::PendingLogge
     QList<KTp::LogEntity> entities() const;
 
   protected:
-    explicit PendingLoggerEntities(const Tp::AccountPtr &account, QObject* parent = 0);
+    explicit PendingLoggerEntities(const Tp::AccountPtr &account, QObject* parent = nullptr);
 
     void appendEntities(const QList<KTp::LogEntity> &entities);
     void appendEntity(const KTp::LogEntity &entity);

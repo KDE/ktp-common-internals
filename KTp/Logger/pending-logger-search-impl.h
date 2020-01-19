@@ -31,7 +31,7 @@ class PendingLoggerSearchImpl : public KTp::PendingLoggerSearch
     Q_OBJECT
 
   public:
-    explicit PendingLoggerSearchImpl(const QString& term, QObject* parent = 0);
+    explicit PendingLoggerSearchImpl(const QString& term, QObject* parent = nullptr);
     ~PendingLoggerSearchImpl() override;
 
 

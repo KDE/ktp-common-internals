@@ -85,12 +85,12 @@ class ContactInfoDialog::Private
         editable(false),
         infoDataChanged(false),
         avatarChanged(false),
-        columnsLayout(0),
-        infoLayout(0),
-        stateLayout(0),
-        changeAvatarButton(0),
-        clearAvatarButton(0),
-        avatarLabel(0),
+        columnsLayout(nullptr),
+        infoLayout(nullptr),
+        stateLayout(nullptr),
+        changeAvatarButton(nullptr),
+        clearAvatarButton(nullptr),
+        avatarLabel(nullptr),
         q(parent)
     {}
 

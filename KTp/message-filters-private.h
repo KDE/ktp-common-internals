@@ -26,14 +26,14 @@
 class MessageUrlFilter : public KTp::AbstractMessageFilter
 {
   public:
-    explicit MessageUrlFilter(QObject *parent = 0);
+    explicit MessageUrlFilter(QObject *parent = nullptr);
     void filterMessage(KTp::Message &message, const KTp::MessageContext &context) override;
 };
 
 class MessageEscapeFilter : public KTp::AbstractMessageFilter
 {
   public:
-    explicit MessageEscapeFilter(QObject *parent = 0);
+    explicit MessageEscapeFilter(QObject *parent = nullptr);
     void filterMessage(KTp::Message& message, const KTp::MessageContext &context) override;
 };
 

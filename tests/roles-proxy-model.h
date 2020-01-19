@@ -29,7 +29,7 @@ class RolesProxyModel : public QAbstractProxyModel {
     Q_OBJECT
 
 public:
-    RolesProxyModel(QObject *parent = 0);
+    RolesProxyModel(QObject *parent = nullptr);
     ~RolesProxyModel() override;
 
     void setSourceModel(QAbstractItemModel *sourceModel) override;

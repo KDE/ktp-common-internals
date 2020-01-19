@@ -202,7 +202,7 @@ public:
     };
     Q_DECLARE_FLAGS(SubscriptionStateFilterFlags, SubscriptionStateFilterFlag)
 
-    ContactsFilterModel(QObject *parent = 0);
+    ContactsFilterModel(QObject *parent = nullptr);
     ~ContactsFilterModel() override;
 
     QVariant data(const QModelIndex &index, int role) const override;

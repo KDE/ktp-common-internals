@@ -26,7 +26,7 @@ class QPainter;
 class ChatListviewDelegate : public QStyledItemDelegate
 {
 public:
-    ChatListviewDelegate(QWidget *parent = 0) : QStyledItemDelegate(parent) {}
+    ChatListviewDelegate(QWidget *parent = nullptr) : QStyledItemDelegate(parent) {}
 
     enum dataRole {
         senderAliasRole = Qt::UserRole + 100,

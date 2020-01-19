@@ -30,7 +30,7 @@ class KTPMODELS_EXPORT KPeopleTranslationProxy : public QSortFilterProxyModel
     Q_OBJECT
 
 public:
-    KPeopleTranslationProxy(QObject *parent = 0);
+    KPeopleTranslationProxy(QObject *parent = nullptr);
     ~KPeopleTranslationProxy() override;
 
     QVariant data(const QModelIndex &proxyIndex, int role = Qt::DisplayRole) const override;

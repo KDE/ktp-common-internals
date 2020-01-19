@@ -32,7 +32,7 @@ class KTPCOMMONINTERNALS_EXPORT SettingsKcmDialog : public KSettings::Dialog
 {
     Q_OBJECT
 public:
-    SettingsKcmDialog(QWidget *parent = 0);
+    SettingsKcmDialog(QWidget *parent = nullptr);
 
     // Add the General Settings tab
     void addGeneralSettingsModule();

@@ -38,7 +38,7 @@
 class PinnedContactsModelPrivate {
 public:
     PinnedContactsModelPrivate() {
-        conversations = 0;
+        conversations = nullptr;
     }
 
     QList<KTp::PersistentContactPtr> m_pins;

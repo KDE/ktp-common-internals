@@ -48,7 +48,7 @@ class KTPCOMMONINTERNALS_EXPORT AbstractLoggerPlugin : public QObject
     /**
      * Constructor.
      */
-    explicit AbstractLoggerPlugin(QObject *parent = 0);
+    explicit AbstractLoggerPlugin(QObject *parent = nullptr);
 
     /**
      * Destructor.

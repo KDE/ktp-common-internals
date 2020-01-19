@@ -63,7 +63,7 @@ class KTPCOMMONINTERNALS_EXPORT GlobalPresence : public QObject
     Q_PROPERTY(Tp::AccountSetPtr onlineAccounts READ onlineAccounts)
 
 public:
-    explicit GlobalPresence(QObject *parent = 0);
+    explicit GlobalPresence(QObject *parent = nullptr);
 
     enum ConnectionPresenceType
     {

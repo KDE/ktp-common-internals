@@ -49,7 +49,7 @@ KTp::ContactsListModel::ContactsListModel(QObject *parent) :
     QAbstractListModel(parent),
     d(new KTp::ContactsListModel::Private())
 {
-    d->contactManager = 0;
+    d->contactManager = nullptr;
 }
 
 KTp::ContactsListModel::~ContactsListModel()

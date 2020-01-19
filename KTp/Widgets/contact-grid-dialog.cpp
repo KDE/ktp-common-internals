@@ -45,7 +45,7 @@ class KTp::ContactGridDialog::Private
 public:
     Private(KTp::ContactGridDialog *parent) :
         q(parent),
-        contactsModel(0)
+        contactsModel(nullptr)
     {
     }
 

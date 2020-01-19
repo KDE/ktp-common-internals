@@ -35,7 +35,7 @@ class KTPCOMMONINTERNALS_EXPORT ServiceAvailabilityChecker : public QObject
 {
     Q_OBJECT
 public:
-    explicit ServiceAvailabilityChecker(const QString & serviceName, QObject *parent = 0);
+    explicit ServiceAvailabilityChecker(const QString & serviceName, QObject *parent = nullptr);
     ~ServiceAvailabilityChecker() override;
 
     bool isAvailable() const;

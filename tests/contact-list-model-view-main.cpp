@@ -68,7 +68,7 @@ int main(int argc, char *argv[])
     model->setAccountManager(accountManager);
     
     // Set up and show the main widget
-    ModelView *mainWidget = new ModelView(model, 0);
+    ModelView *mainWidget = new ModelView(model, nullptr);
     mainWidget->show();
 
     // Start event loop.

@@ -47,7 +47,7 @@ public:
 
 CorePrivate::CorePrivate()
     : m_kPeopleEnabled(false),
-      m_contactManager(0)
+      m_contactManager(nullptr)
 {
     //if built with kpeople support, enable it
     #ifdef HAVE_KPEOPLE
@@ -115,7 +115,7 @@ Tp::AccountManagerPtr KTp::accountManager()
 KTp::GlobalContactManager* KTp::contactManager()
 {
     if (!s_instance->m_contactManager) {
-        s_instance->m_contactManager = new KTp::GlobalContactManager(KTp::accountManager(), 0);
+        s_instance->m_contactManager = new KTp::GlobalContactManager(KTp::accountManager(), nullptr);
     }
 
     return s_instance->m_contactManager;

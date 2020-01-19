@@ -32,7 +32,7 @@ class KTPCOMMONINTERNALS_EXPORT CircularCountdown : public QWidget
     Q_OBJECT
 
 public:
-    explicit CircularCountdown(int msec = 5000, QWidget *parent = 0);
+    explicit CircularCountdown(int msec = 5000, QWidget *parent = nullptr);
     ~CircularCountdown() override;
 
     void setDuration(int msec);

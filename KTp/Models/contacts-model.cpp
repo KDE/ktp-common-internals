@@ -170,7 +170,7 @@ void KTp::ContactsModel::updateGroupProxyModels()
         d->channelWatcherProxy.reset();
     }
 
-    QAbstractItemModel *modelToGroup = 0;
+    QAbstractItemModel *modelToGroup = nullptr;
     if (d->trackUnread) {
         modelToGroup = d->channelWatcherProxy.data();
     } else {
@@ -188,7 +188,7 @@ void KTp::ContactsModel::updateGroupProxyModels()
         //part of the proxy chain, and is now used in the view directly
         //
         //do not disable until you have tested on Qt in debug mode
-        setSourceModel(0);
+        setSourceModel(nullptr);
         setSourceModel(modelToGroup);
         break;
     case AccountGrouping:

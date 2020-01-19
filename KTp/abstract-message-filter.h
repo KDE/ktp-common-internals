@@ -36,7 +36,7 @@ class KTPCOMMONINTERNALS_EXPORT AbstractMessageFilter : public QObject
     Q_OBJECT
 
   public:
-    AbstractMessageFilter(QObject* parent = 0);
+    AbstractMessageFilter(QObject* parent = nullptr);
     ~AbstractMessageFilter() override;
 
     /** Filter messages to show on the UI recieved by another contact*/

@@ -39,7 +39,7 @@ class KTPCOMMONINTERNALS_EXPORT AddContactDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit AddContactDialog(const Tp::AccountManagerPtr &accountManager, QWidget *parent = 0);
+    explicit AddContactDialog(const Tp::AccountManagerPtr &accountManager, QWidget *parent = nullptr);
     ~AddContactDialog() override;
 
     void accept() override;

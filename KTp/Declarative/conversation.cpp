@@ -35,7 +35,7 @@ class Conversation::ConversationPrivate
   public:
       ConversationPrivate()
       {
-          messages = 0;
+          messages = nullptr;
           delegated = false;
           valid = false;
           isGroupChat = false;
@@ -201,7 +201,7 @@ Tp::Account* Conversation::accountObject() const
         return d->account.data();
     }
 
-    return 0;
+    return nullptr;
 }
 
 bool Conversation::isValid() const

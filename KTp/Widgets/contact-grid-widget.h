@@ -31,7 +31,7 @@ class KTPCOMMONINTERNALS_EXPORT ContactGridWidget : public ContactViewWidget
     Q_DISABLE_COPY(ContactGridWidget)
 
 public:
-    explicit ContactGridWidget(ContactsListModel *model, QWidget *parent = 0);
+    explicit ContactGridWidget(ContactsListModel *model, QWidget *parent = nullptr);
 
 }; // class ContactGridWidget
 

@@ -60,7 +60,7 @@ class KTPCOMMONINTERNALS_EXPORT PendingLoggerSearch : public  KTp::PendingLogger
 
   protected:
     explicit PendingLoggerSearch(const QString &term,
-                                 QObject *parent = 0);
+                                 QObject *parent = nullptr);
 
     void appendSearchHits(const QList<KTp::LogSearchHit> &searchHits);
     void appendSearchHit(const KTp::LogSearchHit &searchHit);

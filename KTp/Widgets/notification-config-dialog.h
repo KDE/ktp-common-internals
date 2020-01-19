@@ -36,7 +36,7 @@ class KTPCOMMONINTERNALS_EXPORT NotificationConfigDialog : public QDialog
 {
     Q_OBJECT
 public:
-    explicit NotificationConfigDialog(const Tp::ContactPtr &contact, QWidget *parent = 0);
+    explicit NotificationConfigDialog(const Tp::ContactPtr &contact, QWidget *parent = nullptr);
     ~NotificationConfigDialog() override;
 
 private Q_SLOTS:

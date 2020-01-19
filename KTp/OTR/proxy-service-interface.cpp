@@ -34,10 +34,10 @@ ProxyServiceInterface::ProxyServiceInterface(const Tp::AbstractInterface& mainIn
 void ProxyServiceInterface::invalidate(Tp::DBusProxy *proxy,
         const QString &error, const QString &message)
 {
-    disconnect(this, SIGNAL(ProxyConnected(const QDBusObjectPath&)), NULL, NULL);
-    disconnect(this, SIGNAL(ProxyDisconnected(const QDBusObjectPath&)), NULL, NULL);
-    disconnect(this, SIGNAL(KeyGenerationStarted(const QDBusObjectPath&)), NULL, NULL);
-    disconnect(this, SIGNAL(KeyGenerationFinished(const QDBusObjectPath&, bool)), NULL, NULL);
+    disconnect(this, SIGNAL(ProxyConnected(const QDBusObjectPath&)), nullptr, nullptr);
+    disconnect(this, SIGNAL(ProxyDisconnected(const QDBusObjectPath&)), nullptr, nullptr);
+    disconnect(this, SIGNAL(KeyGenerationStarted(const QDBusObjectPath&)), nullptr, nullptr);
+    disconnect(this, SIGNAL(KeyGenerationFinished(const QDBusObjectPath&, bool)), nullptr, nullptr);
 
     Tp::AbstractInterface::invalidate(proxy, error, message);
 }

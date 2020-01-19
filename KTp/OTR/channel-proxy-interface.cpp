@@ -34,17 +34,17 @@ ChannelProxyInterfaceOTRInterface::ChannelProxyInterfaceOTRInterface(const Tp::A
 void ChannelProxyInterfaceOTRInterface::invalidate(Tp::DBusProxy *proxy,
         const QString &error, const QString &message)
 {
-    disconnect(this, SIGNAL(MessageSent(const Tp::MessagePartList&, uint, const QString&)), NULL, NULL);
-    disconnect(this, SIGNAL(MessageReceived(const Tp::MessagePartList&)), NULL, NULL);
-    disconnect(this, SIGNAL(PendingMessagesRemoved(const Tp::UIntList&)), NULL, NULL);
-    disconnect(this, SIGNAL(PeerAuthenticationRequested(const QString&)), NULL, NULL);
-    disconnect(this, SIGNAL(PeerAuthenticationConcluded(bool)), NULL, NULL);
-    disconnect(this, SIGNAL(PeerAuthenticationInProgress()), NULL, NULL);
-    disconnect(this, SIGNAL(PeerAuthenticationAborted()), NULL, NULL);
-    disconnect(this, SIGNAL(PeerAuthenticationError()), NULL, NULL);
-    disconnect(this, SIGNAL(PeerAuthenticationCheated()), NULL, NULL);
-    disconnect(this, SIGNAL(SessionRefreshed()), NULL, NULL);
-    disconnect(this, SIGNAL(TrustLevelChanged(uint)), NULL, NULL);
+    disconnect(this, SIGNAL(MessageSent(const Tp::MessagePartList&, uint, const QString&)), nullptr, nullptr);
+    disconnect(this, SIGNAL(MessageReceived(const Tp::MessagePartList&)), nullptr, nullptr);
+    disconnect(this, SIGNAL(PendingMessagesRemoved(const Tp::UIntList&)), nullptr, nullptr);
+    disconnect(this, SIGNAL(PeerAuthenticationRequested(const QString&)), nullptr, nullptr);
+    disconnect(this, SIGNAL(PeerAuthenticationConcluded(bool)), nullptr, nullptr);
+    disconnect(this, SIGNAL(PeerAuthenticationInProgress()), nullptr, nullptr);
+    disconnect(this, SIGNAL(PeerAuthenticationAborted()), nullptr, nullptr);
+    disconnect(this, SIGNAL(PeerAuthenticationError()), nullptr, nullptr);
+    disconnect(this, SIGNAL(PeerAuthenticationCheated()), nullptr, nullptr);
+    disconnect(this, SIGNAL(SessionRefreshed()), nullptr, nullptr);
+    disconnect(this, SIGNAL(TrustLevelChanged(uint)), nullptr, nullptr);
 
     Tp::AbstractInterface::invalidate(proxy, error, message);
 }

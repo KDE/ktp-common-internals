@@ -34,7 +34,7 @@ class PendingTpLoggerLogs : public KTp::PendingLoggerLogs
     explicit PendingTpLoggerLogs(const Tp::AccountPtr &account,
                                  const KTp::LogEntity &entity,
                                  const QDate &date,
-                                 QObject *parent = 0);
+                                 QObject *parent = nullptr);
     ~PendingTpLoggerLogs() override;
 
   private Q_SLOTS:
