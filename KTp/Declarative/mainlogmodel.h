@@ -118,6 +118,7 @@ Q_SIGNALS:
     void newRequestedChannel(const QModelIndex &index);
 
 public Q_SLOTS:
+    void startChat(const QString &personUri);
     void startChat(const QString &accountId, const QString &contactId);
 
 private Q_SLOTS:

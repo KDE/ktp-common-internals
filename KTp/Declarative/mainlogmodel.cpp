@@ -251,6 +251,19 @@ bool MainLogModel::canChat(const QString &accountId) const
     return false;
 }
 
+void MainLogModel::startChat(const QString &personUri)
+{
+    const static QString scheme = QLatin1String("ktp://");
+    if (!personUri.startsWith(scheme)) {
+        return;
+    }
+
+    QString accountId = personUri.section(QLatin1Char('?'), 0, 0);
+    accountId = accountId.mid(scheme.length());
+    QString contactId = personUri.section(QLatin1Char('?'), 1, 1);
+    startChat(accountId, contactId);
+}
+
 void MainLogModel::startChat(const QString &accountId, const QString &contactId)
 {
     const QString objectPath = TP_QT_ACCOUNT_OBJECT_PATH_BASE + QLatin1Char('/') + accountId;
