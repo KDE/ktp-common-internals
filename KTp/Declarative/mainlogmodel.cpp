@@ -220,18 +220,18 @@ int MainLogModel::rowCount(const QModelIndex &parent) const
 
 QHash<int, QByteArray> MainLogModel::roleNames() const
 {
-    QHash<int, QByteArray> roles = QAbstractItemModel::roleNames();
-
-    roles.insert(ContactDisplayNameRole, "contactDisplayName");
-    roles.insert(ContactIdRole, "contactId");
-    roles.insert(PersonUriRole, "personUri");
-    roles.insert(AccountIdRole, "accountId");
-    roles.insert(LastMessageDateRole, "lastMessageDate");
-    roles.insert(LastMessageTextRole, "lastMessageText");
-    roles.insert(ConversationRole, "conversation");
-    roles.insert(HasUnreadMessagesRole, "hasUnreadMessages");
-    roles.insert(UnreadMessagesCountRole, "unreadMessagesCount");
-
+    static const QHash<int, QByteArray> extraRoles = {
+        { ContactDisplayNameRole, "contactDisplayName" },
+        { ContactIdRole, "contactId" },
+        { PersonUriRole, "personUri" },
+        { AccountIdRole, "accountId" },
+        { LastMessageDateRole, "lastMessageDate" },
+        { LastMessageTextRole, "lastMessageText" },
+        { ConversationRole, "conversation" },
+        { HasUnreadMessagesRole, "hasUnreadMessages" },
+        { UnreadMessagesCountRole, "unreadMessagesCount" },
+    };
+    static const QHash<int, QByteArray> roles = QAbstractItemModel::roleNames().unite(extraRoles);
     return roles;
 }
 
