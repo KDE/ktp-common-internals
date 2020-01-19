@@ -94,12 +94,12 @@ MessageFilterConfigManager::~MessageFilterConfigManager()
 
 KPluginInfo::List MessageFilterConfigManager::allPlugins() const
 {
-    return d->all.toList();
+    return d->all.values();
 }
 
 KPluginInfo::List MessageFilterConfigManager::enabledPlugins() const
 {
-    return d->enabled.toList();
+    return d->enabled.values();
 }
 
 KConfigGroup MessageFilterConfigManager::configGroup() const

@@ -172,10 +172,8 @@ bool KPeopleTranslationProxy::filterAcceptsRow(int source_row, const QModelIndex
     return !sourceIndex.data(KPeople::PersonsModel::PersonVCardRole).value<KPeople::AbstractContact::Ptr>()->customProperty(S_KPEOPLE_PROPERTY_PRESENCE).isNull();
 }
 
-QVariant KPeopleTranslationProxy::translatePresence(const QVariant &presenceName) const
+QVariant KPeopleTranslationProxy::translatePresence(const QVariant &/*presenceName*/) const
 {
-
-
     return Tp::ConnectionPresenceTypeOffline;
 }
 

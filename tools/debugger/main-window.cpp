@@ -84,7 +84,7 @@ void MainWindow::onAccountManagerBecameReady(Tp::PendingOperation* op)
 
 void MainWindow::initConnectionManagerTabs(const QSet<QString>& connectionManagerSet)
 {
-    QStringList connectionManagerStringList = connectionManagerSet.toList();
+    QStringList connectionManagerStringList = connectionManagerSet.values();
     std::sort(connectionManagerStringList.begin(), connectionManagerStringList.end());
 
     Q_FOREACH(QString connectionManager, connectionManagerStringList) {

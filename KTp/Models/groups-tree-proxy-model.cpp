@@ -47,7 +47,11 @@ QSet<QString> KTp::GroupsTreeProxyModel::groupsForIndex(const QModelIndex &sourc
         groups.append(QLatin1String("_unsorted"));
     }
 
+#if QT_VERSION < QT_VERSION_CHECK(5, 14, 0)
     return groups.toSet();
+#else
+    return QSet<QString>(groups.begin(), groups.end());
+#endif
 }
 
 

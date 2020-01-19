@@ -211,7 +211,7 @@ void KTp::ContactsListModel::onContactsChanged(const Tp::Contacts &added, const 
 
     if (added.size() > 0) {
         beginInsertRows(QModelIndex(), d->contacts.size(), d->contacts.size() + added.size() -1);
-        d->contacts.append(added.toList());
+        d->contacts.append(added.values());
         endInsertRows();
     }
 
