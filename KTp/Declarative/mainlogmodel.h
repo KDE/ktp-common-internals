@@ -79,6 +79,7 @@ class MainLogModel : public QAbstractListModel, public Tp::AbstractClientHandler
 public:
     enum Role {
         ContactDisplayNameRole = Qt::DisplayRole,
+        ChatPictureRole = Qt::DecorationRole,
         ContactIdRole = Qt::UserRole,
         PersonUriRole,
         AccountIdRole,

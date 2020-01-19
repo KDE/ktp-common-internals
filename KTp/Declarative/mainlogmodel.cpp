@@ -158,6 +158,7 @@ QVariant MainLogModel::data(const QModelIndex &index, int role) const
     case MainLogModel::HasUnreadMessagesRole:
     case MainLogModel::UnreadMessagesCountRole:
     case MainLogModel::ContactDisplayNameRole:
+    case MainLogModel::ChatPictureRole:
     case MainLogModel::PersonUriRole:
         if (role == MainLogModel::ConversationRole) {
             return QVariant::fromValue(m_logItems.at(row).conversation);
@@ -166,6 +167,8 @@ QVariant MainLogModel::data(const QModelIndex &index, int role) const
         if (conversation->personData()->isValid()) {
             if (role == MainLogModel::PersonUriRole) {
                 return conversation->personData()->personUri();
+            } else if (role == MainLogModel::ChatPictureRole) {
+                return conversation->personData()->photo();
             } else if (role == MainLogModel::ContactDisplayNameRole) {
                 return conversation->personData()->name();
             }
@@ -215,6 +218,7 @@ QHash<int, QByteArray> MainLogModel::roleNames() const
 {
     static const QHash<int, QByteArray> extraRoles = {
         { ContactDisplayNameRole, "contactDisplayName" },
+        { ChatPictureRole, "chatPicture" },
         { ContactIdRole, "contactId" },
         { PersonUriRole, "personUri" },
         { AccountIdRole, "accountId" },
