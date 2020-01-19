@@ -65,11 +65,20 @@ void QmlPlugins::registerTypes(const char *uri)
     qmlRegisterUncreatableType<MessagesModel> (uri, 0, 1, "MessagesModel",
         QLatin1String("It will be created once the conversation is created"));
 
+#if QT_VERSION < QT_VERSION_CHECK(5, 14, 0)
     qmlRegisterType<TelepathyManager>();
+#else
+    qmlRegisterAnonymousType<TelepathyManager>(uri, 0);
+#endif
     qmlRegisterUncreatableType<ConversationsModel>(uri, 0, 1, "Conversation",
         QStringLiteral("Conversation type cannot be created from QML"));
+#if QT_VERSION < QT_VERSION_CHECK(5, 14, 0)
     qmlRegisterType<Tp::PendingChannelRequest>();
     qmlRegisterType<Tp::PendingOperation>();
+#else
+    qmlRegisterAnonymousType<Tp::PendingChannelRequest>(uri, 0);
+    qmlRegisterAnonymousType<Tp::PendingOperation>(uri, 0);
+#endif
     qRegisterMetaType<Tp::Presence>();
     qRegisterMetaType<KTp::Presence>();
     qRegisterMetaType<Tp::AccountManagerPtr>();
