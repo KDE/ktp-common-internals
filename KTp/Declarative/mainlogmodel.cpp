@@ -145,60 +145,53 @@ QVariant MainLogModel::data(const QModelIndex &index, int role) const
     }
 
     const int row = index.row();
+    const Conversation *conversation = m_logItems.at(row).conversation;
 
     switch (role) {
-        case MainLogModel::ContactIdRole:
-            return m_logItems.at(row).targetContact;
-        case MainLogModel::AccountIdRole:
-            return m_logItems.at(row).accountObjectPath.mid(35);
-        case MainLogModel::LastMessageDateRole:
-        case MainLogModel::LastMessageTextRole:
-        case MainLogModel::ConversationRole:
-        case MainLogModel::HasUnreadMessagesRole:
-        case MainLogModel::UnreadMessagesCountRole:
-        case MainLogModel::ContactDisplayNameRole:
-        case MainLogModel::PersonUriRole:
-        {
-            if (role == MainLogModel::ConversationRole) {
-                return QVariant::fromValue(m_logItems.at(row).conversation);
+    case MainLogModel::ContactIdRole:
+        return m_logItems.at(row).targetContact;
+    case MainLogModel::AccountIdRole:
+        return m_logItems.at(row).accountObjectPath.mid(35);
+    case MainLogModel::LastMessageDateRole:
+    case MainLogModel::LastMessageTextRole:
+    case MainLogModel::ConversationRole:
+    case MainLogModel::HasUnreadMessagesRole:
+    case MainLogModel::UnreadMessagesCountRole:
+    case MainLogModel::ContactDisplayNameRole:
+    case MainLogModel::PersonUriRole:
+        if (role == MainLogModel::ConversationRole) {
+            return QVariant::fromValue(m_logItems.at(row).conversation);
+        }
+
+        if (conversation->personData()->isValid()) {
+            if (role == MainLogModel::PersonUriRole) {
+                return conversation->personData()->personUri();
+            } else if (role == MainLogModel::ContactDisplayNameRole) {
+                return conversation->personData()->name();
             }
+        }
 
-            const Conversation *conversation = m_logItems.at(row).conversation;
-
-            if (!conversation->personData()->isValid()) {
-                if (role == MainLogModel::PersonUriRole || role == MainLogModel::ContactDisplayNameRole) {
-                    return QVariant();
-                }
-            } else {
-                if (role == MainLogModel::PersonUriRole) {
-                    return conversation->personData()->personUri();
-                } else if (role == MainLogModel::ContactDisplayNameRole) {
-                    return conversation->personData()->name();
-                }
+        if (conversation->isValid()) {
+            if (role == MainLogModel::HasUnreadMessagesRole) {
+                return conversation->hasUnreadMessages();
+            } else if (role == MainLogModel::UnreadMessagesCountRole) {
+                return conversation->messages()->unreadCount();
+            } else if (role == MainLogModel::LastMessageDateRole) {
+                return conversation->messages()->lastMessageDateTime();
+            } else if (role == MainLogModel::LastMessageTextRole) {
+                return conversation->messages()->lastMessage();
             }
-
-            if (!conversation->isValid()) {
-                if (role == MainLogModel::HasUnreadMessagesRole) {
-                    return false;
-                } else if (role == MainLogModel::UnreadMessagesCountRole) {
-                    // TODO this needs to be replaced once the persistent
-                    //      unread count is done
-                    return 0;
-                } else if (role == MainLogModel::LastMessageDateRole) {
-                    return m_logItems.at(row).messageDateTime;
-                } else if (role == MainLogModel::LastMessageTextRole) {
-                    return m_logItems.at(row).message;
-                }
-            } else {
-                if (role == MainLogModel::HasUnreadMessagesRole) {
-                    return conversation->hasUnreadMessages();
-                } else if (role == MainLogModel::UnreadMessagesCountRole) {
-                    return conversation->messages()->unreadCount();
-                } else if (role == MainLogModel::LastMessageDateRole) {
-                    return conversation->messages()->lastMessageDateTime();
-                } else if (role == MainLogModel::LastMessageTextRole) {
-                    return conversation->messages()->lastMessage();
-                }
+        } else {
+            if (role == MainLogModel::HasUnreadMessagesRole) {
+                return false;
+            } else if (role == MainLogModel::UnreadMessagesCountRole) {
+                // TODO this needs to be replaced once the persistent
+                //      unread count is done
+                return 0;
+            } else if (role == MainLogModel::LastMessageDateRole) {
+                return m_logItems.at(row).messageDateTime;
+            } else if (role == MainLogModel::LastMessageTextRole) {
+                return m_logItems.at(row).message;
             }
         }
     }
