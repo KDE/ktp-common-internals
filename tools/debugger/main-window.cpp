@@ -49,7 +49,6 @@ MainWindow::MainWindow(QWidget *parent)
     saveLogAction->setToolTip(i18nc("Toolbar icon tooltip", "Save log of the current tab"));
     toolBar()->addAction(saveLogAction);
 
-    connect(m_ui.mcLogsView, SIGNAL(statusMessage(QString)), statusBar(), SLOT(showMessage(QString)));
     connect(saveLogAction, SIGNAL(triggered(bool)), this, SLOT(saveLogFile()));
 }
 
