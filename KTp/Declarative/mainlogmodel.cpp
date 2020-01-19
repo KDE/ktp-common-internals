@@ -258,6 +258,7 @@ void MainLogModel::startChat(const QString &accountId, const QString &contactId)
 
     if (account.isNull()) {
         qWarning() << "Cannot get account for" << accountId;
+        return;
     }
 
     if (m_conversations.contains(accountId + contactId)) {
