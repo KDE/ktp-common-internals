@@ -71,7 +71,11 @@ TelepathyHandlerApplication::Private::~Private()
 
 void TelepathyHandlerApplication::Private::_k_onInitialTimeout()
 {
+#if QT_VERSION < QT_VERSION_CHECK(5, 14, 0)
     if (jobCount.load() == 0 && jobCount.fetchAndAddOrdered(-1) == 0) {
+#else
+    if (jobCount.loadRelaxed() == 0 && jobCount.fetchAndAddOrdered(-1) == 0) {
+#endif
         // m_jobCount is now -1
         qDebug() << "No job received. Exiting";
         QCoreApplication::quit();
@@ -80,7 +84,11 @@ void TelepathyHandlerApplication::Private::_k_onInitialTimeout()
 
 void TelepathyHandlerApplication::Private::_k_onTimeout()
 {
+#if QT_VERSION < QT_VERSION_CHECK(5, 14, 0)
     if (jobCount.load() == 0 && jobCount.fetchAndAddOrdered(-1) == 0) {
+#else
+    if (jobCount.loadRelaxed() == 0 && jobCount.fetchAndAddOrdered(-1) == 0) {
+#endif
         // m_jobCount is now -1
         qDebug() << "Timeout. Exiting";
         QCoreApplication::quit();
@@ -164,7 +172,11 @@ int TelepathyHandlerApplication::newJob()
             d->firstJobStarted = true;
         }
     }
+#if QT_VERSION < QT_VERSION_CHECK(5, 14, 0)
     qDebug() << "New job started." << d->jobCount.load() << "jobs currently running";
+#else
+    qDebug() << "New job started." << d->jobCount.loadRelaxed() << "jobs currently running";
+#endif
     return ret;
 }
 
@@ -179,7 +191,11 @@ void TelepathyHandlerApplication::jobFinished()
             d->timer->start(d->timeout);
         }
     }
+#if QT_VERSION < QT_VERSION_CHECK(5, 14, 0)
     qDebug() << "Job finished." << d->jobCount.load() << "jobs currently running";
+#else
+    qDebug() << "Job finished." << d->jobCount.loadRelaxed() << "jobs currently running";
+#endif
 }
 
 } // namespace KTp
