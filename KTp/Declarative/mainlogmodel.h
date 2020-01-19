@@ -100,7 +100,6 @@ public:
     QHash<int, QByteArray> roleNames() const override;
 
     Q_INVOKABLE bool canChat(const QString &accountId) const;
-    Q_INVOKABLE void startChat(const QString &accountId, const QString &contactId);
     Q_INVOKABLE void setAccountManager(const Tp::AccountManagerPtr &accountManager);
     Q_INVOKABLE QVariant data(int index, QByteArray role) const;
     Q_INVOKABLE QObject* observerProxy() const;
@@ -117,6 +116,9 @@ public:
 
 Q_SIGNALS:
     void newRequestedChannel(const QModelIndex &index);
+
+public Q_SLOTS:
+    void startChat(const QString &accountId, const QString &contactId);
 
 private Q_SLOTS:
     void handleChannel(const Tp::AccountPtr &account, const Tp::TextChannelPtr &channel);
