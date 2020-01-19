@@ -28,7 +28,7 @@ uint ProxyServiceAdaptor::PolicySettings() const
 
 void ProxyServiceAdaptor::SetPolicySettings(const uint &newValue)
 {
-    adaptee()->setProperty("policySettings", qVariantFromValue(newValue));
+    adaptee()->setProperty("policySettings", QVariant::fromValue(newValue));
 }
 
 void ProxyServiceAdaptor::GeneratePrivateKey(const QDBusObjectPath& account, const QDBusMessage& dbusMessage)
