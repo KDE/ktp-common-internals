@@ -32,21 +32,21 @@ class TpLoggerPlugin : public KTp::AbstractLoggerPlugin
 
   public:
     explicit TpLoggerPlugin(QObject *parent, const QVariantList &);
-    virtual ~TpLoggerPlugin();
+    ~TpLoggerPlugin() override;
 
     KTp::PendingLoggerDates* queryDates(const Tp::AccountPtr &account,
-                                        const KTp::LogEntity &entity);
+                                        const KTp::LogEntity &entity) override;
     KTp::PendingLoggerLogs* queryLogs(const Tp::AccountPtr &account,
                                       const KTp::LogEntity &entity,
-                                      const QDate &date);
-    KTp::PendingLoggerEntities* queryEntities(const Tp::AccountPtr &account);
-    void clearAccountLogs(const Tp::AccountPtr &account);
+                                      const QDate &date) override;
+    KTp::PendingLoggerEntities* queryEntities(const Tp::AccountPtr &account) override;
+    void clearAccountLogs(const Tp::AccountPtr &account) override;
     void clearContactLogs(const Tp::AccountPtr &account,
-                          const KTp::LogEntity &entity);
-    KTp::PendingLoggerSearch* search(const QString &term);
-    bool logsExist(const Tp::AccountPtr &account, const KTp::LogEntity &contact);
+                          const KTp::LogEntity &entity) override;
+    KTp::PendingLoggerSearch* search(const QString &term) override;
+    bool logsExist(const Tp::AccountPtr &account, const KTp::LogEntity &contact) override;
 
-    void setAccountManager(const Tp::AccountManagerPtr &accountManager);
+    void setAccountManager(const Tp::AccountManagerPtr &accountManager) override;
 
 
   private Q_SLOTS:

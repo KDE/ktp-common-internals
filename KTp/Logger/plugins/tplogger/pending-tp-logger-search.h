@@ -32,7 +32,7 @@ class PendingTpLoggerSearch : public KTp::PendingLoggerSearch
 
   public:
     explicit PendingTpLoggerSearch(const QString& term, QObject* parent = 0);
-    virtual ~PendingTpLoggerSearch();
+    ~PendingTpLoggerSearch() override;
 
   private Q_SLOTS:
     void searchFinished(Tpl::PendingOperation *op);

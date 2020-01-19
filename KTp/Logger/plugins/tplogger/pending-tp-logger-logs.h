@@ -35,7 +35,7 @@ class PendingTpLoggerLogs : public KTp::PendingLoggerLogs
                                  const KTp::LogEntity &entity,
                                  const QDate &date,
                                  QObject *parent = 0);
-    virtual ~PendingTpLoggerLogs();
+    ~PendingTpLoggerLogs() override;
 
   private Q_SLOTS:
     void logsRetrieved(Tpl::PendingOperation *op);

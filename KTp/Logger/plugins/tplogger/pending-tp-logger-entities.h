@@ -33,7 +33,7 @@ class PendingTpLoggerEntities : public KTp::PendingLoggerEntities
   public:
     explicit PendingTpLoggerEntities(const Tp::AccountPtr &account,
                                      QObject *parent = 0);
-    ~PendingTpLoggerEntities();
+    ~PendingTpLoggerEntities() override;
 
   private Q_SLOTS:
     void entitiesRetrieved(Tpl::PendingOperation *op);

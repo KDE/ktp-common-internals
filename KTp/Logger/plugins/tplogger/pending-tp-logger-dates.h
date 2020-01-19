@@ -34,7 +34,7 @@ class PendingTpLoggerDates : public KTp::PendingLoggerDates
     explicit PendingTpLoggerDates(const Tp::AccountPtr &account,
                                   const KTp::LogEntity &entity,
                                   QObject *parent = 0);
-    virtual ~PendingTpLoggerDates();
+    ~PendingTpLoggerDates() override;
 
   private Q_SLOTS:
     void datesRetrieved(Tpl::PendingOperation *op);

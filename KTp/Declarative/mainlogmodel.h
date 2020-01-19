@@ -64,7 +64,7 @@ public:
                          const QList<Tp::ChannelPtr> &channels,
                          const Tp::ChannelDispatchOperationPtr &dispatchOperation,
                          const QList<Tp::ChannelRequestPtr> &requestsSatisfied,
-                         const Tp::AbstractClientObserver::ObserverInfo &observerInfo);
+                         const Tp::AbstractClientObserver::ObserverInfo &observerInfo) override;
 
 private:
     MainLogModel *m_model;
@@ -93,11 +93,11 @@ public:
     Q_ENUMS(Role)
 
     MainLogModel(QObject *parent = 0);
-    ~MainLogModel();
+    ~MainLogModel() override;
 
-    virtual QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const Q_DECL_OVERRIDE;
-    virtual int rowCount(const QModelIndex &parent = QModelIndex()) const Q_DECL_OVERRIDE;
-    virtual QHash<int, QByteArray> roleNames() const Q_DECL_OVERRIDE;
+    QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
+    int rowCount(const QModelIndex &parent = QModelIndex()) const override;
+    QHash<int, QByteArray> roleNames() const override;
 
     Q_INVOKABLE bool canChat(const QString &accountId) const;
     Q_INVOKABLE void startChat(const QString &accountId, const QString &contactId);
@@ -111,9 +111,9 @@ public:
                         const QList<Tp::ChannelPtr> &channels,
                         const QList<Tp::ChannelRequestPtr> &channelRequests,
                         const QDateTime &userActionTime,
-                        const HandlerInfo &handlerInfo);
+                        const HandlerInfo &handlerInfo) override;
 
-    bool bypassApproval() const;
+    bool bypassApproval() const override;
 
 Q_SIGNALS:
     void newRequestedChannel(const QModelIndex &index);
