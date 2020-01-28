@@ -288,7 +288,9 @@ Conversation::~Conversation()
 {
     qCDebug(KTP_DECLARATIVE);
     //if we are not handling the channel do nothing.
-    if (!d->delegated) {
+    // d->messages is valid here (destroyed in a deeper base class destructor)
+    // but the textChannel actually can be invalid.
+    if (!d->delegated && !d->messages->textChannel().isNull()) {
         d->messages->textChannel()->requestClose();
     }
     delete d;
