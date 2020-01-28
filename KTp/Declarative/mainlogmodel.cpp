@@ -28,6 +28,7 @@
 #include <TelepathyQt/AccountManager>
 #include <TelepathyQt/PendingOperation>
 #include <TelepathyQt/PendingChannel>
+#include <TelepathyQt/PendingReady>
 #include <TelepathyQt/TextChannel>
 #include <TelepathyQt/Channel>
 #include <TelepathyQt/ChannelClassSpecList>
@@ -114,6 +115,15 @@ MainLogModel::MainLogModel(QObject *parent)
 MainLogModel::~MainLogModel()
 {
 
+}
+
+void MainLogModel::onAccountManagerReady()
+{
+    if (!m_accountManager->isReady()) {
+        qWarning() << "Unable to initialize account manager";
+        return;
+    }
+    processQueryResults(m_query);
 }
 
 void MainLogModel::processQueryResults(QSqlQuery query)
@@ -304,7 +314,14 @@ void MainLogModel::setAccountManager(const Tp::AccountManagerPtr &accountManager
 {
     m_accountManager = accountManager;
 
-    processQueryResults(m_query);
+    if (m_accountManager) {
+        if (m_accountManager->isReady()) {
+            onAccountManagerReady();
+        } else {
+            Tp::PendingOperation *readyOp = m_accountManager->becomeReady();
+            connect(readyOp, &Tp::PendingOperation::finished, this, &MainLogModel::onAccountManagerReady);
+        }
+    }
 }
 
 QObject* MainLogModel::observerProxy() const

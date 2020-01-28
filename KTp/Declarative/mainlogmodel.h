@@ -125,6 +125,7 @@ public Q_SLOTS:
 private Q_SLOTS:
     void handleChannel(const Tp::AccountPtr &account, const Tp::TextChannelPtr &channel);
     void onConversationChanged();
+    void onAccountManagerReady();
 
 private:
     void setupSignals(Conversation *conversation) const;
