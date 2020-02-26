@@ -32,11 +32,8 @@ namespace Accounts {
 class KAccountsKTpPlugin : public KAccountsDPlugin
 {
     Q_OBJECT
-    Q_PLUGIN_METADATA(IID "org.kde.kaccounts.DPlugin")
-    Q_INTERFACES(KAccountsDPlugin)
-
 public:
-    KAccountsKTpPlugin(QObject *parent = nullptr);
+    KAccountsKTpPlugin(QObject *parent, const QVariantList &args);
     ~KAccountsKTpPlugin() override;
 
 public Q_SLOTS:

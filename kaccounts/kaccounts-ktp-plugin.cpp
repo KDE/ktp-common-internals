@@ -32,6 +32,7 @@
 
 #include <KSharedConfig>
 #include <KConfigGroup>
+#include <KPluginFactory>
 
 #include <QTimer>
 #include <QStandardPaths>
@@ -59,6 +60,8 @@ static QStringList s_knownProviders{QStringLiteral("haze-icq"),
                                     QStringLiteral("haze-sametime"),
                                     QStringLiteral("haze-yahoo"),
                                     QStringLiteral("haze-gadugadu")};
+
+K_PLUGIN_CLASS_WITH_JSON(KAccountsKTpPlugin, "kaccountsplugin.json")
 
 class KAccountsKTpPlugin::Private {
 public:
@@ -324,8 +327,8 @@ void KAccountsKTpPlugin::Private::derefMigrationCount()
 
 //---------------------------------------------------------------------------------------
 
-KAccountsKTpPlugin::KAccountsKTpPlugin(QObject *parent)
-    : KAccountsDPlugin(parent),
+KAccountsKTpPlugin::KAccountsKTpPlugin(QObject *parent, const QVariantList &args)
+    : KAccountsDPlugin(parent, args),
       d(new Private(this))
 {
     d->kaccountsConfig = KSharedConfig::openConfig(QStringLiteral("kaccounts-ktprc"));
@@ -380,3 +383,5 @@ void KAccountsKTpPlugin::onServiceDisabled(const Accounts::AccountId accountId, 
     Q_UNUSED(accountId);
     Q_UNUSED(service);
 }
+
+#include "kaccounts-ktp-plugin.moc"

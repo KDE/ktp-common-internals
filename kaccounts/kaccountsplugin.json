@@ -1,0 +1,11 @@
+{
+    "KPlugin": {
+        "Description": "KTP KAccounts integration",
+        "EnabledByDefault": true,
+        "Icon": "telepathy-kde",
+        "Id": "kaccounts_ktp",
+        "License": "GPL",
+        "Name": "KTP",
+        "Version": "0.1"
+    }
+}

@@ -1,14 +1,7 @@
-project(kaccounts-integration-plugin)
-
-include_directories (${CMAKE_CURRENT_BINARY_DIR}
-                     ${CMAKE_CURRENT_SOURCE_DIR}
-)
-
-set(kaccounts_ktp_plugin_SRCS
-    kaccounts-ktp-plugin.cpp
-)
-
-add_library(kaccounts_ktp_plugin MODULE ${kaccounts_ktp_plugin_SRCS})
+kcoreaddons_add_plugin(kaccounts_ktp_plugin
+    JSON kaccountsplugin.json
+    SOURCES kaccounts-ktp-plugin.cpp
+    INSTALL_NAMESPACE kaccounts/daemonplugins)
 
 target_link_libraries(kaccounts_ktp_plugin
                       Qt5::Core
@@ -20,10 +13,3 @@ target_link_libraries(kaccounts_ktp_plugin
                       ${ACCOUNTSQT_LIBRARIES}
                       ${SIGNONQT_LIBRARIES}
 )
-
-# Install:
-install (TARGETS kaccounts_ktp_plugin
-         DESTINATION ${PLUGIN_INSTALL_DIR}/kaccounts/daemonplugins
-)
-
-
