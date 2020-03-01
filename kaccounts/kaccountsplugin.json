@@ -1,11 +1,27 @@
 {
     "KPlugin": {
         "Description": "KTP KAccounts integration",
+        "Description[ca@valencia]": "Integració a KAccounts del KTP",
+        "Description[ca]": "Integració a KAccounts del KTP",
+        "Description[eu]": "KTP KAccounts bateratzea",
+        "Description[nl]": "Integratie van KTP KAccounts",
+        "Description[pt]": "Integração do KAccounts do KTP",
+        "Description[sv]": "KTP KAccounts integrering",
+        "Description[uk]": "Інтеграція облікових записів KTP",
+        "Description[x-test]": "xxKTP KAccounts integrationxx",
         "EnabledByDefault": true,
         "Icon": "telepathy-kde",
         "Id": "kaccounts_ktp",
         "License": "GPL",
         "Name": "KTP",
+        "Name[ca@valencia]": "KTP",
+        "Name[ca]": "KTP",
+        "Name[eu]": "KTP",
+        "Name[nl]": "KTP",
+        "Name[pt]": "KTP",
+        "Name[sv]": "KTP",
+        "Name[uk]": "KTP",
+        "Name[x-test]": "xxKTPxx",
         "Version": "0.1"
     }
 }
