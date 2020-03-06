@@ -12,6 +12,7 @@
         "Description[sv]": "KTP KAccounts integrering",
         "Description[uk]": "Інтеграція облікових записів KTP",
         "Description[x-test]": "xxKTP KAccounts integrationxx",
+        "Description[zh_TW]": "KTP KAccounts 整合",
         "EnabledByDefault": true,
         "Icon": "telepathy-kde",
         "Id": "kaccounts_ktp",
@@ -28,6 +29,7 @@
         "Name[sv]": "KTP",
         "Name[uk]": "KTP",
         "Name[x-test]": "xxKTPxx",
+        "Name[zh_TW]": "KTP",
         "Version": "0.1"
     }
 }
