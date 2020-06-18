@@ -17,6 +17,7 @@
         "Description[pt_BR]": "Integração KAccounts do KTP",
         "Description[sv]": "KTP KAccounts integrering",
         "Description[uk]": "Інтеграція облікових записів KTP",
+        "Description[x-test]": "xxKTP KAccounts integrationxx",
         "Description[zh_CN]": "KTP KAccounts 集成",
         "Description[zh_TW]": "KTP KAccounts 整合",
         "EnabledByDefault": true,
@@ -40,6 +41,7 @@
         "Name[pt_BR]": "KTP",
         "Name[sv]": "KTP",
         "Name[uk]": "KTP",
+        "Name[x-test]": "xxKTPxx",
         "Name[zh_CN]": "KTP",
         "Name[zh_TW]": "KTP",
         "Version": "0.1"
