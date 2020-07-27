@@ -2099,7 +2099,7 @@ Action=None
 [Event/googletalkExtensionsError]
 Name=File renamed for sending with Google Talk
 Name[bs]=Datoteka preimenovana za slanje s Google Talk
-Name[ca]=Reanomena el fitxer per enviar-lo amb el Google Talk
+Name[ca]=Reanomena el fitxer per a enviar-lo amb el Google Talk
 Name[ca@valencia]=Reanomena el fitxer per enviar-lo amb el Google Talk
 Name[cs]=Soubor byl přejmenován pro přenos pomocí Google Talk
 Name[da]=Fil omdøbt for at blive sendt med Google Talk
