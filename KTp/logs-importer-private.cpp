@@ -170,7 +170,7 @@ void LogsImporter::Private::saveKTpDocument()
         .arg(m_month, 2, 10, QLatin1Char('0'))
         .arg(m_day, 2, 10, QLatin1Char('0'));
 
-    QString path = QStandardPaths::writableLocation(QStandardPaths::DataLocation) + QLatin1String("/TpLogger/logs");
+    QString path = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation) + QLatin1String("/TpLogger/logs");
 
     if (m_isMUCLog) {
         path += QDir::separator() + QLatin1String("chatrooms");
