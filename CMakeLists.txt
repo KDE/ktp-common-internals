@@ -10,8 +10,8 @@ set (CMAKE_MODULE_PATH
 cmake_policy(SET CMP0002 OLD)
 
 # KDE Application Version, managed by release script
-set (RELEASE_SERVICE_VERSION_MAJOR "20")
-set (RELEASE_SERVICE_VERSION_MINOR "11")
+set (RELEASE_SERVICE_VERSION_MAJOR "21")
+set (RELEASE_SERVICE_VERSION_MINOR "03")
 set (RELEASE_SERVICE_VERSION_MICRO "70")
 
 # Bump for every 0.x release, or whenever BC changes
