@@ -27,7 +27,6 @@
 
 #include "ktp-debug.h"
 #include <KService>
-#include <KServiceTypeTrader>
 #include <KPluginFactory>
 
 Q_LOGGING_CATEGORY(KTP_MESSAGEPROCESSOR, "ktp-message-processor")
