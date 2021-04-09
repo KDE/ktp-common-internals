@@ -12,7 +12,7 @@ cmake_policy(SET CMP0002 OLD)
 # KDE Application Version, managed by release script
 set (RELEASE_SERVICE_VERSION_MAJOR "21")
 set (RELEASE_SERVICE_VERSION_MINOR "03")
-set (RELEASE_SERVICE_VERSION_MICRO "80")
+set (RELEASE_SERVICE_VERSION_MICRO "90")
 
 # Bump for every 0.x release, or whenever BC changes
 set (KTP_SONUMBER 9) # SO 9 is for 15.08 release
