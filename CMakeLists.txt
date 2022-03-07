@@ -1,13 +1,4 @@
-project(ktp-common-internals)
-
-cmake_minimum_required (VERSION 3.5)
-
-find_package(ECM 1.7.0 REQUIRED NO_MODULE)
-set (CMAKE_MODULE_PATH
-     "${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules"
-     ${ECM_MODULE_PATH} ${ECM_KDE_MODULE_DIR}
-)
-cmake_policy(SET CMP0002 OLD)
+cmake_minimum_required (VERSION 3.16)
 
 # KDE Application Version, managed by release script
 set (RELEASE_SERVICE_VERSION_MAJOR "22")
@@ -18,6 +9,14 @@ set (RELEASE_SERVICE_VERSION_MICRO "70")
 set (KTP_SONUMBER 9) # SO 9 is for 15.08 release
 set (KTP_VERSION "${RELEASE_SERVICE_VERSION_MAJOR}.${RELEASE_SERVICE_VERSION_MINOR}.${RELEASE_SERVICE_VERSION_MICRO}")
 set (KTP_MESSAGE_FILTER_FRAMEWORK_VERSION "5")
+
+project(ktp-common-internals VERSION ${KTP_VERSION})
+
+find_package(ECM 1.7.0 REQUIRED NO_MODULE)
+set (CMAKE_MODULE_PATH
+     "${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules"
+     ${ECM_MODULE_PATH} ${ECM_KDE_MODULE_DIR}
+)
 
 find_package (Qt5 REQUIRED CONFIG COMPONENTS
               DBus
@@ -61,7 +60,7 @@ include(KDEInstallDirs)
 include(KDECMakeSettings)
 include(KDECompilerSettings NO_POLICY_SCOPE)
 include(ECMMarkNonGuiExecutable)
-include(ECMPackageConfigHelpers)
+include(CMakePackageConfigHelpers)
 include(ECMInstallIcons)
 include(ECMSetupVersion)
 include(GenerateExportHeader)
@@ -129,7 +128,7 @@ endif (OTR_LIBS_FOUND)
 
 set(CMAKECONFIG_INSTALL_DIR "${CMAKECONFIG_INSTALL_PREFIX}/KTp")
 
-ecm_configure_package_config_file("${CMAKE_CURRENT_SOURCE_DIR}/KTpConfig.cmake.in"
+configure_package_config_file("${CMAKE_CURRENT_SOURCE_DIR}/KTpConfig.cmake.in"
                               "${CMAKE_CURRENT_BINARY_DIR}/KTpConfig.cmake"
                               INSTALL_DESTINATION  ${CMAKECONFIG_INSTALL_DIR}
                               )
