@@ -141,4 +141,6 @@ install(FILES  "${CMAKE_CURRENT_BINARY_DIR}/KTpConfig.cmake"
 install(EXPORT KTpTargets DESTINATION "${CMAKECONFIG_INSTALL_DIR}"
         FILE KTpTargets.cmake NAMESPACE KTp:: COMPONENT Devel)
 
+ki18n_install(po)
+
 feature_summary(WHAT ALL FATAL_ON_MISSING_REQUIRED_PACKAGES)
