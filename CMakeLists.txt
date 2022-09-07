@@ -15,7 +15,7 @@ project(ktp-common-internals VERSION ${KTP_VERSION})
 find_package(ECM 1.7.0 REQUIRED NO_MODULE)
 set (CMAKE_MODULE_PATH
      "${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules"
-     ${ECM_MODULE_PATH} ${ECM_KDE_MODULE_DIR}
+     ${ECM_MODULE_PATH}
 )
 
 find_package (Qt5 REQUIRED CONFIG COMPONENTS
