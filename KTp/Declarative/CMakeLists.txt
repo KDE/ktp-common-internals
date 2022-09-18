@@ -31,5 +31,5 @@ target_link_libraries (ktpqmlplugin
     KTp::Widgets
 )
 
-install (TARGETS ktpqmlplugin DESTINATION ${QML_INSTALL_DIR}/org/kde/telepathy)
-install (FILES qmldir DESTINATION ${QML_INSTALL_DIR}/org/kde/telepathy)
+install (TARGETS ktpqmlplugin DESTINATION ${KDE_INSTALL_QMLDIR}/org/kde/telepathy)
+install (FILES qmldir DESTINATION ${KDE_INSTALL_QMLDIR}/org/kde/telepathy)

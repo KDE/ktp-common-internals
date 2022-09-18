@@ -16,7 +16,7 @@ kde_target_enable_exceptions(ktploggerplugin_tplogger PRIVATE)
 
 # Install:
 install (TARGETS ktploggerplugin_tplogger
-         DESTINATION ${PLUGIN_INSTALL_DIR}
+         DESTINATION ${KDE_INSTALL_PLUGINDIR}
 )
 
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/ktploggerplugin_tplogger.desktop.cmake
@@ -24,6 +24,6 @@ configure_file(${CMAKE_CURRENT_SOURCE_DIR}/ktploggerplugin_tplogger.desktop.cmak
                @ONLY)
 
 install (FILES ${CMAKE_CURRENT_BINARY_DIR}/ktploggerplugin_tplogger.desktop
-         DESTINATION ${SERVICES_INSTALL_DIR}
+         DESTINATION ${KDE_INSTALL_KSERVICES5DIR}
 )
 

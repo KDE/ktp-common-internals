@@ -65,7 +65,7 @@ install (FILES ${ktp_logger_private_HDRS}
 )
 
 install(FILES ktp_logger_plugin.desktop
-        DESTINATION ${SERVICETYPES_INSTALL_DIR}
+        DESTINATION ${KDE_INSTALL_KSERVICETYPES5DIR}
 )
 
 

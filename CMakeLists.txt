@@ -126,7 +126,7 @@ if (OTR_LIBS_FOUND)
     add_subdirectory(otr-proxy)
 endif (OTR_LIBS_FOUND)
 
-set(CMAKECONFIG_INSTALL_DIR "${CMAKECONFIG_INSTALL_PREFIX}/KTp")
+set(CMAKECONFIG_INSTALL_DIR "${KDE_INSTALL_CMAKEPACKAGEDIR}/KTp")
 
 configure_package_config_file("${CMAKE_CURRENT_SOURCE_DIR}/KTpConfig.cmake.in"
                               "${CMAKE_CURRENT_BINARY_DIR}/KTpConfig.cmake"
