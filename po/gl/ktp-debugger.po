@@ -1,0 +1,95 @@
+# Copyright (C) YEAR This_file_is_part_of_KDE
+# This file is distributed under the same license as the PACKAGE package.
+# Adrian Chaves Fernandez <adriyetichaves@gmail.com>, 2012, 2015.
+# Marce Villarino <mvillarino@kde-espana.es>, 2013.
+# Adrián Chaves (Gallaecio) <adrian@chaves.io>, 2020.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: https://bugs.kde.org\n"
+"POT-Creation-Date: 2019-05-20 03:11+0200\n"
+"PO-Revision-Date: 2020-01-11 11:19+0100\n"
+"Last-Translator: Adrián Chaves (Gallaecio) <adrian@chaves.io>\n"
+"Language-Team: Galician <kde-i18n-doc@kde.org>\n"
+"Language: gl\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: Lokalize 19.08.3\n"
+
+#, kde-format
+msgctxt "NAME OF TRANSLATORS"
+msgid "Your names"
+msgstr "Adrián Chaves Fernández"
+
+#, kde-format
+msgctxt "EMAIL OF TRANSLATORS"
+msgid "Your emails"
+msgstr "adrian@chaves.io"
+
+#: debug-message-view.cpp:133
+#, kde-format
+msgctxt "@title:window"
+msgid "Save Log"
+msgstr "Gardar o rexistro"
+
+#: main-window.cpp:48
+#, kde-format
+msgid "Save Log"
+msgstr "Gardar o rexistro"
+
+#: main-window.cpp:49
+#, kde-format
+msgctxt "Toolbar icon tooltip"
+msgid "Save log of the current tab"
+msgstr "Gardar o rexistro do separador actual"
+
+#: main.cpp:31
+#, kde-format
+msgid "KDE Telepathy Debug Tool"
+msgstr "Ferramenta de depuración de KDE Telepathy"
+
+#: main.cpp:33
+#, kde-format
+msgid "Tool for inspecting logs of the various underlying telepathy components"
+msgstr ""
+"Ferramenta para inspeccionar rexistros de varios compoñentes subxacentes de "
+"Telepathy."
+
+#: main.cpp:35
+#, kde-format
+msgid "Copyright (C) 2011 Collabora Ltd."
+msgstr "© 2011 Collabora Ltd."
+
+#: main.cpp:36
+#, kde-format
+msgid "George Kiagiadakis"
+msgstr "George Kiagiadakis"
+
+#: main.cpp:36
+#, kde-format
+msgid "Developer"
+msgstr "Desenvolvedor"
+
+#~ msgid "Add Mark"
+#~ msgstr "Engadir unha marca"
+
+#~ msgid "Could not find '%1'"
+#~ msgstr "Non foi posíbel atopar «%1»"
+
+#~ msgid "Mission Control"
+#~ msgstr "Control de misións"
+
+#~ msgid "Gabble"
+#~ msgstr "Gabble"
+
+#~ msgid "Haze"
+#~ msgstr "Haze"
+
+#~ msgid "Salut"
+#~ msgstr "Salut"
+
+#~ msgid "Rakia"
+#~ msgstr "Rakia"

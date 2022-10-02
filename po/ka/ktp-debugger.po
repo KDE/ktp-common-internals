@@ -1,0 +1,71 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR This file is copyright:
+# This file is distributed under the same license as the ktp-common-internals package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: ktp-common-internals\n"
+"Report-Msgid-Bugs-To: https://bugs.kde.org\n"
+"POT-Creation-Date: 2019-05-20 03:11+0200\n"
+"PO-Revision-Date: 2022-09-27 14:59+0200\n"
+"Last-Translator: Temuri Doghonadze <temuri.doghonadze@gmail.com>\n"
+"Language-Team: Georgian <kde-i18n-doc@kde.org>\n"
+"Language: ka\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Poedit 3.1.1\n"
+
+#, kde-format
+msgctxt "NAME OF TRANSLATORS"
+msgid "Your names"
+msgstr "Temuri Doghonadze"
+
+#, kde-format
+msgctxt "EMAIL OF TRANSLATORS"
+msgid "Your emails"
+msgstr "Temuri.doghonadze@gmail.com"
+
+#: debug-message-view.cpp:133
+#, kde-format
+msgctxt "@title:window"
+msgid "Save Log"
+msgstr "ჟურნალის შენახვა"
+
+#: main-window.cpp:48
+#, kde-format
+msgid "Save Log"
+msgstr "ჟურნალის შენახვა"
+
+#: main-window.cpp:49
+#, kde-format
+msgctxt "Toolbar icon tooltip"
+msgid "Save log of the current tab"
+msgstr "მიმდინარე ჩანართის ჟურნალის შენახვა"
+
+#: main.cpp:31
+#, kde-format
+msgid "KDE Telepathy Debug Tool"
+msgstr "KDE Telepathy გამართვის ხელსაწყო"
+
+#: main.cpp:33
+#, kde-format
+msgid "Tool for inspecting logs of the various underlying telepathy components"
+msgstr ""
+
+#: main.cpp:35
+#, kde-format
+msgid "Copyright (C) 2011 Collabora Ltd."
+msgstr "Copyright (C) 2011 Collabora Ltd., ყველა უფლება დაცულია."
+
+#: main.cpp:36
+#, kde-format
+msgid "George Kiagiadakis"
+msgstr "George Kiagiadakis"
+
+#: main.cpp:36
+#, kde-format
+msgid "Developer"
+msgstr "პროგრამისტი"

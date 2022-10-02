@@ -1,0 +1,93 @@
+# Copyright (C) YEAR This_file_is_part_of_KDE
+# This file is distributed under the same license as the PACKAGE package.
+#
+# Kristóf Kiszel <ulysses@kubuntu.org>, 2012.
+# Balázs Úr <urbalazs@gmail.com>, 2012, 2013, 2014.
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: https://bugs.kde.org\n"
+"POT-Creation-Date: 2019-05-20 03:11+0200\n"
+"PO-Revision-Date: 2014-03-19 21:38+0100\n"
+"Last-Translator: Balázs Úr <urbalazs@gmail.com>\n"
+"Language-Team: Hungarian <kde-l10n-hu@kde.org>\n"
+"Language: hu\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Lokalize 1.5\n"
+
+#, kde-format
+msgctxt "NAME OF TRANSLATORS"
+msgid "Your names"
+msgstr "Kiszel Kristóf"
+
+#, kde-format
+msgctxt "EMAIL OF TRANSLATORS"
+msgid "Your emails"
+msgstr "ulysses@kubuntu.org"
+
+#: debug-message-view.cpp:133
+#, fuzzy, kde-format
+#| msgid "Save Log"
+msgctxt "@title:window"
+msgid "Save Log"
+msgstr "Napló mentése"
+
+#: main-window.cpp:48
+#, kde-format
+msgid "Save Log"
+msgstr "Napló mentése"
+
+#: main-window.cpp:49
+#, kde-format
+msgctxt "Toolbar icon tooltip"
+msgid "Save log of the current tab"
+msgstr "A jelenlegi lap naplójának mentése"
+
+#: main.cpp:31
+#, kde-format
+msgid "KDE Telepathy Debug Tool"
+msgstr "KDE Telepathy hibakereső segédprogram"
+
+#: main.cpp:33
+#, kde-format
+msgid "Tool for inspecting logs of the various underlying telepathy components"
+msgstr "Segédprogram a különböző komponensen naplóinak megtekintéséhez"
+
+#: main.cpp:35
+#, kde-format
+msgid "Copyright (C) 2011 Collabora Ltd."
+msgstr "Copyright © Collabora Ltd., 2011."
+
+#: main.cpp:36
+#, kde-format
+msgid "George Kiagiadakis"
+msgstr "George Kiagiadakis"
+
+#: main.cpp:36
+#, kde-format
+msgid "Developer"
+msgstr "Fejlesztő"
+
+#~ msgid "Add Mark"
+#~ msgstr "Jel hozzáadása"
+
+#~ msgid "Could not find '%1'"
+#~ msgstr "„%1” nem található"
+
+#~ msgid "Mission Control"
+#~ msgstr "Mission Control"
+
+#~ msgid "Gabble"
+#~ msgstr "Gabble"
+
+#~ msgid "Haze"
+#~ msgstr "Haze"
+
+#~ msgid "Salut"
+#~ msgstr "Salut"
+
+#~ msgid "Rakia"
+#~ msgstr "Rakia"

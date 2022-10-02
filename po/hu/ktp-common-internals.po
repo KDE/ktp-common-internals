@@ -1,0 +1,1269 @@
+# Copyright (C) YEAR This_file_is_part_of_KDE
+# This file is distributed under the same license as the PACKAGE package.
+#
+# Kristóf Kiszel <ulysses@kubuntu.org>, 2012.
+# Balázs Úr <urbalazs@gmail.com>, 2012, 2013, 2014.
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: https://bugs.kde.org\n"
+"POT-Creation-Date: 2020-02-18 03:18+0100\n"
+"PO-Revision-Date: 2014-12-09 21:27+0100\n"
+"Last-Translator: Balázs Úr <urbalazs@gmail.com>\n"
+"Language-Team: Hungarian <kde-l10n-hu@kde.org>\n"
+"Language: hu\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Lokalize 1.5\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#, kde-format
+msgctxt "NAME OF TRANSLATORS"
+msgid "Your names"
+msgstr "Úr Balázs"
+
+#, kde-format
+msgctxt "EMAIL OF TRANSLATORS"
+msgid "Your emails"
+msgstr "urbalazs@gmail.com"
+
+#: kpeople/actionsplugin/kpeople-actions-plugin.cpp:191
+#, fuzzy, kde-format
+#| msgid "Start Chat Using %1..."
+msgctxt ""
+"Context menu action; means 'Bring your account online and then start a chat "
+"using %1 account'"
+msgid "Connect and Start Chat Using %1..."
+msgstr "Csevegés indítása %1 használatával…"
+
+#: kpeople/actionsplugin/kpeople-actions-plugin.cpp:203
+#, kde-format
+msgid "Start Chat Using %1..."
+msgstr "Csevegés indítása %1 használatával…"
+
+#: kpeople/actionsplugin/kpeople-actions-plugin.cpp:213
+#, kde-format
+msgid "Start Audio Call Using %1..."
+msgstr "Hanghívás indítása %1 használatával…"
+
+#: kpeople/actionsplugin/kpeople-actions-plugin.cpp:223
+#, kde-format
+msgid "Start Video Call Using %1..."
+msgstr "Videohívás indítása %1 használatával…"
+
+#: kpeople/actionsplugin/kpeople-actions-plugin.cpp:234
+#, kde-format
+msgid "Send Files Using %1..."
+msgstr "Fájlok küldése %1 használatával…"
+
+#: kpeople/actionsplugin/kpeople-actions-plugin.cpp:244
+#, kde-format
+msgid "Collaboratively edit a document Using %1..."
+msgstr "Egy dokumentum együttműködő szerkesztése %1 használatával…"
+
+#: kpeople/actionsplugin/kpeople-actions-plugin.cpp:255
+#, kde-format
+msgid "Previous Conversations..."
+msgstr ""
+
+#: kpeople/actionsplugin/kpeople-actions-plugin.cpp:284
+#, kde-format
+msgid "Choose files to send to %1"
+msgstr "Válassza ki a(z) %1 partnernek küldendő fájlokat"
+
+#: kpeople/actionsplugin/kpeople-actions-plugin.cpp:295
+#, kde-format
+msgid "Choose a file to edit with %1"
+msgstr "Válassza ki a(z) %1 programmal szerkesztendő fájlt"
+
+#: kpeople/uiplugins/chatplugin/kpeople_chat_plugin.cpp:58
+#, fuzzy, kde-format
+#| msgctxt "Short user visible error string"
+#| msgid "Contact has no support"
+msgid "Chat for current contact is not supported"
+msgstr "A partner nem támogatja"
+
+#: kpeople/uiplugins/chatplugin/kpeople_chat_plugin.cpp:158
+#, kde-format
+msgid "Chat"
+msgstr "Csevegés"
+
+#: kpeople/uiplugins/imdetailswidget.cpp:47
+#, kde-format
+msgid "IM"
+msgstr "IM"
+
+#: KTp/actions.cpp:182
+#, kde-format
+msgid ""
+"Transferring files with .exe or .ini extension is not allowed by Google "
+"Talk. It was sent with filename <i>%1</i>"
+msgstr ""
+"Az .exe vagy .ini kiterjesztéssel rendelkező fájlok átvitelét nem "
+"engedélyezi a Google Talk. A következő fájlnévvel lett elküldve: <i>%1</i>"
+
+#: KTp/actions.cpp:183
+#, kde-format
+msgid "Transferred file renamed"
+msgstr "Az átküldött fájl átnevezve"
+
+#: KTp/error-dictionary.cpp:35
+#, kde-format
+msgctxt "Verbose user visible error string"
+msgid ""
+"Looks like you are already connected from other location and the server does "
+"not allow multiple connections"
+msgstr ""
+"Úgy tűnik már kapcsolódott egy másik helyről, a kiszolgáló azonban nem tesz "
+"lehetővé többszörös bejelentkezést"
+
+#: KTp/error-dictionary.cpp:37
+#, kde-format
+msgctxt "Verbose user visible error string"
+msgid "Authentication of your account failed (is your password correct?)"
+msgstr "Az azonosító hitelesítése meghiúsult, talán nem jó a jelszava"
+
+#: KTp/error-dictionary.cpp:39
+#, kde-format
+msgctxt "Verbose user visible error string"
+msgid ""
+"The channel is too busy now to process your request. Try again in a few "
+"minutes"
+msgstr ""
+"A csatorna túlságosan elfoglalt a kérése feldolgozásához. Próbálja meg újra "
+"néhány perc múlva"
+
+#: KTp/error-dictionary.cpp:41
+#, kde-format
+msgctxt "Verbose user visible error string"
+msgid "The connection was canceled on your request"
+msgstr "A kapcsolat az Ön kérésére meg lett szakítva"
+
+#: KTp/error-dictionary.cpp:43
+#, kde-format
+msgctxt "Verbose user visible error string"
+msgid "The SSL/TLS certificate received from server is expired"
+msgstr "A kiszolgálótól kapott SSL/TLS-tanúsítvány lejárt"
+
+#: KTp/error-dictionary.cpp:45
+#, kde-format
+msgctxt "Verbose user visible error string"
+msgid ""
+"The SSL/TLS certificate received from server has different fingerprint than "
+"expected"
+msgstr ""
+"A kiszolgálótól kapott SSL/TLS-tanúsítvány ujjlenyomata eltér a várttól"
+
+#: KTp/error-dictionary.cpp:47
+#, kde-format
+msgctxt "Verbose user visible error string"
+msgid ""
+"The SSL/TLS certificate received from server has different hostname than "
+"expected"
+msgstr "A kiszolgálótól kapott SSL/TLS-tanúsítvány gépneve eltér a várttól"
+
+#: KTp/error-dictionary.cpp:49
+#, kde-format
+msgctxt "Verbose user visible error string"
+msgid "The SSL/TLS certificate received from server uses too weak encryption"
+msgstr ""
+"A kiszolgálótól kapott SSL/TLS-tanúsítvány túl gyenge titkosítást használ"
+
+#: KTp/error-dictionary.cpp:51
+#, kde-format
+msgctxt "Verbose user visible error string"
+msgid "The SSL/TLS certificate received from server is invalid"
+msgstr "A kiszolgálótól kapott SSL/TLS-tanúsítvány érvénytelen"
+
+#: KTp/error-dictionary.cpp:53
+#, kde-format
+msgctxt "Verbose user visible error string"
+msgid "The SSL/TLS certificate received from server has exceeded length limit"
+msgstr "A kiszolgálótól kapott SSL/TLS-tanúsítvány túllépte a hosszkorlátot"
+
+#: KTp/error-dictionary.cpp:55
+#, kde-format
+msgctxt "Verbose user visible error string"
+msgid "The SSL/TLS certificate received from server has not been activated yet"
+msgstr "A kiszolgálótól kapott SSL/TLS-tanúsítványt még nem aktiválták"
+
+#: KTp/error-dictionary.cpp:57
+#, kde-format
+msgctxt "Verbose user visible error string"
+msgid "The server did not provide any SSL/TLS certificate"
+msgstr "A kiszolgáló nem küldött semmilyen SSL/TLS-tanúsítványt"
+
+#: KTp/error-dictionary.cpp:59
+#, kde-format
+msgctxt "Verbose user visible error string"
+msgid "The SSL/TLS certificate received from server has been revoked"
+msgstr "A kiszolgálótól kapott SSL/TLS-tanúsítványt visszavonták"
+
+#: KTp/error-dictionary.cpp:61
+#, kde-format
+msgctxt "Verbose user visible error string"
+msgid ""
+"The SSL/TLS certificate received from server was self-signed by the server "
+"and is untrusted"
+msgstr "A kiszolgálótól kapott SSL/TLS-tanúsítvány önaláírt és nem megbízható"
+
+#: KTp/error-dictionary.cpp:63
+#, kde-format
+msgctxt "Verbose user visible error string"
+msgid ""
+"The SSL/TLS certificate received from server was not signed by a trusted "
+"certificate authority"
+msgstr ""
+"A kiszolgálótól kapott SSL/TSL-tanúsítványt nem egy érvényes "
+"hitelesítésszolgáltató írta alá"
+
+#: KTp/error-dictionary.cpp:65
+#, kde-format
+msgctxt "Verbose user visible error string"
+msgid "You have been banned from the channel"
+msgstr "Kitiltották a csatornáról"
+
+#: KTp/error-dictionary.cpp:67
+#, kde-format
+msgctxt "Verbose user visible error string"
+msgid "The channel is full"
+msgstr "A csatorna megtelt"
+
+#: KTp/error-dictionary.cpp:69
+#, kde-format
+msgctxt "Verbose user visible error string"
+msgid "The channel is invite-only"
+msgstr "A csatornára csak meghívóval lehet belépni"
+
+#: KTp/error-dictionary.cpp:71
+#, kde-format
+msgctxt "Verbose user visible error string"
+msgid "You have been kicked from the channel"
+msgstr "Kidobták a csatornáról"
+
+#: KTp/error-dictionary.cpp:73
+#, kde-format
+msgctxt "Verbose user visible error string"
+msgid "An unexpected error has occurred"
+msgstr "Váratlan hiba történt"
+
+#: KTp/error-dictionary.cpp:75
+#, kde-format
+msgctxt "Verbose user visible error string"
+msgid "Could not establish connection"
+msgstr "Nem sikerült létrehozni a kapcsolatot"
+
+#: KTp/error-dictionary.cpp:77
+#, kde-format
+msgctxt "Verbose user visible error string"
+msgid "Connection to server was lost"
+msgstr "A kapcsolat megszakadt a kiszolgálóval"
+
+#: KTp/error-dictionary.cpp:79
+#, kde-format
+msgctxt "Verbose user visible error string"
+msgid "Server refused your connection"
+msgstr "A kiszolgáló elutasította a kapcsolatot"
+
+#: KTp/error-dictionary.cpp:81
+#, kde-format
+msgctxt "Verbose user visible error string"
+msgid ""
+"Somewhere there is another client connecting with your account and your "
+"current connection is lost"
+msgstr ""
+"Valahol egy másik kliens kapcsolódott az Ön azonosítójával, és a jelenlegi "
+"kapcsolata elveszett"
+
+#: KTp/error-dictionary.cpp:83
+#, kde-format
+msgctxt "Verbose user visible error string"
+msgid "You have been disconnected"
+msgstr "A kapcsolat megszakadt"
+
+#: KTp/error-dictionary.cpp:85
+#, kde-format
+msgctxt "Verbose user visible error string"
+msgid "Selected user does not exist"
+msgstr "A kijelölt felhasználó nem létezik"
+
+#: KTp/error-dictionary.cpp:87
+#, kde-format
+msgctxt "Verbose user visible error string"
+msgid "Emergency calls are not supported"
+msgstr "A  segélyhívások nem támogatottak"
+
+#: KTp/error-dictionary.cpp:89
+#, kde-format
+msgctxt "Verbose user visible error string"
+msgid "An encryption error has occurred"
+msgstr "Titkosítási hiba történt"
+
+#: KTp/error-dictionary.cpp:91
+#, kde-format
+msgctxt "Verbose user visible error string"
+msgid "Requested encryption is not available"
+msgstr "A kért titkosítás nem érhető el"
+
+#: KTp/error-dictionary.cpp:93
+#, kde-format
+msgctxt "Verbose user visible error string"
+msgid "An invalid argument was provided"
+msgstr "Érvénytelen argumentum került megadásra"
+
+#: KTp/error-dictionary.cpp:95
+#, kde-format
+msgctxt "Verbose user visible error string"
+msgid "The specified handle is unknown on this channel"
+msgstr "A megadott handle ismeretlen ezen a csatornán"
+
+#: KTp/error-dictionary.cpp:97
+#, kde-format
+msgctxt "Verbose user visible error string"
+msgid "There appears to be a problem with your network, check your connection"
+msgstr "Úgy tűnik, hogy probléma van a hálózatával, ellenőrizze a kapcsolatot"
+
+#: KTp/error-dictionary.cpp:99
+#, kde-format
+msgctxt "Verbose user visible error string"
+msgid "You were removed from the channel because you did not respond"
+msgstr "Eltávolították a csatornáról, mert nem válaszolt"
+
+#: KTp/error-dictionary.cpp:101
+#, kde-format
+msgctxt "Verbose user visible error string"
+msgid "The service is not available"
+msgstr "A szolgáltatás nem érhető el"
+
+#: KTp/error-dictionary.cpp:103
+#, kde-format
+msgctxt "Verbose user visible error string"
+msgid "The contact does not have the requested capabilities"
+msgstr "A partner nem rendelkezik a kért képességekkel"
+
+#: KTp/error-dictionary.cpp:105
+#, kde-format
+msgctxt "Verbose user visible error string"
+msgid "This operation is not implemented"
+msgstr "A művelet nincs implementálva"
+
+#: KTp/error-dictionary.cpp:107
+#, kde-format
+msgctxt "Verbose user visible error string"
+msgid "This operation is not yet implemented"
+msgstr "A művelet még nincs implementálva"
+
+#: KTp/error-dictionary.cpp:109
+#, kde-format
+msgctxt "Verbose user visible error string"
+msgid "The requested channel is already being handled by some other process"
+msgstr "A kért csatornát már egy másik folyamat kezeli"
+
+#: KTp/error-dictionary.cpp:111
+#, kde-format
+msgctxt "Verbose user visible error string"
+msgid "This operation is unavailable for offline contacts"
+msgstr "A művelet nem érhető el offline partnereknél"
+
+#: KTp/error-dictionary.cpp:113
+#, kde-format
+msgctxt "Verbose user visible error string"
+msgid "You are not permitted to perform this operation"
+msgstr "Nincs engedélye a művelet végrehajtásához"
+
+#: KTp/error-dictionary.cpp:115
+#, kde-format
+msgctxt "Verbose user visible error string"
+msgid "Current call was picked up by another resource"
+msgstr "Az aktuális hívást egy másik erőforrás vette fel"
+
+#: KTp/error-dictionary.cpp:117
+#, kde-format
+msgctxt "Verbose user visible error string"
+msgid "Account with this username already exists"
+msgstr "Már létezik azonosító ezzel a felhasználónévvel"
+
+#: KTp/error-dictionary.cpp:119
+#, kde-format
+msgctxt "Verbose user visible error string"
+msgid "The receiver rejected your call"
+msgstr "A címzett elutasította a hívását"
+
+#: KTp/error-dictionary.cpp:121
+#, kde-format
+msgctxt "Verbose user visible error string"
+msgid ""
+"There are insufficient resources (like free memory) to finish the operation "
+"at the moment"
+msgstr ""
+"Pillanatnyilag kevés az erőforrás (például a szabad memória) a művelet "
+"befejezéséhez"
+
+#: KTp/error-dictionary.cpp:123
+#, kde-format
+msgctxt "Verbose user visible error string"
+msgid ""
+"Your request hit a busy resource somewhere along the way and the operation "
+"was unable to finish"
+msgstr ""
+"Egy foglalt erőforrást kért menet közben, ezért a művelet nem tudott "
+"befejeződni"
+
+#: KTp/error-dictionary.cpp:125
+#, kde-format
+msgctxt "Verbose user visible error string"
+msgid "An internal error has occurred (known as the 'Confused service error')"
+msgstr "Egy belső hiba történt („Kusza szolgáltatáshiba” néven ismert)"
+
+#: KTp/error-dictionary.cpp:127
+#, kde-format
+msgctxt "Verbose user visible error string"
+msgid ""
+"The installed libraries are too old. Please try updating all Telepathy "
+"packages to a newer version"
+msgstr ""
+"A telepített programkönyvtár túl régi. Frissítse az összes Telepathy "
+"csomagot egy újabb verzióra"
+
+#: KTp/error-dictionary.cpp:129
+#, kde-format
+msgctxt "Verbose user visible error string"
+msgid "The channel was terminated for no apparent reason"
+msgstr "A csatorna nyilvánvaló ok nélkül megszakadt"
+
+#: KTp/error-dictionary.cpp:131
+#, kde-format
+msgctxt "Verbose user visible error string"
+msgid ""
+"This operation can not be finished as it would break your requested anonymity"
+msgstr "A művelet nem fejezhető be, mivel megtörné a kért névtelenséget"
+
+#: KTp/error-dictionary.cpp:133
+#, kde-format
+msgctxt "Verbose user visible error string"
+msgid "Some of the IM components are not working correctly"
+msgstr "Az azonnali üzenetküldő komponensek egy része nem működik megfelelően"
+
+#: KTp/error-dictionary.cpp:135
+#, kde-format
+msgctxt "User visible error string"
+msgid "An unknown error was encountered (%1), please report this"
+msgstr "Ismeretlen hiba történt (%1), kérjük jelentse"
+
+#: KTp/error-dictionary.cpp:142
+#, kde-format
+msgctxt "Short user visible error string"
+msgid "Connected elsewhere"
+msgstr "Kapcsolódva máshonnan"
+
+#: KTp/error-dictionary.cpp:144
+#, kde-format
+msgctxt "Short user visible error string"
+msgid "Authentication failed"
+msgstr "Sikertelen hitelesítés"
+
+#: KTp/error-dictionary.cpp:146
+#, kde-format
+msgctxt "Short user visible error string"
+msgid "Channel too busy"
+msgstr "A csatorna túl elfoglalt"
+
+#: KTp/error-dictionary.cpp:148
+#, kde-format
+msgctxt "Short user visible error string"
+msgid "Cancelled by user"
+msgstr "Felhasználói megszakítás"
+
+#: KTp/error-dictionary.cpp:150
+#, kde-format
+msgctxt "Short user visible error string"
+msgid "Certificate is expired"
+msgstr "A tanúsítvány lejárt"
+
+#: KTp/error-dictionary.cpp:152
+#, kde-format
+msgctxt "Short user visible error string"
+msgid "Wrong certificate fingerprint"
+msgstr "A tanúsítvány ujjlenyomata rossz"
+
+#: KTp/error-dictionary.cpp:154
+#, kde-format
+msgctxt "Short user visible error string"
+msgid "Wrong certificate hostname"
+msgstr "A tanúsítvány gépneve rossz"
+
+#: KTp/error-dictionary.cpp:156
+#, kde-format
+msgctxt "Short user visible error string"
+msgid "Too weak certificate encryption"
+msgstr "A tanúsítvány titkosítása túl gyenge"
+
+#: KTp/error-dictionary.cpp:158
+#, kde-format
+msgctxt "Short user visible error string"
+msgid "Invalid certificate"
+msgstr "Érvénytelen tanúsítvány"
+
+#: KTp/error-dictionary.cpp:160
+#, kde-format
+msgctxt "Short user visible error string"
+msgid "Certificate length limit exceeded"
+msgstr "A tanúsítvány túl hosszú"
+
+#: KTp/error-dictionary.cpp:162
+#, kde-format
+msgctxt "Short user visible error string"
+msgid "Certificate not yet active"
+msgstr "A tanúsítvány még nem aktív"
+
+#: KTp/error-dictionary.cpp:164
+#, kde-format
+msgctxt "Short user visible error string"
+msgid "No certificate from server"
+msgstr "Nincs tanúsítvány a kiszolgálótól"
+
+#: KTp/error-dictionary.cpp:166
+#, kde-format
+msgctxt "Short user visible error string"
+msgid "Certificate revoked"
+msgstr "Visszavont tanúsítvány"
+
+#: KTp/error-dictionary.cpp:168
+#, kde-format
+msgctxt "Short user visible error string"
+msgid "Untrusted self-signed certificate"
+msgstr "Nem megbízható, önaláírt tanúsítvány"
+
+#: KTp/error-dictionary.cpp:170
+#, kde-format
+msgctxt "Short user visible error string"
+msgid "Untrusted certificate"
+msgstr "Nem megbízható tanúsítvány"
+
+#: KTp/error-dictionary.cpp:172
+#, kde-format
+msgctxt "Short user visible error string"
+msgid "Banned from channel"
+msgstr "Kitiltva a csatornáról"
+
+#: KTp/error-dictionary.cpp:174
+#, kde-format
+msgctxt "Short user visible error string"
+msgid "The channel is full"
+msgstr "A csatorna megtelt"
+
+#: KTp/error-dictionary.cpp:176
+#, kde-format
+msgctxt "Short user visible error string"
+msgid "The channel is invite-only"
+msgstr "A csatornára csak meghívóval lehet belépni"
+
+#: KTp/error-dictionary.cpp:178
+#, kde-format
+msgctxt "Short user visible error string"
+msgid "Kicked from channel"
+msgstr "Kirúgva a csatornáról"
+
+#: KTp/error-dictionary.cpp:180
+#, kde-format
+msgctxt "Short user visible error string"
+msgid "Something's seriously wrong"
+msgstr "Valami nagyon rossz történt"
+
+#: KTp/error-dictionary.cpp:182
+#, kde-format
+msgctxt "Short user visible error string"
+msgid "Connection failed"
+msgstr "Kapcsolódás meghiúsult"
+
+#: KTp/error-dictionary.cpp:184
+#, kde-format
+msgctxt "Short user visible error string"
+msgid "Connection lost"
+msgstr "A kapcsolat megszakadt"
+
+#: KTp/error-dictionary.cpp:186
+#, kde-format
+msgctxt "Short user visible error string"
+msgid "Connection refused"
+msgstr "Kapcsolat visszautasítva"
+
+#: KTp/error-dictionary.cpp:188
+#, kde-format
+msgctxt "Short user visible error string"
+msgid "Connection stolen by other account"
+msgstr "A kapcsolatot egy másik azonosító ellopta"
+
+#: KTp/error-dictionary.cpp:190
+#, kde-format
+msgctxt "Short user visible error string"
+msgid "Disconnected"
+msgstr "Szétkapcsolva"
+
+#: KTp/error-dictionary.cpp:192
+#, kde-format
+msgctxt "Short user visible error string"
+msgid "User does not exist"
+msgstr "A felhasználó nem létezik"
+
+#: KTp/error-dictionary.cpp:194
+#, kde-format
+msgctxt "Short user visible error string"
+msgid "Emergency calls unsupported"
+msgstr "A segélyhívás nem támogatott"
+
+#: KTp/error-dictionary.cpp:196
+#, kde-format
+msgctxt "Short user visible error string"
+msgid "Encryption error"
+msgstr "Titkosítási hiba"
+
+#: KTp/error-dictionary.cpp:198
+#, kde-format
+msgctxt "Short user visible error string"
+msgid "Encryption not available"
+msgstr "Nem érhető el titkosítás"
+
+#: KTp/error-dictionary.cpp:200
+#, kde-format
+msgctxt "Short user visible error string"
+msgid "Invalid argument"
+msgstr "Érvénytelen argumentum"
+
+#: KTp/error-dictionary.cpp:202
+#, kde-format
+msgctxt "Short user visible error string"
+msgid "Invalid handle"
+msgstr "Érvénytelen kezelés"
+
+#: KTp/error-dictionary.cpp:204
+#, kde-format
+msgctxt "Short user visible error string"
+msgid "Network error"
+msgstr "Hálózati hiba"
+
+#: KTp/error-dictionary.cpp:206
+#, kde-format
+msgctxt "Short user visible error string"
+msgid "Removed from channel"
+msgstr "Eltávolítva a csatornáról"
+
+#: KTp/error-dictionary.cpp:208
+#, kde-format
+msgctxt "Short user visible error string"
+msgid "Service not available"
+msgstr "A szolgáltatás nem érhető el"
+
+#: KTp/error-dictionary.cpp:210
+#, kde-format
+msgctxt "Short user visible error string"
+msgid "Contact has no support"
+msgstr "A partner nem támogatja"
+
+#: KTp/error-dictionary.cpp:212
+#, kde-format
+msgctxt "Short user visible error string"
+msgid "Operation not implemented"
+msgstr "A művelet nincs implementálva"
+
+#: KTp/error-dictionary.cpp:214
+#, kde-format
+msgctxt "Short user visible error string"
+msgid "Operation not yet implemented"
+msgstr "A művelet még nincs implementálva"
+
+#: KTp/error-dictionary.cpp:216
+#, kde-format
+msgctxt "Short user visible error string"
+msgid "Channel already being handled"
+msgstr "A csatorna már kezelt"
+
+#: KTp/error-dictionary.cpp:218
+#, kde-format
+msgctxt "Short user visible error string"
+msgid "Contact is offline"
+msgstr "A partner kilépett"
+
+#: KTp/error-dictionary.cpp:220
+#, kde-format
+msgctxt "Short user visible error string"
+msgid "Operation not permitted"
+msgstr "A művelet nem engedélyezett"
+
+#: KTp/error-dictionary.cpp:222
+#, kde-format
+msgctxt "Short user visible error string"
+msgid "Call picked by other resource"
+msgstr "A hívást egy másik erőforrás vette fel"
+
+#: KTp/error-dictionary.cpp:224
+#, kde-format
+msgctxt "Short user visible error string"
+msgid "Username already taken"
+msgstr "A felhasználónév már foglalt"
+
+#: KTp/error-dictionary.cpp:226
+#, kde-format
+msgctxt "Short user visible error string"
+msgid "Call rejected"
+msgstr "Hívás elutasítva"
+
+#: KTp/error-dictionary.cpp:228
+#, kde-format
+msgctxt "Short user visible error string"
+msgid "Insufficient resources"
+msgstr "Kevés erőforrás"
+
+#: KTp/error-dictionary.cpp:230
+#, kde-format
+msgctxt "Short user visible error string"
+msgid "Service is busy"
+msgstr "A szolgáltatás foglalt"
+
+#: KTp/error-dictionary.cpp:232
+#, kde-format
+msgctxt "Short user visible error string"
+msgid "Internal error"
+msgstr "Belső hiba"
+
+#: KTp/error-dictionary.cpp:234
+#, kde-format
+msgctxt "Short user visible error string"
+msgid "Software upgrade required"
+msgstr "Szoftverfrissítés szükséges"
+
+#: KTp/error-dictionary.cpp:236
+#, kde-format
+msgctxt "Short user visible error string"
+msgid "Channel terminated"
+msgstr "A csatorna megszakadt"
+
+#: KTp/error-dictionary.cpp:238
+#, kde-format
+msgctxt "Short user visible error string"
+msgid "Anonymity break possible"
+msgstr "A névtelenség megtörése lehetséges"
+
+#: KTp/error-dictionary.cpp:240
+#, kde-format
+msgctxt "Short user visible error string"
+msgid "Internal component error"
+msgstr "Belső komponenshiba"
+
+#: KTp/error-dictionary.cpp:244
+#, kde-format
+msgctxt "User visible error string"
+msgid "Unknown error"
+msgstr "Ismeretlen hiba"
+
+#: KTp/logs-importer-private.cpp:52
+#, kde-format
+msgid "No Kopete logs found"
+msgstr "Nem található Kopete napló"
+
+#: KTp/logs-importer-private.cpp:332 KTp/logs-importer-private.cpp:339
+#, kde-format
+msgid "Invalid Kopete log format"
+msgstr "Érvénytelen Kopete naplóformátum"
+
+#: KTp/Models/accounts-list-model.cpp:316
+#, kde-format
+msgctxt "This is a connection state"
+msgid "Connecting"
+msgstr "Kapcsolódás"
+
+#: KTp/Models/accounts-list-model.cpp:318
+#, kde-format
+msgctxt "This is a connection state"
+msgid "Disconnected"
+msgstr "Szétkapcsolva"
+
+#: KTp/Models/accounts-list-model.cpp:320
+#, kde-format
+msgctxt "This is an unknown connection state"
+msgid "Unknown"
+msgstr "Ismeretlen"
+
+#: KTp/Models/accounts-list-model.cpp:323
+#, kde-format
+msgctxt "This is a disabled account"
+msgid "Disabled"
+msgstr "Letiltva"
+
+#: KTp/Models/groups-tree-proxy-model.cpp:65
+#, kde-format
+msgid "Unsorted"
+msgstr "Rendezetlen"
+
+#: KTp/Models/rooms-model.cpp:73
+#, kde-format
+msgid "Password required"
+msgstr "Jelszó szükséges"
+
+#: KTp/Models/rooms-model.cpp:75
+#, kde-format
+msgid "No password required"
+msgstr "Nem szükséges jelszó"
+
+#: KTp/Models/rooms-model.cpp:93
+#, kde-format
+msgid "Member count"
+msgstr "Tagszám"
+
+#: KTp/Models/rooms-model.cpp:113
+#, kde-format
+msgctxt "Chatrooms name"
+msgid "Name"
+msgstr "Név"
+
+#: KTp/Models/rooms-model.cpp:115
+#, kde-format
+msgctxt "Chatrooms description"
+msgid "Description"
+msgstr "Leírás"
+
+#: KTp/Models/rooms-model.cpp:200
+#, kde-format
+msgid "Room bookmarked"
+msgstr "A szoba könyvjelzőbe téve"
+
+#: KTp/Models/rooms-model.cpp:202
+#, kde-format
+msgid "Room not bookmarked"
+msgstr "A szoba nincs könyvjelzőbe téve"
+
+#: KTp/OTR/utils.cpp:78
+#, kde-format
+msgid "OTR error: %1"
+msgstr "OTR hiba: %1"
+
+#: KTp/OTR/utils.cpp:84
+#, kde-format
+msgid "Received unencrypted message: [%1]"
+msgstr "Fogadott titkosítatlan üzenet: [%1]"
+
+#: KTp/presence.cpp:115
+#, kde-format
+msgctxt "IM presence: a person is available"
+msgid "Available"
+msgstr "Elérhető"
+
+#: KTp/presence.cpp:117
+#, kde-format
+msgctxt "IM presence: a person is busy"
+msgid "Busy"
+msgstr "Elfoglalt"
+
+#: KTp/presence.cpp:119
+#, kde-format
+msgctxt "IM presence: a person is away"
+msgid "Away"
+msgstr "Távollét"
+
+#: KTp/presence.cpp:121
+#, kde-format
+msgctxt "IM presence: a person is not available"
+msgid "Not Available"
+msgstr "Nem érhető el"
+
+#: KTp/presence.cpp:123
+#, kde-format
+msgctxt "IM presence: a person is invisible"
+msgid "Invisible"
+msgstr "Láthatatlan"
+
+#: KTp/presence.cpp:125
+#, kde-format
+msgctxt "IM presence: a person is offline"
+msgid "Offline"
+msgstr "Kilépett"
+
+#: KTp/telepathy-handler-application.cpp:134
+#, kde-format
+msgid "Persistent mode (do not exit on timeout)"
+msgstr "Folyamatos mód (nem lép ki időtúllépésnél)"
+
+#: KTp/telepathy-handler-application.cpp:135
+#, kde-format
+msgid "Show Telepathy debugging information"
+msgstr "A Telepathy hibakövetési információinak megjelenítése"
+
+#: KTp/Widgets/add-contact-dialog.cpp:91
+#, kde-format
+msgid "Add new contact"
+msgstr "Új partner hozzáadása"
+
+#: KTp/Widgets/add-contact-dialog.cpp:155 KTp/Widgets/start-chat-dialog.cpp:95
+#, kde-format
+msgid "No account selected."
+msgstr "Nincs kijelölve felhasználói fiók."
+
+#: KTp/Widgets/add-contact-dialog.cpp:157
+#, kde-format
+msgid ""
+"The requested account has been disconnected and so the contact could not be "
+"added."
+msgstr "A kért fiók le lett választva, ezért a partner nem adható hozzá."
+
+#: KTp/Widgets/add-contact-dialog.cpp:160
+#, kde-format
+msgid "You did not specify the name of the contact to add."
+msgstr "Nem adta meg a partner nevét."
+
+#: KTp/Widgets/add-contact-dialog.cpp:186
+#, kde-format
+msgid "Failed to create new contact."
+msgstr "Nem sikerült létrehozni az új névjegyet."
+
+#: KTp/Widgets/add-contact-dialog.cpp:203
+#, kde-format
+msgid "Failed to request presence subscription from the requested contact."
+msgstr "Nem sikerült lekérdezni a partner állapotát."
+
+#. i18n: ectx: property (text), widget (QLabel, label)
+#: KTp/Widgets/add-contact-dialog.ui:20 KTp/Widgets/start-chat-dialog.ui:17
+#, kde-format
+msgid "Account:"
+msgstr "Felhasználói fiók:"
+
+#. i18n: ectx: property (text), widget (QLabel, label_2)
+#: KTp/Widgets/add-contact-dialog.ui:37 KTp/Widgets/start-chat-dialog.ui:24
+#, kde-format
+msgid "Screen Name:"
+msgstr "Megjelenített név:"
+
+#. i18n: ectx: property (text), widget (QLabel, messageLineLabel)
+#: KTp/Widgets/add-contact-dialog.ui:47
+#, kde-format
+msgid "Message:"
+msgstr "Üzenet:"
+
+#. i18n: ectx: property (placeholderText), widget (QLineEdit, messageLineEdit)
+#: KTp/Widgets/add-contact-dialog.ui:54
+#, kde-format
+msgid "Optional message to send"
+msgstr "Opcionális elküldendő üzenet"
+
+#: KTp/Widgets/contact-grid-dialog.cpp:112
+#, kde-format
+msgid "Search in Contacts..."
+msgstr "Keresés a partnerekben…"
+
+#. i18n in global static vars
+#: KTp/Widgets/contact-info-dialog.cpp:72
+#, kde-format
+msgid "Full name:"
+msgstr "Teljes név:"
+
+#: KTp/Widgets/contact-info-dialog.cpp:73
+#, kde-format
+msgid "Nickname:"
+msgstr "Becenév:"
+
+#: KTp/Widgets/contact-info-dialog.cpp:74
+#, kde-format
+msgid "Email:"
+msgstr "E-mail:"
+
+#: KTp/Widgets/contact-info-dialog.cpp:75
+#, kde-format
+msgid "Phone:"
+msgstr "Telefon:"
+
+#: KTp/Widgets/contact-info-dialog.cpp:76
+#, kde-format
+msgid "Homepage:"
+msgstr "Honlap:"
+
+#: KTp/Widgets/contact-info-dialog.cpp:77
+#, kde-format
+msgid "Birthday:"
+msgstr "Születésnap:"
+
+#: KTp/Widgets/contact-info-dialog.cpp:78
+#, kde-format
+msgid "Organization:"
+msgstr "Szervezet:"
+
+#: KTp/Widgets/contact-info-dialog.cpp:153
+#, kde-format
+msgid "Change Avatar"
+msgstr "Avatar módosítása"
+
+#: KTp/Widgets/contact-info-dialog.cpp:158
+#, kde-format
+msgid "Clear Avatar"
+msgstr "Avatar törlése"
+
+#: KTp/Widgets/contact-info-dialog.cpp:228
+#, kde-format
+msgid "Failed to load the new avatar image"
+msgstr "Nem sikerült betölteni az új avatar képet"
+
+#: KTp/Widgets/contact-info-dialog.cpp:334
+#, kde-format
+msgid "Contact can see when you are online:"
+msgstr "A partner láthatja, amikor ön elérhető:"
+
+#: KTp/Widgets/contact-info-dialog.cpp:335
+#, kde-format
+msgid "You can see when the contact is online:"
+msgstr "Ön láthatja, amikor a partner elérhető:"
+
+#: KTp/Widgets/contact-info-dialog.cpp:336
+#, kde-format
+msgid "Contact is blocked:"
+msgstr "A partner blokkolt:"
+
+#: KTp/Widgets/join-chat-room-dialog.cpp:93
+#, kde-format
+msgctxt "Dialog title"
+msgid "Join Chat Room"
+msgstr "Csatlakozás csevegőszobához"
+
+#: KTp/Widgets/join-chat-room-dialog.cpp:108
+#, kde-format
+msgctxt "button"
+msgid "Join/Create"
+msgstr "Csatlakozás/Létrehozás"
+
+#: KTp/Widgets/join-chat-room-dialog.cpp:392
+#, kde-format
+msgctxt "Button text"
+msgid "Query"
+msgstr "Lekérdezés"
+
+#: KTp/Widgets/join-chat-room-dialog.cpp:393
+#, kde-format
+msgctxt "Tooltip text"
+msgid "Start query"
+msgstr "Lekérdezés indítása"
+
+#: KTp/Widgets/join-chat-room-dialog.cpp:405
+#, kde-format
+msgctxt "Button text"
+msgid "Stop"
+msgstr "Leállítás"
+
+#: KTp/Widgets/join-chat-room-dialog.cpp:406
+#, kde-format
+msgctxt "Tooltip text"
+msgid "Stop query"
+msgstr "Lekérdezés leállítása"
+
+#: KTp/Widgets/join-chat-room-dialog.cpp:454
+#, kde-format
+msgid "Could not join chatroom"
+msgstr "Nem sikerült csatlakozni a csevegőszobához"
+
+#. i18n: ectx: property (windowTitle), widget (QWidget, JoinChatRoomDialog)
+#: KTp/Widgets/join-chat-room-dialog.ui:20
+#, kde-format
+msgid "Join Chatroom"
+msgstr "Csatlakozás csevegőszobához"
+
+#. i18n: ectx: property (title), widget (QGroupBox, accountGroupBox)
+#: KTp/Widgets/join-chat-room-dialog.ui:35
+#, kde-format
+msgid "Account"
+msgstr "Fiók"
+
+#. i18n: ectx: property (title), widget (QGroupBox, chatRoomGroupBox)
+#: KTp/Widgets/join-chat-room-dialog.ui:60
+#, kde-format
+msgid "Chat Room"
+msgstr "Csevegőszoba"
+
+#. i18n: ectx: attribute (title), widget (QWidget, previousTab)
+#: KTp/Widgets/join-chat-room-dialog.ui:70
+#, kde-format
+msgid "Previous"
+msgstr "Előző"
+
+#. i18n: ectx: property (text), widget (QPushButton, clearRecentPushButton)
+#: KTp/Widgets/join-chat-room-dialog.ui:98
+#, kde-format
+msgid "Clear Recent Rooms"
+msgstr "Legutóbbi szobák törlése"
+
+#. i18n: ectx: property (placeholderText), widget (QLineEdit, lineEdit)
+#: KTp/Widgets/join-chat-room-dialog.ui:108
+#, kde-format
+msgid "Enter chat room name or address"
+msgstr "Adja meg a csevegőszoba nevét vagy címét"
+
+#. i18n: ectx: attribute (title), widget (QWidget, searchTab)
+#: KTp/Widgets/join-chat-room-dialog.ui:119
+#, kde-format
+msgid "Search"
+msgstr "Keresés"
+
+#. i18n: ectx: property (text), widget (QLabel, serverLabel)
+#: KTp/Widgets/join-chat-room-dialog.ui:125
+#, kde-format
+msgid "Server to be queried:"
+msgstr "A lekérdezendő kiszolgáló:"
+
+#. i18n: ectx: property (placeholderText), widget (QLineEdit, serverLineEdit)
+#: KTp/Widgets/join-chat-room-dialog.ui:134
+#, kde-format
+msgid "Leave blank for the selected account's default server"
+msgstr ""
+"Hagyja üresen a kijelölt azonosító alapértelmezett kiszolgálójának "
+"használatához"
+
+#. i18n: ectx: property (text), widget (QToolButton, queryButton)
+#: KTp/Widgets/join-chat-room-dialog.ui:147
+#, kde-format
+msgid "Query"
+msgstr "Lekérdezés"
+
+#. i18n: ectx: property (placeholderText), widget (QLineEdit, filterBar)
+#: KTp/Widgets/join-chat-room-dialog.ui:189
+#, kde-format
+msgid "Filter rooms"
+msgstr "Szobák szűrése"
+
+#: KTp/Widgets/notification-config-dialog.cpp:46
+#: KTp/Widgets/notification-config-dialog.cpp:116
+#, kde-format
+msgid "Configure notifications for %1"
+msgstr "Értesítések beállítása ehhez: %1"
+
+#: KTp/Widgets/notification-config-dialog.cpp:55
+#, kde-format
+msgid "Configure notifications for"
+msgstr "Értesítések beállítása ehhez:"
+
+#: KTp/Widgets/notification-config-dialog.cpp:60
+#, kde-format
+msgid "All users"
+msgstr "Minden felhasználó"
+
+#: KTp/Widgets/notification-config-dialog.cpp:119
+#, kde-format
+msgid "Configure notifications for all users"
+msgstr "Értesítések beállítása minden felhasználóhoz"
+
+#: KTp/Widgets/settings-kcm-dialog.cpp:40
+#, kde-format
+msgid ""
+"It appears you do not have the IM Accounts control module installed. Please "
+"install kaccounts-integration package."
+msgstr ""
+"Úgy tűnik nincs telepítve az azonnali üzenetküldési azonosítók "
+"beállítómodulja. Telepítse a kaccounts-integration csomagot."
+
+#: KTp/Widgets/settings-kcm-dialog.cpp:41
+#, kde-format
+msgid "IM Accounts KCM Plugin Is Not Installed"
+msgstr "Az azonnali üzenetküldési azonosítók beállítómodulja nincs telepítve"
+
+#: KTp/Widgets/settings-kcm-dialog.cpp:65
+#, kde-format
+msgid "Notifications"
+msgstr "Értesítések"
+
+#: KTp/Widgets/start-chat-dialog.cpp:63
+#, kde-format
+msgid "Start a chat"
+msgstr "Csevegés indítása"
+
+#: KTp/Widgets/start-chat-dialog.cpp:97
+#, kde-format
+msgid ""
+"The requested account has been disconnected and so a chat could not be "
+"initiated."
+msgstr ""
+"A kért fiók le lett választva, ezért a csevegést nem lehet előkészíteni."
+
+#: KTp/Widgets/start-chat-dialog.cpp:100
+#, kde-format
+msgid "You did not specify the name of the contact to start a chat with."
+msgstr "Nem adta meg a partner nevét, akivel csevegni szeretne."
+
+#: KTp/Widgets/start-chat-dialog.cpp:118
+#, kde-format
+msgid ""
+"The contact Screen Name you provided is invalid or does not accept text "
+"chats."
+msgstr ""
+"A partner megadott megjelenített neve érvénytelen vagy nem fogad szöveges "
+"üzeneteket."
+
+#: KTp/Widgets/start-chat-dialog.cpp:144
+#, kde-format
+msgid "Failed to start a chat with the contact."
+msgstr "Nem sikerült elindítani a csevegést a partnerrel."
+
+#~ msgid "KDE Telepathy"
+#~ msgstr "KDE Telepathy"
+
+#~ msgid "Save"
+#~ msgstr "Mentés"
+
+#~ msgid "This room is already in your favorites."
+#~ msgstr "Ez a szoba már szerepel a kedvencek között."
+
+#~ msgid "Add room"
+#~ msgstr "Szoba hozzáadása"
+
+#~ msgid "Name"
+#~ msgstr "Név"
+
+#~ msgid "Favorites"
+#~ msgstr "Kedvencek"
+
+#~ msgid "Add Room"
+#~ msgstr "Szoba hozzáadása"
+
+#~ msgid "Remove Room"
+#~ msgstr "Szoba eltávolítása"
+
+#~ msgid "Recent"
+#~ msgstr "Legutóbbi"
+
+#~ msgid "Remove"
+#~ msgstr "Eltávolítás"
+
+#~ msgid "Clear list"
+#~ msgstr "Lista törlése"
+
+#~ msgid "Open Log Viewer..."
+#~ msgstr "Naplómegjelenítő megnyitása…"
+
+#~ msgid "Instant Messaging Accounts"
+#~ msgstr "Azonnali üzenetküldő fiókok"
+
+#, fuzzy
+#~| msgid "KDE Telepathy"
+#~ msgid "KDE Telepathy Debug Tool"
+#~ msgstr "KDE Telepathy"
+
+#~ msgctxt "Short user visible error string"
+#~ msgid "Capability not available"
+#~ msgstr "A képesség nem érhető el"
+
+#~ msgid "Ungrouped"
+#~ msgstr "Csoportosítatlan"
+
+#~ msgctxt "Verbose user visible error string"
+#~ msgid "Congratulate yourself - you just reached an impossible situation"
+#~ msgstr "Gratuláljon magának - épp most ért el egy lehetetlen állapotot"
+
+#~ msgctxt "Verbose user visible error string"
+#~ msgid "You apparently do not exist"
+#~ msgstr "Úgy tűnik, hogy Ön nem létezik"
+
+#~ msgctxt "Short user visible error string"
+#~ msgid "Unknown handle"
+#~ msgstr "Ismeretlen handle"
+
+#~ msgctxt "Short user visible error string"
+#~ msgid "Contact incapable"
+#~ msgstr "A partner elérhetetlen"
+
+#~ msgctxt "Verbose user visible error string"
+#~ msgid "You apparently do not exist "
+#~ msgstr "Úgy tűnik Ön nem létezik "

@@ -1,0 +1,1208 @@
+# Translation of ktp-common-internals.po to Euskara/Basque (eu).
+# Copyright (C) 2018-2019, This file is copyright:
+# This file is distributed under the same license as the ktp-common-internals package.
+# KDE euskaratzeko proiektuaren ardurauna <xalba@euskalnet.net>.
+#
+# Translators:
+# Gontzal M. Pujana <juchuf@gmail.com>, 2018.
+# Iñigo Salvador Azurmendi <xalba@euskalnet.net>, 2019.
+msgid ""
+msgstr ""
+"Project-Id-Version: ktp-common-internals\n"
+"Report-Msgid-Bugs-To: https://bugs.kde.org\n"
+"POT-Creation-Date: 2020-02-18 03:18+0100\n"
+"PO-Revision-Date: 2019-07-18 22:56+0200\n"
+"Last-Translator: Iñigo Salvador Azurmendi <xalba@euskalnet.net>\n"
+"Language-Team: Basque <kde-i18n-eu@kde.org>\n"
+"Language: eu\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Lokalize 19.04.3\n"
+
+#, kde-format
+msgctxt "NAME OF TRANSLATORS"
+msgid "Your names"
+msgstr "Gontzal M. Pujana"
+
+#, kde-format
+msgctxt "EMAIL OF TRANSLATORS"
+msgid "Your emails"
+msgstr "juchuf@gmail.com"
+
+#: kpeople/actionsplugin/kpeople-actions-plugin.cpp:191
+#, kde-format
+msgctxt ""
+"Context menu action; means 'Bring your account online and then start a chat "
+"using %1 account'"
+msgid "Connect and Start Chat Using %1..."
+msgstr "Konektatu eta hasi berriketan %1 erabiliz..."
+
+#: kpeople/actionsplugin/kpeople-actions-plugin.cpp:203
+#, kde-format
+msgid "Start Chat Using %1..."
+msgstr "Hasi berriketan %1 erabiliz..."
+
+#: kpeople/actionsplugin/kpeople-actions-plugin.cpp:213
+#, kde-format
+msgid "Start Audio Call Using %1..."
+msgstr "Hasi audio-dei bat %1 erabiliz..."
+
+#: kpeople/actionsplugin/kpeople-actions-plugin.cpp:223
+#, kde-format
+msgid "Start Video Call Using %1..."
+msgstr "Hasi bideo-dei bat %1 erabiliz..."
+
+#: kpeople/actionsplugin/kpeople-actions-plugin.cpp:234
+#, kde-format
+msgid "Send Files Using %1..."
+msgstr "Bidali fitxategiak %1 erabiliz..."
+
+#: kpeople/actionsplugin/kpeople-actions-plugin.cpp:244
+#, kde-format
+msgid "Collaboratively edit a document Using %1..."
+msgstr "Editatu dokumentu bat elkarlanean %1 erabiliz..."
+
+#: kpeople/actionsplugin/kpeople-actions-plugin.cpp:255
+#, kde-format
+msgid "Previous Conversations..."
+msgstr "Aurreko elkarrizketak..."
+
+#: kpeople/actionsplugin/kpeople-actions-plugin.cpp:284
+#, kde-format
+msgid "Choose files to send to %1"
+msgstr "Aukeratu %1-(r)i bidali beharreko fitxategiak"
+
+#: kpeople/actionsplugin/kpeople-actions-plugin.cpp:295
+#, kde-format
+msgid "Choose a file to edit with %1"
+msgstr "Aukeratu %1-(r)ekin editatu beharreko fitxategi bat"
+
+#: kpeople/uiplugins/chatplugin/kpeople_chat_plugin.cpp:58
+#, kde-format
+msgid "Chat for current contact is not supported"
+msgstr "Uneko kontaktuarekin berriketan aritzeko euskarririk ez dago"
+
+#: kpeople/uiplugins/chatplugin/kpeople_chat_plugin.cpp:158
+#, kde-format
+msgid "Chat"
+msgstr "Berriketa"
+
+#: kpeople/uiplugins/imdetailswidget.cpp:47
+#, kde-format
+msgid "IM"
+msgstr "Bat-bateko mezularitza"
+
+#: KTp/actions.cpp:182
+#, kde-format
+msgid ""
+"Transferring files with .exe or .ini extension is not allowed by Google "
+"Talk. It was sent with filename <i>%1</i>"
+msgstr ""
+"Google Talk-ek ez du onartzen .exe edo .ini luzapeneko fitxategien "
+"transferentzia. <i>%1</i> izenarekin bidali da."
+
+#: KTp/actions.cpp:183
+#, kde-format
+msgid "Transferred file renamed"
+msgstr "Transferitutako fitxategia berrizendatu da"
+
+#: KTp/error-dictionary.cpp:35
+#, kde-format
+msgctxt "Verbose user visible error string"
+msgid ""
+"Looks like you are already connected from other location and the server does "
+"not allow multiple connections"
+msgstr ""
+"Ematen du jada beste leku batetik konektatuta zaudela eta zerbitzariak ez du "
+"konexio anitzik onartzen"
+
+#: KTp/error-dictionary.cpp:37
+#, kde-format
+msgctxt "Verbose user visible error string"
+msgid "Authentication of your account failed (is your password correct?)"
+msgstr ""
+"Zure kontuaren autentifikazioak huts egin du (pasahitza ondo sartu duzu?)"
+
+#: KTp/error-dictionary.cpp:39
+#, kde-format
+msgctxt "Verbose user visible error string"
+msgid ""
+"The channel is too busy now to process your request. Try again in a few "
+"minutes"
+msgstr ""
+"Kanala lanpetuegi dago orain zure eskaera prozesatzeko. Saiatu berriro "
+"minutu batzuk pasa ostean"
+
+#: KTp/error-dictionary.cpp:41
+#, kde-format
+msgctxt "Verbose user visible error string"
+msgid "The connection was canceled on your request"
+msgstr "Konexioa zuk eskatuta utzi da"
+
+#: KTp/error-dictionary.cpp:43
+#, kde-format
+msgctxt "Verbose user visible error string"
+msgid "The SSL/TLS certificate received from server is expired"
+msgstr "Zerbitzaritik jasotako SSL/TLS ziurtagiria iraungita dago"
+
+#: KTp/error-dictionary.cpp:45
+#, kde-format
+msgctxt "Verbose user visible error string"
+msgid ""
+"The SSL/TLS certificate received from server has different fingerprint than "
+"expected"
+msgstr ""
+"Zerbitzaritik jasotako SSL/TLS ziurtagiriak esperotakoa ez, beste hatz-marka "
+"bat dauka"
+
+#: KTp/error-dictionary.cpp:47
+#, kde-format
+msgctxt "Verbose user visible error string"
+msgid ""
+"The SSL/TLS certificate received from server has different hostname than "
+"expected"
+msgstr ""
+"Zerbitzaritik jasotako SSL/TLS ziurtagiriak esperotakoa ez, beste ostalari-"
+"izen bat dauka"
+
+#: KTp/error-dictionary.cpp:49
+#, kde-format
+msgctxt "Verbose user visible error string"
+msgid "The SSL/TLS certificate received from server uses too weak encryption"
+msgstr ""
+"Zerbitzaritik jasotako SSL/TLS ziurtagiriak zifratze ahulegia erabiltzen du"
+
+#: KTp/error-dictionary.cpp:51
+#, kde-format
+msgctxt "Verbose user visible error string"
+msgid "The SSL/TLS certificate received from server is invalid"
+msgstr "Zerbitzaritik jasotako SSL/TLS ziurtagiria baliogabea da"
+
+#: KTp/error-dictionary.cpp:53
+#, kde-format
+msgctxt "Verbose user visible error string"
+msgid "The SSL/TLS certificate received from server has exceeded length limit"
+msgstr "Zerbitzaritik jasotako SSL/TLS ziurtagiriak luzera muga gainditu du"
+
+#: KTp/error-dictionary.cpp:55
+#, kde-format
+msgctxt "Verbose user visible error string"
+msgid "The SSL/TLS certificate received from server has not been activated yet"
+msgstr "Zerbitzaritik jasotako SSL/TLS ziurtagiria ez da aktibatu oraindik"
+
+#: KTp/error-dictionary.cpp:57
+#, kde-format
+msgctxt "Verbose user visible error string"
+msgid "The server did not provide any SSL/TLS certificate"
+msgstr "Zerbitzariak ez du SSL/TLS ziurtagiririk eman"
+
+#: KTp/error-dictionary.cpp:59
+#, kde-format
+msgctxt "Verbose user visible error string"
+msgid "The SSL/TLS certificate received from server has been revoked"
+msgstr "Zerbitzaritik jasotako SSL/TLS ziurtagiria baliogabetua izan da"
+
+#: KTp/error-dictionary.cpp:61
+#, kde-format
+msgctxt "Verbose user visible error string"
+msgid ""
+"The SSL/TLS certificate received from server was self-signed by the server "
+"and is untrusted"
+msgstr ""
+"Zerbitzaritik jasotako SSL/TLS ziurtagiria zerbitzariak berak sinatu du eta "
+"ez da fidagarria"
+
+#: KTp/error-dictionary.cpp:63
+#, kde-format
+msgctxt "Verbose user visible error string"
+msgid ""
+"The SSL/TLS certificate received from server was not signed by a trusted "
+"certificate authority"
+msgstr ""
+"Zerbitzaritik jasotako SSL/TLS ziurtagiria ez du konfiantza duen ziurtagiri-"
+"emaile batek sinatu"
+
+#: KTp/error-dictionary.cpp:65
+#, kde-format
+msgctxt "Verbose user visible error string"
+msgid "You have been banned from the channel"
+msgstr "Kanalera sartzeko debekatua jaso duzu"
+
+#: KTp/error-dictionary.cpp:67
+#, kde-format
+msgctxt "Verbose user visible error string"
+msgid "The channel is full"
+msgstr "Kanala beteta dago"
+
+#: KTp/error-dictionary.cpp:69
+#, kde-format
+msgctxt "Verbose user visible error string"
+msgid "The channel is invite-only"
+msgstr "Kanala gonbidapenezkoa da"
+
+#: KTp/error-dictionary.cpp:71
+#, kde-format
+msgctxt "Verbose user visible error string"
+msgid "You have been kicked from the channel"
+msgstr "Kanaletik bota zaituzte"
+
+#: KTp/error-dictionary.cpp:73
+#, kde-format
+msgctxt "Verbose user visible error string"
+msgid "An unexpected error has occurred"
+msgstr "Errore ezezagun bat gertatu da"
+
+#: KTp/error-dictionary.cpp:75
+#, kde-format
+msgctxt "Verbose user visible error string"
+msgid "Could not establish connection"
+msgstr "Ezin izan da konexiorik ezarri"
+
+#: KTp/error-dictionary.cpp:77
+#, kde-format
+msgctxt "Verbose user visible error string"
+msgid "Connection to server was lost"
+msgstr "Zerbitzarirako konexioa galdu da"
+
+#: KTp/error-dictionary.cpp:79
+#, kde-format
+msgctxt "Verbose user visible error string"
+msgid "Server refused your connection"
+msgstr "Zerbitzariak zure konexioa errefusatu du"
+
+#: KTp/error-dictionary.cpp:81
+#, kde-format
+msgctxt "Verbose user visible error string"
+msgid ""
+"Somewhere there is another client connecting with your account and your "
+"current connection is lost"
+msgstr ""
+"Nonbait beste bezero bat ari da zure kontuarekin konektatzen eta uneko zure "
+"konexioa galdu egin da"
+
+#: KTp/error-dictionary.cpp:83
+#, kde-format
+msgctxt "Verbose user visible error string"
+msgid "You have been disconnected"
+msgstr "Deskonektatua izan zara"
+
+#: KTp/error-dictionary.cpp:85
+#, kde-format
+msgctxt "Verbose user visible error string"
+msgid "Selected user does not exist"
+msgstr "Aukeratutako erabiltzailea ez da existitzen"
+
+#: KTp/error-dictionary.cpp:87
+#, kde-format
+msgctxt "Verbose user visible error string"
+msgid "Emergency calls are not supported"
+msgstr "Larrialdi-deiak ez dira onartzen"
+
+#: KTp/error-dictionary.cpp:89
+#, kde-format
+msgctxt "Verbose user visible error string"
+msgid "An encryption error has occurred"
+msgstr "Zifratze errore bat gertatu da"
+
+#: KTp/error-dictionary.cpp:91
+#, kde-format
+msgctxt "Verbose user visible error string"
+msgid "Requested encryption is not available"
+msgstr "Eskatutako zifratzea ez dago erabilgarri"
+
+#: KTp/error-dictionary.cpp:93
+#, kde-format
+msgctxt "Verbose user visible error string"
+msgid "An invalid argument was provided"
+msgstr "Argumentu baliogabe bat eman da"
+
+#: KTp/error-dictionary.cpp:95
+#, kde-format
+msgctxt "Verbose user visible error string"
+msgid "The specified handle is unknown on this channel"
+msgstr "Zehaztutako deskriptorea ezezaguna da kanal honetan"
+
+#: KTp/error-dictionary.cpp:97
+#, kde-format
+msgctxt "Verbose user visible error string"
+msgid "There appears to be a problem with your network, check your connection"
+msgstr "Ematen du arazo bat dagoela zure sarearekin, ikuskatu zure konexioa"
+
+#: KTp/error-dictionary.cpp:99
+#, kde-format
+msgctxt "Verbose user visible error string"
+msgid "You were removed from the channel because you did not respond"
+msgstr "Kanaletik kendua izan zara ez duzulako erantzun"
+
+#: KTp/error-dictionary.cpp:101
+#, kde-format
+msgctxt "Verbose user visible error string"
+msgid "The service is not available"
+msgstr "Zerbitzua ez dago erabilgarri"
+
+#: KTp/error-dictionary.cpp:103
+#, kde-format
+msgctxt "Verbose user visible error string"
+msgid "The contact does not have the requested capabilities"
+msgstr "Kontaktuak ez dauzka eskatutako ahalmenak"
+
+#: KTp/error-dictionary.cpp:105
+#, kde-format
+msgctxt "Verbose user visible error string"
+msgid "This operation is not implemented"
+msgstr "Eragiketa hau ez dago inplementatuta"
+
+#: KTp/error-dictionary.cpp:107
+#, kde-format
+msgctxt "Verbose user visible error string"
+msgid "This operation is not yet implemented"
+msgstr "Eragiketa hau ez dago oraindik inplementatuta"
+
+#: KTp/error-dictionary.cpp:109
+#, kde-format
+msgctxt "Verbose user visible error string"
+msgid "The requested channel is already being handled by some other process"
+msgstr "Eskatutako kanala dagoeneko beste prozesu batek kudeatua izaten ari da"
+
+#: KTp/error-dictionary.cpp:111
+#, kde-format
+msgctxt "Verbose user visible error string"
+msgid "This operation is unavailable for offline contacts"
+msgstr "Eragiketa hau ez dago lineaz kanpoko kontaktuentzat erabilgarri"
+
+#: KTp/error-dictionary.cpp:113
+#, kde-format
+msgctxt "Verbose user visible error string"
+msgid "You are not permitted to perform this operation"
+msgstr "Ez duzu eragiketa hau gauzatzeko baimenduta"
+
+#: KTp/error-dictionary.cpp:115
+#, kde-format
+msgctxt "Verbose user visible error string"
+msgid "Current call was picked up by another resource"
+msgstr "Uneko deia beste baliabide batek hartu du"
+
+#: KTp/error-dictionary.cpp:117
+#, kde-format
+msgctxt "Verbose user visible error string"
+msgid "Account with this username already exists"
+msgstr "Erabiltzaile-izen hau duen kontu bat existitzen da jada"
+
+#: KTp/error-dictionary.cpp:119
+#, kde-format
+msgctxt "Verbose user visible error string"
+msgid "The receiver rejected your call"
+msgstr "Hartzaileak zure deia errefusatu du"
+
+#: KTp/error-dictionary.cpp:121
+#, kde-format
+msgctxt "Verbose user visible error string"
+msgid ""
+"There are insufficient resources (like free memory) to finish the operation "
+"at the moment"
+msgstr ""
+"Ez dago baliabide nahikorik (memoria librea esaterako) une honetan eragiketa "
+"bukatzeko"
+
+#: KTp/error-dictionary.cpp:123
+#, kde-format
+msgctxt "Verbose user visible error string"
+msgid ""
+"Your request hit a busy resource somewhere along the way and the operation "
+"was unable to finish"
+msgstr ""
+"Zure eskaerak lanpetuta dagoen baliabide bat aurkitu bidean aurrera eta "
+"eragiketa ezin izan da burutu"
+
+#: KTp/error-dictionary.cpp:125
+#, kde-format
+msgctxt "Verbose user visible error string"
+msgid "An internal error has occurred (known as the 'Confused service error')"
+msgstr ""
+"Barne-errore bat gertatu da ('Zerbitzu nahasiaren errorea' bezala ezaguna)"
+
+#: KTp/error-dictionary.cpp:127
+#, kde-format
+msgctxt "Verbose user visible error string"
+msgid ""
+"The installed libraries are too old. Please try updating all Telepathy "
+"packages to a newer version"
+msgstr ""
+"Instalatutako liburutegiak zaharregiak dira. Mesedez saia zaitez Telepathy-"
+"ren pakete guztiak bertsio berriago batera eguneratzen"
+
+#: KTp/error-dictionary.cpp:129
+#, kde-format
+msgctxt "Verbose user visible error string"
+msgid "The channel was terminated for no apparent reason"
+msgstr "Kanala itxi egin itxuraz arrazoirik gabe"
+
+#: KTp/error-dictionary.cpp:131
+#, kde-format
+msgctxt "Verbose user visible error string"
+msgid ""
+"This operation can not be finished as it would break your requested anonymity"
+msgstr ""
+"Eragiketa hau ezin da burutu zuk eskatutako zeure anonimotasuna apurtuko "
+"lukeelako"
+
+#: KTp/error-dictionary.cpp:133
+#, kde-format
+msgctxt "Verbose user visible error string"
+msgid "Some of the IM components are not working correctly"
+msgstr "Bat-bateko mezularitzako osagai batzuk ez dabiltza behar bezala"
+
+#: KTp/error-dictionary.cpp:135
+#, kde-format
+msgctxt "User visible error string"
+msgid "An unknown error was encountered (%1), please report this"
+msgstr "Errore ezezagun bat aurkitu da (%1), mesedez eman honen berri"
+
+#: KTp/error-dictionary.cpp:142
+#, kde-format
+msgctxt "Short user visible error string"
+msgid "Connected elsewhere"
+msgstr "Beste nonbaitera konektatuta"
+
+#: KTp/error-dictionary.cpp:144
+#, kde-format
+msgctxt "Short user visible error string"
+msgid "Authentication failed"
+msgstr "Autentifikazioak huts egin du"
+
+#: KTp/error-dictionary.cpp:146
+#, kde-format
+msgctxt "Short user visible error string"
+msgid "Channel too busy"
+msgstr "Kanala lanpetuegia dago"
+
+#: KTp/error-dictionary.cpp:148
+#, kde-format
+msgctxt "Short user visible error string"
+msgid "Cancelled by user"
+msgstr "Erabiltzaileak utzita"
+
+#: KTp/error-dictionary.cpp:150
+#, kde-format
+msgctxt "Short user visible error string"
+msgid "Certificate is expired"
+msgstr "Ziurtagiria iraungita dago"
+
+#: KTp/error-dictionary.cpp:152
+#, kde-format
+msgctxt "Short user visible error string"
+msgid "Wrong certificate fingerprint"
+msgstr "Ziurtagiriaren hatz-marka okerra"
+
+#: KTp/error-dictionary.cpp:154
+#, kde-format
+msgctxt "Short user visible error string"
+msgid "Wrong certificate hostname"
+msgstr "Ziurtagiriaren ostalari-izen okerra"
+
+#: KTp/error-dictionary.cpp:156
+#, kde-format
+msgctxt "Short user visible error string"
+msgid "Too weak certificate encryption"
+msgstr "Ziurtagiriaren zifratzea ahulegia"
+
+#: KTp/error-dictionary.cpp:158
+#, kde-format
+msgctxt "Short user visible error string"
+msgid "Invalid certificate"
+msgstr "Ziurtagiri baliogabea"
+
+#: KTp/error-dictionary.cpp:160
+#, kde-format
+msgctxt "Short user visible error string"
+msgid "Certificate length limit exceeded"
+msgstr "Ziurtagiriaren luzera muga gainditua"
+
+#: KTp/error-dictionary.cpp:162
+#, kde-format
+msgctxt "Short user visible error string"
+msgid "Certificate not yet active"
+msgstr "Ziurtagiria ez dago oraindik aktibo"
+
+#: KTp/error-dictionary.cpp:164
+#, kde-format
+msgctxt "Short user visible error string"
+msgid "No certificate from server"
+msgstr "Ez da ziurtagiririk jaso zerbitzaritik"
+
+#: KTp/error-dictionary.cpp:166
+#, kde-format
+msgctxt "Short user visible error string"
+msgid "Certificate revoked"
+msgstr "Ziurtagiria baliogabetua"
+
+#: KTp/error-dictionary.cpp:168
+#, kde-format
+msgctxt "Short user visible error string"
+msgid "Untrusted self-signed certificate"
+msgstr "Bere buruak sinatutako konfiantzarik gabeko ziurtagiria"
+
+#: KTp/error-dictionary.cpp:170
+#, kde-format
+msgctxt "Short user visible error string"
+msgid "Untrusted certificate"
+msgstr "Konfiantzarik gabeko ziurtagiria"
+
+#: KTp/error-dictionary.cpp:172
+#, kde-format
+msgctxt "Short user visible error string"
+msgid "Banned from channel"
+msgstr "Kanaleko debekua"
+
+#: KTp/error-dictionary.cpp:174
+#, kde-format
+msgctxt "Short user visible error string"
+msgid "The channel is full"
+msgstr "Kanala beteta dago"
+
+#: KTp/error-dictionary.cpp:176
+#, kde-format
+msgctxt "Short user visible error string"
+msgid "The channel is invite-only"
+msgstr "Kanala gonbidapenekoa da"
+
+#: KTp/error-dictionary.cpp:178
+#, kde-format
+msgctxt "Short user visible error string"
+msgid "Kicked from channel"
+msgstr "Kanaletik botata"
+
+#: KTp/error-dictionary.cpp:180
+#, kde-format
+msgctxt "Short user visible error string"
+msgid "Something's seriously wrong"
+msgstr "Zerbait oso oker dago"
+
+#: KTp/error-dictionary.cpp:182
+#, kde-format
+msgctxt "Short user visible error string"
+msgid "Connection failed"
+msgstr "Konexioak huts egin du"
+
+#: KTp/error-dictionary.cpp:184
+#, kde-format
+msgctxt "Short user visible error string"
+msgid "Connection lost"
+msgstr "Konexioa galdu da"
+
+#: KTp/error-dictionary.cpp:186
+#, kde-format
+msgctxt "Short user visible error string"
+msgid "Connection refused"
+msgstr "Konexioa errefusatu da"
+
+#: KTp/error-dictionary.cpp:188
+#, kde-format
+msgctxt "Short user visible error string"
+msgid "Connection stolen by other account"
+msgstr "Konexioa beste kontu batek lapurtu du"
+
+#: KTp/error-dictionary.cpp:190
+#, kde-format
+msgctxt "Short user visible error string"
+msgid "Disconnected"
+msgstr "Deskonektatuta"
+
+#: KTp/error-dictionary.cpp:192
+#, kde-format
+msgctxt "Short user visible error string"
+msgid "User does not exist"
+msgstr "Erabiltzailea ez da existitzen"
+
+#: KTp/error-dictionary.cpp:194
+#, kde-format
+msgctxt "Short user visible error string"
+msgid "Emergency calls unsupported"
+msgstr "Larrialdi deiak ez dira onartzen"
+
+#: KTp/error-dictionary.cpp:196
+#, kde-format
+msgctxt "Short user visible error string"
+msgid "Encryption error"
+msgstr "Zifratze errorea"
+
+#: KTp/error-dictionary.cpp:198
+#, kde-format
+msgctxt "Short user visible error string"
+msgid "Encryption not available"
+msgstr "Zifratzea ez dago erabilgarri"
+
+#: KTp/error-dictionary.cpp:200
+#, kde-format
+msgctxt "Short user visible error string"
+msgid "Invalid argument"
+msgstr "Argumentu baliogabea"
+
+#: KTp/error-dictionary.cpp:202
+#, kde-format
+msgctxt "Short user visible error string"
+msgid "Invalid handle"
+msgstr "Deskriptore baliogabea"
+
+#: KTp/error-dictionary.cpp:204
+#, kde-format
+msgctxt "Short user visible error string"
+msgid "Network error"
+msgstr "Sareko errorea"
+
+#: KTp/error-dictionary.cpp:206
+#, kde-format
+msgctxt "Short user visible error string"
+msgid "Removed from channel"
+msgstr "Kanaletik kendua"
+
+#: KTp/error-dictionary.cpp:208
+#, kde-format
+msgctxt "Short user visible error string"
+msgid "Service not available"
+msgstr "Zerbitzua ez dago erabilgarri"
+
+#: KTp/error-dictionary.cpp:210
+#, kde-format
+msgctxt "Short user visible error string"
+msgid "Contact has no support"
+msgstr "Kontaktuak ez du euskarririk"
+
+#: KTp/error-dictionary.cpp:212
+#, kde-format
+msgctxt "Short user visible error string"
+msgid "Operation not implemented"
+msgstr "Eragiketa ez dago inplementatuta"
+
+#: KTp/error-dictionary.cpp:214
+#, kde-format
+msgctxt "Short user visible error string"
+msgid "Operation not yet implemented"
+msgstr "Eragiketa hau ez dago oraindik inplementatuta"
+
+#: KTp/error-dictionary.cpp:216
+#, kde-format
+msgctxt "Short user visible error string"
+msgid "Channel already being handled"
+msgstr "Kanala jada kudeatua dago"
+
+#: KTp/error-dictionary.cpp:218
+#, kde-format
+msgctxt "Short user visible error string"
+msgid "Contact is offline"
+msgstr "Kontaktua lineaz kanpo dago"
+
+#: KTp/error-dictionary.cpp:220
+#, kde-format
+msgctxt "Short user visible error string"
+msgid "Operation not permitted"
+msgstr "Eragiketa hau ez dago baimenduta"
+
+#: KTp/error-dictionary.cpp:222
+#, kde-format
+msgctxt "Short user visible error string"
+msgid "Call picked by other resource"
+msgstr "Deia beste baliabide batek hartu du"
+
+#: KTp/error-dictionary.cpp:224
+#, kde-format
+msgctxt "Short user visible error string"
+msgid "Username already taken"
+msgstr "Erabiltzaile-izena hartuta dago"
+
+#: KTp/error-dictionary.cpp:226
+#, kde-format
+msgctxt "Short user visible error string"
+msgid "Call rejected"
+msgstr "Deia errefusatu da"
+
+#: KTp/error-dictionary.cpp:228
+#, kde-format
+msgctxt "Short user visible error string"
+msgid "Insufficient resources"
+msgstr "Ez dago baliabide nahikorik"
+
+#: KTp/error-dictionary.cpp:230
+#, kde-format
+msgctxt "Short user visible error string"
+msgid "Service is busy"
+msgstr "Zerbitzua lanpetuta dago"
+
+#: KTp/error-dictionary.cpp:232
+#, kde-format
+msgctxt "Short user visible error string"
+msgid "Internal error"
+msgstr "Barne-errorea"
+
+#: KTp/error-dictionary.cpp:234
+#, kde-format
+msgctxt "Short user visible error string"
+msgid "Software upgrade required"
+msgstr "Softwarea bertsio-berritzea beharrezkoa"
+
+#: KTp/error-dictionary.cpp:236
+#, kde-format
+msgctxt "Short user visible error string"
+msgid "Channel terminated"
+msgstr "Kanala amaituta"
+
+#: KTp/error-dictionary.cpp:238
+#, kde-format
+msgctxt "Short user visible error string"
+msgid "Anonymity break possible"
+msgstr "Anonimotasun apurtzea posible"
+
+#: KTp/error-dictionary.cpp:240
+#, kde-format
+msgctxt "Short user visible error string"
+msgid "Internal component error"
+msgstr "Barneko osagai errorea"
+
+#: KTp/error-dictionary.cpp:244
+#, kde-format
+msgctxt "User visible error string"
+msgid "Unknown error"
+msgstr "Errore ezezaguna"
+
+#: KTp/logs-importer-private.cpp:52
+#, kde-format
+msgid "No Kopete logs found"
+msgstr "Ez da Kopete egunkari-sarrerarik aurkitu"
+
+#: KTp/logs-importer-private.cpp:332 KTp/logs-importer-private.cpp:339
+#, kde-format
+msgid "Invalid Kopete log format"
+msgstr "Kopete egunkari formatu baliogabea"
+
+#: KTp/Models/accounts-list-model.cpp:316
+#, kde-format
+msgctxt "This is a connection state"
+msgid "Connecting"
+msgstr "Konektatzen"
+
+#: KTp/Models/accounts-list-model.cpp:318
+#, kde-format
+msgctxt "This is a connection state"
+msgid "Disconnected"
+msgstr "Deskonektatuta"
+
+#: KTp/Models/accounts-list-model.cpp:320
+#, kde-format
+msgctxt "This is an unknown connection state"
+msgid "Unknown"
+msgstr "Ezezaguna"
+
+#: KTp/Models/accounts-list-model.cpp:323
+#, kde-format
+msgctxt "This is a disabled account"
+msgid "Disabled"
+msgstr "Desgaituta"
+
+#: KTp/Models/groups-tree-proxy-model.cpp:65
+#, kde-format
+msgid "Unsorted"
+msgstr "Ordenatu gabe"
+
+#: KTp/Models/rooms-model.cpp:73
+#, kde-format
+msgid "Password required"
+msgstr "Pasahitza beharrezkoa"
+
+#: KTp/Models/rooms-model.cpp:75
+#, kde-format
+msgid "No password required"
+msgstr "Pasahitza ez da beharrezkoa"
+
+#: KTp/Models/rooms-model.cpp:93
+#, kde-format
+msgid "Member count"
+msgstr "Kide kopurua"
+
+#: KTp/Models/rooms-model.cpp:113
+#, kde-format
+msgctxt "Chatrooms name"
+msgid "Name"
+msgstr "Izena"
+
+#: KTp/Models/rooms-model.cpp:115
+#, kde-format
+msgctxt "Chatrooms description"
+msgid "Description"
+msgstr "Deskribapena"
+
+#: KTp/Models/rooms-model.cpp:200
+#, kde-format
+msgid "Room bookmarked"
+msgstr "Gela laster-markatan dago"
+
+#: KTp/Models/rooms-model.cpp:202
+#, kde-format
+msgid "Room not bookmarked"
+msgstr "Gela ez dago laster-markatan"
+
+#: KTp/OTR/utils.cpp:78
+#, kde-format
+msgid "OTR error: %1"
+msgstr "OTR errorea: %1"
+
+#: KTp/OTR/utils.cpp:84
+#, kde-format
+msgid "Received unencrypted message: [%1]"
+msgstr "Zifratu gabeko mezua jaso da: [%1]"
+
+#: KTp/presence.cpp:115
+#, kde-format
+msgctxt "IM presence: a person is available"
+msgid "Available"
+msgstr "Erabilgarri"
+
+#: KTp/presence.cpp:117
+#, kde-format
+msgctxt "IM presence: a person is busy"
+msgid "Busy"
+msgstr "Lanpetuta"
+
+#: KTp/presence.cpp:119
+#, kde-format
+msgctxt "IM presence: a person is away"
+msgid "Away"
+msgstr "Kanpoan"
+
+#: KTp/presence.cpp:121
+#, kde-format
+msgctxt "IM presence: a person is not available"
+msgid "Not Available"
+msgstr "Ez erabilgarri"
+
+#: KTp/presence.cpp:123
+#, kde-format
+msgctxt "IM presence: a person is invisible"
+msgid "Invisible"
+msgstr "Ikusezina"
+
+#: KTp/presence.cpp:125
+#, kde-format
+msgctxt "IM presence: a person is offline"
+msgid "Offline"
+msgstr "Lineaz kanpo"
+
+#: KTp/telepathy-handler-application.cpp:134
+#, kde-format
+msgid "Persistent mode (do not exit on timeout)"
+msgstr "Modu iraunkorra (ez irten denbora-muga gainditzean)"
+
+#: KTp/telepathy-handler-application.cpp:135
+#, kde-format
+msgid "Show Telepathy debugging information"
+msgstr "Erakutsi Telepathy arazteko informazioa"
+
+#: KTp/Widgets/add-contact-dialog.cpp:91
+#, kde-format
+msgid "Add new contact"
+msgstr "Gehitu kontaktu berria"
+
+#: KTp/Widgets/add-contact-dialog.cpp:155 KTp/Widgets/start-chat-dialog.cpp:95
+#, kde-format
+msgid "No account selected."
+msgstr "Ez da konturik aukeratu."
+
+#: KTp/Widgets/add-contact-dialog.cpp:157
+#, kde-format
+msgid ""
+"The requested account has been disconnected and so the contact could not be "
+"added."
+msgstr ""
+"Eskatutako kontua deskonektatu egin da horregatik kontaktua ezin izan da "
+"gehitu."
+
+#: KTp/Widgets/add-contact-dialog.cpp:160
+#, kde-format
+msgid "You did not specify the name of the contact to add."
+msgstr "Ez duzu gehitu beharreko kontaktuaren izena zehaztu."
+
+#: KTp/Widgets/add-contact-dialog.cpp:186
+#, kde-format
+msgid "Failed to create new contact."
+msgstr "Kontaktu berria sortzea huts egin du."
+
+#: KTp/Widgets/add-contact-dialog.cpp:203
+#, kde-format
+msgid "Failed to request presence subscription from the requested contact."
+msgstr "Huts egin du eskatutako kontaktuaren presentzia-harpidetza eskatzea."
+
+#. i18n: ectx: property (text), widget (QLabel, label)
+#: KTp/Widgets/add-contact-dialog.ui:20 KTp/Widgets/start-chat-dialog.ui:17
+#, kde-format
+msgid "Account:"
+msgstr "Kontua:"
+
+#. i18n: ectx: property (text), widget (QLabel, label_2)
+#: KTp/Widgets/add-contact-dialog.ui:37 KTp/Widgets/start-chat-dialog.ui:24
+#, kde-format
+msgid "Screen Name:"
+msgstr "Pantailako izena:"
+
+#. i18n: ectx: property (text), widget (QLabel, messageLineLabel)
+#: KTp/Widgets/add-contact-dialog.ui:47
+#, kde-format
+msgid "Message:"
+msgstr "Mezua:"
+
+#. i18n: ectx: property (placeholderText), widget (QLineEdit, messageLineEdit)
+#: KTp/Widgets/add-contact-dialog.ui:54
+#, kde-format
+msgid "Optional message to send"
+msgstr "Bidaliko den aukerazko mezua"
+
+#: KTp/Widgets/contact-grid-dialog.cpp:112
+#, kde-format
+msgid "Search in Contacts..."
+msgstr "Bilatu kontaktuetan..."
+
+#. i18n in global static vars
+#: KTp/Widgets/contact-info-dialog.cpp:72
+#, kde-format
+msgid "Full name:"
+msgstr "Izen-abizenak:"
+
+#: KTp/Widgets/contact-info-dialog.cpp:73
+#, kde-format
+msgid "Nickname:"
+msgstr "Goitizena:"
+
+#: KTp/Widgets/contact-info-dialog.cpp:74
+#, kde-format
+msgid "Email:"
+msgstr "E-posta:"
+
+#: KTp/Widgets/contact-info-dialog.cpp:75
+#, kde-format
+msgid "Phone:"
+msgstr "Telefonoa:"
+
+#: KTp/Widgets/contact-info-dialog.cpp:76
+#, kde-format
+msgid "Homepage:"
+msgstr "Etxeko orria:"
+
+#: KTp/Widgets/contact-info-dialog.cpp:77
+#, kde-format
+msgid "Birthday:"
+msgstr "Jaiotza data:"
+
+#: KTp/Widgets/contact-info-dialog.cpp:78
+#, kde-format
+msgid "Organization:"
+msgstr "Erakundea:"
+
+#: KTp/Widgets/contact-info-dialog.cpp:153
+#, kde-format
+msgid "Change Avatar"
+msgstr "Aldatu avatara"
+
+#: KTp/Widgets/contact-info-dialog.cpp:158
+#, kde-format
+msgid "Clear Avatar"
+msgstr "Garbitu avatara"
+
+#: KTp/Widgets/contact-info-dialog.cpp:228
+#, kde-format
+msgid "Failed to load the new avatar image"
+msgstr "Avatar irudi berria kargatzea huts egin du"
+
+#: KTp/Widgets/contact-info-dialog.cpp:334
+#, kde-format
+msgid "Contact can see when you are online:"
+msgstr "Kontaktuak ikus dezake linean noiz zauden:"
+
+#: KTp/Widgets/contact-info-dialog.cpp:335
+#, kde-format
+msgid "You can see when the contact is online:"
+msgstr "Kontaktua linean noiz dagoen ikus dezakezu:"
+
+#: KTp/Widgets/contact-info-dialog.cpp:336
+#, kde-format
+msgid "Contact is blocked:"
+msgstr "Kontaktua blokeatuta dago:"
+
+#: KTp/Widgets/join-chat-room-dialog.cpp:93
+#, kde-format
+msgctxt "Dialog title"
+msgid "Join Chat Room"
+msgstr "Batu berriketa gelara"
+
+#: KTp/Widgets/join-chat-room-dialog.cpp:108
+#, kde-format
+msgctxt "button"
+msgid "Join/Create"
+msgstr "Batu/Sortu"
+
+#: KTp/Widgets/join-chat-room-dialog.cpp:392
+#, kde-format
+msgctxt "Button text"
+msgid "Query"
+msgstr "Kontsulta"
+
+#: KTp/Widgets/join-chat-room-dialog.cpp:393
+#, kde-format
+msgctxt "Tooltip text"
+msgid "Start query"
+msgstr "Hasi kontsulta"
+
+#: KTp/Widgets/join-chat-room-dialog.cpp:405
+#, kde-format
+msgctxt "Button text"
+msgid "Stop"
+msgstr "Gelditu"
+
+#: KTp/Widgets/join-chat-room-dialog.cpp:406
+#, kde-format
+msgctxt "Tooltip text"
+msgid "Stop query"
+msgstr "Gelditu kontsulta"
+
+#: KTp/Widgets/join-chat-room-dialog.cpp:454
+#, kde-format
+msgid "Could not join chatroom"
+msgstr "Ezin izan da berriketa-gelara batu"
+
+#. i18n: ectx: property (windowTitle), widget (QWidget, JoinChatRoomDialog)
+#: KTp/Widgets/join-chat-room-dialog.ui:20
+#, kde-format
+msgid "Join Chatroom"
+msgstr "Batu berriketa-gelara"
+
+#. i18n: ectx: property (title), widget (QGroupBox, accountGroupBox)
+#: KTp/Widgets/join-chat-room-dialog.ui:35
+#, kde-format
+msgid "Account"
+msgstr "Kontua"
+
+#. i18n: ectx: property (title), widget (QGroupBox, chatRoomGroupBox)
+#: KTp/Widgets/join-chat-room-dialog.ui:60
+#, kde-format
+msgid "Chat Room"
+msgstr "Berriketa-gela"
+
+#. i18n: ectx: attribute (title), widget (QWidget, previousTab)
+#: KTp/Widgets/join-chat-room-dialog.ui:70
+#, kde-format
+msgid "Previous"
+msgstr "Aurrekoa"
+
+#. i18n: ectx: property (text), widget (QPushButton, clearRecentPushButton)
+#: KTp/Widgets/join-chat-room-dialog.ui:98
+#, kde-format
+msgid "Clear Recent Rooms"
+msgstr "Garbitu oraintsu erabilitako gelak"
+
+#. i18n: ectx: property (placeholderText), widget (QLineEdit, lineEdit)
+#: KTp/Widgets/join-chat-room-dialog.ui:108
+#, kde-format
+msgid "Enter chat room name or address"
+msgstr "Sartu berriketa-gelaren izena edo helbidea"
+
+#. i18n: ectx: attribute (title), widget (QWidget, searchTab)
+#: KTp/Widgets/join-chat-room-dialog.ui:119
+#, kde-format
+msgid "Search"
+msgstr "Bilatu"
+
+#. i18n: ectx: property (text), widget (QLabel, serverLabel)
+#: KTp/Widgets/join-chat-room-dialog.ui:125
+#, kde-format
+msgid "Server to be queried:"
+msgstr "Kontsultatu beharreko zerbitzaria:"
+
+#. i18n: ectx: property (placeholderText), widget (QLineEdit, serverLineEdit)
+#: KTp/Widgets/join-chat-room-dialog.ui:134
+#, kde-format
+msgid "Leave blank for the selected account's default server"
+msgstr "Utzi hutsik aukeratutako kontuaren zerbitzari lehenetsirako"
+
+#. i18n: ectx: property (text), widget (QToolButton, queryButton)
+#: KTp/Widgets/join-chat-room-dialog.ui:147
+#, kde-format
+msgid "Query"
+msgstr "Kontsultatu"
+
+#. i18n: ectx: property (placeholderText), widget (QLineEdit, filterBar)
+#: KTp/Widgets/join-chat-room-dialog.ui:189
+#, kde-format
+msgid "Filter rooms"
+msgstr "Iragazi gelak"
+
+#: KTp/Widgets/notification-config-dialog.cpp:46
+#: KTp/Widgets/notification-config-dialog.cpp:116
+#, kde-format
+msgid "Configure notifications for %1"
+msgstr "Konfiguratu %1-(r)entzako jakinarazpenak"
+
+#: KTp/Widgets/notification-config-dialog.cpp:55
+#, kde-format
+msgid "Configure notifications for"
+msgstr "Konfiguratu honentzako jakinarazpenak:"
+
+#: KTp/Widgets/notification-config-dialog.cpp:60
+#, kde-format
+msgid "All users"
+msgstr "Erabiltzaile guztiak"
+
+#: KTp/Widgets/notification-config-dialog.cpp:119
+#, kde-format
+msgid "Configure notifications for all users"
+msgstr "Konfiguratu jakinarazpenak erabiltzaile guztientzat"
+
+#: KTp/Widgets/settings-kcm-dialog.cpp:40
+#, kde-format
+msgid ""
+"It appears you do not have the IM Accounts control module installed. Please "
+"install kaccounts-integration package."
+msgstr ""
+"Ematen du bat-bateko mezularitzako kontuen aginte modulua instalatu gabe "
+"daukazula. Mesedez instalatu «kaccounts-integration» paketea."
+
+#: KTp/Widgets/settings-kcm-dialog.cpp:41
+#, kde-format
+msgid "IM Accounts KCM Plugin Is Not Installed"
+msgstr "Bat-bateko mezularitzako kontuen KCM plugina ez dago instalatuta"
+
+#: KTp/Widgets/settings-kcm-dialog.cpp:65
+#, kde-format
+msgid "Notifications"
+msgstr "Jakinarazpenak"
+
+#: KTp/Widgets/start-chat-dialog.cpp:63
+#, kde-format
+msgid "Start a chat"
+msgstr "Hasi berriketa bat"
+
+#: KTp/Widgets/start-chat-dialog.cpp:97
+#, kde-format
+msgid ""
+"The requested account has been disconnected and so a chat could not be "
+"initiated."
+msgstr ""
+"Eskatutako kontua deskonektatu egin da eta horregatik ezin izan da berriketa "
+"bat hasi."
+
+#: KTp/Widgets/start-chat-dialog.cpp:100
+#, kde-format
+msgid "You did not specify the name of the contact to start a chat with."
+msgstr "Ez duzu zehaztu berriketa zein kontakturekin hasi nahi duzun."
+
+#: KTp/Widgets/start-chat-dialog.cpp:118
+#, kde-format
+msgid ""
+"The contact Screen Name you provided is invalid or does not accept text "
+"chats."
+msgstr ""
+"Eman duzun pantailako izena baliogabea da edo ez du onartzen testu-"
+"berriketarik."
+
+#: KTp/Widgets/start-chat-dialog.cpp:144
+#, kde-format
+msgid "Failed to start a chat with the contact."
+msgstr "Kontaktuarekin berriketa bat hastea huts egin du."

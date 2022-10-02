@@ -1,0 +1,1239 @@
+# translation of telepathy-common-internals.po to Low Saxon
+# Copyright (C) YEAR This_file_is_part_of_KDE
+# This file is distributed under the same license as the PACKAGE package.
+# Manfred Wiese <m.j.wiese@web.de>, 2011, 2014.
+# Sönke Dibbern <s_dibbern@web.de>, 2014.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: telepathy-common-internals\n"
+"Report-Msgid-Bugs-To: https://bugs.kde.org\n"
+"POT-Creation-Date: 2020-02-18 03:18+0100\n"
+"PO-Revision-Date: 2014-08-14 18:10+0200\n"
+"Last-Translator: Sönke Dibbern <s_dibbern@web.de>\n"
+"Language-Team: Low Saxon <kde-i18n-nds@kde.org>\n"
+"Language: nds\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Lokalize 1.4\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+
+#, kde-format
+msgctxt "NAME OF TRANSLATORS"
+msgid "Your names"
+msgstr "Manfred Wiese, Sönke Dibbern"
+
+#, kde-format
+msgctxt "EMAIL OF TRANSLATORS"
+msgid "Your emails"
+msgstr "m.j.wiese@web.de, s_dibbern@web.de"
+
+#: kpeople/actionsplugin/kpeople-actions-plugin.cpp:191
+#, fuzzy, kde-format
+#| msgid "Start Chat Using %1..."
+msgctxt ""
+"Context menu action; means 'Bring your account online and then start a chat "
+"using %1 account'"
+msgid "Connect and Start Chat Using %1..."
+msgstr "Klönen mit %1 starten..."
+
+#: kpeople/actionsplugin/kpeople-actions-plugin.cpp:203
+#, kde-format
+msgid "Start Chat Using %1..."
+msgstr "Klönen mit %1 starten..."
+
+#: kpeople/actionsplugin/kpeople-actions-plugin.cpp:213
+#, kde-format
+msgid "Start Audio Call Using %1..."
+msgstr "Klanganroop mit %1 maken..."
+
+#: kpeople/actionsplugin/kpeople-actions-plugin.cpp:223
+#, kde-format
+msgid "Start Video Call Using %1..."
+msgstr "Videoanroop mit %1 maken..."
+
+#: kpeople/actionsplugin/kpeople-actions-plugin.cpp:234
+#, kde-format
+msgid "Send Files Using %1..."
+msgstr "Dateien mit %1 loosstüern..."
+
+#: kpeople/actionsplugin/kpeople-actions-plugin.cpp:244
+#, kde-format
+msgid "Collaboratively edit a document Using %1..."
+msgstr "Tosamen en Dokment mit %1 bewerken..."
+
+#: kpeople/actionsplugin/kpeople-actions-plugin.cpp:255
+#, kde-format
+msgid "Previous Conversations..."
+msgstr ""
+
+#: kpeople/actionsplugin/kpeople-actions-plugin.cpp:284
+#, kde-format
+msgid "Choose files to send to %1"
+msgstr "Dateien utsöken, de Du %1 tostüern wullt"
+
+#: kpeople/actionsplugin/kpeople-actions-plugin.cpp:295
+#, kde-format
+msgid "Choose a file to edit with %1"
+msgstr "Datei utsöken, de Du mit %1 bewerken wullt"
+
+#: kpeople/uiplugins/chatplugin/kpeople_chat_plugin.cpp:58
+#, fuzzy, kde-format
+#| msgctxt "Short user visible error string"
+#| msgid "Contact has no support"
+msgid "Chat for current contact is not supported"
+msgstr "Kontakt ünnerstütt wat nich"
+
+#: kpeople/uiplugins/chatplugin/kpeople_chat_plugin.cpp:158
+#, kde-format
+msgid "Chat"
+msgstr "Klönen"
+
+#: kpeople/uiplugins/imdetailswidget.cpp:47
+#, kde-format
+msgid "IM"
+msgstr "KN"
+
+#: KTp/actions.cpp:182
+#, kde-format
+msgid ""
+"Transferring files with .exe or .ini extension is not allowed by Google "
+"Talk. It was sent with filename <i>%1</i>"
+msgstr ""
+"Överdregen vun Dateien mit de Verwiedern „.exe“ oder „.ini“ is bi Google "
+"Talk nich tolaten. De Datei wöör mit den Dateinaam <i>%1</i> loosstüert."
+
+#: KTp/actions.cpp:183
+#, kde-format
+msgid "Transferred file renamed"
+msgstr "Överdragen Datei ümnöömt"
+
+#: KTp/error-dictionary.cpp:35
+#, kde-format
+msgctxt "Verbose user visible error string"
+msgid ""
+"Looks like you are already connected from other location and the server does "
+"not allow multiple connections"
+msgstr ""
+"As't lett büst Du al vun en anner Steed tokoppelt un de Server lett mehr "
+"Verbinnen nich to."
+
+#: KTp/error-dictionary.cpp:37
+#, kde-format
+msgctxt "Verbose user visible error string"
+msgid "Authentication of your account failed (is your password correct?)"
+msgstr "Anmellen bi Dien Konto is fehlslaan (is dat Passwoort richtig?)"
+
+#: KTp/error-dictionary.cpp:39
+#, kde-format
+msgctxt "Verbose user visible error string"
+msgid ""
+"The channel is too busy now to process your request. Try again in a few "
+"minutes"
+msgstr ""
+"Binnen den Klöönruum is to veel to doon, Dien Anfraag lett sik nich "
+"afarbeiden. Versöök dat man in en poor Minuten nochmaal."
+
+#: KTp/error-dictionary.cpp:41
+#, kde-format
+msgctxt "Verbose user visible error string"
+msgid "The connection was canceled on your request"
+msgstr "De Verbinnen wöör op Dien Anfraag afbraken."
+
+#: KTp/error-dictionary.cpp:43
+#, kde-format
+msgctxt "Verbose user visible error string"
+msgid "The SSL/TLS certificate received from server is expired"
+msgstr "Den Server sien SSL-/TLS-Zertifikaat is aflopen."
+
+#: KTp/error-dictionary.cpp:45
+#, kde-format
+msgctxt "Verbose user visible error string"
+msgid ""
+"The SSL/TLS certificate received from server has different fingerprint than "
+"expected"
+msgstr ""
+"Den Server sien SSL-/TLS-Zertifikaat hett en anner Fingerafdruck as verwacht"
+
+#: KTp/error-dictionary.cpp:47
+#, kde-format
+msgctxt "Verbose user visible error string"
+msgid ""
+"The SSL/TLS certificate received from server has different hostname than "
+"expected"
+msgstr ""
+"Den Server sien SSL-/TLS-Zertifikaat wiest en anner Reeknernaam as verwacht"
+
+#: KTp/error-dictionary.cpp:49
+#, kde-format
+msgctxt "Verbose user visible error string"
+msgid "The SSL/TLS certificate received from server uses too weak encryption"
+msgstr "Den Server sien SSL-/TLS-Zertifikaat bruukt to week Verslöteln"
+
+#: KTp/error-dictionary.cpp:51
+#, kde-format
+msgctxt "Verbose user visible error string"
+msgid "The SSL/TLS certificate received from server is invalid"
+msgstr "Den Server sien SSL-/TLS-Zertifikaat gellt nich"
+
+#: KTp/error-dictionary.cpp:53
+#, kde-format
+msgctxt "Verbose user visible error string"
+msgid "The SSL/TLS certificate received from server has exceeded length limit"
+msgstr "Den Server sien SSL-/TLS-Zertifikaat is to lang."
+
+#: KTp/error-dictionary.cpp:55
+#, kde-format
+msgctxt "Verbose user visible error string"
+msgid "The SSL/TLS certificate received from server has not been activated yet"
+msgstr "Den Server sien SSL-/TLS-Zertifikaat wöör noch nich aktievmaakt."
+
+#: KTp/error-dictionary.cpp:57
+#, kde-format
+msgctxt "Verbose user visible error string"
+msgid "The server did not provide any SSL/TLS certificate"
+msgstr "De Server hett keen SSL-/TLS-Zertifikaat vörwiest"
+
+#: KTp/error-dictionary.cpp:59
+#, kde-format
+msgctxt "Verbose user visible error string"
+msgid "The SSL/TLS certificate received from server has been revoked"
+msgstr "Den Server sien SSL-/TLS-Zertifikaat wöör torüchropen."
+
+#: KTp/error-dictionary.cpp:61
+#, kde-format
+msgctxt "Verbose user visible error string"
+msgid ""
+"The SSL/TLS certificate received from server was self-signed by the server "
+"and is untrusted"
+msgstr ""
+"Den Server sien SSL-/TLS-Zertifikaat is sülvensünnerschreven, dat warrt nich "
+"troot."
+
+#: KTp/error-dictionary.cpp:63
+#, kde-format
+msgctxt "Verbose user visible error string"
+msgid ""
+"The SSL/TLS certificate received from server was not signed by a trusted "
+"certificate authority"
+msgstr ""
+"Den Server sien SSL-/TLS-Zertifikaat is vun keen Zertifikaatautoriteet "
+"ünnerschreven, de troot warrt"
+
+#: KTp/error-dictionary.cpp:65
+#, kde-format
+msgctxt "Verbose user visible error string"
+msgid "You have been banned from the channel"
+msgstr "Du büst ut den Klöönruum utslaten worrn."
+
+#: KTp/error-dictionary.cpp:67
+#, kde-format
+msgctxt "Verbose user visible error string"
+msgid "The channel is full"
+msgstr "De Klöönruum is vull."
+
+#: KTp/error-dictionary.cpp:69
+#, kde-format
+msgctxt "Verbose user visible error string"
+msgid "The channel is invite-only"
+msgstr "Disse Klöönruum bruukt Inladen"
+
+#: KTp/error-dictionary.cpp:71
+#, kde-format
+msgctxt "Verbose user visible error string"
+msgid "You have been kicked from the channel"
+msgstr "Du büst ut den Klöönruum rutsmeten worrn."
+
+#: KTp/error-dictionary.cpp:73
+#, kde-format
+msgctxt "Verbose user visible error string"
+msgid "An unexpected error has occurred"
+msgstr "Dat geev en nich verwacht Fehler."
+
+#: KTp/error-dictionary.cpp:75
+#, kde-format
+msgctxt "Verbose user visible error string"
+msgid "Could not establish connection"
+msgstr "Verbinnen lett sik nich opstellen"
+
+#: KTp/error-dictionary.cpp:77
+#, kde-format
+msgctxt "Verbose user visible error string"
+msgid "Connection to server was lost"
+msgstr "Verbinnen na Server is afreten"
+
+#: KTp/error-dictionary.cpp:79
+#, kde-format
+msgctxt "Verbose user visible error string"
+msgid "Server refused your connection"
+msgstr "Server hett Dien Verbinnen afwiest"
+
+#: KTp/error-dictionary.cpp:81
+#, kde-format
+msgctxt "Verbose user visible error string"
+msgid ""
+"Somewhere there is another client connecting with your account and your "
+"current connection is lost"
+msgstr ""
+"En anner Client verbindt sik na Dien Konto un Dien aktuelle Verbinnen is "
+"afreten"
+
+#: KTp/error-dictionary.cpp:83
+#, kde-format
+msgctxt "Verbose user visible error string"
+msgid "You have been disconnected"
+msgstr "Dien Verbinnen wöör afkoppelt"
+
+#: KTp/error-dictionary.cpp:85
+#, kde-format
+msgctxt "Verbose user visible error string"
+msgid "Selected user does not exist"
+msgstr "Den utsöchten Bruker gifft dat nich"
+
+#: KTp/error-dictionary.cpp:87
+#, kde-format
+msgctxt "Verbose user visible error string"
+msgid "Emergency calls are not supported"
+msgstr "Nootrööp warrt nich ünnerstütt"
+
+#: KTp/error-dictionary.cpp:89
+#, kde-format
+msgctxt "Verbose user visible error string"
+msgid "An encryption error has occurred"
+msgstr "Dat hett en Fehler bi't Verslöteln geven"
+
+#: KTp/error-dictionary.cpp:91
+#, kde-format
+msgctxt "Verbose user visible error string"
+msgid "Requested encryption is not available"
+msgstr "Anfraagt Verslöteln is nich verföögbor"
+
+#: KTp/error-dictionary.cpp:93
+#, kde-format
+msgctxt "Verbose user visible error string"
+msgid "An invalid argument was provided"
+msgstr "Dor weer en leeg Argument angeven"
+
+#: KTp/error-dictionary.cpp:95
+#, kde-format
+msgctxt "Verbose user visible error string"
+msgid "The specified handle is unknown on this channel"
+msgstr "De angeven Kennen gifft dat binnen dissen Klöönruum nich"
+
+#: KTp/error-dictionary.cpp:97
+#, kde-format
+msgctxt "Verbose user visible error string"
+msgid "There appears to be a problem with your network, check your connection"
+msgstr ""
+"As't lett gifft dat en Problem mit Dien Nettwark, prööv bitte Dien Verbinnen"
+
+#: KTp/error-dictionary.cpp:99
+#, kde-format
+msgctxt "Verbose user visible error string"
+msgid "You were removed from the channel because you did not respond"
+msgstr "Du büst ut den Klöönruum rutflagen, denn Du hest nich antert."
+
+#: KTp/error-dictionary.cpp:101
+#, kde-format
+msgctxt "Verbose user visible error string"
+msgid "The service is not available"
+msgstr "De Deenst is nich verföögbor"
+
+#: KTp/error-dictionary.cpp:103
+#, kde-format
+msgctxt "Verbose user visible error string"
+msgid "The contact does not have the requested capabilities"
+msgstr "De Kontakt hett dat anfraagte Könen nich"
+
+#: KTp/error-dictionary.cpp:105
+#, kde-format
+msgctxt "Verbose user visible error string"
+msgid "This operation is not implemented"
+msgstr "Disse Akschoon is nich inbuut"
+
+#: KTp/error-dictionary.cpp:107
+#, kde-format
+msgctxt "Verbose user visible error string"
+msgid "This operation is not yet implemented"
+msgstr "Disse Akschoon is noch nich inbuut"
+
+#: KTp/error-dictionary.cpp:109
+#, kde-format
+msgctxt "Verbose user visible error string"
+msgid "The requested channel is already being handled by some other process"
+msgstr "De anfraagte Klöönruum warrt al vun en anner Perzess hanteert"
+
+#: KTp/error-dictionary.cpp:111
+#, kde-format
+msgctxt "Verbose user visible error string"
+msgid "This operation is unavailable for offline contacts"
+msgstr "Disse Akschoon lett sik nich mit nich tokoppelt Kontakten utföhren"
+
+#: KTp/error-dictionary.cpp:113
+#, kde-format
+msgctxt "Verbose user visible error string"
+msgid "You are not permitted to perform this operation"
+msgstr "Du hest för disse Akschoon keen Verlööf."
+
+#: KTp/error-dictionary.cpp:115
+#, kde-format
+msgctxt "Verbose user visible error string"
+msgid "Current call was picked up by another resource"
+msgstr "De aktuelle Anroop wöör vun en anner Ressource opnahmen"
+
+#: KTp/error-dictionary.cpp:117
+#, kde-format
+msgctxt "Verbose user visible error string"
+msgid "Account with this username already exists"
+msgstr "Dat gifft al en Togang mit dissen Brukernaam"
+
+#: KTp/error-dictionary.cpp:119
+#, kde-format
+msgctxt "Verbose user visible error string"
+msgid "The receiver rejected your call"
+msgstr "De Adressaat hett Dien Anroop afwiest"
+
+#: KTp/error-dictionary.cpp:121
+#, kde-format
+msgctxt "Verbose user visible error string"
+msgid ""
+"There are insufficient resources (like free memory) to finish the operation "
+"at the moment"
+msgstr ""
+"Opstunns gifft dat nich noog Ressourcen (as fre'en Spieker), de Akschoon "
+"lett sik opstunns nich afsluten."
+
+#: KTp/error-dictionary.cpp:123
+#, kde-format
+msgctxt "Verbose user visible error string"
+msgid ""
+"Your request hit a busy resource somewhere along the way and the operation "
+"was unable to finish"
+msgstr ""
+"Dien Anfraag hett langs den Weg en Ressource drapen, de to doon harr, de "
+"Akschoon lett sik nich afsluten."
+
+#: KTp/error-dictionary.cpp:125
+#, kde-format
+msgctxt "Verbose user visible error string"
+msgid "An internal error has occurred (known as the 'Confused service error')"
+msgstr "Dat geev en intern Fehler (begäng as „Tüdelig-Deenst-Fehler“)"
+
+#: KTp/error-dictionary.cpp:127
+#, kde-format
+msgctxt "Verbose user visible error string"
+msgid ""
+"The installed libraries are too old. Please try updating all Telepathy "
+"packages to a newer version"
+msgstr ""
+"De installeerten Bibliotheken sünd to oolt. Versöök dat bitte un frisch all "
+"Telepathy-Paketen op en nieger Verschoon op."
+
+#: KTp/error-dictionary.cpp:129
+#, kde-format
+msgctxt "Verbose user visible error string"
+msgid "The channel was terminated for no apparent reason"
+msgstr "De Klöönruum wöör ahn sichtbor Grund tomaakt."
+
+#: KTp/error-dictionary.cpp:131
+#, kde-format
+msgctxt "Verbose user visible error string"
+msgid ""
+"This operation can not be finished as it would break your requested anonymity"
+msgstr ""
+"Disse Akschoon lett sik nich afsluten, se wöör Dien anfraagt Anonümiteet "
+"risikeren."
+
+#: KTp/error-dictionary.cpp:133
+#, kde-format
+msgctxt "Verbose user visible error string"
+msgid "Some of the IM components are not working correctly"
+msgstr "En poor KN-Komponenten loopt nich propper."
+
+#: KTp/error-dictionary.cpp:135
+#, kde-format
+msgctxt "User visible error string"
+msgid "An unknown error was encountered (%1), please report this"
+msgstr "Dat geev en nich begäng Fehler (%1), stüer bitte en Bericht loos."
+
+#: KTp/error-dictionary.cpp:142
+#, kde-format
+msgctxt "Short user visible error string"
+msgid "Connected elsewhere"
+msgstr "Annerwarts tokoppelt"
+
+#: KTp/error-dictionary.cpp:144
+#, kde-format
+msgctxt "Short user visible error string"
+msgid "Authentication failed"
+msgstr "Identiteetprööv fehlslaan"
+
+#: KTp/error-dictionary.cpp:146
+#, kde-format
+msgctxt "Short user visible error string"
+msgid "Channel too busy"
+msgstr "Klöönruum hett to doon"
+
+#: KTp/error-dictionary.cpp:148
+#, kde-format
+msgctxt "Short user visible error string"
+msgid "Cancelled by user"
+msgstr "Vun Bruker afbraken"
+
+#: KTp/error-dictionary.cpp:150
+#, kde-format
+msgctxt "Short user visible error string"
+msgid "Certificate is expired"
+msgstr "Zertifikaat is aflopen"
+
+#: KTp/error-dictionary.cpp:152
+#, kde-format
+msgctxt "Short user visible error string"
+msgid "Wrong certificate fingerprint"
+msgstr "Leeg Zertifikaat-Fingerafdruck"
+
+#: KTp/error-dictionary.cpp:154
+#, kde-format
+msgctxt "Short user visible error string"
+msgid "Wrong certificate hostname"
+msgstr "Leeg Zertifikaat-Reeknernaam"
+
+#: KTp/error-dictionary.cpp:156
+#, kde-format
+msgctxt "Short user visible error string"
+msgid "Too weak certificate encryption"
+msgstr "To week Zertifikaatverslöteln"
+
+#: KTp/error-dictionary.cpp:158
+#, kde-format
+msgctxt "Short user visible error string"
+msgid "Invalid certificate"
+msgstr "Leeg Zertifikaat"
+
+#: KTp/error-dictionary.cpp:160
+#, kde-format
+msgctxt "Short user visible error string"
+msgid "Certificate length limit exceeded"
+msgstr "Zertifikaat to lang"
+
+#: KTp/error-dictionary.cpp:162
+#, kde-format
+msgctxt "Short user visible error string"
+msgid "Certificate not yet active"
+msgstr "Zertifikaat noch nich aktiev"
+
+#: KTp/error-dictionary.cpp:164
+#, kde-format
+msgctxt "Short user visible error string"
+msgid "No certificate from server"
+msgstr "Keen Zertifikaat vörwiest"
+
+#: KTp/error-dictionary.cpp:166
+#, kde-format
+msgctxt "Short user visible error string"
+msgid "Certificate revoked"
+msgstr "Zertifikaat torüchropen"
+
+#: KTp/error-dictionary.cpp:168
+#, kde-format
+msgctxt "Short user visible error string"
+msgid "Untrusted self-signed certificate"
+msgstr "Nich troot sülvensünnerschreven Zertifikaat"
+
+#: KTp/error-dictionary.cpp:170
+#, kde-format
+msgctxt "Short user visible error string"
+msgid "Untrusted certificate"
+msgstr "Nich troot Zertifikaat"
+
+#: KTp/error-dictionary.cpp:172
+#, kde-format
+msgctxt "Short user visible error string"
+msgid "Banned from channel"
+msgstr "Ut Ruum utslaten"
+
+#: KTp/error-dictionary.cpp:174
+#, kde-format
+msgctxt "Short user visible error string"
+msgid "The channel is full"
+msgstr "De Klöönruum is vull."
+
+#: KTp/error-dictionary.cpp:176
+#, kde-format
+msgctxt "Short user visible error string"
+msgid "The channel is invite-only"
+msgstr "Klöönruum bruukt Inladen"
+
+#: KTp/error-dictionary.cpp:178
+#, kde-format
+msgctxt "Short user visible error string"
+msgid "Kicked from channel"
+msgstr "Ut Ruum rutsmeten"
+
+#: KTp/error-dictionary.cpp:180
+#, kde-format
+msgctxt "Short user visible error string"
+msgid "Something's seriously wrong"
+msgstr "Dor is wat redig leeg"
+
+#: KTp/error-dictionary.cpp:182
+#, kde-format
+msgctxt "Short user visible error string"
+msgid "Connection failed"
+msgstr "Tokoppeln fehlslaan"
+
+#: KTp/error-dictionary.cpp:184
+#, kde-format
+msgctxt "Short user visible error string"
+msgid "Connection lost"
+msgstr "Verbinnen afreten"
+
+#: KTp/error-dictionary.cpp:186
+#, kde-format
+msgctxt "Short user visible error string"
+msgid "Connection refused"
+msgstr "Tokoppeln afwiest"
+
+#: KTp/error-dictionary.cpp:188
+#, kde-format
+msgctxt "Short user visible error string"
+msgid "Connection stolen by other account"
+msgstr "Verbinnen vun anner Client wegnahmen"
+
+#: KTp/error-dictionary.cpp:190
+#, kde-format
+msgctxt "Short user visible error string"
+msgid "Disconnected"
+msgstr "Afkoppelt"
+
+#: KTp/error-dictionary.cpp:192
+#, kde-format
+msgctxt "Short user visible error string"
+msgid "User does not exist"
+msgstr "Gifft Bruker nich"
+
+#: KTp/error-dictionary.cpp:194
+#, kde-format
+msgctxt "Short user visible error string"
+msgid "Emergency calls unsupported"
+msgstr "Nootrööp nich ünnerstütt"
+
+#: KTp/error-dictionary.cpp:196
+#, kde-format
+msgctxt "Short user visible error string"
+msgid "Encryption error"
+msgstr "Fehler bi't Verslöteln"
+
+#: KTp/error-dictionary.cpp:198
+#, kde-format
+msgctxt "Short user visible error string"
+msgid "Encryption not available"
+msgstr "Verslöteln nich verföögbor"
+
+#: KTp/error-dictionary.cpp:200
+#, kde-format
+msgctxt "Short user visible error string"
+msgid "Invalid argument"
+msgstr "Leeg Argument"
+
+#: KTp/error-dictionary.cpp:202
+#, kde-format
+msgctxt "Short user visible error string"
+msgid "Invalid handle"
+msgstr "Leeg Kennen"
+
+#: KTp/error-dictionary.cpp:204
+#, kde-format
+msgctxt "Short user visible error string"
+msgid "Network error"
+msgstr "Nettwarkfehler"
+
+#: KTp/error-dictionary.cpp:206
+#, kde-format
+msgctxt "Short user visible error string"
+msgid "Removed from channel"
+msgstr "Ut Ruum rutsmeten"
+
+#: KTp/error-dictionary.cpp:208
+#, kde-format
+msgctxt "Short user visible error string"
+msgid "Service not available"
+msgstr "Deenst is nich verföögbor"
+
+#: KTp/error-dictionary.cpp:210
+#, kde-format
+msgctxt "Short user visible error string"
+msgid "Contact has no support"
+msgstr "Kontakt ünnerstütt wat nich"
+
+#: KTp/error-dictionary.cpp:212
+#, kde-format
+msgctxt "Short user visible error string"
+msgid "Operation not implemented"
+msgstr "Akschoon is nich inbuut"
+
+#: KTp/error-dictionary.cpp:214
+#, kde-format
+msgctxt "Short user visible error string"
+msgid "Operation not yet implemented"
+msgstr "Akschoon is noch nich inbuut"
+
+#: KTp/error-dictionary.cpp:216
+#, kde-format
+msgctxt "Short user visible error string"
+msgid "Channel already being handled"
+msgstr "Klöönruum warrt al hanteert"
+
+#: KTp/error-dictionary.cpp:218
+#, kde-format
+msgctxt "Short user visible error string"
+msgid "Contact is offline"
+msgstr "Kontakt is afkoppelt."
+
+#: KTp/error-dictionary.cpp:220
+#, kde-format
+msgctxt "Short user visible error string"
+msgid "Operation not permitted"
+msgstr "Akschoon nich tolaten"
+
+#: KTp/error-dictionary.cpp:222
+#, kde-format
+msgctxt "Short user visible error string"
+msgid "Call picked by other resource"
+msgstr "Anroop vun anner Ressource opnahmen"
+
+#: KTp/error-dictionary.cpp:224
+#, kde-format
+msgctxt "Short user visible error string"
+msgid "Username already taken"
+msgstr "Brukernaam nich mehr free"
+
+#: KTp/error-dictionary.cpp:226
+#, kde-format
+msgctxt "Short user visible error string"
+msgid "Call rejected"
+msgstr "Anroop afwiest"
+
+#: KTp/error-dictionary.cpp:228
+#, kde-format
+msgctxt "Short user visible error string"
+msgid "Insufficient resources"
+msgstr "Nich noog Ressourcen"
+
+#: KTp/error-dictionary.cpp:230
+#, kde-format
+msgctxt "Short user visible error string"
+msgid "Service is busy"
+msgstr "Deenst hett to doon"
+
+#: KTp/error-dictionary.cpp:232
+#, kde-format
+msgctxt "Short user visible error string"
+msgid "Internal error"
+msgstr "Intern Fehler"
+
+#: KTp/error-dictionary.cpp:234
+#, kde-format
+msgctxt "Short user visible error string"
+msgid "Software upgrade required"
+msgstr "Programmopfrischen deit noot"
+
+#: KTp/error-dictionary.cpp:236
+#, kde-format
+msgctxt "Short user visible error string"
+msgid "Channel terminated"
+msgstr "Klöönruum tomaakt"
+
+#: KTp/error-dictionary.cpp:238
+#, kde-format
+msgctxt "Short user visible error string"
+msgid "Anonymity break possible"
+msgstr "Riskanz för de Anomümiteet"
+
+#: KTp/error-dictionary.cpp:240
+#, kde-format
+msgctxt "Short user visible error string"
+msgid "Internal component error"
+msgstr "Fehler binnen intern Komponent"
+
+#: KTp/error-dictionary.cpp:244
+#, kde-format
+msgctxt "User visible error string"
+msgid "Unknown error"
+msgstr "Nich begäng Fehler"
+
+#: KTp/logs-importer-private.cpp:52
+#, kde-format
+msgid "No Kopete logs found"
+msgstr "Keen Kopete-Logbook funnen"
+
+#: KTp/logs-importer-private.cpp:332 KTp/logs-importer-private.cpp:339
+#, kde-format
+msgid "Invalid Kopete log format"
+msgstr "Leeg Kopete-Logbookformaat"
+
+#: KTp/Models/accounts-list-model.cpp:316
+#, kde-format
+msgctxt "This is a connection state"
+msgid "Connecting"
+msgstr "Bi to tokoppeln"
+
+#: KTp/Models/accounts-list-model.cpp:318
+#, kde-format
+msgctxt "This is a connection state"
+msgid "Disconnected"
+msgstr "Afkoppelt"
+
+#: KTp/Models/accounts-list-model.cpp:320
+#, kde-format
+msgctxt "This is an unknown connection state"
+msgid "Unknown"
+msgstr "Nich begäng"
+
+#: KTp/Models/accounts-list-model.cpp:323
+#, kde-format
+msgctxt "This is a disabled account"
+msgid "Disabled"
+msgstr "Utmaakt"
+
+#: KTp/Models/groups-tree-proxy-model.cpp:65
+#, kde-format
+msgid "Unsorted"
+msgstr "Nich sorteert"
+
+#: KTp/Models/rooms-model.cpp:73
+#, kde-format
+msgid "Password required"
+msgstr "Passwoort deit noot"
+
+#: KTp/Models/rooms-model.cpp:75
+#, kde-format
+msgid "No password required"
+msgstr "Passwoort deit nich noot"
+
+#: KTp/Models/rooms-model.cpp:93
+#, kde-format
+msgid "Member count"
+msgstr "Matentall"
+
+#: KTp/Models/rooms-model.cpp:113
+#, kde-format
+msgctxt "Chatrooms name"
+msgid "Name"
+msgstr "Naam"
+
+#: KTp/Models/rooms-model.cpp:115
+#, kde-format
+msgctxt "Chatrooms description"
+msgid "Description"
+msgstr "Beschrieven"
+
+#: KTp/Models/rooms-model.cpp:200
+#, kde-format
+msgid "Room bookmarked"
+msgstr "Ruum na Leestekens toföögt"
+
+#: KTp/Models/rooms-model.cpp:202
+#, kde-format
+msgid "Room not bookmarked"
+msgstr "Ruum nich na Leestekens toföögt"
+
+#: KTp/OTR/utils.cpp:78
+#, kde-format
+msgid "OTR error: %1"
+msgstr ""
+
+#: KTp/OTR/utils.cpp:84
+#, kde-format
+msgid "Received unencrypted message: [%1]"
+msgstr ""
+
+#: KTp/presence.cpp:115
+#, kde-format
+msgctxt "IM presence: a person is available"
+msgid "Available"
+msgstr "Verföögbor"
+
+#: KTp/presence.cpp:117
+#, kde-format
+msgctxt "IM presence: a person is busy"
+msgid "Busy"
+msgstr "Hett to doon"
+
+#: KTp/presence.cpp:119
+#, kde-format
+msgctxt "IM presence: a person is away"
+msgid "Away"
+msgstr "Weg"
+
+#: KTp/presence.cpp:121
+#, kde-format
+msgctxt "IM presence: a person is not available"
+msgid "Not Available"
+msgstr "Nich verföögbor"
+
+#: KTp/presence.cpp:123
+#, kde-format
+msgctxt "IM presence: a person is invisible"
+msgid "Invisible"
+msgstr "Nich sichtbor"
+
+#: KTp/presence.cpp:125
+#, kde-format
+msgctxt "IM presence: a person is offline"
+msgid "Offline"
+msgstr "Afkoppelt"
+
+#: KTp/telepathy-handler-application.cpp:134
+#, kde-format
+msgid "Persistent mode (do not exit on timeout)"
+msgstr "Duerbedrief (bi Tietafloop nich utmaken)"
+
+#: KTp/telepathy-handler-application.cpp:135
+#, kde-format
+msgid "Show Telepathy debugging information"
+msgstr "Telepathy-Fehlersöökinformatschonen wiesen"
+
+#: KTp/Widgets/add-contact-dialog.cpp:91
+#, kde-format
+msgid "Add new contact"
+msgstr "Nieg Kontakt tofögen"
+
+#: KTp/Widgets/add-contact-dialog.cpp:155 KTp/Widgets/start-chat-dialog.cpp:95
+#, kde-format
+msgid "No account selected."
+msgstr "Keen Konto utsöcht."
+
+#: KTp/Widgets/add-contact-dialog.cpp:157
+#, kde-format
+msgid ""
+"The requested account has been disconnected and so the contact could not be "
+"added."
+msgstr "Dat anfraagte Konto wöör afkoppelt, de Kontakt leet sik nich tofögen."
+
+#: KTp/Widgets/add-contact-dialog.cpp:160
+#, kde-format
+msgid "You did not specify the name of the contact to add."
+msgstr "Du hest den Naam vun den Kontakt, den Du tofögen wullt, nich angeven."
+
+#: KTp/Widgets/add-contact-dialog.cpp:186
+#, kde-format
+msgid "Failed to create new contact."
+msgstr "Nieg Kontakt lett sik nich opstellen."
+
+#: KTp/Widgets/add-contact-dialog.cpp:203
+#, kde-format
+msgid "Failed to request presence subscription from the requested contact."
+msgstr ""
+"De Anwesigkeit-Informatschonen vun den angeven Kontakt laat sik nich "
+"bestellen."
+
+#. i18n: ectx: property (text), widget (QLabel, label)
+#: KTp/Widgets/add-contact-dialog.ui:20 KTp/Widgets/start-chat-dialog.ui:17
+#, kde-format
+msgid "Account:"
+msgstr "Konto:"
+
+#. i18n: ectx: property (text), widget (QLabel, label_2)
+#: KTp/Widgets/add-contact-dialog.ui:37 KTp/Widgets/start-chat-dialog.ui:24
+#, kde-format
+msgid "Screen Name:"
+msgstr "Wiesnaam:"
+
+#. i18n: ectx: property (text), widget (QLabel, messageLineLabel)
+#: KTp/Widgets/add-contact-dialog.ui:47
+#, kde-format
+msgid "Message:"
+msgstr "Naricht:"
+
+#. i18n: ectx: property (placeholderText), widget (QLineEdit, messageLineEdit)
+#: KTp/Widgets/add-contact-dialog.ui:54
+#, kde-format
+msgid "Optional message to send"
+msgstr "Naricht, de Du köörwies loosstüern kannst"
+
+#: KTp/Widgets/contact-grid-dialog.cpp:112
+#, kde-format
+msgid "Search in Contacts..."
+msgstr "Binnen Kontakten söken..."
+
+#. i18n in global static vars
+#: KTp/Widgets/contact-info-dialog.cpp:72
+#, kde-format
+msgid "Full name:"
+msgstr "Heel Naam:"
+
+#: KTp/Widgets/contact-info-dialog.cpp:73
+#, kde-format
+msgid "Nickname:"
+msgstr "Ökelnaam:"
+
+#: KTp/Widgets/contact-info-dialog.cpp:74
+#, kde-format
+msgid "Email:"
+msgstr "Nettpostadress:"
+
+#: KTp/Widgets/contact-info-dialog.cpp:75
+#, kde-format
+msgid "Phone:"
+msgstr "Telefoon:"
+
+#: KTp/Widgets/contact-info-dialog.cpp:76
+#, kde-format
+msgid "Homepage:"
+msgstr "Tohuussiet:"
+
+#: KTp/Widgets/contact-info-dialog.cpp:77
+#, kde-format
+msgid "Birthday:"
+msgstr "Geboortsdag:"
+
+#: KTp/Widgets/contact-info-dialog.cpp:78
+#, kde-format
+msgid "Organization:"
+msgstr "Organisatschoon:"
+
+#: KTp/Widgets/contact-info-dialog.cpp:153
+#, kde-format
+msgid "Change Avatar"
+msgstr "Bildteken ännern"
+
+#: KTp/Widgets/contact-info-dialog.cpp:158
+#, kde-format
+msgid "Clear Avatar"
+msgstr "Bildteken leddig maken"
+
+#: KTp/Widgets/contact-info-dialog.cpp:228
+#, kde-format
+msgid "Failed to load the new avatar image"
+msgstr "Nieg Bildteken lett sik nich laden."
+
+#: KTp/Widgets/contact-info-dialog.cpp:334
+#, kde-format
+msgid "Contact can see when you are online:"
+msgstr "Kontakt süht, wenn Du tokoppelt büst:"
+
+#: KTp/Widgets/contact-info-dialog.cpp:335
+#, kde-format
+msgid "You can see when the contact is online:"
+msgstr "Du sühst, wenn de Kontakt tokoppelt is:"
+
+#: KTp/Widgets/contact-info-dialog.cpp:336
+#, kde-format
+msgid "Contact is blocked:"
+msgstr "Kontakt is blockeert:"
+
+#: KTp/Widgets/join-chat-room-dialog.cpp:93
+#, kde-format
+msgctxt "Dialog title"
+msgid "Join Chat Room"
+msgstr "Na Klöönruum ringahn..."
+
+#: KTp/Widgets/join-chat-room-dialog.cpp:108
+#, kde-format
+msgctxt "button"
+msgid "Join/Create"
+msgstr "Ringahn/Opstellen"
+
+#: KTp/Widgets/join-chat-room-dialog.cpp:392
+#, kde-format
+msgctxt "Button text"
+msgid "Query"
+msgstr "Anfraag"
+
+#: KTp/Widgets/join-chat-room-dialog.cpp:393
+#, kde-format
+msgctxt "Tooltip text"
+msgid "Start query"
+msgstr "Anfraag starten"
+
+#: KTp/Widgets/join-chat-room-dialog.cpp:405
+#, kde-format
+msgctxt "Button text"
+msgid "Stop"
+msgstr "Anhollen"
+
+#: KTp/Widgets/join-chat-room-dialog.cpp:406
+#, kde-format
+msgctxt "Tooltip text"
+msgid "Stop query"
+msgstr "Anfraag anhollen"
+
+#: KTp/Widgets/join-chat-room-dialog.cpp:454
+#, kde-format
+msgid "Could not join chatroom"
+msgstr "Ringahn na Klöönruum nich mööglich"
+
+#. i18n: ectx: property (windowTitle), widget (QWidget, JoinChatRoomDialog)
+#: KTp/Widgets/join-chat-room-dialog.ui:20
+#, kde-format
+msgid "Join Chatroom"
+msgstr "Na Klöönruum ringahn"
+
+#. i18n: ectx: property (title), widget (QGroupBox, accountGroupBox)
+#: KTp/Widgets/join-chat-room-dialog.ui:35
+#, kde-format
+msgid "Account"
+msgstr "Konto"
+
+#. i18n: ectx: property (title), widget (QGroupBox, chatRoomGroupBox)
+#: KTp/Widgets/join-chat-room-dialog.ui:60
+#, kde-format
+msgid "Chat Room"
+msgstr "Klöönruum"
+
+#. i18n: ectx: attribute (title), widget (QWidget, previousTab)
+#: KTp/Widgets/join-chat-room-dialog.ui:70
+#, kde-format
+msgid "Previous"
+msgstr "Verleden"
+
+#. i18n: ectx: property (text), widget (QPushButton, clearRecentPushButton)
+#: KTp/Widgets/join-chat-room-dialog.ui:98
+#, kde-format
+msgid "Clear Recent Rooms"
+msgstr "Verleden Rüüm opkloren"
+
+#. i18n: ectx: property (placeholderText), widget (QLineEdit, lineEdit)
+#: KTp/Widgets/join-chat-room-dialog.ui:108
+#, kde-format
+msgid "Enter chat room name or address"
+msgstr "Klöönruum-Naam oder -Adress ingeven"
+
+#. i18n: ectx: attribute (title), widget (QWidget, searchTab)
+#: KTp/Widgets/join-chat-room-dialog.ui:119
+#, kde-format
+msgid "Search"
+msgstr "Söken"
+
+#. i18n: ectx: property (text), widget (QLabel, serverLabel)
+#: KTp/Widgets/join-chat-room-dialog.ui:125
+#, kde-format
+msgid "Server to be queried:"
+msgstr "Server, den Du fragen wullt:"
+
+#. i18n: ectx: property (placeholderText), widget (QLineEdit, serverLineEdit)
+#: KTp/Widgets/join-chat-room-dialog.ui:134
+#, kde-format
+msgid "Leave blank for the selected account's default server"
+msgstr ""
+"Leddig laten, wenn Du den Standard-Server för't utsöchte Konto bruken wullt"
+
+#. i18n: ectx: property (text), widget (QToolButton, queryButton)
+#: KTp/Widgets/join-chat-room-dialog.ui:147
+#, kde-format
+msgid "Query"
+msgstr "Anfraag"
+
+#. i18n: ectx: property (placeholderText), widget (QLineEdit, filterBar)
+#: KTp/Widgets/join-chat-room-dialog.ui:189
+#, kde-format
+msgid "Filter rooms"
+msgstr "Rüüm filtern"
+
+#: KTp/Widgets/notification-config-dialog.cpp:46
+#: KTp/Widgets/notification-config-dialog.cpp:116
+#, kde-format
+msgid "Configure notifications for %1"
+msgstr "Bescheden för „%1“ instellen"
+
+#: KTp/Widgets/notification-config-dialog.cpp:55
+#, kde-format
+msgid "Configure notifications for"
+msgstr "Bescheden instellen för"
+
+#: KTp/Widgets/notification-config-dialog.cpp:60
+#, kde-format
+msgid "All users"
+msgstr "All Brukers"
+
+#: KTp/Widgets/notification-config-dialog.cpp:119
+#, kde-format
+msgid "Configure notifications for all users"
+msgstr "Bescheden för all Brukers instellen"
+
+#: KTp/Widgets/settings-kcm-dialog.cpp:40
+#, fuzzy, kde-format
+#| msgid ""
+#| "It appears you do not have the IM Accounts control module installed. "
+#| "Please install ktp-accounts-kcm package."
+msgid ""
+"It appears you do not have the IM Accounts control module installed. Please "
+"install kaccounts-integration package."
+msgstr ""
+"As't lett hest Du dat KN-Konto-Kuntrullmoduul nich installeert. Installeer "
+"bitte dat Paket „ktp-accounts-kcm“."
+
+#: KTp/Widgets/settings-kcm-dialog.cpp:41
+#, kde-format
+msgid "IM Accounts KCM Plugin Is Not Installed"
+msgstr "KN-Kontos-Kuntrullmoduul is nich installeert"
+
+#: KTp/Widgets/settings-kcm-dialog.cpp:65
+#, kde-format
+msgid "Notifications"
+msgstr "Bescheden"
+
+#: KTp/Widgets/start-chat-dialog.cpp:63
+#, kde-format
+msgid "Start a chat"
+msgstr "Klönen starten"
+
+#: KTp/Widgets/start-chat-dialog.cpp:97
+#, kde-format
+msgid ""
+"The requested account has been disconnected and so a chat could not be "
+"initiated."
+msgstr ""
+"En Klöönsnack lett sik nich starten, denn dat anfraagte Konto wöör afkoppelt."
+
+#: KTp/Widgets/start-chat-dialog.cpp:100
+#, kde-format
+msgid "You did not specify the name of the contact to start a chat with."
+msgstr ""
+"Du hest den Naam vun den Kontakt, mit den Du klönen wullt, nich angeven."
+
+#: KTp/Widgets/start-chat-dialog.cpp:118
+#, kde-format
+msgid ""
+"The contact Screen Name you provided is invalid or does not accept text "
+"chats."
+msgstr ""
+"De Kontakt-Weisnaam, den Du angeven hest, is leeg oder nimmt keen Text-"
+"Klöönsnacks an."
+
+#: KTp/Widgets/start-chat-dialog.cpp:144
+#, kde-format
+msgid "Failed to start a chat with the contact."
+msgstr "Mit den Kontakt lett sik keen Klöönsnack anfangen."
+
+#~ msgid "KDE Telepathy"
+#~ msgstr "KDE-Telepathy"
+
+#~ msgid "Save"
+#~ msgstr "Sekern"
+
+#~ msgid "Add room"
+#~ msgstr "Ruum tofögen"
+
+#~ msgid "Name"
+#~ msgstr "Naam"
+
+#~ msgid "Favorites"
+#~ msgstr "Leevste"
+
+#~ msgid "Add Room"
+#~ msgstr "Ruum tofögen"
+
+#~ msgid "Remove Room"
+#~ msgstr "Ruum wegmaken"
+
+#~ msgid "Recent"
+#~ msgstr "Tolest bruukt"
+
+#~ msgid "Remove"
+#~ msgstr "Wegmaken"
+
+#~ msgid "Clear list"
+#~ msgstr "List leddig maken"

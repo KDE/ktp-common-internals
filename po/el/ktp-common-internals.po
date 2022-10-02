@@ -1,0 +1,1288 @@
+# ktp-common-internals.po translation [el]
+# Copyright (C) YEAR This_file_is_part_of_KDE
+# This file is distributed under the same license as the PACKAGE package.
+#
+#
+# Stelios <sstavra@gmail.com>, 2012, 2014.
+# Dimitrios Glentadakis <dglent@gmail.com>, 2012.
+# Dimitris Kardarakos <dimkard@gmail.com>, 2014, 2015.
+# Petros Vidalis <pvidalis@gmail.com>, 2016.
+msgid ""
+msgstr ""
+"Project-Id-Version: ktp-common-internals\n"
+"Report-Msgid-Bugs-To: https://bugs.kde.org\n"
+"POT-Creation-Date: 2020-02-18 03:18+0100\n"
+"PO-Revision-Date: 2016-06-24 14:52+0200\n"
+"Last-Translator: Petros Vidalis <pvidalis@gmail.com>\n"
+"Language-Team: Greek <kde-i18n-el@kde.org>\n"
+"Language: el\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Lokalize 2.0\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+
+#, kde-format
+msgctxt "NAME OF TRANSLATORS"
+msgid "Your names"
+msgstr "Stelios"
+
+#, kde-format
+msgctxt "EMAIL OF TRANSLATORS"
+msgid "Your emails"
+msgstr "sstavra@gmail.com"
+
+#: kpeople/actionsplugin/kpeople-actions-plugin.cpp:191
+#, kde-format
+msgctxt ""
+"Context menu action; means 'Bring your account online and then start a chat "
+"using %1 account'"
+msgid "Connect and Start Chat Using %1..."
+msgstr "Σύνδσεη και έναρξη συνομιλίας με τη χρήση του %1..."
+
+#: kpeople/actionsplugin/kpeople-actions-plugin.cpp:203
+#, kde-format
+msgid "Start Chat Using %1..."
+msgstr "Έναρξη συνομιλίας με τη χρήση του %1..."
+
+#: kpeople/actionsplugin/kpeople-actions-plugin.cpp:213
+#, kde-format
+msgid "Start Audio Call Using %1..."
+msgstr "Έναρξη ηχητικής κλήσης με τη χρήση του %1..."
+
+#: kpeople/actionsplugin/kpeople-actions-plugin.cpp:223
+#, kde-format
+msgid "Start Video Call Using %1..."
+msgstr "Έναρξη βιντεο-κλήσης με τη χρήση του %1..."
+
+#: kpeople/actionsplugin/kpeople-actions-plugin.cpp:234
+#, kde-format
+msgid "Send Files Using %1..."
+msgstr "Αποστολή αρχείου με τη χρήση του %1..."
+
+#: kpeople/actionsplugin/kpeople-actions-plugin.cpp:244
+#, kde-format
+msgid "Collaboratively edit a document Using %1..."
+msgstr "Συλλογική επεξεργασία εγγράφου με τη χρήση του %1..."
+
+#: kpeople/actionsplugin/kpeople-actions-plugin.cpp:255
+#, kde-format
+msgid "Previous Conversations..."
+msgstr "Προηγούμενες συζητήσεις..."
+
+#: kpeople/actionsplugin/kpeople-actions-plugin.cpp:284
+#, kde-format
+msgid "Choose files to send to %1"
+msgstr "Επιλογή αρχείων για αποστολή στον/στην %1"
+
+#: kpeople/actionsplugin/kpeople-actions-plugin.cpp:295
+#, kde-format
+msgid "Choose a file to edit with %1"
+msgstr "Επιλογή αρχείου για επεξεργασία με τον/την %1"
+
+#: kpeople/uiplugins/chatplugin/kpeople_chat_plugin.cpp:58
+#, kde-format
+msgid "Chat for current contact is not supported"
+msgstr "Η συνομιλία για την τρέχουσα επαφή δεν υποστηρίζεται"
+
+#: kpeople/uiplugins/chatplugin/kpeople_chat_plugin.cpp:158
+#, kde-format
+msgid "Chat"
+msgstr "Συνομιλία"
+
+#: kpeople/uiplugins/imdetailswidget.cpp:47
+#, kde-format
+msgid "IM"
+msgstr "IM"
+
+#: KTp/actions.cpp:182
+#, kde-format
+msgid ""
+"Transferring files with .exe or .ini extension is not allowed by Google "
+"Talk. It was sent with filename <i>%1</i>"
+msgstr ""
+"Η αποστολή αρχείων με επέκταση .exe ή .ini δεν επιτρέπεται από το Google "
+"Talk. Στάλθηκε με το όνομα αρχείου <i>%1</i>"
+
+#: KTp/actions.cpp:183
+#, kde-format
+msgid "Transferred file renamed"
+msgstr "Το αρχείο μεταφέρθηκε μετονομασμένο"
+
+#: KTp/error-dictionary.cpp:35
+#, kde-format
+msgctxt "Verbose user visible error string"
+msgid ""
+"Looks like you are already connected from other location and the server does "
+"not allow multiple connections"
+msgstr ""
+"Φαίνεται να έχετε ήδη συνδεθεί από άλλη θέση και ο εξυπηρετητής δεν "
+"επιτρέπει πολλαπλές συνδέσεις"
+
+#: KTp/error-dictionary.cpp:37
+#, kde-format
+msgctxt "Verbose user visible error string"
+msgid "Authentication of your account failed (is your password correct?)"
+msgstr ""
+"Η ταυτοποίηση του λογαριασμού σας απέτυχε (είναι σωστός ο κωδικός πρόσβασης;"
+
+#: KTp/error-dictionary.cpp:39
+#, kde-format
+msgctxt "Verbose user visible error string"
+msgid ""
+"The channel is too busy now to process your request. Try again in a few "
+"minutes"
+msgstr ""
+"Το κανάλι είναι πολύ απασχολημένο τώρα για να επεξεργαστεί το αίτημά σας. "
+"Προσπαθήστε πάλι σε λίγα λεπτά"
+
+#: KTp/error-dictionary.cpp:41
+#, kde-format
+msgctxt "Verbose user visible error string"
+msgid "The connection was canceled on your request"
+msgstr "Η σύνδεση ακυρώθηκε με σχετικό αίτημα που υποβάλλατε"
+
+#: KTp/error-dictionary.cpp:43
+#, kde-format
+msgctxt "Verbose user visible error string"
+msgid "The SSL/TLS certificate received from server is expired"
+msgstr "Το SSL/TLS πιστοποιητικό που ελήφθη από τον εξυπηρετητή έχει λήξει"
+
+#: KTp/error-dictionary.cpp:45
+#, kde-format
+msgctxt "Verbose user visible error string"
+msgid ""
+"The SSL/TLS certificate received from server has different fingerprint than "
+"expected"
+msgstr ""
+"Το SSL/TLS πιστοποιητικό που ελήφθη από τον εξυπηρετητή έχει διαφορετικό "
+"αποτύπωμα από το αναμενόμενο"
+
+#: KTp/error-dictionary.cpp:47
+#, kde-format
+msgctxt "Verbose user visible error string"
+msgid ""
+"The SSL/TLS certificate received from server has different hostname than "
+"expected"
+msgstr ""
+"Το SSL/TLS πιστοποιητικό που ελήφθη από τον εξυπηρετητή έχει διαφορετικό "
+"όνομα υπολογιστή από το αναμενόμενο"
+
+#: KTp/error-dictionary.cpp:49
+#, kde-format
+msgctxt "Verbose user visible error string"
+msgid "The SSL/TLS certificate received from server uses too weak encryption"
+msgstr ""
+"Το SSL/TLS πιστοποιητικό που ελήφθη από τον εξυπηρετητή έχει πολύ ασθενή "
+"κρυπτογράφηση"
+
+#: KTp/error-dictionary.cpp:51
+#, kde-format
+msgctxt "Verbose user visible error string"
+msgid "The SSL/TLS certificate received from server is invalid"
+msgstr ""
+"Το SSL/TLS πιστοποιητικό που ελήφθη από τον εξυπηρετητή δεν είναι έγκυρο"
+
+#: KTp/error-dictionary.cpp:53
+#, kde-format
+msgctxt "Verbose user visible error string"
+msgid "The SSL/TLS certificate received from server has exceeded length limit"
+msgstr ""
+"Το SSL/TLS πιστοποιητικό που ελήφθη από τον εξυπηρετητή έχει υπερβεί το όριο "
+"μήκους"
+
+#: KTp/error-dictionary.cpp:55
+#, kde-format
+msgctxt "Verbose user visible error string"
+msgid "The SSL/TLS certificate received from server has not been activated yet"
+msgstr ""
+"Το SSL/TLS πιστοποιητικό που ελήφθη από τον εξυπηρετητή δεν έχει "
+"ενεργοποιηθεί ακόμη"
+
+#: KTp/error-dictionary.cpp:57
+#, kde-format
+msgctxt "Verbose user visible error string"
+msgid "The server did not provide any SSL/TLS certificate"
+msgstr "Ο εξυπηρετητής δεν παρείχε κανένα SSL/TLS πιστοποιητικό"
+
+#: KTp/error-dictionary.cpp:59
+#, kde-format
+msgctxt "Verbose user visible error string"
+msgid "The SSL/TLS certificate received from server has been revoked"
+msgstr "Το SSL/TLS πιστοποιητικό που ελήφθη από τον εξυπηρετητή έχει ανακληθεί"
+
+#: KTp/error-dictionary.cpp:61
+#, kde-format
+msgctxt "Verbose user visible error string"
+msgid ""
+"The SSL/TLS certificate received from server was self-signed by the server "
+"and is untrusted"
+msgstr ""
+"Το SSL/TLS πιστοποιητικό που ελήφθη από τον εξυπηρετητή είχε υπογραφεί από "
+"τον εξυπηρετητή και δεν είναι έμπιστο"
+
+#: KTp/error-dictionary.cpp:63
+#, kde-format
+msgctxt "Verbose user visible error string"
+msgid ""
+"The SSL/TLS certificate received from server was not signed by a trusted "
+"certificate authority"
+msgstr ""
+"Το SSL/TLS πιστοποιητικό που ελήφθη από τον εξυπηρετητή δεν είχε υπογραφεί "
+"από έμπιστη αρχή πιστοποίησης"
+
+#: KTp/error-dictionary.cpp:65
+#, kde-format
+msgctxt "Verbose user visible error string"
+msgid "You have been banned from the channel"
+msgstr "Έχετε αποκλειστεί από το κανάλι"
+
+#: KTp/error-dictionary.cpp:67
+#, kde-format
+msgctxt "Verbose user visible error string"
+msgid "The channel is full"
+msgstr "το κανάλι είναι πλήρες"
+
+#: KTp/error-dictionary.cpp:69
+#, kde-format
+msgctxt "Verbose user visible error string"
+msgid "The channel is invite-only"
+msgstr "Το κανάλι είναι με πρόσκληση μόνο"
+
+#: KTp/error-dictionary.cpp:71
+#, kde-format
+msgctxt "Verbose user visible error string"
+msgid "You have been kicked from the channel"
+msgstr "Έχετε εκδιωχθεί από το κανάλι"
+
+#: KTp/error-dictionary.cpp:73
+#, kde-format
+msgctxt "Verbose user visible error string"
+msgid "An unexpected error has occurred"
+msgstr "Έχει παρουσιαστεί απρόσμενο σφάλμα"
+
+#: KTp/error-dictionary.cpp:75
+#, kde-format
+msgctxt "Verbose user visible error string"
+msgid "Could not establish connection"
+msgstr "Αδυναμία έναρξης σύνδεσης"
+
+#: KTp/error-dictionary.cpp:77
+#, kde-format
+msgctxt "Verbose user visible error string"
+msgid "Connection to server was lost"
+msgstr "Η σύνδεση στον εξυπηρετητή χάθηκε"
+
+#: KTp/error-dictionary.cpp:79
+#, kde-format
+msgctxt "Verbose user visible error string"
+msgid "Server refused your connection"
+msgstr "Ο εξυπηρετητής αρνήθηκε τη σύνδεσή σας"
+
+#: KTp/error-dictionary.cpp:81
+#, kde-format
+msgctxt "Verbose user visible error string"
+msgid ""
+"Somewhere there is another client connecting with your account and your "
+"current connection is lost"
+msgstr ""
+"Κάπου υπάρχει άλλος πελάτης σε σύνδεση με το λογαριασμό σας και η τρέχουσα "
+"σύνδεσή σας έχει χαθεί"
+
+#: KTp/error-dictionary.cpp:83
+#, kde-format
+msgctxt "Verbose user visible error string"
+msgid "You have been disconnected"
+msgstr "Έχετε αποσυνδεθεί"
+
+#: KTp/error-dictionary.cpp:85
+#, kde-format
+msgctxt "Verbose user visible error string"
+msgid "Selected user does not exist"
+msgstr "Ο επιλεγμένος χρήστης δεν υπάρχει"
+
+#: KTp/error-dictionary.cpp:87
+#, kde-format
+msgctxt "Verbose user visible error string"
+msgid "Emergency calls are not supported"
+msgstr "Οι επείγουσες κλήσεις δεν υποστηρίζονται"
+
+#: KTp/error-dictionary.cpp:89
+#, kde-format
+msgctxt "Verbose user visible error string"
+msgid "An encryption error has occurred"
+msgstr "Έχει παρουσιαστεί σφάλμα κρυπτογράφησης"
+
+#: KTp/error-dictionary.cpp:91
+#, kde-format
+msgctxt "Verbose user visible error string"
+msgid "Requested encryption is not available"
+msgstr "Η αιτηθείσα κρυπτογράφηση δεν είναι διαθέσιμη"
+
+#: KTp/error-dictionary.cpp:93
+#, kde-format
+msgctxt "Verbose user visible error string"
+msgid "An invalid argument was provided"
+msgstr "Δόθηκε μη έγκυρο όρισμα"
+
+#: KTp/error-dictionary.cpp:95
+#, kde-format
+msgctxt "Verbose user visible error string"
+msgid "The specified handle is unknown on this channel"
+msgstr "Ο δοσμένος χειρισμός είναι άγνωστος στο κανάλι αυτό"
+
+#: KTp/error-dictionary.cpp:97
+#, kde-format
+msgctxt "Verbose user visible error string"
+msgid "There appears to be a problem with your network, check your connection"
+msgstr "Φαίνεται να υπάρχει πρόβλημα με το δίκτυό σας, ελέγξτε τη σύνδεσή σας"
+
+#: KTp/error-dictionary.cpp:99
+#, kde-format
+msgctxt "Verbose user visible error string"
+msgid "You were removed from the channel because you did not respond"
+msgstr "Διαγραφήκατε από το κανάλι επειδή δεν απαντήσατε"
+
+#: KTp/error-dictionary.cpp:101
+#, kde-format
+msgctxt "Verbose user visible error string"
+msgid "The service is not available"
+msgstr "Η υπηρεσία δεν είναι διαθέσιμη"
+
+#: KTp/error-dictionary.cpp:103
+#, kde-format
+msgctxt "Verbose user visible error string"
+msgid "The contact does not have the requested capabilities"
+msgstr "Η επαφή δεν διαθέτει τις απαιτούμενες δυνατότητες"
+
+#: KTp/error-dictionary.cpp:105
+#, kde-format
+msgctxt "Verbose user visible error string"
+msgid "This operation is not implemented"
+msgstr "Η λειτουργία αυτή δεν έχει εφαρμοστεί"
+
+#: KTp/error-dictionary.cpp:107
+#, kde-format
+msgctxt "Verbose user visible error string"
+msgid "This operation is not yet implemented"
+msgstr "Η λειτουργία αυτή δεν έχει εφαρμοστεί ακόμη"
+
+#: KTp/error-dictionary.cpp:109
+#, kde-format
+msgctxt "Verbose user visible error string"
+msgid "The requested channel is already being handled by some other process"
+msgstr "Το αιτούμενο κανάλι το χειρίζεται ήδη μια άλλη διεργασία"
+
+#: KTp/error-dictionary.cpp:111
+#, kde-format
+msgctxt "Verbose user visible error string"
+msgid "This operation is unavailable for offline contacts"
+msgstr "Η λειτουργία αυτή δεν είναι διαθέσιμη για επαφές εκτός σύνδεσης"
+
+#: KTp/error-dictionary.cpp:113
+#, kde-format
+msgctxt "Verbose user visible error string"
+msgid "You are not permitted to perform this operation"
+msgstr "Σας επιτρέπεται να πραγματοποιήσετε αυτήν τη λειτουργία"
+
+#: KTp/error-dictionary.cpp:115
+#, kde-format
+msgctxt "Verbose user visible error string"
+msgid "Current call was picked up by another resource"
+msgstr "Κάποιος άλλος πόρος ανταποκρίθηκε στην τρέχουσα κλήση"
+
+#: KTp/error-dictionary.cpp:117
+#, kde-format
+msgctxt "Verbose user visible error string"
+msgid "Account with this username already exists"
+msgstr "Λογαριασμός με αυτό το όνομα χρήστη υπάρχει ήδη"
+
+#: KTp/error-dictionary.cpp:119
+#, kde-format
+msgctxt "Verbose user visible error string"
+msgid "The receiver rejected your call"
+msgstr "Ο δέκτης απέρριψε την κλήση σας"
+
+#: KTp/error-dictionary.cpp:121
+#, kde-format
+msgctxt "Verbose user visible error string"
+msgid ""
+"There are insufficient resources (like free memory) to finish the operation "
+"at the moment"
+msgstr ""
+"Δεν υπάρχουν επαρκείς πόροι (όπως ελεύθερη μνήμη) για να ολοκληρωθεί η "
+"λειτουργία προς το παρόν"
+
+#: KTp/error-dictionary.cpp:123
+#, kde-format
+msgctxt "Verbose user visible error string"
+msgid ""
+"Your request hit a busy resource somewhere along the way and the operation "
+"was unable to finish"
+msgstr ""
+"Το αίτημά σας προσέκρουσε σε απασχολημένο πόρο κάπου στη διαδρομή και η "
+"λειτουργία δεν ήταν δυνατό να ολοκληρωθεί"
+
+#: KTp/error-dictionary.cpp:125
+#, kde-format
+msgctxt "Verbose user visible error string"
+msgid "An internal error has occurred (known as the 'Confused service error')"
+msgstr ""
+"Έχει παρουσιαστεί εσωτερικό σφάλμα (γνωστό ως 'Confused service error')"
+
+#: KTp/error-dictionary.cpp:127
+#, kde-format
+msgctxt "Verbose user visible error string"
+msgid ""
+"The installed libraries are too old. Please try updating all Telepathy "
+"packages to a newer version"
+msgstr ""
+"Οι εγκατεστημένες βιβλιοθήκες είναι πολύ παλαιές. Προσπαθήστε να ενημερώσετε "
+"όλα τα πακέτα telepathy με νέες εκδόσεις"
+
+#: KTp/error-dictionary.cpp:129
+#, kde-format
+msgctxt "Verbose user visible error string"
+msgid "The channel was terminated for no apparent reason"
+msgstr "Το κανάλι τερματίστηκε χωρίς προφανή αιτία"
+
+#: KTp/error-dictionary.cpp:131
+#, kde-format
+msgctxt "Verbose user visible error string"
+msgid ""
+"This operation can not be finished as it would break your requested anonymity"
+msgstr ""
+"Η λειτουργία αυτή δεν ολοκληρώθηκε καθώς θα διέκοπτε το αίτημά σας για "
+"ανωνυμία"
+
+#: KTp/error-dictionary.cpp:133
+#, kde-format
+msgctxt "Verbose user visible error string"
+msgid "Some of the IM components are not working correctly"
+msgstr "Κάποια από τα IM συστατικά δεν λειτουργούν σωστά"
+
+#: KTp/error-dictionary.cpp:135
+#, kde-format
+msgctxt "User visible error string"
+msgid "An unknown error was encountered (%1), please report this"
+msgstr "Βρέθηκε άγνωστο σφάλμα (%1), δηλώστε το με σχετική αναφορά"
+
+#: KTp/error-dictionary.cpp:142
+#, kde-format
+msgctxt "Short user visible error string"
+msgid "Connected elsewhere"
+msgstr "Σε σύνδεση κάπου αλλού"
+
+#: KTp/error-dictionary.cpp:144
+#, kde-format
+msgctxt "Short user visible error string"
+msgid "Authentication failed"
+msgstr "Η ταυτοποίηση απέτυχε"
+
+#: KTp/error-dictionary.cpp:146
+#, kde-format
+msgctxt "Short user visible error string"
+msgid "Channel too busy"
+msgstr "Το κανάλι είναι πολύ απασχολημένο"
+
+#: KTp/error-dictionary.cpp:148
+#, kde-format
+msgctxt "Short user visible error string"
+msgid "Cancelled by user"
+msgstr "Ακυρώθηκε από τον χρήστη"
+
+#: KTp/error-dictionary.cpp:150
+#, kde-format
+msgctxt "Short user visible error string"
+msgid "Certificate is expired"
+msgstr "Το πιστοποιητικό έληξε"
+
+#: KTp/error-dictionary.cpp:152
+#, kde-format
+msgctxt "Short user visible error string"
+msgid "Wrong certificate fingerprint"
+msgstr "Λάθος αποτύπωμα πιστοποιητικού"
+
+#: KTp/error-dictionary.cpp:154
+#, kde-format
+msgctxt "Short user visible error string"
+msgid "Wrong certificate hostname"
+msgstr "Λάθος όνομα υπολογιστή πιστοποιητικού"
+
+#: KTp/error-dictionary.cpp:156
+#, kde-format
+msgctxt "Short user visible error string"
+msgid "Too weak certificate encryption"
+msgstr "Πολύ ασθενής κρυπτογράφηση πιστοποιητικού"
+
+#: KTp/error-dictionary.cpp:158
+#, kde-format
+msgctxt "Short user visible error string"
+msgid "Invalid certificate"
+msgstr "Μη έγκυρο πιστοποιητικό"
+
+#: KTp/error-dictionary.cpp:160
+#, kde-format
+msgctxt "Short user visible error string"
+msgid "Certificate length limit exceeded"
+msgstr "Υπέρβαση ορίου μήκους πιστοποιητικού"
+
+#: KTp/error-dictionary.cpp:162
+#, kde-format
+msgctxt "Short user visible error string"
+msgid "Certificate not yet active"
+msgstr "Το πιστοποιητικό δεν είναι ακόμη ενεργό"
+
+#: KTp/error-dictionary.cpp:164
+#, kde-format
+msgctxt "Short user visible error string"
+msgid "No certificate from server"
+msgstr "Κανένα πιστοποιητικό από εξυπηρετητή"
+
+#: KTp/error-dictionary.cpp:166
+#, kde-format
+msgctxt "Short user visible error string"
+msgid "Certificate revoked"
+msgstr "Το πιστοποιητικό ανακλήθηκε"
+
+#: KTp/error-dictionary.cpp:168
+#, kde-format
+msgctxt "Short user visible error string"
+msgid "Untrusted self-signed certificate"
+msgstr "Μη έμπιστο ιδιόγραφο πιστοποιητικό"
+
+#: KTp/error-dictionary.cpp:170
+#, kde-format
+msgctxt "Short user visible error string"
+msgid "Untrusted certificate"
+msgstr "Μη έμπιστο πιστοποιητικό"
+
+#: KTp/error-dictionary.cpp:172
+#, kde-format
+msgctxt "Short user visible error string"
+msgid "Banned from channel"
+msgstr "Σε αποκλεισμό από κανάλι"
+
+#: KTp/error-dictionary.cpp:174
+#, kde-format
+msgctxt "Short user visible error string"
+msgid "The channel is full"
+msgstr "Το κανάλι είναι πλήρες"
+
+#: KTp/error-dictionary.cpp:176
+#, kde-format
+msgctxt "Short user visible error string"
+msgid "The channel is invite-only"
+msgstr "Το κανάλι είναι με πρόσκληση μόνο"
+
+#: KTp/error-dictionary.cpp:178
+#, kde-format
+msgctxt "Short user visible error string"
+msgid "Kicked from channel"
+msgstr "Σε εκδίωξη από κανάλι"
+
+#: KTp/error-dictionary.cpp:180
+#, kde-format
+msgctxt "Short user visible error string"
+msgid "Something's seriously wrong"
+msgstr "Κάποιο σοβαρό λάθος υπάρχει"
+
+#: KTp/error-dictionary.cpp:182
+#, kde-format
+msgctxt "Short user visible error string"
+msgid "Connection failed"
+msgstr "Η σύνδεση απέτυχε"
+
+#: KTp/error-dictionary.cpp:184
+#, kde-format
+msgctxt "Short user visible error string"
+msgid "Connection lost"
+msgstr "Η σύνδεση χάθηκε"
+
+#: KTp/error-dictionary.cpp:186
+#, kde-format
+msgctxt "Short user visible error string"
+msgid "Connection refused"
+msgstr "Άρνηση σύνδεσης"
+
+#: KTp/error-dictionary.cpp:188
+#, kde-format
+msgctxt "Short user visible error string"
+msgid "Connection stolen by other account"
+msgstr "Η σύνδεση εκλάπη από άλλον λογαριασμό"
+
+#: KTp/error-dictionary.cpp:190
+#, kde-format
+msgctxt "Short user visible error string"
+msgid "Disconnected"
+msgstr "Σε αποσύνδεση"
+
+#: KTp/error-dictionary.cpp:192
+#, kde-format
+msgctxt "Short user visible error string"
+msgid "User does not exist"
+msgstr "Ο χρήστης δεν υπάρχει"
+
+#: KTp/error-dictionary.cpp:194
+#, kde-format
+msgctxt "Short user visible error string"
+msgid "Emergency calls unsupported"
+msgstr "Μη υποστηριζόμενες επείγουσες κλήσεις"
+
+#: KTp/error-dictionary.cpp:196
+#, kde-format
+msgctxt "Short user visible error string"
+msgid "Encryption error"
+msgstr "Σφάλμα κρυπτογράφησης"
+
+#: KTp/error-dictionary.cpp:198
+#, kde-format
+msgctxt "Short user visible error string"
+msgid "Encryption not available"
+msgstr "Η κρυπτογράφηση δεν είναι διαθέσιμη"
+
+#: KTp/error-dictionary.cpp:200
+#, kde-format
+msgctxt "Short user visible error string"
+msgid "Invalid argument"
+msgstr "Μη έγκυρο όρισμα"
+
+#: KTp/error-dictionary.cpp:202
+#, kde-format
+msgctxt "Short user visible error string"
+msgid "Invalid handle"
+msgstr "Μη έγκυρος χειρισμός"
+
+#: KTp/error-dictionary.cpp:204
+#, kde-format
+msgctxt "Short user visible error string"
+msgid "Network error"
+msgstr "Σφάλμα δικτύου"
+
+#: KTp/error-dictionary.cpp:206
+#, kde-format
+msgctxt "Short user visible error string"
+msgid "Removed from channel"
+msgstr "Διαγραφή από κανάλι"
+
+#: KTp/error-dictionary.cpp:208
+#, kde-format
+msgctxt "Short user visible error string"
+msgid "Service not available"
+msgstr "Η υπηρεσία δεν είναι διαθέσιμη"
+
+#: KTp/error-dictionary.cpp:210
+#, kde-format
+msgctxt "Short user visible error string"
+msgid "Contact has no support"
+msgstr "Η επαφή δεν έχει υποστήριξη"
+
+#: KTp/error-dictionary.cpp:212
+#, kde-format
+msgctxt "Short user visible error string"
+msgid "Operation not implemented"
+msgstr "Η λειτουργία δεν έχει εφαρμοστεί"
+
+#: KTp/error-dictionary.cpp:214
+#, kde-format
+msgctxt "Short user visible error string"
+msgid "Operation not yet implemented"
+msgstr "Η λειτουργία δεν έχει εφαρμοστεί ακόμη"
+
+#: KTp/error-dictionary.cpp:216
+#, kde-format
+msgctxt "Short user visible error string"
+msgid "Channel already being handled"
+msgstr "Το κανάλι είναι ήδη αντικείμενο χειρισμού"
+
+#: KTp/error-dictionary.cpp:218
+#, kde-format
+msgctxt "Short user visible error string"
+msgid "Contact is offline"
+msgstr "Η επαφή είναι εκτός σύνδεσης"
+
+#: KTp/error-dictionary.cpp:220
+#, kde-format
+msgctxt "Short user visible error string"
+msgid "Operation not permitted"
+msgstr "Η λειτουργία δεν επιτρέπεται"
+
+#: KTp/error-dictionary.cpp:222
+#, kde-format
+msgctxt "Short user visible error string"
+msgid "Call picked by other resource"
+msgstr "Άλλος πόρος ανταποκρίθηκε στην κλήση"
+
+#: KTp/error-dictionary.cpp:224
+#, kde-format
+msgctxt "Short user visible error string"
+msgid "Username already taken"
+msgstr "Το όνομα χρήστη είναι ήδη σε χρήση"
+
+#: KTp/error-dictionary.cpp:226
+#, kde-format
+msgctxt "Short user visible error string"
+msgid "Call rejected"
+msgstr "Η κλήση απορρίφθηκε"
+
+#: KTp/error-dictionary.cpp:228
+#, kde-format
+msgctxt "Short user visible error string"
+msgid "Insufficient resources"
+msgstr "Ανεπαρκείς πόροι"
+
+#: KTp/error-dictionary.cpp:230
+#, kde-format
+msgctxt "Short user visible error string"
+msgid "Service is busy"
+msgstr "Η υπηρεσία είναι απασχολημένη"
+
+#: KTp/error-dictionary.cpp:232
+#, kde-format
+msgctxt "Short user visible error string"
+msgid "Internal error"
+msgstr "Εσωτερικό σφάλμα"
+
+#: KTp/error-dictionary.cpp:234
+#, kde-format
+msgctxt "Short user visible error string"
+msgid "Software upgrade required"
+msgstr "Απαιτείται αναβάθμιση λογισμικού"
+
+#: KTp/error-dictionary.cpp:236
+#, kde-format
+msgctxt "Short user visible error string"
+msgid "Channel terminated"
+msgstr "Το κανάλι τερματίστηκε"
+
+#: KTp/error-dictionary.cpp:238
+#, kde-format
+msgctxt "Short user visible error string"
+msgid "Anonymity break possible"
+msgstr "Εφικτή η διακοπή ανωνυμίας"
+
+#: KTp/error-dictionary.cpp:240
+#, kde-format
+msgctxt "Short user visible error string"
+msgid "Internal component error"
+msgstr "Εσωτερικό σφάλμα συστατικού"
+
+#: KTp/error-dictionary.cpp:244
+#, kde-format
+msgctxt "User visible error string"
+msgid "Unknown error"
+msgstr "Άγνωστο σφάλμα"
+
+#: KTp/logs-importer-private.cpp:52
+#, kde-format
+msgid "No Kopete logs found"
+msgstr "Δεν βρέθηκαν ημερολόγια του kopete"
+
+#: KTp/logs-importer-private.cpp:332 KTp/logs-importer-private.cpp:339
+#, kde-format
+msgid "Invalid Kopete log format"
+msgstr "Μη έγκυρος τύπος ημερολογίου καταγραφών του kopete"
+
+#: KTp/Models/accounts-list-model.cpp:316
+#, kde-format
+msgctxt "This is a connection state"
+msgid "Connecting"
+msgstr "Συνδέεται"
+
+#: KTp/Models/accounts-list-model.cpp:318
+#, kde-format
+msgctxt "This is a connection state"
+msgid "Disconnected"
+msgstr "Αποσυνδεδεμένο"
+
+#: KTp/Models/accounts-list-model.cpp:320
+#, kde-format
+msgctxt "This is an unknown connection state"
+msgid "Unknown"
+msgstr "Άγνωστη"
+
+#: KTp/Models/accounts-list-model.cpp:323
+#, kde-format
+msgctxt "This is a disabled account"
+msgid "Disabled"
+msgstr "Ανενεργός"
+
+#: KTp/Models/groups-tree-proxy-model.cpp:65
+#, kde-format
+msgid "Unsorted"
+msgstr "Αταξινόμητα"
+
+#: KTp/Models/rooms-model.cpp:73
+#, kde-format
+msgid "Password required"
+msgstr "Απαιτείται κωδικός πρόσβασης"
+
+#: KTp/Models/rooms-model.cpp:75
+#, kde-format
+msgid "No password required"
+msgstr "Δεν απαιτείται κωδικός πρόσβασης"
+
+#: KTp/Models/rooms-model.cpp:93
+#, kde-format
+msgid "Member count"
+msgstr "Καταμέτρηση μελών"
+
+#: KTp/Models/rooms-model.cpp:113
+#, kde-format
+msgctxt "Chatrooms name"
+msgid "Name"
+msgstr "Όνομα"
+
+#: KTp/Models/rooms-model.cpp:115
+#, kde-format
+msgctxt "Chatrooms description"
+msgid "Description"
+msgstr "Περιγραφή"
+
+#: KTp/Models/rooms-model.cpp:200
+#, kde-format
+msgid "Room bookmarked"
+msgstr "Η αίθουσα προστέθηκε στους σελιδοδείκτες"
+
+#: KTp/Models/rooms-model.cpp:202
+#, kde-format
+msgid "Room not bookmarked"
+msgstr "Η αίθουσα δεν προστέθηκε στους σελιδοδείκτες"
+
+#: KTp/OTR/utils.cpp:78
+#, kde-format
+msgid "OTR error: %1"
+msgstr "Σφάλμα OTR: %1"
+
+#: KTp/OTR/utils.cpp:84
+#, kde-format
+msgid "Received unencrypted message: [%1]"
+msgstr "Ελήφθη μη κρυπτογραφημένο μήνυμα: [%1]"
+
+#: KTp/presence.cpp:115
+#, kde-format
+msgctxt "IM presence: a person is available"
+msgid "Available"
+msgstr "Διαθέσιμος"
+
+#: KTp/presence.cpp:117
+#, kde-format
+msgctxt "IM presence: a person is busy"
+msgid "Busy"
+msgstr "Απασχολημένος"
+
+#: KTp/presence.cpp:119
+#, kde-format
+msgctxt "IM presence: a person is away"
+msgid "Away"
+msgstr "Σε απόσταση"
+
+#: KTp/presence.cpp:121
+#, kde-format
+msgctxt "IM presence: a person is not available"
+msgid "Not Available"
+msgstr "Μη διαθέσιμος"
+
+#: KTp/presence.cpp:123
+#, kde-format
+msgctxt "IM presence: a person is invisible"
+msgid "Invisible"
+msgstr "Αόρατος"
+
+#: KTp/presence.cpp:125
+#, kde-format
+msgctxt "IM presence: a person is offline"
+msgid "Offline"
+msgstr "Εκτός σύνδεσης"
+
+#: KTp/telepathy-handler-application.cpp:134
+#, kde-format
+msgid "Persistent mode (do not exit on timeout)"
+msgstr "Μόνιμη λειτουργία (χωρίς έξοδο μετά το χρονικό περιθώριο)"
+
+#: KTp/telepathy-handler-application.cpp:135
+#, kde-format
+msgid "Show Telepathy debugging information"
+msgstr "Εμφάνιση πληροφοριών διόρθωσης σφαλμάτων για το telepathy"
+
+#: KTp/Widgets/add-contact-dialog.cpp:91
+#, kde-format
+msgid "Add new contact"
+msgstr "Προσθήκη νέας επαφής"
+
+#: KTp/Widgets/add-contact-dialog.cpp:155 KTp/Widgets/start-chat-dialog.cpp:95
+#, kde-format
+msgid "No account selected."
+msgstr "Δεν επελέγη λογαριασμός."
+
+#: KTp/Widgets/add-contact-dialog.cpp:157
+#, kde-format
+msgid ""
+"The requested account has been disconnected and so the contact could not be "
+"added."
+msgstr ""
+"Ο λογαριασμός που ζητήθηκε έχει αποσυνδεθεί και έτσι η επαφή δεν μπορεί να "
+"προστεθεί."
+
+#: KTp/Widgets/add-contact-dialog.cpp:160
+#, kde-format
+msgid "You did not specify the name of the contact to add."
+msgstr "Δεν ορίσατε το όνομα της επαφής που θα προσθέσετε."
+
+#: KTp/Widgets/add-contact-dialog.cpp:186
+#, kde-format
+msgid "Failed to create new contact."
+msgstr "Αποτυχία δημιουργίας νέας επαφής."
+
+#: KTp/Widgets/add-contact-dialog.cpp:203
+#, kde-format
+msgid "Failed to request presence subscription from the requested contact."
+msgstr "Αποτυχία αιτήματος δήλωσης παρουσίας από την ζητηθείσα επαφή."
+
+#. i18n: ectx: property (text), widget (QLabel, label)
+#: KTp/Widgets/add-contact-dialog.ui:20 KTp/Widgets/start-chat-dialog.ui:17
+#, kde-format
+msgid "Account:"
+msgstr "Λογαριασμός:"
+
+#. i18n: ectx: property (text), widget (QLabel, label_2)
+#: KTp/Widgets/add-contact-dialog.ui:37 KTp/Widgets/start-chat-dialog.ui:24
+#, kde-format
+msgid "Screen Name:"
+msgstr "Όνομα στην οθόνη:"
+
+#. i18n: ectx: property (text), widget (QLabel, messageLineLabel)
+#: KTp/Widgets/add-contact-dialog.ui:47
+#, kde-format
+msgid "Message:"
+msgstr "Μήνυμα:"
+
+#. i18n: ectx: property (placeholderText), widget (QLineEdit, messageLineEdit)
+#: KTp/Widgets/add-contact-dialog.ui:54
+#, kde-format
+msgid "Optional message to send"
+msgstr "Προαιρετικό μήνυμα προς αποστολή"
+
+#: KTp/Widgets/contact-grid-dialog.cpp:112
+#, kde-format
+msgid "Search in Contacts..."
+msgstr "Αναζήτηση στις επαφές..."
+
+#. i18n in global static vars
+#: KTp/Widgets/contact-info-dialog.cpp:72
+#, kde-format
+msgid "Full name:"
+msgstr "Ονοματεπώνυμο:"
+
+#: KTp/Widgets/contact-info-dialog.cpp:73
+#, kde-format
+msgid "Nickname:"
+msgstr "Ψευδώνυμο:"
+
+#: KTp/Widgets/contact-info-dialog.cpp:74
+#, kde-format
+msgid "Email:"
+msgstr "Διευθυνση αλληλογραφίας:"
+
+#: KTp/Widgets/contact-info-dialog.cpp:75
+#, kde-format
+msgid "Phone:"
+msgstr "Τηλέφωνο:"
+
+#: KTp/Widgets/contact-info-dialog.cpp:76
+#, kde-format
+msgid "Homepage:"
+msgstr "Ιστοσελίδα:"
+
+#: KTp/Widgets/contact-info-dialog.cpp:77
+#, kde-format
+msgid "Birthday:"
+msgstr "Ημερομηνία γέννησης:"
+
+#: KTp/Widgets/contact-info-dialog.cpp:78
+#, kde-format
+msgid "Organization:"
+msgstr "Οργανισμός:"
+
+#: KTp/Widgets/contact-info-dialog.cpp:153
+#, kde-format
+msgid "Change Avatar"
+msgstr "Αλλαγή avatar"
+
+#: KTp/Widgets/contact-info-dialog.cpp:158
+#, kde-format
+msgid "Clear Avatar"
+msgstr "Καθαρισμός avatar"
+
+#: KTp/Widgets/contact-info-dialog.cpp:228
+#, kde-format
+msgid "Failed to load the new avatar image"
+msgstr "Αποτυχία φόρτωσης της νέας εικόνας του avatar"
+
+#: KTp/Widgets/contact-info-dialog.cpp:334
+#, kde-format
+msgid "Contact can see when you are online:"
+msgstr "Η επαφή μπορεί να δει πότε είστε σε σύνδεση:"
+
+#: KTp/Widgets/contact-info-dialog.cpp:335
+#, kde-format
+msgid "You can see when the contact is online:"
+msgstr "Μπορείτε να δείτε πότε η επαφή είναι σε σύνδεση:"
+
+#: KTp/Widgets/contact-info-dialog.cpp:336
+#, kde-format
+msgid "Contact is blocked:"
+msgstr "Η επαφή είναι σε φραγή:"
+
+#: KTp/Widgets/join-chat-room-dialog.cpp:93
+#, kde-format
+msgctxt "Dialog title"
+msgid "Join Chat Room"
+msgstr "Συμμετοχή στην αίθουσα συνομιλίας"
+
+#: KTp/Widgets/join-chat-room-dialog.cpp:108
+#, kde-format
+msgctxt "button"
+msgid "Join/Create"
+msgstr "Συμμετοχή/Δημιουργία"
+
+#: KTp/Widgets/join-chat-room-dialog.cpp:392
+#, kde-format
+msgctxt "Button text"
+msgid "Query"
+msgstr "Ερώτηση"
+
+#: KTp/Widgets/join-chat-room-dialog.cpp:393
+#, kde-format
+msgctxt "Tooltip text"
+msgid "Start query"
+msgstr "Έναρξη ερώτησης"
+
+#: KTp/Widgets/join-chat-room-dialog.cpp:405
+#, kde-format
+msgctxt "Button text"
+msgid "Stop"
+msgstr "Διακοπή"
+
+#: KTp/Widgets/join-chat-room-dialog.cpp:406
+#, kde-format
+msgctxt "Tooltip text"
+msgid "Stop query"
+msgstr "Διακοπή ερώτησης"
+
+#: KTp/Widgets/join-chat-room-dialog.cpp:454
+#, kde-format
+msgid "Could not join chatroom"
+msgstr "Αδυναμία συμμετοχής στην αίθουσα συνομιλίας"
+
+#. i18n: ectx: property (windowTitle), widget (QWidget, JoinChatRoomDialog)
+#: KTp/Widgets/join-chat-room-dialog.ui:20
+#, kde-format
+msgid "Join Chatroom"
+msgstr "Συμμετοχή στην αίθουσα συνομιλίας"
+
+#. i18n: ectx: property (title), widget (QGroupBox, accountGroupBox)
+#: KTp/Widgets/join-chat-room-dialog.ui:35
+#, kde-format
+msgid "Account"
+msgstr "Λογαριασμός"
+
+#. i18n: ectx: property (title), widget (QGroupBox, chatRoomGroupBox)
+#: KTp/Widgets/join-chat-room-dialog.ui:60
+#, kde-format
+msgid "Chat Room"
+msgstr "Επεξεργασία αίθουσας"
+
+#. i18n: ectx: attribute (title), widget (QWidget, previousTab)
+#: KTp/Widgets/join-chat-room-dialog.ui:70
+#, kde-format
+msgid "Previous"
+msgstr "Προηγούμενο"
+
+#. i18n: ectx: property (text), widget (QPushButton, clearRecentPushButton)
+#: KTp/Widgets/join-chat-room-dialog.ui:98
+#, kde-format
+msgid "Clear Recent Rooms"
+msgstr "Καθαρισμός πρόσφατων αιθουσών"
+
+#. i18n: ectx: property (placeholderText), widget (QLineEdit, lineEdit)
+#: KTp/Widgets/join-chat-room-dialog.ui:108
+#, kde-format
+msgid "Enter chat room name or address"
+msgstr "Καταχωρήστε το όνομα ή τη διεύθυνση της αίθουσας συνομιλίας"
+
+#. i18n: ectx: attribute (title), widget (QWidget, searchTab)
+#: KTp/Widgets/join-chat-room-dialog.ui:119
+#, kde-format
+msgid "Search"
+msgstr "Αναζήτηση"
+
+#. i18n: ectx: property (text), widget (QLabel, serverLabel)
+#: KTp/Widgets/join-chat-room-dialog.ui:125
+#, kde-format
+msgid "Server to be queried:"
+msgstr "Εξυπηρετητής που θα ερωτηθεί:"
+
+#. i18n: ectx: property (placeholderText), widget (QLineEdit, serverLineEdit)
+#: KTp/Widgets/join-chat-room-dialog.ui:134
+#, kde-format
+msgid "Leave blank for the selected account's default server"
+msgstr ""
+"Να παραμείνει κενό για τον προκαθορισμένο εξυπηρετητή του επιλεγμένου "
+"λογαριασμού"
+
+#. i18n: ectx: property (text), widget (QToolButton, queryButton)
+#: KTp/Widgets/join-chat-room-dialog.ui:147
+#, kde-format
+msgid "Query"
+msgstr "Ερώτηση"
+
+#. i18n: ectx: property (placeholderText), widget (QLineEdit, filterBar)
+#: KTp/Widgets/join-chat-room-dialog.ui:189
+#, kde-format
+msgid "Filter rooms"
+msgstr "Φιλτράρισμα αιθουσών"
+
+#: KTp/Widgets/notification-config-dialog.cpp:46
+#: KTp/Widgets/notification-config-dialog.cpp:116
+#, kde-format
+msgid "Configure notifications for %1"
+msgstr "Διαμόρφωση ειδοποιήσεων για %1"
+
+#: KTp/Widgets/notification-config-dialog.cpp:55
+#, kde-format
+msgid "Configure notifications for"
+msgstr "Διαμόρφωση ειδοποιήσεων για"
+
+#: KTp/Widgets/notification-config-dialog.cpp:60
+#, kde-format
+msgid "All users"
+msgstr "Όλους τους χρήστες"
+
+#: KTp/Widgets/notification-config-dialog.cpp:119
+#, kde-format
+msgid "Configure notifications for all users"
+msgstr "Διαμόρφωση ειδοποιήσεων για όλους τους χρήστες"
+
+#: KTp/Widgets/settings-kcm-dialog.cpp:40
+#, kde-format
+msgid ""
+"It appears you do not have the IM Accounts control module installed. Please "
+"install kaccounts-integration package."
+msgstr ""
+"Φαίνεται ότι δεν έχετε εγκατεστημένο το άρθρωμα ελέγχου λογαριασμών "
+"στιγμιαίων μηνυμάτων. Εγκαταστήστε το πακέτο kaccounts-integration."
+
+#: KTp/Widgets/settings-kcm-dialog.cpp:41
+#, kde-format
+msgid "IM Accounts KCM Plugin Is Not Installed"
+msgstr ""
+"Το πρόσθετο KCM για λογαριασμούς στιγμιαίων μηνυμάτων δεν είναι εγκατεστημένο"
+
+#: KTp/Widgets/settings-kcm-dialog.cpp:65
+#, kde-format
+msgid "Notifications"
+msgstr "Ειδοποιήσεις"
+
+#: KTp/Widgets/start-chat-dialog.cpp:63
+#, kde-format
+msgid "Start a chat"
+msgstr "Έναρξη συνομιλίας"
+
+#: KTp/Widgets/start-chat-dialog.cpp:97
+#, kde-format
+msgid ""
+"The requested account has been disconnected and so a chat could not be "
+"initiated."
+msgstr ""
+"Ο λογαριασμός που ζητήθηκε έχει αποσυνδεθεί και έτσι η συνομιλία δεν μπορεί "
+"να ξεκινήσει."
+
+#: KTp/Widgets/start-chat-dialog.cpp:100
+#, kde-format
+msgid "You did not specify the name of the contact to start a chat with."
+msgstr "Δεν ορίσατε το όνομα της επαφής για την έναρξη συνομιλίας με αυτή."
+
+#: KTp/Widgets/start-chat-dialog.cpp:118
+#, kde-format
+msgid ""
+"The contact Screen Name you provided is invalid or does not accept text "
+"chats."
+msgstr ""
+"Το όνομα οθόνης για την επαφή που δώσατε δεν είναι έγκυρο ή δε δέχεται "
+"μηνύματα κειμένου."
+
+#: KTp/Widgets/start-chat-dialog.cpp:144
+#, kde-format
+msgid "Failed to start a chat with the contact."
+msgstr "Αποτυχία εκκίνησης συνομιλίας με την επαφή."
+
+#~ msgid "KDE Telepathy"
+#~ msgstr "KDE Telepathy"
+
+#~ msgid "Save"
+#~ msgstr "Αποθήκευση"
+
+#~ msgid "This room is already in your favorites."
+#~ msgstr "Αυτή η αίθουσα είναι ήδη στις αγαπημένες σας."
+
+#~ msgid "Add room"
+#~ msgstr "Προσθήκη αίθουσας"
+
+#~ msgid "Name"
+#~ msgstr "Όνομα"
+
+#~ msgid "Favorites"
+#~ msgstr "Αγαπημένα"
+
+#~ msgid "Add Room"
+#~ msgstr "Προσθήκη αίθουσας"
+
+#~ msgid "Remove Room"
+#~ msgstr "Αφαίρεση αίθουσας"
+
+#~ msgid "Recent"
+#~ msgstr "Πρόσφατο"
+
+#~ msgid "Remove"
+#~ msgstr "Αφαίρεση"
+
+#~ msgid "Clear list"
+#~ msgstr "Καθαρισμός λίστας"
+
+#, fuzzy
+#~| msgid "KDE Telepathy"
+#~ msgid "KDE Telepathy Debug Tool"
+#~ msgstr "KDE Telepathy"
+
+#~ msgctxt "Short user visible error string"
+#~ msgid "Capability not available"
+#~ msgstr "Η δυνατότητα δεν είναι διαθέσιμη"
+
+#~ msgid "Me"
+#~ msgstr "Εγώ"
+
+#~ msgid "Ungrouped"
+#~ msgstr "Διαχωρισμένα"
+
+#~ msgctxt "Verbose user visible error string"
+#~ msgid "Congratulate yourself - you just reached an impossible situation"
+#~ msgstr ""
+#~ "Δώστε συγχαρητήρια στον εαυτό σας - έχετε μόλις φθάσει σε μια απίθανη "
+#~ "κατάσταση"
+
+#~ msgctxt "Verbose user visible error string"
+#~ msgid "You apparently do not exist"
+#~ msgstr "Προφανώς δεν υπάρχετε"
+
+#~ msgctxt "Short user visible error string"
+#~ msgid "Unknown handle"
+#~ msgstr "Άγνωστος χειρισμός"
+
+#~ msgctxt "Short user visible error string"
+#~ msgid "Contact incapable"
+#~ msgstr "Η επαφή είναι ανίκανη"
+
+#~ msgctxt "Verbose user visible error string"
+#~ msgid "You apparently do not exist "
+#~ msgstr "Προφανώς δεν υπάρχετε "

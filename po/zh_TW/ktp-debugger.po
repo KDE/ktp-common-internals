@@ -1,0 +1,71 @@
+# Copyright (C) YEAR This_file_is_part_of_KDE
+# This file is distributed under the same license as the PACKAGE package.
+#
+# Franklin Weng <franklin@goodhorse.idv.tw>, 2012, 2013, 2014.
+# Tsung-en Hsiao <joshua841025@gmail.com>, 2015.
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: https://bugs.kde.org\n"
+"POT-Creation-Date: 2019-05-20 03:11+0200\n"
+"PO-Revision-Date: 2015-06-05 13:21+0800\n"
+"Last-Translator: Tsung-en Hsiao <joshua841025@gmail.com>\n"
+"Language-Team: Chinese <zh-l10n@lists.linux.org.tw>\n"
+"Language: zh_TW\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Lokalize 2.0\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#, kde-format
+msgctxt "NAME OF TRANSLATORS"
+msgid "Your names"
+msgstr "Frank Weng (a.k.a. Franklin)"
+
+#, kde-format
+msgctxt "EMAIL OF TRANSLATORS"
+msgid "Your emails"
+msgstr "franklin@goodhorse.idv.tw"
+
+#: debug-message-view.cpp:133
+#, kde-format
+msgctxt "@title:window"
+msgid "Save Log"
+msgstr "儲存紀錄"
+
+#: main-window.cpp:48
+#, kde-format
+msgid "Save Log"
+msgstr "儲存紀錄"
+
+#: main-window.cpp:49
+#, kde-format
+msgctxt "Toolbar icon tooltip"
+msgid "Save log of the current tab"
+msgstr "儲存目前分頁的紀錄"
+
+#: main.cpp:31
+#, kde-format
+msgid "KDE Telepathy Debug Tool"
+msgstr "KDE Telepathy 除錯工具"
+
+#: main.cpp:33
+#, kde-format
+msgid "Tool for inspecting logs of the various underlying telepathy components"
+msgstr "檢查多個 telepathy 組件的除錯紀錄的工具"
+
+#: main.cpp:35
+#, kde-format
+msgid "Copyright (C) 2011 Collabora Ltd."
+msgstr "Copyright (C) 2011 Collabora Ltd."
+
+#: main.cpp:36
+#, kde-format
+msgid "George Kiagiadakis"
+msgstr "George Kiagiadakis"
+
+#: main.cpp:36
+#, kde-format
+msgid "Developer"
+msgstr "開發者"

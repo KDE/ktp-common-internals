@@ -1,0 +1,99 @@
+# Copyright (C) YEAR This_file_is_part_of_KDE
+# This file is distributed under the same license as the PACKAGE package.
+#
+# Stefan Asserhäll <stefan.asserhall@bredband.net>, 2012, 2013, 2014, 2015.
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: https://bugs.kde.org\n"
+"POT-Creation-Date: 2019-05-20 03:11+0200\n"
+"PO-Revision-Date: 2015-05-07 17:59+0200\n"
+"Last-Translator: Stefan Asserhäll <stefan.asserhall@bredband.net>\n"
+"Language-Team: Swedish <kde-i18n-doc@kde.org>\n"
+"Language: sv\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: Lokalize 1.5\n"
+
+#, kde-format
+msgctxt "NAME OF TRANSLATORS"
+msgid "Your names"
+msgstr "Stefan Asserhäll"
+
+#, kde-format
+msgctxt "EMAIL OF TRANSLATORS"
+msgid "Your emails"
+msgstr "stefan.asserhall@bredband.net"
+
+#: debug-message-view.cpp:133
+#, kde-format
+msgctxt "@title:window"
+msgid "Save Log"
+msgstr "Spara logg"
+
+#: main-window.cpp:48
+#, kde-format
+msgid "Save Log"
+msgstr "Spara logg"
+
+#: main-window.cpp:49
+#, kde-format
+msgctxt "Toolbar icon tooltip"
+msgid "Save log of the current tab"
+msgstr "Spara den aktuella flikens logg"
+
+#: main.cpp:31
+#, kde-format
+msgid "KDE Telepathy Debug Tool"
+msgstr "KDE:s felsökningsverktyg för Telepathy"
+
+#: main.cpp:33
+#, kde-format
+msgid "Tool for inspecting logs of the various underlying telepathy components"
+msgstr ""
+"Verktyg för att inspektera loggarna från de diverse underliggande Telepathy-"
+"komponenterna"
+
+#: main.cpp:35
+#, kde-format
+msgid "Copyright (C) 2011 Collabora Ltd."
+msgstr "Copyright © 2011 Collabora Ltd."
+
+#: main.cpp:36
+#, kde-format
+msgid "George Kiagiadakis"
+msgstr "George Kiagiadakis"
+
+#: main.cpp:36
+#, kde-format
+msgid "Developer"
+msgstr "Utvecklare"
+
+#~ msgid "Saves the log into a file."
+#~ msgstr "Sparar loggen i en fil."
+
+#~ msgid "Save log"
+#~ msgstr "Spara logg"
+
+#~ msgid "Add Mark"
+#~ msgstr "Lägg till markering"
+
+#~ msgid "Could not find '%1'"
+#~ msgstr "Kunde inte hitta '%1'"
+
+#~ msgid "Mission Control"
+#~ msgstr "Mission Control"
+
+#~ msgid "Gabble"
+#~ msgstr "Gabble"
+
+#~ msgid "Haze"
+#~ msgstr "Haze"
+
+#~ msgid "Salut"
+#~ msgstr "Salut"
+
+#~ msgid "Rakia"
+#~ msgstr "Rakia"

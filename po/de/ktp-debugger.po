@@ -1,0 +1,89 @@
+# Burkhard Lück <lueck@hube-lueck.de>, 2012, 2013, 2014, 2015.
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: https://bugs.kde.org\n"
+"POT-Creation-Date: 2019-05-20 03:11+0200\n"
+"PO-Revision-Date: 2015-05-14 14:17+0200\n"
+"Last-Translator: Burkhard Lück <lueck@hube-lueck.de>\n"
+"Language-Team: German <kde-i18n-de@kde.org>\n"
+"Language: de\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+
+#, kde-format
+msgctxt "NAME OF TRANSLATORS"
+msgid "Your names"
+msgstr "Burkhard Lück"
+
+#, kde-format
+msgctxt "EMAIL OF TRANSLATORS"
+msgid "Your emails"
+msgstr "lueck@hube-lueck.de"
+
+#: debug-message-view.cpp:133
+#, kde-format
+msgctxt "@title:window"
+msgid "Save Log"
+msgstr "Protokoll speichern"
+
+#: main-window.cpp:48
+#, kde-format
+msgid "Save Log"
+msgstr "Protokoll speichern"
+
+#: main-window.cpp:49
+#, kde-format
+msgctxt "Toolbar icon tooltip"
+msgid "Save log of the current tab"
+msgstr "Protokoll des aktiven Unterfensters speichern"
+
+#: main.cpp:31
+#, kde-format
+msgid "KDE Telepathy Debug Tool"
+msgstr "Programm zur Fehlersuche für KDE-Telepathy"
+
+#: main.cpp:33
+#, kde-format
+msgid "Tool for inspecting logs of the various underlying telepathy components"
+msgstr ""
+"Werkzeug zur Inspektion der verschiedenen zugrunde liegenden Telepathy-"
+"Komponenten"
+
+#: main.cpp:35
+#, kde-format
+msgid "Copyright (C) 2011 Collabora Ltd."
+msgstr "Copyright (C) 2011 Collabora Ltd."
+
+#: main.cpp:36
+#, kde-format
+msgid "George Kiagiadakis"
+msgstr "George Kiagiadakis"
+
+#: main.cpp:36
+#, kde-format
+msgid "Developer"
+msgstr "Entwickler"
+
+#~ msgid "Saves the log into a file."
+#~ msgstr "Speichert das Protokoll in eine Datei."
+
+#~ msgid "Save log"
+#~ msgstr "Protokoll speichern"
+
+#~ msgid "Could not find '%1'"
+#~ msgstr "„%1“ nicht gefunden"
+
+#~ msgid "Gabble"
+#~ msgstr "Gabble"
+
+#~ msgid "Haze"
+#~ msgstr "Haze"
+
+#~ msgid "Salut"
+#~ msgstr "Salut"
+
+#~ msgid "Rakia"
+#~ msgstr "Rakia"

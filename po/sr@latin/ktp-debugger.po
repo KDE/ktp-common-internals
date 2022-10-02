@@ -1,0 +1,72 @@
+# Translation of ktp-debugger.po into Serbian.
+# Chusslove Illich <caslav.ilic@gmx.net>, 2012, 2013, 2014, 2015.
+msgid ""
+msgstr ""
+"Project-Id-Version: ktp-debugger\n"
+"Report-Msgid-Bugs-To: https://bugs.kde.org\n"
+"POT-Creation-Date: 2019-05-20 03:11+0200\n"
+"PO-Revision-Date: 2015-05-08 19:26+0200\n"
+"Last-Translator: Chusslove Illich <caslav.ilic@gmx.net>\n"
+"Language-Team: Serbian <kde-i18n-sr@kde.org>\n"
+"Language: sr@latin\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=4; plural=n==1 ? 3 : n%10==1 && n%100!=11 ? 0 : n"
+"%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
+"X-Accelerator-Marker: &\n"
+"X-Text-Markup: kde4\n"
+"X-Environment: kde\n"
+
+#, kde-format
+msgctxt "NAME OF TRANSLATORS"
+msgid "Your names"
+msgstr "Časlav Ilić"
+
+#, kde-format
+msgctxt "EMAIL OF TRANSLATORS"
+msgid "Your emails"
+msgstr "caslav.ilic@gmx.net"
+
+#: debug-message-view.cpp:133
+#, kde-format
+msgctxt "@title:window"
+msgid "Save Log"
+msgstr "Upisivanje dnevnika"
+
+# >> @title:window
+#: main-window.cpp:48
+#, kde-format
+msgid "Save Log"
+msgstr "Upisivanje dnevnika"
+
+#: main-window.cpp:49
+#, kde-format
+msgctxt "Toolbar icon tooltip"
+msgid "Save log of the current tab"
+msgstr "Sačuvaj dnevnik tekućeg jezička"
+
+#: main.cpp:31
+#, kde-format
+msgid "KDE Telepathy Debug Tool"
+msgstr "KDE Telepathy alatka za ispravljanje"
+
+#: main.cpp:33
+#, kde-format
+msgid "Tool for inspecting logs of the various underlying telepathy components"
+msgstr "Alatka za ispitivanje dnevnika raznih podložnih Telepathy komponenti"
+
+#: main.cpp:35
+#, kde-format
+msgid "Copyright (C) 2011 Collabora Ltd."
+msgstr "© 2011, Collabora"
+
+#: main.cpp:36
+#, kde-format
+msgid "George Kiagiadakis"
+msgstr "Georgios Kjajadakis"
+
+#: main.cpp:36
+#, kde-format
+msgid "Developer"
+msgstr "Programer"
