@@ -72,12 +72,12 @@ msgstr "Converses anteriors..."
 #: kpeople/actionsplugin/kpeople-actions-plugin.cpp:284
 #, kde-format
 msgid "Choose files to send to %1"
-msgstr "Seleccioneu els fitxers que s'enviaran a %1"
+msgstr "Seleccioneu els fitxers que s'han d'enviar a %1"
 
 #: kpeople/actionsplugin/kpeople-actions-plugin.cpp:295
 #, kde-format
 msgid "Choose a file to edit with %1"
-msgstr "Seleccioneu un fitxer que s'ha d'editar amb %1"
+msgstr "Seleccioneu un fitxer que s'editarà amb %1"
 
 #: kpeople/uiplugins/chatplugin/kpeople_chat_plugin.cpp:58
 #, kde-format
@@ -922,7 +922,7 @@ msgstr ""
 #: KTp/Widgets/add-contact-dialog.cpp:160
 #, kde-format
 msgid "You did not specify the name of the contact to add."
-msgstr "No heu especificat el nom del contacte a afegir."
+msgstr "No heu especificat el nom del contacte que s'ha d'afegir."
 
 #: KTp/Widgets/add-contact-dialog.cpp:186
 #, kde-format
@@ -957,7 +957,7 @@ msgstr "Missatge:"
 #: KTp/Widgets/add-contact-dialog.ui:54
 #, kde-format
 msgid "Optional message to send"
-msgstr "Missatge opcional a enviar"
+msgstr "Missatge opcional que s'ha d'enviar"
 
 #: KTp/Widgets/contact-grid-dialog.cpp:112
 #, kde-format
