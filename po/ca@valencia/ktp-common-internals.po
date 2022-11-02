@@ -838,12 +838,12 @@ msgstr "Descripció"
 #: KTp/Models/rooms-model.cpp:200
 #, kde-format
 msgid "Room bookmarked"
-msgstr "Sala inclosa a les adreces d'interés"
+msgstr "Sala inclosa en les adreces d'interés"
 
 #: KTp/Models/rooms-model.cpp:202
 #, kde-format
 msgid "Room not bookmarked"
-msgstr "Sala no inclosa a les adreces d'interés"
+msgstr "Sala no inclosa en les adreces d'interés"
 
 #: KTp/OTR/utils.cpp:78
 #, kde-format
