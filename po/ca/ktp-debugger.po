@@ -74,24 +74,3 @@ msgstr "George Kiagiadakis"
 #, kde-format
 msgid "Developer"
 msgstr "Desenvolupador"
-
-#~ msgid "Add Mark"
-#~ msgstr "Afegeix una marca"
-
-#~ msgid "Could not find '%1'"
-#~ msgstr "No s'ha pogut trobar «%1»"
-
-#~ msgid "Mission Control"
-#~ msgstr "Control de missió"
-
-#~ msgid "Gabble"
-#~ msgstr "Gabble"
-
-#~ msgid "Haze"
-#~ msgstr "Haze"
-
-#~ msgid "Salut"
-#~ msgstr "Salut"
-
-#~ msgid "Rakia"
-#~ msgstr "Rakia"
