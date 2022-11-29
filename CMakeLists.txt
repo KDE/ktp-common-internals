@@ -2,8 +2,8 @@ cmake_minimum_required (VERSION 3.16)
 
 # KDE Application Version, managed by release script
 set (RELEASE_SERVICE_VERSION_MAJOR "22")
-set (RELEASE_SERVICE_VERSION_MINOR "11")
-set (RELEASE_SERVICE_VERSION_MICRO "90")
+set (RELEASE_SERVICE_VERSION_MINOR "12")
+set (RELEASE_SERVICE_VERSION_MICRO "0")
 
 # Bump for every 0.x release, or whenever BC changes
 set (KTP_SONUMBER 9) # SO 9 is for 15.08 release
