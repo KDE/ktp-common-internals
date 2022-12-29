@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ktp-common-internals\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
 "POT-Creation-Date: 2020-02-18 03:18+0100\n"
-"PO-Revision-Date: 2022-12-27 08:44+0100\n"
+"PO-Revision-Date: 2022-12-28 09:36+0100\n"
 "Last-Translator: Temuri Doghonadze <temuri.doghonadze@gmail.com>\n"
 "Language-Team: Georgian <kde-i18n-doc@kde.org>\n"
 "Language: ka\n"
@@ -101,7 +101,7 @@ msgstr ""
 #: KTp/actions.cpp:183
 #, kde-format
 msgid "Transferred file renamed"
-msgstr ""
+msgstr "გადაგზავნილ ფაილს სახელი შეეცვალა"
 
 #: KTp/error-dictionary.cpp:35
 #, kde-format
@@ -762,7 +762,7 @@ msgstr "გათიშულია"
 #, kde-format
 msgctxt "This is an unknown connection state"
 msgid "Unknown"
-msgstr ""
+msgstr "უცნობი"
 
 #: KTp/Models/accounts-list-model.cpp:323
 #, kde-format
@@ -794,13 +794,13 @@ msgstr "წევრების რაოდენობა"
 #, kde-format
 msgctxt "Chatrooms name"
 msgid "Name"
-msgstr ""
+msgstr "სახელი"
 
 #: KTp/Models/rooms-model.cpp:115
 #, kde-format
 msgctxt "Chatrooms description"
 msgid "Description"
-msgstr ""
+msgstr "აღწერა"
 
 #: KTp/Models/rooms-model.cpp:200
 #, kde-format
@@ -943,7 +943,7 @@ msgstr "მეტსახელი:"
 #: KTp/Widgets/contact-info-dialog.cpp:74
 #, kde-format
 msgid "Email:"
-msgstr ""
+msgstr "ელფოტა:"
 
 #: KTp/Widgets/contact-info-dialog.cpp:75
 #, kde-format
