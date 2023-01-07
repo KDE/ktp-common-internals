@@ -34,14 +34,18 @@ SettingsKcmDialog::SettingsKcmDialog(QWidget *parent) :
     setAttribute(Qt::WA_DeleteOnClose);
     resize(700, 640);
 
-    KService::Ptr tpAccKcm = KService::serviceByDesktopName(QStringLiteral("kcm_kaccounts"));
-    if (!tpAccKcm) {
+    
+    if (KPluginMetaData data(QStringLiteral("plasma/kcms/systemsettings/kcm_kaccounts")); data.isValid()) {
+        addModule(data);
+    } else if (KService::serviceByDesktopName(QStringLiteral("kcm_kaccounts"))) {
+        addModule(QStringLiteral("kcm_kaccounts"));
+    } else {
         KMessageBox::error(this,
-                           i18n("It appears you do not have the IM Accounts control module installed. Please install kaccounts-integration package."),
-                           i18n("IM Accounts KCM Plugin Is Not Installed"));
+            i18n("It appears you do not have the IM Accounts control module installed. Please install kaccounts-integration package."),
+            i18n("IM Accounts KCM Plugin Is Not Installed"));
+
     }
 
-    addModule(QStringLiteral("kcm_kaccounts"));
 }
 
 void SettingsKcmDialog::addGeneralSettingsModule()
