@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
-"POT-Creation-Date: 2020-02-18 03:18+0100\n"
+"POT-Creation-Date: 2023-01-09 00:55+0000\n"
 "PO-Revision-Date: 2016-01-14 13:11+0200\n"
 "Last-Translator: Marek Laane <qiilaq69@gmail.com>\n"
 "Language-Team: Estonian <kde-et@linux.ee>\n"
@@ -1134,7 +1134,7 @@ msgstr "Kõik kasutajad"
 msgid "Configure notifications for all users"
 msgstr "Märguannete seadistamine kõigile kasutajatele"
 
-#: KTp/Widgets/settings-kcm-dialog.cpp:40
+#: KTp/Widgets/settings-kcm-dialog.cpp:44
 #, kde-format
 msgid ""
 "It appears you do not have the IM Accounts control module installed. Please "
@@ -1143,12 +1143,12 @@ msgstr ""
 "Paistb, et sul pole kiirsuhtluskontode juhtimiskeskuse moodulit paigaldatud. "
 "Palun paigalda pakett kaccounts-integration."
 
-#: KTp/Widgets/settings-kcm-dialog.cpp:41
+#: KTp/Widgets/settings-kcm-dialog.cpp:45
 #, kde-format
 msgid "IM Accounts KCM Plugin Is Not Installed"
 msgstr "Kiirsuhtluskontode juhtimismoodul ei ole paigaldatud"
 
-#: KTp/Widgets/settings-kcm-dialog.cpp:65
+#: KTp/Widgets/settings-kcm-dialog.cpp:69
 #, kde-format
 msgid "Notifications"
 msgstr "Märguanded"

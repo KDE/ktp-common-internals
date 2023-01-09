@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: bosnianuniversetranslation\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
-"POT-Creation-Date: 2020-02-18 03:18+0100\n"
+"POT-Creation-Date: 2023-01-09 00:55+0000\n"
 "PO-Revision-Date: 2014-12-24 21:24+0000\n"
 "Last-Translator: Mirza Bulbulusic <mbulbulusic@gmail.com>\n"
 "Language-Team: Bosnian <bs@li.org>\n"
@@ -1147,7 +1147,7 @@ msgstr "Svi korisnici"
 msgid "Configure notifications for all users"
 msgstr "Konfiguriši napomene za sve korisnike"
 
-#: KTp/Widgets/settings-kcm-dialog.cpp:40
+#: KTp/Widgets/settings-kcm-dialog.cpp:44
 #, fuzzy, kde-format
 msgid ""
 "It appears you do not have the IM Accounts control module installed. Please "
@@ -1156,12 +1156,12 @@ msgstr ""
 "Izgleda kao da nemate instaliran kontrolni IM račun. Molimo instalirajte ktp-"
 "račun-kcm paket."
 
-#: KTp/Widgets/settings-kcm-dialog.cpp:41
+#: KTp/Widgets/settings-kcm-dialog.cpp:45
 #, kde-format
 msgid "IM Accounts KCM Plugin Is Not Installed"
 msgstr "IM računi KCM uključenje nije instalirano"
 
-#: KTp/Widgets/settings-kcm-dialog.cpp:65
+#: KTp/Widgets/settings-kcm-dialog.cpp:69
 #, kde-format
 msgid "Notifications"
 msgstr "Notifikacije"
