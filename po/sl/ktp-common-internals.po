@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
-"POT-Creation-Date: 2020-02-18 03:18+0100\n"
+"POT-Creation-Date: 2023-01-09 02:39+0000\n"
 "PO-Revision-Date: 2015-04-03 14:15+0200\n"
 "Last-Translator: Andrej Mernik <andrejm@ubuntu.si>\n"
 "Language-Team: Slovenian <lugos-slo@lugos.si>\n"
@@ -1153,7 +1153,7 @@ msgstr "Vsi uporabniki"
 msgid "Configure notifications for all users"
 msgstr "Nastavi obvestila za vse uporabnike"
 
-#: KTp/Widgets/settings-kcm-dialog.cpp:40
+#: KTp/Widgets/settings-kcm-dialog.cpp:44
 #, kde-format
 msgid ""
 "It appears you do not have the IM Accounts control module installed. Please "
@@ -1162,12 +1162,12 @@ msgstr ""
 "Izgleda, da nimate nameščenega nadzornega modula za račune hipnega "
 "sporočanja. Namestite paket kaccounts-integration."
 
-#: KTp/Widgets/settings-kcm-dialog.cpp:41
+#: KTp/Widgets/settings-kcm-dialog.cpp:45
 #, kde-format
 msgid "IM Accounts KCM Plugin Is Not Installed"
 msgstr "Vstavek Računov hipnega sporočanja za KCM ni nameščen"
 
-#: KTp/Widgets/settings-kcm-dialog.cpp:65
+#: KTp/Widgets/settings-kcm-dialog.cpp:69
 #, kde-format
 msgid "Notifications"
 msgstr "Obvestila"

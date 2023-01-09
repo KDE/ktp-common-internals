@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ktp-common-internals\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
-"POT-Creation-Date: 2020-02-18 03:18+0100\n"
+"POT-Creation-Date: 2023-01-09 02:39+0000\n"
 "PO-Revision-Date: 2016-06-24 14:52+0200\n"
 "Last-Translator: Petros Vidalis <pvidalis@gmail.com>\n"
 "Language-Team: Greek <kde-i18n-el@kde.org>\n"
@@ -1164,7 +1164,7 @@ msgstr "Όλους τους χρήστες"
 msgid "Configure notifications for all users"
 msgstr "Διαμόρφωση ειδοποιήσεων για όλους τους χρήστες"
 
-#: KTp/Widgets/settings-kcm-dialog.cpp:40
+#: KTp/Widgets/settings-kcm-dialog.cpp:44
 #, kde-format
 msgid ""
 "It appears you do not have the IM Accounts control module installed. Please "
@@ -1173,13 +1173,13 @@ msgstr ""
 "Φαίνεται ότι δεν έχετε εγκατεστημένο το άρθρωμα ελέγχου λογαριασμών "
 "στιγμιαίων μηνυμάτων. Εγκαταστήστε το πακέτο kaccounts-integration."
 
-#: KTp/Widgets/settings-kcm-dialog.cpp:41
+#: KTp/Widgets/settings-kcm-dialog.cpp:45
 #, kde-format
 msgid "IM Accounts KCM Plugin Is Not Installed"
 msgstr ""
 "Το πρόσθετο KCM για λογαριασμούς στιγμιαίων μηνυμάτων δεν είναι εγκατεστημένο"
 
-#: KTp/Widgets/settings-kcm-dialog.cpp:65
+#: KTp/Widgets/settings-kcm-dialog.cpp:69
 #, kde-format
 msgid "Notifications"
 msgstr "Ειδοποιήσεις"

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ktp-common-internals\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
-"POT-Creation-Date: 2020-02-18 03:18+0100\n"
+"POT-Creation-Date: 2023-01-09 02:39+0000\n"
 "PO-Revision-Date: 2023-01-01 13:05+0100\n"
 "Last-Translator: Temuri Doghonadze <temuri.doghonadze@gmail.com>\n"
 "Language-Team: Georgian <kde-i18n-doc@kde.org>\n"
@@ -1138,7 +1138,7 @@ msgstr "ყველა მომხმარებელი"
 msgid "Configure notifications for all users"
 msgstr "შეტყობინების მორგება ყველა მომხმარებლისთვის"
 
-#: KTp/Widgets/settings-kcm-dialog.cpp:40
+#: KTp/Widgets/settings-kcm-dialog.cpp:44
 #, kde-format
 msgid ""
 "It appears you do not have the IM Accounts control module installed. Please "
@@ -1147,12 +1147,12 @@ msgstr ""
 "როგორც ჩანს, მესინჯერის კონტროლის მოდული დაყენებული არ გაქვთ. დააყენეთ "
 "პაკეტი kaccounts-integration."
 
-#: KTp/Widgets/settings-kcm-dialog.cpp:41
+#: KTp/Widgets/settings-kcm-dialog.cpp:45
 #, kde-format
 msgid "IM Accounts KCM Plugin Is Not Installed"
 msgstr "IM ანგარიშის KCM დამატება დაყენებული არაა"
 
-#: KTp/Widgets/settings-kcm-dialog.cpp:65
+#: KTp/Widgets/settings-kcm-dialog.cpp:69
 #, kde-format
 msgid "Notifications"
 msgstr "გაფრთხილებები"

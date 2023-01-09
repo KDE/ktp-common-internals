@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ktp-common-internals\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
-"POT-Creation-Date: 2020-02-18 03:18+0100\n"
+"POT-Creation-Date: 2023-01-09 02:39+0000\n"
 "PO-Revision-Date: 2019-07-06 09:31+0100\n"
 "Last-Translator: Pino Toscano <toscano.pino@tiscali.it>\n"
 "Language-Team: Italian <kde-i18n-it@kde.org>\n"
@@ -1158,7 +1158,7 @@ msgstr "Tutti gli utenti"
 msgid "Configure notifications for all users"
 msgstr "Configura le notifiche per tutti gli utenti"
 
-#: KTp/Widgets/settings-kcm-dialog.cpp:40
+#: KTp/Widgets/settings-kcm-dialog.cpp:44
 #, kde-format
 msgid ""
 "It appears you do not have the IM Accounts control module installed. Please "
@@ -1167,12 +1167,12 @@ msgstr ""
 "Sembra che il modulo di controllo degli account di messaggistica istantanea "
 "non sia installato. Installa il pacchetto kaccounts-integration."
 
-#: KTp/Widgets/settings-kcm-dialog.cpp:41
+#: KTp/Widgets/settings-kcm-dialog.cpp:45
 #, kde-format
 msgid "IM Accounts KCM Plugin Is Not Installed"
 msgstr "Estensione KCM degli account di MI non installata"
 
-#: KTp/Widgets/settings-kcm-dialog.cpp:65
+#: KTp/Widgets/settings-kcm-dialog.cpp:69
 #, kde-format
 msgid "Notifications"
 msgstr "Notifiche"

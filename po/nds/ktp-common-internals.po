@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: telepathy-common-internals\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
-"POT-Creation-Date: 2020-02-18 03:18+0100\n"
+"POT-Creation-Date: 2023-01-09 02:39+0000\n"
 "PO-Revision-Date: 2014-08-14 18:10+0200\n"
 "Last-Translator: Sönke Dibbern <s_dibbern@web.de>\n"
 "Language-Team: Low Saxon <kde-i18n-nds@kde.org>\n"
@@ -1153,7 +1153,7 @@ msgstr "All Brukers"
 msgid "Configure notifications for all users"
 msgstr "Bescheden för all Brukers instellen"
 
-#: KTp/Widgets/settings-kcm-dialog.cpp:40
+#: KTp/Widgets/settings-kcm-dialog.cpp:44
 #, fuzzy, kde-format
 #| msgid ""
 #| "It appears you do not have the IM Accounts control module installed. "
@@ -1165,12 +1165,12 @@ msgstr ""
 "As't lett hest Du dat KN-Konto-Kuntrullmoduul nich installeert. Installeer "
 "bitte dat Paket „ktp-accounts-kcm“."
 
-#: KTp/Widgets/settings-kcm-dialog.cpp:41
+#: KTp/Widgets/settings-kcm-dialog.cpp:45
 #, kde-format
 msgid "IM Accounts KCM Plugin Is Not Installed"
 msgstr "KN-Kontos-Kuntrullmoduul is nich installeert"
 
-#: KTp/Widgets/settings-kcm-dialog.cpp:65
+#: KTp/Widgets/settings-kcm-dialog.cpp:69
 #, kde-format
 msgid "Notifications"
 msgstr "Bescheden"
