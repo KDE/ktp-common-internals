@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ktp-common-internals\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
 "POT-Creation-Date: 2023-01-09 00:55+0000\n"
-"PO-Revision-Date: 2022-12-28 09:36+0100\n"
+"PO-Revision-Date: 2023-01-24 06:14+0100\n"
 "Last-Translator: Temuri Doghonadze <temuri.doghonadze@gmail.com>\n"
 "Language-Team: Georgian <kde-i18n-doc@kde.org>\n"
 "Language: ka\n"
@@ -79,7 +79,7 @@ msgstr "აირჩიეთ %1-თან ერთად ჩასასწო
 #: kpeople/uiplugins/chatplugin/kpeople_chat_plugin.cpp:58
 #, kde-format
 msgid "Chat for current contact is not supported"
-msgstr ""
+msgstr "მიმდინარე კონტაქტისთვის ჩატი მხარდაუჭერელია"
 
 #: kpeople/uiplugins/chatplugin/kpeople_chat_plugin.cpp:158
 #, kde-format
@@ -97,6 +97,8 @@ msgid ""
 "Transferring files with .exe or .ini extension is not allowed by Google "
 "Talk. It was sent with filename <i>%1</i>"
 msgstr ""
+"ფაილების, რომლებსაც .exe ან .ini გაფართოება გააჩნია, Google Talk-ით გაგზავნა "
+"აკრძალულია. ის გაიგზავნება სახელით <i>%1</i>"
 
 #: KTp/actions.cpp:183
 #, kde-format
@@ -110,12 +112,14 @@ msgid ""
 "Looks like you are already connected from other location and the server does "
 "not allow multiple connections"
 msgstr ""
+"როგორც ჩანს, თქვენ უკვე მიერთებული ბრძანდებით სხვა ადგილიდან და სერვერი "
+"მრავალ მიერთებას არ უშვებს"
 
 #: KTp/error-dictionary.cpp:37
 #, kde-format
 msgctxt "Verbose user visible error string"
 msgid "Authentication of your account failed (is your password correct?)"
-msgstr ""
+msgstr "თქვენი ანგარიშის ავთენტიკაცია წარუმატებელია (პაროლი სწორად ჩაწერეთ?)"
 
 #: KTp/error-dictionary.cpp:39
 #, kde-format
@@ -124,18 +128,20 @@ msgid ""
 "The channel is too busy now to process your request. Try again in a few "
 "minutes"
 msgstr ""
+"არხი მეტისმეტად დაკავებულია, რომ თქვენი მოთხოვნა დაამუშაოს. რამდენიმე წუთში "
+"სცადეთ"
 
 #: KTp/error-dictionary.cpp:41
 #, kde-format
 msgctxt "Verbose user visible error string"
 msgid "The connection was canceled on your request"
-msgstr ""
+msgstr "მოთხოვნა გაუქმდა, როგორც მოითხოვეთ"
 
 #: KTp/error-dictionary.cpp:43
 #, kde-format
 msgctxt "Verbose user visible error string"
 msgid "The SSL/TLS certificate received from server is expired"
-msgstr ""
+msgstr "სერვერიდან მიღებული SSL/TLS სერტიფიკატი ვადაგასულია"
 
 #: KTp/error-dictionary.cpp:45
 #, kde-format
@@ -143,7 +149,7 @@ msgctxt "Verbose user visible error string"
 msgid ""
 "The SSL/TLS certificate received from server has different fingerprint than "
 "expected"
-msgstr ""
+msgstr "სერვერიდან მიღებული SSL/TLS სერტიფიკატის მოულოდნელი ანაბეჭდი"
 
 #: KTp/error-dictionary.cpp:47
 #, kde-format
@@ -152,30 +158,32 @@ msgid ""
 "The SSL/TLS certificate received from server has different hostname than "
 "expected"
 msgstr ""
+"სერვერიდან მიღებული SSL/TLS სერტიფიკატი მოულოდნელ ჰოსტის სახელს ეკუთვნის"
 
 #: KTp/error-dictionary.cpp:49
 #, kde-format
 msgctxt "Verbose user visible error string"
 msgid "The SSL/TLS certificate received from server uses too weak encryption"
 msgstr ""
+"სერვერიდან მიღებული SSL/TLS სერტიფიკატი მეტისმეტად სუსტ დაშიფვრას იყენებს"
 
 #: KTp/error-dictionary.cpp:51
 #, kde-format
 msgctxt "Verbose user visible error string"
 msgid "The SSL/TLS certificate received from server is invalid"
-msgstr ""
+msgstr "სერვერიდან მიღებული SSL/TLS სერტიფიკატი არასწორია"
 
 #: KTp/error-dictionary.cpp:53
 #, kde-format
 msgctxt "Verbose user visible error string"
 msgid "The SSL/TLS certificate received from server has exceeded length limit"
-msgstr ""
+msgstr "სერვერიდან მიღებული SSL/TLS სერტიფიკატი დასაშვებ ლიმიტზე გრძელია"
 
 #: KTp/error-dictionary.cpp:55
 #, kde-format
 msgctxt "Verbose user visible error string"
 msgid "The SSL/TLS certificate received from server has not been activated yet"
-msgstr ""
+msgstr "სერვერიდან მიღებული SSL/TLS სერტიფიკატი ჯერ აქტიური არაა"
 
 #: KTp/error-dictionary.cpp:57
 #, kde-format
@@ -187,7 +195,7 @@ msgstr "სერვერს SSL/TLS სერტიფიკატი არ �
 #, kde-format
 msgctxt "Verbose user visible error string"
 msgid "The SSL/TLS certificate received from server has been revoked"
-msgstr ""
+msgstr "სერვერიდან მიღებული SSL/TLS სერტიფიკატი გაუქმებულია"
 
 #: KTp/error-dictionary.cpp:61
 #, kde-format
@@ -196,6 +204,8 @@ msgid ""
 "The SSL/TLS certificate received from server was self-signed by the server "
 "and is untrusted"
 msgstr ""
+"სერვერიდან მიღებული SSL/TLS სერტიფიკატი თვითხელმოწერილია სერვერის მიერ და "
+"სანდო არაა"
 
 #: KTp/error-dictionary.cpp:63
 #, kde-format
@@ -203,7 +213,7 @@ msgctxt "Verbose user visible error string"
 msgid ""
 "The SSL/TLS certificate received from server was not signed by a trusted "
 "certificate authority"
-msgstr ""
+msgstr "სერვერიდან მიღებული SSL/TLS სერტიფიკატის ხელმომწერი სანდო არაა"
 
 #: KTp/error-dictionary.cpp:65
 #, kde-format
@@ -260,6 +270,7 @@ msgid ""
 "Somewhere there is another client connecting with your account and your "
 "current connection is lost"
 msgstr ""
+"სადღაც ვიღაც ცდილობს თქვენი ანგარიშით შესვლას, ამიტომ თქვენი მიერთება გაწყდა"
 
 #: KTp/error-dictionary.cpp:83
 #, kde-format
@@ -307,13 +318,13 @@ msgstr "ამ არხზე მითითებული დამმუშ
 #, kde-format
 msgctxt "Verbose user visible error string"
 msgid "There appears to be a problem with your network, check your connection"
-msgstr ""
+msgstr "გადაამოწმეთ ქსელთან კავშირის მდგომარეობა"
 
 #: KTp/error-dictionary.cpp:99
 #, kde-format
 msgctxt "Verbose user visible error string"
 msgid "You were removed from the channel because you did not respond"
-msgstr ""
+msgstr "არხიდან გაგაგდეს იმიტომ, რომ არ გიპასუხიათ"
 
 #: KTp/error-dictionary.cpp:101
 #, kde-format
@@ -343,7 +354,7 @@ msgstr "ოპერაცია ჯერ განხორციელებ�
 #, kde-format
 msgctxt "Verbose user visible error string"
 msgid "The requested channel is already being handled by some other process"
-msgstr ""
+msgstr "მოთხოვნილი არხი უკვე მუშავდება სხვა პროცესის მიერ"
 
 #: KTp/error-dictionary.cpp:111
 #, kde-format
@@ -361,7 +372,7 @@ msgstr "ამ ოპერაციის ჩატარების უფლ
 #, kde-format
 msgctxt "Verbose user visible error string"
 msgid "Current call was picked up by another resource"
-msgstr ""
+msgstr "მიმდინარე ზარს სხვა რესურსმა უპასუხა"
 
 #: KTp/error-dictionary.cpp:117
 #, kde-format
@@ -382,6 +393,8 @@ msgid ""
 "There are insufficient resources (like free memory) to finish the operation "
 "at the moment"
 msgstr ""
+"ამჟამად ოპერაციის დასასრულებლად საჭირო რესურსები საკმარისი არაა (მაგალითად, "
+"მეხსიერება)"
 
 #: KTp/error-dictionary.cpp:123
 #, kde-format
@@ -390,12 +403,13 @@ msgid ""
 "Your request hit a busy resource somewhere along the way and the operation "
 "was unable to finish"
 msgstr ""
+"არასაკმარისი რესურსები თქვენი მოთხოვნის დამუშავებისას. ის არ დასრულებულა"
 
 #: KTp/error-dictionary.cpp:125
 #, kde-format
 msgctxt "Verbose user visible error string"
 msgid "An internal error has occurred (known as the 'Confused service error')"
-msgstr ""
+msgstr "შიდა შეცდომა (ასევე ცნობილია, როგორც 'დაბნეული სერვისის შეცდომა')"
 
 #: KTp/error-dictionary.cpp:127
 #, kde-format
@@ -403,13 +417,13 @@ msgctxt "Verbose user visible error string"
 msgid ""
 "The installed libraries are too old. Please try updating all Telepathy "
 "packages to a newer version"
-msgstr ""
+msgstr "დაყენებული ბიბლიოთეკები მეტისმეტად ძველია. სცადეთ განაახლოთ Telepathy"
 
 #: KTp/error-dictionary.cpp:129
 #, kde-format
 msgctxt "Verbose user visible error string"
 msgid "The channel was terminated for no apparent reason"
-msgstr ""
+msgstr "არხი ყოველგვარი მიზეზის გარეშე შეწყდა"
 
 #: KTp/error-dictionary.cpp:131
 #, kde-format
@@ -417,18 +431,19 @@ msgctxt "Verbose user visible error string"
 msgid ""
 "This operation can not be finished as it would break your requested anonymity"
 msgstr ""
+"ამ ოპერაციის დასრულება შეუძლებელია, რადგან ის მოთხოვნილი ანონიმურობას არღვევს"
 
 #: KTp/error-dictionary.cpp:133
 #, kde-format
 msgctxt "Verbose user visible error string"
 msgid "Some of the IM components are not working correctly"
-msgstr ""
+msgstr "მესინჯერის ზოგიერთი კომპონენტი არასწორად მუშაობს"
 
 #: KTp/error-dictionary.cpp:135
 #, kde-format
 msgctxt "User visible error string"
 msgid "An unknown error was encountered (%1), please report this"
-msgstr ""
+msgstr "ნაპოვნია უცნობი შეცდომა (%1). გთხოვთ მოგვწეროთ"
 
 #: KTp/error-dictionary.cpp:142
 #, kde-format
@@ -883,7 +898,7 @@ msgstr "ანგარიში მონიშნული არაა."
 msgid ""
 "The requested account has been disconnected and so the contact could not be "
 "added."
-msgstr ""
+msgstr "მოთხოვნილი ანგარიში გაითიშა, ამიტომ კონტაქტი არ დამატებულა."
 
 #: KTp/Widgets/add-contact-dialog.cpp:160
 #, kde-format
@@ -898,7 +913,7 @@ msgstr "ახალი კონტაქტის შექმნის შე
 #: KTp/Widgets/add-contact-dialog.cpp:203
 #, kde-format
 msgid "Failed to request presence subscription from the requested contact."
-msgstr ""
+msgstr "მითითებული კონტაქტის სტატუსის გამოწერის მოთხოვნის შეცდომა."
 
 #. i18n: ectx: property (text), widget (QLabel, label)
 #: KTp/Widgets/add-contact-dialog.ui:20 KTp/Widgets/start-chat-dialog.ui:17
@@ -1082,13 +1097,13 @@ msgstr "ძებნა"
 #: KTp/Widgets/join-chat-room-dialog.ui:125
 #, kde-format
 msgid "Server to be queried:"
-msgstr ""
+msgstr "გამოსათხოვი სერვერი:"
 
 #. i18n: ectx: property (placeholderText), widget (QLineEdit, serverLineEdit)
 #: KTp/Widgets/join-chat-room-dialog.ui:134
 #, kde-format
 msgid "Leave blank for the selected account's default server"
-msgstr ""
+msgstr "დატოვეთ ცარიელი, თუ ანგარიშის ნაგულისხმებ სერვერს იყენებთ"
 
 #. i18n: ectx: property (text), widget (QToolButton, queryButton)
 #: KTp/Widgets/join-chat-room-dialog.ui:147
@@ -1106,12 +1121,12 @@ msgstr "ოთახების გაფილტვრა"
 #: KTp/Widgets/notification-config-dialog.cpp:116
 #, kde-format
 msgid "Configure notifications for %1"
-msgstr ""
+msgstr "%1-ის შეტყობინებების მორგება"
 
 #: KTp/Widgets/notification-config-dialog.cpp:55
 #, kde-format
 msgid "Configure notifications for"
-msgstr ""
+msgstr "შეტყობინებების მორგება ანგარიშისთვის"
 
 #: KTp/Widgets/notification-config-dialog.cpp:60
 #, kde-format
@@ -1121,7 +1136,7 @@ msgstr "ყველა მომხმარებელი"
 #: KTp/Widgets/notification-config-dialog.cpp:119
 #, kde-format
 msgid "Configure notifications for all users"
-msgstr ""
+msgstr "შეტყობინების მორგება ყველა მომხმარებლისთვის"
 
 #: KTp/Widgets/settings-kcm-dialog.cpp:44
 #, kde-format
@@ -1129,11 +1144,13 @@ msgid ""
 "It appears you do not have the IM Accounts control module installed. Please "
 "install kaccounts-integration package."
 msgstr ""
+"როგორც ჩანს, მესინჯერის კონტროლის მოდული დაყენებული არ გაქვთ. დააყენეთ "
+"პაკეტი kaccounts-integration."
 
 #: KTp/Widgets/settings-kcm-dialog.cpp:45
 #, kde-format
 msgid "IM Accounts KCM Plugin Is Not Installed"
-msgstr ""
+msgstr "IM ანგარიშის KCM დამატება დაყენებული არაა"
 
 #: KTp/Widgets/settings-kcm-dialog.cpp:69
 #, kde-format
@@ -1150,12 +1167,12 @@ msgstr "საუბრის დაწყება"
 msgid ""
 "The requested account has been disconnected and so a chat could not be "
 "initiated."
-msgstr ""
+msgstr "მოთხოვნილი ანგარიში გაითიშა, ამიტომ ჩატის მოთხოვნა არ გაგზავნილა."
 
 #: KTp/Widgets/start-chat-dialog.cpp:100
 #, kde-format
 msgid "You did not specify the name of the contact to start a chat with."
-msgstr ""
+msgstr "ჩატის დასაწყებად კონტაქტის სახელი არ მიგითითებიათ."
 
 #: KTp/Widgets/start-chat-dialog.cpp:118
 #, kde-format
@@ -1163,8 +1180,9 @@ msgid ""
 "The contact Screen Name you provided is invalid or does not accept text "
 "chats."
 msgstr ""
+"ნაჩვენები სახელი, რომელიც შეიყვანეთ, არასწორია და ტექსტურ ჩატს ვერ იღებს."
 
 #: KTp/Widgets/start-chat-dialog.cpp:144
 #, kde-format
 msgid "Failed to start a chat with the contact."
-msgstr ""
+msgstr "კონტაქტთან საუბრის დაწყების შეცდომა."
