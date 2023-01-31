@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: extragear-network-kde4\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
 "POT-Creation-Date: 2023-01-09 00:55+0000\n"
-"PO-Revision-Date: 2023-01-18 22:31+0300\n"
+"PO-Revision-Date: 2023-01-31 01:19+0300\n"
 "Last-Translator: Emir SARI <emir_sari@icloud.com>\n"
 "Language-Team: Turkish <kde-l10n-tr@kde.org>\n"
 "Language: tr\n"
@@ -1149,12 +1149,12 @@ msgid ""
 "install kaccounts-integration package."
 msgstr ""
 "IM Hesap denetim modülü yüklü değil gibi görünüyor. Lütfen kaccounts-"
-"integration paketini yükleyin."
+"integration paketini kurun."
 
 #: KTp/Widgets/settings-kcm-dialog.cpp:45
 #, kde-format
 msgid "IM Accounts KCM Plugin Is Not Installed"
-msgstr "IM Hesapları KCM Eklentisi Yüklü Değil"
+msgstr "IM Hesapları KCM Eklentisi Kurulu Değil"
 
 #: KTp/Widgets/settings-kcm-dialog.cpp:69
 #, kde-format
