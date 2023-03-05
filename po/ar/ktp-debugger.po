@@ -49,7 +49,7 @@ msgstr "احفظ سجلّ اللسان الحاليّ"
 #: main.cpp:31
 #, kde-format
 msgid "KDE Telepathy Debug Tool"
-msgstr "أداة تنقيح كدي تلبثي"
+msgstr "أداة تنقيح كِيدِي تلبثي"
 
 #: main.cpp:33
 #, kde-format
