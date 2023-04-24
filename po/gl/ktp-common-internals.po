@@ -1,17 +1,17 @@
 # Copyright (C) YEAR This_file_is_part_of_KDE
 # This file is distributed under the same license as the PACKAGE package.
-#
 # Xosé <xosecalvo@gmail.com>, 2012.
 # Adrian Chaves Fernandez <adriyetichaves@gmail.com>, 2012, 2015.
 # Miguel Branco <mgl.branco@gmail.com>, 2013.
 # Marce Villarino <mvillarino@kde-espana.es>, 2013.
-# Adrián Chaves (Gallaecio) <adrian@chaves.io>, 2017, 2018, 2019.
+# Adrián Chaves (Gallaecio) <adrian@chaves.io>, 2017, 2018, 2019, 2023.
+#
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
 "POT-Creation-Date: 2023-01-09 00:55+0000\n"
-"PO-Revision-Date: 2019-11-01 17:03+0100\n"
+"PO-Revision-Date: 2023-04-23 06:27+0200\n"
 "Last-Translator: Adrián Chaves (Gallaecio) <adrian@chaves.io>\n"
 "Language-Team: Galician <proxecto@trasno.gal>\n"
 "Language: gl\n"
@@ -19,7 +19,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Lokalize 19.08.2\n"
+"X-Generator: Lokalize 22.12.3\n"
 
 #, kde-format
 msgctxt "NAME OF TRANSLATORS"
@@ -62,7 +62,7 @@ msgstr "Enviar ficheiros usando %1…"
 #: kpeople/actionsplugin/kpeople-actions-plugin.cpp:244
 #, kde-format
 msgid "Collaboratively edit a document Using %1..."
-msgstr "Editar colaborativamente un documento usando %1…"
+msgstr "Editar un documento de maneira colaborativa usando %1…"
 
 #: kpeople/actionsplugin/kpeople-actions-plugin.cpp:255
 #, kde-format
@@ -851,7 +851,7 @@ msgstr "Erro de OTR: %1"
 #: KTp/OTR/utils.cpp:84
 #, kde-format
 msgid "Received unencrypted message: [%1]"
-msgstr "Recibiouse unha mensaxe sen cifrar: [%1]"
+msgstr "Recibiuse unha mensaxe sen cifrar: [%1]"
 
 #: KTp/presence.cpp:115
 #, kde-format
