@@ -171,8 +171,7 @@ msgstr ""
 msgctxt "Verbose user visible error string"
 msgid "The SSL/TLS certificate received from server uses too weak encryption"
 msgstr ""
-"O certificado de SSL/TLS recibido do servidor emprega un cifrado demasiado "
-"fraco"
+"O certificado de SSL/TLS recibido do servidor usa un cifrado demasiado fraco"
 
 #: KTp/error-dictionary.cpp:51
 #, kde-format
@@ -897,7 +896,7 @@ msgstr "Modo persistente (non saír ao pasar un tempo)"
 #: KTp/telepathy-handler-application.cpp:135
 #, kde-format
 msgid "Show Telepathy debugging information"
-msgstr "Mostrar a información de depuración do Telepathy"
+msgstr "Amosar a información de depuración do Telepathy"
 
 #: KTp/Widgets/add-contact-dialog.cpp:91
 #, kde-format
@@ -1121,8 +1120,7 @@ msgstr "Servidor para consultar:"
 #, kde-format
 msgid "Leave blank for the selected account's default server"
 msgstr ""
-"Déixese en branco para empregar o servidor predeterminado da conta "
-"seleccionada."
+"Déixese en branco para usar o servidor predeterminado da conta seleccionada."
 
 #. i18n: ectx: property (text), widget (QToolButton, queryButton)
 #: KTp/Widgets/join-chat-room-dialog.ui:147
