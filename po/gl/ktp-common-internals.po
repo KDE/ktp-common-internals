@@ -37,12 +37,12 @@ msgctxt ""
 "Context menu action; means 'Bring your account online and then start a chat "
 "using %1 account'"
 msgid "Connect and Start Chat Using %1..."
-msgstr "Conectarse e comezar unha conversa usando %1…"
+msgstr "Conectarse e comezar unha charla usando %1…"
 
 #: kpeople/actionsplugin/kpeople-actions-plugin.cpp:203
 #, kde-format
 msgid "Start Chat Using %1..."
-msgstr "Comezar unha conversa usando %1…"
+msgstr "Comezar unha charla usando %1…"
 
 #: kpeople/actionsplugin/kpeople-actions-plugin.cpp:213
 #, kde-format
@@ -451,7 +451,7 @@ msgstr ""
 msgctxt "Verbose user visible error string"
 msgid "Some of the IM components are not working correctly"
 msgstr ""
-"Algúns dos compoñentes da mensaxería instantánea non están a funcionar "
+"Algúns dos compoñentes da mensaxaría instantánea non están a funcionar "
 "correctamente (e o sistema non nos di cal)"
 
 #: KTp/error-dictionary.cpp:135
@@ -1030,7 +1030,7 @@ msgstr "Este contacto está bloqueado:"
 #, kde-format
 msgctxt "Dialog title"
 msgid "Join Chat Room"
-msgstr "Unirse á sala de conversas"
+msgstr "Unirse á sala de charlas"
 
 #: KTp/Widgets/join-chat-room-dialog.cpp:108
 #, kde-format
@@ -1083,7 +1083,7 @@ msgstr "Conta"
 #: KTp/Widgets/join-chat-room-dialog.ui:60
 #, kde-format
 msgid "Chat Room"
-msgstr "Sala de conversas"
+msgstr "Sala de charlas"
 
 #. i18n: ectx: attribute (title), widget (QWidget, previousTab)
 #: KTp/Widgets/join-chat-room-dialog.ui:70
@@ -1101,7 +1101,7 @@ msgstr "Limpar as salas recentes"
 #: KTp/Widgets/join-chat-room-dialog.ui:108
 #, kde-format
 msgid "Enter chat room name or address"
-msgstr "Insira o nome ou enderezo da sala de conversas"
+msgstr "Insira o nome ou enderezo da sala de charlas"
 
 #. i18n: ectx: attribute (title), widget (QWidget, searchTab)
 #: KTp/Widgets/join-chat-room-dialog.ui:119
@@ -1161,7 +1161,7 @@ msgid ""
 "It appears you do not have the IM Accounts control module installed. Please "
 "install kaccounts-integration package."
 msgstr ""
-"Parece que non está instalado o módulo de control de contas de mensaxería "
+"Parece que non está instalado o módulo de control de contas de mensaxaría "
 "instantánea. Instale o paquete «kaccounts-integration»."
 
 #: KTp/Widgets/settings-kcm-dialog.cpp:45
@@ -1178,7 +1178,7 @@ msgstr "Notificacións"
 #: KTp/Widgets/start-chat-dialog.cpp:63
 #, kde-format
 msgid "Start a chat"
-msgstr "Comezar unha conversa"
+msgstr "Comezar unha charla"
 
 #: KTp/Widgets/start-chat-dialog.cpp:97
 #, kde-format
@@ -1186,13 +1186,12 @@ msgid ""
 "The requested account has been disconnected and so a chat could not be "
 "initiated."
 msgstr ""
-"A conta solicitada desconectouse, polo que non se puido iniciar unha "
-"conversa."
+"A conta solicitada desconectouse, polo que non se puido iniciar unha charla."
 
 #: KTp/Widgets/start-chat-dialog.cpp:100
 #, kde-format
 msgid "You did not specify the name of the contact to start a chat with."
-msgstr "Non indicou o nome do contacto co que comezar unha conversa."
+msgstr "Non indicou o nome do contacto co que comezar unha charla."
 
 #: KTp/Widgets/start-chat-dialog.cpp:118
 #, kde-format
@@ -1200,13 +1199,13 @@ msgid ""
 "The contact Screen Name you provided is invalid or does not accept text "
 "chats."
 msgstr ""
-"O alcume que forneceu para o contacto é incorrecto ou non acepta conversas "
-"de texto."
+"O alcume que forneceu para o contacto é incorrecto ou non acepta charlas de "
+"texto."
 
 #: KTp/Widgets/start-chat-dialog.cpp:144
 #, kde-format
 msgid "Failed to start a chat with the contact."
-msgstr "Non se puido comezar unha conversa co contacto."
+msgstr "Non se puido comezar unha charla co contacto."
 
 #~ msgid "KDE Telepathy"
 #~ msgstr "Telepathy do KDE"
