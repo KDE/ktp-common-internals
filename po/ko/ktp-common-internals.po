@@ -364,7 +364,7 @@ msgstr "이 작업을 수행할 수 없습니다"
 #, kde-format
 msgctxt "Verbose user visible error string"
 msgid "Current call was picked up by another resource"
-msgstr "현재 통화를 다른 자원에서 받았습니다"
+msgstr "현재 통화를 다른 리소스에서 받았습니다"
 
 #: KTp/error-dictionary.cpp:117
 #, kde-format
@@ -384,7 +384,7 @@ msgctxt "Verbose user visible error string"
 msgid ""
 "There are insufficient resources (like free memory) to finish the operation "
 "at the moment"
-msgstr "작업을 완료하기에 충분한 자원(여유 메모리 등)이 없습니다"
+msgstr "작업을 완료하기에 충분한 리소스(여유 메모리 등)이 없습니다"
 
 #: KTp/error-dictionary.cpp:123
 #, kde-format
@@ -678,7 +678,7 @@ msgstr "지원하지 않는 동작"
 #, kde-format
 msgctxt "Short user visible error string"
 msgid "Call picked by other resource"
-msgstr "다른 자원에서 통화 받음"
+msgstr "다른 리소스에서 통화 받음"
 
 #: KTp/error-dictionary.cpp:224
 #, kde-format
@@ -696,7 +696,7 @@ msgstr "통화 거부됨"
 #, kde-format
 msgctxt "Short user visible error string"
 msgid "Insufficient resources"
-msgstr "자원 충분하지 않음"
+msgstr "리소스 충분하지 않음"
 
 #: KTp/error-dictionary.cpp:230
 #, kde-format
